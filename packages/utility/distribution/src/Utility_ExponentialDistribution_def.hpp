@@ -20,38 +20,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareExponentialDistribution );
 
 namespace Utility{
 
-// The constant multiplier value key (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_key( "multiplier" );
-
-// The constant multiplier min match string (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_min_match_string( "mult" );
-
-// The exponent multiplier value key (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_exponent_multiplier_value_key( "exponent" );
-
-// The exponent multiplier min match string (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_exponent_multiplier_value_min_match_string( "exp" );
-
-// The lower limit value key (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_key( "lower boundary" );
-
-// The lower limit min match string (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>  
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_min_match_string( "lower" );
-
-// The upper limit value key (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_key( "upper boundary" );
-
-// The upper limit min match string (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_min_match_string( "upper" );
-
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -72,18 +40,12 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_lower_limit( lower_limit ),
     d_upper_limit( upper_limit )
 {
-  // Make sure the multipliers are valid
-  remember( typedef QuantityTraits<InputIndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<InputInverseIndepQuantity> InputIIQT );
-  remember( typedef QuantityTraits<InputDepQuantity> InputDQT );
-  testPrecondition( !InputDQT::isnaninf( constant_multiplier ) );
-  testPrecondition( !InputIIQT::isnaninf( exponent_multiplier ) );
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( exponent_multiplier > InputIIQT::zero() );
-  // Make sure the limits are valid
-  testPrecondition( lower_limit >= InputIQT::zero() );
-  testPrecondition( upper_limit > lower_limit );
-
+  // Verify that the shape parameters are valid
+  this->verifyValidShapeParameters( d_constant_multiplier,
+                                    d_exponent_multiplier,
+                                    d_lower_limit,
+                                    d_upper_limit );
+  
   // Initialize the distribution
   this->initialize();
 
@@ -105,19 +67,6 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_lower_limit( dist_instance.d_lower_limit ),
     d_upper_limit( dist_instance.d_upper_limit )
 {
-  remember( typedef QuantityTraits<typename UnitAwareExponentialDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareExponentialDistribution<InputIndepUnit,InputDepUnit>::InverseIndepQuantity> InputIIQT );
-  remember( typedef QuantityTraits<typename UnitAwareExponentialDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
-  // Make sure the multipliers are valid
-  testPrecondition( !InputDQT::isnaninf(dist_instance.d_constant_multiplier) );
-  testPrecondition( !InputIIQT::isnaninf(dist_instance.d_exponent_multiplier));
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( dist_instance.d_exponent_multiplier > InputIIQT::zero() );
-  // Make sure the limits are valid
-  testPrecondition( dist_instance.d_lower_limit >= InputIQT::zero() );
-  testPrecondition( dist_instance.d_upper_limit >
-		    dist_instance.d_lower_limit );
-
   // Initialize the distribution
   this->initialize();
 
@@ -132,18 +81,6 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_lower_limit( IQT::initializeQuantity( unitless_dist_instance.d_lower_limit ) ),
     d_upper_limit( IQT::initializeQuantity( unitless_dist_instance.d_upper_limit ) )
 {
-  // Make sure the multipliers are valid
-  testPrecondition( !QT::isnaninf(
-			      unitless_dist_instance.d_constant_multiplier ) );
-  testPrecondition( !QT::isnaninf(
-			      unitless_dist_instance.d_exponent_multiplier ) );
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( unitless_dist_instance.d_exponent_multiplier > QT::zero());
-  // Make sure the limits are valid
-  testPrecondition( unitless_dist_instance.d_lower_limit >= QT::zero() );
-  testPrecondition( unitless_dist_instance.d_upper_limit >
-		    unitless_dist_instance.d_lower_limit );
-
   // Initialize the distribution
   this->initialize();
 
@@ -170,16 +107,6 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>&
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::operator=(
  const UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure the multipliers are valid
-  testPrecondition( !DQT::isnaninf(dist_instance.d_constant_multiplier) );
-  testPrecondition( !IIQT::isnaninf(dist_instance.d_exponent_multiplier));
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( dist_instance.d_exponent_multiplier > IIQT::zero() );
-  // Make sure the limits are valid
-  testPrecondition( dist_instance.d_lower_limit >= IQT::zero() );
-  testPrecondition( dist_instance.d_upper_limit >
-		    dist_instance.d_lower_limit );
-
   if( this != &dist_instance )
   {
     d_constant_multiplier = dist_instance.d_constant_multiplier;
@@ -324,27 +251,6 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getDistribution
   return ThisType::distribution_type;
 }
 
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( "Exponential",
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
-}
-
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool
@@ -358,157 +264,11 @@ template<typename IndependentUnit, typename DependentUnit>
 void
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamImpl( os,
-                      Utility::getRawQuantity( d_exponent_multiplier ),
-                      Utility::getRawQuantity( d_constant_multiplier ),
-                      Utility::getRawQuantity( d_lower_limit ),
-                      Utility::getRawQuantity( d_upper_limit ) );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Set the exponent multiplier
-  if( !distribution_data.empty() )
-  {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_exponent_multiplier );
-    distribution_data.pop_front();
-  }
-  else
-  {
-    d_exponent_multiplier =
-      ThisType::getDefaultExponentMultiplier<InverseIndepQuantity>();
-  }
-
-  // Set the constant multiplier
-  if( !distribution_data.empty() )
-  {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_constant_multiplier );
-    distribution_data.pop_front();
-  }
-  else
-  {
-    d_constant_multiplier =
-      ThisType::getDefaultConstMultiplier<DepQuantity>();
-  }
-
-  // Set the lower boundary of the distribution
-  if( !distribution_data.empty() )
-  {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_lower_limit );
-    distribution_data.pop_front();
-  }
-  else
-    d_lower_limit = ThisType::getDefaultLowerLimit<IndepQuantity>();
-
-  // Set the upper boundary of the distribution
-  if( !distribution_data.empty() )
-  {
-    this->extractShapeParameter( distribution_data.front(),
-                                 d_upper_limit );
-    distribution_data.pop_front();
-  }
-  else
-    d_upper_limit = ThisType::getDefaultUpperLimit<IndepQuantity>();
-
-  // Verify that the shape parameters are valid
-  this->verifyValidShapeParameters( d_constant_multiplier,
-                                    d_exponent_multiplier,
-                                    d_lower_limit,
-                                    d_upper_limit );
-  
-  // Initialize the distribution
-  this->initialize();
-}
-
-// Method for converting the type to a property tree
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    return this->toPropertyTreeImpl(
-     std::tie(s_const_multiplier_value_key, Utility::getRawQuantity(d_constant_multiplier)),
-     std::tie(s_exponent_multiplier_value_key, Utility::getRawQuantity(d_exponent_multiplier)),
-     std::tie(s_lower_limit_value_key, Utility::getRawQuantity(d_lower_limit)),
-     std::tie(s_upper_limit_value_key, Utility::getRawQuantity(d_upper_limit)) );
-  }
-}
-
-// Method for initializing the object from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-
-  // Initialize from child nodes
-  else
-  {
-    // Initialize the member data to default values
-    d_constant_multiplier = ThisType::getDefaultConstMultiplier<DepQuantity>();
-    d_exponent_multiplier = ThisType::getDefaultExponentMultiplier<InverseIndepQuantity>();
-    d_lower_limit = ThisType::getDefaultLowerLimit<IndepQuantity>();
-    d_upper_limit = ThisType::getDefaultUpperLimit<IndepQuantity>();
-
-    std::string type_name = this->getTypeName( true, true );
-
-    // Create the data extractor map
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-         std::bind<void>(&ThisType::extractShapeParameterFromNode<DepQuantity>,
-                         std::placeholders::_1,
-                         std::ref(d_constant_multiplier)) )));
-    data_extractors.insert(
-     std::make_pair( s_exponent_multiplier_value_key,
-      std::make_tuple( s_exponent_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<InverseIndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_exponent_multiplier),
-                       std::cref(type_name)) )));
-    data_extractors.insert(
-     std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_lower_limit),
-                       std::cref(type_name)) )));
-    data_extractors.insert(
-     std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_upper_limit),
-                       std::cref(type_name)) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    // Verify that the shape parameters are valid
-    try{
-      this->verifyValidShapeParameters( d_constant_multiplier,
-                                        d_exponent_multiplier,
-                                        d_lower_limit,
-                                        d_upper_limit );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PropertyTreeConversionException,
-                                "Invalid shape parameter detected!" );
-
-    // Initialize the distribution
-    this->initialize();
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "exponent multiplier", d_exponent_multiplier ),
+                          std::make_pair( "multiplier", d_constant_multiplier ),
+                          std::make_pair( "lower bound", d_lower_limit ),
+                          std::make_pair( "upper boud", d_upper_limit ) );
 }
 
 // Save the distribution to an archive
@@ -581,41 +341,50 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::initialize
 
 // Verify that the shape parameters are valid
 template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity,
+         typename InputInverseIndepQuantity,
+         typename InputDepQuantity>
 void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::verifyValidShapeParameters(
-                               const DepQuantity& const_multiplier,
-                               const InverseIndepQuantity& exponent_multiplier,
-                               const IndepQuantity& lower_limit,
-                               const IndepQuantity& upper_limit )
+                          const InputDepQuantity& const_multiplier,
+                          const InputInverseIndepQuantity& exponent_multiplier,
+                          const InputIndepQuantity& lower_limit,
+                          const InputIndepQuantity& upper_limit )
 {
-  TEST_FOR_EXCEPTION( DQT::isnaninf( const_multiplier ),
-                      Utility::StringConversionException,
+  typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
+  
+  TEST_FOR_EXCEPTION( InputDQT::isnaninf( const_multiplier ),
+                      Utility::BadOneDDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the multiplier is invalid!" );
 
-  TEST_FOR_EXCEPTION( const_multiplier == DQT::zero(),
-                      Utility::StringConversionException,
+  TEST_FOR_EXCEPTION( const_multiplier == InputDQT::zero(),
+                      Utility::BadOneDDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the multiplier is invalid!" );
+
+  typedef Utility::QuantityTraits<InputInverseIndepQuantity> InputIIQT;
   
-  TEST_FOR_EXCEPTION( IIQT::isnaninf( exponent_multiplier ),
-                      Utility::StringConversionException,
+  TEST_FOR_EXCEPTION( InputIIQT::isnaninf( exponent_multiplier ),
+                      Utility::BadOneDDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the exponent multiplier is "
                       "invalid!" );
   
-  TEST_FOR_EXCEPTION( exponent_multiplier <= IIQT::zero(),
-                      Utility::StringConversionException,
+  TEST_FOR_EXCEPTION( exponent_multiplier <= InputIIQT::zero(),
+                      Utility::BadOneDDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the exponent multiplier is "
                       "invalid!" );
 
-  TEST_FOR_EXCEPTION( lower_limit < IQT::zero(),
-                      Utility::StringConversionException,
+  typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
+
+  TEST_FOR_EXCEPTION( lower_limit < InputIQT::zero(),
+                      Utility::BadOneDDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the lower limit is invalid!" );
 
   TEST_FOR_EXCEPTION( upper_limit <= lower_limit,
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the upper limit is invalid!" );
 }

@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 
@@ -21,9 +20,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                   private OneDDistributionPropertyTreeConverter<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
-                                   private OneDDistributionPropertyTreeConverter<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -115,29 +112,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree 
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareDeltaDistribution& other ) const;
@@ -149,12 +128,6 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int );
-
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
@@ -195,18 +168,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = DELTA_DISTRIBUTION;
 
-  // The location value key (used in property trees)
-  static const std::string s_location_value_key;
-
-  // The location value min match string (used when reading property trees)
-  static const std::string s_location_value_min_match_string;
-
-  // The multiplier value key (used in property trees)
-  static const std::string s_multiplier_value_key;
-
-  // The multiplier value min match string (used when reading property trees)
-  static const std::string s_multiplier_value_min_match_string;
-
   // The location of the delta distribution
   IndepQuantity d_location;
 
@@ -218,39 +179,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareDeltaDistribution<void,void> DeltaDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * delta distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for delta distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<DeltaDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return DeltaDistribution::typeName( true, false ); }
-};
 
 } // end Utility namespace
 

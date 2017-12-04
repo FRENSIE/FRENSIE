@@ -11,9 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_Vector.hpp"
-#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -21,9 +19,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                             private OneDDistributionPropertyTreeConverter<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
-                                             private OneDDistributionPropertyTreeConverter<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -54,11 +50,10 @@ public:
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
 
-  //! Default constructor
-  UnitAwareEquiprobableBinDistribution();
-
   //! Basic constructor (potentially dangerous)
-  explicit UnitAwareEquiprobableBinDistribution( const std::vector<double>& bin_boundaries );
+  explicit UnitAwareEquiprobableBinDistribution(
+                                 const std::vector<double>& bin_boundaries =
+                                 ThisType::getDefaultBinBoundaries<double>() );
 
   //! Constructor
   template<typename InputIndepQuantity>
@@ -118,29 +113,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareEquiprobableBinDistribution& other ) const;
@@ -153,14 +130,13 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareEquiprobableBinDistribution( const UnitAwareEquiprobableBinDistribution<void,void>& unitless_dist_instance, int );
 
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
-
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
+
+  //! Get the default bin boundaries
+  template<typename InputIndepQuantity>
+  static std::vector<InputIndepQuantity> getDefaultBinBoundaries()
+  { return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::zero(),Utility::QuantityTraits<InputIndepQuantity>::one()}); }
 
 private:
 
@@ -177,8 +153,9 @@ private:
 		    const std::vector<InputIndepQuantity>& bin_boundaries );
 
   // Verify that the bin boundaries are valid
+  template<typename InputIndepQuantity>
   static void verifyValidBinBoundaries(
-                                   const std::vector<double>& bin_boundaries );
+                       const std::vector<InputIndepQuantity>& bin_boundaries );
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -201,13 +178,7 @@ private:
   static const OneDDistributionType distribution_type =
     EQUIPROBABLE_BIN_DISTRIBUTION;
 
-  // The bin boundary values key (used in property trees)
-  static const std::string s_bin_boundary_values_key;
-
-  // The bin boundary values min match string (used when reading prop. trees)
-  static const std::string s_bin_boundary_min_match_string;
-
-  // The distribution
+    // The distribution
   std::vector<IndepQuantity> d_bin_boundaries;
 };
 
@@ -215,39 +186,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareEquiprobableBinDistribution<void,void> EquiprobableBinDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * equiprobable bin distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for equiprobable bin distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<EquiprobableBinDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return EquiprobableBinDistribution::typeName( true, false ); }
-};
 
 } // end Utility namespace
 

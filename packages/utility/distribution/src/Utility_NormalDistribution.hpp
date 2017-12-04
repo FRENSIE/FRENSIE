@@ -11,15 +11,12 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
-#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
 //! Normal distribution class
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-                                    private OneDDistributionPropertyTreeConverter<UnitAwareNormalDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
   typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -125,32 +122,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareNormalDistribution& other ) const;
@@ -162,12 +138,6 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareNormalDistribution( const UnitAwareNormalDistribution<void,void>& unitless_dist_instance, int );
-
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
@@ -227,36 +197,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = NORMAL_DISTRIBUTION;
 
-  // The constant multiplier value key (used in property trees)
-  static const std::string s_const_multiplier_value_key;
-
-  // The constant multiplier min match string (used in property trees)
-  static const std::string s_const_multiplier_value_min_match_string;
-
-  // The mean value key (used in property trees)
-  static const std::string s_mean_value_key;
-
-  // The mean value min match string (used in property trees)
-  static const std::string s_mean_value_min_match_string;
-
-  // The standard deviation value key (used in property trees)
-  static const std::string s_standard_deviation_value_key;
-
-  // The standard deviation value min match string (used in property trees)
-  static const std::string s_standard_deviation_value_min_match_string;
-
-  // The lower limit value key (used in property trees)
-  static const std::string s_lower_limit_value_key;
-
-  // The lower limit min match string (used in property trees)
-  static const std::string s_lower_limit_value_min_match_string;
-
-  // The upper limit value key (used in property trees)
-  static const std::string s_upper_limit_value_key;
-
-  // The upper limit min match string (used in property trees)
-  static const std::string s_upper_limit_value_min_match_string;
-
   // Constant normalization factor (1/sqrt(2*pi))
   static const double constant_norm_factor;
 
@@ -280,39 +220,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareNormalDistribution<void,void> NormalDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * normal distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareNormalDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for normal distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<NormalDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return NormalDistribution::typeName( true, false ); }
-};
 
 } // end Utility namespace
 

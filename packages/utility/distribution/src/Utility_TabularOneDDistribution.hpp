@@ -93,25 +93,6 @@ EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularOneDDistribution<void,void>
 
 } // end Utility namespace
 
-namespace boost{
-
-namespace property_tree{
-
-/*! \brief Partial specialization of boost::property_tree::translator_between
- * for Utility::TabularOneDDistribution
- *
- * This translator only allows put operators. Get operations must be done
- * through a complete distribution type.
- * \ingroup ptree
- */
-template<typename IndependentUnit, typename DependentUnit>
-struct translator_between<Utility::Variant,Utility::UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> > : public translator_between<Utility::Variant,Utility::UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
-{ /* ... */ };
-
-} // end property_tree namespace
-
-} // end boost namespace
-
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( UnitAwareTabularOneDDistribution );
 BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareTabularOneDDistribution, 0 );
 

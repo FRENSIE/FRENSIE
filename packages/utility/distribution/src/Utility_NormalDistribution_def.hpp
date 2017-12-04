@@ -21,37 +21,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareNormalDistribution );
 
 namespace Utility{
 
-// Initialize property tree keys and match strings
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_key( "multiplier" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_min_match_string( "mult" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_mean_value_key( "mean" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_mean_value_min_match_string( "mean" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_standard_deviation_value_key( "standard deviation" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_standard_deviation_value_min_match_string( "dev" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_key( "lower boundary" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_min_match_string( "lower" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_key( "upper boundary" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_min_match_string( "upper" );
-
 // Initialize the constant norm factor
 template<typename IndependentUnit, typename DependentUnit>
 const double UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::constant_norm_factor = 1.0/sqrt( 2*PhysicalConstants::pi );
@@ -79,17 +48,12 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
     d_min_independent_value( min_independent_value ),
     d_max_independent_value( max_independent_value )
 {
-  // Make sure that the values are valid
-  testPrecondition( !QuantityTraits<InputDepQuantity>::isnaninf( constant_multiplier ) );
-  testPrecondition( constant_multiplier !=
-		    QuantityTraits<InputDepQuantity>::zero() );
-  testPrecondition( !QuantityTraits<InputIndepQuantityA>::isnaninf( mean ) );
-  testPrecondition( !QuantityTraits<InputIndepQuantityB>::isnaninf( standard_deviation ) );
-  // Make sure that the standard deviation is positive
-  testPrecondition( standard_deviation >
-		    QuantityTraits<InputIndepQuantityB>::zero() );
-  // Make sure that the min indep value is < the max indep value
-  testPrecondition( min_independent_value < max_independent_value );
+  // Verify that the shape parameters are valid
+  this->verifyValidShapeParameters( d_constant_multiplier,
+                                    d_mean,
+                                    d_standard_deviation,
+                                    d_min_independent_value,
+                                    d_max_independent_value );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -111,16 +75,6 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
     d_min_independent_value( dist_instance.d_min_independent_value ),
     d_max_independent_value( dist_instance.d_max_independent_value )
 {
-  remember( typedef QuantityTraits<typename UnitAwareNormalDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareNormalDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
-  // Make sure that the values are valid
-  testPrecondition( !InputDQT::isnaninf( dist_instance.d_constant_multiplier ) );
-  testPrecondition( dist_instance.d_constant_multiplier != InputDQT::zero() );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_mean ) );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_standard_deviation ) );
-  // Make sure that the standard deviation is positive
-  testPrecondition( dist_instance.d_standard_deviation > InputIQT::zero() );
-
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
@@ -133,14 +87,6 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
     d_min_independent_value( IQT::initializeQuantity( unitless_dist_instance.d_min_independent_value ) ),
     d_max_independent_value( IQT::initializeQuantity( unitless_dist_instance.d_max_independent_value ) )
 {
-  // Make sure that the values are valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_constant_multiplier ) );
-  testPrecondition( unitless_dist_instance.d_constant_multiplier != 0.0 );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_mean ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_standard_deviation ) );
-  // Make sure that the standard deviation is positive
-  testPrecondition( unitless_dist_instance.d_standard_deviation > 0.0 );
-
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
@@ -164,14 +110,6 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>&
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::operator=(
   const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure that the values are valid
-  testPrecondition( !DQT::isnaninf( dist_instance.d_constant_multiplier ) );
-  testPrecondition( dist_instance.d_constant_multiplier != DQT::zero() );
-  testPrecondition( !IQT::isnaninf( dist_instance.d_mean ) );
-  testPrecondition( !IQT::isnaninf( dist_instance.d_standard_deviation ) );
-  // Make sure that the standard deviation is positive
-  testPrecondition( dist_instance.d_standard_deviation > IQT::zero() );
-
   if( this != &dist_instance )
   {
     d_constant_multiplier = dist_instance.d_constant_multiplier;
@@ -332,27 +270,6 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getDistributionType(
   return ThisType::distribution_type;
 }
 
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( "Normal",
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
-}
-
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::isContinuous() const
@@ -364,186 +281,12 @@ bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::isContinuous() 
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamImpl( os,
-                      Utility::getRawQuantity( d_mean ),
-                      Utility::getRawQuantity( d_standard_deviation ),
-                      Utility::getRawQuantity( d_min_independent_value ),
-                      Utility::getRawQuantity( d_max_independent_value ),
-                      Utility::getRawQuantity( d_constant_multiplier ) );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Set the mean
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_mean,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_mean = ThisType::getDefaultMean<IndepQuantity>();
-
-  // Set the standard deviation
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_standard_deviation,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-  {
-    d_standard_deviation =
-      ThisType::getDefaultStandardDeviation<IndepQuantity>();
-  }
-
-  // Set the lower boundary of the distribution
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_min_independent_value,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_min_independent_value = ThisType::getDefaultLowerLimit<IndepQuantity>();
-
-  // Set the upper boundary of the distribution
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_max_independent_value,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_max_independent_value = ThisType::getDefaultUpperLimit<IndepQuantity>();
-
-  // Set the constant multiplier
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_constant_multiplier,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_constant_multiplier = ThisType::getDefaultConstMultiplier<DepQuantity>();
-
-  // Verify that the shape parameters are valid
-  this->verifyValidShapeParameters( d_constant_multiplier,
-                                    d_mean,
-                                    d_standard_deviation,
-                                    d_min_independent_value,
-                                    d_max_independent_value );
-}
-
-// Method for converting the type to a property tree
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    return this->toPropertyTreeImpl(
-     std::tie(s_const_multiplier_value_key, Utility::getRawQuantity(d_constant_multiplier)),
-     std::tie(s_mean_value_key, Utility::getRawQuantity(d_mean)),
-     std::tie(s_standard_deviation_value_key, Utility::getRawQuantity(d_standard_deviation)),
-     std::tie(s_lower_limit_value_key, Utility::getRawQuantity(d_min_independent_value)),
-     std::tie(s_upper_limit_value_key, Utility::getRawQuantity(d_max_independent_value)) );
-  }
-}
-
-// Method for initializing the object from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-
-  // Initialize from child nodes
-  else
-  {
-    // Initialize the member data to default values
-    d_constant_multiplier = ThisType::getDefaultConstMultiplier<DepQuantity>();
-    d_mean = ThisType::getDefaultMean<IndepQuantity>();
-    d_standard_deviation =
-      ThisType::getDefaultStandardDeviation<IndepQuantity>();
-    d_min_independent_value = ThisType::getDefaultLowerLimit<IndepQuantity>();
-    d_max_independent_value = ThisType::getDefaultUpperLimit<IndepQuantity>();
-
-    std::string type_name = this->getTypeName( true, true );
-
-    // Create the data extractor map
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-         std::bind<void>(&BaseType::template extractValueFromNode<DepQuantity>,
-                         std::placeholders::_1,
-                         std::ref(d_constant_multiplier),
-                         std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_mean_value_key,
-      std::make_tuple( s_mean_value_min_match_string, BaseType::OPTIONAL_DATA,
-         std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                         std::placeholders::_1,
-                         std::ref(d_mean),
-                         std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_standard_deviation_value_key,
-      std::make_tuple( s_standard_deviation_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_standard_deviation),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_min_independent_value),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_max_independent_value),
-                       std::cref(type_name)) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    // Verify that the shape parameters are valid
-    try{
-      this->verifyValidShapeParameters( d_constant_multiplier,
-                                        d_mean,
-                                        d_standard_deviation,
-                                        d_min_independent_value,
-                                        d_max_independent_value );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PropertyTreeConversionException,
-                                "Invalid shape parameter detected!" );
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "mean", d_mean ),
+                          std::make_pair( "standard dev", d_standard_deviation ),
+                          std::make_pair( "lower bound", d_min_independent_value ),
+                          std::make_pair( "upper bound", d_max_independent_value ),
+                          std::make_pair( "multiplier", d_constant_multiplier ) );
 }
 
 // Save the distribution to an archive
@@ -623,32 +366,32 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::verifyValidShap
                                    const IndepQuantity& max_independent_value )
 {
   TEST_FOR_EXCEPTION( DQT::isnaninf( const_multiplier ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because of the multiplier is invalid!" );
   
   TEST_FOR_EXCEPTION( const_multiplier == DQT::zero(),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because of the multiplier is invalid!" );
   
   TEST_FOR_EXCEPTION( IQT::isnaninf( mean ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because the mean is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( standard_deviation ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because the standard deviation is invalid!" );
 
   TEST_FOR_EXCEPTION( standard_deviation <= IQT::zero(),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because the standard deviation is invalid!" );
 
   TEST_FOR_EXCEPTION( max_independent_value <= min_independent_value,
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The normal distribution cannot be constructed because "
                       "the upper limit is invalid!" );
 }

@@ -1,8 +1,7 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_dist)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DeltaDistribution DEPENDS tstDeltaDistribution.cpp)
-FRENSIE_ADD_TEST(DeltaDistribution
-  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_delta_distributions.json)
+FRENSIE_ADD_TEST(DeltaDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DiscreteDistribution DEPENDS tstDiscreteDistribution.cpp)
 FRENSIE_ADD_TEST(DiscreteDistribution

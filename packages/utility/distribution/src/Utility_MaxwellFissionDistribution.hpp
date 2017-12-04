@@ -7,8 +7,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_MAXWELLFISSION_DISTRIBUTION_HPP
-#define UTILITY_MAXWELLFISSION_DISTRIBUTION_HPP
+#ifndef UTILITY_MAXWELL_FISSION_DISTRIBUTION_HPP
+#define UTILITY_MAXWELL_FISSION_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <limits>
@@ -19,8 +19,6 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
-#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -28,8 +26,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareMaxwellFissionDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-                                            private OneDDistributionPropertyTreeConverter<UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareMaxwellFissionDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
@@ -139,29 +136,8 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareMaxwellFissionDistribution& other ) const;
@@ -173,9 +149,6 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareMaxwellFissionDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_dist_instance, int );
-
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
@@ -228,31 +201,7 @@ private:
   friend class UnitAwareMaxwellFissionDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = MAXWELLFISSION_DISTRIBUTION;
-
-  // The incident energy value key (used in property trees)
-  static const std::string s_incident_energy_value_key;
-
-  // The incident energy min match string (used when reading property trees)
-  static const std::string s_incident_energy_value_min_match_string;
-
-  // The nuclear temperature value key (used in property trees)
-  static const std::string s_nuclear_temp_value_key;
-
-  // The nuclear temperature min match string (used when reading prop. trees)
-  static const std::string s_nuclear_temp_value_min_match_string;
-
-  // The restriction energy value key (used in property trees)
-  static const std::string s_restriction_energy_value_key;
-
-  // The restriction energy min match string (used when reading prop. trees)
-  static const std::string s_restriction_energy_value_min_match_string;
-
-  // The distribution multiplier value key (used in property trees)
-  static const std::string s_multiplier_value_key;
-
-  // The distribution multiplier min match string (used when reading prop. trees)
-  static const std::string s_multiplier_value_min_match_string;
+  static const OneDDistributionType distribution_type = MAXWELL_FISSION_DISTRIBUTION;
 
   // The incident neutron energy of the distribution
   IndepQuantity d_incident_energy;
@@ -275,39 +224,6 @@ private:
  */
 typedef UnitAwareMaxwellFissionDistribution<void,void> MaxwellFissionDistribution;
 
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * maxwell fission distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for maxwell fission distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<MaxwellFissionDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return MaxwellFissionDistribution::typeName( true, false ); }
-};
-
 } // end Utility namespace
 
 BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareMaxwellFissionDistribution, 0 );
@@ -321,7 +237,7 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( MaxwellFissionDistribution );
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_MAXWELLFISSION_DISTRIBUTION_HPP
+#endif // end UTILITY_MAXWELL_FISSION_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_MaxwellFissionDistribution.hpp

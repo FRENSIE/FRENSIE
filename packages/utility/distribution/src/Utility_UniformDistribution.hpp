@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
@@ -20,9 +19,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                     private OneDDistributionPropertyTreeConverter<UnitAwareUniformDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
-                                     private OneDDistributionPropertyTreeConverter<UnitAwareUniformDistribution<IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
 
 private:
@@ -56,14 +53,16 @@ public:
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
 
-  //! Default constructor
-  UnitAwareUniformDistribution();
-
   //! Constructor
-  template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareUniformDistribution(const InputIndepQuantity& min_independent_value,
-			       const InputIndepQuantity& max_independent_value,
-			       const InputDepQuantity& dependent_value );
+  template<typename InputIndepQuantity = IndepQuantity,
+           typename InputDepQuantity = DepQuantity>
+  UnitAwareUniformDistribution(
+                          const InputIndepQuantity& min_independent_value =
+                          ThisType::getDefaultLowerBound<InputIndepQuantity>(),
+                          const InputIndepQuantity& max_independent_value =
+                          ThisType::getDefaultUpperBound<InputIndepQuantity>(),
+                          const InputDepQuantity& dependent_value =
+                          ThisType::getDefaultDepValue<InputDepQuantity>() );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit, typename Dummy=void>
@@ -133,32 +132,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   // Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
-  //! Method for converting to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareUniformDistribution& other ) const;
@@ -171,14 +149,23 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareUniformDistribution( const UnitAwareUniformDistribution<void,void>& unitless_dist_instance, int );
 
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
-
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
+
+  //! Get the default lower bound
+  template<typename InputIndepQuantity>
+  static InputIndepQuantity getDefaultLowerBound()
+  { return Utility::QuantityTraits<InputIndepQuantity>::zero(); }
+
+  //! Get the default upper bound
+  template<typename InputIndepQuantity>
+  static InputIndepQuantity getDefaultUpperBound()
+  { return Utility::QuantityTraits<InputIndepQuantity>::one(); }
+
+  //! Get the default dependent value
+  template<typename InputDepQuantity>
+  static InputDepQuantity getDefaultDepValue()
+  { return Utility::QuantityTraits<InputDepQuantity>::one(); }
 
 private:
 
@@ -211,24 +198,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = UNIFORM_DISTRIBUTION;
 
-  // The constant multiplier value key (used in property trees)
-  static const std::string s_const_multiplier_value_key;
-
-  // The constant multiplier min match string (used in property trees)
-  static const std::string s_const_multiplier_value_min_match_string;
-
-  // The lower limit value key (used in property trees)
-  static const std::string s_lower_limit_value_key;
-
-  // The lower limit min match string (used in property trees)
-  static const std::string s_lower_limit_value_min_match_string;
-
-  // The upper limit value key (used in property trees)
-  static const std::string s_upper_limit_value_key;
-
-  // The upper limit min match string (used in property trees)
-  static const std::string s_upper_limit_value_min_match_string;
-
   // The min independent value
   IndepQuantity d_min_independent_value;
 
@@ -246,39 +215,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * uniform distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for uniform distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<UniformDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return UniformDistribution::typeName( true, false ); }
-};
 
 } // end Utility namespace
 

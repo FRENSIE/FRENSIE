@@ -26,7 +26,7 @@ namespace Utility{
  */
 class OStreamableObject
 {
-  public:
+public:
 
   //! Constructor
   OStreamableObject()
@@ -38,6 +38,12 @@ class OStreamableObject
 
   //! Method for placing the object in an output stream
   virtual void toStream( std::ostream& os ) const = 0;
+
+protected:
+
+  //! Add data to the stream
+  template<typename... Types>
+  void toStreamImpl( std::ostream& os, const Types&... data ) const;
 };
 
 /*! Specialization of Utility::ToStringTraits for Utility::OStreamable object
@@ -83,6 +89,14 @@ inline std::ostream& operator<<( std::ostream& os,
 }
   
 } // end std namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_OStreamableObject_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_OSTREAMABLE_OBJECT_HPP
 

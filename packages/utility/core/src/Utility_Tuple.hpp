@@ -16,6 +16,9 @@
 #include <utility>
 #include <type_traits>
 
+// Boost Includes
+#include <boost/serialization/utility.hpp>
+
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"

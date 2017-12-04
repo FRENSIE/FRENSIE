@@ -14,7 +14,6 @@
 #include <stdexcept>
 #include <iostream>
 #include <type_traits>
-#include <functional>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
@@ -28,7 +27,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
-#include "Utility_InlinablePropertyTreeCompatibleObject.hpp"
+#include "Utility_OStreamableObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -47,7 +46,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareOneDDistribution : public InlinablePropertyTreeCompatibleObject
+class UnitAwareOneDDistribution : public OStreamableObject
 {
   // Typedef for this type
   typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> ThisType;
@@ -112,6 +111,9 @@ public:
   //! Return the lower bound of the distribution independent variable
   virtual IndepQuantity getLowerBoundOfIndepVar() const = 0;
 
+  //! Return the distribution type
+  virtual OneDDistributionType getDistributionType() const = 0;
+
   //! Test if the distribution is tabular
   virtual bool isTabular() const;
 
@@ -125,28 +127,7 @@ public:
   //! Test if the distribution has the same bounds
   bool hasSameBounds( const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const;
 
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-  
-  //! Method for placing an object in the desired property tree node
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
-
 protected:
-
-  //! Return the distribution type name
-  static std::string typeNameImpl( const std::string base_name,
-                                   const bool verbose_name,
-                                   const bool use_template_params,
-                                   const std::string& delim );
-
-  //! Return the distribution type name
-  static std::string typeNameImpl( const std::vector<std::string>& base_name,
-                                   const bool verbose_name,
-                                   const bool use_template_params,
-                                   const std::string& delim );
 
   //! Test if the dependent variable can be zero within the indep bounds
   virtual bool canDepVarBeZeroInIndepBounds() const = 0;
@@ -169,6 +150,10 @@ protected:
   //! Test if the dependent variable is compatible with Log processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
+
+  //! Add distribution data to the stream
+  template<typename... Types>
+  void toStreamDistImpl( std::ostream& os, const Types&... data ) const;
   
 private:
 
@@ -185,6 +170,21 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareOneDDistribution<void,void> OneDDistribution;
+
+/*! \brief Exception thrown by OneDDistribution objects when an invalid
+ * parameter is encountered.
+ * \ingroup one_d_distributions
+ */
+class BadOneDDistributionParameter : public std::logic_error
+{
+public:
+  BadOneDDistributionParameter( const std::string& msg )
+    : std::logic_error( msg )
+  { /* ... */ }
+
+  ~BadOneDDistributionParameter() throw()
+  { /* ... */ }
+};
   
 } // end Utility namespace
 
@@ -307,39 +307,6 @@ namespace Utility{                          \
   EXPLICIT_TEMPLATE_FUNCTION_INST( \
                                   void __VA_ARGS__::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) \
                                    )
-
-namespace boost{
-
-namespace property_tree{
-
-/*! \brief Partial specialization of boost::property_tree::translator_between
- * for Utility::OneDDistribution
- *
- * This translator only allows put operators. Get operations must be done
- * through a complete distribution type.
- * \ingroup ptree
- */
-template<typename IndependentUnit, typename DependentUnit>
-struct translator_between<Utility::Variant,Utility::UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
-{
-  //! The translator
-  struct translator
-  {
-    typedef Utility::Variant internal_type;
-    typedef void external_type;
-
-    //! Convert a distribution to a Utility::Variant
-    static inline boost::optional<internal_type> put_value( const Utility::UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& obj )
-    { return Utility::Variant( obj ); }
-  };
-
-  //! The translator type
-  typedef translator type;
-};
-  
-} // end property_tree namespace
-
-} // end boost namespace
 
 #define BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( FullName ) \
 namespace boost{                                                      \

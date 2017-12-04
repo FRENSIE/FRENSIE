@@ -23,37 +23,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareWattDistribution );
 
 namespace Utility{
 
-// Initialize static member data
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_incident_energy_value_key( "incident energy" );
-  
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_incident_energy_value_min_match_string( "energy" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_a_parameter_value_key( "a parameter" );
-  
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_a_parameter_value_min_match_string( "a" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_b_parameter_value_key( "b parameter" );
-  
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_b_parameter_value_min_match_string( "b" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_restriction_energy_value_key( "restriction energy" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_restriction_energy_value_min_match_string( "restrict" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_key( "multiplier" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_min_match_string( "mult" );
-  
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -78,22 +47,13 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
     d_norm_constant()
 {
-  // Make sure values are valid
-  testPrecondition( !QuantityTraits<InputIndepQuantityA>::isnaninf( incident_energy ) );
-  testPrecondition( !QuantityTraits<InputIndepQuantityB>::isnaninf( a_parameter ) );
-  testPrecondition( !QuantityTraits<InputInverseIndepQuantity>::isnaninf( b_parameter ) );
-  testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
-  testPrecondition( !QT::isnaninf( constant_multiplier ) );
-  // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( incident_energy >
-		    QuantityTraits<InputIndepQuantityA>::zero() );
-  testPrecondition( a_parameter >
-		    QuantityTraits<InputIndepQuantityB>::zero() );
-  testPrecondition( b_parameter >
-		    QuantityTraits<InputInverseIndepQuantity>::zero() );
-  // Make sure that the constant multiplier is positive
-  testPrecondition( constant_multiplier > 0.0 );
-
+  // Verify that the shape parameters are valid
+  this->verifyValidShapeParameters( d_incident_energy,
+                                    d_a_parameter,
+                                    d_b_parameter,
+                                    d_restriction_energy,
+                                    d_multiplier );
+  
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
 
@@ -118,18 +78,6 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_multiplier( dist_instance.d_multiplier ),
     d_norm_constant()
 {
-  // Make sure the multipliers are valid
-  remember( typedef QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::InverseIndepQuantity> InputIIQT );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_incident_energy ) );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_a_parameter ) );
-  testPrecondition( !InputIIQT::isnaninf( dist_instance.d_b_parameter ) );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_restriction_energy ));
-  // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( dist_instance.d_incident_energy > InputIQT::zero() );
-  testPrecondition( dist_instance.d_a_parameter > InputIQT::zero() );
-  testPrecondition( dist_instance.d_b_parameter > InputIIQT::zero() );
-
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
@@ -146,16 +94,6 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_multiplier( DMQT::initializeQuantity( unitless_dist_instance.d_multiplier ) ),
     d_norm_constant()
 {
-  // Make sure the multipliers are valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_incident_energy ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_a_parameter ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_b_parameter ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_restriction_energy ) );
-  // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( unitless_dist_instance.d_incident_energy > 0.0 );
-  testPrecondition( unitless_dist_instance.d_a_parameter > 0.0 );
-  testPrecondition( unitless_dist_instance.d_b_parameter > 0.0 );
-
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
@@ -182,15 +120,6 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>&
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::operator=(
 const UnitAwareWattDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure the distribution is valid
-  testPrecondition( !IQT::isnaninf( dist_instance.d_incident_energy ) );
-  testPrecondition( !IQT::isnaninf( dist_instance.d_a_parameter ) );
-  testPrecondition( !IIQT::isnaninf( dist_instance.d_b_parameter ) );
-  testPrecondition( !IQT::isnaninf( dist_instance.d_restriction_energy ) );
-  testPrecondition( dist_instance.d_incident_energy > IQT::zero() );
-  testPrecondition( dist_instance.d_a_parameter > IQT::zero() );
-  testPrecondition( dist_instance.d_b_parameter > IIQT::zero() );
-
   if( this != &dist_instance )
   {
     d_incident_energy = dist_instance.d_incident_energy;
@@ -367,27 +296,6 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getDistributionType() 
   return ThisType::distribution_type;
 }
 
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( "Watt",
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
-}
-
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool
@@ -400,195 +308,12 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::isContinuous() const
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamImpl( os,
-                      Utility::getRawQuantity( d_incident_energy ),
-                      Utility::getRawQuantity( d_a_parameter ),
-                      Utility::getRawQuantity( d_b_parameter ),
-                      Utility::getRawQuantity( d_restriction_energy ),
-                      Utility::getRawQuantity( d_multiplier ) );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Set the incident energy
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_incident_energy,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_incident_energy = ThisType::getDefaultIncidentEnergy<IndepQuantity>();
-
-  // Set the a parameter
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_a_parameter,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_a_parameter = ThisType::getDefaultAParameter<IndepQuantity>();
-
-  // Set the b parameter
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_b_parameter,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_b_parameter = ThisType::getDefaultBParameter<InverseIndepQuantity>();
-
-  // Set the restriction energy
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_restriction_energy,
-                        this->getTypeName( true, true ) );
-    
-    distribution_data.pop_front();
-  }
-  else
-    d_restriction_energy = ThisType::getDefaultRestrictionEnergy<IndepQuantity>();
-
-  // Set the constant multiplier
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_multiplier,
-                        this->getTypeName( true, true ) );
-    
-    distribution_data.pop_front();
-  }
-  else
-    Utility::setQuantity( d_multiplier, ThisType::getDefaultConstantMultiplier() );
-
-  // Verify that the shape parameters are valid
-  this->verifyValidShapeParameters( d_incident_energy,
-                                    d_a_parameter,
-                                    d_b_parameter,
-                                    d_restriction_energy,
-                                    d_multiplier );
-
-  // Calculate the normalization constant
-  this->calculateNormalizationConstant();
-}
-
-// Method for converting the type to a property tree
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareWattDistribution<IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    return this->toPropertyTreeImpl(
-       std::tie(s_incident_energy_value_key, Utility::getRawQuantity(d_incident_energy)),
-       std::tie(s_a_parameter_value_key, Utility::getRawQuantity(d_a_parameter)),
-       std::tie(s_b_parameter_value_key, Utility::getRawQuantity(d_b_parameter)),
-       std::tie(s_restriction_energy_value_key, Utility::getRawQuantity(d_restriction_energy)),
-       std::tie(s_multiplier_value_key, Utility::getRawQuantity(d_multiplier)) );
-  }
-}
-
-// Method for initializing the object from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  // Initialize from inline data
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-    
-  // Initialize from child nodes
-  else
-  {
-    // Initialize the member data to default values
-    d_incident_energy =
-      ThisType::getDefaultIncidentEnergy<IndepQuantity>();
-    d_a_parameter =
-      ThisType::getDefaultAParameter<IndepQuantity>();
-    d_b_parameter =
-      ThisType::getDefaultBParameter<InverseIndepQuantity>();
-    d_restriction_energy =
-      ThisType::getDefaultRestrictionEnergy<IndepQuantity>();
-    Utility::setQuantity( d_multiplier,
-                          ThisType::getDefaultConstantMultiplier() );
-
-    std::string type_name = this->getTypeName( true, true );
-
-    // Create the data extractor map
-    typename BaseType::DataExtractorMap data_extractors;    
-
-    data_extractors.insert(
-     std::make_pair( s_incident_energy_value_key,
-      std::make_tuple( s_incident_energy_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_incident_energy),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_a_parameter_value_key,
-      std::make_tuple( s_a_parameter_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_a_parameter),
-                       std::cref(type_name)) )));
-
-    data_extractors.insert(
-     std::make_pair( s_b_parameter_value_key,
-      std::make_tuple( s_b_parameter_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<InverseIndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_b_parameter),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_restriction_energy_value_key,
-      std::make_tuple( s_restriction_energy_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_restriction_energy),
-                       std::cref(type_name)) )));
-
-    data_extractors.insert(
-     std::make_pair( s_multiplier_value_key,
-      std::make_tuple( s_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<DistMultiplierQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_multiplier),
-                       std::cref(type_name)) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    
-    // Verify that the shape parameters are valid
-    try{
-      this->verifyValidShapeParameters( d_incident_energy,
-                                        d_a_parameter,
-                                        d_b_parameter,
-                                        d_restriction_energy,
-                                        d_multiplier );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PropertyTreeConversionException,
-                                "Invalid shape parameter detected!" );
-
-    // Calculate the normalization constant
-    this->calculateNormalizationConstant();
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "incident energy", d_incident_energy ),
+                          std::make_pair( "a parameter", d_a_parameter ),
+                          std::make_pair( "b parameter", d_b_parameter ),
+                          std::make_pair( "restriction energy", d_restriction_energy ),
+                          std::make_pair( "multiplier", Utility::getRawQuantity( d_multiplier ) ) );
 }
 
 // Save the distribution to an archive
@@ -666,42 +391,42 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::verifyValidShapeP
                                            DistMultiplierQuantity& multiplier )
 {
   TEST_FOR_EXCEPTION( IQT::isnaninf( incident_energy ),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= IQT::zero(),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( a_parameter ),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the A parameter is invalid!" );
 
   TEST_FOR_EXCEPTION( a_parameter <= IQT::zero(),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the A parameter is invalid!" );
   
   TEST_FOR_EXCEPTION( IIQT::isnaninf( b_parameter ),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the B parameter is invalid!" );
   
   TEST_FOR_EXCEPTION( b_parameter <= IIQT::zero(),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the B parameter is invalid!" );
   
   TEST_FOR_EXCEPTION( IQT::isnaninf( restriction_energy ),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the restriction energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= restriction_energy,
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the incident energy ("
                       << Utility::toString(incident_energy) << ")"
@@ -709,12 +434,12 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::verifyValidShapeP
                       << Utility::toString(restriction_energy) << ")!" );
 
   TEST_FOR_EXCEPTION( DMQT::isnaninf( multiplier ),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the multiplier is invalid!" );
 
   TEST_FOR_EXCEPTION( multiplier == DMQT::zero(),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the multiplier is invalid!" );  
 }

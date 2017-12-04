@@ -20,25 +20,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_EXTRA( UnitAwarePowerDistribution, siz
 
 namespace Utility{
 
-// Initialize static member data
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::s_const_multiplier_value_key( "multiplier" );
-  
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::s_const_multiplier_value_min_match_string( "mult" );
-
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::s_lower_limit_value_key( "lower boundary" );
-
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::s_lower_limit_value_min_match_string( "lower" );
-
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::s_upper_limit_value_key( "upper boundary" );
-
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::s_upper_limit_value_min_match_string( "upper" );
-
 namespace Details{
 
 /*! Power distribution traits struct for power N
@@ -48,9 +29,6 @@ namespace Details{
 template<size_t N>
 struct PowerDistributionTraits
 {
-  //! The distribution type
-  static const OneDDistributionType distribution_type = POWER_N_DISTRIBUTION;
-
   //! The N+1 root function
   template<typename Np1Quantity>
   static inline typename QuantityTraits<Np1Quantity>::template GetQuantityToPowerType<1,N+1>::type np1Root( const Np1Quantity& quantity )
@@ -78,9 +56,6 @@ struct PowerDistributionTraits
 template<>
 struct PowerDistributionTraits<2>
 {
-  //! The distribution type
-  static const OneDDistributionType distribution_type = POWER_2_DISTRIBUTION;
-
   //! The N+1 root function
   template<typename CubedQuantity>
   static inline typename QuantityTraits<CubedQuantity>::template GetQuantityToPowerType<1,3>::type np1Root( const CubedQuantity& quantity )
@@ -108,9 +83,6 @@ struct PowerDistributionTraits<2>
 template<>
 struct PowerDistributionTraits<1>
 {
-  //! The distribution type
-  static const OneDDistributionType distribution_type = POWER_1_DISTRIBUTION;
-
   //! The N+1 root function
   template<typename SquaredQuantity>
   static inline typename QuantityTraits<SquaredQuantity>::template GetQuantityToPowerType<1,2>::type np1Root( const SquaredQuantity& quantity )
@@ -152,17 +124,10 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
     d_max_indep_limit_to_power_Np1(),
     d_norm_constant()
 {
-  // Make sure the exponent is valid
-  testStaticPrecondition( N > 0 );
-  // Make sure that the values are valid
-  testPrecondition( !QT::isnaninf( constant_multiplier ) );
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( min_indep_limit ) );
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( max_indep_limit ) );
-  // Make sure that the min value is greater than or equal to zero
-  testPrecondition( min_indep_limit >=
-		    QuantityTraits<InputIndepQuantity>::zero() );
-  // Make sure that the max value is greater than the min value
-  testPrecondition( max_indep_limit > min_indep_limit );
+  // Verify that the shape parameters are valid
+  this->verifyValidShapeParameters( d_multiplier,
+                                    d_min_indep_limit,
+                                    d_max_indep_limit );
 
   this->initializeDistribution();
 
@@ -187,18 +152,6 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
     d_max_indep_limit_to_power_Np1(),
     d_norm_constant()
 {
-  // Make sure the exponent is valid
-  testStaticPrecondition( N > 0 );
-  // Make sure that the values are valid
-  remember( typedef QuantityTraits<typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_min_indep_limit ) );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_max_indep_limit ) );
-  // Make sure that the min value is greater than or equal to zero
-  testPrecondition( dist_instance.d_min_indep_limit >= InputIQT::zero() );
-  // Make sure that the max value is greater than the min value
-  testPrecondition( dist_instance.d_max_indep_limit >
-		    dist_instance.d_min_indep_limit );
-
   typedef typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
   typedef typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
@@ -225,18 +178,6 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
     d_max_indep_limit_to_power_Np1(),
     d_norm_constant()
 {
-  // Make sure the exponent is valid
-  testStaticPrecondition( N > 0 );
-  // Make sure that the values are valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_multiplier ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_min_indep_limit ));
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_max_indep_limit ));
-  // Make sure that the min value is greater than or equal to zero
-  testPrecondition( unitless_dist_instance.d_min_indep_limit >= QT::zero() );
-  // Make sure that the max value is greater than the min value
-  testPrecondition( unitless_dist_instance.d_max_indep_limit >
-		    unitless_dist_instance.d_min_indep_limit );
-
   this->initializeDistribution();
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
@@ -262,11 +203,6 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>&
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::operator=(
                               const UnitAwarePowerDistribution& dist_instance )
 {
-  // Make sure the distribution is valid
-  testPrecondition( dist_instance.d_min_indep_limit >= IQT::zero() );
-  testPrecondition( dist_instance.d_max_indep_limit >
-		    dist_instance.d_min_indep_limit );
-
   if( this != &dist_instance )
   {
     d_multiplier = dist_instance.d_multiplier;
@@ -374,28 +310,7 @@ template<size_t N, typename IndependentUnit, typename DependentUnit>
 OneDDistributionType
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getDistributionType() const
 {
-  return Details::PowerDistributionTraits<N>::distribution_type;
-}
-
-// Return the distribution type name
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( {"Power", Utility::toString(N)},
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-std::string UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
+  return distribution_type;
 }
 
 // Test if the distribution is continuous
@@ -411,142 +326,11 @@ template<size_t N, typename IndependentUnit, typename DependentUnit>
 void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream(
 						       std::ostream& os ) const
 {
-  this->toStreamImpl( os,
-                      Utility::getRawQuantity( d_min_indep_limit ),
-                      Utility::getRawQuantity( d_max_indep_limit ),
-                      Utility::getRawQuantity( d_multiplier ) );
-}
-
-// Method for initializing the object from an input stream
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Set the lower boundary of the distribution
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_min_indep_limit,
-                        this->getTypeName( true, true ) );
-    
-    distribution_data.pop_front();
-  }
-  else
-    d_min_indep_limit = ThisType::getDefaultLowerLimit<IndepQuantity>();
-
-  // Set the upper boundary of the distribution
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_max_indep_limit,
-                        this->getTypeName( true, true ) );
-    
-    distribution_data.pop_front();
-  }
-  else
-    d_max_indep_limit = ThisType::getDefaultUpperLimit<IndepQuantity>();
-
-  // Set the multiplier
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_multiplier,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-  {
-    d_multiplier =
-      ThisType::getDefaultConstMultiplier<DistMultiplierQuantity>();
-  }
-
-  // Verify that the shape parameters are valid
-  this->verifyValidShapeParameters( d_multiplier,
-                                    d_min_indep_limit,
-                                    d_max_indep_limit );
-
-  // Initialize the distribution
-  this->initializeDistribution();
-}
-
-// Method for placing the object in an output stream
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    return this->toPropertyTreeImpl(
-       std::tie(s_const_multiplier_value_key, Utility::getRawQuantity( d_multiplier )),
-       std::tie(s_lower_limit_value_key, Utility::getRawQuantity(d_min_indep_limit)),
-       std::tie(s_upper_limit_value_key, Utility::getRawQuantity(d_max_indep_limit)) );
-  }
-}
-
-// Method for initializing the object from a property tree
-template<size_t N, typename IndependentUnit, typename DependentUnit>
-void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromPropertyTree( 
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-
-  // Initialize from child nodes
-  else
-  {
-    // Initialize the member data to default values
-    d_multiplier =
-      ThisType::getDefaultConstMultiplier<DistMultiplierQuantity>();
-    d_min_indep_limit = ThisType::getDefaultLowerLimit<IndepQuantity>();
-    d_max_indep_limit = ThisType::getDefaultUpperLimit<IndepQuantity>();
-
-    std::string type_name = this->getTypeName( true, true );
-
-    // Create the data extractor map
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<DistMultiplierQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_multiplier),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_min_indep_limit),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, BaseType::OPTIONAL_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_max_indep_limit),
-                       std::cref(type_name)) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    // Verify that the shape parameters are valid
-    try{
-      this->verifyValidShapeParameters( d_multiplier,
-                                        d_min_indep_limit,
-                                        d_max_indep_limit );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PropertyTreeConversionException,
-                                "Invalid shape parameter detected!" );
-
-    // Initialize the distribution
-    this->initializeDistribution();
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "power", N ),
+                          std::make_pair( "lower bound", d_min_indep_limit ),
+                          std::make_pair( "upper bound", d_max_indep_limit ),
+                          std::make_pair( "multiplier", Utility::getRawQuantity( d_multiplier ) ) );
 }
 
 // Save the distribution to an archive
@@ -635,33 +419,36 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::verifyValidSha
                                 const IndepQuantity& lower_limit,
                                 const IndepQuantity& upper_limit )
 {
+  // Make sure the exponent is valid
+  testStaticPrecondition( N > 0 );
+  
   TEST_FOR_EXCEPTION( DMQT::isnaninf( const_multiplier ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the multiplier is invalid!" );
   
   TEST_FOR_EXCEPTION( const_multiplier == DMQT::zero(),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the multiplier is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( lower_limit ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the lower limit is invalid!" );
 
   TEST_FOR_EXCEPTION( lower_limit < IQT::zero(),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the lower limit is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( upper_limit ),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the upper limit is invalid!" );
 
   TEST_FOR_EXCEPTION( upper_limit <= lower_limit,
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The power distribution cannot be constructed because "
                       "the upper limit is invalid!" );
 }

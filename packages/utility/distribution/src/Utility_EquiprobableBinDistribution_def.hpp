@@ -17,7 +17,6 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -25,26 +24,15 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareEquiprobableBinDistribution 
 
 namespace Utility{
 
-// Iniitalize static member data
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::s_bin_boundary_values_key( "bin boundaries" );
-
-template<typename IndependentUnit, typename DependentUnit> 
-const std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::s_bin_boundary_min_match_string( "boundaries" );
-
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution()
-{ 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
-}
-
 // Basic constructor
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
 				 const std::vector<double>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
+  // Verify that the bin boundaries are valid
+  this->verifyValidBinBoundaries( bin_boundaries );
+  
   this->initializeDistribution( bin_boundaries );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
@@ -57,6 +45,9 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 	           const std::vector<InputIndepQuantity>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
+  // Verify that the bin boundaries are valid
+  this->verifyValidBinBoundaries( bin_boundaries );
+  
   this->initializeDistribution( bin_boundaries );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
@@ -322,31 +313,6 @@ OneDDistributionType UnitAwareEquiprobableBinDistribution<IndependentUnit,Depend
   return ThisType::distribution_type;
 }
 
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  std::vector<std::string> name_components( {"Equiprobable"} );
-  
-  if( verbose_name )
-    name_components.push_back( "Bin" );
-  
-  return BaseType::typeNameImpl( name_components,
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl( const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
-}
-
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::isContinuous() const
@@ -358,101 +324,8 @@ bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::isCont
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
-
-  for( size_t i = 0; i < d_bin_boundaries.size(); ++i )
-    raw_bin_boundaries[i] = Utility::getRawQuantity( d_bin_boundaries[i] );
-
-  this->toStreamImpl( os, raw_bin_boundaries );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  TEST_FOR_EXCEPTION( distribution_data.size() == 0,
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " could not be constructed because no bin boundaries "
-                      "have been specified!" );
-  
-  // Extract the bin boundaries
-  std::vector<double> bin_boundaries;
-
-  this->extractArray( distribution_data.front(),
-                      bin_boundaries,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Verify that the bin boundaries are valid
-  this->verifyValidBinBoundaries( bin_boundaries );
-
-  // Initialize the distribution
-  this->initializeDistribution( bin_boundaries );
-}
-
-// Method for converting the type to a property tree
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
-                                                 const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    std::vector<double> raw_bin_boundaries( d_bin_boundaries.size() );
-
-    for( size_t i = 0; i < d_bin_boundaries.size(); ++i )
-      raw_bin_boundaries[i] = Utility::getRawQuantity( d_bin_boundaries[i] );
-
-    return this->toPropertyTreeImpl(
-                   std::tie( s_bin_boundary_values_key, raw_bin_boundaries ) );
-  }
-}
-
-// Method for initializing the object from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  // Initialize from inline data
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-  
-  // Initialize from child nodes
-  else
-  {
-    std::vector<double> bin_boundaries;
-
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_bin_boundary_values_key,
-      std::make_tuple( s_bin_boundary_min_match_string, BaseType::REQUIRED_DATA,
-         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
-                         std::placeholders::_1,
-                         std::ref(bin_boundaries),
-                         this->getTypeName( true, true )) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    
-    // Verify that the bin boundaries are valid
-    try{
-      this->verifyValidBinBoundaries( bin_boundaries );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PropertyTreeConversionException,
-                                "The equiprobable bin distribution could not "
-                                "be constructed because the bin boundaries "
-                                "are not valid!" );
-
-    // Initialize the distribution
-    this->initializeDistribution( bin_boundaries );
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "bin boundaries", d_bin_boundaries ) );
 }
 
 // Save the distribution to an archive
@@ -543,39 +416,42 @@ bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::canDep
 
 // Verify that the bin boundaries are valid
 template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verifyValidBinBoundaries(
-                                    const std::vector<double>& bin_boundaries )
+                        const std::vector<InputIndepQuantity>& bin_boundaries )
 {
   TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The equiprobable bin distribution cannot be "
 		      "constructed because at least one bin (consisting of "
                       "two boundaries) is required!" );
 
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
 						bin_boundaries.end() ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The equiprobable bin distribution cannot be "
 		      "constructed because the bin boundaries "
 		      << bin_boundaries << " are not sorted!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.front() ),
-                      Utility::StringConversionException,
+  typedef Utility::QuantityTraits<InputIndepQuantity> IIQT;
+
+  TEST_FOR_EXCEPTION( IIQT::isnaninf( bin_boundaries.front() ),
+                      Utility::BadOneDDistributionParameter,
                       "The equiprobable bin distribution cannot be "
                       "constructed because the first bin boundary is "
                       "invalid!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.back() ),
-                      Utility::StringConversionException,
+  TEST_FOR_EXCEPTION( IIQT::isnaninf( bin_boundaries.back() ),
+                      Utility::BadOneDDistributionParameter,
                       "The equiprobable bin distribution cannot be "
                       "constructed because the last bin boundary is "
                       "invalid!" );
 
-  std::vector<double>::const_iterator repeat_bin_boundary =
+  typename std::vector<InputIndepQuantity>::const_iterator repeat_bin_boundary =
     std::adjacent_find( bin_boundaries.begin(), bin_boundaries.end() );
 
   TEST_FOR_EXCEPTION( repeat_bin_boundary != bin_boundaries.end(),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The equiprobable bin distribution cannot be "
                       "constructed because there is a repeated bin boundary "
                       "at index "

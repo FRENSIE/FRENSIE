@@ -18,8 +18,6 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
-#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -27,8 +25,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-                                  private OneDDistributionPropertyTreeConverter<UnitAwareWattDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
@@ -140,26 +137,8 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
   
   //! Equality comparison operator
   bool operator==( const UnitAwareWattDistribution& other ) const;
@@ -171,12 +150,6 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareWattDistribution( const UnitAwareWattDistribution<void,void>& unitless_dist_instance, int );
-
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
@@ -237,36 +210,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = WATT_DISTRIBUTION;
 
-  // The incident energy value key (used in property trees)
-  static const std::string s_incident_energy_value_key;
-
-  // The incident energy min match string (used when reading property trees)
-  static const std::string s_incident_energy_value_min_match_string;
-
-  // The a parameter value key (used in property trees)
-  static const std::string s_a_parameter_value_key;
-
-  // The a parameter min match string (used when reading property trees)
-  static const std::string s_a_parameter_value_min_match_string;
-
-  // The b parameter value key (used in property trees)
-  static const std::string s_b_parameter_value_key;
-
-  // The b parameter min match string (used when reading property trees)
-  static const std::string s_b_parameter_value_min_match_string;
-
-  // The restriction energy value key (used in property trees)
-  static const std::string s_restriction_energy_value_key;
-
-  // The restriction energy min match string (used when reading prop. trees)
-  static const std::string s_restriction_energy_value_min_match_string;
-
-  // The distribution multiplier value key (used in property trees)
-  static const std::string s_multiplier_value_key;
-
-  // The distribution multiplier min match string (used when reading prop. trees)
-  static const std::string s_multiplier_value_min_match_string;
-
   // The incident neutron energy of the distribution
   IndepQuantity d_incident_energy;
 
@@ -290,39 +233,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareWattDistribution<void,void> WattDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * watt distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareWattDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareWattDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for watt distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<WattDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return WattDistribution::typeName( true, false ); }
-};
 
 } // end Utility namespace
 

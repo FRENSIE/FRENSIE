@@ -23,23 +23,46 @@ namespace Utility{
 enum OneDDistributionType{
   DELTA_DISTRIBUTION,
   DISCRETE_DISTRIBUTION,
-  ELASTIC_ELECTRON_DISTRIBUTION,
   EQUIPROBABLE_BIN_DISTRIBUTION,
   EVAPORATION_DISTRIBUTION,
   EXPONENTIAL_DISTRIBUTION,
   HISTOGRAM_DISTRIBUTION,
-  MAXWELLFISSION_DISTRIBUTION,
+  MAXWELL_FISSION_DISTRIBUTION,
   NORMAL_DISTRIBUTION,
   POLYNOMIAL_DISTRIBUTION,
-  POWER_1_DISTRIBUTION,
-  POWER_2_DISTRIBUTION,
-  POWER_N_DISTRIBUTION,
+  POWER_DISTRIBUTION,
   TABULAR_DISTRIBUTION,
   UNIFORM_DISTRIBUTION,
   WATT_DISTRIBUTION
 };
 
+/*! Specializatio of Utility::ToStringTraits for Utility::OneDDistributionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<OneDDistributionType>
+{
+  //! Convert a Utility::OneDDistributionType to a string
+  static std::string toString( const OneDDistributionType obj );
+
+  //! Place the Utility::OneDDistributionType in a stream
+  static void toStream( std::ostream& os, const OneDDistributionType obj );
+};
+
 } // end Utility namespace
+
+namespace std{
+
+//! Place a Utility::OneDDistributionType in a stream
+inline std::ostream& operator<<( std::ostream& os,
+                                 Utility::OneDDistributionType obj )
+{
+  Utility::toStream( os, obj );
+
+  return os;
+}
+  
+} // end std namespace
 
 #endif // end UTILITY_ONE_D_DISTRIBUTION_TYPE_HPP
 

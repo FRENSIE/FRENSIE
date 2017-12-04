@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Array.hpp"
@@ -24,9 +23,7 @@ namespace Utility{
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
-class UnitAwareTabularDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                     private OneDDistributionPropertyTreeConverter<UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
-                                     private OneDDistributionPropertyTreeConverter<UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareTabularDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -72,12 +69,11 @@ public:
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
 
-  //! Default constructor
-  UnitAwareTabularDistribution();
-
   //! Basic constructor (potentially dangerous)
-  UnitAwareTabularDistribution( const std::vector<double>& independent_values,
-                                const std::vector<double>& dependent_values );
+  UnitAwareTabularDistribution( const std::vector<double>& independent_values =
+                                ThisType::getDefaultIndepValues<double>(),
+                                const std::vector<double>& dependent_values =
+                                ThisType::getDefaultDepValues<double>() );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
@@ -149,22 +145,6 @@ public:
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
 
-  //! Method for initializing the object from an input stream
-  using IStreamableObject::fromStream;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
-
   //! Equality comparison operator
   bool operator==( const UnitAwareTabularDistribution& other ) const;
 
@@ -178,12 +158,6 @@ protected:
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
-
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the independent variable is compatible with Lin processing
   bool isIndepVarCompatibleWithProcessingType(
@@ -201,7 +175,35 @@ protected:
   bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
 
+  //! Get the default independent values
+  template<typename InputIndepQuantity>
+  static std::vector<InputIndepQuantity> getDefaultIndepValues()
+  {
+    return ThisType::getDefaultIndepValuesImpl<InputIndepQuantity>( typename InterpolationPolicy::IndepVarProcessingTag() );
+  }
+
+  //! Get the default dependent values
+  template<typename InputDepQuantity>
+  static std::vector<InputDepQuantity> getDefaultDepValues()
+  { 
+    return std::vector<InputDepQuantity>(2, Utility::QuantityTraits<InputDepQuantity>::one());
+  }
+
 private:
+
+  // Get the default independent values (compatible with *-Lin interpolation)
+  template<typename InputIndepQuantity>
+  static std::vector<InputIndepQuantity> getDefaultIndepValuesImpl( LinIndepVarProcessingTag )
+  {
+    return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::zero(), Utility::QuantityTraits<InputIndepQuantity>::one()});
+  }
+
+  // Get the default independent values (compatible with *-Log interpolation)
+  template<typename InputIndepQuantity>
+  static std::vector<InputIndepQuantity> getDefaultIndepValuesImpl( LogIndepVarProcessingTag )
+  {
+    return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::initializeQuantity(0.1), Utility::QuantityTraits<InputIndepQuantity>::one()});
+  }
 
   // Initialize the distribution
   void initializeDistributionFromRawData(
@@ -235,8 +237,10 @@ private:
 				      unsigned& sampled_bin_index ) const;
 
   // Verify that the values are valid
-  static void verifyValidValues( const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values );
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  static void verifyValidValues(
+                     const std::vector<InputIndepQuantity>& independent_values,
+                     const std::vector<InputDepQuantity>& dependent_values );
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -260,18 +264,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = TABULAR_DISTRIBUTION;
 
-  // The independent values key (used in property trees)
-  static const std::string s_independent_values_key;
-
-  // The independent values min match string (used when reading prop. trees)
-  static const std::string s_independent_values_min_match_string;
-
-  // The dependent values key (used in property trees)
-  static const std::string s_dependent_values_key;
-
-  // The dependent values min match string (used when reading prop. trees)
-  static const std::string s_dependent_values_min_match_string;
-
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
   // prevent altering the grid with log interpolation
@@ -287,41 +279,6 @@ private:
  */
 template<typename InterpolationPolicy> using TabularDistribution =
   UnitAwareTabularDistribution<InterpolationPolicy,void,void>;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * equiprobable bin distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-struct TypeNameTraits<UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::typeName( true, true );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for equiprobable bin distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename InterpolationPolicy>
-struct TypeNameTraits<TabularDistribution<InterpolationPolicy> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return TabularDistribution<InterpolationPolicy>::typeName( true, false ); }
-};
 
 } // end Utility namespace
 

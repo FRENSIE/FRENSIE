@@ -11,8 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
-#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -22,8 +20,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareExponentialDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-                                         private OneDDistributionPropertyTreeConverter<UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareExponentialDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
   typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -115,29 +112,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareExponentialDistribution& other ) const;
@@ -149,9 +128,6 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareExponentialDistribution( const UnitAwareExponentialDistribution<void,void>& unitless_dist_instance, int );
-
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
@@ -182,11 +158,14 @@ private:
   void initialize();
 
   // Verify that the shape parameters are valid
+  template<typename InputIndepQuantity,
+           typename InputInverseIndepQuantity,
+           typename InputDepQuantity>
   static void verifyValidShapeParameters(
-                               const DepQuantity& const_multiplier,
-                               const InverseIndepQuantity& exponent_multiplier,
-                               const IndepQuantity& lower_limit,
-                               const IndepQuantity& upper_limit );
+                          const InputDepQuantity& const_multiplier,
+                          const InputInverseIndepQuantity& exponent_multiplier,
+                          const InputIndepQuantity& lower_limit,
+                          const InputIndepQuantity& upper_limit );
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -208,30 +187,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type =
     EXPONENTIAL_DISTRIBUTION;
-
-  // The constant multiplier value key (used in property trees)
-  static const std::string s_const_multiplier_value_key;
-
-  // The constant multiplier min match string (used in property trees)
-  static const std::string s_const_multiplier_value_min_match_string;
-
-  // The exponent multiplier value key (used in property trees)
-  static const std::string s_exponent_multiplier_value_key;
-
-  // The exponent multiplier min match string (used in property trees)
-  static const std::string s_exponent_multiplier_value_min_match_string;
-
-  // The lower limit value key (used in property trees)
-  static const std::string s_lower_limit_value_key;
-
-  // The lower limit min match string (used in property trees)
-  static const std::string s_lower_limit_value_min_match_string;
-
-  // The upper limit value key (used in property trees)
-  static const std::string s_upper_limit_value_key;
-
-  // The upper limit min match string (used in property trees)
-  static const std::string s_upper_limit_value_min_match_string;
 
   // The constant multiplier
   DepQuantity d_constant_multiplier;
@@ -256,39 +211,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareExponentialDistribution<void,void> ExponentialDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * exponential distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareExponentialDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for exponential distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<ExponentialDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return ExponentialDistribution::typeName( true, false ); }
-};
   
 } // end Utility namespace
 

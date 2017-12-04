@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -21,9 +20,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                       private OneDDistributionPropertyTreeConverter<UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
-                                       private OneDDistributionPropertyTreeConverter<UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -63,13 +60,13 @@ public:
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
 
-  //! Default constructor
-  UnitAwareHistogramDistribution();
-
   //! Basic constructor (potentially dangerous)
-  UnitAwareHistogramDistribution( const std::vector<double>& bin_boundaries,
-				  const std::vector<double>& bin_values,
-				  const bool interpret_dependent_values_as_cdf = false );
+  UnitAwareHistogramDistribution( const std::vector<double>& bin_boundaries =
+                                  ThisType::getDefaultBinBoundaries<double>(),
+				  const std::vector<double>& bin_values =
+                                  ThisType::getDefaultBinValues<double>(),
+				  const bool interpret_dependent_values_as_cdf =
+                                  false );
 
   //! CDF constructor
   template<typename InputIndepQuantity>
@@ -136,29 +133,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareHistogramDistribution& other ) const;
@@ -171,14 +150,18 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareHistogramDistribution( const UnitAwareHistogramDistribution<void,void>& unitless_dist_instance, int );
 
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
-
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
 
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
+  //! Get the default bin boundaries
+  template<typename InputIndepQuantity>
+  static std::vector<InputIndepQuantity> getDefaultBinBoundaries()
+  { return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::zero(),Utility::QuantityTraits<InputIndepQuantity>::one()}); }
+  
+  //! Get the default bin values
+  template<typename InputDepQuantity>
+  static std::vector<InputDepQuantity> getDefaultBinValues()
+  { return std::vector<InputDepQuantity>({Utility::QuantityTraits<InputDepQuantity>::one()}); }
 
 private:
 
@@ -220,18 +203,11 @@ private:
 				      unsigned& sampled_bin_index ) const;
 
   // Verify that the values are valid
-  static void verifyValidValues( const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values,
-                                 const bool cdf_bin_values );
-
-  // Extract the cdf boolean from a property tree
-  static void extractCDFBooleanFromNode(
-                                 const Utility::PropertyTree& cdf_boolean_data,
-                                 bool& cdf_specified );
-  
-  // Extract the cdf boolean
-  static void extractCDFBoolean( const Utility::Variant& cdf_boolean_data,
-                                 bool& cdf_specified );
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  static void verifyValidValues(
+                     const std::vector<InputIndepQuantity>& independent_values,
+                     const std::vector<InputDepQuantity>& dependent_values,
+                     const bool cdf_bin_values );
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -253,24 +229,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
 
-  // The bin boundary values key (used in property trees)
-  static const std::string s_bin_boundary_values_key;
-
-  // The bin boundary values min match string (used when reading prop. trees)
-  static const std::string s_bin_boundary_values_min_match_string;
-
-  // The bin values key (used in property trees)
-  static const std::string s_bin_values_key;
-
-  // The bin values min match string (used when reading property trees)
-  static const std::string s_bin_values_min_match_string;
-
-  // The cdf specified value key (used in property trees)
-  static const std::string s_cdf_specified_value_key;
-
-  // The cdf specified value min match string (used when reading prop. trees)
-  static const std::string s_cdf_specified_value_min_match_string;
-
   // The distribution (first = bin_min, second = bin_PDF, third = bin_CDF)
   // Note: The bin_CDF value is the value of the CDF at the lower bin boundary
   typedef std::vector<std::tuple<IndepQuantity,DepQuantity,UnnormCDFQuantity> > DistributionArray;
@@ -284,39 +242,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareHistogramDistribution<void,void> HistogramDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * equiprobable bin distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for equiprobable bin distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<HistogramDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return HistogramDistribution::typeName( true, false ); }
-};
 
 } // end Utility namespace
 

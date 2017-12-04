@@ -22,19 +22,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
 
 namespace Utility{
 
-// Initialize static member data
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_location_value_key( "location" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_location_value_min_match_string( "loc" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_key( "multiplier" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::s_multiplier_value_min_match_string( "mult" );
-
 // Constructor
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
@@ -44,11 +31,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   : d_location( location ),
     d_multiplier( multiplier )
 {
-  // Make sure that the point is valid
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( location ));
-  // Make sure the multiplier is valid
-  testPrecondition( !QuantityTraits<InputDepQuantity>::isnaninf( multiplier ));
-  testPrecondition( multiplier != QuantityTraits<InputDepQuantity>::zero() );
+  this->verifyValidShapeParameters( d_location, d_multiplier );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -69,13 +52,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
   : d_location( dist_instance.d_location ),
     d_multiplier( dist_instance.d_multiplier )
 {
-  remember( typedef QuantityTraits<typename UnitAwareDeltaDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareDeltaDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
-  // Make sure that the point is valid
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_location ) );
-  // Make sure that the multiplier is valid
-  testPrecondition( !InputDQT::isnaninf( dist_instance.d_multiplier ) );
-  testPrecondition( dist_instance.d_multiplier != InputDQT::zero() );
+  this->verifyValidShapeParameters( d_location, d_multiplier );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -87,11 +64,7 @@ const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int )
   : d_location( IQT::initializeQuantity( unitless_dist_instance.d_location ) ),
     d_multiplier( DQT::initializeQuantity( unitless_dist_instance.d_multiplier ) )
 {
-  // Make sure that the point is valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_location ) );
-  // Make sure that the multiplier is valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_multiplier ) );
-  testPrecondition( unitless_dist_instance.d_multiplier != 0.0 );
+  this->verifyValidShapeParameters( d_location, d_multiplier );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -261,27 +234,6 @@ OneDDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::
   return ThisType::distribution_type;
 }
 
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( "Delta",
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
-}
-
 // Test if the distribution is continuous
 /*! \details Though the delta distribution is technically continuous
  * because it is only non-zero at the specified point it will be treated as
@@ -297,106 +249,9 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::isContinuous() c
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamImpl( os,
-                      Utility::getRawQuantity( d_location ),
-                      Utility::getRawQuantity( d_multiplier ) );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Extract the location value
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_location,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_location = ThisType::getDefaultLocation<IndepQuantity>();
-
-  // Extract the multiplier value
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_multiplier,
-                        this->getTypeName( true, true ) );
-    
-    distribution_data.pop_front();
-  }
-  else
-    d_multiplier = ThisType::getDefaultMultiplier<DepQuantity>();
-
-  // Verify that shape parameters are valid
-  this->verifyValidShapeParameters( d_location, d_multiplier );
-}
-
-// Method for placing the object in the desired property tree node
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
-                                                 const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    return this->toPropertyTreeImpl(
-     std::tie(s_location_value_key, Utility::getRawQuantity(d_location)),
-     std::tie(s_multiplier_value_key, Utility::getRawQuantity(d_multiplier)) );
-  }
-}
-
-// Method for initializing the object from a property tree
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  // Initialize from inline data
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-  
-  // Initialize from child nodes
-  else
-  {
-    // Initialize the member data to default values
-    d_location = ThisType::getDefaultLocation<IndepQuantity>();
-    d_multiplier = ThisType::getDefaultMultiplier<DepQuantity>();
-
-    std::string type_name = this->getTypeName( true, true );
-
-    // Create the data extractor map
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_location_value_key,
-      std::make_tuple( s_location_value_min_match_string, BaseType::OPTIONAL_DATA,
-                       std::bind<void>( &BaseType::template extractValueFromNode<IndepQuantity>,
-                                        std::placeholders::_1,
-                                        std::ref(d_location),
-                                        std::cref(type_name)) )));
-    data_extractors.insert(
-     std::make_pair( s_multiplier_value_key,
-      std::make_tuple( s_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-                       std::bind<void>( &BaseType::template extractValueFromNode<DepQuantity>,
-                                        std::placeholders::_1,
-                                        std::ref(d_multiplier),
-                                        std::cref(type_name)) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    // Verify that shape parameters are valid
-    try{
-      this->verifyValidShapeParameters( d_location, d_multiplier );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PropertyTreeConversionException,
-                                "Invalid shape parameter detected!" );
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "location", d_location ),
+                          std::make_pair( "multiplier", d_multiplier ) );
 }
 
 // Save the distribution to an archive
@@ -432,17 +287,17 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyValidShape
                                                 const DepQuantity& multiplier )
 {
   TEST_FOR_EXCEPTION( IQT::isnaninf( location ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The delta distribution cannot be constructed "
 		      "because of an invalid location!" );
   
   TEST_FOR_EXCEPTION( DQT::isnaninf( multiplier ),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The delta distribution cannot be constructed "
                       "because of an invalid multiplier!" );
 
   TEST_FOR_EXCEPTION( multiplier == DQT::zero(),
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The delta distribution cannot be constructed "
                       "because of an invalid multiplier!" );
 }

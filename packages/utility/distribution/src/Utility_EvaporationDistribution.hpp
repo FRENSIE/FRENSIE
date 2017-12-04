@@ -18,8 +18,6 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
-#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -27,8 +25,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareEvaporationDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-                                         private OneDDistributionPropertyTreeConverter<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> 
+class UnitAwareEvaporationDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
@@ -135,29 +132,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareEvaporationDistribution& other ) const;
@@ -169,13 +148,6 @@ protected:
 
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance, int );
-
-  //! Return the distribution type name
-  std::string getTypeName( const bool verbose_name,
-                           const bool lowercase ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
 
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
@@ -205,10 +177,11 @@ private:
   void calculateNormalizationConstant();
 
   // Verify that the shape parameters are valid
-  static void verifyValidShapeParameters( IndepQuantity& incident_energy,
-                                          IndepQuantity& nuclear_temp,
-                                          IndepQuantity& restriction_energy,
-                                          DistMultiplierQuantity& multiplier );
+  template<typename InputIndepQuantity, typename InputDistMultQuantity>
+  static void verifyValidShapeParameters( InputIndepQuantity& incident_energy,
+                                          InputIndepQuantity& nuclear_temp,
+                                          InputIndepQuantity& restriction_energy,
+                                          InputDistMultQuantity& multiplier );
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -230,30 +203,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = EVAPORATION_DISTRIBUTION;
 
-  // The incident energy value key (used in property trees)
-  static const std::string s_incident_energy_value_key;
-
-  // The incident energy min match string (used when reading property trees)
-  static const std::string s_incident_energy_value_min_match_string;
-
-  // The nuclear temperature value key (used in property trees)
-  static const std::string s_nuclear_temp_value_key;
-
-  // The nuclear temperature min match string (used when reading prop. trees)
-  static const std::string s_nuclear_temp_value_min_match_string;
-
-  // The restriction energy value key (used in property trees)
-  static const std::string s_restriction_energy_value_key;
-
-  // The restriction energy min match string (used when reading prop. trees)
-  static const std::string s_restriction_energy_value_min_match_string;
-
-  // The distribution multiplier value key (used in property trees)
-  static const std::string s_multiplier_value_key;
-
-  // The distribution multiplier min match string (used when reading prop. trees)
-  static const std::string s_multiplier_value_min_match_string;
-
   // The incident neutron energy of the distribution
   IndepQuantity d_incident_energy;
 
@@ -274,40 +223,7 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareEvaporationDistribution<void,void> EvaporationDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * evaporation distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for evaporation distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<EvaporationDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return EvaporationDistribution::typeName( true, false ); }
-};
-
+  
 } // end Utility namespace
 
 BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareEvaporationDistribution, 0 );

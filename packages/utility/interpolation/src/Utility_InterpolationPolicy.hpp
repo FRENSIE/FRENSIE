@@ -105,6 +105,9 @@ public:
   //! Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
   template<typename T>
   static T calculateFuzzyUpperBound( const T value, const double tol = 1e-3 );
+
+  //! The name of the policy
+  static std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log 
@@ -172,9 +175,6 @@ struct LogLog : public InterpolationHelper<LogLog>
   //! Test if the dependent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isDepVarInValidRange( const T dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-lin
@@ -242,9 +242,6 @@ struct LogLin : public InterpolationHelper<LogLin>
   //! Test if the dependent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isDepVarInValidRange( const T dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require lin-log
@@ -312,9 +309,6 @@ struct LinLog : public InterpolationHelper<LinLog>
   //! Test if the dependent value is in a valid range (doesn't check nan/inf)
   template<typename T>
   static bool isDepVarInValidRange( const T dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require lin-lin
@@ -382,9 +376,6 @@ struct LinLin : public InterpolationHelper<LinLin>
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
-
-  //! The name of the policy
-  static const std::string name();
 };
 
 TYPE_NAME_TRAITS_QUICK_DECL( LinLin );

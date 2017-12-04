@@ -11,10 +11,8 @@
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_OneDDistributionPropertyTreeConverter.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -22,9 +20,7 @@ namespace Utility{
  * \ingroup one_d_distributions
  */
 template<typename IndependentUnit,typename DependentUnit>
-class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                      private OneDDistributionPropertyTreeConverter<UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>,UnitAwareOneDDistribution<IndependentUnit,DependentUnit> >,
-                                      private OneDDistributionPropertyTreeConverter<UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>,UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> >
+class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
   typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
@@ -55,13 +51,12 @@ public:
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
 
-  //! Default Constructor
-  UnitAwareDiscreteDistribution();
-
   //! Basic Constructor (potentially dangerous)
   UnitAwareDiscreteDistribution(
-			const std::vector<double>& independent_values,
-			const std::vector<double>& dependent_values,
+			const std::vector<double>& independent_values =
+                        ThisType::getDefaultIndepValues<double>(),
+			const std::vector<double>& dependent_values =
+                        ThisType::getDefaultDepValues<double>(),
 			const bool interpret_dependent_values_as_cdf = false );
 
   //! CDF constructor
@@ -130,29 +125,11 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const override;
 
-  //! Return the distribution type name
-  static std::string typeName( const bool verbose_name,
-                               const bool use_template_params = false,
-                               const std::string& delim = std::string() );
-
   //! Test if the distribution is continuous
   bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
-
-  //! Method for converting the type to a property tree
-  Utility::PropertyTree toPropertyTree( const bool inline_data ) const override;
-
-  //! Method for converting the type to a property tree
-  using PropertyTreeCompatibleObject::toPropertyTree;
-
-  //! Method for initializing the object from a property tree
-  void fromPropertyTree( const Utility::PropertyTree& node,
-                         std::vector<std::string>& unused_children ) override;
-
-  //! Method for converting to a property tree
-  using PropertyTreeCompatibleObject::fromPropertyTree;
 
   //! Equality comparison operator
   bool operator==( const UnitAwareDiscreteDistribution& other ) const;
@@ -165,14 +142,18 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int );
 
-  //! Return the distribution type name
-  std::string getTypeNameImpl( const bool verbose_name ) const override;
-
-  //! Process the data that was extracted the stream
-  void fromStreamImpl( VariantList& distribution_data ) override;
-
   // Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
+
+  //! Get the default independent values
+  template<typename InputIndepQuantity>
+  static std::vector<InputIndepQuantity> getDefaultIndepValues()
+  { return std::vector<InputIndepQuantity>({Utility::QuantityTraits<InputIndepQuantity>::zero()}); }
+
+  //! Get the default dependent values
+  template<typename InputDepQuantity>
+  static std::vector<InputDepQuantity> getDefaultDepValues()
+  { return std::vector<InputDepQuantity>({Utility::QuantityTraits<InputDepQuantity>::one()}); }
 
 private:
 
@@ -215,9 +196,11 @@ private:
 				 std::vector<Quantity>& quantities );
 
   // Verify that the values are valid
-  static void verifyValidValues( const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values,
-                                 const bool cdf_bin_values );
+  template<typename InputIndepQuantity,typename InputDepQuantity>
+  static void verifyValidValues(
+                     const std::vector<InputIndepQuantity>& independent_values,
+                     const std::vector<InputDepQuantity>& dependent_values,
+                     const bool cdf_bin_values );
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -239,24 +222,6 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
 
-  // The independent values key (used in property trees)
-  static const std::string s_indep_values_key;
-
-  // The independent values min match string (used when reading property trees)
-  static const std::string s_indep_values_min_match_string;
-
-  // The dependent values key (used in property trees)
-  static const std::string s_dep_values_key;
-
-  // The dependent values min match string (used when reading property trees)
-  static const std::string s_dep_values_min_match_string;
-
-  // The cdf specified value key (used in property trees)
-  static const std::string s_cdf_specified_value_key;
-
-  // The cdf specified value min match string (used when reading prop. trees)
-  static const std::string s_cdf_specified_value_min_match_string;
-
   // The distribution (first = independent value, second = CDF)
   std::vector<std::pair<IndepQuantity,double> > d_distribution;
 
@@ -268,39 +233,6 @@ private:
  * \ingroup one_d_distributions
  */
 typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
-
-/*! Partial specialization of Utility::TypeNameTraits for unit aware
- * discrete distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<typename IndependentUnit,typename DependentUnit>
-struct TypeNameTraits<UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> >
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  {
-    return UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::typeName( true, true  );
-  }
-};
-
-/*! Specialization of Utility::TypeNameTraits for discrete distribution
- * \ingroup one_d_distributions
- * \ingroup type_name_traits
- */
-template<>
-struct TypeNameTraits<DiscreteDistribution>
-{
-  //! Check if the type has a specialization
-  typedef std::true_type IsSpecialized;
-
-  //! Get the type name
-  static inline std::string name()
-  { return DiscreteDistribution::typeName( true, false ); }
-};
   
 } // end Utility namespace
 

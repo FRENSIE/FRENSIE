@@ -25,32 +25,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
 
 namespace Utility{
 
-// Initialize static member data
-template<typename IndependentUnit,typename DependentUnit>
-const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_indep_values_key( "independent values" );
-
-template<typename IndependentUnit,typename DependentUnit> 
-const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_indep_values_min_match_string( "indep" );
-
-template<typename IndependentUnit,typename DependentUnit> 
-const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_dep_values_key( "dependent values" );
-
-template<typename IndependentUnit,typename DependentUnit> 
-const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_dep_values_min_match_string( "dep" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_cdf_specified_value_key( "cdf specified" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::s_cdf_specified_value_min_match_string( "cdf" );
-
-// Default Constructor
-template<typename IndependentUnit,typename DependentUnit>
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution()
-{ 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
-}
-
 // Basic Constructor (potentiall dangerous)
 /*! \details A precalculated CDF can be passed as the dependent values as
  * long as the interpret_dependent_values_as_cdf argument is true.
@@ -63,6 +37,11 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   : d_distribution( independent_values.size() ),
     d_norm_constant()
 {
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values,
+                           dependent_values,
+                           interpret_dependent_values_as_cdf );
+  
   this->initializeDistribution( independent_values,
 				dependent_values,
 				interpret_dependent_values_as_cdf );
@@ -79,6 +58,9 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   : d_distribution( independent_quantities.size() ),
     d_norm_constant()
 {
+  // Verify that the values are valid
+  this->verifyValidValues( independent_quantities, dependent_values, true );
+  
   this->initializeDistributionFromCDF( independent_quantities,
 				       dependent_values );
 
@@ -90,12 +72,17 @@ template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	      const std::vector<InputIndepQuantity>& independent_quantities,
-	      const std::vector<InputDepQuantity>& dependent_values )
+	      const std::vector<InputDepQuantity>& dependent_quantities )
   : d_distribution( independent_quantities.size() ),
     d_norm_constant()
 {
+  // Verify that the values are valid
+  this->verifyValidValues( independent_quantities,
+                           dependent_quantities,
+                           false );
+    
   this->initializeDistribution( independent_quantities,
-				dependent_values );
+				dependent_quantities );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -149,6 +136,9 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   unitless_dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 							  input_bin_values );
 
+  // Verify that the values are valid
+  this->verifyValidValues( input_bin_boundaries, input_bin_values, false );
+
   this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
 
   BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
@@ -198,7 +188,7 @@ template<typename IndependentUnit,typename DependentUnit>
 typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::DepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluate( const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  return getRawQuantity(this->evaluatePDF( indep_var_value ))*d_norm_constant;
+  return Utility::getRawQuantity(this->evaluatePDF( indep_var_value ))*d_norm_constant;
 }
 
 // Evaluate the PDF
@@ -212,11 +202,11 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const
 {
   double raw_pdf = 0.0;
 
-  if( indep_var_value >= Utility::get<FIRST>(d_distribution.front()) &&
-      indep_var_value <= Utility::get<FIRST>(d_distribution.back()) )
+  if( indep_var_value >= Utility::get<0>(d_distribution.front()) &&
+      indep_var_value <= Utility::get<0>(d_distribution.back()) )
   {
     typename std::vector<std::pair<IndepQuantity,double> >::const_iterator bin =
-      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+      Search::binaryLowerBound<0>( d_distribution.begin(),
 				       d_distribution.end(),
 				       indep_var_value );
 
@@ -225,19 +215,19 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const
     --prev_bin;
 
     // The same independent variable may appear multiple times
-    while( Utility::get<FIRST>(*bin) == indep_var_value )
+    while( Utility::get<0>(*bin) == indep_var_value )
     {
       if( bin != d_distribution.begin() )
       {
-	raw_pdf += Utility::get<SECOND>(*bin) -
-          Utility::get<SECOND>(*prev_bin);
+	raw_pdf += Utility::get<1>(*bin) -
+          Utility::get<1>(*prev_bin);
 
 	--bin;
 	--prev_bin;
       }
       else
       {
-	raw_pdf += Utility::get<SECOND>(*bin);
+	raw_pdf += Utility::get<1>(*bin);
 
 	break;
       }
@@ -255,18 +245,18 @@ double UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluateCDF
 {
   double cdf = 0.0;
 
-  if( indep_var_value >= Utility::get<FIRST>(d_distribution.front()) &&
-      indep_var_value <= Utility::get<FIRST>(d_distribution.back()) )
+  if( indep_var_value >= Utility::get<0>(d_distribution.front()) &&
+      indep_var_value <= Utility::get<0>(d_distribution.back()) )
   {
     typename std::vector<std::pair<IndepQuantity,double> >::const_iterator bin =
-      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+      Search::binaryLowerBound<0>( d_distribution.begin(),
 				       d_distribution.end(),
 				       indep_var_value );
 
     // The same independent variable may appear multiple times
-    cdf = Utility::get<SECOND>(*bin);
+    cdf = Utility::get<1>(*bin);
   }
-  else if( indep_var_value < Utility::get<FIRST>(d_distribution.front()) )
+  else if( indep_var_value < Utility::get<0>(d_distribution.front()) )
     cdf = 0.0;
   else
     cdf = 1.0;
@@ -325,7 +315,7 @@ typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuan
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleInSubrange( const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= Utility::get<FIRST>(d_distribution.front()) );
+  testPrecondition( max_indep_var >= Utility::get<0>(d_distribution.front()) );
 
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -346,11 +336,11 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementati
 
   // Get the bin index sampled
   sampled_bin_index =
-    Search::binaryUpperBoundIndex<SECOND>( d_distribution.begin(),
+    Search::binaryUpperBoundIndex<1>( d_distribution.begin(),
 					   d_distribution.end(),
 					   random_number );
 
-  return Utility::get<FIRST>(d_distribution[sampled_bin_index]);
+  return Utility::get<0>(d_distribution[sampled_bin_index]);
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
@@ -364,7 +354,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNu
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
   // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= Utility::get<FIRST>(d_distribution.front()) );
+  testPrecondition( max_indep_var >= Utility::get<0>(d_distribution.front()) );
 
   // Scale the random number to the cdf at the max indep var
   double scaled_random_number =
@@ -380,7 +370,7 @@ template<typename IndependentUnit,typename DependentUnit>
 typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
-  return Utility::get<FIRST>(d_distribution.back());
+  return Utility::get<0>(d_distribution.back());
 }
 
 // Return the lower bound of the independent variable
@@ -388,7 +378,7 @@ template<typename IndependentUnit,typename DependentUnit>
 typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return Utility::get<FIRST>(d_distribution.front());
+  return Utility::get<0>(d_distribution.front());
 }
 
 // Return the distribution type
@@ -397,27 +387,6 @@ OneDDistributionType
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( "Discrete",
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
 }
 
 // Test if the distribution is continuous
@@ -431,139 +400,14 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isContinuous(
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  std::vector<double> independent_values, dependent_values;
+  std::vector<IndepQuantity> independent_values;
+  std::vector<DepQuantity> dependent_values;
 
-  this->reconstructOriginalUnitlessDistribution( independent_values,
-						 dependent_values );
+  this->reconstructOriginalDistribution(independent_values, dependent_values);
 
-  this->toStreamImpl( os, independent_values, dependent_values );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit,typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Verify that the correct amount of distribution data is present
-  TEST_FOR_EXCEPTION( distribution_data.size() < 2,
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " cannot be constructed because the string "
-                      "representation is not valid!" );
-
-  // Extract the independent values
-  std::vector<double> independent_values;
-
-  this->extractArray( distribution_data.front(),
-                      independent_values,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Extract the dependent values
-  std::vector<double> dependent_values;
-
-  this->extractArray( distribution_data.front(),
-                      dependent_values,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Extract the cdf boolean
-  bool cdf_specified = false;
-
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        cdf_specified,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-
-  // Verify that the values are valid
-  this->verifyValidValues( independent_values, dependent_values, cdf_specified );        
-
-  this->initializeDistribution( independent_values, dependent_values, cdf_specified );
-}
-
-// Method for converting the type to a property tree
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
-                                                 const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    std::vector<double> independent_values, dependent_values;
-
-    this->reconstructOriginalUnitlessDistribution( independent_values,
-                                                   dependent_values );
-
-    return this->toPropertyTreeImpl(
-                            std::tie( s_indep_values_key, independent_values ),
-                            std::tie( s_dep_values_key, dependent_values ) );
-  }
-}
-
-// Method for initializing the object from a property tree node
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  // Initialize from inline data
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-  
-  // Initialize from child nodes
-  else
-  {
-    std::vector<double> independent_values, dependent_values;
-    bool cdf_specified = false;
-
-    std::string type_name = this->getTypeName( true, true );
-    
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_indep_values_key,
-      std::make_tuple( s_indep_values_min_match_string, BaseType::REQUIRED_DATA,
-        std::bind<void>( &BaseType::template extractArrayFromNode<std::vector>,
-                         std::placeholders::_1,
-                         std::ref(independent_values),
-                         std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_dep_values_key,
-      std::make_tuple( s_dep_values_min_match_string, BaseType::REQUIRED_DATA,
-        std::bind<void>( &BaseType::template extractArrayFromNode<std::vector>,
-                         std::placeholders::_1,
-                         std::ref(dependent_values),
-                         std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_cdf_specified_value_key,
-      std::make_tuple( s_cdf_specified_value_min_match_string, BaseType::OPTIONAL_DATA,
-                std::bind<void>(&BaseType::template extractValueFromNode<bool>,
-                                std::placeholders::_1,
-                                std::ref(cdf_specified),
-                                std::cref(type_name)) )));
-    
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    // Verify that the values are valid
-    try{
-      this->verifyValidValues( independent_values, dependent_values, cdf_specified );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PropertyTreeConversionException,
-                                "Could not create the discrete "
-                                "distribution!" );
-
-    this->initializeDistribution(independent_values, dependent_values, cdf_specified );
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "indepedent values", independent_values ),
+                          std::make_pair( "dependent values", dependent_values ) );
 }
 
 // Save the distribution to an archive
@@ -665,10 +509,10 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   // Assign the distribution
   for( unsigned i = 0; i < cdf_values.size(); ++i )
   {
-    Utility::get<FIRST>(d_distribution[i]) =
+    Utility::get<0>(d_distribution[i]) =
       IndepQuantity( independent_quantities[i] );
 
-    Utility::get<SECOND>(d_distribution[i]) = cdf_values[i];
+    Utility::get<1>(d_distribution[i]) = cdf_values[i];
   }
 
   // Verify that the CDF is normalized (in event of round-off errors)
@@ -676,8 +520,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   {
     for( unsigned i = 0; i < d_distribution.size(); ++i )
     {
-      Utility::get<SECOND>(d_distribution[i]) /=
-        Utility::get<SECOND>(d_distribution.back());
+      Utility::get<1>(d_distribution[i]) /=
+        Utility::get<1>(d_distribution.back());
     }
   }
 
@@ -707,19 +551,19 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   // Assign the raw distribution data
   for( unsigned i = 0; i < dependent_values.size(); ++i )
   {
-    Utility::get<FIRST>(d_distribution[i]) =
+    Utility::get<0>(d_distribution[i]) =
       IndepQuantity( independent_values[i] );
 
     // Use an explicit cast to desired unit
     DepQuantity dep_quantity( dependent_values[i] );
 
-    Utility::get<SECOND>(d_distribution[i]) = getRawQuantity( dep_quantity );
+    Utility::get<1>(d_distribution[i]) = Utility::getRawQuantity( dep_quantity );
 
     d_norm_constant += dep_quantity;
   }
 
   // Create a CDF from the raw distribution data
-  DataProcessor::calculateDiscreteCDF<SECOND,SECOND>( d_distribution );
+  DataProcessor::calculateDiscreteCDF<1,1>( d_distribution );
 }
 
 // Reconstruct original distribution
@@ -734,18 +578,18 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_quantities[i] = Utility::get<FIRST>(d_distribution[i]);
+    independent_quantities[i] = Utility::get<0>(d_distribution[i]);
 
     if( i != 0u )
     {
       dependent_quantities[i] = d_norm_constant*
-	(Utility::get<SECOND>(d_distribution[i]) -
-         Utility::get<SECOND>(d_distribution[i-1]));
+	(Utility::get<1>(d_distribution[i]) -
+         Utility::get<1>(d_distribution[i-1]));
     }
     else
     {
       dependent_quantities[i] =
-        d_norm_constant*Utility::get<SECOND>(d_distribution[i]);
+        d_norm_constant*Utility::get<1>(d_distribution[i]);
     }
   }
 }
@@ -763,18 +607,18 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
     independent_values[i] =
-      getRawQuantity( Utility::get<FIRST>(d_distribution[i]) );
+      Utility::getRawQuantity( Utility::get<0>(d_distribution[i]) );
 
     if( i != 0u )
     {
-      dependent_values[i] = getRawQuantity( d_norm_constant )*
-	(Utility::get<SECOND>(d_distribution[i]) -
-         Utility::get<SECOND>(d_distribution[i-1]));
+      dependent_values[i] = Utility::getRawQuantity( d_norm_constant )*
+	(Utility::get<1>(d_distribution[i]) -
+         Utility::get<1>(d_distribution[i-1]));
     }
     else
     {
-      dependent_values[i] = Utility::get<SECOND>(d_distribution[i])*
-        getRawQuantity( d_norm_constant );
+      dependent_values[i] = Utility::get<1>(d_distribution[i])*
+        Utility::getRawQuantity( d_norm_constant );
     }
   }
 }
@@ -803,48 +647,53 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZe
 
 // Verify that the values are valid
 template<typename IndependentUnit,typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidValues(
-                                 const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values,
-                                 const bool cdf_bin_values )
+                     const std::vector<InputIndepQuantity>& independent_values,
+                     const std::vector<InputDepQuantity>& dependent_values,
+                     const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( independent_values.size() == 0,
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because no independent values have been specified!" );
   
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
 						independent_values.end() ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The discrete distribution cannot be constructed "
 		      "because the independent values "
 		      << independent_values << " are not sorted!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( independent_values.front() ),
-                      Utility::StringConversionException,
+  typedef Utility::QuantityTraits<InputIndepQuantity> IIQT;
+  
+  TEST_FOR_EXCEPTION( IIQT::isnaninf( independent_values.front() ),
+                      Utility::BadOneDDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because the first independent value is invalid!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( independent_values.back() ),
-                      Utility::StringConversionException,
+  TEST_FOR_EXCEPTION( IIQT::isnaninf( independent_values.back() ),
+                      Utility::BadOneDDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because the last independent value is invalid!" );
   
   TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The discrete distribution cannot be constructed "
                       "because the number of independent values ("
                       << independent_values.size() << ") does not match the "
                       "number of dependent values ("
                       << dependent_values.size() << ")!" );
 
-  std::vector<double>::const_iterator bad_dependent_value =
+  typedef Utility::QuantityTraits<InputDepQuantity> IDQT;
+
+  typename std::vector<InputDepQuantity>::const_iterator bad_dependent_value =
     std::find_if( dependent_values.begin(),
                   dependent_values.end(),
-                  [](double element){ return QT::isnaninf( element ) || element <= 0.0; } );
+                  [](const InputDepQuantity& element){ return IDQT::isnaninf( element ) || element <= IDQT::zero(); } );
     
   TEST_FOR_EXCEPTION(  bad_dependent_value != dependent_values.end(),
-                       Utility::StringConversionException,
+                       Utility::BadOneDDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because the dependent value at index "
                        << std::distance( dependent_values.begin(), bad_dependent_value ) <<
@@ -854,16 +703,16 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
   {
     TEST_FOR_EXCEPTION( !Sort::isSortedAscending( dependent_values.begin(),
                                                   dependent_values.end() ),
-                        Utility::StringConversionException,
+                        Utility::BadOneDDistributionParameter,
                         "The discrete distribution cannot be constructed "
                         "because the dependent cdf values  are not "
                         "sorted!" );
 
-    std::vector<double>::const_iterator repeat_cdf_value =
+    typename std::vector<InputDepQuantity>::const_iterator repeat_cdf_value =
       std::adjacent_find( dependent_values.begin(), dependent_values.end() );
     
     TEST_FOR_EXCEPTION( repeat_cdf_value != dependent_values.end(),
-                        Utility::StringConversionException,
+                        Utility::BadOneDDistributionParameter,
                         "The discrete distribution cannot be "
                         "constructed because there is a repeated dependent cdf"
                         " value at index "

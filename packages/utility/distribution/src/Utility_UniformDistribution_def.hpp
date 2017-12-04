@@ -19,37 +19,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareUniformDistribution );
 
 namespace Utility{
 
-// The constant multiplier value key (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_key( "multiplier" );
-
-// The constant multiplier min match string (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::s_const_multiplier_value_min_match_string( "mult" );
-
-// The lower limit value key (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_key( "lower boundary" );
-
-// The lower limit min match string (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>  
-const std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::s_lower_limit_value_min_match_string( "lower" );
-
-// The upper limit value key (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_key( "upper boundary" );
-
-// The upper limit min match string (used in property trees)
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::s_upper_limit_value_min_match_string( "upper" );
-
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDistribution()
-{
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
-}
-
 // Constructor
 /*! \details A quantity with a different unit can be used as an input. This
  * will be explicitly cast to the desired unit during object construction.
@@ -65,16 +34,11 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
     d_dependent_value( dependent_value ),
     d_pdf_value()
 {
-  // Make sure that the values are valid
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf(
-						     min_independent_value ) );
-  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf(
-						     max_independent_value ) );
-  testPrecondition( !QuantityTraits<InputDepQuantity>::isnaninf(
-							   dependent_value ) );
-  // Make sure that the max value is greater than the min value
-  testPrecondition( max_independent_value > min_independent_value );
-
+  // Verify that shape parameters are valid
+  this->verifyValidShapeParameters( d_min_independent_value,
+                                    d_max_independent_value,
+                                    d_dependent_value );
+  
   // Calculate the pdf value
   this->calculatePDFValue();
 
@@ -98,16 +62,6 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
     d_dependent_value( dist_instance.d_dependent_value ),
     d_pdf_value()
 {
-  // Make sure that the values are valid
-  remember( typedef QuantityTraits<typename UnitAwareUniformDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  remember( typedef QuantityTraits<typename UnitAwareUniformDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_min_independent_value ) );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_max_independent_value ) );
-  testPrecondition( !InputDQT::isnaninf( dist_instance.d_dependent_value ) );
-  // Make sure that the max value is greater than the min value
-  testPrecondition( dist_instance.d_max_independent_value >
-		    dist_instance.d_min_independent_value );
-
   // Calculate the pdf value
   this->calculatePDFValue();
 
@@ -122,14 +76,6 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
     d_dependent_value( DQT::initializeQuantity( unitless_dist_instance.d_dependent_value ) ),
     d_pdf_value()
 {
-  // Make sure the values are valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_min_independent_value ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_max_independent_value ) );
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_dependent_value ));
-  // Make sure that the max value is greater than the min value
-  testPrecondition( unitless_dist_instance.d_max_independent_value >
-		    unitless_dist_instance.d_min_independent_value );
-
   // Calculate the pdf value
   this->calculatePDFValue();
 
@@ -154,10 +100,6 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::operator=(
        const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure that the distribution is valid
-  testPrecondition( dist_instance.d_max_independent_value >
-		    dist_instance.d_min_independent_value );
-
   if( this != &dist_instance )
   {
     d_min_independent_value = dist_instance.d_min_independent_value;
@@ -360,27 +302,6 @@ OneDDistributionType UnitAwareUniformDistribution<IndependentUnit,DependentUnit>
   return UnitAwareUniformDistribution::distribution_type;
 }
 
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( "Uniform",
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
-}
-
 // Test if the distribution is continuous
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isContinuous() const
@@ -392,140 +313,10 @@ bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isContinuous()
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamImpl( os,
-                      Utility::getRawQuantity( d_min_independent_value ),
-                      Utility::getRawQuantity( d_max_independent_value ),
-                      Utility::getRawQuantity( d_dependent_value ) );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Set the lower boundary of the distribution
-  TEST_FOR_EXCEPTION( distribution_data.empty(),
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " could not be constructed because the lower boundary "
-                      "was not specified!" );
-
-  this->extractValue( distribution_data.front(),
-                      d_min_independent_value ,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Set the upper boundary of the distribution
-  TEST_FOR_EXCEPTION( distribution_data.empty(),
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " could ot be constructed because the upper boundary "
-                      "was not specified!" );
-
-  this->extractValue( distribution_data.front(),
-                      d_max_independent_value,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Set the constant multiplier
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        d_dependent_value,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-  else
-    d_dependent_value = DQT::one();
-
-  // Verify that shape parameters are valid
-  this->verifyValidShapeParameters( d_min_independent_value,
-                                    d_max_independent_value,
-                                    d_dependent_value );
-
-  // Calculate the distribution's pdf
-  this->calculatePDFValue();
-}
-
-// Method for placing the object in the desired property tree node
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
-                                                 const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    return this->toPropertyTreeImpl(
-     std::tie(s_lower_limit_value_key, Utility::getRawQuantity(d_min_independent_value)),
-     std::tie(s_upper_limit_value_key, Utility::getRawQuantity(d_max_independent_value)),
-     std::tie(s_const_multiplier_value_key, Utility::getRawQuantity(d_dependent_value)) );
-  }
-}
-
-// Method for initializing the object from a property tree node
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  // Initialize from inline data
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-  
-  // Initialize from child nodes
-  else
-  {
-    // Initialize the dependent value
-    d_dependent_value = DQT::one();
-
-    std::string type_name = this->getTypeName( true, true );
-
-    // Create the data extractor map
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_lower_limit_value_key,
-      std::make_tuple( s_lower_limit_value_min_match_string, BaseType::REQUIRED_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_min_independent_value),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_upper_limit_value_key,
-      std::make_tuple( s_upper_limit_value_min_match_string, BaseType::REQUIRED_DATA,
-       std::bind<void>(&BaseType::template extractValueFromNode<IndepQuantity>,
-                       std::placeholders::_1,
-                       std::ref(d_max_independent_value),
-                       std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_const_multiplier_value_key,
-      std::make_tuple( s_const_multiplier_value_min_match_string, BaseType::OPTIONAL_DATA,
-         std::bind<void>(&BaseType::template extractValueFromNode<DepQuantity>,
-                         std::placeholders::_1,
-                         std::ref(d_dependent_value),
-                         std::cref(type_name)) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-    
-    // Verify that the values are valid
-    try{
-      this->verifyValidShapeParameters( d_min_independent_value,
-                                        d_max_independent_value,
-                                        d_dependent_value );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PropertyTreeConversionException,
-                                "Invalid shape parameter detected!" );
-
-    // Calculate the distribution's pdf
-    this->calculatePDFValue();
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "lower bound", d_min_independent_value ),
+                          std::make_pair( "upper bound", d_max_independent_value ),
+                          std::make_pair( "dependent value", d_dependent_value ) );
 }
 
 // Save the distribution to an archive
@@ -566,30 +357,30 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::verifyValidSha
                                           const DepQuantity& multiplier )
 {
   TEST_FOR_EXCEPTION( IQT::isnaninf( min_indep_value ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid min "
 		      "independent value!" );
   
   TEST_FOR_EXCEPTION( IQT::isnaninf( max_indep_value ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid max "
 		      "independent value!" );
   
   TEST_FOR_EXCEPTION( max_indep_value <= min_indep_value,
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The uniform distribution cannot be constructed because "
                       "of invalid independent values!" );
 
   TEST_FOR_EXCEPTION( DQT::isnaninf( multiplier ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid dependent "
 		      "value!" );
 
   TEST_FOR_EXCEPTION( multiplier <= DQT::zero(),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid dependent "
 		      "value!" );

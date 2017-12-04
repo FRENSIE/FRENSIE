@@ -25,32 +25,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareHistogramDistribution );
 
 namespace Utility{
 
-// Initialize static member data
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::s_bin_boundary_values_key( "bin boundaries" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::s_bin_boundary_values_min_match_string( "boundaries" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::s_bin_values_key( "bin values" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::s_bin_values_min_match_string( "values" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::s_cdf_specified_value_key( "cdf specified" );
-
-template<typename IndependentUnit, typename DependentUnit>
-const std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::s_cdf_specified_value_min_match_string( "cdf" );
-
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution()
-{ 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
-}
-
 // Basic constructor (potentially dangerous)
 /*! \details The bin boundaries are assumed to be sorted (lowest to
  * highest). If cdf values are provided a pdf will be calculated. Note that
@@ -65,14 +39,11 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
-  // Make sure there is at least one bin
-  testPrecondition( bin_boundaries.size() > 1 );
-  // Make sure the bin boundaries are sorted
-  testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
-					     bin_boundaries.end() ) );
-  // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size() - 1 == bin_values.size() );
-
+  // Verify that the values are valid
+  this->verifyValidValues( bin_boundaries,
+                           bin_values, 
+                           interpret_dependent_values_as_cdf );
+  
   this->initializeDistribution( bin_boundaries,
 				bin_values,
 				interpret_dependent_values_as_cdf );
@@ -93,16 +64,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
-  // Make sure there is at least one bin
-  testPrecondition( bin_boundaries.size() > 1 );
-  // Make sure the bin boundaries are sorted
-  testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
-					     bin_boundaries.end() ) );
-  // Make sure the cdf values are sorted
-  testPrecondition( Sort::isSortedAscending( cdf_values.begin(),
-					     cdf_values.end() ) );
-  // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size() - 1 == cdf_values.size() );
+  // Verify that the values are valid
+  this->verifyValidValues( bin_boundaries, cdf_values, true );
 
   this->initializeDistributionFromCDF( bin_boundaries, cdf_values );
 
@@ -118,13 +81,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
-  // Make sure there is at least one bin
-  testPrecondition( bin_boundaries.size() > 1 );
-  // Make sure the bin boundaries are sorted
-  testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
-					     bin_boundaries.end() ) );
-  // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size() - 1 == bin_values.size() );
+  // Verify that the values are valid
+  this->verifyValidValues( bin_boundaries, bin_values, false );
 
   this->initializeDistribution( bin_boundaries, bin_values );
 
@@ -145,8 +103,6 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   : d_distribution(),
     d_norm_constant()
 {
-  // Make sure that the distribution is valid
-  testPrecondition( dist_instance.d_distribution.size() > 0 );
 
   typedef typename UnitAwareHistogramDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
@@ -171,9 +127,6 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   : d_distribution(),
     d_norm_constant()
 {
-  // Make sure that the distribution is valid
-  testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
-
   // Reconstruct the original input distribution
   std::vector<double> input_bin_boundaries, input_bin_values;
 
@@ -205,9 +158,6 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>&
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::operator=(
   const UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure that the distribution is valid
-  testPrecondition( dist_instance.d_distribution.size() > 0 );
-
   if( this != &dist_instance )
   {
     d_distribution = dist_instance.d_distribution;
@@ -223,18 +173,18 @@ typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::DepQuant
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::evaluate(
  const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < Utility::get<FIRST>(d_distribution.front()) )
+  if( indep_var_value < Utility::get<0>(d_distribution.front()) )
     return DQT::zero();
-  else if( indep_var_value > Utility::get<FIRST>(d_distribution.back()) )
+  else if( indep_var_value > Utility::get<0>(d_distribution.back()) )
     return DQT::zero();
   else
   {
     typename DistributionArray::const_iterator bin =
-      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+      Search::binaryLowerBound<0>( d_distribution.begin(),
                                        d_distribution.end(),
                                        indep_var_value );
 
-    return Utility::get<SECOND>(*bin);
+    return Utility::get<1>(*bin);
   }
 }
 
@@ -252,22 +202,22 @@ template<typename IndependentUnit, typename DependentUnit>
 double UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::evaluateCDF(
   const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < Utility::get<FIRST>(d_distribution.front()) )
+  if( indep_var_value < Utility::get<0>(d_distribution.front()) )
     return 0.0;
-  else if( indep_var_value >= Utility::get<FIRST>(d_distribution.back()) )
+  else if( indep_var_value >= Utility::get<0>(d_distribution.back()) )
     return 1.0;
   else
   {
     typename DistributionArray::const_iterator lower_bin =
-      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+      Search::binaryLowerBound<0>( d_distribution.begin(),
                                        d_distribution.end(),
                                        indep_var_value );
 
     IndepQuantity indep_diff =
-      indep_var_value - Utility::get<FIRST>(*lower_bin);
+      indep_var_value - Utility::get<0>(*lower_bin);
 
-    return (Utility::get<THIRD>(*lower_bin) +
-            Utility::get<SECOND>(*lower_bin)*indep_diff)*d_norm_constant;
+    return (Utility::get<2>(*lower_bin) +
+            Utility::get<1>(*lower_bin)*indep_diff)*d_norm_constant;
   }
 }
 
@@ -346,18 +296,18 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleImplementat
   testPrecondition( random_number <= 1.0 );
 
   UnnormCDFQuantity scaled_random_number =
-    random_number*Utility::get<THIRD>(d_distribution.back());
+    random_number*Utility::get<2>(d_distribution.back());
 
   typename DistributionArray::const_iterator bin =
-    Search::binaryLowerBound<THIRD>( d_distribution.begin(),
+    Search::binaryLowerBound<2>( d_distribution.begin(),
 				     d_distribution.end(),
 				     scaled_random_number );
 
   sampled_bin_index = std::distance( d_distribution.begin(), bin );
 
-  return Utility::get<FIRST>(*bin) +
-    IndepQuantity((scaled_random_number - Utility::get<THIRD>(*bin))/
-                  Utility::get<SECOND>(*bin));
+  return Utility::get<0>(*bin) +
+    IndepQuantity((scaled_random_number - Utility::get<2>(*bin))/
+                  Utility::get<1>(*bin));
 }
 
 // Return a sample from the distribution at the given CDF value in a subrange
@@ -387,7 +337,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
-  return Utility::get<FIRST>(d_distribution.back());
+  return Utility::get<0>(d_distribution.back());
 }
 
 // Return the lower bound of the distribution independent variable
@@ -395,7 +345,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return Utility::get<FIRST>(d_distribution.front());
+  return Utility::get<0>(d_distribution.front());
 }
 
 // Return the distribution type
@@ -404,27 +354,6 @@ OneDDistributionType
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return UnitAwareHistogramDistribution::distribution_type;
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( "Histogram",
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  return this->typeName( verbose_name, false, " " );
 }
 
 //! Test if the distribution is continuous
@@ -439,145 +368,14 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::toStream(
 						       std::ostream& os ) const
 {
-  std::vector<double> bin_boundaries, bin_values;
+  std::vector<IndepQuantity> bin_boundaries;
+  std::vector<DepQuantity> bin_values;
 
-  this->reconstructOriginalUnitlessDistribution( bin_boundaries,
-						 bin_values );
+  this->reconstructOriginalDistribution( bin_boundaries, bin_values );
 
-  this->toStreamImpl( os, bin_boundaries, bin_values );
-}
-
-// Method for initializing the object from an input stream
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Extract the bin boundaries
-  TEST_FOR_EXCEPTION( distribution_data.empty(),
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " could not be constructed because no bin boundaries "
-                      "are not specified!" );
-  
-  std::vector<double> bin_boundaries;
-  this->extractArray( distribution_data.front(),
-                      bin_boundaries,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Extract the bin values
-  TEST_FOR_EXCEPTION( distribution_data.empty(),
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " could not be constructed because no bin values "
-                      "are not specified!" );
-  
-  std::vector<double> bin_values;
-  this->extractArray( distribution_data.front(),
-                      bin_values,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Extract the cdf boolean
-  bool cdf_specified = false;
-
-  if( !distribution_data.empty() )
-  {
-    this->extractValue( distribution_data.front(),
-                        cdf_specified,
-                        this->getTypeName( true, true ) );
-
-    distribution_data.pop_front();
-  }
-
-  // Verify that the values are valid
-  this->verifyValidValues( bin_boundaries, bin_values, cdf_specified );
-
-  // Initialize the distribution
-  this->initializeDistribution( bin_boundaries, bin_values, cdf_specified );
-}
-
-// Method for converting the type to a property tree
-template<typename IndependentUnit, typename DependentUnit>
-Utility::PropertyTree UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::toPropertyTree(
-                                                 const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    std::vector<double> bin_boundaries, bin_values;
-
-    this->reconstructOriginalUnitlessDistribution( bin_boundaries,
-                                                   bin_values );
-
-    return this->toPropertyTreeImpl(
-                         std::tie( s_bin_boundary_values_key, bin_boundaries ),
-                         std::tie( s_bin_values_key, bin_values ) );
-  }
-}
-
-// Method for initializing the object from a property tree node
-template<typename IndependentUnit, typename DependentUnit>
-void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  // Initialize from inline data
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-  
-  // Initialize from child nodes
-  else
-  {
-    std::vector<double> bin_boundaries, bin_values;
-    bool cdf_specified = false;
-
-    std::string type_name = this->getTypeName( true, true );
-
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_bin_boundary_values_key,
-      std::make_tuple( s_bin_boundary_values_min_match_string, BaseType::REQUIRED_DATA,
-         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
-                         std::placeholders::_1,
-                         std::ref(bin_boundaries),
-                         std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_bin_values_key,
-      std::make_tuple( s_bin_values_min_match_string, BaseType::REQUIRED_DATA,
-         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
-                         std::placeholders::_1,
-                         std::ref(bin_values),
-                         std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_cdf_specified_value_key,
-      std::make_tuple( s_cdf_specified_value_min_match_string, BaseType::OPTIONAL_DATA,
-                std::bind<void>(&BaseType::template extractValueFromNode<bool>,
-                                std::placeholders::_1,
-                                std::ref(cdf_specified),
-                                std::cref(type_name)) )));
-                           
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-    
-    // Verify that the values are valid
-    try{
-      this->verifyValidValues( bin_boundaries, bin_values, cdf_specified );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                                Utility::PropertyTreeConversionException,
-                                "The histogram distribution could not be "
-                                "constructed because the bin boundaries and/or"
-                                " values are not valid!" );
-
-    // Initialize the distribution
-    this->initializeDistribution( bin_boundaries, bin_values, cdf_specified );
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "bin boundaries", bin_boundaries ),
+                          std::make_pair( "bin values", bin_values ) );
 }
 
 // Save the distribution to an archive
@@ -681,31 +479,31 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   d_distribution.resize( bin_boundaries.size() );
 
   // Assign the first cdf value
-  Utility::get<FIRST>(d_distribution[0]) = IndepQuantity( bin_boundaries[0] );
-  setQuantity( Utility::get<THIRD>(d_distribution[0]), 0.0 );
+  Utility::get<0>(d_distribution[0]) = IndepQuantity( bin_boundaries[0] );
+  setQuantity( Utility::get<2>(d_distribution[0]), 0.0 );
 
     // Assign the distribution
     for( unsigned i = 1; i < bin_boundaries.size(); ++i )
     {
-      Utility::get<FIRST>(d_distribution[i]) =
+      Utility::get<0>(d_distribution[i]) =
         IndepQuantity( bin_boundaries[i] );
       
-      setQuantity( Utility::get<THIRD>(d_distribution[i]), cdf_values[i-1] );
+      setQuantity( Utility::get<2>(d_distribution[i]), cdf_values[i-1] );
 
       // Calculate the pdf from the cdf
-      Utility::get<SECOND>(d_distribution[i-1]) =
-        DepQuantity( (Utility::get<THIRD>(d_distribution[i]) -
-                      Utility::get<THIRD>(d_distribution[i-1]))/
-		     (Utility::get<FIRST>(d_distribution[i]) -
-                      Utility::get<FIRST>(d_distribution[i-1])) );
+      Utility::get<1>(d_distribution[i-1]) =
+        DepQuantity( (Utility::get<2>(d_distribution[i]) -
+                      Utility::get<2>(d_distribution[i-1]))/
+		     (Utility::get<0>(d_distribution[i]) -
+                      Utility::get<0>(d_distribution[i-1])) );
     }
 
     // Last PDF value is unused and can be assigned to the second to last value
-    Utility::get<SECOND>(d_distribution.back()) =
-      Utility::get<SECOND>(d_distribution[d_distribution.size()-2]);
+    Utility::get<1>(d_distribution.back()) =
+      Utility::get<1>(d_distribution[d_distribution.size()-2]);
 
     // Set normalization constant
-    d_norm_constant = 1.0/Utility::get<THIRD>(d_distribution.back());
+    d_norm_constant = 1.0/Utility::get<2>(d_distribution.back());
 }
 
 // Initialize the distribution
@@ -730,31 +528,31 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   for( unsigned i = 0; i < bin_boundaries.size(); ++i )
   {
     // Assign the min and max bin boundaries (respectively)
-    Utility::get<FIRST>(d_distribution[i]) =
+    Utility::get<0>(d_distribution[i]) =
       IndepQuantity( bin_boundaries[i] );
 
     // Assign the bin PDF value
     if( i < bin_boundaries.size() - 1 )
-      Utility::get<SECOND>(d_distribution[i]) = DepQuantity( bin_values[i] );
+      Utility::get<1>(d_distribution[i]) = DepQuantity( bin_values[i] );
     else
-      Utility::get<SECOND>(d_distribution[i]) = DepQuantity( bin_values[i-1] );
+      Utility::get<1>(d_distribution[i]) = DepQuantity( bin_values[i-1] );
 
     // Assign the discrete CDF value
     if( i > 0 )
     {
-      Utility::get<THIRD>(d_distribution[i]) =
-        Utility::get<THIRD>(d_distribution[i-1]);
+      Utility::get<2>(d_distribution[i]) =
+        Utility::get<2>(d_distribution[i-1]);
 
-      Utility::get<THIRD>(d_distribution[i]) += DepQuantity( bin_values[i-1] )*
-        IndepQuantity( Utility::get<FIRST>(d_distribution[i]) -
-                       Utility::get<FIRST>(d_distribution[i-1]) );
+      Utility::get<2>(d_distribution[i]) += DepQuantity( bin_values[i-1] )*
+        IndepQuantity( Utility::get<0>(d_distribution[i]) -
+                       Utility::get<0>(d_distribution[i-1]) );
     }
     else
-      setQuantity( Utility::get<THIRD>(d_distribution[i]), 0.0 );
+      setQuantity( Utility::get<2>(d_distribution[i]), 0.0 );
   }
 
   // Assign the normalization constant
-  d_norm_constant = 1.0/Utility::get<THIRD>(d_distribution.back());
+  d_norm_constant = 1.0/Utility::get<2>(d_distribution.back());
 }
 
 // Reconstruct original distribution
@@ -776,10 +574,10 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
   
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    bin_boundaries[i] = Utility::get<FIRST>(d_distribution[i]);
+    bin_boundaries[i] = Utility::get<0>(d_distribution[i]);
 
     if( i < d_distribution.size() - 1 )
-      bin_values[i] = Utility::get<SECOND>(d_distribution[i]);
+      bin_values[i] = Utility::get<1>(d_distribution[i]);
   }
 }
 
@@ -803,12 +601,12 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
     bin_boundaries[i] =
-      getRawQuantity( Utility::get<FIRST>(d_distribution[i]) );
+      Utility::getRawQuantity( Utility::get<0>(d_distribution[i]) );
 
     if( i < d_distribution.size() - 1 )
     {
       bin_values[i] =
-        getRawQuantity( Utility::get<SECOND>(d_distribution[i]) );
+        Utility::getRawQuantity( Utility::get<1>(d_distribution[i]) );
     }
   }
 }
@@ -836,7 +634,7 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
   
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
-    if( Utility::get<SECOND>(d_distribution[i]) == DQT::zero() )
+    if( Utility::get<1>(d_distribution[i]) == DQT::zero() )
     {
       possible_zero = true;
 
@@ -849,35 +647,38 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
 
 // Verify that the values are valid
 template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidValues(
-                                 const std::vector<double>& bin_boundaries,
-                                 const std::vector<double>& bin_values,
-                                 const bool cdf_bin_values )
+                         const std::vector<InputIndepQuantity>& bin_boundaries,
+                         const std::vector<InputDepQuantity>& bin_values,
+                         const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
-                      Utility::StringConversionException,
+                      Utility::BadOneDDistributionParameter,
                       "The histogram distribution cannot be constructed "
                       "because no full bins have been specified!" );
   
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
 						bin_boundaries.end() ),
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The histogram distribution cannot be "
 		      "constructed because the bin boundaries "
 		      << bin_boundaries << " are not sorted!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.front() ),
-                      Utility::StringConversionException,
+  typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
+  
+  TEST_FOR_EXCEPTION( InputIQT::isnaninf( bin_boundaries.front() ),
+                      Utility::BadOneDDistributionParameter,
                       "The histogram distribution cannot be constructed "
                       "because the first bin boundary is invalid!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( bin_boundaries.back() ),
-                      Utility::StringConversionException,
+  TEST_FOR_EXCEPTION( InputIQT::isnaninf( bin_boundaries.back() ),
+                      Utility::BadOneDDistributionParameter,
                       "The histogram distribution cannot be constructed "
                       "because the last bin boundary is invalid!" );
 
   TEST_FOR_EXCEPTION( bin_boundaries.size() != bin_values.size()+1,
-		      Utility::StringConversionException,
+		      Utility::BadOneDDistributionParameter,
 		      "The histogram distribution cannot be constructed "
                       "because the number of bin boundaries ("
                       << bin_boundaries.size() << ") does not match the "
@@ -888,16 +689,16 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
   {
     TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_values.begin(),
                                                   bin_values.end() ),
-                        Utility::StringConversionException,
+                        Utility::BadOneDDistributionParameter,
                         "The histogram distribution cannot be "
                         "constructed because the bin cdf values "
-                        << bin_values << " are not sorted!" );
+                        " are not sorted!" );
 
-    std::vector<double>::const_iterator repeat_bin_value =
+    typename std::vector<InputDepQuantity>::const_iterator repeat_bin_value =
       std::adjacent_find( bin_values.begin(), bin_values.end() );
     
     TEST_FOR_EXCEPTION( repeat_bin_value != bin_values.end(),
-                        Utility::StringConversionException,
+                        Utility::BadOneDDistributionParameter,
                         "The histogram distribution cannot be "
                         "constructed because there is a repeated bin cdf "
                         "value at index "
@@ -905,14 +706,15 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
                         " (" << *repeat_bin_value << ")!" );
   }
 
+  typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
   
-  std::vector<double>::const_iterator bad_bin_value =
+  typename std::vector<InputDepQuantity>::const_iterator bad_bin_value =
     std::find_if( bin_values.begin(),
                   bin_values.end(),
-                  [](double element){ return QT::isnaninf( element ) || element <= 0.0; } );
+                  [](const InputDepQuantity& element){ return InputDQT::isnaninf( element ) || element <= InputDQT::zero(); } );
 
   TEST_FOR_EXCEPTION(  bad_bin_value != bin_values.end(),
-                       Utility::StringConversionException,
+                       Utility::BadOneDDistributionParameter,
                        "The histogram distribution cannot be constructed "
                        "because the bin value at index "
                          << std::distance( bin_values.begin(), bad_bin_value ) <<

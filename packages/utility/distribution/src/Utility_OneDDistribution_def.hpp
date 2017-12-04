@@ -17,61 +17,6 @@
 
 namespace Utility{
 
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::typeNameImpl(
-                                                const std::string base_name,
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return ThisType::typeNameImpl( std::vector<std::string>( {base_name} ),
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename IndependentUnit, typename DependentUnit>
-std::string UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::typeNameImpl(
-                                     const std::vector<std::string>& base_name,
-                                     const bool verbose_name,
-                                     const bool use_template_params,
-                                     const std::string& delim )
-{
-  std::string name;
-
-  for( size_t i = 0; i < base_name.size(); ++i )
-  {
-    name += base_name[i];
-
-    if( i < base_name.size()-1 )
-      name += delim;
-  }
-
-  if( verbose_name )
-  {
-    name += delim;
-    name += "Distribution";
-
-    if( use_template_params )
-    {
-      std::string name_start( "Unit" );
-      name_start += delim + "Aware" + delim;
-      
-      name = name_start+name;
-
-      name += "<";
-      name += Utility::typeName<IndependentUnit>();
-      name += ",";
-      name += Utility::typeName<DependentUnit>();
-      name += ">";
-    }
-  }
-
-  return name;
-}
-
 // Test if the distribution is tabular
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isTabular() const
@@ -181,6 +126,18 @@ bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBounds(
      CloseComparisonPolicy::compare( this->getLowerBoundOfIndepVar(),
                                      distribution.getLowerBoundOfIndepVar(),
                                      1e-9 ));
+}
+
+// Add distribution data to the stream
+template<typename IndependentUnit, typename DependentUnit>
+template<typename... Types>
+void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::toStreamDistImpl( std::ostream& os, const Types&... data ) const
+{
+  this->toStreamImpl( os,
+                      std::make_pair( "type", this->getDistributionType() ),
+                      std::make_pair( "independent unit", Utility::UnitTraits<IndependentUnit>::name() ),
+                      std::make_pair( "dependent unit", Utility::UnitTraits<DependentUnit>::name() ),
+                      data... );
 }
 
 // Explicit instantiation (extern declaration)

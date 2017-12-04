@@ -22,34 +22,6 @@ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_EXTRA( UnitAwareTabularDistribution, t
 
 namespace Utility{
 
-// Initialize static member data
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-const std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_independent_values_key( "independent values" );
-
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-const std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_independent_values_min_match_string( "indep" );
-
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-const std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_dependent_values_key( "dependent values" );
-
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-const std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::s_dependent_values_min_match_string( "dep" );
-
-// Default constructor
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution()
-{ BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType ); }
-
 // Basic constructor (potentially dangerous)
 /*! \details The independent values are assumed to be sorted (lowest to
  * highest). If cdf values are provided a pdf will be calculated. Because
@@ -67,12 +39,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() )
 {
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( dependent_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					     independent_values.end() ) );
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values );
 
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
@@ -91,12 +59,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() )
 {
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( dependent_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					     independent_values.end() ) );
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values );
 
   this->initializeDistribution( independent_values, dependent_values );
 
@@ -119,9 +83,6 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   : d_distribution(),
     d_norm_constant()
 {
-  // Make sure the distribution is valid
-  testPrecondition( dist_instance.d_distribution.size() > 0 );
-
   typedef typename UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
   typedef typename UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
@@ -146,9 +107,6 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   : d_distribution(),
     d_norm_constant()
 {
-  // Make sure the distribution is valid
-  testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
-
   // Reconstruct the original input distribution
   std::vector<double> input_indep_values, input_dep_values;
 
@@ -185,9 +143,6 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>&
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator=(
   const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& dist_instance )
 {
-  // Make sure the distribution is valid
-  testPrecondition( dist_instance.d_distribution.size() > 0 );
-
   if( this != &dist_instance )
   {
     d_distribution = dist_instance.d_distribution;
@@ -470,31 +425,6 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   return ThisType::distribution_type;
 }
 
-// Return the distribution type name
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::typeName(
-                                                const bool verbose_name,
-                                                const bool use_template_params,
-                                                const std::string& delim )
-{
-  return BaseType::typeNameImpl( {"Tabular", InterpolationPolicy::name()},
-                                 verbose_name,
-                                 use_template_params,
-                                 delim );
-}
-
-// Return the distribution type name
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-std::string UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getTypeNameImpl(
-                                                const bool verbose_name ) const
-{
-  this->typeName( verbose_name, false, " " );
-}
-
 // Test if the distribution is continuous
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,
@@ -511,129 +441,16 @@ template<typename InterpolationPolicy,
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toStream(
 						       std::ostream& os ) const
 {
-  std::vector<double> independent_values, dependent_values;
+  std::vector<IndepQuantity> independent_values;
+  std::vector<DepQuantity> dependent_values;
 
-  this->reconstructOriginalUnitlessDistribution( independent_values,
-						 dependent_values );
+  this->reconstructOriginalDistribution( independent_values,
+                                         dependent_values );
 
-  this->toStreamImpl( os, independent_values, dependent_values );
-}
-
-// Method for initializing the object from an input stream
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStreamImpl(
-                                               VariantList& distribution_data )
-{
-  // Extract the independent values
-  TEST_FOR_EXCEPTION( distribution_data.empty(),
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " could not be reconstructed because no independent "
-                      "values are specified!" );
-
-  std::vector<double> independent_values;
-  this->extractArray( distribution_data.front(),
-                      independent_values,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Extract the dependent values
-  TEST_FOR_EXCEPTION( distribution_data.empty(),
-                      Utility::StringConversionException,
-                      "The " << this->getTypeName( true, true ) <<
-                      " could not be reconstructed because no dependent "
-                      "values are specified!" );
-
-  std::vector<double> dependent_values;
-  this->extractArray( distribution_data.front(),
-                      dependent_values,
-                      this->getTypeName( true, true ) );
-
-  distribution_data.pop_front();
-
-  // Verify that the values are valid
-  this->verifyValidValues( independent_values, dependent_values );
-
-  // Initialize the distribution
-  this->initializeDistributionFromRawData( independent_values,
-                                           dependent_values );
-}
-
-// Method for converting the type to a property tree
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-Utility::PropertyTree UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toPropertyTree( const bool inline_data ) const
-{
-  if( inline_data )
-    return this->toInlinedPropertyTreeImpl();
-  else
-  {
-    std::vector<double> independent_values, dependent_values;
-
-    this->reconstructOriginalUnitlessDistribution( independent_values,
-                                                   dependent_values );
-
-    return this->toPropertyTreeImpl(
-                      std::tie( s_independent_values_key, independent_values ),
-                      std::tie( s_dependent_values_key, dependent_values ) );
-  }
-}
-
-// Method for initializing the object from a property tree
-template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromPropertyTree(
-                                    const Utility::PropertyTree& node,
-                                    std::vector<std::string>& unused_children )
-{
-  // Initialize from inline data
-  if( node.size() == 0 )
-    this->fromInlinedPropertyTreeImpl( node );
-
-  // Initialize from child nodes
-  else
-  {
-    std::vector<double> independent_values, dependent_values;
-
-    std::string type_name = this->getTypeName( true, true );
-
-    typename BaseType::DataExtractorMap data_extractors;
-
-    data_extractors.insert(
-     std::make_pair( s_independent_values_key,
-      std::make_tuple( s_independent_values_min_match_string, BaseType::REQUIRED_DATA,
-         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
-                         std::placeholders::_1,
-                         std::ref(independent_values),
-                         std::cref(type_name)) )));
-    
-    data_extractors.insert(
-     std::make_pair( s_dependent_values_key,
-      std::make_tuple( s_dependent_values_min_match_string, BaseType::REQUIRED_DATA,
-         std::bind<void>(&BaseType::template extractArrayFromNode<std::vector>,
-                         std::placeholders::_1,
-                         std::ref(dependent_values),
-                         std::cref(type_name)) )));
-
-    this->fromPropertyTreeImpl( node, unused_children, data_extractors );
-
-    // Verify that the values are valid
-    try{
-      this->verifyValidValues( independent_values, dependent_values );
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Utility::StringConversionException,
-                                Utility::PropertyTreeConversionException,
-                                "Invalid values detected!" );
-
-    // Initialize the distribution
-    this->initializeDistributionFromRawData( independent_values,
-                                             dependent_values );
-  }
+  this->toStreamDistImpl( os,
+                          std::make_pair( "interp", InterpolationPolicy::name() ),
+                          std::make_pair( "independent values", independent_values ),
+                          std::make_pair( "dependent values", dependent_values ) );
 }
 
 // Save the distribution to an archive
@@ -875,9 +692,10 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::verifyValidValues(
-                                 const std::vector<double>& independent_values,
-                                 const std::vector<double>& dependent_values )
+                     const std::vector<InputIndepQuantity>& independent_values,
+                     const std::vector<InputDepQuantity>& dependent_values )
 {
   // There must be at least two independent values
   TEST_FOR_EXCEPTION( independent_values.size() < 2,
@@ -893,12 +711,14 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 		      "The tabular distribution cannot be constructed "
 		      "because the independent values are not sorted!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( independent_values.front() ),
+  typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
+
+  TEST_FOR_EXCEPTION( InputIQT::isnaninf( independent_values.front() ),
                       Utility::StringConversionException,
                       "The tabular distribution cannot be constructed "
                       "because the first independent value is invalid!" );
 
-  TEST_FOR_EXCEPTION( QT::isnaninf( independent_values.back() ),
+  TEST_FOR_EXCEPTION( InputIQT::isnaninf( independent_values.back() ),
                       Utility::StringConversionException,
                       "The tabular distribution cannot be constructed "
                       "because the last independent value is invalid!" );
@@ -922,11 +742,13 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
                       "equal the number of dependent values ("
                       << dependent_values.size() << ")!" );
 
+  typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
+  
   // Search for bad dependent values
-  std::vector<double>::const_iterator bad_dependent_value =
+  typename std::vector<InputDepQuantity>::const_iterator bad_dependent_value =
     std::find_if( dependent_values.begin(),
                   dependent_values.end(),
-                  [](double element){ return element < 0.0 || QT::isnaninf( element ) || !InterpolationPolicy::isDepVarInValidRange( element ); } );
+                  [](const InputDepQuantity& element){ return element < InputDQT::zero() || InputDQT::isnaninf( element ) || !InterpolationPolicy::isDepVarInValidRange( element ); } );
 
   TEST_FOR_EXCEPTION( bad_dependent_value != dependent_values.end(),
                       Utility::StringConversionException,

@@ -305,6 +305,13 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateFuzzyUpperBound(
     return value*(1-tol);
 }
 
+// The name of the policy
+template<typename ParentInterpolationType>
+inline std::string InterpolationHelper<ParentInterpolationType>::name()
+{
+  return Utility::typeName<ParentInterpolationType>();
+}
+
 // Get the interpolation type
 inline InterpolationType LogLog::getInterpolationType()
 {
@@ -428,12 +435,6 @@ inline bool LogLog::isDepVarInValidRange( const T dep_var )
   return dep_var > QuantityTraits<T>::zero();
 }
 
-// The name of the policy
-inline const std::string LogLog::name()
-{
-  return "LogLog";
-}
-
 // Get the interpolation type
 inline InterpolationType LogLin::getInterpolationType()
 {
@@ -555,12 +556,6 @@ inline bool LogLin::isDepVarInValidRange( const T dep_var )
   return dep_var > QuantityTraits<T>::zero();
 }
 
-// The name of the policy
-inline const std::string LogLin::name()
-{
-  return "LogLin";
-}
-
 // Get the interpolation type
 inline InterpolationType LinLog::getInterpolationType()
 {
@@ -669,12 +664,6 @@ inline bool LinLog::isDepVarInValidRange( const T dep_var )
   return true;
 }
 
-// The name of the policy
-inline const std::string LinLog::name()
-{
-  return "LinLog";
-}
-
 // Get the interpolation type
 inline InterpolationType LinLin::getInterpolationType()
 {
@@ -781,12 +770,6 @@ inline bool LinLin::isDepVarInValidRange( const T dep_var )
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
 
   return true;
-}
-
-// The name of the policy
-inline const std::string LinLin::name()
-{
-  return "LinLin";
 }
 
 } // end Utility namespace
