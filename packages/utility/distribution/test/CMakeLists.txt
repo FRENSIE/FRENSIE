@@ -10,8 +10,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(EquiprobableBinDistribution DEPENDS tstEquiprobableB
 FRENSIE_ADD_TEST(EquiprobableBinDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(EvaporationDistribution DEPENDS tstEvaporationDistribution.cpp)
-FRENSIE_ADD_TEST(EvaporationDistribution
-  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_evaporation_distributions.json)
+FRENSIE_ADD_TEST(EvaporationDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(ExponentialDistribution DEPENDS tstExponentialDistribution.cpp)
 FRENSIE_ADD_TEST(ExponentialDistribution

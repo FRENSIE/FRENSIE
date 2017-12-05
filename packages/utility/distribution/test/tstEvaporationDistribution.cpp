@@ -65,52 +65,11 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> distribution(
                        new Utility::EvaporationDistribution( 1.0, 1.0, 0.1 ) );
 
 std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution( new Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 1e3*keV, 1e3*keV, 100.0*keV ) );
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::EvaporationDistribution dummy_dist;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_5_args_valid" ) << "Distribution A" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 );
-  NEW_ROW( "inline_4_args_valid" ) << "Distribution B" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0 );
-  NEW_ROW( "inline_3_args_valid" ) << "Distribution C" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0 );
-  NEW_ROW( "inline_2_args_valid" ) << "Distribution D" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0 );
-  NEW_ROW( "inline_1_arg_valid" )  << "Distribution E" << true  << no_unused_children << Utility::EvaporationDistribution();
-  NEW_ROW( "inline_bad_type" )     << "Distribution M" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "1_arg_valid" )         << "Distribution F" << true  << no_unused_children << Utility::EvaporationDistribution();
-  NEW_ROW( "2_args_valid" )        << "Distribution G" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0 );
-  NEW_ROW( "3_args_valid" )        << "Distribution H" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0 );
-  NEW_ROW( "4_args_valid" )        << "Distribution I" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0 );
-  NEW_ROW( "5_args_valid" )        << "Distribution J" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 );
-  NEW_ROW( "5_abrv_args_valid" )   << "Distribution K" << true  << no_unused_children << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 0.1 );
-  NEW_ROW( "6_args_valid" )        << "Distribution L" << true  << std::vector<std::string>({"dummy"}) << Utility::EvaporationDistribution( 1.0, 1.0, 0.1, 10.0 );
-  NEW_ROW( "bad_type" )            << "Distribution N" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_energy" )          << "Distribution O" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_energy" )         << "Distribution P" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_energy" )          << "Distribution Q" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_restrict" )        << "Distribution R" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "high_restrict" )       << "Distribution S" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_temp" )            << "Distribution T" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_temp" )           << "Distribution U" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_temp" )            << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_mult" )            << "Distribution W" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -411,31 +370,6 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution type name can be returned
-FRENSIE_UNIT_TEST( EvaporationDistribution, getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( Utility::EvaporationDistribution::typeName( true, false, " " ),
-                       "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::EvaporationDistribution::typeName( false ),
-                       "Evaporation" );
-  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::EvaporationDistribution>(),
-                       "EvaporationDistribution" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution type name can be returned
-FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution,
-                   getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>::typeName( true, false, " " )),
-                       "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>::typeName( false )),
-                       "Evaporation" );
-  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount> >()),
-                       std::string("UnitAwareEvaporationDistribution<")+Utility::typeName<ElectronVolt>()+","+Utility::typeName<si::amount>()+">" );
-}
-
-//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 FRENSIE_UNIT_TEST( EvaporationDistribution, isTabular )
 {
@@ -485,159 +419,6 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be converted to a string
-FRENSIE_UNIT_TEST( EvaporationDistribution, toString )
-{
-  std::string dist_string =
-    Utility::toString( Utility::EvaporationDistribution() );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::EvaporationDistribution( 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 2.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+01}" );
-
-  FRENSIE_CHECK_NO_THROW( dist_string = Utility::toString( *distribution ) );
-  FRENSIE_CHECK_LESS( dist_string.find( "Evaporation Distribution" ),
-                      dist_string.size() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be converted to a string
-FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, toString )
-{
-  //std::string dist_string = Utility::toString( *distribution );
-  std::string dist_string =
-    Utility::toString( Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>() );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 2.0*eV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 2.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV, 10.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+01}" );
-
-  FRENSIE_CHECK_NO_THROW( dist_string = Utility::toString( *unit_aware_distribution ) );
-  FRENSIE_CHECK_LESS( dist_string.find( "Evaporation Distribution" ),
-                      dist_string.size() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be placed in a stream
-FRENSIE_UNIT_TEST( EvaporationDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, Utility::EvaporationDistribution() );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::EvaporationDistribution( 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 2.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+01}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  FRENSIE_CHECK_NO_THROW( Utility::toStream( oss, *distribution ) );
-  FRENSIE_CHECK_LESS( oss.str().find( "Evaporation Distribution" ),
-                      oss.str().size() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>() );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 2.0*eV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 2.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV, 10.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+01}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  FRENSIE_CHECK_NO_THROW( Utility::toStream( oss, *unit_aware_distribution ) );
-  FRENSIE_CHECK_LESS( oss.str().find( "Evaporation Distribution" ),
-                      oss.str().size() );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
 FRENSIE_UNIT_TEST( EvaporationDistribution, ostream_operator )
 {
@@ -645,42 +426,97 @@ FRENSIE_UNIT_TEST( EvaporationDistribution, ostream_operator )
 
   oss << Utility::EvaporationDistribution();
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::EvaporationDistribution( 2.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 2.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::EvaporationDistribution( 3.0, 2.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 3.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::EvaporationDistribution( 3.0, 2.0, 1.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 3.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+01}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+    
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 3.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 10.0 );
 
   oss.str( "" );
   oss.clear();
 
-  FRENSIE_CHECK_NO_THROW( oss << *distribution );
-  FRENSIE_CHECK_LESS( oss.str().find( "Evaporation Distribution" ),
-                      oss.str().size() );
+  oss << *distribution;
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+    
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.1 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -691,768 +527,127 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, ostream_operator )
 
   oss << Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>();
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       0.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 2.0*eV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 2.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       0.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
 
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       3.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       0.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
+  
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       3.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareEvaporationDistribution<ElectronVolt,si::amount>( 3.0*eV, 2.0*eV, 1.0*eV, 10.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Evaporation Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+01}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<ElectronVolt> >(),
+                       3.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<ElectronVolt> >(),
+                       2.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<ElectronVolt> >(),
+                       1.0*eV );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 10.0 );
 
   oss.str( "" );
   oss.clear();
 
-  FRENSIE_CHECK_NO_THROW( oss << *unit_aware_distribution );
-  FRENSIE_CHECK_LESS( oss.str().find( "Evaporation Distribution" ),
-                      oss.str().size() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a string
-FRENSIE_UNIT_TEST( EvaporationDistribution, fromString )
-{
-  Utility::EvaporationDistribution test_dist =
-    Utility::fromString<Utility::EvaporationDistribution>( "{Evaporation Distribution}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution() );
-
-  test_dist =
-    Utility::fromString<Utility::EvaporationDistribution>( "{Evaporation Distribution, 3.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0 ) );
-
-  test_dist =
-    Utility::fromString<Utility::EvaporationDistribution>( "{evaporation distribution, 3.0, 2.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  test_dist =
-    Utility::fromString<Utility::EvaporationDistribution>( "{Evaporation, 3.0, 2.0, 1.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  test_dist =
-    Utility::fromString<Utility::EvaporationDistribution>( "{evaporation, 3.0, 2.0, 1.0, 10.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  test_dist =
-    Utility::fromString<Utility::EvaporationDistribution>( Utility::toString(*distribution) );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::EvaporationDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, fromString )
-{
-  Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> test_dist=
-    Utility::fromString<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> >( "{Evaporation Distribution}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>()) );
-
-  test_dist =
-    Utility::fromString<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> >( "{Evaporation Distribution, 3.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV )) );
-
-  test_dist =
-    Utility::fromString<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> >( "{evaporation distribution, 3.0, 2.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV )) );
-
-  test_dist =
-    Utility::fromString<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> >( "{Evaporation, 3.0, 2.0, 1.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV )) );
-
-  test_dist =
-    Utility::fromString<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> >( "{evaporation, 3.0, 2.0, 1.0, 10.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
-
-  test_dist =
-    Utility::fromString<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> >( Utility::toString(*distribution) );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( EvaporationDistribution, fromStream )
-{
-  std::istringstream iss( "{Evaporation Distribution}" );
-  
-  Utility::EvaporationDistribution test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution() );
-
-  iss.str( "{Evaporation Distribution, 3.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0 ) );
-
-  iss.str( "{evaporation distribution, 3.0, 2.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  iss.str( "{Evaporation, 3.0, 2.0, 1.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  iss.str( "{evaporation, 3.0, 2.0, 1.0, 10.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  iss.str( Utility::toString(*distribution) );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::EvaporationDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, fromStream )
-{
-  std::istringstream iss( "{Evaporation Distribution}" );
-  
-  Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>()) );
-
-  iss.str( "{Evaporation Distribution, 3.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV )) );
-
-  iss.str( "{evaporation distribution, 3.0, 2.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV )) );
-
-  iss.str( "{Evaporation, 3.0, 2.0, 1.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV )) );
-
-  iss.str( "{evaporation, 3.0, 2.0, 1.0, 10.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
-
-  iss.str( Utility::toString(*unit_aware_distribution) );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( EvaporationDistribution, istream_operator )
-{
-  std::istringstream iss( "{Evaporation Distribution}" );
-  
-  Utility::EvaporationDistribution test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution() );
-
-  iss.str( "{Evaporation Distribution, 3.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0 ) );
-
-  iss.str( "{evaporation distribution, 3.0, 2.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  iss.str( "{Evaporation, 3.0, 2.0, 1.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  iss.str( "{evaporation, 3.0, 2.0, 1.0, 10.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  iss.str( Utility::toString(*distribution) );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::EvaporationDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, istream_operator )
-{
-  std::istringstream iss( "{Evaporation Distribution}" );
-  
-  Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>()) );
-
-  iss.str( "{Evaporation Distribution, 3.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV )) );
-
-  iss.str( "{evaporation distribution, 3.0, 2.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV )) );
-
-  iss.str( "{Evaporation, 3.0, 2.0, 1.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV )) );
-
-  iss.str( "{evaporation, 3.0, 2.0, 1.0, 10.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
-
-  iss.str( Utility::toString(*unit_aware_distribution) );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree
-FRENSIE_UNIT_TEST( EvaporationDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::EvaporationDistribution() );
-
-  Utility::EvaporationDistribution copy_dist =
-    ptree.get<Utility::EvaporationDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution() );
-
-  ptree.put( "test distribution", Utility::EvaporationDistribution( 3.0 ) );
-
-  copy_dist = ptree.get<Utility::EvaporationDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0 ) );
-
-  ptree.put( "test distribution", Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  copy_dist = ptree.get<Utility::EvaporationDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  ptree.put( "test distribution", Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  copy_dist = ptree.get<Utility::EvaporationDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  ptree.put( "test distribution", Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  copy_dist = ptree.get<Utility::EvaporationDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  ptree.put( "test distribution", *distribution );
-
-  copy_dist = ptree.get<Utility::EvaporationDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EvaporationDistribution*>( distribution.get() ) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::EvaporationDistribution().toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution() );
-
-  ptree = Utility::EvaporationDistribution().toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::EvaporationDistribution( 3.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0 ) );
-
-  ptree = Utility::EvaporationDistribution( 3.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::EvaporationDistribution( 3.0, 2.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0, 2.0 ) );
-
-  ptree = Utility::EvaporationDistribution( 3.0, 2.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ) );
-
-  ptree = Utility::EvaporationDistribution( 3.0, 2.0, 1.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
-
-  ptree = Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 10.0 );
-
-  ptree = distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EvaporationDistribution*>( distribution.get() ) );
-
-  ptree = distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.1 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::EvaporationDistribution(), true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::EvaporationDistribution() );
-
-  ptree = Utility::toPropertyTree( Utility::EvaporationDistribution(), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( *distribution, true );
-
-  copy_dist = ptree.get_value<Utility::EvaporationDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EvaporationDistribution*>( distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.1 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( *distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.1 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-  
-  ptree.put( "test distribution", Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>() );
-
-  Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> copy_dist =
-    ptree.get<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>()) );
-
-  ptree.put( "test distribution", (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV )) );
-
-  copy_dist = ptree.get<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV )) );
-
-  ptree.put( "test distribution", (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV )) );
-
-  copy_dist = ptree.get<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV )) );
-
-  ptree.put( "test distribution", (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV )) );
-
-  copy_dist = ptree.get<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV )) );
-
-  ptree.put( "test distribution", (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
-
-  copy_dist = ptree.get<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
-
-  ptree.put( "test distribution", *distribution );
-
-  copy_dist = ptree.get<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>().toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>()) );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>().toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV )) );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV )) );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV )) );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
-
-  ptree = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 10.0 );
-
-  ptree = unit_aware_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = unit_aware_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.1 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>(), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>()) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>(), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.1 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Evaporation Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "nuclear temperature" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.1 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( EvaporationDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{                                                                     
-  FETCH_FROM_TABLE( std::string, dist_name );                           
-  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
-  FETCH_FROM_TABLE( Utility::EvaporationDistribution, expected_dist );     
-                                                   
-  Utility::EvaporationDistribution dist;                         
-  std::vector<std::string> unused_children;        
-                                                        
-  /* Use the PropertyTreeCompatibleObject interface */  
-  if( valid_dist_rep )                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) ); 
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-                                                                        
-    unused_children.clear();                                            
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ), 
-                         Utility::PropertyTreeConversionException );    
-  }                                                                     
-                                                                        
-  /* Use the property tree helper methods */                            
-  if( valid_dist_rep )                                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW(                                             
-            dist = Utility::fromPropertyTree<Utility::EvaporationDistribution>(
-                                    test_dists_ptree->get_child( dist_name ), 
-                                    unused_children ) );                
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW(
-                 Utility::fromPropertyTree<Utility::EvaporationDistribution>(
-                                  test_dists_ptree->get_child( dist_name ) ), 
-                 Utility::PropertyTreeConversionException );    
-  }                                                                     
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareEvaporationDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )  
-{
-  typedef Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );                           
-  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
-  FETCH_FROM_TABLE( DistributionType, expected_dist );     
-                                                   
-  DistributionType dist;                         
-  std::vector<std::string> unused_children;        
-                                                        
-  /* Use the PropertyTreeCompatibleObject interface */  
-  if( valid_dist_rep )                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) ); 
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-                                                                        
-    unused_children.clear();                                            
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ), 
-                         Utility::PropertyTreeConversionException );    
-  }                                                                     
-                                                                        
-  /* Use the property tree helper methods */                            
-  if( valid_dist_rep )                                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                    test_dists_ptree->get_child( dist_name ), 
-                                    unused_children ) );                
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                  test_dists_ptree->get_child( dist_name ) ), 
-                         Utility::PropertyTreeConversionException );    
-  }                                                                     
+  oss << *unit_aware_distribution;
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Evaporation Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV );
+  FRENSIE_CHECK_EQUAL( dist_data["nuclear temp"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       0.1*MeV );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1719,24 +914,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareEvaporationDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
- 
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS() 
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
-              "Test distributions xml file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-  
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
