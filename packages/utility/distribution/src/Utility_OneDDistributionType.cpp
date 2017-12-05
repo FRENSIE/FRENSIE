@@ -35,7 +35,7 @@ void ToStringTraits<OneDDistributionType>::toStream(
   {
   case DELTA_DISTRIBUTION: os << "Delta Distribution"; return;
   case DISCRETE_DISTRIBUTION: os << "Discrete Distribution"; return;
-  case EQUIPROBABLE_BIN_DISTRIBUTION: os << "Equiprobabl Bin Distribution"; return;
+  case EQUIPROBABLE_BIN_DISTRIBUTION: os << "Equiprobable Bin Distribution"; return;
   case EVAPORATION_DISTRIBUTION: os << "Evaporation Distribution"; return;
   case EXPONENTIAL_DISTRIBUTION: os << "Exponential Distribution"; return;
   case HISTOGRAM_DISTRIBUTION: os << "Histogram Distribution"; return;

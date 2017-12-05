@@ -64,8 +64,6 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> distribution;
 std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
 
@@ -73,37 +71,6 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> 
   unit_aware_distribution;
 std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_distribution;
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::EquiprobableBinDistribution dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_lcase_type" ) << "Distribution A" << true << no_unused_children << Utility::EquiprobableBinDistribution( {0.0, pi, 2*pi} );
-  NEW_ROW( "inline_ucase_type" ) << "Distribution B" << true << no_unused_children << Utility::EquiprobableBinDistribution( Utility::fromString<std::vector<double> >( "{-1.0, 31i, 1.0}" ) );
-  NEW_ROW( "inline_bad_type" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  
-  NEW_ROW( "inline_boundaries" ) << "Distribution C" << true << no_unused_children << Utility::EquiprobableBinDistribution( {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0} );
-  NEW_ROW( "json_boundaries" ) << "Distribution D" << true << no_unused_children << Utility::EquiprobableBinDistribution( {0.0, pi/4, pi/2, 3*pi/4, pi} );
-  NEW_ROW( "extra_args" ) << "Distribution E" << true << std::vector<std::string>( {"dummy"} ) << Utility::EquiprobableBinDistribution( Utility::fromString<std::vector<double> >( "{0.001, 100l, 20.0}" ) );
-  NEW_ROW( "bad_type" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "empty_boundaries" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "single_boundary" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_boundaries" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "repeated_boundary" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_inf_boundary" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "pos_inf_boundary" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -2035,31 +2002,6 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution type name can be returned
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( Utility::EquiprobableBinDistribution::typeName( true, false, " " ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::EquiprobableBinDistribution::typeName( false ),
-                       "Equiprobable" );
-  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::EquiprobableBinDistribution>(),
-                       "EquiprobableBinDistribution" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution type name can be returned
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
-                   getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::typeName( true, false, " " )),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>::typeName( false )),
-                       "Equiprobable" );
-  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> >()),
-                       std::string("UnitAwareEquiprobableBinDistribution<")+Utility::typeName<MegaElectronVolt>()+","+Utility::typeName<si::amount>()+">" );
-}
-
-//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 FRENSIE_UNIT_TEST( EquiprobableBinDistribution, isTabular )
 {
@@ -2140,83 +2082,50 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can converted to a string
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
-
-  dist_string = Utility::toString( *tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be converted to a stream
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-
-  dist_string = Utility::toString( *unit_aware_tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be placed in a stream
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, *distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *unit_aware_tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
 FRENSIE_UNIT_TEST( EquiprobableBinDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
+  oss << Utility::EquiprobableBinDistribution();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Equiprobable Bin Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<double> >(),
+                       std::vector<double>({0.0, 1.0}) );
+
+  oss.str( "" );
+  oss.clear();
+
   oss << *distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Equiprobable Bin Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<double> >(),
+                       std::vector<double>({-16.0, -15.0, -14.0, -13.0, -12.0, -11.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -0.5, 0.0, 0.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0}) );
 
   oss.str( "" );
   oss.clear();
 
   oss << *tab_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {-1.600000000000000000e+01, -1.500000000000000000e+01, -1.400000000000000000e+01, -1.300000000000000000e+01, -1.200000000000000000e+01, -1.100000000000000000e+01, -1.000000000000000000e+01, -9.000000000000000000e+00, -8.000000000000000000e+00, -7.000000000000000000e+00, -6.000000000000000000e+00, -5.000000000000000000e+00, -4.000000000000000000e+00, -3.000000000000000000e+00, -2.000000000000000000e+00, -5.000000000000000000e-01, 0.000000000000000000e+00, 5.000000000000000000e-01, 2.000000000000000000e+00, 3.000000000000000000e+00, 4.000000000000000000e+00, 5.000000000000000000e+00, 6.000000000000000000e+00, 7.000000000000000000e+00, 8.000000000000000000e+00, 9.000000000000000000e+00, 1.000000000000000000e+01, 1.100000000000000000e+01, 1.200000000000000000e+01, 1.300000000000000000e+01, 1.400000000000000000e+01, 1.500000000000000000e+01, 1.600000000000000000e+01}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Equiprobable Bin Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<double> >(),
+                       std::vector<double>({-16.0, -15.0, -14.0, -13.0, -12.0, -11.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -0.5, 0.0, 0.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0}) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2225,433 +2134,51 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
+  oss << Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Equiprobable Bin Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({0.0*MeV, 1.0*MeV}) );
+
+  oss.str( "" );
+  oss.clear();
+
   oss << *unit_aware_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Equiprobable Bin Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({0.0*MeV, 0.1*MeV, 1.0*MeV, 5.0*MeV, 10.0*MeV}) );
 
   oss.str( "" );
   oss.clear();
 
   oss << *unit_aware_tab_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-}
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
 
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a string
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, fromString )
-{
-  Utility::EquiprobableBinDistribution test_dist =
-    Utility::fromString<Utility::EquiprobableBinDistribution>( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
-
-  FRENSIE_CHECK_THROW( Utility::fromString<Utility::EquiprobableBinDistribution>( "{Dummy Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" ),
-              Utility::StringConversionException );
-
-  FRENSIE_CHECK_THROW( Utility::fromString<Utility::EquiprobableBinDistribution>( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0r2, 0.5, 2.0, 13i, 16.0}}" ),
-              Utility::StringConversionException );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromString )
-{
-  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> test_dist =
-    Utility::fromString<decltype(test_dist)>( "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_distribution.get() ) );
-
-  FRENSIE_CHECK_THROW( Utility::fromString<decltype(test_dist)>( "{Dummy Distribution, {0.0, 3i, 10.0}}" ),
-              Utility::StringConversionException );
-
-  FRENSIE_CHECK_THROW( Utility::fromString<Utility::EquiprobableBinDistribution>( "{Equiprobable Bin Distribution, {0.0, 1.0r3, 10.0}}" ),
-              Utility::StringConversionException );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, fromStream )
-{
-  std::istringstream iss( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
-  
-  Utility::EquiprobableBinDistribution test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
-
-  iss.str( "{Dummy Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
-  iss.clear();
-
-  FRENSIE_CHECK_THROW( Utility::fromStream( iss, test_dist ),
-              Utility::StringConversionException );
-
-  iss.str( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0r2, 0.5, 2.0, 13i, 16.0}}" );
-  iss.clear();
-
-  FRENSIE_CHECK_THROW( Utility::fromStream( iss, test_dist ),
-              Utility::StringConversionException );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromStream )
-{
-  std::istringstream iss( "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-  
-  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_distribution.get() ) );
-
-  iss.str( "{Dummy Distribution, {0.0, 3i, 10.0}}" );
-  iss.clear();
-
-  FRENSIE_CHECK_THROW( Utility::fromStream( iss, test_dist ),
-              Utility::StringConversionException );
-
-  iss.str( "{Equiprobable Bin Distribution, {0.0, 1.0r3, 10.0}}" );
-  iss.clear();
-  
-  FRENSIE_CHECK_THROW( Utility::fromStream( iss, test_dist ),
-              Utility::StringConversionException );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, istream_operator )
-{
-  std::istringstream iss( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
-  
-  Utility::EquiprobableBinDistribution test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
-
-  iss.str( "{Dummy Distribution, {-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}}" );
-  iss.clear();
-
-  FRENSIE_CHECK_THROW( iss >> test_dist, Utility::StringConversionException );
-
-  iss.str( "{Equiprobable Bin Distribution, {-16.0, 13i, -2.0, -0.5, 0.0r2, 0.5, 2.0, 13i, 16.0}}" );
-  iss.clear();
-
-  FRENSIE_CHECK_THROW( iss >> test_dist, Utility::StringConversionException );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, istream_operator )
-{
-  std::istringstream iss( "{Equiprobable Bin Distribution, {0.000000000000000000e+00, 1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+01}}" );
-  
-  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_distribution.get() ) );
-
-  iss.str( "{Dummy Distribution, {0.0, 3i, 10.0}}" );
-  iss.clear();
-
-  FRENSIE_CHECK_THROW( iss >> test_dist, Utility::StringConversionException );
-
-  iss.str( "{Equiprobable Bin Distribution, {0.0, 1.0r3, 10.0}}" );
-  iss.clear();
-  
-  FRENSIE_CHECK_THROW( iss >> test_dist, Utility::StringConversionException );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *distribution );
-
-  Utility::EquiprobableBinDistribution copy_dist =
-    ptree.get<Utility::EquiprobableBinDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
-
-  ptree.put( "test distribution", *tab_distribution );
-
-  copy_dist = ptree.get<Utility::EquiprobableBinDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( tab_distribution.get() ) );
-
-  ptree.clear();
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::EquiprobableBinDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
-
-  ptree = distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
                        "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
-
-  ptree = distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( *distribution, true );
-
-  copy_dist = ptree.get_value<Utility::EquiprobableBinDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *tab_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::EquiprobableBinDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::EquiprobableBinDistribution*>( distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
-
-  ptree = Utility::toPropertyTree( *tab_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
-
-  ptree = Utility::toPropertyTree( *distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
-
-  ptree = Utility::toPropertyTree( *tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           Utility::fromString<std::vector<double> >( "{-16.0, 13i, -2.0, -0.5, 0.0, 0.5, 2.0, 13i, 16.0}" ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *unit_aware_distribution );
-
-  Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>
-    copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_distribution.get() ) );
-
-  ptree.put( "test distribution", *unit_aware_tab_distribution );
-
-  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_distribution.get() ) );
-
-  ptree.clear();
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = unit_aware_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<decltype(copy_dist)>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_distribution.get() ) );
-
-  ptree = unit_aware_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
-
-  ptree = unit_aware_distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
-
-  // Use the property tree helper methds
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
-
-  copy_dist = ptree.get_value<decltype(copy_dist)>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 2 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ),
-                       "Equiprobable Bin Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                       std::vector<double>({0.0, 0.1, 1.0, 5.0, 10.0}) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( EquiprobableBinDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::EquiprobableBinDistribution dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::EquiprobableBinDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-             dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-             Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::EquiprobableBinDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-        dist = Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-               Utility::fromPropertyTree<Utility::EquiprobableBinDistribution>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-               Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({0.0*MeV, 0.1*MeV, 1.0*MeV, 5.0*MeV, 10.0*MeV}) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2979,24 +2506,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareEquiprobableBinDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value( "" ),
-              "Test distributions json file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-
   // Initialize the distribution
   std::vector<double> bin_boundaries( 33 );
 

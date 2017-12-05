@@ -7,8 +7,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(DiscreteDistribution DEPENDS tstDiscreteDistribution
 FRENSIE_ADD_TEST(DiscreteDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(EquiprobableBinDistribution DEPENDS tstEquiprobableBinDistribution.cpp)
-FRENSIE_ADD_TEST(EquiprobableBinDistribution
-  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_equiprobable_bin_distributions.json)
+FRENSIE_ADD_TEST(EquiprobableBinDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(EvaporationDistribution DEPENDS tstEvaporationDistribution.cpp)
 FRENSIE_ADD_TEST(EvaporationDistribution
