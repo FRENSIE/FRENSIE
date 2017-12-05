@@ -406,7 +406,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::toStream( std
   this->reconstructOriginalDistribution(independent_values, dependent_values);
 
   this->toStreamDistImpl( os,
-                          std::make_pair( "indepedent values", independent_values ),
+                          std::make_pair( "independent values", independent_values ),
                           std::make_pair( "dependent values", dependent_values ) );
 }
 

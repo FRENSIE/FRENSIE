@@ -66,8 +66,6 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> distribution;
 std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
 std::shared_ptr<Utility::OneDDistribution> cdf_cons_distribution;
@@ -84,60 +82,6 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_cdf_cons_distribution;
 std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_cdf_cons_distribution;
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  /* The data table will always use the basic distribution since they are */
-  /* serialized the same in the table */
-  Utility::DiscreteDistribution dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_full_ucase_type" ) << "Distribution A" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} );
-  NEW_ROW( "inline_full_lcase_type" ) << "Distribution B" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "inline_short_ucase_type" ) << "Distribution C" << true << no_unused_children << Utility::DiscreteDistribution( {-1.0, 0.0, 1.0}, {1.0, 2.0, 1.0} );
-  NEW_ROW( "inline_short_lcase_type" ) << "Distribution D" << true << no_unused_children << Utility::DiscreteDistribution( {-pi/2, 0.0, pi/2, pi}, {0.25, 0.5, 0.75, 1.0}, true );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_indep_vals" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_indep_vals" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_start_indep_val" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_end_indep_val" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_dep_vals" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_dep_val" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_dep_val" ) << "Distribution N" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_dep_val" ) << "Distribution O" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_cdf_vals" ) << "Distribution P" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_repeated_cdf_vals" ) << "Distribution Q" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "full_ucase_type" ) << "Distribution R" << true << no_unused_children << Utility::DiscreteDistribution( {0.1, 1.0, 10.0}, {2.0, 6.0, 2.0} );
-  NEW_ROW( "full_lcase_type" ) << "Distribution S" << true << std::vector<std::string>( {"dummy"} ) << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "short_ucase_type" ) << "Distribution T" << true << no_unused_children << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "short_lcase_name" ) << "Distribution U" << true << no_unused_children << Utility::DiscreteDistribution( {pi/2, 5*pi/8, 3*pi/4, 7*pi/8, pi}, {1.0, 1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "repeated_keys" ) << "Distribution V" << true << std::vector<std::string>( {"independent values", "dependent values", "cdf"} ) << Utility::DiscreteDistribution( {0.0, 1.0, 2.0, 3.0, 4.0}, {0.2, 0.4, 0.6, 0.8, 1.0}, true );
-  NEW_ROW( "bad_type" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "0_args" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "no_dep_vals" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "no_indep_vals" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_indep_vals" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_indep_vals" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_start_idep_val" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_end_indep_val" ) << "Distribution AD" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_dep_vals" ) << "Distribution AE" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_dep_val" ) << "Distribution AF" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_dep_val" ) << "Distribution AG" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_dep_val" ) << "Distribution AH" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_cdf_vals" ) << "Distribution AI" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "repeated_cdf_vals" ) << "Distribution AJ" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -1475,31 +1419,6 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution type name can be returned
-FRENSIE_UNIT_TEST( DiscreteDistribution, getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::typeName( true, false, " " ),
-                       "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::DiscreteDistribution::typeName( false ),
-                       "Discrete" );
-  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::DiscreteDistribution>(),
-                       "DiscreteDistribution" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution type name can be returned
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution,
-                   getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::typeName( true, false, " " )),
-                       "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>::typeName( false )),
-                       "Discrete" );
-  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >()),
-                       std::string("UnitAwareDiscreteDistribution<")+Utility::typeName<ElectronVolt>()+","+Utility::typeName<si::amount>()+">" );
-}
-
-//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 FRENSIE_UNIT_TEST( DiscreteDistribution, isTabular )
 {
@@ -1548,101 +1467,66 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be converted to a string
-FRENSIE_UNIT_TEST( DiscreteDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  dist_string = Utility::toString( *cdf_cons_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
-
-  dist_string = Utility::toString( *repeat_vals_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distributio can be converted to a string
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
-
-  dist_string = Utility::toString( *unit_aware_cdf_cons_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be placed in a stream
-FRENSIE_UNIT_TEST( DiscreteDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, *distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *cdf_cons_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *repeat_vals_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *unit_aware_cdf_cons_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
 FRENSIE_UNIT_TEST( DiscreteDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
+  oss << Utility::DiscreteDistribution();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(), "Discrete Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<double> >(),
+                       std::vector<double>({0.0}) );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0}) );
+
+  oss.str( "" );
+  oss.clear();
+
   oss << *distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(), "Discrete Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<double> >(),
+                       std::vector<double>({-1.0, 0.0, 1.0}) );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0, 2.0, 1.0}) );
 
   oss.str( "" );
   oss.clear();
 
   oss << *cdf_cons_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(), "Discrete Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<double> >(),
+                       std::vector<double>({-1.0, 0.0, 1.0}) );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<double> >(),
+                       std::vector<double>({0.25, 0.5, 0.25}) );
 
   oss.str( "" );
   oss.clear();
 
   oss << *repeat_vals_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(), "Discrete Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<double> >(),
+                       std::vector<double>({-1.0, 0.0, 1.0}) );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<double> >(),
+                       std::vector<double>({0.25, 0.5, 0.25}) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1651,421 +1535,54 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
+  oss << Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(), "Discrete Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<quantity<ElectronVolt> > >(),
+                       std::vector<quantity<ElectronVolt> >({0.0*eV}) );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<quantity<si::amount> > >(),
+                       std::vector<quantity<si::amount> >({1.0*si::mole}) );
+
+  oss.str( "" );
+  oss.clear();
+  
   oss << *unit_aware_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(), "Discrete Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<quantity<ElectronVolt> > >(),
+                       std::vector<quantity<ElectronVolt> >({0.1*eV, 1.0*eV, 5.0*eV, 1000*eV}) );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_data["dependent values"].toType<std::vector<quantity<si::amount> > >(),
+                                   std::vector<quantity<si::amount> >({0.25*si::mole, 1.0*si::mole, 2.7*si::mole, 0.05*si::mole}),
+                                   1e-14 );
 
   oss.str( "" );
   oss.clear();
 
   oss << *unit_aware_cdf_cons_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a string
-FRENSIE_UNIT_TEST( DiscreteDistribution, fromString )
-{
-  Utility::DiscreteDistribution test_dist =
-    Utility::fromString<Utility::DiscreteDistribution>( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-
-  test_dist = Utility::fromString<Utility::DiscreteDistribution>( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( cdf_cons_distribution.get() ) );
-
-  test_dist = Utility::fromString<Utility::DiscreteDistribution>( "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( repeat_vals_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, fromString )
-{
-  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> test_dist;
-
-  test_dist = Utility::fromString<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_cdf_cons_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( DiscreteDistribution, fromStream )
-{
-  std::istringstream iss( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  Utility::DiscreteDistribution test_dist;
-  
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-
-  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
-  iss.clear();
-  
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( cdf_cons_distribution.get() ) );
-
-  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( repeat_vals_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, fromStream )
-{
-  std::istringstream iss( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
-  
-  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  iss.str( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_cdf_cons_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( DiscreteDistribution, istream_operator )
-{
-  std::istringstream iss( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {1.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  Utility::DiscreteDistribution test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-
-  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 5.000000000000000000e-01, 2.500000000000000000e-01}}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( cdf_cons_distribution.get() ) );
-
-  iss.str( "{Discrete Distribution, {-1.000000000000000000e+00, -1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}, {2.500000000000000000e-01, 7.500000000000000000e-01, 2.000000000000000000e+00, 7.500000000000000000e-01, 2.500000000000000000e-01}}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::DiscreteDistribution*>( repeat_vals_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, istream_operator )
-{
-  std::istringstream iss( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {2.500000000000000000e-01, 1.000000000000000000e+00, 2.700000000000000178e+00, 4.999999999999982236e-02}}" );
-  
-  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  iss.str( "{Discrete Distribution, {1.000000000000000056e-01, 1.000000000000000000e+00, 5.000000000000000000e+00, 1.000000000000000000e+03}, {6.250000000000000000e-02, 2.500000000000000000e-01, 6.750000000000000444e-01, 1.249999999999995559e-02}}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_cdf_cons_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree
-FRENSIE_UNIT_TEST( DiscreteDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *distribution );
-
-  Utility::DiscreteDistribution copy_dist =
-    ptree.get<Utility::DiscreteDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-
-  ptree.put( "test distribution", *tab_distribution );
-
-  copy_dist = ptree.get<Utility::DiscreteDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( tab_distribution.get() ) );
-
-  ptree.clear();
-  
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::DiscreteDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-
-  ptree = distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
-
-  ptree = distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( *distribution, true );
-
-  copy_dist = ptree.get_value<Utility::DiscreteDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *tab_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::DiscreteDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::DiscreteDistribution*>( distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
-
-  ptree = Utility::toPropertyTree( *tab_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
-
-  ptree = Utility::toPropertyTree( *distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
-
-  ptree = Utility::toPropertyTree( *tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({-1.0, 0.0, 1.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({1.0, 2.0, 1.0}) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *unit_aware_distribution );
-
-  Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> copy_dist =
-    ptree.get<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree.put( "test distribution", *unit_aware_tab_distribution );
-
-  copy_dist = ptree.get<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_tab_distribution.get() )) );
-
-  ptree.clear();
-  
-  // Use the PropertTreeCompatibleObject interface
-  ptree = unit_aware_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = unit_aware_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
-
-  ptree = unit_aware_distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
-
-  // Use the PropertyTree helper methods
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Discrete Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ), std::vector<double>({0.1, 1.0, 5.0, 1000.0}) );
-  FRENSIE_CHECK_FLOATING_EQUALITY( ptree.get<std::vector<double> >( "dependent values" ), std::vector<double>({0.25, 1.0, 2.7, 0.05}), 1e-14 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( DiscreteDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::DiscreteDistribution dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::DiscreteDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::DiscreteDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-               dist = Utility::fromPropertyTree<Utility::DiscreteDistribution>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-                      Utility::fromPropertyTree<Utility::DiscreteDistribution>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-                      Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareDiscreteDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(), "Discrete Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<ElectronVolt>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<quantity<ElectronVolt> > >(),
+                       std::vector<quantity<ElectronVolt> >({0.1*eV, 1.0*eV, 5.0*eV, 1000*eV}) );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_data["dependent values"].toType<std::vector<quantity<si::amount> > >(),
+                                   std::vector<quantity<si::amount> >({0.25*si::mole, 1.0*si::mole, 2.7*si::mole, 0.05*si::mole}),
+                                   1e-14 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2304,24 +1821,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareDiscreteDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS() 
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value( "" ),
-              "Test distributions json file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-
   // Create a distribution using the standard constructor
   std::vector<double> independent_values( 3 );
   independent_values[0] = -1.0;
