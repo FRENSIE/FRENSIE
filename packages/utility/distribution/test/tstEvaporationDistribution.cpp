@@ -80,9 +80,9 @@ FRENSIE_UNIT_TEST( EvaporationDistribution, evaluate )
   double test_value_1 = 0.0 ;
   double test_value_2 = 0.9*exp( -0.9 );
 
-  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0 ), test_value_1 );
-  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.9 ), test_value_2 );
-  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0 ), test_value_1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0 ), test_value_1, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.9 ), test_value_2, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0 ), test_value_1, SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//

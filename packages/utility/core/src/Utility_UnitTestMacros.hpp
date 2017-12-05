@@ -13,6 +13,10 @@
 #include <iostream>
 #include <string>
 
+// Boost Includes
+#include <boost/preprocessor/control.hpp>
+#include <boost/preprocessor/variadic.hpp>
+
 // FRENSIE Includes
 #include "Utility_UnitTest.hpp"
 #include "Utility_DataUnitTest.hpp"
@@ -241,17 +245,66 @@
   else                                                                \
   {                                                                 \
     ++__NUMBER_OF_PASSED_CHECKS__;                                  \
-  }                                                                 
+  }
 
-#define __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, RETURN_ON_FAILURE ) \
+#define __CREATE_LOCAL_INPUT_COPY__( input, processed_input )   \
+  auto processed_input = std::forward<decltype(input)>( input )
+
+#define __CONVERT_INPUT_TO_LVALUE_REFERENCE__( input, processed_input )    \
+  typename std::add_const<typename std::add_lvalue_reference<decltype(input)>::type>::type processed_input = input
+
+#define __DEFAULT_INPUT_PROCESSOR__( lhs, rhs )
+
+#define __DEFAULT_INPUT_PROCESSOR____LHS_VAR__( lhs ) lhs
+#define __DEFAULT_INPUT_PROCESSOR____RHS_VAR__( rhs ) rhs
+
+#define SHOW_LHS( lhs, rhs )                                            \
+  __CREATE_LOCAL_INPUT_COPY__( lhs, lhs_copy )
+
+#define SHOW_LHS__LHS_VAR__( lhs ) lhs_copy
+#define SHOW_LHS__RHS_VAR__( rhs ) rhs
+
+#define SHOW_RHS( lhs, rhs )                    \
+  __CREATE_LOCAL_INPUT_COPY__( rhs, rhs_copy )
+
+#define SHOW_RHS__LHS_VAR__( lhs ) lhs
+#define SHOW_RHS__RHS_VAR__( rhs ) rhs_copy 
+
+#define SHOW_BOTH( lhs, rhs )                  \
+  __CREATE_LOCAL_INPUT_COPY__( lhs, lhs_copy ); \
+  __CREATE_LOCAL_INPUT_COPY__( rhs, rhs_copy )
+
+#define SHOW_BOTH__LHS_VAR__( lhs ) lhs_copy
+#define SHOW_BOTH__RHS_VAR__( rhs ) rhs_copy 
+
+#define __EVALUATE_INPUT_PROCESSOR__( lhs, rhs, ... )                        \
+  BOOST_PP_IF( BOOST_PP_EQUAL(1,BOOST_PP_VARIADIC_SIZE(dummy, ##__VA_ARGS__)),\
+               __DEFAULT_INPUT_PROCESSOR__,                             \
+               __VA_ARGS__ )( lhs, rhs )
+
+#define __GET_PROCESSED_LHS__( lhs, ... )       \
+  BOOST_PP_IF( BOOST_PP_EQUAL(1,BOOST_PP_VARIADIC_SIZE(dummy, ##__VA_ARGS__)),\
+               __DEFAULT_INPUT_PROCESSOR____LHS_VAR__,                  \
+               __VA_ARGS__##__LHS_VAR__ )( lhs )
+
+#define __GET_PROCESSED_RHS__( rhs, ... )       \
+  BOOST_PP_IF( BOOST_PP_EQUAL(1,BOOST_PP_VARIADIC_SIZE(dummy, ##__VA_ARGS__)),\
+               __DEFAULT_INPUT_PROCESSOR____RHS_VAR__,                  \
+               __VA_ARGS__##__RHS_VAR__ )( rhs )
+
+#define __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, RETURN_ON_FAILURE, ... ) \
   {                                                                     \
     ++__NUMBER_OF_CHECKS__;                                             \
     FRENSIE_CHECKPOINT();                                               \
                                                                         \
     Utility::reportCheckType<INDENT>( RETURN_ON_FAILURE, log );         \
                                                                         \
+    __EVALUATE_INPUT_PROCESSOR__( lhs, rhs, ##__VA_ARGS__ );              \
+                                                                        \
     const bool local_result =                                           \
-      Utility::compare<ComparePolicy,0,Utility::Details::incrementRightShift(INDENT)>( lhs, #lhs, rhs, #rhs, log, extra_data, true ); \
+      Utility::compare<ComparePolicy,0,Utility::Details::incrementRightShift(INDENT)>( __GET_PROCESSED_LHS__( lhs, ##__VA_ARGS__ ), #lhs, \
+                                                                                       __GET_PROCESSED_RHS__( rhs, ##__VA_ARGS__ ), #rhs, \
+                                                                                       log, extra_data, true ); \
                                                                         \
     Utility::logExtraCheckDetails<Utility::Details::incrementRightShift(INDENT)>( local_result, __FILE__, __LINE__, log ); \
                                                                         \
@@ -344,77 +397,77 @@
     __FRENSIE_PROCESS_LOCAL_TEST_RESULT__( local_result, test_success, RETURN_ON_FAILURE ); \
   }
 
-#define __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (typename Utility::ComparisonTraits<typename std::common_type<typename std::decay<decltype(lhs)>::type,typename std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, false )
+#define __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, log, test_success, ... ) \
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (typename Utility::ComparisonTraits<typename std::common_type<typename std::decay<decltype(lhs)>::type,typename std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, false, ##__VA_ARGS__ )
 
-#define __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( ComparePolicy, lhs, rhs, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (typename Utility::ComparisonTraits<typename std::common_type<typename std::decay<decltype(lhs)>::type,typename std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, true )
+#define __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( ComparePolicy, lhs, rhs, log, test_success, ... ) \
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, (typename Utility::ComparisonTraits<typename std::common_type<typename std::decay<decltype(lhs)>::type,typename std::decay<decltype(rhs)>::type>::type>::ExtraDataType()), log, test_success, true, ##__VA_ARGS__ )
 
-#define __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, extra_data, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, false )
+#define __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( ComparePolicy, lhs, rhs, extra_data, log, test_success, ... ) \
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, false, ##__VA_ARGS__ )
 
-#define __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( ComparePolicy, lhs, rhs, extra_data, log, test_success ) \
-  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, true )
+#define __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( ComparePolicy, lhs, rhs, extra_data, log, test_success, ... ) \
+  __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, true, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK( statement )              \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success )
+#define FRENSIE_CHECK( statement, ... )                                     \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE( statement )            \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success )
+#define FRENSIE_REQUIRE( statement, ... )                                   \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_EQUAL( lhs, rhs )         \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::EqualityComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_CHECK_EQUAL( lhs, rhs, ... )                                \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::EqualityComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_EQUAL( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::EqualityComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_REQUIRE_EQUAL( lhs, rhs, ... )                              \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::EqualityComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_DIFFERENT( lhs, rhs )     \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::InequalityComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_CHECK_DIFFERENT( lhs, rhs, ... )                            \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::InequalityComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_DIFFERENT( lhs, rhs )   \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::InequalityComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_REQUIRE_DIFFERENT( lhs, rhs, ... )                          \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::InequalityComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_GREATER( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::GreaterThanComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_CHECK_GREATER( lhs, rhs, ... )                              \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::GreaterThanComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_GREATER( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::GreaterThanComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_REQUIRE_GREATER( lhs, rhs, ... )                            \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::GreaterThanComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_GREATER_OR_EQUAL( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::GreaterThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_CHECK_GREATER_OR_EQUAL( lhs, rhs, ... )                     \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::GreaterThanOrEqualToComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_GREATER_OR_EQUAL( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::GreaterThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_REQUIRE_GREATER_OR_EQUAL( lhs, rhs, ... )                   \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::GreaterThanOrEqualToComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_LESS( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::LessThanComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_CHECK_LESS( lhs, rhs, ... )                                 \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::LessThanComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_LESS( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::LessThanComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_REQUIRE_LESS( lhs, rhs, ... )                               \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::LessThanComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_LESS_OR_EQUAL( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::LessThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_CHECK_LESS_OR_EQUAL( lhs, rhs, ... )                        \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::LessThanOrEqualToComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_LESS_OR_EQUAL( lhs, rhs )       \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::LessThanOrEqualToComparisonPolicy, lhs, rhs, log, success )
+#define FRENSIE_REQUIRE_LESS_OR_EQUAL( lhs, rhs, ... )                      \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::LessThanOrEqualToComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_CLOSE( lhs, rhs, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success )
+#define FRENSIE_CHECK_CLOSE( lhs, rhs, tol, ... )                           \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_CLOSE( lhs, rhs, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success )
+#define FRENSIE_REQUIRE_CLOSE( lhs, rhs, tol, ... )                         \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, lhs, rhs, tol, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_SMALL( value, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::CloseComparisonPolicy, value, Utility::Details::zero(value), tol, log, success )
+#define FRENSIE_CHECK_SMALL( value, tol, ... )                              \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::CloseComparisonPolicy, value, Utility::Details::zero(value), tol, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_SMALL( value, tol )    \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, value, Utility::Details::zero(value), tol, log, success )
+#define FRENSIE_REQUIRE_SMALL( value, tol, ... )                            \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::CloseComparisonPolicy, value, Utility::Details::zero(value), tol, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK_FLOATING_EQUALITY( lhs, rhs, tol ) \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success )
+#define FRENSIE_CHECK_FLOATING_EQUALITY( lhs, rhs, tol, ... )               \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success, ##__VA_ARGS__ )
 
-#define FRENSIE_REQUIRE_FLOATING_EQUALITY( lhs, rhs, tol ) \
-  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success )
+#define FRENSIE_REQUIRE_FLOATING_EQUALITY( lhs, rhs, tol, ... )             \
+  __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( Utility::RelativeErrorComparisonPolicy, lhs, rhs, tol, log, success, ##__VA_ARGS__ )
 
 #define FRENSIE_CHECK_NO_THROW( statement )     \
   __FRENSIE_CHECK_NO_THROW_WITH_OPTIONAL_RETURN__( statement, log, success, false )
