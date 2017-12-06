@@ -64,8 +64,6 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> pdf_distribution;
 std::shared_ptr<Utility::TabularOneDDistribution> tab_pdf_distribution;
 
@@ -82,51 +80,6 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> 
   unit_aware_cdf_distribution;
 std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_cdf_distribution;
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::HistogramDistribution dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_2_args" ) << "Distribution A" << true << no_unused_children << Utility::HistogramDistribution( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 2.0} );
-  NEW_ROW( "inline_3_args" ) << "Distribution B" << true << no_unused_children << Utility::HistogramDistribution( {0.0, 0.25, 0.5, 0.75, 1.0}, {1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "inline_3_args_cdf" ) << "Distribution C" << true << no_unused_children << Utility::HistogramDistribution( {0.0, 0.25, 0.5, 0.75, 1.0}, {0.25, 0.5, 0.75, 1.0}, true );
-  NEW_ROW( "inline_bad_type" ) << "Distribution D" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_bounds" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_bounds" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_start_bound" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_end_bound" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_many_values" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_cdf_values" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_repeated_cdf_values" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_value" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_value" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "2_args" ) << "Distribution N" << true << no_unused_children << Utility::HistogramDistribution( {-2.0, -1.0, 1.0, pi}, {2.0, 1.0, 2.0} );
-  NEW_ROW( "4_args_cdf" ) << "Distribution O" << true << std::vector<std::string>( {"dummy"} ) << Utility::HistogramDistribution( {0.0, 0.25, 0.5, 0.75, 1.0}, {0.25, 0.5, 0.75, 1.0}, true );
-  NEW_ROW( "4_args" ) << "Distribution P" << true << std::vector<std::string>( {"Dummy"} ) << Utility::HistogramDistribution( {0.0, 0.25, 0.5, 0.75, 1.0}, {1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "repeated_keys" ) << "Distribution Q" << true << std::vector<std::string>( {"cdf specified", "bin values", "bin boundaries"} ) << Utility::HistogramDistribution( {0.0, 0.25, 0.5, 0.75, 1.0}, {1.0, 1.0, 1.0, 1.0} );
-  NEW_ROW( "bad_type" ) << "Distribution R" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_bounds" ) << "Distribution S" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_bounds" ) << "Distribution T" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_start_bound" ) << "Distribution U" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_end_bound" ) << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_many_values" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_cdf_values" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "repeated_cdf_values" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_value" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_value" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -1417,31 +1370,6 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution type name can be returned
-FRENSIE_UNIT_TEST( HistogramDistribution, getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( Utility::HistogramDistribution::typeName( true, false, " " ),
-                       "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::HistogramDistribution::typeName( false ),
-                       "Histogram" );
-  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::HistogramDistribution>(),
-                       "HistogramDistribution" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution type name can be returned
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution,
-                   getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::typeName( true, false, " " )),
-                       "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>::typeName( false )),
-                       "Histogram" );
-  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> >()),
-                       std::string("UnitAwareHistogramDistribution<")+Utility::typeName<MegaElectronVolt>()+","+Utility::typeName<si::amount>()+">" );
-}
-
-//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 FRENSIE_UNIT_TEST( HistogramDistribution, isTabular )
 {
@@ -1525,83 +1453,62 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be converted to a string
-FRENSIE_UNIT_TEST( HistogramDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-
-  dist_string = Utility::toString( *cdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be converted to a string
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *unit_aware_pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-
-  dist_string = Utility::toString( *unit_aware_cdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be placed in a stream
-FRENSIE_UNIT_TEST( HistogramDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, *pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-
-  oss.str( "" );
-  oss.clear();
-  
-  Utility::toStream( oss, *cdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, toStream )
-{
-  std::ostringstream oss;
-  
-  Utility::toStream( oss, *unit_aware_pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *unit_aware_cdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
 FRENSIE_UNIT_TEST( HistogramDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
+  oss << Utility::HistogramDistribution();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Histogram Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<double> >(),
+                       std::vector<double>({0.0, 1.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin values"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0}),
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
   oss << *pdf_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Histogram Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<double> >(),
+                       std::vector<double>({-2.0, -1.0, 1.0, 2.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin values"].toType<std::vector<double> >(),
+                       std::vector<double>({2.0, 1.0, 2.0}),
+                       SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
   
   oss << *cdf_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Histogram Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<double> >(),
+                       std::vector<double>({-2.0, -1.0, 1.0, 2.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin values"].toType<std::vector<double> >(),
+                       std::vector<double>({2.0, 1.0, 2.0}),
+                       SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -1609,555 +1516,73 @@ FRENSIE_UNIT_TEST( HistogramDistribution, ostream_operator )
 FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, ostream_operator )
 {
   std::ostringstream oss;
+
+  oss << Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Histogram Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({0.0*MeV, 1.0*MeV}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin values"].toType<std::vector<quantity<si::amount> > >(),
+                       std::vector<quantity<si::amount> >({1.0*si::mole}),
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
   
   oss << *unit_aware_pdf_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Histogram Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({-2.0*MeV, -1.0*MeV, 1.0*MeV, 2.0*MeV}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin values"].toType<std::vector<quantity<si::amount> > >(),
+                       std::vector<quantity<si::amount> >({2.0*si::mole, 1.0*si::mole, 2.0*si::mole}),
+                       SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << *unit_aware_cdf_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a string
-FRENSIE_UNIT_TEST( HistogramDistribution, fromString )
-{
-  Utility::HistogramDistribution test_dist =
-    Utility::fromString<Utility::HistogramDistribution>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  test_dist = Utility::fromString<Utility::HistogramDistribution>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  test_dist = Utility::fromString<Utility::HistogramDistribution>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, fromString )
-{
-  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> test_dist =
-    Utility::fromString<decltype(test_dist)>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  test_dist = Utility::fromString<decltype(test_dist)>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  test_dist = Utility::fromString<decltype(test_dist)>( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( HistogramDistribution, fromStream )
-{
-  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-  Utility::HistogramDistribution test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );  
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, fromStream )
-{
-  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
-    test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( HistogramDistribution, istream_operator )
-{
-  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-  Utility::HistogramDistribution test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, istream_operator )
-{
-  std::istringstream iss( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}}" );
-  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
-    test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, false}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  iss.str( "{Histogram Distribution, {-2.000000000000000000e+00, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}, {2.0, 4.0, 6.0}, true}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_pdf_distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<decltype(test_dist)*>( unit_aware_cdf_distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree
-FRENSIE_UNIT_TEST( HistogramDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *pdf_distribution );
-
-  Utility::HistogramDistribution copy_dist =
-    ptree.get<Utility::HistogramDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-
-  ptree.put( "test distribution", *tab_pdf_distribution );
-
-  copy_dist = ptree.get<Utility::HistogramDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( tab_pdf_distribution.get() ) );
-
-  ptree.put( "test distribution", *cdf_distribution );
-
-  copy_dist = ptree.get<Utility::HistogramDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  ptree.put( "test distribution", *tab_cdf_distribution );
-
-  copy_dist = ptree.get<Utility::HistogramDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( tab_cdf_distribution.get() ) );
-
-  ptree.clear();
-
-  // Use the PropertyTreeCompatibleOjbect interface
-  ptree = pdf_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-
-  ptree = pdf_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = pdf_distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = cdf_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( cdf_distribution.get() ) );
-
-  ptree = cdf_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = cdf_distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( *pdf_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( pdf_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *pdf_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = Utility::toPropertyTree( *pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = Utility::toPropertyTree( *tab_pdf_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::HistogramDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::HistogramDistribution*>( tab_pdf_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *tab_pdf_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = Utility::toPropertyTree( *tab_pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *unit_aware_pdf_distribution );
-
-  Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> copy_dist =
-    ptree.get<decltype(copy_dist)>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_pdf_distribution.get() ) );
-
-  ptree.put( "test distribution", *unit_aware_tab_pdf_distribution );
-
-  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_pdf_distribution.get() ) );
-
-  ptree.put( "test distribution", *unit_aware_cdf_distribution );
-
-  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  ptree.put( "test distribution", *unit_aware_tab_cdf_distribution );
-
-  copy_dist = ptree.get<decltype(copy_dist)>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_cdf_distribution.get() ) );
-
-  ptree.clear();
-
-  // Use the PropertyTreeCompatibleOjbect interface
-  ptree = unit_aware_pdf_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<decltype(copy_dist)>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_pdf_distribution.get() ) );
-
-  ptree = unit_aware_pdf_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = unit_aware_pdf_distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = unit_aware_cdf_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<decltype(copy_dist)>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_cdf_distribution.get() ) );
-
-  ptree = unit_aware_cdf_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = unit_aware_cdf_distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( *unit_aware_pdf_distribution, true );
-
-  copy_dist = ptree.get_value<decltype(copy_dist)>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_pdf_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_pdf_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_pdf_distribution, true );
-
-  copy_dist = ptree.get_value<decltype(copy_dist)>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<decltype(copy_dist)*>( unit_aware_tab_pdf_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_pdf_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_pdf_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Histogram Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin boundaries" ),
-                           std::vector<double>({-2.0, -1.0, 1.0, 2.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "bin values" ),
-                           std::vector<double>({2.0, 1.0, 2.0}) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( HistogramDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::HistogramDistribution dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::HistogramDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-             dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-             Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::HistogramDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-        dist = Utility::fromPropertyTree<Utility::HistogramDistribution>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-               Utility::fromPropertyTree<Utility::HistogramDistribution>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-               Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareHistogramDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  typedef Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Histogram Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( dist_data["bin boundaries"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({-2.0*MeV, -1.0*MeV, 1.0*MeV, 2.0*MeV}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["bin values"].toType<std::vector<quantity<si::amount> > >(),
+                       std::vector<quantity<si::amount> >({2.0*si::mole, 1.0*si::mole, 2.0*si::mole}),
+                       SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -2388,24 +1813,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareHistogramDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
-              "Test distributions json file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-
   // Create a distribution using the standard constructor
   {
     std::vector<double> bin_boundaries( 4 );

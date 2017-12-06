@@ -16,8 +16,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(ExponentialDistribution DEPENDS tstExponentialDistri
 FRENSIE_ADD_TEST(ExponentialDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(HistogramDistribution DEPENDS tstHistogramDistribution.cpp)
-FRENSIE_ADD_TEST(HistogramDistribution
-  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.json)
+FRENSIE_ADD_TEST(HistogramDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(MaxwellFissionDistribution DEPENDS tstMaxwellFissionDistribution.cpp)
 FRENSIE_ADD_TEST(MaxwellFissionDistribution
