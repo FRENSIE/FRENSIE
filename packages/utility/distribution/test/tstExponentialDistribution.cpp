@@ -65,58 +65,9 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> distribution(
 			     new Utility::ExponentialDistribution( 2.0, 3.0 ) );
 std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 300.0/si::meter, 0.0*si::meter ) );
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since all 
-  // distributions are serialized the same
-  Utility::ExponentialDistribution dummy_dist;
-
-  const double& pi = Utility::PhysicalConstants::pi;
-  const double inf = Utility::QuantityTraits<double>::inf();
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_ucase_type_4_args" ) << "Distribution A" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0, 1.0, inf );
-  NEW_ROW( "inline_lcase_type_4_args" ) << "Distribution B" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0, 1.0, 2.0 );
-  NEW_ROW( "inline_3_args" ) << "Distribution C" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0, 1.0 );
-  NEW_ROW( "inline_2_args" ) << "Distribution D" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0 );
-  NEW_ROW( "inline_1_arg" ) << "Distribution E" << true << no_unused_children << Utility::ExponentialDistribution( 1.0, 3.0 );
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << true << no_unused_children << Utility::ExponentialDistribution();
-  NEW_ROW( "inline_bad_type" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_exponent" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_exponent" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_exponent" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_multiplier" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_lower_limit" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_bad_limits" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "0_args" ) << "Distribution N" << true << no_unused_children << Utility::ExponentialDistribution();
-  NEW_ROW( "1_arg" ) << "Distribution O" << true << no_unused_children << Utility::ExponentialDistribution( 1.0, 3.0 );
-  NEW_ROW( "2_args" ) << "Distribution P" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0 );
-  NEW_ROW( "3_args" ) << "Distribution Q" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0, 1.0 );
-  NEW_ROW( "4_args" ) << "Distribution R" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0, 1.0, 2.0 );
-  NEW_ROW( "4_args_reverse_order" ) << "Distribution S" << true << no_unused_children << Utility::ExponentialDistribution( pi, 3.0, 1.0, 2.0 );
-  NEW_ROW( "5_args" ) << "Distribution T" << true << std::vector<std::string>( {"dummy"} ) << Utility::ExponentialDistribution( pi, 3.0, 1.0, 2.0 );
-  NEW_ROW( "duplicate_args" ) << "Distribution U" << true << std::vector<std::string>( {"exp", "mult", "lower", "upper"} ) << Utility::ExponentialDistribution( pi, 3.0, 1.0, 2.0 );
-  NEW_ROW( "bad_type" ) << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_exponent" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_exponent" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_multiplier" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_multiplier" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_lower_limit" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "bad_limits" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -517,157 +468,6 @@ FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be converted to a string
-FRENSIE_UNIT_TEST( ExponentialDistribution, toString )
-{
-  std::string dist_string =
-    Utility::toString( Utility::ExponentialDistribution() );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  dist_string = Utility::toString( Utility::ExponentialDistribution( 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 1.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  dist_string = Utility::toString( Utility::ExponentialDistribution( 2.0, 3.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  dist_string = Utility::toString( Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, inf}" );
-
-  dist_string = Utility::toString( Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( *distribution );
-  
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be converted to a string
-FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, toString )
-{
-  std::string dist_string =
-    Utility::toString( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>() );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-  
-  dist_string = Utility::toString( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 1.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, inf}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( *unit_aware_distribution );
-  
-  FRENSIE_CHECK_EQUAL( dist_string, "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be placed in a stream
-FRENSIE_UNIT_TEST( ExponentialDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, Utility::ExponentialDistribution() );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::ExponentialDistribution( 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::ExponentialDistribution( 2.0, 3.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *distribution );
-  
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, toStream )
-{
-  std::ostringstream oss;
-  Utility::toStream( oss, Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>() );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-  
-  Utility::toStream( oss, Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, inf}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *unit_aware_distribution );
-  
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that a distribution can be placed in a stream
 FRENSIE_UNIT_TEST( ExponentialDistribution, ostream_operator )
 {
@@ -675,42 +475,102 @@ FRENSIE_UNIT_TEST( ExponentialDistribution, ostream_operator )
 
   oss << Utility::ExponentialDistribution();
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf() );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::ExponentialDistribution( 2.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf() );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::ExponentialDistribution( 2.0, 3.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toDouble(), 3.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf() );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::ExponentialDistribution( 2.0, 3.0, 1.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, inf}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toDouble(), 3.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf() );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toDouble(), 3.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 2.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << *distribution;
-  
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void" );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toDouble(), 3.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 2.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(),
+                       Utility::QuantityTraits<double>::inf() );
 }
 
 //---------------------------------------------------------------------------//
@@ -718,888 +578,136 @@ FRENSIE_UNIT_TEST( ExponentialDistribution, ostream_operator )
 FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, ostream_operator )
 {
   std::ostringstream oss;
+  
   oss << Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>();
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
 
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toType<quantity<Utility::UnitTraits<cgs::length>::InverseUnit> >(),
+                       1.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       1.0*si::mole );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf() );
+  
   oss.str( "" );
   oss.clear();
   
   oss << Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 1.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toType<quantity<Utility::UnitTraits<cgs::length>::InverseUnit> >(),
+                       1.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       2.0*si::mole );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf() );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
 
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toType<quantity<Utility::UnitTraits<cgs::length>::InverseUnit> >(),
+                       3.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       2.0*si::mole );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf() );
+  
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, inf}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toType<quantity<Utility::UnitTraits<cgs::length>::InverseUnit> >(),
+                       3.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       2.0*si::mole );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       1.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf() );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toType<quantity<Utility::UnitTraits<cgs::length>::InverseUnit> >(),
+                       3.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       2.0*si::mole );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       1.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       2.0*cgs::centimeter );
 
   oss.str( "" );
   oss.clear();
 
   oss << *unit_aware_distribution;
   
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Exponential Distribution, 3.000000000000000000e+00, 2.000000000000000000e+00, 0.000000000000000000e+00, inf}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a string
-FRENSIE_UNIT_TEST( ExponetialDistribution, fromString )
-{
-  Utility::ExponentialDistribution test_dist =
-    Utility::fromString<Utility::ExponentialDistribution>( "{Exponential Distribution}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution() );
-
-  test_dist = Utility::fromString<Utility::ExponentialDistribution>( "{Exponential Distribution, 3.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( 1.0, 3.0 ) );
-
-  test_dist = Utility::fromString<Utility::ExponentialDistribution>( "{Exponential Distribution, 3.0, pi}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0 ) );
-
-  test_dist = Utility::fromString<Utility::ExponentialDistribution>( "{Exponential Distribution, 3.0, pi, 1.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0, 1.0 ) );
-
-  test_dist = Utility::fromString<Utility::ExponentialDistribution>( "{Exponential Distribution, 3.0, pi, 1.0, 2.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0, 1.0, 2.0 ) );
-
-  test_dist = Utility::fromString<Utility::ExponentialDistribution>( Utility::toString(*distribution) );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::ExponentialDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, fromString )
-{
-  Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> test_dist =
-    Utility::fromString<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "{Exponential Distribution}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>()) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "{Exponential Distribution, 3.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 1.0*si::mole, 3.0/cgs::centimeter )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "{Exponential Distribution, 3.0, pi}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "{Exponential Distribution, 3.0, pi, 1.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "{Exponential Distribution, 3.0, pi, 1.0, 2.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( Utility::toString(*unit_aware_distribution) );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( ExponetialDistribution, fromStream )
-{
-  std::istringstream iss( "{Exponential Distribution}" );
-
-  Utility::ExponentialDistribution test_dist;
-  
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution() );
-
-  iss.str( "{Exponential Distribution, 3.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( 1.0, 3.0 ) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0 ) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0, 1.0 ) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0, 2.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0, 1.0, 2.0 ) );
-
-  iss.str( Utility::toString(*distribution) );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::ExponentialDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, fromStream )
-{
-  std::istringstream iss( "{Exponential Distribution}" );
-
-  Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> test_dist;
-  
-  Utility::fromStream( iss, test_dist );
-                       
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>()) );
-
-  iss.str( "{Exponential Distribution, 3.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 1.0*si::mole, 3.0/cgs::centimeter )) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-  
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter )) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter )) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0, 2.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-  
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
-
-  iss.str( Utility::toString(*unit_aware_distribution) );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( ExponetialDistribution, istream_operator )
-{
-  std::istringstream iss( "{Exponential Distribution}" );
-
-  Utility::ExponentialDistribution test_dist;
-  
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution() );
-
-  iss.str( "{Exponential Distribution, 3.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( 1.0, 3.0 ) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0 ) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0, 1.0 ) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0, 2.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::ExponentialDistribution( Utility::PhysicalConstants::pi, 3.0, 1.0, 2.0 ) );
-
-  iss.str( Utility::toString(*distribution) );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::ExponentialDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, istream_operator )
-{
-  std::istringstream iss( "{Exponential Distribution}" );
-
-  Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> test_dist;
-  
-  iss >> test_dist;
-                       
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>()) );
-
-  iss.str( "{Exponential Distribution, 3.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 1.0*si::mole, 3.0/cgs::centimeter )) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi}" );
-  iss.clear();
-
-  iss >> test_dist;
-  
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter )) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter )) );
-
-  iss.str( "{Exponential Distribution, 3.0, pi, 1.0, 2.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-  
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( Utility::PhysicalConstants::pi*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
-
-  iss.str( Utility::toString(*unit_aware_distribution) );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be written to a property tree
-FRENSIE_UNIT_TEST( ExponentialDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::ExponentialDistribution() );
-
-  Utility::ExponentialDistribution copy_dist =
-    ptree.get<Utility::ExponentialDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution() );
-
-  ptree.put( "test distribution", Utility::ExponentialDistribution( 2.0 ) );
-
-  copy_dist = ptree.get<Utility::ExponentialDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0 ) );
-
-  ptree.put( "test distribution", Utility::ExponentialDistribution( 2.0, 3.0 ) );
-
-  copy_dist = ptree.get<Utility::ExponentialDistribution>( "test distribution" );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0 ) );
-
-  ptree.put( "test distribution", Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ) );
-
-  copy_dist = ptree.get<Utility::ExponentialDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ) );
-
-  ptree.put( "test distribution", Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
-
-  copy_dist = ptree.get<Utility::ExponentialDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
-
-  ptree.put( "test distribution", *distribution );
-
-  copy_dist = ptree.get<Utility::ExponentialDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::ExponentialDistribution*>( distribution.get() ) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::ExponentialDistribution().toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution() );
-
-  ptree = Utility::ExponentialDistribution().toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::ExponentialDistribution( 2.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0 ) );
-
-  ptree = Utility::ExponentialDistribution( 2.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::ExponentialDistribution( 2.0, 3.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0 ) );
-
-  ptree = Utility::ExponentialDistribution( 2.0, 3.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ) );
-
-  ptree = Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
-
-  ptree = Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::ExponentialDistribution*>( distribution.get() ) );
-
-  ptree = distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution(), true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution() );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution(), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0, 3.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0, 3.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = Utility::toPropertyTree( *distribution, true );
-
-  copy_dist = ptree.get_value<Utility::ExponentialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::ExponentialDistribution*>( distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>() );
-
-  Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> copy_dist =
-    ptree.get<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>()) );
-
-  ptree.put( "test distribution", Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole )) );
-
-  ptree.put( "test distribution", Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "test distribution" );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter )) );
-
-  ptree.put( "test distribution", Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter )) );
-
-  ptree.put( "test distribution", (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
-
-  copy_dist = ptree.get<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
-
-  ptree.put( "test distribution", *distribution );
-
-  copy_dist = ptree.get<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>().toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>()) );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>().toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole )) );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter )) );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter )) );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
-
-  ptree = Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = unit_aware_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = unit_aware_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>(), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>()) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>(), false );
-  
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = Utility::toPropertyTree( *distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 5 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Exponential Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "exponent" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ),
-                       Utility::QuantityTraits<double>::inf() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( ExponentialDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );                           
-  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
-  FETCH_FROM_TABLE( Utility::ExponentialDistribution, expected_dist );     
-                                                   
-  Utility::ExponentialDistribution dist;                         
-  std::vector<std::string> unused_children;        
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FRENSIE_CHECK_NO_THROW(
-            dist = Utility::fromPropertyTree<Utility::ExponentialDistribution>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-                 Utility::fromPropertyTree<Utility::ExponentialDistribution>(
-                                  test_dists_ptree->get_child( dist_name ) ), 
-                 Utility::PropertyTreeConversionException );    
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareExponentialDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  typedef Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> Distribution;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );                           
-  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
-  FETCH_FROM_TABLE( Distribution, expected_dist );     
-                                                   
-  Distribution dist;                         
-  std::vector<std::string> unused_children;        
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<Distribution>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Distribution>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Exponential Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<cgs::length>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name() );
+  FRENSIE_CHECK_EQUAL( dist_data["exponent multiplier"].toType<quantity<Utility::UnitTraits<cgs::length>::InverseUnit> >(),
+                       3.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toType<quantity<si::amount> >(),
+                       2.0*si::mole );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<cgs::length> >(),
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<cgs::length> >(),
+                       Utility::QuantityTraits<quantity<cgs::length> >::inf() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1834,23 +942,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareExponentialDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
-              "Test distributions json file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-  test_dists_json_file >> *test_dists_ptree;
-
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

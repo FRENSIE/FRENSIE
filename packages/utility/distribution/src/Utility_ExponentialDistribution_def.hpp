@@ -268,7 +268,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::toStream( std::
                           std::make_pair( "exponent multiplier", d_exponent_multiplier ),
                           std::make_pair( "multiplier", d_constant_multiplier ),
                           std::make_pair( "lower bound", d_lower_limit ),
-                          std::make_pair( "upper boud", d_upper_limit ) );
+                          std::make_pair( "upper bound", d_upper_limit ) );
 }
 
 // Save the distribution to an archive
