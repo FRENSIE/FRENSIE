@@ -19,8 +19,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(HistogramDistribution DEPENDS tstHistogramDistributi
 FRENSIE_ADD_TEST(HistogramDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(MaxwellFissionDistribution DEPENDS tstMaxwellFissionDistribution.cpp)
-FRENSIE_ADD_TEST(MaxwellFissionDistribution
-  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_maxwell_fission_distributions.json)
+FRENSIE_ADD_TEST(MaxwellFissionDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(NormalDistribution DEPENDS tstNormalDistribution.cpp)
 FRENSIE_ADD_TEST(NormalDistribution
