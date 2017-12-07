@@ -55,8 +55,6 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
 
@@ -67,54 +65,6 @@ std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<si::energy,si::amount>
 
 std::shared_ptr<Utility::UnitAwareOneDDistribution<si::energy,si::amount> >
   unit_aware_distribution;
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::UniformDistribution dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_full_ucase_name" ) << "Distribution A" << true << no_unused_children << Utility::UniformDistribution( -1.0, 1.0, 2.0 );
-  NEW_ROW( "inline_full_lcase_name" ) << "Distribution B" << true << no_unused_children << Utility::UniformDistribution( 0.0, 2*pi, 3.0 );
-  NEW_ROW( "inline_short_ucase_name" ) << "Distribution C" << true << no_unused_children << Utility::UniformDistribution( -1.0, 1.0, 1.0 );
-  NEW_ROW( "inline_short_lcase_name" ) << "Distribution D" << true << no_unused_children << Utility::UniformDistribution( 0.0, 2*pi, 1.0 );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_lower_limit" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_upper_limit" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_same_limits" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_bad_limits" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_mult" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_mult" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_mult" ) << "Distribution N" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "full_ucase_name" ) << "Distribution O" << true << no_unused_children << Utility::UniformDistribution( -1.0, 1.0, 2.0 );
-  NEW_ROW( "full_lcase_name" ) << "Distribution P" << true << no_unused_children << Utility::UniformDistribution( 0.0, 2*pi, 3.0 );
-  NEW_ROW( "short_ucase_name" ) << "Distribution Q" << true << std::vector<std::string>( {"dummy"} ) << Utility::UniformDistribution( -1.0, 1.0, 1.0 );
-  NEW_ROW( "short_lcase_name" ) << "Distribution R" << true << no_unused_children << Utility::UniformDistribution( 0.0, 2*pi, 1.0 );
-  NEW_ROW( "repeated_keys" ) << "Distribution T" << true << std::vector<std::string>( {"upper bound", "lower bound", "multiplier"} ) << Utility::UniformDistribution( -1.0, 1.0, 0.5 );
-  NEW_ROW( "bad_type" ) << "Distribution U" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "0_args" ) << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "no_upper_limit" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "no_lower_limit" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_lower_limit" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_upper_limit" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "same_limits" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "bad_limits" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_mult" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_mult" ) << "Distribution AD" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_mult" ) << "Distribution AE" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -737,54 +687,72 @@ FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be converted to a string
-FRENSIE_UNIT_TEST( UniformDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be converted to a string
-FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, toString )
-{
-  std::string dist_string = Utility::toString( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UniformDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, *distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, toStream )
-{
-  std::ostringstream oss;
-
-  Utility::toStream( oss, *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
 FRENSIE_UNIT_TEST( UniformDistribution, ostream_operator )
 {
   std::ostringstream oss;
 
+  oss << Utility::UniformDistribution();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UniformDistribution( -2.0, 2.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), -2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 2.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UniformDistribution( -2.0, 2.0, 3.0 );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), -2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 2.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
   oss << *distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), -1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 1.0, SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -792,594 +760,108 @@ FRENSIE_UNIT_TEST( UniformDistribution, ostream_operator )
 FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, ostream_operator )
 {
   std::ostringstream oss;
-  
+
+  oss << Utility::UnitAwareUniformDistribution<si::energy,si::amount>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<si::energy>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toType<quantity<si::amount> >(),
+                       1.0*si::mole,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<si::energy> >(),
+                       0.0*si::joule,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<si::energy> >(),
+                       1.0*si::joule,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareUniformDistribution<si::energy,si::amount>( -2.0*si::joule, 2.0*si::joule );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<si::energy>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toType<quantity<si::amount> >(),
+                       1.0*si::mole,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<si::energy> >(),
+                       -2.0*si::joule,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<si::energy> >(),
+                       2.0*si::joule,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwareUniformDistribution<si::energy,si::amount>( -2.0*si::joule, 2.0*si::joule, 3.0*si::mole );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<si::energy>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toType<quantity<si::amount> >(),
+                       3.0*si::mole,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<si::energy> >(),
+                       -2.0*si::joule,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<si::energy> >(),
+                       2.0*si::joule,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
   oss << *unit_aware_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UniformDistribution, fromString )
-{
-  Utility::UniformDistribution test_dist =
-    Utility::fromString<Utility::UniformDistribution>( "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  
-  test_dist = Utility::fromString<Utility::UniformDistribution>( "{uniform distribution, -1.0, 1.0, 2.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-
-  test_dist = Utility::fromString<Utility::UniformDistribution>( "{uniform-distribution, -1, 1, 2}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-
-  test_dist = Utility::fromString<Utility::UniformDistribution>( "{uniform,-1,1,2}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-
-  test_dist = Utility::fromString<Utility::UniformDistribution>( "{Uniform, -1, 1}" );
-
-  FRENSIE_CHECK( test_dist != *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), -1.0 );
-  FRENSIE_CHECK_EQUAL( test_dist.getUpperBoundOfIndepVar(), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, fromString )
-{
-  Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist =
-    Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{uniform distribution, 0.0, 1.0, 1.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{uniform-distribution, 0, 1, 1}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{uniform,0,1,1}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "{Uniform, 0, 1}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UniformDistribution, fromStream )
-{
-  std::istringstream iss( "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{uniform distribution, -1.0, 1.0, 2.0}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{uniform-distribution, -1, 1, 2}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{uniform,-1,1,2}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{Uniform, -1, 1}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK( test_dist != *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-    FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), -1.0 );
-    FRENSIE_CHECK_EQUAL( test_dist.getUpperBoundOfIndepVar(), 1.0 );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, fromStream )
-{
-  std::istringstream iss( "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{uniform distribution, 0.0, 1.0, 1.0}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{uniform-distribution, 0, 1, 1}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{uniform,0,1,1}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{Uniform, 0, 1}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    Utility::fromStream( iss, test_dist );
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UniformDistribution, istream_operator )
-{
-  std::istringstream iss( "{Uniform Distribution, -1.000000000000000000e+00, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{uniform distribution, -1.0, 1.0, 2.0}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{uniform-distribution, -1, 1, 2}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{uniform,-1,1,2}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-  }
-
-  iss.str( "{Uniform, -1, 1}" );
-  iss.clear();
-
-  {
-    Utility::UniformDistribution test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK( test_dist != *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-    FRENSIE_CHECK_EQUAL( test_dist.getLowerBoundOfIndepVar(), -1.0 );
-    FRENSIE_CHECK_EQUAL( test_dist.getUpperBoundOfIndepVar(), 1.0 );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, istream_operator )
-{
-  std::istringstream iss( "{Uniform Distribution, 0.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{uniform distribution, 0.0, 1.0, 1.0}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{uniform-distribution, 0, 1, 1}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{uniform,0,1,1}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-
-  iss.str( "{Uniform, 0, 1}" );
-  iss.clear();
-
-  {
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount> test_dist;
-
-    iss >> test_dist;
-
-    FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UniformDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *distribution );
-
-  Utility::UniformDistribution copy_dist =
-    ptree.get<Utility::UniformDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
-
-  ptree.put( "test distribution", *tab_distribution );
-
-  copy_dist = ptree.get<Utility::UniformDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
-
-  ptree.clear();
-  
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = distribution->toPropertyTree( true );
-  
-  copy_dist = ptree.get_value<Utility::UniformDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
-
-  ptree = distribution->toPropertyTree( false );
-  
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), -1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-
-  ptree = distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), -1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-
-  // Use the PropertyTree helper methods
-  ptree = Utility::toPropertyTree( *distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UniformDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *tab_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UniformDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), -1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-
-  ptree = Utility::toPropertyTree( *tab_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), -1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-
-  ptree = Utility::toPropertyTree( *distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), -1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-
-  ptree = Utility::toPropertyTree( *tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), -1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 2.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", *unit_aware_distribution );
-
-  Utility::UnitAwareUniformDistribution<si::energy,si::amount> copy_dist =
-    ptree.get<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree.put( "test distribution", *unit_aware_tab_distribution );
-
-  copy_dist = ptree.get<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
-
-  ptree.clear();
-  
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = unit_aware_distribution->toPropertyTree( true );
-  copy_dist = ptree.get_value<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
-
-  ptree = unit_aware_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = unit_aware_distribution->toPropertyTree();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  // Use the PropertyTree helper methods
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareUniformDistribution<si::energy,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_tab_distribution );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Uniform Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );  
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UniformDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::UniformDistribution dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::UniformDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-             dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-             Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::UniformDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-        dist = Utility::fromPropertyTree<Utility::UniformDistribution>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-               Utility::fromPropertyTree<Utility::UniformDistribution>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-               Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareUniformDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Uniform Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<si::energy>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent value"].toType<quantity<si::amount> >(),
+                       1.0*si::mole,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<si::energy> >(),
+                       0.0*si::joule,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<si::energy> >(),
+                       1.0*si::joule,
+                       SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -1576,24 +1058,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareUniformDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
-              "Test distributions json file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-  
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-  
   // Initialize the unit-aware distributions
   unit_aware_tab_distribution.reset(
 	     new Utility::UnitAwareUniformDistribution<si::energy,si::amount>(
