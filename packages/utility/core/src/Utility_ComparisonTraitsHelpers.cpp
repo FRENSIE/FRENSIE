@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_ComparisonTraits.cpp
+//! \file   Utility_ComparisonTraitsHelpers.cpp
 //! \author Alex Robinson
 //! \brief  Comparison traits helper function definitions
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_ComparisonTraits.hpp"
+#include "Utility_ComparisonTraitsHelpers.hpp"
 #include "Utility_StaticOutputFormatter.hpp"
 
 namespace Utility{
@@ -24,5 +24,5 @@ void reportComparisonPassFail( const bool result, std::ostream& log )
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_ComparisonTraits.cpp
+// end Utility_ComparisonTraitsHelpers.cpp
 //---------------------------------------------------------------------------//

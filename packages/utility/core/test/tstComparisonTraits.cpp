@@ -28,7 +28,22 @@
 template<typename Policy>
 struct TypeList
 {
-  typedef boost::mpl::list<std::tuple<Policy,bool>, std::tuple<Policy,char>, std::tuple<Policy,signed char>, std::tuple<Policy,unsigned char>, std::tuple<Policy,short>, std::tuple<Policy,unsigned short>, std::tuple<Policy,int>, std::tuple<Policy,long>, std::tuple<Policy,unsigned>, std::tuple<Policy,unsigned long>, std::tuple<Policy,long long>, std::tuple<Policy,unsigned long long>, std::tuple<Policy,float>, std::tuple<Policy,double>, std::tuple<Policy,boost::units::quantity<boost::units::si::energy> >, std::tuple<Policy,std::string> > type;
+  typedef boost::mpl::list<std::tuple<Policy,bool>,
+                           std::tuple<Policy,char>,
+                           std::tuple<Policy,signed char>,
+                           std::tuple<Policy,unsigned char>,
+                           std::tuple<Policy,short>,
+                           std::tuple<Policy,unsigned short>,
+                           std::tuple<Policy,int>,
+                           std::tuple<Policy,long>,
+                           std::tuple<Policy,unsigned>,
+                           std::tuple<Policy,unsigned long>,
+                           std::tuple<Policy,long long>,
+                           std::tuple<Policy,unsigned long long>,
+                           std::tuple<Policy,float>,
+                           std::tuple<Policy,double>,
+                           std::tuple<Policy,boost::units::quantity<boost::units::si::energy> >,
+                           std::tuple<Policy,std::string> > type;
 };
 
 
@@ -656,6 +671,97 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( createComparisonHeader_rvalues_helper,
     + ": ";
 
   BOOST_CHECK_EQUAL( header, expected_header );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the comparison header can be created (two string literals)
+BOOST_AUTO_TEST_CASE( createComparisonHeader_string_literals_helper )
+{
+  // Two string literals (same size)
+  std::string header =
+    Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
+                                                    "test string", "\"lhs\"",
+                                                    "test string", "\"rhs\"" );
+
+  std::string expected_header =
+    Utility::EqualityComparisonPolicy::createComparisonDetails(
+                     std::string("\"lhs\""), false, std::string("test string"),
+                     std::string("\"rhs\""), false, std::string("test string"),
+                     "" ) + ": ";
+  
+  BOOST_CHECK_EQUAL( header, expected_header );
+
+  // Two string literals (different size)
+  header =
+    Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
+                                            "test string", "\"lhs\"",
+                                            "another test string", "\"rhs\"" );
+
+  expected_header =
+    Utility::EqualityComparisonPolicy::createComparisonDetails(
+             std::string("\"lhs\""), false, std::string("test string"),
+             std::string("\"rhs\""), false, std::string("another test string"),
+             "" ) + ": ";
+  
+  BOOST_CHECK_EQUAL( header, expected_header );
+
+  // One string literal and one string rvalue
+  header =
+    Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
+                                       "test string", "\"lhs\"",
+                                       std::string("test string"), "rhs" );
+
+  expected_header =
+    Utility::EqualityComparisonPolicy::createComparisonDetails(
+                     std::string("\"lhs\""), false, std::string("test string"),
+                     std::string("rhs"), false, std::string("test string"),
+                     "" ) + ": ";
+  
+  BOOST_CHECK_EQUAL( header, expected_header );
+
+  header =
+    Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
+                                             std::string("test string"), "lhs",
+                                             "test string", "\"rhs\"" );
+
+  expected_header =
+    Utility::EqualityComparisonPolicy::createComparisonDetails(
+                     std::string("lhs"), false, std::string("test string"),
+                     std::string("\"rhs\""), false, std::string("test string"),
+                     "" ) + ": ";
+  
+  BOOST_CHECK_EQUAL( header, expected_header );
+
+  // One string literal and one string lvalue
+  {
+    std::string test_string( "test string" );
+
+    header =
+      Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
+                                                      "test string", "\"lhs\"",
+                                                      test_string, "rhs" );
+
+    expected_header =
+      Utility::EqualityComparisonPolicy::createComparisonDetails(
+                     std::string("\"lhs\""), false, std::string("test string"),
+                     std::string("rhs"), true, test_string,
+                     "" ) + ": ";
+  
+    BOOST_CHECK_EQUAL( header, expected_header );
+    
+    header =
+      Utility::createComparisonHeader<Utility::EqualityComparisonPolicy,0>(
+                                                    test_string, "lhs",
+                                                    "test string", "\"rhs\"" );
+
+    expected_header =
+      Utility::EqualityComparisonPolicy::createComparisonDetails(
+                     std::string("lhs"), true, test_string,
+                     std::string("\"rhs\""), false, std::string("test string"),
+                     "" ) + ": ";
+  
+    BOOST_CHECK_EQUAL( header, expected_header );
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -1899,6 +2005,167 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( compare_rvalues_helper, TypePair, TestTypes )
 
   BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
   BOOST_CHECK_EQUAL( oss.str(), expected_details );
+}
+
+typedef boost::mpl::list<Utility::EqualityComparisonPolicy,Utility::InequalityComparisonPolicy> LocalPolicyTypes;
+
+//---------------------------------------------------------------------------//
+// Check that two rvalues of a type can be compared
+BOOST_AUTO_TEST_CASE_TEMPLATE( compare_string_literals_helper,
+                               Policy,
+                               LocalPolicyTypes )
+{
+  // No details logging
+  std::ostringstream oss;
+
+  bool compare_result = Utility::compare<Policy,0,0>( "test string", "\"lhs\"",
+                                                      "test string", "\"rhs\"",
+                                                      oss );
+
+  bool expected_compare_result = Policy::compare( std::string("test string"),
+                                                  std::string("test string") );
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+
+  compare_result = Utility::compare<Policy,0,0>( "test string", "\"lhs\"",
+                                                 std::string("test string"), "rhs",
+                                                 oss );
+
+  expected_compare_result = Policy::compare( std::string("test string"),
+                                             std::string("test string") );
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+
+  compare_result = Utility::compare<Policy,0,0>( std::string("test string"), "lhs",
+                                                 "test string", "\"rhs\"",
+                                                 oss );
+
+  expected_compare_result = Policy::compare( std::string("test string"),
+                                             std::string("test string") );
+
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+
+  {
+    std::string test_string( "test string" );
+
+    compare_result = Utility::compare<Policy,0,0>( "test string", "\"lhs\"",
+                                                   test_string, "rhs",
+                                                   oss );
+
+    expected_compare_result = Policy::compare( std::string("test string"),
+                                               test_string );
+
+    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+    
+    compare_result = Utility::compare<Policy,0,0>( test_string, "lhs",
+                                                   "test string", "\"rhs\"",
+                                                   oss );
+    
+    expected_compare_result = Policy::compare( test_string,
+                                               std::string("test string") );
+    
+    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  }
+  
+
+  // Details logging
+  std::string extra_data;
+  
+  compare_result = Utility::compare<Policy,0,0>( "test string", "\"lhs\"",
+                                                 "test string", "\"rhs\"",
+                                                 oss, extra_data, true );
+
+  expected_compare_result = Policy::compare( std::string("test string"),
+                                             std::string("test string") );
+
+  std::string expected_details =
+    Policy::createComparisonDetails( "\"lhs\"", false, std::string("test string"),
+                                     "\"rhs\"", false, std::string("test string"),
+                                     "" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n");
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result = Utility::compare<Policy,0,0>( "test string", "\"lhs\"",
+                                                 std::string("test string"), "rhs",
+                                                 oss, extra_data, true );
+
+  expected_compare_result = Policy::compare( std::string("test string"),
+                                             std::string("test string") );
+
+  expected_details =
+    Policy::createComparisonDetails( "\"lhs\"", false, std::string("test string"),
+                                     "rhs", false, std::string("test string"),
+                                     "" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n");
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  compare_result = Utility::compare<Policy,0,0>( std::string("test string"), "lhs",
+                                                 "test string", "\"rhs\"",
+                                                 oss, extra_data, true );
+
+  expected_compare_result = Policy::compare( std::string("test string"),
+                                             std::string("test string") );
+
+  expected_details =
+    Policy::createComparisonDetails( "lhs", false, std::string("test string"),
+                                     "\"rhs\"", false, std::string("test string"),
+                                     "" ) + ": " +
+    (expected_compare_result ? "passed\n" : "failed!\n");
+  
+  BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+  BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+  oss.str( "" );
+  oss.clear();
+
+  {
+    std::string test_string( "test string" );
+
+    compare_result = Utility::compare<Policy,0,0>( "test string", "\"lhs\"",
+                                                   test_string, "rhs",
+                                                   oss, extra_data, true );
+
+    expected_compare_result = Policy::compare( std::string("test string"),
+                                               test_string );
+    
+    expected_details =
+      Policy::createComparisonDetails( "\"lhs\"", false, std::string("test string"),
+                                       "rhs", true, test_string,
+                                       "" ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n");
+  
+    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+    BOOST_CHECK_EQUAL( oss.str(), expected_details );
+
+    oss.str( "" );
+    oss.clear();
+
+    compare_result = Utility::compare<Policy,0,0>( test_string, "lhs",
+                                                   "test string", "\"rhs\"",
+                                                   oss, extra_data, true );
+
+    expected_compare_result = Policy::compare( test_string,
+                                               std::string("test string") );
+
+    expected_details =
+      Policy::createComparisonDetails( "lhs", true, test_string,
+                                       "\"rhs\"", false, std::string("test string"),
+                                       "" ) + ": " +
+      (expected_compare_result ? "passed\n" : "failed!\n");
+  
+    BOOST_CHECK_EQUAL( compare_result, expected_compare_result );
+    BOOST_CHECK_EQUAL( oss.str(), expected_details );
+  }
 }
 
 //---------------------------------------------------------------------------//

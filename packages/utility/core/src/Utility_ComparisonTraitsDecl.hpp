@@ -17,6 +17,7 @@
 #include <utility>
 
 // FRENSIE Includes
+#include "Utility_ComparisonTraitsHelpers.hpp"
 #include "Utility_UndefinedTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 
@@ -32,16 +33,6 @@
  */
 
 namespace Utility{
-
-namespace Details{
-
-/*! Increment the right shift
- * \ingroup comparison_traits
- */
-constexpr size_t incrementRightShift( const size_t right_shift )
-{ return right_shift+2; }
-
-} // end Details namespace
 
 /*! \brief This structure defines the comparison that can be used to compare
  * two values of arrays of values.
@@ -541,11 +532,6 @@ inline bool compare(
                                        log, extra_data, log_comparison_details,
                                        name_suffix );
 }
-
-/*! Check the comparison result and add "passed" or "failed!" to the log
- * \ingroup comparison_traits
- */
-void reportComparisonPassFail( const bool result, std::ostream& log );
 
 } // end Utility namespace
 

@@ -26,167 +26,6 @@
 
 namespace Utility{
 
-namespace Details{
-
-/*! The zero helper
- * \ingroup comparison_traits
- */
-template<typename T, typename Enabled = void>
-struct ZeroHelper;
-
-/*! Partial specialization of the zero helper for arithmetic types
- * \ingroup comparison_traits
- */
-template<typename T>
-struct ZeroHelper<T,typename std::enable_if<std::is_arithmetic<T>::value>::type>
-{
-  //! Return the zero object
-  static inline T zero( const T )
-  { return Utility::QuantityTraits<T>::zero(); }
-};
-
-/*! Partial specialization of the zero helper for quantity types
- * \ingroup comparison_traits
- */
-template<typename Unit, typename T>
-struct ZeroHelper<boost::units::quantity<Unit,T> >
-{
-  //! Return the zero object
-  static inline boost::units::quantity<Unit,T> zero( const boost::units::quantity<Unit,T> )
-  { return Utility::QuantityTraits<boost::units::quantity<Unit,T> >::zero(); }
-};
-
-/*! Specialization of the zero helper for std::string
- * \ingroup comparison_traits
- */
-template<>
-struct ZeroHelper<std::string>
-{
-  //! Return the zero object
-  static inline std::string zero( const std::string& )
-  { return std::string(); }
-};
-
-/*! Specialization of the zero helper for std::wstring
- * \ingroup comparison_traits
- */
-template<>
-struct ZeroHelper<std::wstring>
-{
-  //! Return the zero object
-  static inline std::wstring zero( const std::wstring& )
-  { return std::wstring(); }
-};
-
-/*! STL compliant containre zero helper implementation 
- * 
- * A partial specialization of ZeroHelper must be made for the container type
- * and it should inherit from this struct.
- * \ingroup comparison_traits
- */
-template<typename STLCompliantContainer>
-struct STLCompliantContainerZeroHelper
-{
-  //! Return the zero object
-  static inline STLCompliantContainer zero( const STLCompliantContainer& mirror_obj )
-  {
-    STLCompliantContainer zero_obj( mirror_obj );
-
-    typename STLCompliantContainer::iterator it, end_it;
-    it = zero_obj.begin();
-    end_it = zero_obj.end();
-
-    while( it != end_it )
-    {
-      *it = Utility::Details::ZeroHelper<typename STLCompliantContainer::value_type>::zero( *it );
-      
-      ++it;
-    }
-
-    return zero_obj;
-  }
-};
-
-/*! Create the zero object
- * \ingroup comparison_traits
- */
-template<typename T>
-inline T zero( const T& mirror_obj )
-{
-  return Utility::Details::ZeroHelper<T>::zero( mirror_obj );
-}
-
-/*! Default implementation of the createComparisonHeader method
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t RightShift,
-         typename T,
-         typename ExtraDataType>
-inline std::string createComparisonHeaderImpl(
-                                              const T& left_value,
-                                              const std::string& left_name,
-                                              const bool log_left_name,
-                                              const T& right_value,
-                                              const std::string& right_name,
-                                              const bool log_right_name,
-                                              const std::string& name_suffix,
-                                              const ExtraDataType& extra_data )
-{
-  std::string comparison_header( RightShift, ' ' );
-
-  comparison_header += ComparisonPolicy::createComparisonDetails(
-                                       left_name, log_left_name, left_value,
-                                       right_name, log_right_name, right_value,
-                                       name_suffix, extra_data );
-  comparison_header += ": ";
-
-  return comparison_header;
-}
-
-/*! Default implementation of the compare method
- * \ingroup comparison_traits
- */
-template<typename ComparisonPolicy,
-         size_t RightShift,
-         typename T,
-         typename ExtraDataType>
-inline bool compareImpl( const T& left_value,
-                         const std::string& left_name,
-                         const bool log_left_name,
-                         const T& right_value,
-                         const std::string& right_name,
-                         const bool log_right_name,
-                         const std::string& name_suffix,
-                         std::ostream& log,
-                         const bool log_comparison_details,
-                         const ExtraDataType& extra_data )
-{
-  if( log_comparison_details )
-  {
-    log << Details::createComparisonHeaderImpl<ComparisonPolicy,RightShift>(
-                                                                left_value,
-                                                                left_name,
-                                                                log_left_name,
-                                                                right_value,
-                                                                right_name,
-                                                                log_right_name,
-                                                                name_suffix,
-                                                                extra_data );
-  }
-
-  // Conduct the comparison
-  const bool success =
-    ComparisonPolicy::compare( left_value, right_value, extra_data );
-
-  if( log_comparison_details )
-    Utility::reportComparisonPassFail( success, log );
-
-  return success;
-}
-  
-} // end Details namespace
-
 // Create a comparison header
 template<typename T, typename Enabled>
 template<typename ComparisonPolicy, size_t RightShift>
@@ -235,18 +74,292 @@ inline bool ComparisonTraits<T,Enabled>::compare(
                                       extra_data );
 };
 
+/*! The specialization of the Utility::ComparisonTraits for std::string
+ *
+ * This specialization will be used to handle string literals, which are
+ * not treated as rvalues due to the fact that they are arrays
+ * \ingroup comparison_traits
+ */
+template<>
+struct ComparisonTraits<std::string>
+{
+  //! Relative error and close comparisons are not allowed
+  template<typename ComparisonPolicy>
+  struct IsComparisonAllowed : public std::conditional<std::is_same<ComparisonPolicy,Utility::CloseComparisonPolicy>::value || std::is_same<ComparisonPolicy,Utility::RelativeErrorComparisonPolicy>::value, std::false_type, std::true_type>::type
+  { /* ... */ };
+
+  //! The extra data type
+  typedef std::string ExtraDataType;
+
+  //! Create the comparison header
+  template<typename ComparisonPolicy,
+           size_t RightShift = 0>
+  static inline std::string createComparisonHeader(
+                            const std::string& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const std::string& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::createComparisonHeaderWithExtraChecks<ComparisonPolicy,RightShift>(
+                                left_value, left_name, log_left_name, false,
+                                right_value, right_name, log_right_name, false,
+                                name_suffix, extra_data );
+  }
+
+  //! Create the comparison header
+  template<typename ComparisonPolicy,
+           size_t RightShift = 0,
+           size_t N>
+  static inline std::string createComparisonHeader(
+                            const char (&left_value)[N],
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const std::string& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::createComparisonHeaderWithExtraChecks<ComparisonPolicy,RightShift>(
+                                left_value, left_name, log_left_name, true,
+                                right_value, right_name, log_right_name, false,
+                                name_suffix, extra_data );
+  }
+
+  //! Create the comparison header
+  template<typename ComparisonPolicy,
+           size_t RightShift = 0,
+           size_t N>
+  static inline std::string createComparisonHeader(
+                            const std::string& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const char (&right_value)[N],
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::createComparisonHeaderWithExtraChecks<ComparisonPolicy,RightShift>(
+                                left_value, left_name, log_left_name, false,
+                                right_value, right_name, log_right_name, true,
+                                name_suffix, extra_data );
+  }
+
+  //! Create the comparison header
+  template<typename ComparisonPolicy,
+           size_t RightShift = 0,
+           size_t N,
+           size_t M>
+  static inline std::string createComparisonHeader(
+                            const char (&left_value)[N],
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const char (&right_value)[M],
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::createComparisonHeaderWithExtraChecks<ComparisonPolicy,RightShift>(
+                                left_value, left_name, log_left_name, true,
+                                right_value, right_name, log_right_name, true,
+                                name_suffix, extra_data );
+  }
+
+  //! Compare two strings
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t>
+  static inline bool compare( const std::string& left_value,
+                              const std::string& left_name,
+                              const bool log_left_name,
+                              const std::string& right_value,
+                              const std::string& right_name,
+                              const bool log_right_name,
+                              const std::string& name_suffix,
+                              std::ostream& log,
+                              const bool log_comparison_details = false,
+                              const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::compareWithExtraChecks<ComparisonPolicy,HeaderRightShift>(
+                                left_value, left_name, log_left_name, false,
+                                right_value, right_name, log_right_name, false,
+                                name_suffix, log, log_comparison_details,
+                                extra_data );
+  }
+
+  //! Compare two strings
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t,
+           size_t N>
+  static inline bool compare( const char (&left_value)[N],
+                              const std::string& left_name,
+                              const bool log_left_name,
+                              const std::string& right_value,
+                              const std::string& right_name,
+                              const bool log_right_name,
+                              const std::string& name_suffix,
+                              std::ostream& log,
+                              const bool log_comparison_details = false,
+                              const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::compareWithExtraChecks<ComparisonPolicy,HeaderRightShift>(
+                                left_value, left_name, log_left_name, true,
+                                right_value, right_name, log_right_name, false,
+                                name_suffix, log, log_comparison_details,
+                                extra_data );
+  }
+
+  //! Compare two strings
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t,
+           size_t N>
+  static inline bool compare( const std::string& left_value,
+                              const std::string& left_name,
+                              const bool log_left_name,
+                              const char (&right_value)[N],
+                              const std::string& right_name,
+                              const bool log_right_name,
+                              const std::string& name_suffix,
+                              std::ostream& log,
+                              const bool log_comparison_details = false,
+                              const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::compareWithExtraChecks<ComparisonPolicy,HeaderRightShift>(
+                                left_value, left_name, log_left_name, false,
+                                right_value, right_name, log_right_name, true,
+                                name_suffix, log, log_comparison_details,
+                                extra_data );
+  }
+
+  //! Compare two strings
+  template<typename ComparisonPolicy,
+           size_t HeaderRightShift,
+           size_t,
+           size_t N,
+           size_t M>
+  static inline bool compare( const char (&left_value)[N],
+                              const std::string& left_name,
+                              const bool log_left_name,
+                              const char (&right_value)[M],
+                              const std::string& right_name,
+                              const bool log_right_name,
+                              const std::string& name_suffix,
+                              std::ostream& log,
+                              const bool log_comparison_details = false,
+                              const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    return ComparisonTraits<std::string>::compareWithExtraChecks<ComparisonPolicy,HeaderRightShift>(
+                                left_value, left_name, log_left_name, true,
+                                right_value, right_name, log_right_name, true,
+                                name_suffix, log, log_comparison_details,
+                                extra_data );
+  }
+
+private:
+
+  // Compare two strings with extra checks
+  template<typename ComparisonPolicy, size_t HeaderRightShift>
+  static inline bool compareWithExtraChecks(
+                                  const std::string& left_value,
+                                  const std::string& left_name,
+                                  const bool log_left_name,
+                                  const bool check_if_left_value_is_a_literal,
+                                  const std::string& right_value,
+                                  const std::string& right_name,
+                                  const bool log_right_name,
+                                  const bool check_if_right_value_is_a_literal,
+                                  const std::string& name_suffix,
+                                  std::ostream& log,
+                                  const bool log_comparison_details,
+                                  const ExtraDataType& extra_data )
+  {
+    return Details::compareImpl<ComparisonPolicy,HeaderRightShift>(
+                     left_value, left_name, log_left_name,
+                     right_value, right_name, log_right_name,
+                     name_suffix, log, log_comparison_details,
+                     extra_data,
+                     std::bind<std::string>( &ComparisonTraits<std::string>::createComparisonHeaderWithExtraChecks<ComparisonPolicy,HeaderRightShift>,
+                                             std::placeholders::_1,
+                                             std::placeholders::_2,
+                                             std::placeholders::_3,
+                                             check_if_left_value_is_a_literal,
+                                             std::placeholders::_4,
+                                             std::placeholders::_5,
+                                             std::placeholders::_6,
+                                             check_if_right_value_is_a_literal,
+                                             std::placeholders::_7,
+                                             std::placeholders::_8 ) );
+  }
+
+  // Create the comparison header with extra checks
+  template<typename ComparisonPolicy, size_t RightShift>
+  static inline std::string createComparisonHeaderWithExtraChecks(
+                            const std::string& left_value,
+                            const std::string& left_name,
+                            const bool log_left_name,
+                            const bool check_if_left_value_is_a_literal,
+                            const std::string& right_value,
+                            const std::string& right_name,
+                            const bool log_right_name,
+                            const bool check_if_right_value_is_a_literal,
+                            const std::string& name_suffix,
+                            const ExtraDataType& extra_data = ExtraDataType() )
+  {
+    bool log_left_name_override = log_left_name;
+
+    if( log_left_name && check_if_left_value_is_a_literal )
+    {
+      if( ComparisonTraits<std::string>::isValueLikelyStringLiteral( left_name ) )
+        log_left_name_override = false;
+    }
+
+    bool log_right_name_override = log_right_name;
+
+    if( log_right_name && check_if_right_value_is_a_literal )
+    {
+      if( ComparisonTraits<std::string>::isValueLikelyStringLiteral( right_name ) )
+        log_right_name_override = false;
+    }
+    
+    return Details::createComparisonHeaderImpl<ComparisonPolicy,RightShift>(
+                                                       left_value,
+                                                       left_name,
+                                                       log_left_name_override,
+                                                       right_value,
+                                                       right_name,
+                                                       log_right_name_override,
+                                                       name_suffix,
+                                                       extra_data );
+  }
+
+  // Check if a value is likely a string literal
+  static inline bool isValueLikelyStringLiteral( const std::string& value_name )
+  {
+    return value_name[0] == '"' ||
+      (value_name[0] == 'L' && value_name[1] == '"');
+  }
+};
+
+/*! \brief The specialization of the Utility::ComparisonTraits for char[]
+ * \ingroup comparison_traits
+ */
+template<size_t _N>
+struct ComparisonTraits<char[_N]> : public ComparisonTraits<std::string>
+{ /* ... */ };
+
 /*! \brief The specialization of the Utility::ComparisonTraits for char*
  * \ingroup comparison_traits
  */
 template<>
 struct ComparisonTraits<char*> : public ComparisonTraits<std::string>
-{ /* ... */ };
-
-/*! \brief The specialization of the Utility::ComparisonTraits for char[]
- * \ingroup comparison_traits
- */
-template<size_t N>
-struct ComparisonTraits<char[N]> : public ComparisonTraits<std::string>
 { /* ... */ };
 
 /*! \brief The specialization of the Utility::ComparisonTraits for const and/or
@@ -1650,7 +1763,7 @@ inline std::string createComparisonHeader(
 {
   typedef typename std::conditional<std::is_lvalue_reference<T1>::value,std::true_type,std::false_type>::type LeftDisplayBoolean;
   typedef typename std::conditional<std::is_lvalue_reference<T2>::value,std::true_type,std::false_type>::type RightDisplayBoolean;
-  
+
   return ComparisonTraits<typename std::common_type<T1,T2>::type>::template createComparisonHeader<ComparisonPolicy,RightShift>(
                                                     left_value,
                                                     left_name,
