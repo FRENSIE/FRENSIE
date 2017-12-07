@@ -70,8 +70,6 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> distribution;
 std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
 
@@ -79,200 +77,6 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> 
   unit_aware_distribution;
 std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
 unit_aware_tab_distribution;
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the LinLin property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable_LinLin )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::TabularDistribution<Utility::LinLin> dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_full_ucase_name" ) << "Distribution A" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLin>( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 1.0, 2.0} );
-  NEW_ROW( "inline_full_lcase_name" ) << "Distribution B" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {0.0, pi/4, pi/2, 3*pi/4, pi} );
-  NEW_ROW( "inline_short_ucase_name" ) << "Distribution C" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLin>( {0.0, 1.0}, {1.0, 1.0} );
-  NEW_ROW( "inline_short_lcase_name" ) << "Distribution D" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLin>( {-1.0, 1.0}, {2.0, 2.0} );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_indep_vals" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_indep_vals" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_start_indep_val" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_end_indep_val" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_dep_vals" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_dep_val" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "full_ucase_name" ) << "Distribution N" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLin>( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 1.0, 2.0} );
-  NEW_ROW( "full_lcase_name" ) << "Distribution O" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {0.0, pi/4, pi/2, 3*pi/4, pi} );
-  NEW_ROW( "short_ucase_name" ) << "Distribution P" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {0.0, pi/4, pi/2, 3*pi/4, pi} );
-  NEW_ROW( "short_lcase_name" ) << "Distribution Q" << true << std::vector<std::string>( {"dummy"} ) << Utility::TabularDistribution<Utility::LinLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {0.0, pi/4, pi/2, 3*pi/4, pi} );
-  NEW_ROW( "repeated_keys" ) << "Distribution R" << true << std::vector<std::string>( {"independent values", "dependent values"} ) << Utility::TabularDistribution<Utility::LinLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {0.0, pi/4, pi/2, 3*pi/4, pi} );
-  NEW_ROW( "bad_type" ) << "Distribution S" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "0_args" ) << "Distribution T" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inep_vals_only" ) << "Distribution U" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "dep_vals_only" ) << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_indep_vals" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_indep_vals" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_start_indep_val" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_end_indep_val" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_dep_vals" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_dep_val" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_dep_val" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-}
-
-// This table describes the data in the LogLin property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable_LogLin )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::TabularDistribution<Utility::LogLin> dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_full_ucase_name" ) << "Distribution A" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLin>( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 1.0, 2.0} );
-  NEW_ROW( "inline_full_lcase_name" ) << "Distribution B" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {pi/4, pi/2, 3*pi/4, pi, 5*pi/4} );
-  NEW_ROW( "inline_short_ucase_name" ) << "Distribution C" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLin>( {0.0, 1.0}, {1.0, 1.0} );
-  NEW_ROW( "inline_short_lcase_name" ) << "Distribution D" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLin>( {-1.0, 1.0}, {1.0, 1.0} );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_indep_vals" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_indep_vals" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_start_indep_val" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_end_indep_val" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_dep_vals" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_dep_val" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_dep_val" ) << "Distribution N" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_dep_val" ) << "Distribution O" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "full_ucase_name" ) << "Distribution P" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLin>( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 1.0, 2.0} );
-  NEW_ROW( "full_lcase_name" ) << "Distribution Q" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {pi/4, pi/2, 3*pi/4, pi, 5*pi/4} );
-  NEW_ROW( "short_ucase_name" ) << "Distribution R" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {pi/4, pi/2, 3*pi/4, pi, 5*pi/4} );
-  NEW_ROW( "short_lcase_name" ) << "Distribution S" << true << std::vector<std::string>( {"dummy"} ) << Utility::TabularDistribution<Utility::LogLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {pi, 5*pi/4, 3*pi/2, 7*pi/4, 2*pi} );
-  NEW_ROW( "repeated_keys" ) << "Distribution T" << true << std::vector<std::string>( {"independent values", "dependent values"} ) << Utility::TabularDistribution<Utility::LogLin>( {-1.0, -0.5, 0.0, 0.5, 1.0}, {pi/4, pi/2, 3*pi/4, pi, 5*pi/4} );
-  NEW_ROW( "bad_type" ) << "Distribution U" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "0_args" ) << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inep_vals_only" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "dep_vals_only" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_indep_vals" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_indep_vals" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_start_indep_val" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_end_indep_val" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_dep_vals" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_dep_val" ) << "Distribution AD" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_dep_val" ) << "Distribution AE" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_dep_val" ) << "Distribution AF" << false << no_unused_children << dummy_dist;
-}
-
-// This table describes the data in the LinLog property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable_LinLog )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::TabularDistribution<Utility::LinLog> dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_full_ucase_name" ) << "Distribution A" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLog>( {1e-4, 1.0}, {2.0, 1.0} );
-  NEW_ROW( "inline_full_lcase_name" ) << "Distribution B" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLog>( {1e-4, 1.0}, {1.0, 2.0} );
-  NEW_ROW( "inline_short_ucase_name" ) << "Distribution C" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLog>( {1.0, 10.0}, {1.0, 1.0} );
-  NEW_ROW( "inline_short_lcase_name" ) << "Distribution D" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLog>( {0.1, 1.0}, {2.0, 2.0} );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_indep_vals" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_indep_vals" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_start_indep_val" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_start_indep_val" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_start_indep_val" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_end_indep_val" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_dep_vals" ) << "Distribution N" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_dep_val" ) << "Distribution O" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_dep_val" ) << "Distribution P" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "full_ucase_name" ) << "Distribution Q" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLog>( {1e-4, 1.0}, {2.0, 1.0} );
-  NEW_ROW( "full_lcase_name" ) << "Distribution R" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLog>( {1e-4, 1.0}, {pi/4, 5*pi/4} );
-  NEW_ROW( "short_ucase_name" ) << "Distribution S" << true << no_unused_children << Utility::TabularDistribution<Utility::LinLog>( {1e-4, 1.0}, {pi/4, 5*pi/4} );
-  NEW_ROW( "short_lcase_name" ) << "Distribution T" << true << std::vector<std::string>( {"dummy"} ) << Utility::TabularDistribution<Utility::LinLog>( {1e-4, 1.0}, {pi/4, 5*pi/4} );
-  NEW_ROW( "repeated_keys" ) << "Distribution U" << true << std::vector<std::string>( {"independent values", "dependent values"} ) << Utility::TabularDistribution<Utility::LinLog>( {1e-4, 1.0}, {pi/4, 5*pi/4} );
-  NEW_ROW( "bad_type" ) << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "0_args" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inep_vals_only" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "dep_vals_only" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_indep_vals" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_indep_vals" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_start_indep_val" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_start_indep_val" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_start_indep_val" ) << "Distribution AD" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_end_indep_val" ) << "Distribution AE" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_dep_vals" ) << "Distribution AF" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_dep_val" ) << "Distribution AG" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_dep_val" ) << "Distribution AH" << false << no_unused_children << dummy_dist;
-}
-
-// This table describes the data in the LogLog property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable_LogLog )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::TabularDistribution<Utility::LogLog> dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_full_ucase_name" ) << "Distribution A" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLog>( {1e-4, 1.0}, {1.0, 1e3} );
-  NEW_ROW( "inline_full_lcase_name" ) << "Distribution B" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLog>( {1e-4, 1.0}, {pi/2, 2*pi} );
-  NEW_ROW( "inline_short_ucase_name" ) << "Distribution C" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLog>( {1.0, 10.0}, {1.0, 1.0} );
-  NEW_ROW( "inline_short_lcase_name" ) << "Distribution D" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLog>( {0.1, 1.0}, {2.0, 2.0} );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_indep_vals" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_unsorted_indep_vals" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_start_indep_val" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_start_indep_val" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_start_indep_val" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_end_indep_val" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_too_few_dep_vals" ) << "Distribution N" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_dep_val" ) << "Distribution O" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_dep_val" ) << "Distribution P" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_dep_val" ) << "Distribution Q" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "full_ucase_name" ) << "Distribution R" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLog>( {1e-4, 1.0}, {1.0, 1e3} );
-  NEW_ROW( "full_lcase_name" ) << "Distribution S" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLog>( {1e-4, 1.0}, {pi/2, 2*pi} );
-  NEW_ROW( "short_ucase_name" ) << "Distribution T" << true << no_unused_children << Utility::TabularDistribution<Utility::LogLog>( {1e-4, 1.0}, {1e-4, 10.0} );
-  NEW_ROW( "short_lcase_name" ) << "Distribution U" << true << std::vector<std::string>( {"dummy"} ) << Utility::TabularDistribution<Utility::LogLog>( {1e-4, 1.0}, {1e-3, 10.0} );
-  NEW_ROW( "repeated_keys" ) << "Distribution V" << true << std::vector<std::string>( {"independent values", "dependent values"} ) << Utility::TabularDistribution<Utility::LogLog>( {1e-4, 1.0}, {1e-3, 10.0} );
-  NEW_ROW( "bad_type" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "0_args" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inep_vals_only" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "dep_vals_only" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_indep_vals" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "unsorted_indep_vals" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_start_indep_val" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_start_indep_val" ) << "Distribution AD" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_start_indep_val" ) << "Distribution AE" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_end_indep_val" ) << "Distribution AF" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "too_few_dep_vals" ) << "Distribution AG" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_dep_val" ) << "Distribution AH" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_dep_val" ) << "Distribution AI" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_dep_val" ) << "Distribution AJ" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -877,42 +681,6 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution type name can be returned
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            getDistributionTypeName,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  FRENSIE_CHECK_EQUAL( Utility::TabularDistribution<InterpolationPolicy>::typeName( true, false, " " ),
-                       std::string("Tabular ")+InterpolationPolicy::name()+" Distribution" );
-
-  FRENSIE_CHECK_EQUAL( Utility::TabularDistribution<InterpolationPolicy>::typeName( false, false, " " ),
-                       std::string("Tabular ")+InterpolationPolicy::name() );
-  
-  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::TabularDistribution<InterpolationPolicy> >(),
-                       std::string("Tabular")+InterpolationPolicy::name()+"Distribution" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution type name can be returned
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            getDistributionTypeName,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>::typeName( true, false, " " )),
-                       std::string("Tabular ")+InterpolationPolicy::name()+" Distribution" );
-
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>::typeName( false, false, " " )),
-                       std::string("Tabular ")+InterpolationPolicy::name() );
-  
-  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> >()),
-                       (std::string("UnitAwareTabular")+InterpolationPolicy::name()+"Distribution<"+Utility::typeName<MegaElectronVolt,si::amount>()+">" ));
-}
-
-//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
                             isTabular,
@@ -1059,106 +827,6 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be converted to a string
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            toString,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-  
-  std::string dist_string = Utility::toString( Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  std::unique_ptr<Utility::OneDDistribution> local_dist( new Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  dist_string = Utility::toString( *local_dist );
-
-  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be converted to a string
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            toString,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  std::string dist_string = Utility::toString( Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  std::unique_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > local_dist( new Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ) );
-
-  dist_string = Utility::toString( *local_dist );
-
-  FRENSIE_CHECK_EQUAL( dist_string, std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be placed in a stream
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            toStream,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  std::ostringstream oss;
-  Utility::toStream( oss, Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  std::unique_ptr<Utility::OneDDistribution> local_dist( new Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  Utility::toStream( oss, *local_dist );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            toStream,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-  
-  std::ostringstream oss;
-  Utility::toStream( oss, Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  std::unique_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > local_dist( new Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ) );
-
-  Utility::toStream( oss, *local_dist );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution can be placed in a stream
 FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
                             ostream_operator,
@@ -1166,14 +834,48 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
 
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-  
   std::ostringstream oss;
+
+  oss << Utility::TabularDistribution<InterpolationPolicy>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Tabular Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
+                       InterpolationPolicy::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<double> >(),
+                       std::vector<double>({(std::is_same<typename InterpolationPolicy::IndepVarProcessingTag,Utility::LinIndepVarProcessingTag>::value ? 0.0 : 0.1), 1.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0, 1.0}) );
+  
+  oss.str( "" );
+  oss.clear();
+  
   oss << Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Tabular Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
+                       InterpolationPolicy::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0, 2.0, 3.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<double> >(),
+                       std::vector<double>({3.0, 2.0, 1.0}),
+                       SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
@@ -1182,7 +884,22 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
 
   oss << *local_dist;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Tabular Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
+                       InterpolationPolicy::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0, 2.0, 3.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<double> >(),
+                       std::vector<double>({3.0, 2.0, 1.0}),
+                       SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -1193,14 +910,57 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
 
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-  
   std::ostringstream oss;
+
+  oss << Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Tabular Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
+                       InterpolationPolicy::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({(std::is_same<typename InterpolationPolicy::IndepVarProcessingTag,Utility::LinIndepVarProcessingTag>::value ? 0.0*MeV : 0.1*MeV), 1.0*MeV}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<quantity<si::amount> > >(),
+                       std::vector<quantity<si::amount> >({1.0*si::mole, 1.0*si::mole}),
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+  
   oss << Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Tabular Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
+                       InterpolationPolicy::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({1.0*MeV, 2.0*MeV, 3.0*MeV}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<quantity<si::amount> > >(),
+                       std::vector<quantity<si::amount> >({3.0*si::mole, 2.0*si::mole, 1.0*si::mole}),
+                       SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
@@ -1209,657 +969,26 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
 
   oss << *local_dist;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), std::string("{")+dist_name+", {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00}, {3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a string
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            fromString,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-  
-  Utility::TabularDistribution<InterpolationPolicy> test_dist =
-    Utility::fromString<Utility::TabularDistribution<InterpolationPolicy> >( std::string("{") + dist_name + ", {1.0, 2.0, 3.0}, {3.0, 2.0, 1.0}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            fromString,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-  
-  Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> test_dist =
-    Utility::fromString<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> >( std::string("{") + dist_name + ", {1.0, 2.0, 3.0}, {3.0, 2.0, 1.0}}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a stream
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            fromStream,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  std::istringstream iss( std::string("{") + dist_name + ", {1.0, 2.0, 3.0}, {3.0, 2.0, 1.0}}" );
-  Utility::TabularDistribution<InterpolationPolicy> test_dist;
-  
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            fromStream,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  std::istringstream iss( std::string("{") + dist_name + ", {1.0, 2.0, 3.0}, {3.0, 2.0, 1.0}}" );
-  Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> test_dist;
-  
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be initialized from a stream
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            istream_operator,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  std::istringstream iss( std::string("{") + dist_name + ", {1.0, 2.0, 3.0}, {3.0, 2.0, 1.0}}" );
-  Utility::TabularDistribution<InterpolationPolicy> test_dist;
-  
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            istream_operator,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  std::istringstream iss( std::string("{") + dist_name + ", {1.0, 2.0, 3.0}, {3.0, 2.0, 1.0}}" );
-  Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be written to a property tree
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            toPropertyTree,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  Utility::TabularDistribution<InterpolationPolicy> copy_dist =
-    ptree.get<Utility::TabularDistribution<InterpolationPolicy> >( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::TabularDistribution<InterpolationPolicy> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  ptree = Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), dist_name );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ),
-                       std::vector<double>( {1, 2, 3} ) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ),
-                       std::vector<double>( {3, 2, 1} ) );
-
-  // Use the propery tree helper methods
-  ptree = Utility::toPropertyTree( Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ), true );
-
-  copy_dist = ptree.get_value<Utility::TabularDistribution<InterpolationPolicy> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
-
-  ptree = Utility::toPropertyTree( Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), dist_name );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ),
-                       std::vector<double>( {1, 2, 3} ) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ),
-                       std::vector<double>( {3, 2, 1} ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            toPropertyTree,
-                            TestInterpPolicies )
-{
-  FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-
-  std::string dist_name( "Tabular " );
-  dist_name += InterpolationPolicy::name();
-  dist_name += " Distribution";
-
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} )) );
-
-  Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> copy_dist =
-    ptree.get<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> >( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} )) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} )) );
-
-  ptree = Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), dist_name );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ),
-                       std::vector<double>( {1, 2, 3} ) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ),
-                       std::vector<double>( {3, 2, 1} ) );
-
-  // Use the propery tree helper methods
-  ptree = Utility::toPropertyTree( Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> >();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 3 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), dist_name );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "independent values" ),
-                       std::vector<double>( {1, 2, 3} ) );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "dependent values" ),
-                       std::vector<double>( {3, 2, 1} ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( TabularDistribution,
-                        fromPropertyTree_LinLin,
-                        TestPropertyTreeTable_LinLin )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree linlin_ptree = test_dists_ptree->get_child( "LinLin" );
-  Utility::TabularDistribution<Utility::LinLin> dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LinLin>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( linlin_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-                  dist.fromPropertyTree( linlin_ptree.get_child( dist_name ) ),
-                  Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LinLin>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-      dist = Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LinLin> >(
-                                      linlin_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-     Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LinLin> >(
-                                    linlin_ptree.get_child( dist_name ) ),
-     Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareTabularDistribution,
-                        fromPropertyTree_LinLin,
-                        TestPropertyTreeTable_LinLin )
-{
-  typedef Utility::UnitAwareTabularDistribution<Utility::LinLin,MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree linlin_ptree = test_dists_ptree->get_child( "LinLin" );
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( linlin_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( linlin_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      linlin_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    linlin_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( TabularDistribution,
-                        fromPropertyTree_LogLin,
-                        TestPropertyTreeTable_LogLin )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree loglin_ptree = test_dists_ptree->get_child( "LogLin" );
-  Utility::TabularDistribution<Utility::LogLin> dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LogLin>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( loglin_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-                  dist.fromPropertyTree( loglin_ptree.get_child( dist_name ) ),
-                  Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LogLin>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-      dist = Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LogLin> >(
-                                      loglin_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-     Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LogLin> >(
-                                    loglin_ptree.get_child( dist_name ) ),
-     Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareTabularDistribution,
-                        fromPropertyTree_LogLin,
-                        TestPropertyTreeTable_LogLin )
-{
-  typedef Utility::UnitAwareTabularDistribution<Utility::LogLin,MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree loglin_ptree = test_dists_ptree->get_child( "LogLin" );
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( loglin_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( loglin_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      loglin_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    loglin_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( TabularDistribution,
-                        fromPropertyTree_LinLog,
-                        TestPropertyTreeTable_LinLog )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree linlog_ptree = test_dists_ptree->get_child( "LinLog" );
-  Utility::TabularDistribution<Utility::LinLog> dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LinLog>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( linlog_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-                  dist.fromPropertyTree( linlog_ptree.get_child( dist_name ) ),
-                  Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LinLog>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-      dist = Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LinLog> >(
-                                      linlog_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-     Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LinLog> >(
-                                    linlog_ptree.get_child( dist_name ) ),
-     Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareTabularDistribution,
-                        fromPropertyTree_LinLog,
-                        TestPropertyTreeTable_LinLog )
-{
-  typedef Utility::UnitAwareTabularDistribution<Utility::LinLog,MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree linlog_ptree = test_dists_ptree->get_child( "LinLog" );
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( linlog_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( linlog_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      linlog_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    linlog_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( TabularDistribution,
-                        fromPropertyTree_LogLog,
-                        TestPropertyTreeTable_LogLog )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree linlog_ptree = test_dists_ptree->get_child( "LogLog" );
-  Utility::TabularDistribution<Utility::LogLog> dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LogLog>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( linlog_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-                  dist.fromPropertyTree( linlog_ptree.get_child( dist_name ) ),
-                  Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::TabularDistribution<Utility::LogLog>, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-      dist = Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LogLog> >(
-                                      linlog_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-     Utility::fromPropertyTree<Utility::TabularDistribution<Utility::LogLog> >(
-                                    linlog_ptree.get_child( dist_name ) ),
-     Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareTabularDistribution,
-                        fromPropertyTree_LogLog,
-                        TestPropertyTreeTable_LogLog )
-{
-  typedef Utility::UnitAwareTabularDistribution<Utility::LogLog,MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PropertyTree linlog_ptree = test_dists_ptree->get_child( "LogLog" );
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( linlog_ptree.get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( linlog_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      linlog_ptree.get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    linlog_ptree.get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Tabular Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
+                       InterpolationPolicy::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent values"].toType<std::vector<quantity<MegaElectronVolt> > >(),
+                       std::vector<quantity<MegaElectronVolt> >({1.0*MeV, 2.0*MeV, 3.0*MeV}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent values"].toType<std::vector<quantity<si::amount> > >(),
+                       std::vector<quantity<si::amount> >({3.0*si::mole, 2.0*si::mole, 1.0*si::mole}),
+                       SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -2042,24 +1171,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareTabularDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
-              "Test distributions json file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
