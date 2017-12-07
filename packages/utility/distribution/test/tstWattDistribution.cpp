@@ -64,72 +64,11 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> distribution(
 			 new Utility::WattDistribution( 1.0, 1.0, 1.0, 0.1 ) );
 
 std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
 unit_aware_distribution( new Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 1e6*eV, 1e3*keV, 1e-6/eV, 0.1*MeV ) );
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::WattDistribution dummy_dist;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_6_args_valid" ) << "Distribution A" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0, 1.0, 0.0, 0.5 );
-  NEW_ROW( "inline_5_args_valid" ) << "Distribution B" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0, 1.0, 0.1 );
-  NEW_ROW( "inline_4_args_valid" ) << "Distribution C" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0, 1.0 );
-  NEW_ROW( "inline_3_args_valid" ) << "Distribution D" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0 );
-  NEW_ROW( "inline_2_args_valid" ) << "Distribution E" << true << no_unused_children << Utility::WattDistribution( 3.0 );
-  NEW_ROW( "inline_1_arg_valid" ) << "Distribution F" << true << no_unused_children << Utility::WattDistribution();
-  NEW_ROW( "inline_bad_type" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_energy" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_energy" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_energy" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_a_param" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_a_param" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_a_param" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_b_param" ) << "Distribution N" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_b_param" ) << "Distribution O" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_b_param" ) << "Distribution P" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_restric_energy" ) << "Distribution Q" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_equal_restrict_energy" ) << "Distribution R" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_greater_restrict_energy" ) << "Distribution S" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_mult" ) << "Distribution T" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_mult" ) << "Distribution U" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "6_args_valid" ) << "Distribution V" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0, 1.0, 0.0, 0.5 );
-  NEW_ROW( "5_args_valid" ) << "Distribution W" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0, 1.0, 0.1 );
-  NEW_ROW( "4_args_valid" ) << "Distribution X" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0, 1.0 );
-  NEW_ROW( "3_args_valid" ) << "Distribution Y" << true << no_unused_children << Utility::WattDistribution( 3.0, 2.0 );
-  NEW_ROW( "2_args_valid" ) << "Distribution Z" << true << no_unused_children << Utility::WattDistribution( 3.0 );
-  NEW_ROW( "1_arg_valid" ) << "Distribution AA" << true << std::vector<std::string>( {"dummy"} ) << Utility::WattDistribution();
-  NEW_ROW( "repeated_keys" ) << "Distribution AB" << true << std::vector<std::string>( {"mult", "restrict", "b", "a", "energy"} ) << Utility::WattDistribution( 1.0, 1.0, 1.0, 0.1, 2.0 );
-  NEW_ROW( "bad_type" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_energy" ) << "Distribution AD" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_energy" ) << "Distribution AE" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_energy" ) << "Distribution AF" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_a_param" ) << "Distribution AG" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_a_param" ) << "Distribution AH" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_a_param" ) << "Distribution AI" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_b_param" ) << "Distribution AJ" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_b_param" ) << "Distribution AK" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_b_param" ) << "Distribution AL" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_restric_energy" ) << "Distribution AM" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "equal_restrict_energy" ) << "Distribution AN" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "greater_restrict_energy" ) << "Distribution AO" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_mult" ) << "Distribution AP" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_mult" ) << "Distribution AQ" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -499,31 +438,6 @@ FRENSIE_UNIT_TEST( UnitAwareWattDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution type name can be returned
-FRENSIE_UNIT_TEST( WattDistribution, getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( Utility::WattDistribution::typeName( true, false, " " ),
-                       "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::WattDistribution::typeName( false ),
-                       "Watt" );
-  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::WattDistribution>(),
-                       "WattDistribution" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution type name can be returned
-FRENSIE_UNIT_TEST( UnitAwareWattDistribution,
-                   getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareWattDistribution<ElectronVolt,si::amount>::typeName( true, false, " " )),
-                       "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwareWattDistribution<ElectronVolt,si::amount>::typeName( false )),
-                       "Watt" );
-  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwareWattDistribution<ElectronVolt,si::amount> >()),
-                       (std::string("UnitAwareWattDistribution<")+Utility::typeName<ElectronVolt,si::amount>()+">" ));
-}
-
-//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 FRENSIE_UNIT_TEST( WattDistribution, isTabular )
 {
@@ -572,183 +486,6 @@ FRENSIE_UNIT_TEST( UnitAwareWattDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a distribution can be converted to a string
-FRENSIE_UNIT_TEST( WattDistribution, toString )
-{
-  std::string dist_string =
-    Utility::toString( Utility::WattDistribution() );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::WattDistribution( 3.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::WattDistribution( 5.0, 4.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-
-  std::shared_ptr<Utility::OneDDistribution> shared_dist( new Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-  dist_string = Utility::toString( *shared_dist );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be converted to a string
-FRENSIE_UNIT_TEST( UnitAwareWattDistribution, toString )
-{
-  std::string dist_string =
-    Utility::toString( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>() );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 3.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>> shared_dist( new Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
-  dist_string = Utility::toString( *shared_dist );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be placed in a stream
-FRENSIE_UNIT_TEST( WattDistribution, toStream )
-{
-  std::ostringstream oss;
-  
-  Utility::toStream( oss, Utility::WattDistribution() );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::WattDistribution( 3.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::WattDistribution( 5.0, 4.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  std::shared_ptr<Utility::WattDistribution> shared_dist( new Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-  Utility::toStream( oss, *shared_dist );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareWattDistribution, toStream )
-{
-  std::ostringstream oss;
-  Utility::toStream( oss, Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>() );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 3.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-  
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>> shared_dist( new Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
-  Utility::toStream( oss, *shared_dist );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that a distribution can be placed in a stream
 FRENSIE_UNIT_TEST( WattDistribution, ostream_operator )
 {
@@ -756,50 +493,129 @@ FRENSIE_UNIT_TEST( WattDistribution, ostream_operator )
   
   oss << Utility::WattDistribution();
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::WattDistribution( 3.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::WattDistribution( 5.0, 4.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 5.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toDouble(), 4.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toDouble(), 1.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::WattDistribution( 5.0, 4.0, 3.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 5.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toDouble(), 4.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 5.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toDouble(), 4.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 5.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toDouble(), 4.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 0.5, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   std::shared_ptr<Utility::WattDistribution> shared_dist( new Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
+  
   oss << *shared_dist;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toDouble(), 5.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toDouble(), 4.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toDouble(), 3.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toDouble(), 2.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 0.5, SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -807,900 +623,216 @@ FRENSIE_UNIT_TEST( WattDistribution, ostream_operator )
 FRENSIE_UNIT_TEST( UnitAwareWattDistribution, ostream_operator )
 {
   std::ostringstream oss;
+  
   oss << Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>();
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 1.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toType<quantity<Utility::UnitTraits<MegaElectronVolt>::InverseUnit> >(),
+                       1.0/MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       0.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 3.0*MeV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 3.000000000000000000e+00, 1.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       3.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toType<quantity<Utility::UnitTraits<MegaElectronVolt>::InverseUnit> >(),
+                       1.0/MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       0.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       5.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toType<quantity<MegaElectronVolt> >(),
+                       4.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toType<quantity<Utility::UnitTraits<MegaElectronVolt>::InverseUnit> >(),
+                       1.0/MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       0.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
   
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       5.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toType<quantity<MegaElectronVolt> >(),
+                       4.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toType<quantity<Utility::UnitTraits<MegaElectronVolt>::InverseUnit> >(),
+                       3.0/MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       0.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       5.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toType<quantity<MegaElectronVolt> >(),
+                       4.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toType<quantity<Utility::UnitTraits<MegaElectronVolt>::InverseUnit> >(),
+                       3.0/MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       2.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 1.0, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       5.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toType<quantity<MegaElectronVolt> >(),
+                       4.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toType<quantity<Utility::UnitTraits<MegaElectronVolt>::InverseUnit> >(),
+                       3.0/MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       2.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 0.5, SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>> shared_dist( new Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
+  
   oss << *shared_dist;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Watt Distribution, 5.000000000000000000e+00, 4.000000000000000000e+00, 3.000000000000000000e+00, 2.000000000000000000e+00, 5.000000000000000000e-01}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a string
-FRENSIE_UNIT_TEST( WattDistribution, fromString )
-{
-  Utility::WattDistribution test_dist =
-    Utility::fromString<Utility::WattDistribution>( "{Watt Distribution}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution() );
-
-  test_dist = Utility::fromString<Utility::WattDistribution>( "{Watt Distribution, 5.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0 ) );
-
-  test_dist = Utility::fromString<Utility::WattDistribution>( "{Watt Distribution, 5.0, 4.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0 ) );
-
-  test_dist = Utility::fromString<Utility::WattDistribution>( "{Watt Distribution, 5.0, 4.0, 3.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  test_dist = Utility::fromString<Utility::WattDistribution>( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  test_dist = Utility::fromString<Utility::WattDistribution>( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0, 0.5}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwareWattDistribution, fromString )
-{
-  Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> test_dist =
-    Utility::fromString<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "{Watt Distribution}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>()) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "{Watt Distribution, 5.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "{Watt Distribution, 5.0, 4.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "{Watt Distribution, 5.0, 4.0, 3.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0, 0.5}" );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( WattDistribution, fromStream )
-{
-  std::istringstream iss( "{Watt Distribution}" );
-  
-  Utility::WattDistribution test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution() );
-
-  iss.str( "{Watt Distribution, 5.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0, 0.5}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareWattDistribution, fromStream )
-{
-  std::istringstream iss( "{Watt Distribution}" );
-  Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>()) );
-
-  iss.str( "{Watt Distribution, 5.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0, 0.5}" );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( WattDistribution, istream_operator )
-{
-  std::istringstream iss( "{Watt Distribution}" );
-  
-  Utility::WattDistribution test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution() );
-
-  iss.str( "{Watt Distribution, 5.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0, 0.5}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwareWattDistribution, istream_operator )
-{
-  std::istringstream iss( "{Watt Distribution}" );
-  Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>()) );
-
-  iss.str( "{Watt Distribution, 5.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV )) );
-
-  iss.str( "{Watt Distribution, 5.0, 4.0, 3.0, 2.0, 0.5}" );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be written to a property tree
-FRENSIE_UNIT_TEST( WattDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::WattDistribution() );
-
-  Utility::WattDistribution copy_dist =
-    ptree.get<Utility::WattDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution() );
-
-  ptree.put( "test distribution", Utility::WattDistribution( 5.0 ) );
-
-  copy_dist = ptree.get<Utility::WattDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0 ) );
-
-  ptree.put( "test distribution", Utility::WattDistribution( 5.0, 4.0 ) );
-
-  copy_dist = ptree.get<Utility::WattDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0 ) );
-
-  ptree.put( "test distribution", Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  copy_dist = ptree.get<Utility::WattDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  ptree.put( "test distribution", Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  copy_dist = ptree.get<Utility::WattDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  ptree.put( "test distribution", Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-
-  copy_dist = ptree.get<Utility::WattDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::WattDistribution().toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution() );
-
-  ptree = Utility::WattDistribution().toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::WattDistribution( 5.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0 ) );
-
-  ptree = Utility::WattDistribution( 5.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0 ) );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0, 3.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0, 3.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-
-  ptree = Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 0.5 );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::WattDistribution(), true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution() );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution(), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0, 3.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0, 3.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ), true );
-
-  copy_dist = ptree.get_value<Utility::WattDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
-
-  ptree = Utility::toPropertyTree( Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 0.5 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwareWattDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>() );
-
-  Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> copy_dist =
-    ptree.get<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>()) );
-
-  ptree.put( "test distribution", Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV )) );
-
-  ptree.put( "test distribution", Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV )) );
-
-  ptree.put( "test distribution", Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV )) );
-
-  ptree.put( "test distribution", Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV )) );
-
-  ptree.put( "test distribution", Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
-
-  copy_dist = ptree.get<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 )) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>().toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>()) );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>().toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV )) );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV )) );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV )) );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV )) );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 )) );
-
-  ptree = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 0.5 );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>(), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>()) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>(), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 1.0 );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 6 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Watt Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "incident energy" ), 5.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "a parameter" ), 4.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "b parameter" ), 3.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "restriction energy" ), 2.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "multiplier" ), 0.5 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( WattDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{                                                                     
-  FETCH_FROM_TABLE( std::string, dist_name );                           
-  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
-  FETCH_FROM_TABLE( Utility::WattDistribution, expected_dist );     
-                                                   
-  Utility::WattDistribution dist;                         
-  std::vector<std::string> unused_children;        
-                                                        
-  /* Use the PropertyTreeCompatibleObject interface */  
-  if( valid_dist_rep )                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) ); 
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-                                                                        
-    unused_children.clear();                                            
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ), 
-                         Utility::PropertyTreeConversionException );    
-  }                                                                     
-                                                                        
-  /* Use the property tree helper methods */                            
-  if( valid_dist_rep )                                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW(                                             
-            dist = Utility::fromPropertyTree<Utility::WattDistribution>(
-                                    test_dists_ptree->get_child( dist_name ), 
-                                    unused_children ) );                
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW(
-                 Utility::fromPropertyTree<Utility::WattDistribution>(
-                                  test_dists_ptree->get_child( dist_name ) ), 
-                 Utility::PropertyTreeConversionException );    
-  }                                                                     
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwareWattDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )  
-{
-  typedef Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );                           
-  FETCH_FROM_TABLE( bool, valid_dist_rep );                             
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children ); 
-  FETCH_FROM_TABLE( DistributionType, expected_dist );     
-                                                   
-  DistributionType dist;                         
-  std::vector<std::string> unused_children;        
-                                                        
-  /* Use the PropertyTreeCompatibleObject interface */  
-  if( valid_dist_rep )                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) ); 
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-                                                                        
-    unused_children.clear();                                            
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ), 
-                         Utility::PropertyTreeConversionException );    
-  }                                                                     
-                                                                        
-  /* Use the property tree helper methods */                            
-  if( valid_dist_rep )                                                  
-  {                                                                   
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                    test_dists_ptree->get_child( dist_name ), 
-                                    unused_children ) );                
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );                         
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );   
-  }                                                                     
-  else                                                                  
-  {                                                                   
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                  test_dists_ptree->get_child( dist_name ) ), 
-                         Utility::PropertyTreeConversionException );    
-  }                                                                     
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Watt Distribution",
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["incident energy"].toType<quantity<MegaElectronVolt> >(),
+                       5.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["a parameter"].toType<quantity<MegaElectronVolt> >(),
+                       4.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["b parameter"].toType<quantity<Utility::UnitTraits<MegaElectronVolt>::InverseUnit> >(),
+                       3.0/MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["restriction energy"].toType<quantity<MegaElectronVolt> >(),
+                       2.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["multiplier"].toDouble(), 0.5, SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -1974,24 +1106,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareWattDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS() 
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
-              "Test distributions xml file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
