@@ -55,59 +55,10 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::unique_ptr<Utility::PropertyTree> test_dists_ptree;
-
 std::shared_ptr<Utility::OneDDistribution> distribution;
 
 std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution;
-
-//---------------------------------------------------------------------------//
-// Testing Tables
-//---------------------------------------------------------------------------//
-// This table describes the data in the property tree
-FRENSIE_DATA_TABLE( TestPropertyTreeTable )
-{
-  std::vector<std::string> no_unused_children;
-
-  // The data table will always use the basic distribution since they are
-  // serialized the same in the table
-  Utility::PolynomialDistribution dummy_dist;
-
-  double pi = Utility::PhysicalConstants::pi;
-
-  COLUMNS() << "dist_name" << "valid_dist_rep" << "expected_unused_children" << "expected_dist";
-  NEW_ROW( "inline_ucase_full_name" ) << "Distribution A" << true << no_unused_children << Utility::PolynomialDistribution( {1.0, 2.0, 3.0}, 0.0, 1.0 );
-  NEW_ROW( "inline_lcase_full_name" ) << "Distribution B" << true << no_unused_children << Utility::PolynomialDistribution( {1.0, 2.0, 3.0}, 1.0, 2.0 );
-  NEW_ROW( "inline_ucase_abv_name" ) << "Distribution C" << true << no_unused_children << Utility::PolynomialDistribution( {1.0, 1.0, 1.0, 1.0, 1.0}, 1.0, pi );
-  NEW_ROW( "inline_lcase_abv_name" ) << "Distribution D" << true << no_unused_children << Utility::PolynomialDistribution( {0.0, 1.0, 1.0, 1.0}, pi/2, 3*pi/2 );
-  NEW_ROW( "inline_bad_type" ) << "Distribution E" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_0_args" ) << "Distribution F" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_1_arg" ) << "Distribution G" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_2_args" ) << "Distribution H" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_no_coeffs" ) << "Distribution I" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_zero_coeffs" ) << "Distribution J" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_coeff" ) << "Distribution K" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_inf_coeff" ) << "Distribution L" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_neg_lower_limit" ) << "Distribution M" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inline_bad_limits)" ) << "Distribution N" << false << no_unused_children << dummy_dist;
-
-  NEW_ROW( "ucase_full_name" ) << "Distribution O" << true << no_unused_children << Utility::PolynomialDistribution( {1.0, 2.0, 3.0}, 0.0, 1.0 );
-  NEW_ROW( "lcase_full_name" ) << "Distribution P" << true << no_unused_children << Utility::PolynomialDistribution( {1.0, 2.0, 3.0}, 1.0, 2.0 );
-  NEW_ROW( "ucase_abv_name" ) << "Distribution Q" << true << std::vector<std::string>( {"dummy"} ) << Utility::PolynomialDistribution( {1.0, 1.0, 1.0, 1.0, 1.0}, 1.0, 10.0 );
-  NEW_ROW( "repeated_keys" ) << "Distribution R" << true << std::vector<std::string>( {"coefficients", "upper boundary", "lower boundary"} ) << Utility::PolynomialDistribution( {0.0, 0.0, 1.0, 1.0}, 1.0, 10.0 );
-  NEW_ROW( "bad_type" ) << "Distribution S" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "0_args" ) << "Distribution T" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "1_arg" ) << "Distribution U" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "no_upper_limit" ) << "Distribution V" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "no_lower_limit" ) << "Distribution W" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "no_coeffs" ) << "Distribution X" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "zero_coeffs" ) << "Distribution Y" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_coeff" ) << "Distribution Z" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "inf_coeff" ) << "Distribution AA" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "neg_lower_limit" ) << "Distribution AB" << false << no_unused_children << dummy_dist;
-  NEW_ROW( "bad_limits" ) << "Distribution AC" << false << no_unused_children << dummy_dist;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -407,31 +358,6 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution type name can be returned
-FRENSIE_UNIT_TEST( PolynomialDistribution, getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( Utility::PolynomialDistribution::typeName( true, false, " " ),
-                       "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( Utility::PolynomialDistribution::typeName( false ),
-                       "Polynomial" );
-  FRENSIE_CHECK_EQUAL( Utility::typeName<Utility::PolynomialDistribution>(),
-                       "PolynomialDistribution" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution type name can be returned
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution,
-                   getDistributionTypeName )
-{
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>::typeName( true, false, " " )),
-                       "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>::typeName( false )),
-                       "Polynomial" );
-  FRENSIE_CHECK_EQUAL( (Utility::typeName<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> >()),
-                       (std::string("UnitAwarePolynomialDistribution<")+Utility::typeName<MegaElectronVolt,si::amount>()+">") );
-}
-
-//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 FRENSIE_UNIT_TEST( PolynomialDistribution, isTabular )
 {
@@ -533,80 +459,73 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a distribution can be converted to a string
-FRENSIE_UNIT_TEST( PolynomialDistribution, toString )
-{
-  std::string dist_string = Utility::toString( Utility::PolynomialDistribution( {0.0, 1.0, 0.0, 1.0}, 1.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Polynomial Distribution, {0.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( *distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Polynomial Distribution, {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00}, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be converted to a string
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, toString )
-{
-  std::string dist_string = Utility::toString( Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 0.0, 1.0}, 1.0*MeV, 2.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Polynomial Distribution, {0.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  dist_string = Utility::toString( *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( dist_string, "{Polynomial Distribution, {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00}, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be placed in a stream
-FRENSIE_UNIT_TEST( PolynomialDistribution, toStream )
-{
-  std::ostringstream oss;
-  Utility::toStream( oss, Utility::PolynomialDistribution( {0.0, 1.0, 0.0, 1.0}, 1.0, 2.0 ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {0.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00}, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, toStream )
-{
-  std::ostringstream oss;
-  Utility::toStream( oss, Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 0.0, 1.0}, 1.0*MeV, 2.0*MeV ) );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {0.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
-
-  oss.str( "" );
-  oss.clear();
-
-  Utility::toStream( oss, *unit_aware_distribution );
-
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00}, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
 // Check that a distribution can be placed in a stream
 FRENSIE_UNIT_TEST( PolynomialDistribution, ostream_operator )
 {
   std::ostringstream oss;
+  
+  oss << Utility::PolynomialDistribution();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0, SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 1.0, SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::PolynomialDistribution( {0.0, 1.0, 0.0, 1.0} );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({0.0, 1.0, 0.0, 1.0}) );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 1.0 );
+
+  oss.str( "" );
+  oss.clear();
+  
   oss << Utility::PolynomialDistribution( {0.0, 1.0, 0.0, 1.0}, 1.0, 2.0 );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {0.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({0.0, 1.0, 0.0, 1.0}) );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 1.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 2.0 );
 
   oss.str( "" );
   oss.clear();
 
   oss << *distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00}, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(), "void", SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0, 2.0, 3.0, 0.0}) );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toDouble(), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toDouble(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -614,397 +533,104 @@ FRENSIE_UNIT_TEST( PolynomialDistribution, ostream_operator )
 FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, ostream_operator )
 {
   std::ostringstream oss;
+
+  oss << Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>();
+
+  Utility::VariantMap dist_data =
+    Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<MegaElectronVolt> >(),
+                       0.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+
+  oss << Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 0.0, 1.0} );
+
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({0.0, 1.0, 0.0, 1.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<MegaElectronVolt> >(),
+                       0.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+
+  oss.str( "" );
+  oss.clear();
+  
   oss << Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 0.0, 1.0}, 1.0*MeV, 2.0*MeV );
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {0.000000000000000000e+00, 1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}, 1.000000000000000000e+00, 2.000000000000000000e+00}" );
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({0.0, 1.0, 0.0, 1.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<MegaElectronVolt> >(),
+                       2.0*MeV,
+                       SHOW_LHS );
 
   oss.str( "" );
   oss.clear();
 
   oss << *unit_aware_distribution;
 
-  FRENSIE_CHECK_EQUAL( oss.str(), "{Polynomial Distribution, {1.000000000000000000e+00, 2.000000000000000000e+00, 3.000000000000000000e+00, 0.000000000000000000e+00}, 0.000000000000000000e+00, 1.000000000000000000e+00}" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a string
-FRENSIE_UNIT_TEST( PolynomialDistribution, fromString )
-{
-  Utility::PolynomialDistribution test_dist =
-    Utility::fromString<Utility::PolynomialDistribution>( "{Polynomial Distribution, {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0}");
-
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::PolynomialDistribution( {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0 ));
-
-  test_dist = Utility::fromString<Utility::PolynomialDistribution>( Utility::toString( *distribution ) );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::PolynomialDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a string
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, fromString )
-{
-  Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> test_dist =
-    Utility::fromString<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> >( "{Polynomial Distribution, {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0}");
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {3.0, 2.0, 1.0, 1.0}, 1.0*MeV, 2.0*MeV )) );
-
-  test_dist = Utility::fromString<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> >( Utility::toString( *unit_aware_distribution ) );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( PolynomialDistribution, fromStream )
-{
-  std::istringstream iss( "{Polynomial Distribution, {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0}");
-  Utility::PolynomialDistribution test_dist;
-
-  Utility::fromStream( iss, test_dist );
-  
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::PolynomialDistribution( {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0 ));
-
-  iss.str( Utility::toString( *distribution ) );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::PolynomialDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, fromStream )
-{
-  std::istringstream iss( "{Polynomial Distribution, {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0}" );
-  Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {3.0, 2.0, 1.0, 1.0}, 1.0*MeV, 2.0*MeV )) );
-
-  iss.str( Utility::toString( *unit_aware_distribution ) );
-  iss.clear();
-
-  Utility::fromStream( iss, test_dist );
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( PolynomialDistribution, istream_operator )
-{
-  std::istringstream iss( "{Polynomial Distribution, {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0}");
-  Utility::PolynomialDistribution test_dist;
-
-  iss >> test_dist;
-  
-  FRENSIE_CHECK_EQUAL( test_dist, Utility::PolynomialDistribution( {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0 ));
-
-  iss.str( Utility::toString( *distribution ) );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, *dynamic_cast<Utility::PolynomialDistribution*>( distribution.get() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be initialized from a stream
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, istream_operator )
-{
-  std::istringstream iss( "{Polynomial Distribution, {3.0, 2.0, 1.0, 1.0}, 1.0, 2.0}" );
-  Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> test_dist;
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {3.0, 2.0, 1.0, 1.0}, 1.0*MeV, 2.0*MeV )) );
-
-  iss.str( Utility::toString( *unit_aware_distribution ) );
-  iss.clear();
-
-  iss >> test_dist;
-
-  FRENSIE_CHECK_EQUAL( test_dist, (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a distribution can be written to a property tree
-FRENSIE_UNIT_TEST( PolynomialDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 0.0, 1.0 ) );
-
-  Utility::PolynomialDistribution copy_dist =
-    ptree.get<Utility::PolynomialDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 0.0, 1.0 ) );
-
-  ptree.put( "test distribution", *distribution );
-
-  copy_dist = ptree.get<Utility::PolynomialDistribution>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::PolynomialDistribution*>( distribution.get() ) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 1.0, 2.0 ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::PolynomialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 1.0, 2.0 ) );
-
-  ptree = Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 1.0, 2.0 ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({0.0, 1.0, 2.0, 3.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::PolynomialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::PolynomialDistribution*>( distribution.get() ) );
-
-  ptree = distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({1.0, 2.0, 3.0, 0.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 1.0, 2.0 ), true );
-
-  copy_dist = ptree.get_value<Utility::PolynomialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 1.0, 2.0 ) );
-
-  ptree = Utility::toPropertyTree( Utility::PolynomialDistribution( {0.0, 1.0, 2.0, 3.0}, 1.0, 2.0 ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({0.0, 1.0, 2.0, 3.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = Utility::toPropertyTree( *distribution, true );
-
-  copy_dist = ptree.get_value<Utility::PolynomialDistribution>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, *dynamic_cast<Utility::PolynomialDistribution*>( distribution.get() ) );
-
-  ptree = Utility::toPropertyTree( *distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({1.0, 2.0, 3.0, 0.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be written to a property tree
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, toPropertyTree )
-{
-  // Use the property tree interface directly
-  Utility::PropertyTree ptree;
-
-  ptree.put( "test distribution", Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 0.0*MeV, 1.0*MeV ) );
-
-  Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> copy_dist =
-    ptree.get<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 0.0*MeV, 1.0*MeV )) );
-
-  ptree.put( "test distribution", *unit_aware_distribution );
-
-  copy_dist = ptree.get<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>>( "test distribution" );
-
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  // Use the PropertyTreeCompatibleObject interface
-  ptree = Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 1.0*MeV, 2.0*MeV ).toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 1.0*MeV, 2.0*MeV )) );
-
-  ptree = Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 1.0*MeV, 2.0*MeV ).toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({0.0, 1.0, 2.0, 3.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = unit_aware_distribution->toPropertyTree( true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = unit_aware_distribution->toPropertyTree( false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({1.0, 2.0, 3.0, 0.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
-
-  // Use the property tree helper methods
-  ptree = Utility::toPropertyTree( Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 1.0*MeV, 2.0*MeV ), true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 1.0*MeV, 2.0*MeV )) );
-
-  ptree = Utility::toPropertyTree( Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 2.0, 3.0}, 1.0*MeV, 2.0*MeV ), false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({0.0, 1.0, 2.0, 3.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 1.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 2.0 );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, true );
-
-  copy_dist = ptree.get_value<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>>();
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 0 );
-  FRENSIE_CHECK_EQUAL( copy_dist, (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() )) );
-
-  ptree = Utility::toPropertyTree( *unit_aware_distribution, false );
-
-  FRENSIE_CHECK_EQUAL( ptree.size(), 4 );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::string>( "type" ), "Polynomial Distribution" );
-  FRENSIE_CHECK_EQUAL( ptree.get<std::vector<double> >( "coefficients" ),
-                       std::vector<double>({1.0, 2.0, 3.0, 0.0}) );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "lower boundary" ), 0.0 );
-  FRENSIE_CHECK_EQUAL( ptree.get<double>( "upper boundary" ), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( PolynomialDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  Utility::PolynomialDistribution dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::PolynomialDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-             dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-             Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( Utility::PolynomialDistribution, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW(
-        dist = Utility::fromPropertyTree<Utility::PolynomialDistribution>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW(
-               Utility::fromPropertyTree<Utility::PolynomialDistribution>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-               Utility::PropertyTreeConversionException );
-  }
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be read from a property tree
-FRENSIE_DATA_UNIT_TEST( UnitAwarePolynomialDistribution,
-                        fromPropertyTree,
-                        TestPropertyTreeTable )
-{
-  typedef Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> DistributionType;
-  
-  FETCH_FROM_TABLE( std::string, dist_name );
-  FETCH_FROM_TABLE( bool, valid_dist_rep );
-  FETCH_FROM_TABLE( std::vector<std::string>, expected_unused_children );
-
-  DistributionType dist;
-  std::vector<std::string> unused_children;
-
-  // Use the PropertyTreeCompatibleObject interface
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ), unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-
-    unused_children.clear();
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( dist.fromPropertyTree( test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
-
-  // Use the property tree helper methods
-  if( valid_dist_rep )
-  {
-    FETCH_FROM_TABLE( DistributionType, expected_dist );
-
-    FRENSIE_CHECK_NO_THROW( dist = Utility::fromPropertyTree<DistributionType>(
-                                      test_dists_ptree->get_child( dist_name ),
-                                      unused_children ) );
-    FRENSIE_CHECK_EQUAL( dist, expected_dist );
-    FRENSIE_CHECK_EQUAL( unused_children, expected_unused_children );
-  }
-  else
-  {
-    FRENSIE_CHECK_THROW( Utility::fromPropertyTree<DistributionType>(
-                                    test_dists_ptree->get_child( dist_name ) ),
-                         Utility::PropertyTreeConversionException );
-  }
+  dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
+
+  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
+                       "Polynomial Distribution" );
+  FRENSIE_CHECK_EQUAL( dist_data["independent unit"].toString(),
+                       Utility::UnitTraits<MegaElectronVolt>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
+                       Utility::UnitTraits<si::amount>::name(),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["coefficients"].toType<std::vector<double> >(),
+                       std::vector<double>({1.0, 2.0, 3.0, 0.0}),
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["lower bound"].toType<quantity<MegaElectronVolt> >(),
+                       0.0*MeV,
+                       SHOW_LHS );
+  FRENSIE_CHECK_EQUAL( dist_data["upper bound"].toType<quantity<MegaElectronVolt> >(),
+                       1.0*MeV,
+                       SHOW_LHS );
 }
 
 //---------------------------------------------------------------------------//
@@ -1167,24 +793,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePolynomialDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_dists_json_file_name;
-
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  ADD_OPTION( "test_dists_json_file",
-              boost::program_options::value<std::string>(&test_dists_json_file_name)->default_value(""),
-              "Test distributions json file name" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Load the property tree from the json file
-  test_dists_ptree.reset( new Utility::PropertyTree );
-
-  std::ifstream test_dists_json_file( test_dists_json_file_name );
-
-  test_dists_json_file >> *test_dists_ptree;
-
   // Initialize the polynomial distribution
   std::vector<double> coeffs( 4 );
   coeffs[0] = 1.0;
