@@ -326,11 +326,9 @@ template<size_t N, typename IndependentUnit, typename DependentUnit>
 void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream(
 						       std::ostream& os ) const
 {
-  this->toStreamDistImpl( os,
-                          std::make_pair( "power", N ),
-                          std::make_pair( "lower bound", d_min_indep_limit ),
-                          std::make_pair( "upper bound", d_max_indep_limit ),
-                          std::make_pair( "multiplier", Utility::getRawQuantity( d_multiplier ) ) );
+  this->toStreamWithLimitsDistImpl( os,
+                                    std::make_pair( "power", N ),
+                                    std::make_pair( "multiplier", Utility::getRawQuantity( d_multiplier ) ) );
 }
 
 // Save the distribution to an archive

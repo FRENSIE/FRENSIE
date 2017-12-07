@@ -154,6 +154,10 @@ protected:
   //! Add distribution data to the stream
   template<typename... Types>
   void toStreamDistImpl( std::ostream& os, const Types&... data ) const;
+
+  //! Add distribution data (including the dist limits) to the stream
+  template<typename... Types>
+  void toStreamWithLimitsDistImpl( std::ostream& os, const Types&... data ) const;
   
 private:
 

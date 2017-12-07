@@ -281,12 +281,10 @@ bool UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::isContinuous() 
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamDistImpl( os,
-                          std::make_pair( "mean", d_mean ),
-                          std::make_pair( "standard dev", d_standard_deviation ),
-                          std::make_pair( "lower bound", d_min_independent_value ),
-                          std::make_pair( "upper bound", d_max_independent_value ),
-                          std::make_pair( "multiplier", d_constant_multiplier ) );
+  this->toStreamWithLimitsDistImpl( os,
+                                    std::make_pair( "mean", d_mean ),
+                                    std::make_pair( "standard dev", d_standard_deviation ),
+                                    std::make_pair( "multiplier", d_constant_multiplier ) );
 }
 
 // Save the distribution to an archive

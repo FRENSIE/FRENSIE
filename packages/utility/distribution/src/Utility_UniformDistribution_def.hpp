@@ -313,10 +313,8 @@ bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isContinuous()
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamDistImpl( os,
-                          std::make_pair( "lower bound", d_min_independent_value ),
-                          std::make_pair( "upper bound", d_max_independent_value ),
-                          std::make_pair( "dependent value", d_dependent_value ) );
+  this->toStreamWithLimitsDistImpl( os,
+                                    std::make_pair( "dependent value", d_dependent_value ) );
 }
 
 // Save the distribution to an archive

@@ -259,10 +259,8 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isContinuou
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamDistImpl( os,
-                          std::make_pair( "coefficients", d_coefficients ),
-                          std::make_pair( "lower bound", IQT::initializeQuantity(Utility::get<0>(d_indep_limits_to_series_powers_p1.front())) ),
-                          std::make_pair( "upper bound", IQT::initializeQuantity(Utility::get<1>(d_indep_limits_to_series_powers_p1.front())) ) );
+  this->toStreamWithLimitsDistImpl( os,
+                                    std::make_pair( "coefficients", d_coefficients ) );
 }
 
 // Save the distribution to an archive

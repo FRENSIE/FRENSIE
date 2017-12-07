@@ -264,11 +264,9 @@ template<typename IndependentUnit, typename DependentUnit>
 void
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamDistImpl( os,
-                          std::make_pair( "exponent multiplier", d_exponent_multiplier ),
-                          std::make_pair( "multiplier", d_constant_multiplier ),
-                          std::make_pair( "lower bound", d_lower_limit ),
-                          std::make_pair( "upper bound", d_upper_limit ) );
+  this->toStreamWithLimitsDistImpl( os,
+                                    std::make_pair( "exponent multiplier", d_exponent_multiplier ),
+                                    std::make_pair( "multiplier", d_constant_multiplier ) );
 }
 
 // Save the distribution to an archive

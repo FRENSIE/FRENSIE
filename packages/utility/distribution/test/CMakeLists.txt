@@ -28,9 +28,8 @@ FRENSIE_ADD_TEST_EXECUTABLE(PolynomialDistribution DEPENDS tstPolynomialDistribu
 FRENSIE_ADD_TEST(PolynomialDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(PowerDistribution DEPENDS tstPowerDistribution.cpp)
-FRENSIE_ADD_TEST(PowerDistribution
-  EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_power_distributions.json)
-
+FRENSIE_ADD_TEST(PowerDistribution)
+  
 FRENSIE_ADD_TEST_EXECUTABLE(TabularDistribution DEPENDS tstTabularDistribution.cpp)
 FRENSIE_ADD_TEST(TabularDistribution
   EXTRA_ARGS --test_dists_json_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.json)

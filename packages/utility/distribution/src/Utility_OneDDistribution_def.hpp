@@ -140,6 +140,17 @@ void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::toStreamDistImpl(
                       data... );
 }
 
+// Add distribution data to the stream
+template<typename IndependentUnit, typename DependentUnit>
+template<typename... Types>
+void UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::toStreamWithLimitsDistImpl( std::ostream& os, const Types&... data ) const
+{
+  this->toStreamDistImpl( os,
+                          std::make_pair( "lower bound", this->getLowerBoundOfIndepVar() ),
+                          std::make_pair( "upper bound", this->getUpperBoundOfIndepVar() ),
+                          data... );
+}
+
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareOneDDistribution<void,void> );
   
