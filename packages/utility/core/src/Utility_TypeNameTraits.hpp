@@ -74,7 +74,7 @@ struct TypeNameTraits<boost::units::unit<Dim,Sys> >
 
   //! Get the type name
   static inline std::string name()
-  { return Utility::UnitTraits<boost::units::unit<Dim,Sys> >::symbol(); }
+  { return Utility::UnitTraits<boost::units::unit<Dim,Sys> >::name(); }
 };
 
 /*! \brief Partial specialization of Utility::TypeNameTraits for 
@@ -91,7 +91,7 @@ struct TypeNameTraits<boost::units::quantity<Unit,T> >
   static inline std::string name()
   {
     return std::string("boost::units::quantity<") +
-      Utility::UnitTraits<Unit>::symbol() + "," +
+      Utility::UnitTraits<Unit>::name() + "," +
       TypeNameTraits<T>::name() +">";
   }
 };

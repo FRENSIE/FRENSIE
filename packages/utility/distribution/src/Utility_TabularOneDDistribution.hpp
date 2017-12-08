@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -21,6 +20,9 @@ namespace Utility{
 template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareTabularOneDDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
+
+  // The base distribution type
+  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
 
 public:
 
@@ -60,41 +62,39 @@ public:
 				 const IndepQuantity max_indep_var ) const = 0;
 
   //! Test if the distribution is tabular
-  bool isTabular() const override;
+  bool isTabular() const override
+  { return true; }
 
 private:
 
-  // Archive the distribution
+  // Save the distribution to an archive
   template<typename Archive>
-  void serialize( Archive& ar, const unsigned version )
-  {
-    typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
-    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
-  }
+  void save( Archive& ar, const unsigned version ) const
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+    
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-
-// Test if the distribution is tabular
-template<typename IndependentUnit, typename DependentUnit>
-inline bool UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::isTabular() const
-{
-  return true;
-}
 
 /*! The tabular one-dimensional distribution (unit-agnostic)
  * \ingroup one_d_distributions
  */
 typedef UnitAwareTabularOneDDistribution<void,void> TabularOneDDistribution;
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularOneDDistribution<void,void> );
-
 } // end Utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( UnitAwareTabularOneDDistribution );
 BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareTabularOneDDistribution, 0 );
+
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularOneDDistribution<void,void> );
 
 #endif // end UTILITY_TABULAR_ONE_D_DISTRIBUTION_HPP
 
