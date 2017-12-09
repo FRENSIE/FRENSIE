@@ -226,8 +226,8 @@ typedef UnitAwareEvaporationDistribution<void,void> EvaporationDistribution;
   
 } // end Utility namespace
 
-BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareEvaporationDistribution, 0 );
-BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( EvaporationDistribution );
+BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareEvaporationDistribution, 0 );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( EvaporationDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

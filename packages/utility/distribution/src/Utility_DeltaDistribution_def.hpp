@@ -18,7 +18,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
 
 namespace Utility{
 
@@ -327,10 +327,10 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroI
   return false;
 }
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDeltaDistribution<void,void> );
-
 } // end Utility namespace
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareDeltaDistribution<void,void> );
 
 #endif // end UTILITY_DELTA_DISTRIBUTION_DEF_HPP
 

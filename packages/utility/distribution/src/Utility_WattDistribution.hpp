@@ -236,8 +236,8 @@ typedef UnitAwareWattDistribution<void,void> WattDistribution;
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareWattDistribution, 0 );
-BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( WattDistribution );
+BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareWattDistribution, 0 );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( WattDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

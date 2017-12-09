@@ -226,8 +226,8 @@ typedef UnitAwareMaxwellFissionDistribution<void,void> MaxwellFissionDistributio
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareMaxwellFissionDistribution, 0 );
-BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( MaxwellFissionDistribution );
+BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareMaxwellFissionDistribution, 0 );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( MaxwellFissionDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

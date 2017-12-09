@@ -223,8 +223,8 @@ typedef UnitAwareNormalDistribution<void,void> NormalDistribution;
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareNormalDistribution, 0 );
-BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( NormalDistribution );
+BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareNormalDistribution, 0 );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( NormalDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

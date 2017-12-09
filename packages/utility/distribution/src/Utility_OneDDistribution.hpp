@@ -10,14 +10,9 @@
 #define UTILITY_ONE_D_DISTRIBUTION_HPP
 
 // Std Lib Includes
-#include <limits>
 #include <stdexcept>
-#include <iostream>
-#include <type_traits>
 
 // Boost Includes
-#include <boost/units/quantity.hpp>
-#include <boost/mpl/and.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
@@ -194,8 +189,8 @@ public:
   
 } // end Utility namespace
   
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( UnitAwareOneDDistribution );
-BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareOneDDistribution, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION1( UnitAwareOneDDistribution );
+BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareOneDDistribution, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

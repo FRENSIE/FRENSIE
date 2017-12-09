@@ -21,7 +21,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareMaxwellFissionDistribution );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareMaxwellFissionDistribution );
 
 namespace Utility{
 

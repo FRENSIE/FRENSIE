@@ -13,9 +13,8 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
-BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareUniformDistribution );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareUniformDistribution );
 
 namespace Utility{
 

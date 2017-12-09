@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_DeltaDistribution.cpp
+//! \file   Utility_TwoDDistribution.cpp
 //! \author Alex Robinson
-//! \brief  The delta distribution class template instantiations
+//! \brief  The two-dimensional distribution class template instantiations
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,17 +15,17 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
-#include "Utility_DeltaDistribution.hpp"
+#include "Utility_TwoDDistribution.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
 
 namespace Utility{
 
 // Explicit instantiation
-EXPLICIT_DISTRIBUTION_INST( UnitAwareDeltaDistribution<void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareTwoDDistribution<void,void> );
   
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_DeltaDistribution.cpp
+// end Utility_TwoDDistribution.cpp
 //---------------------------------------------------------------------------//

@@ -21,7 +21,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
 
 namespace Utility{
 

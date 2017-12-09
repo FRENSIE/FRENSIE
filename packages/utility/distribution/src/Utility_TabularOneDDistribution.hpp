@@ -91,8 +91,8 @@ typedef UnitAwareTabularOneDDistribution<void,void> TabularOneDDistribution;
 
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION( UnitAwareTabularOneDDistribution );
-BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwareTabularOneDDistribution, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION1( UnitAwareTabularOneDDistribution );
+BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareTabularOneDDistribution, 0 );
 
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularOneDDistribution<void,void> );
 

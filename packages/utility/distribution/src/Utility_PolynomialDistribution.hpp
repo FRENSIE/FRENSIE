@@ -192,8 +192,8 @@ private:
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION_CLASS_VERSION( UnitAwarePolynomialDistribution, 0 );
-BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2( PolynomialDistribution );
+BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwarePolynomialDistribution, 0 );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( PolynomialDistribution );
 
 //---------------------------------------------------------------------------//
 // Template includes

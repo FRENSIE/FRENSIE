@@ -209,8 +209,8 @@ template<unsigned N> using PowerDistribution =
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION_CLASS_VERSION_EXTRA( UnitAwarePowerDistribution, size_t, N, 0 );
-BOOST_DISTRIBUTION_CLASS_EXPORT_KEY2_EXTRA_INT( PowerDistribution, size_t, N );
+BOOST_DISTRIBUTION1_CLASS_VERSION_EXTRA( UnitAwarePowerDistribution, size_t, N, 0 );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2_EXTRA_INT( PowerDistribution, size_t, N );
 
 //---------------------------------------------------------------------------//
 // Template includes

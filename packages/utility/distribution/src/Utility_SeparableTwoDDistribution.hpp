@@ -28,55 +28,55 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryDependentUnit>
 class UnitAwareSeparableTwoDDistribution : public UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type>
 {
-  
-private:
-
-  // The parent type
-  typedef UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type> ParentType;
+  // The base type
+  typedef UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type> BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
-  typedef QuantityTraits<typename ParentType::PrimaryIndepQuantity> PIQT;
+  typedef QuantityTraits<typename BaseType::PrimaryIndepQuantity> PIQT;
 
   // Typddef for QuantityTraits<SecondaryIndepQuantity>
-  typedef QuantityTraits<typename ParentType::SecondaryIndepQuantity> SIQT;
+  typedef QuantityTraits<typename BaseType::SecondaryIndepQuantity> SIQT;
 
   // Typedef for QuantityTraits<InversePrimaryIndepQuantity>
-  typedef QuantityTraits<typename ParentType::InversePrimaryIndepQuantity> IPIQT;
+  typedef QuantityTraits<typename BaseType::InversePrimaryIndepQuantity> IPIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
-  typedef QuantityTraits<typename ParentType::InverseSecondaryIndepQuantity> ISIQT;
+  typedef QuantityTraits<typename BaseType::InverseSecondaryIndepQuantity> ISIQT;
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename ParentType::InverseIndepQuantity> IIQT;
+  typedef QuantityTraits<typename BaseType::InverseIndepQuantity> IIQT;
 
   // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename ParentType::DepQuantity> DQT;
+  typedef QuantityTraits<typename BaseType::DepQuantity> DQT;
 
 public:
 
+  //! This type
+  typedef UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit> ThisType;
+
   //! The dependent unit type
-  typedef typename ParentType::DepUnit DepUnit;
+  typedef typename BaseType::DepUnit DepUnit;
 
   //! The primary independent quantity type
-  typedef typename ParentType::PrimaryIndepQuantity PrimaryIndepQuantity;
+  typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
   //! The secondary independent quantity type
-  typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
+  typedef typename BaseType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse primary independent quantity type
-  typedef typename ParentType::InversePrimaryIndepQuantity InversePrimaryIndepQuantity;
+  typedef typename BaseType::InversePrimaryIndepQuantity InversePrimaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename BaseType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
 
   //! The inverse independent quantity type
-  typedef typename ParentType::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename BaseType::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename ParentType::DepQuantity DepQuantity;
+  typedef typename BaseType::DepQuantity DepQuantity;
 
   //! Constructor
   UnitAwareSeparableTwoDDistribution(
@@ -89,8 +89,8 @@ public:
 
   //! Evaluate the distribution
   DepQuantity evaluate(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+       const PrimaryIndepQuantity primary_indep_var_value,
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
   //! Evaluate the joint PDF
   InverseIndepQuantity evaluateJointPDF(
@@ -105,19 +105,29 @@ public:
   InverseSecondaryIndepQuantity evaluateSecondaryMarginalPDF(
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
+  //! Evaluate the primary conditional PDF
+  InversePrimaryIndepQuantity evaluatePrimaryConditionalPDF(
+                const PrimaryIndepQuantity primary_indep_var_value,
+                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+  
+  //! Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
+       const PrimaryIndepQuantity primary_indep_var_value,
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
+
   //! Return a random sample from the primary marginal PDF
   PrimaryIndepQuantity samplePrimaryMarginal() const;
 
   //! Return a random sample and record the number of trials
   PrimaryIndepQuantity samplePrimaryMarginalAndRecordTrials(
-                                                      DistributionTraits::Counter& trials ) const;
+                                   DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the secondary marginal PDF
   SecondarIndepQuantity sampleSecondaryMarginal() const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryMarginalAndRecordTrials(
-                                                      DistributionTraits::Counter& trials ) const;
+                                   DistributionTraits::Counter& trials ) const;
 
   //! Return a random sample from the primary conditional PDF
   PrimaryIndepQuantity samplePrimaryConditional(
@@ -130,18 +140,18 @@ public:
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+           const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            DistributionTraits::Counter& trials ) const;
+                          const PrimaryIndepQuantity primary_indep_var_value,
+                          DistributionTraits::Counter& trials ) const override;
 
   //! Return the upper bound of the distribution primary independent variable
-  PrimaryIndepQuantity getUpperBoundOfPrimaryIndepVar() const;
+  PrimaryIndepQuantity getUpperBoundOfPrimaryIndepVar() const override;
 
   //! Return the lower bound of the distribution primary independent variable
-  PrimaryIndepQuantity getLowerBoundOfPrimaryIndepVar() const;
+  PrimaryIndepQuantity getLowerBoundOfPrimaryIndepVar() const override;
 
   //! Return the upper bound of the distribution secondary independent variable
   SecondaryIndepQuantity getUpperBoundOfSecondaryIndepVar() const;
@@ -151,19 +161,32 @@ public:
 
   //! Return the upper bound of the conditional distribution
   SecondaryIndepQuantity getUpperBoundOfConditionalIndepVar(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+           const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
   //! Return the lower bound of the conditional distribution
   SecondaryIndepQuantity getLowerBoundOfConditionalIndepVar(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+           const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
   //! Test if the distribution is tabular in the primary dimension
-  bool isPrimaryDimensionTabular() const;
+  bool isPrimaryDimensionTabular() const override;
 
   //! Test if the distribution is condinuous in the primary dimension
-  bool isPrimaryDimensionContinuous() const;
+  bool isPrimaryDimensionContinuous() const override;
 
 private:
+
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The primary distribution
   std::shared_ptr<const UnitAwareOneDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit> > d_primary_distribution;
@@ -178,6 +201,9 @@ private:
 typedef UnitAwareSeparableTwoDDistribution<void,void,void,void> SeparableTwoDDistribution;
   
 } // end Utility namespace
+
+BOOST_DISTRIBUTION2_CLASS_VERSION( UnitAwareSeparableTwoDDistribution, 0 );
+BOOST_DISTRIBUTION2_CLASS_EXPORT_KEY2( SeparableTwoDDistribution );
 
 #endif // UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_HPP
 

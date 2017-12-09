@@ -18,7 +18,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_EXTRA( UnitAwareTabularDistribution, typename, InterpolationPolicy );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT_EXTRA( UnitAwareTabularDistribution, typename, InterpolationPolicy );
 
 namespace Utility{
 

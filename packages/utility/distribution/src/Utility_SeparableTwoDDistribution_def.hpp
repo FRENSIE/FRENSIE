@@ -11,6 +11,10 @@
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
+
+BOOST_DISTRIBUTION2_CLASS_EXPORT_IMPLEMENT( UnitAwareSeparableTwoDDistribution );
 
 namespace Utility{
 
@@ -25,9 +29,17 @@ UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,S
   : d_primary_distribution( primary_distribution ),
     d_secondary_distribution( secondary_distribution )
 {
-  // Make sure the distributions are valid
-  testPrecondition( primary_distribution.get() );
-  testPrecondition( secondary_distribution.get() );
+  TEST_FOR_EXCEPTION( primary_distribution.get() == NULL,
+                      Utility::BadTwoDDistributionParameter,
+                      "The separable distribution cannot be constructed "
+                      "because the primary distribution is NULL!" );
+
+  TEST_FOR_EXCEPTION( secondary_distribution.get() == NULL,
+                      Utility::BadTwoDDistributionParameter,
+                      "The separable distribution cannot be constructed "
+                      "because the secondary distribution is NULL!" );
+
+  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Evaluate the distribution
@@ -78,6 +90,30 @@ InverseSecondaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndepend
   return d_secondary_distribution->evaluatePDF( secondary_indep_var_value );
 }
 
+// Evaluate the primary conditional PDF
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+InversePrimaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::evaluatePrimaryConditionalPDF(
+                 const PrimaryIndepQuantity primary_indep_var_value,
+                 const SecondaryIndepQuantity ) const
+{
+  return d_primary_distribution->evaluatePDF( primary_indep_var_value );
+}
+  
+// Evaluate the secondary conditional PDF
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+InverseSecondaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::evaluateSecondaryConditionalPDF(
+                 const PrimaryIndepQuantity,
+                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+{
+  return d_secondary_distribution->evaluatePDF( secondary_indep_var_value );
+}
+
 // Return a random sample from the primary marginal PDF
 template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
@@ -113,7 +149,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal( DistributionTraits::Counter& trials ) const
+SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginalAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return d_secondary_distribution->sampleAndRecordTrails( trials );
 }
@@ -284,8 +320,42 @@ bool UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentU
 {
   return d_primary_distribution.isContinuous();
 }
+
+// Save the distribution to an archive
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+template<typename Archive>
+void UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_primary_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_secondary_distribution );
+}
+
+// Load the distribution from an archive
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+template<typename Archive>
+void UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_primary_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_secondary_distribution );
+}
   
 } // end Utility namespace
+
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareSeparableTwoDDistribution<void,void,void,void> );
 
 #endif // end UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_DEF_HPP
 

@@ -9,6 +9,9 @@
 #ifndef UTILITY_UNIT_TRAITS_DECL_HPP
 #define UTILITY_UNIT_TRAITS_DECL_HPP
 
+// Std Lib Includes
+#include <type_traits>
+
 // Boost Includes
 #include <boost/units/operators.hpp>
 
@@ -82,6 +85,42 @@ struct UnitTraits
 };
 
 } // end Utility namespace
+
+/*! Macro for restricting distribution units to a certain dimension
+ *
+ * \details Certain classes only make sense when defined on a certain
+ * dimension (e.g. energy). This macro will prevent improper use of a
+ * class by preventing the class template instance from
+ * compiling when the template parameter has the incorrect dimension. Void
+ * will also be allowed (needed for creating unit-agnostic class instances). If
+ * the compiler shows "__unit_has_invalid_dimension_if_visible__" then you
+ * know that an attempt to use a unit with a restricted dimension was made,
+ * which should help remedy the error faster (given that boost::units
+ * template errors can be intimidating!). This macro can only be used
+ * once - using it multiple times in the same header will prevent your
+ * class from working with any dimension! It is safe to place it
+ * anywhere in the class class declaration.
+ * \ingroup unit_traits
+ */
+#define RESTRICT_UNIT_TO_BOOST_DIMENSION( Unit, Dim )\
+typedef typename std::enable_if<std::is_same<typename Utility::UnitTraits<Unit>::Dimension,boost::units::Dim>::value || std::is_same<typename Utility::UnitTraits<Unit>::Dimension,void>::value>::type __unit_has_invalid_dimension_if_visible__
+
+/*! Macro for excluding a unit from a certain dimension
+ *
+ * \details Certain class do not make sense when defined on a
+ * certain dimension. This macro will prevent improper use of a class
+ * by preventing the class template instance from compiling when
+ * the template parameter has the incorrect dimension. If the compiler shows
+ * "__unit_has_invalid_dimension_if_visible__" then you know that an attempt
+ * to use a unit with a restricted dimension was made, which should help remedy
+ * the error faster (given that boost::units template errors can be
+ * intimidating!). This macro can be used as many times as desired in a
+ * class header file, but only once per dimension. It is
+ * safe to place it anywhere in the class declaration.
+ * \ingroup unit_traits
+ */
+#define RESTRICT_UNIT_FROM_BOOST_DIMENSION( Unit, Dim )\
+typedef typename std::enable_if<!std::is_same<typename Utility::UnitTraits<Unit>::Dimension,boost::units::Dim>::value>,Unit>::type __unit_has_invalid_ ## Dim ## _if_visible__
 
 #endif // end UTILITY_UNIT_TRAITS_DECL_HPP
 

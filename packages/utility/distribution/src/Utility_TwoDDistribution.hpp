@@ -9,11 +9,18 @@
 #ifndef UTILITY_TWO_D_DISTRIBUTION_HPP
 #define UTILITY_TWO_D_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <stdexcept>
+
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+
 // FRENSIE Includes
+#include "Utility_OStreamableObject.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
-#include "Utility_ComparisonTraits.hpp"
+#include "Utility_TwoDDistributionHelpers.hpp"
 
 /*! \defgroup two_d_distributions Two-Dimensinal Distributions
  */
@@ -26,8 +33,11 @@ namespace Utility{
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareTwoDDistribution
+class UnitAwareTwoDDistribution : public OStreamableObject
 {
+
+  // Typedef for this type
+  typedef UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
 
 protected:
 
@@ -121,33 +131,49 @@ public:
 
   //! Test if the distribution has the same primary bounds
   bool hasSamePrimaryBounds( const UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const;
-};
 
-// Test if the distribution has the same primary bounds
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-inline bool UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSamePrimaryBounds( const UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const
-{
-  return
-    Utility::relError(
-              getRawQuantity( this->getUpperBoundOfPrimaryIndepVar() ),
-              getRawQuantity( distribution.getUpperBoundOfPrimaryIndepVar() ) )
-    < 1e-9 &&
-    Utility::relError(
-              getRawQuantity( this->getLowerBoundOfPrimaryIndepVar() ),
-              getRawQuantity( distribution.getLowerBoundOfPrimaryIndepVar() ) )
-    < 1e-9;
-                                                                        
-                                                                        
-}
+private:
+
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const
+  { /* ... */ }
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+};
 
 /*! The two-dimensional distribution (unit-agnostic)
  * \ingroup two_d_distributions
  */
 typedef UnitAwareTwoDDistribution<void,void,void> TwoDDistribution;
+
+/*! \brief Exception thrown by TwoDDistribution objects when an invalid
+ * parameter is encountered.
+ * \ingroup two_d_distributions
+ */
+class BadTwoDDistributionParameter : public std::logic_error
+{
+public:
+  BadTwoDDistributionParameter( const std::string& msg )
+    : std::logic_error( msg )
+  { /* ... */ }
+
+  ~BadTwoDDistributionParameter() throw()
+  { /* ... */ }
+};
   
 } // end Utility namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION2( UnitAwareTwoDDistribution );
+BOOST_DISTRIBUTION2_CLASS_VERSION( UnitAwareTwoDDistribution, 0 );
 
 #endif // end UTILITY_TWO_D_DISTRIBUTION_HPP
 

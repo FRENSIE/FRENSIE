@@ -17,7 +17,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT( UnitAwareNormalDistribution );
+BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareNormalDistribution );
 
 namespace Utility{
 
