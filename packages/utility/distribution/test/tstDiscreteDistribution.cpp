@@ -16,7 +16,7 @@
 #include <boost/units/io.hpp>
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -66,21 +66,21 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution;
-std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
-std::shared_ptr<Utility::OneDDistribution> cdf_cons_distribution;
-std::shared_ptr<Utility::TabularOneDDistribution> tab_cdf_cons_distribution;
-std::shared_ptr<Utility::OneDDistribution> repeat_vals_distribution;
-std::shared_ptr<Utility::TabularOneDDistribution> tab_repeat_vals_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> distribution;
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> cdf_cons_distribution;
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_cdf_cons_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> repeat_vals_distribution;
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_repeat_vals_distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<ElectronVolt,si::amount> >
   unit_aware_distribution;
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<ElectronVolt,si::amount> >
   unit_aware_cdf_cons_distribution;
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_cdf_cons_distribution;
 
 //---------------------------------------------------------------------------//
@@ -1628,7 +1628,7 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, archive )
   FRENSIE_CHECK_EQUAL( discrete_dist_a.evaluate( 1.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_dist_a.evaluate( 2.0 ), 0.0 );
 
-  std::shared_ptr<Utility::OneDDistribution> discrete_dist_b;
+  std::shared_ptr<Utility::UnivariateDistribution> discrete_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "discrete_dist_b", discrete_dist_b ) );
   FRENSIE_CHECK_EQUAL( discrete_dist_b->getLowerBoundOfIndepVar(),-1.0 );
@@ -1700,7 +1700,7 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, archive )
   FRENSIE_CHECK_EQUAL( unit_aware_discrete_dist_a.evaluate( 2e3*eV ),
 		       0.0*si::mole );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<ElectronVolt,si::amount> >
     unit_aware_discrete_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "discrete_dist_b", unit_aware_discrete_dist_b ) );

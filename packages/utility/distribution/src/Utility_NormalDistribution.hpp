@@ -10,16 +10,16 @@
 #define UTILITY_NORMAL_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace Utility{
 
 //! Normal distribution class
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareNormalDistribution : public UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // The distribution normalization quantity type
   typedef typename BaseType::DistNormQuantity DistNormQuantity;
@@ -120,7 +120,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -195,7 +195,7 @@ private:
   friend class UnitAwareNormalDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = NORMAL_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = NORMAL_DISTRIBUTION;
 
   // Constant normalization factor (1/sqrt(2*pi))
   static const double constant_norm_factor;
@@ -217,7 +217,7 @@ private:
 };
 
 /*! The normal distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareNormalDistribution<void,void> NormalDistribution;
 

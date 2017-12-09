@@ -242,7 +242,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfI
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return UnitAwarePolynomialDistribution::distribution_type;
@@ -393,7 +393,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::verifyValid
                                      const InputIndepQuantity max_indep_limit )
 {
   TEST_FOR_EXCEPTION( coefficients.size() == 0,
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "
                       "because there are no coefficients specified!" );
 
@@ -403,7 +403,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::verifyValid
                   []( double coeff ){ return coeff != 0.0; } );
 
   TEST_FOR_EXCEPTION( non_zero_coefficient == coefficients.end(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "
                       "because all coeffients are zero!" );
 
@@ -413,7 +413,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::verifyValid
                   []( double coeff ){ return coeff < 0.0 || Utility::isnaninf( coeff ); } );
 
   TEST_FOR_EXCEPTION( bad_coefficient != coefficients.end(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "
                       "because an invalid (negative or inf) coefficient ("
                       << *bad_coefficient << ") "
@@ -424,12 +424,12 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::verifyValid
   typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
 
   TEST_FOR_EXCEPTION( min_indep_limit < InputIQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "
                       "because the lower limits is negative!" );
   
   TEST_FOR_EXCEPTION( max_indep_limit <= min_indep_limit,
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "
                       "because the limits are invalid!" );
 }

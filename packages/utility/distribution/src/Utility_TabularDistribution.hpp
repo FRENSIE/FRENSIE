@@ -10,7 +10,7 @@
 #define UTILITY_TABULAR_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Array.hpp"
@@ -18,15 +18,15 @@
 namespace Utility{
 
 /*! The interpolated distribution class declaration
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
-class UnitAwareTabularDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareTabularDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
   
   // The unnormalized cdf quantity
   typedef typename QuantityTraits<typename BaseType::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
@@ -132,7 +132,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Return the distribution type name
   static std::string typeName( const bool verbose_name,
@@ -262,7 +262,7 @@ private:
   friend class UnitAwareTabularDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = TABULAR_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = TABULAR_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
@@ -275,7 +275,7 @@ private:
 };
 
 /*! The tabular distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename InterpolationPolicy> using TabularDistribution =
   UnitAwareTabularDistribution<InterpolationPolicy,void,void>;

@@ -65,9 +65,9 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution(
+std::shared_ptr<Utility::UnivariateDistribution> distribution(
 			     new Utility::ExponentialDistribution( 2.0, 3.0 ) );
-std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 300.0/si::meter, 0.0*si::meter ) );
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 300.0/si::meter, 0.0*si::meter ) );
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -773,7 +773,7 @@ FRENSIE_UNIT_TEST( ExponentialDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_e ) );
   FRENSIE_CHECK_EQUAL( dist_e, Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::ExponentialDistribution*>( shared_dist.get() ),
@@ -843,7 +843,7 @@ FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_e ) );
   FRENSIE_CHECK_EQUAL( dist_e, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount>> shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount>> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( shared_dist.get() )),

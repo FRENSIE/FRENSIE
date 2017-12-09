@@ -15,7 +15,7 @@
 #include <boost/units/io.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -64,10 +64,10 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution(
+std::shared_ptr<Utility::UnivariateDistribution> distribution(
 				 new Utility::NormalDistribution( 0.0, 1.0 ) );
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.0*si::meter, 0.01*si::meter, 0.5*si::mole, -Utility::QuantityTraits<quantity<si::length> >::inf(), Utility::QuantityTraits<quantity<si::length> >::inf() ) );
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.0*si::meter, 0.01*si::meter, 0.5*si::mole, -Utility::QuantityTraits<quantity<si::length> >::inf(), Utility::QuantityTraits<quantity<si::length> >::inf() ) );
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -927,7 +927,7 @@ FRENSIE_UNIT_TEST( NormalDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_f ) );
   FRENSIE_CHECK_EQUAL( dist_f, Utility::NormalDistribution( 2.0, 3.0, 4.0, -1.0, 1.0 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::NormalDistribution*>( shared_dist.get() ),
@@ -1006,7 +1006,7 @@ FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_f ) );
   FRENSIE_CHECK_EQUAL( dist_f, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter, 1.0*cgs::centimeter )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareNormalDistribution<cgs::length,si::amount>*>( shared_dist.get() )),

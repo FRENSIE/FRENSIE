@@ -64,21 +64,21 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> pdf_distribution;
-std::shared_ptr<Utility::TabularOneDDistribution> tab_pdf_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> pdf_distribution;
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_pdf_distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_pdf_distribution;
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_pdf_distribution;
 
 
-std::shared_ptr<Utility::OneDDistribution> cdf_distribution;
-std::shared_ptr<Utility::TabularOneDDistribution> tab_cdf_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> cdf_distribution;
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_cdf_distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_cdf_distribution;
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_cdf_distribution;
 
 //---------------------------------------------------------------------------//
@@ -1624,28 +1624,28 @@ FRENSIE_UNIT_TEST( HistogramDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP(dist_b) );
   FRENSIE_CHECK_EQUAL( dist_b, Utility::HistogramDistribution( {-2.0, -1.0, 1.0, 2.0}, {2.0, 4.0, 6.0}, true ) );
 
-  std::shared_ptr<Utility::OneDDistribution> dist_c;
+  std::shared_ptr<Utility::UnivariateDistribution> dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_c) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::HistogramDistribution*>(dist_c.get()),
                        *dynamic_cast<Utility::HistogramDistribution*>(pdf_distribution.get()) );
 
-  std::shared_ptr<Utility::TabularOneDDistribution> dist_d;
+  std::shared_ptr<Utility::TabularUnivariateDistribution> dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_d) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::HistogramDistribution*>(dist_d.get()),
                        *dynamic_cast<Utility::HistogramDistribution*>(tab_pdf_distribution.get()) );
 
-  std::shared_ptr<Utility::OneDDistribution> dist_e;
+  std::shared_ptr<Utility::UnivariateDistribution> dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_e) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::HistogramDistribution*>(dist_e.get()),
                        *dynamic_cast<Utility::HistogramDistribution*>(cdf_distribution.get()) );
 
-  std::shared_ptr<Utility::TabularOneDDistribution> dist_f;
+  std::shared_ptr<Utility::TabularUnivariateDistribution> dist_f;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_f) );
@@ -1692,28 +1692,28 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP(dist_b) );
   FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>( {-2.0, -1.0, 1.0, 2.0}, {2.0, 4.0, 6.0}, true )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > dist_c;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_c) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(dist_c.get())),
                        (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(unit_aware_pdf_distribution.get())) );
 
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> > dist_d;
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> > dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_d) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(dist_d.get())),
                        (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(unit_aware_tab_pdf_distribution.get())) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > dist_e;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_e) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(dist_e.get())),
                        (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(unit_aware_cdf_distribution.get())) );
 
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> > dist_f;
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> > dist_f;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_f) );

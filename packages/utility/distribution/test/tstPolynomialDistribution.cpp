@@ -55,9 +55,9 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution;
+std::shared_ptr<Utility::UnivariateDistribution> distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution;
 
 //---------------------------------------------------------------------------//
@@ -659,7 +659,7 @@ FRENSIE_UNIT_TEST( PolynomialDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP(dist_a) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::PolynomialDistribution( {3.0, 2.0, 1.0}, 1.0, 2.0 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> dist_b;
+  std::shared_ptr<Utility::UnivariateDistribution> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_b) );
@@ -693,7 +693,7 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP(dist_a) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {3.0, 2.0, 1.0}, 1.0*MeV, 2.0*MeV )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > dist_b;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(dist_b) );

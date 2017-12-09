@@ -10,20 +10,20 @@
 #define UTILITY_HISTOGRAM_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace Utility{
 
 /*! The unit-aware histogram distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareHistogramDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // The unnormalized cdf quantity
   typedef typename QuantityTraits<typename BaseType::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
@@ -35,13 +35,13 @@ class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<I
   typedef QuantityTraits<double> QT;
 
   // Typedef for QuantityTraits<IndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+  typedef QuantityTraits<typename UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+  typedef QuantityTraits<typename UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
 
   // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+  typedef QuantityTraits<typename UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
   // Typedef for QuantityTraits<DistNormQuantity>
   typedef QuantityTraits<DistNormQuantity> DNQT;
@@ -131,7 +131,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -227,7 +227,7 @@ private:
   friend class UnitAwareHistogramDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
 
   // The distribution (first = bin_min, second = bin_PDF, third = bin_CDF)
   // Note: The bin_CDF value is the value of the CDF at the lower bin boundary
@@ -239,7 +239,7 @@ private:
 };
 
 /*! The histogram distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareHistogramDistribution<void,void> HistogramDistribution;
 

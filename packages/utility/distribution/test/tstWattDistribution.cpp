@@ -64,10 +64,10 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution(
+std::shared_ptr<Utility::UnivariateDistribution> distribution(
 			 new Utility::WattDistribution( 1.0, 1.0, 1.0, 0.1 ) );
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
 unit_aware_distribution( new Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 1e6*eV, 1e3*keV, 1e-6/eV, 0.1*MeV ) );
 
 //---------------------------------------------------------------------------//
@@ -360,9 +360,9 @@ FRENSIE_UNIT_TEST( UnitAwareWattDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::IndepQuantity incident_energy, a_parameter, restriction_energy, sample;
+  Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount>::IndepQuantity incident_energy, a_parameter, restriction_energy, sample;
 
-  Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::InverseIndepQuantity b_parameter;
+  Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount>::InverseIndepQuantity b_parameter;
 
   Utility::DistributionTraits::Counter trials = 0;
 
@@ -805,7 +805,7 @@ FRENSIE_UNIT_TEST( UnitAwareWattDistribution, ostream_operator )
   oss.str( "" );
   oss.clear();
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>> shared_dist( new Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount>> shared_dist( new Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 ) );
   
   oss << *shared_dist;
 
@@ -914,7 +914,7 @@ FRENSIE_UNIT_TEST( WattDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_f ) );
   FRENSIE_CHECK_EQUAL( dist_f, Utility::WattDistribution( 5.0, 4.0, 3.0, 2.0, 0.5 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW(
     archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
@@ -1001,7 +1001,7 @@ FRENSIE_UNIT_TEST( UnitAwareWattDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_f ) );
   FRENSIE_CHECK_EQUAL( dist_f, (Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>( 5.0*MeV, 4.0*MeV, 3.0/MeV, 2.0*MeV, 0.5 )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW(
     archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );

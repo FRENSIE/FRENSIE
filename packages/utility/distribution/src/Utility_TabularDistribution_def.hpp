@@ -419,7 +419,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;

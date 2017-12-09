@@ -10,20 +10,20 @@
 #define UTILITY_DISCRETE_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace Utility{
 
 /*! The unit-aware discrete distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit,typename DependentUnit>
-class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareDiscreteDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -123,7 +123,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -220,7 +220,7 @@ private:
   friend class UnitAwareDiscreteDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = DISCRETE_DISTRIBUTION;
 
   // The distribution (first = independent value, second = CDF)
   std::vector<std::pair<IndepQuantity,double> > d_distribution;
@@ -230,7 +230,7 @@ private:
 };
 
 /*! The discrete distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
   

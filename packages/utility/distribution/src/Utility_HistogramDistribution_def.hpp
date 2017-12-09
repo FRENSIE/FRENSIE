@@ -350,7 +350,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIn
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return UnitAwareHistogramDistribution::distribution_type;
@@ -654,13 +654,13 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
                          const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The histogram distribution cannot be constructed "
                       "because no full bins have been specified!" );
   
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
 						bin_boundaries.end() ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The histogram distribution cannot be "
 		      "constructed because the bin boundaries "
 		      << bin_boundaries << " are not sorted!" );
@@ -668,17 +668,17 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
   typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
   
   TEST_FOR_EXCEPTION( InputIQT::isnaninf( bin_boundaries.front() ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The histogram distribution cannot be constructed "
                       "because the first bin boundary is invalid!" );
 
   TEST_FOR_EXCEPTION( InputIQT::isnaninf( bin_boundaries.back() ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The histogram distribution cannot be constructed "
                       "because the last bin boundary is invalid!" );
 
   TEST_FOR_EXCEPTION( bin_boundaries.size() != bin_values.size()+1,
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The histogram distribution cannot be constructed "
                       "because the number of bin boundaries ("
                       << bin_boundaries.size() << ") does not match the "
@@ -689,7 +689,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
   {
     TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_values.begin(),
                                                   bin_values.end() ),
-                        Utility::BadOneDDistributionParameter,
+                        Utility::BadUnivariateDistributionParameter,
                         "The histogram distribution cannot be "
                         "constructed because the bin cdf values "
                         " are not sorted!" );
@@ -698,7 +698,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
       std::adjacent_find( bin_values.begin(), bin_values.end() );
     
     TEST_FOR_EXCEPTION( repeat_bin_value != bin_values.end(),
-                        Utility::BadOneDDistributionParameter,
+                        Utility::BadUnivariateDistributionParameter,
                         "The histogram distribution cannot be "
                         "constructed because there is a repeated bin cdf "
                         "value at index "
@@ -714,7 +714,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
                   [](const InputDepQuantity& element){ return InputDQT::isnaninf( element ) || element <= InputDQT::zero(); } );
 
   TEST_FOR_EXCEPTION(  bad_bin_value != bin_values.end(),
-                       Utility::BadOneDDistributionParameter,
+                       Utility::BadUnivariateDistributionParameter,
                        "The histogram distribution cannot be constructed "
                        "because the bin value at index "
                          << std::distance( bin_values.begin(), bad_bin_value ) <<

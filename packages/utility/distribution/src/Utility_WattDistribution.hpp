@@ -17,21 +17,21 @@
 #include <boost/units/physical_dimensions/energy.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace Utility{
 
 /*! Watt distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareWattDistribution : public UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
 
   // Typedef for base type
-  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // The distribution multiplier quantity type
   typedef typename BaseType::DepQuantity DistMultiplierQuantity;
@@ -135,7 +135,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
@@ -208,7 +208,7 @@ private:
   friend class UnitAwareWattDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = WATT_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = WATT_DISTRIBUTION;
 
   // The incident neutron energy of the distribution
   IndepQuantity d_incident_energy;
@@ -230,7 +230,7 @@ private:
 };
 
 /*! The Watt distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareWattDistribution<void,void> WattDistribution;
 

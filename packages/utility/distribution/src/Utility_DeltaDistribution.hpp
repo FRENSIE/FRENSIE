@@ -10,20 +10,20 @@
 #define UTILITY_DELTA_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
 /*! The unit-aware delta distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareDeltaDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -110,7 +110,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -166,7 +166,7 @@ private:
   friend class UnitAwareDeltaDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = DELTA_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = DELTA_DISTRIBUTION;
 
   // The location of the delta distribution
   IndepQuantity d_location;
@@ -176,7 +176,7 @@ private:
 };
 
 /*! The delta distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareDeltaDistribution<void,void> DeltaDistribution;
 

@@ -268,7 +268,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getLowerBoundOf
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -365,32 +365,32 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::verifyVali
   typedef Utility::QuantityTraits<InputIndepQuantity> IIQT;
   
   TEST_FOR_EXCEPTION( IIQT::isnaninf( incident_energy ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= IIQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( IIQT::isnaninf( nuclear_temp ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the nuclear temperature is invalid!" );
 
   TEST_FOR_EXCEPTION( nuclear_temp <= IIQT::zero(),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the nuclear temperature is invalid!" );
   
   TEST_FOR_EXCEPTION( IIQT::isnaninf( restriction_energy ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the restriction energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= restriction_energy,
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the incident energy ("
                       << Utility::toString(incident_energy) << ")"
@@ -400,12 +400,12 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::verifyVali
   typedef Utility::QuantityTraits<InputDistMultQuantity> IDMQT;
 
   TEST_FOR_EXCEPTION( IDMQT::isnaninf( multiplier ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the multiplier is invalid!" );
 
   TEST_FOR_EXCEPTION( multiplier == IDMQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The evaporation distribution cannot be constructed "
                       "because the multiplier is invalid!" );
 }

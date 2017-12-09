@@ -98,8 +98,8 @@ namespace extra_detail{ \
  * classes are templates the GUID registration singleton that is used
  * in the registration process won't get instantiated until the first
  * instance of the distribution has been created.
- * \ingroup one_d_distributions
- * \ingroup two_d_distributions
+ * \ingroup univariate_distributions
+ * \ingroup bivariate_distributions
  */
 #define BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ... )  \
   const auto& __guid_initializer__ = boost::archive::detail::extra_detail::init_guid<__VA_ARGS__>::g

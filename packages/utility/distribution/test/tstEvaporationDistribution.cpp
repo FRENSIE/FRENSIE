@@ -65,10 +65,10 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution(
+std::shared_ptr<Utility::UnivariateDistribution> distribution(
                        new Utility::EvaporationDistribution( 1.0, 1.0, 0.1 ) );
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution( new Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 1e3*keV, 1e3*keV, 100.0*keV ) );
 
 //---------------------------------------------------------------------------//
@@ -724,7 +724,7 @@ FRENSIE_UNIT_TEST( EvaporationDistribution, archive )
                            );
   FRENSIE_CHECK_EQUAL( dist_e, Utility::EvaporationDistribution( 3.0, 2.0, 1.0, 10.0 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( shared_dist->getLowerBoundOfIndepVar(), 0.0 );
@@ -808,7 +808,7 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, archive )
                            );
   FRENSIE_CHECK_EQUAL( dist_e, (Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( shared_dist->getLowerBoundOfIndepVar(), 0.0*MeV );

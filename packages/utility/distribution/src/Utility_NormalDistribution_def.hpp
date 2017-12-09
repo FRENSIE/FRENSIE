@@ -264,7 +264,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndep
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -364,32 +364,32 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::verifyValidShap
                                    const IndepQuantity& max_independent_value )
 {
   TEST_FOR_EXCEPTION( DQT::isnaninf( const_multiplier ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because of the multiplier is invalid!" );
   
   TEST_FOR_EXCEPTION( const_multiplier == DQT::zero(),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because of the multiplier is invalid!" );
   
   TEST_FOR_EXCEPTION( IQT::isnaninf( mean ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because the mean is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( standard_deviation ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because the standard deviation is invalid!" );
 
   TEST_FOR_EXCEPTION( standard_deviation <= IQT::zero(),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The normal distribution cannot be constructed "
 		      "because the standard deviation is invalid!" );
 
   TEST_FOR_EXCEPTION( max_independent_value <= min_independent_value,
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The normal distribution cannot be constructed because "
                       "the upper limit is invalid!" );
 }

@@ -17,21 +17,21 @@
 #include <boost/units/physical_dimensions/energy.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace Utility{
 
 /*! The unit-aware evaporation distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit>
-class UnitAwareEvaporationDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareEvaporationDistribution : public UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
 
   // Typedef for base type
-  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // The distribution multiplier unit traits typedef
   typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistMultiplierUnitTraits;
@@ -130,7 +130,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -201,7 +201,7 @@ private:
   friend class UnitAwareEvaporationDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = EVAPORATION_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = EVAPORATION_DISTRIBUTION;
 
   // The incident neutron energy of the distribution
   IndepQuantity d_incident_energy;
@@ -220,7 +220,7 @@ private:
 };
 
 /*! The evaporation distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareEvaporationDistribution<void,void> EvaporationDistribution;
   

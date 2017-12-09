@@ -10,20 +10,20 @@
 #define UTILITY_EXPONENTIAL_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace Utility{
 
 //! The unit-aware exponential distribution class
 /*! \details Only decaying exponential distributions are allowed (the
  * exponent is always assumed to be negative).
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareExponentialDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareExponentialDistribution : public UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
   
   // The distribution normalization quantity type
   typedef typename BaseType::DistNormQuantity DistNormQuantity;
@@ -110,7 +110,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -185,7 +185,7 @@ private:
   friend class UnitAwareExponentialDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type =
+  static const UnivariateDistributionType distribution_type =
     EXPONENTIAL_DISTRIBUTION;
 
   // The constant multiplier
@@ -208,7 +208,7 @@ private:
 };
 
 /*! The exponential distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareExponentialDistribution<void,void> ExponentialDistribution;
   

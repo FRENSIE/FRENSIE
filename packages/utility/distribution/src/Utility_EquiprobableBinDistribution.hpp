@@ -10,19 +10,19 @@
 #define UTILITY_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Vector.hpp"
 
 namespace Utility{
 
 /*! The unit-aware equiprobable bin distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -111,7 +111,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -175,7 +175,7 @@ private:
   friend class UnitAwareEquiprobableBinDistribution;
 
   // The disribution type
-  static const OneDDistributionType distribution_type =
+  static const UnivariateDistributionType distribution_type =
     EQUIPROBABLE_BIN_DISTRIBUTION;
 
     // The distribution
@@ -183,7 +183,7 @@ private:
 };
 
 /*! The equiprobable bin distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareEquiprobableBinDistribution<void,void> EquiprobableBinDistribution;
 

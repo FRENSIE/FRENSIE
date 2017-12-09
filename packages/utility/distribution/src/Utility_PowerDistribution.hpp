@@ -10,18 +10,18 @@
 #define UTILITY_POWER_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace Utility{
 
 /*! Power distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<size_t N, typename IndependentUnit, typename DependentUnit = void>
-class UnitAwarePowerDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwarePowerDistribution : public UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Typedef for base type
-  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
   
   // The independent unit to power N+1
   typedef UnitTraits<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<N+1>::type> IndepUnitTraitsNp1;
@@ -114,7 +114,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -180,7 +180,7 @@ private:
   friend class UnitAwarePowerDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = POWER_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = POWER_DISTRIBUTION;
 
   // The multiplier
   DistMultiplierQuantity d_multiplier;
@@ -202,7 +202,7 @@ private:
 };
 
 /*! The power distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<unsigned N> using PowerDistribution =
   UnitAwarePowerDistribution<N,void,void>;

@@ -16,7 +16,7 @@
 #include <boost/units/io.hpp>
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
@@ -63,16 +63,16 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::TabularOneDDistribution>
+std::shared_ptr<Utility::TabularUnivariateDistribution>
   tab_distribution( new Utility::DeltaDistribution );
 
-std::shared_ptr<Utility::OneDDistribution>
+std::shared_ptr<Utility::UnivariateDistribution>
   distribution( tab_distribution );
 
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<si::time,si::length> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<si::time,si::length> >
   unit_aware_tab_distribution( new Utility::UnitAwareDeltaDistribution<si::time,si::length>( 3.0*si::seconds ) );
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::time,si::length> >
   unit_aware_distribution( unit_aware_tab_distribution );
 
 //---------------------------------------------------------------------------//
@@ -526,7 +526,7 @@ FRENSIE_UNIT_TEST( DeltaDistribution, archive )
   {
     Utility::DeltaDistribution delta_dist_a( 0.0, 1.0 );
 
-    std::shared_ptr<Utility::OneDDistribution> delta_dist_b( new Utility::DeltaDistribution( 1.0, 2.0 ) );
+    std::shared_ptr<Utility::UnivariateDistribution> delta_dist_b( new Utility::DeltaDistribution( 1.0, 2.0 ) );
 
     Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
 
@@ -544,7 +544,7 @@ FRENSIE_UNIT_TEST( DeltaDistribution, archive )
   FRENSIE_CHECK_EQUAL( delta_dist_a.getLowerBoundOfIndepVar(), 0.0 );
   FRENSIE_CHECK_EQUAL( delta_dist_a.evaluate( 0.0 ), 1.0 );
 
-  std::shared_ptr<Utility::OneDDistribution> delta_dist_b;
+  std::shared_ptr<Utility::UnivariateDistribution> delta_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
   FRENSIE_CHECK_EQUAL( delta_dist_b->getUpperBoundOfIndepVar(), 1.0 );
@@ -563,7 +563,7 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, archive )
     Utility::UnitAwareDeltaDistribution<si::time,si::length>
       delta_dist_a( 0.0*si::seconds, 1.0*si::meters );
 
-    std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> > delta_dist_b( new Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 2.0*si::meters ) );
+    std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::time,si::length> > delta_dist_b( new Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 2.0*si::meters ) );
 
     Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
 
@@ -581,7 +581,7 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, archive )
   FRENSIE_CHECK_EQUAL( delta_dist_a.getLowerBoundOfIndepVar(), 0.0*si::seconds );
   FRENSIE_CHECK_EQUAL( delta_dist_a.evaluate( 0.0*si::seconds ), 1.0*si::meters );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<si::time,si::length> >
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::time,si::length> >
     delta_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );

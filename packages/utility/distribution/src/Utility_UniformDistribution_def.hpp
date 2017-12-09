@@ -296,7 +296,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfInde
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
+UnivariateDistributionType UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return UnitAwareUniformDistribution::distribution_type;
 }
@@ -354,30 +354,30 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::verifyValidSha
                                           const DepQuantity& multiplier )
 {
   TEST_FOR_EXCEPTION( IQT::isnaninf( min_indep_value ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid min "
 		      "independent value!" );
   
   TEST_FOR_EXCEPTION( IQT::isnaninf( max_indep_value ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid max "
 		      "independent value!" );
   
   TEST_FOR_EXCEPTION( max_indep_value <= min_indep_value,
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The uniform distribution cannot be constructed because "
                       "of invalid independent values!" );
 
   TEST_FOR_EXCEPTION( DQT::isnaninf( multiplier ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid dependent "
 		      "value!" );
 
   TEST_FOR_EXCEPTION( multiplier <= DQT::zero(),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The uniform distribution cannot be "
 		      "constructed because of an invalid dependent "
 		      "value!" );

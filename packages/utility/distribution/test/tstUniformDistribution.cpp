@@ -55,15 +55,15 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution(
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
 
-std::shared_ptr<Utility::OneDDistribution> distribution = tab_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> distribution = tab_distribution;
 
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<si::energy,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<si::energy,si::amount> >
   unit_aware_tab_distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<si::energy,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::energy,si::amount> >
   unit_aware_distribution;
 
 //---------------------------------------------------------------------------//
@@ -902,13 +902,13 @@ FRENSIE_UNIT_TEST( UniformDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, Utility::UniformDistribution( 0.0, 2.0, 1.0 ) );
 
-  std::shared_ptr<Utility::TabularOneDDistribution> shared_tab_dist;
+  std::shared_ptr<Utility::TabularUnivariateDistribution> shared_tab_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "tab_distribution", shared_tab_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::UniformDistribution*>( shared_tab_dist.get() ),
                        *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::UniformDistribution*>( shared_dist.get() ),
@@ -953,13 +953,13 @@ FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, archive )
                            archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareUniformDistribution<si::energy,si::amount>( 0.0*si::joule, 2.0*si::joule, 1.0*si::mole )) );
 
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<si::energy,si::amount> > shared_tab_dist;
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<si::energy,si::amount> > shared_tab_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_tab_distribution", shared_tab_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( shared_tab_dist.get() )),
                        (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<si::energy,si::amount> > shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::energy,si::amount> > shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( shared_dist.get() )),

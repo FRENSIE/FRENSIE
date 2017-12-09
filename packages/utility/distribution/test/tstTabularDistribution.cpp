@@ -70,12 +70,12 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution;
-std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> distribution;
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution;
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> >
 unit_aware_tab_distribution;
 
 //---------------------------------------------------------------------------//
@@ -880,7 +880,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
   oss.str( "" );
   oss.clear();
 
-  std::unique_ptr<Utility::OneDDistribution> local_dist( new Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
+  std::unique_ptr<Utility::UnivariateDistribution> local_dist( new Utility::TabularDistribution<InterpolationPolicy>( {1, 2, 3}, {3, 2, 1} ) );
 
   oss << *local_dist;
 
@@ -965,7 +965,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
   oss.str( "" );
   oss.clear();
 
-  std::unique_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > local_dist( new Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ) );
+  std::unique_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > local_dist( new Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1, 2, 3}, {3, 2, 1} ) );
 
   oss << *local_dist;
 
@@ -1026,7 +1026,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
                            archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::TabularDistribution<InterpolationPolicy>( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW(
     archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
@@ -1069,7 +1069,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
                            archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW(
     archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );

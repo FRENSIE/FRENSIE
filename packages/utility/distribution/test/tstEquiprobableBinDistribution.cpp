@@ -64,12 +64,12 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution;
-std::shared_ptr<Utility::TabularOneDDistribution> tab_distribution;
+std::shared_ptr<Utility::UnivariateDistribution> distribution;
+std::shared_ptr<Utility::TabularUnivariateDistribution> tab_distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution;
-std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_tab_distribution;
 
 //---------------------------------------------------------------------------//
@@ -2248,7 +2248,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, archive )
   FRENSIE_CHECK_EQUAL( distribution_a.evaluate( 16.0 ), 1.0/32 );
   FRENSIE_CHECK_EQUAL( distribution_a.evaluate( 17.0 ), 0.0 );
 
-  std::shared_ptr<Utility::OneDDistribution> distribution_b;
+  std::shared_ptr<Utility::UnivariateDistribution> distribution_b;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(distribution_b)
@@ -2291,7 +2291,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, archive )
   FRENSIE_CHECK_EQUAL( distribution_b->evaluate( 16.0 ), 1.0/32 );
   FRENSIE_CHECK_EQUAL( distribution_b->evaluate( 17.0 ), 0.0 );
 
-  std::shared_ptr<Utility::TabularOneDDistribution> distribution_c;
+  std::shared_ptr<Utility::TabularUnivariateDistribution> distribution_c;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(distribution_c)
@@ -2381,7 +2381,7 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, archive )
   FRENSIE_CHECK_EQUAL( distribution_a.evaluate( 10.0*MeV ), 0.05*si::mole );
   FRENSIE_CHECK_EQUAL( distribution_a.evaluate( 11.0*MeV ), 0.0*si::mole );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > distribution_b;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > distribution_b;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(distribution_b)
@@ -2396,7 +2396,7 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, archive )
   FRENSIE_CHECK_EQUAL( distribution_b->evaluate( 10.0*MeV ), 0.05*si::mole );
   FRENSIE_CHECK_EQUAL( distribution_b->evaluate( 11.0*MeV ), 0.0*si::mole );
 
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> > distribution_c;
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> > distribution_c;
 
   FRENSIE_REQUIRE_NO_THROW(
                            archive >> BOOST_SERIALIZATION_NVP(distribution_c)

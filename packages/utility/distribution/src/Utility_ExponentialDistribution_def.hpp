@@ -245,7 +245,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getLowerBoundOf
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -351,25 +351,25 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::verifyVali
   typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
   
   TEST_FOR_EXCEPTION( InputDQT::isnaninf( const_multiplier ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the multiplier is invalid!" );
 
   TEST_FOR_EXCEPTION( const_multiplier == InputDQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the multiplier is invalid!" );
 
   typedef Utility::QuantityTraits<InputInverseIndepQuantity> InputIIQT;
   
   TEST_FOR_EXCEPTION( InputIIQT::isnaninf( exponent_multiplier ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the exponent multiplier is "
                       "invalid!" );
   
   TEST_FOR_EXCEPTION( exponent_multiplier <= InputIIQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the exponent multiplier is "
                       "invalid!" );
@@ -377,12 +377,12 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::verifyVali
   typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
 
   TEST_FOR_EXCEPTION( lower_limit < InputIQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the lower limit is invalid!" );
 
   TEST_FOR_EXCEPTION( upper_limit <= lower_limit,
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The exponential distribution cannot be "
                       "constructed because the upper limit is invalid!" );
 }

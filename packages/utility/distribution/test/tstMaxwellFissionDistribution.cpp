@@ -64,10 +64,10 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution(
+std::shared_ptr<Utility::UnivariateDistribution> distribution(
 				 new Utility::MaxwellFissionDistribution( 1.0, 1.0, 0.1 ) );
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> >
   unit_aware_distribution( new Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>( 1e6*eV, 1e3*keV, 0.1*MeV ) );
 
 //---------------------------------------------------------------------------//
@@ -838,7 +838,7 @@ FRENSIE_UNIT_TEST( MaxwellFissionDistribution, archive )
                            );
   FRENSIE_CHECK_EQUAL( dist_e, Utility::MaxwellFissionDistribution( 3.0, 2.0, 1.0, 10.0 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::MaxwellFissionDistribution*>( shared_dist.get() ),
@@ -919,7 +919,7 @@ FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, archive )
                            );
   FRENSIE_CHECK_EQUAL( dist_e, (Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>( 3.0*MeV, 2.0*MeV, 1.0*MeV, 10.0 )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> > shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>*>( shared_dist.get() )),

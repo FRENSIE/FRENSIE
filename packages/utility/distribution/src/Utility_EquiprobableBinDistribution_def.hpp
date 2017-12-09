@@ -308,7 +308,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getLowerBou
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
+UnivariateDistributionType UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
 }
@@ -421,14 +421,14 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
                         const std::vector<InputIndepQuantity>& bin_boundaries )
 {
   TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The equiprobable bin distribution cannot be "
 		      "constructed because at least one bin (consisting of "
                       "two boundaries) is required!" );
 
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
 						bin_boundaries.end() ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The equiprobable bin distribution cannot be "
 		      "constructed because the bin boundaries "
 		      << bin_boundaries << " are not sorted!" );
@@ -436,13 +436,13 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
   typedef Utility::QuantityTraits<InputIndepQuantity> IIQT;
 
   TEST_FOR_EXCEPTION( IIQT::isnaninf( bin_boundaries.front() ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The equiprobable bin distribution cannot be "
                       "constructed because the first bin boundary is "
                       "invalid!" );
 
   TEST_FOR_EXCEPTION( IIQT::isnaninf( bin_boundaries.back() ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The equiprobable bin distribution cannot be "
                       "constructed because the last bin boundary is "
                       "invalid!" );
@@ -451,7 +451,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
     std::adjacent_find( bin_boundaries.begin(), bin_boundaries.end() );
 
   TEST_FOR_EXCEPTION( repeat_bin_boundary != bin_boundaries.end(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The equiprobable bin distribution cannot be "
                       "constructed because there is a repeated bin boundary "
                       "at index "

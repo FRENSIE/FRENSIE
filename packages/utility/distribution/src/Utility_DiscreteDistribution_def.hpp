@@ -383,7 +383,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfInd
 
 // Return the distribution type
 template<typename IndependentUnit,typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -654,13 +654,13 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
                      const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( independent_values.size() == 0,
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because no independent values have been specified!" );
   
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
 						independent_values.end() ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The discrete distribution cannot be constructed "
 		      "because the independent values "
 		      << independent_values << " are not sorted!" );
@@ -668,17 +668,17 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
   typedef Utility::QuantityTraits<InputIndepQuantity> IIQT;
   
   TEST_FOR_EXCEPTION( IIQT::isnaninf( independent_values.front() ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because the first independent value is invalid!" );
 
   TEST_FOR_EXCEPTION( IIQT::isnaninf( independent_values.back() ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because the last independent value is invalid!" );
   
   TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The discrete distribution cannot be constructed "
                       "because the number of independent values ("
                       << independent_values.size() << ") does not match the "
@@ -693,7 +693,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
                   [](const InputDepQuantity& element){ return IDQT::isnaninf( element ) || element <= IDQT::zero(); } );
     
   TEST_FOR_EXCEPTION(  bad_dependent_value != dependent_values.end(),
-                       Utility::BadOneDDistributionParameter,
+                       Utility::BadUnivariateDistributionParameter,
                       "The discrete distribution cannot be constructed "
                       "because the dependent value at index "
                        << std::distance( dependent_values.begin(), bad_dependent_value ) <<
@@ -703,7 +703,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
   {
     TEST_FOR_EXCEPTION( !Sort::isSortedAscending( dependent_values.begin(),
                                                   dependent_values.end() ),
-                        Utility::BadOneDDistributionParameter,
+                        Utility::BadUnivariateDistributionParameter,
                         "The discrete distribution cannot be constructed "
                         "because the dependent cdf values  are not "
                         "sorted!" );
@@ -712,7 +712,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
       std::adjacent_find( dependent_values.begin(), dependent_values.end() );
     
     TEST_FOR_EXCEPTION( repeat_cdf_value != dependent_values.end(),
-                        Utility::BadOneDDistributionParameter,
+                        Utility::BadUnivariateDistributionParameter,
                         "The discrete distribution cannot be "
                         "constructed because there is a repeated dependent cdf"
                         " value at index "

@@ -68,9 +68,9 @@ typedef std::tuple<
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<Utility::OneDDistribution> distribution;
+std::shared_ptr<Utility::UnivariateDistribution> distribution;
 
-std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> >
+std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> >
   unit_aware_distribution;
 
 //---------------------------------------------------------------------------//
@@ -79,10 +79,10 @@ std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> >
 // Initialize the distribution
 template<unsigned N, typename IndepUnit, typename DepUnit>
 void initializeDistribution(
-       std::shared_ptr<Utility::UnitAwareOneDDistribution<IndepUnit,DepUnit> >&
+       std::shared_ptr<Utility::UnitAwareUnivariateDistribution<IndepUnit,DepUnit> >&
        distribution )
 {
-  typedef typename Utility::UnitAwareOneDDistribution<IndepUnit,DepUnit>::IndepQuantity IndepQuantity;
+  typedef typename Utility::UnitAwareUnivariateDistribution<IndepUnit,DepUnit>::IndepQuantity IndepQuantity;
   distribution.reset(
      new Utility::UnitAwarePowerDistribution<N,IndepUnit,DepUnit>(
 	   (N+1.0),
@@ -761,7 +761,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, archive, TestInts )
                            archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, Utility::PowerDistribution<WrappedN::value>( 3.0, 1.0, 2.0 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> shared_dist;
+  std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( shared_dist.get() ),
@@ -818,7 +818,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, archive, TestInts )
                            archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > shared_dist;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > shared_dist;
 
   FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( shared_dist.get() )),

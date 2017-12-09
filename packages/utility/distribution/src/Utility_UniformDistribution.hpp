@@ -10,22 +10,22 @@
 #define UTILITY_UNIFORM_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
 
 /*! The unit-aware uniform distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareUniformDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
 
 private:
 
   // Typedef for base type
-  typedef UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -130,7 +130,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   // Test if the distribution is continuous
   bool isContinuous() const override;
@@ -196,7 +196,7 @@ private:
   friend class UnitAwareUniformDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = UNIFORM_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = UNIFORM_DISTRIBUTION;
 
   // The min independent value
   IndepQuantity d_min_independent_value;
@@ -212,7 +212,7 @@ private:
 };
 
 /*! The uniform distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
 

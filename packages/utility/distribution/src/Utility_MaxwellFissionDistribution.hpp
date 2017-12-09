@@ -18,21 +18,21 @@
 #include <boost/units/dimensionless_type.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace Utility{
 
 /*! The unit-aware Maxwell fission distribution class
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 template<typename IndependentUnit, typename DependentUnit = void>
-class UnitAwareMaxwellFissionDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
+class UnitAwareMaxwellFissionDistribution : public UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>
 {
   // Only allow construction when the independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
 
   // Typedef for base type
-  typedef UnitAwareOneDDistribution<IndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // The distribution multiplier unit traits typedef
   typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<1,-2>::type>::type> DistMultiplierUnitTraits;
@@ -134,7 +134,7 @@ public:
   IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const override;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
@@ -201,7 +201,7 @@ private:
   friend class UnitAwareMaxwellFissionDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = MAXWELL_FISSION_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = MAXWELL_FISSION_DISTRIBUTION;
 
   // The incident neutron energy of the distribution
   IndepQuantity d_incident_energy;
@@ -220,7 +220,7 @@ private:
 };
 
 /*! The Maxwell fission distribution (unit-agnostic)
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  */
 typedef UnitAwareMaxwellFissionDistribution<void,void> MaxwellFissionDistribution;
 

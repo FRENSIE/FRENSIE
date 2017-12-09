@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_CompleteTwoDDistribuiton.hpp
 //! \author Alex Robinson
-//! \brief  The complete two-dimensional distribution class declaration
+//! \brief  The complete bivariate distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,23 +13,23 @@
 #include <utility>
 
 // FRENSIE Includes
-#include "Utility_TwoDDistribution.hpp"
+#include "Utility_BivariateDistribution.hpp"
 
 namespace Utility{
 
-/*! The unit-aware complete two-dimensional distribution
- * \ingroup two_d_distributions
+/*! The unit-aware complete bivariate distribution
+ * \ingroup bivariate_distributions
  */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareCompleteTwoDDistribution : public UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareCompleteBivariateDistribution : public UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
 
 private:
 
   // The parent class type
-  typedef UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
+  typedef UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
 
 public:
 
@@ -40,11 +40,11 @@ public:
   typedef typename ParentType::InverseIndepUnitTraits::template GetQuantityType<double>::type InverseIndepQuantity;
 
   //! Constructor
-  UnitAwareCompleteTwoDDistribution()
+  UnitAwareCompleteBivariateDistribution()
   { /* ... */ }
 
   //! Destructor
-  virtual ~UnitAwareCompleteTwoDDistribution()
+  virtual ~UnitAwareCompleteBivariateDistribution()
   { /* ... */ }
 
   //! Evaluate the joint PDF
@@ -108,7 +108,7 @@ public:
   virtual SecondaryIndepQuantity getLowerBoundOfSecondaryIndepVar() const = 0;
 
   //! Test if the distribution has the same bounds
-  bool hasSameBounds( const UnitAwareFullyContinuousTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const;
+  bool hasSameBounds( const UnitAwareFullyContinuousBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const;
 };
 
 // Evaluate the primary conditional PDF
@@ -117,7 +117,7 @@ public:
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-InversePrimaryIndepQuantity UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluatePrimaryConditionalPDF(
+InversePrimaryIndepQuantity UnitAwareCompleteBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluatePrimaryConditionalPDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
@@ -132,7 +132,7 @@ InversePrimaryIndepQuantity UnitAwareCompleteTwoDDistribution<PrimaryIndependent
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-InverseSecondaryIndepQuantity UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+InverseSecondaryIndepQuantity UnitAwareCompleteBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
@@ -148,7 +148,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 std::pair<PrimaryIndepQuantity,SecondaryIndepQuantity>
-UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sample() const
+UnitAwareCompleteBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sample() const
 {
   PrimaryIndepQuantity primary_indep_sample = this->samplePrimaryMarginal();
 
@@ -163,7 +163,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 std::pair<PrimaryIndepQuantity,SecondaryIndepQuantity>
-UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
+UnitAwareCompleteBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   PrimaryIndepQuantity primary_indep_sample =
     this->samplePrimaryMarginalAndRecordTrials( trials );
@@ -179,7 +179,7 @@ UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUni
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline bool UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSameBounds( const UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const
+inline bool UnitAwareCompleteBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSameBounds( const UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const
 {
   return this->hasSamePrimaryBounds( distribution ) &&
     Policy::relError(
@@ -192,15 +192,15 @@ inline bool UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIn
     < 1e-9;
 }
 
-/*! The complete two-dimensional distribution (unit-agnostic)
- * \ingroup two_d_distributions
+/*! The complete bivariate distribution (unit-agnostic)
+ * \ingroup bivariate_distributions
  */
-typedef UnitAwareCompleteTwoDDistribution<void,void,void> CompleteTwoDDistribution;
+typedef UnitAwareCompleteBivariateDistribution<void,void,void> CompleteBivariateDistribution;
 
 } // end Utility namespace
 
 #endif // end UTILITY_COMPLETE_TWO_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_CompleteTwoDDistribution.hpp
+// end Utility_CompleteBivariateDistribution.hpp
 //---------------------------------------------------------------------------//

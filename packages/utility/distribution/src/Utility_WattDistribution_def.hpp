@@ -290,7 +290,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVa
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -391,42 +391,42 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::verifyValidShapeP
                                            DistMultiplierQuantity& multiplier )
 {
   TEST_FOR_EXCEPTION( IQT::isnaninf( incident_energy ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= IQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the incident energy is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( a_parameter ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the A parameter is invalid!" );
 
   TEST_FOR_EXCEPTION( a_parameter <= IQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the A parameter is invalid!" );
   
   TEST_FOR_EXCEPTION( IIQT::isnaninf( b_parameter ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the B parameter is invalid!" );
   
   TEST_FOR_EXCEPTION( b_parameter <= IIQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the B parameter is invalid!" );
   
   TEST_FOR_EXCEPTION( IQT::isnaninf( restriction_energy ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the restriction energy is invalid!" );
 
   TEST_FOR_EXCEPTION( incident_energy <= restriction_energy,
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the incident energy ("
                       << Utility::toString(incident_energy) << ")"
@@ -434,12 +434,12 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::verifyValidShapeP
                       << Utility::toString(restriction_energy) << ")!" );
 
   TEST_FOR_EXCEPTION( DMQT::isnaninf( multiplier ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the multiplier is invalid!" );
 
   TEST_FOR_EXCEPTION( multiplier == DMQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The watt distribution cannot be constructed "
                       "because the multiplier is invalid!" );  
 }

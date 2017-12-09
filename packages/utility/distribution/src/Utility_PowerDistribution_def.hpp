@@ -23,7 +23,7 @@ namespace Utility{
 namespace Details{
 
 /*! Power distribution traits struct for power N
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  * \ingroup traits
  */
 template<size_t N>
@@ -50,7 +50,7 @@ struct PowerDistributionTraits
 };
 
 /*! Power distribution traits struct for power 2
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  * \ingroup traits
  */
 template<>
@@ -77,7 +77,7 @@ struct PowerDistributionTraits<2>
 };
 
 /*! Power distribution traits struct for power 1
- * \ingroup one_d_distributions
+ * \ingroup univariate_distributions
  * \ingroup traits
  */
 template<>
@@ -307,7 +307,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getLowerBoundOfInde
 
 // Return the distribution type
 template<size_t N, typename IndependentUnit, typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return distribution_type;
@@ -421,32 +421,32 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::verifyValidSha
   testStaticPrecondition( N > 0 );
   
   TEST_FOR_EXCEPTION( DMQT::isnaninf( const_multiplier ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the multiplier is invalid!" );
   
   TEST_FOR_EXCEPTION( const_multiplier == DMQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the multiplier is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( lower_limit ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the lower limit is invalid!" );
 
   TEST_FOR_EXCEPTION( lower_limit < IQT::zero(),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the lower limit is invalid!" );
 
   TEST_FOR_EXCEPTION( IQT::isnaninf( upper_limit ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The power distribution cannot be constructed because "
                       "the upper limit is invalid!" );
 
   TEST_FOR_EXCEPTION( upper_limit <= lower_limit,
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The power distribution cannot be constructed because "
                       "the upper limit is invalid!" );
 }

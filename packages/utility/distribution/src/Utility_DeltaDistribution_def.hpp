@@ -229,7 +229,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepV
 
 // Return the distribution type
 template<typename IndependentUnit, typename DependentUnit>
-OneDDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
+UnivariateDistributionType UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
 }
@@ -287,17 +287,17 @@ void UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::verifyValidShape
                                                 const DepQuantity& multiplier )
 {
   TEST_FOR_EXCEPTION( IQT::isnaninf( location ),
-		      Utility::BadOneDDistributionParameter,
+		      Utility::BadUnivariateDistributionParameter,
 		      "The delta distribution cannot be constructed "
 		      "because of an invalid location!" );
   
   TEST_FOR_EXCEPTION( DQT::isnaninf( multiplier ),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The delta distribution cannot be constructed "
                       "because of an invalid multiplier!" );
 
   TEST_FOR_EXCEPTION( multiplier == DQT::zero(),
-                      Utility::BadOneDDistributionParameter,
+                      Utility::BadUnivariateDistributionParameter,
                       "The delta distribution cannot be constructed "
                       "because of an invalid multiplier!" );
 }
