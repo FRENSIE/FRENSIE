@@ -64,7 +64,7 @@ InverseIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentU
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  return d_primary_distribution->evaluatePDF( primary_indep_var_value ),
+  return d_primary_distribution->evaluatePDF( primary_indep_var_value )*
     d_secondary_distribution->evaluatePDF( secondary_indep_var_value );
 }
 
@@ -276,7 +276,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::getUpperBoundOfConditionalIndepVar(
+SecondaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::getUpperBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
 {
   if( primary_indep_var_value <
@@ -293,7 +293,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::getLowerBoundOfConditionalIndepVar(
+SecondaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::getLowerBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
 {
   if( primary_indep_var_value <
@@ -303,6 +303,40 @@ SecondaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependen
     return SIQT::zero();
   else
     return d_secondary_distribution->getLowerBoundOfIndepVar();
+}
+
+// Return the upper bound of the primary conditional distribution
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+PrimaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::getUpperBoundOfPrimaryConditionalIndepVar(
+                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+{
+  if( secondary_indep_var_value <
+      d_secondary_distribution->getLowerBoundOfIndepVar() ||
+      secondary_indep_var_value >
+      d_secondary_distribution->getUpperBoundOfIndepVar() )
+    return PIQT::zero();
+  else
+    return d_primary_distribution->getUpperBoundOfIndepVar();
+}
+
+// Return the lower bound of the primary conditional distribution
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+PrimaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::getLowerBoundOfPrimaryConditionalIndepVar(
+                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+{
+  if( secondary_indep_var_value <
+      d_secondary_distribution->getLowerBoundOfIndepVar() ||
+      secondary_indep_var_value >
+      d_secondary_distribution->getUpperBoundOfIndepVar() )
+    return PIQT::zero();
+  else
+    return d_primary_distribution->getLowerBoundOfIndepVar();
 }
 
 // Test if the distribution is tabular in the primary dimension
@@ -316,7 +350,31 @@ bool UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDepen
 }
 
 // Test if the distribution is condinuous in the primary dimension
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
 bool UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::isPrimaryDimensionContinuous() const
+{
+  return d_primary_distribution.isContinuous();
+}
+
+// Test if the distribution is tabular in the secondary dimension
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+bool UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::isSecondaryDimensionTabular() const
+{
+  return d_secondary_distribution.isTabular();
+}
+
+// Test if the distribution is continuous in the secondary dimension
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+bool UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::isSecondaryDimensionContinuous() const
 {
   return d_primary_distribution.isContinuous();
 }
@@ -351,6 +409,19 @@ void UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDepen
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_primary_distribution );
   ar & BOOST_SERIALIZATION_NVP( d_secondary_distribution );
+}
+
+// Method for placing the object in an output stream
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+void UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::toStream( std::ostream& os ) const
+{
+  this->toStreamDistImpl(
+                    "Separable Bivariate Distribution",
+                    std::make_pair( "primary", *d_primary_distribution ),
+                    std::make_pair( "secondary", *d_secondary_distribution ) );
 }
   
 } // end Utility namespace

@@ -154,17 +154,25 @@ public:
   PrimaryIndepQuantity getLowerBoundOfPrimaryIndepVar() const override;
 
   //! Return the upper bound of the distribution secondary independent variable
-  SecondaryIndepQuantity getUpperBoundOfSecondaryIndepVar() const;
+  SecondaryIndepQuantity getUpperBoundOfSecondaryIndepVar() const override;
 
   //! Return the lower bound of the distribution secondary independent variable
-  SecondaryIndepQuantity getLowerBoundOfSecondaryIndepVar() const;
+  SecondaryIndepQuantity getLowerBoundOfSecondaryIndepVar() const override;
+
+  //! Return the upper bound of the primary conditional distribution
+  PrimaryIndepQuantity getUpperBoundOfPrimaryConditionalIndepVar(
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
+
+  //! Return the lower bound of the primary conditional distribution
+  PrimaryIndepQuantity getLowerBoundOfPrimaryConditionalIndepVar(
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
   //! Return the upper bound of the conditional distribution
-  SecondaryIndepQuantity getUpperBoundOfConditionalIndepVar(
+  SecondaryIndepQuantity getUpperBoundOfSecondaryConditionalIndepVar(
            const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
   //! Return the lower bound of the conditional distribution
-  SecondaryIndepQuantity getLowerBoundOfConditionalIndepVar(
+  SecondaryIndepQuantity getLowerBoundOfSecondaryConditionalIndepVar(
            const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
   //! Test if the distribution is tabular in the primary dimension
@@ -172,6 +180,15 @@ public:
 
   //! Test if the distribution is condinuous in the primary dimension
   bool isPrimaryDimensionContinuous() const override;
+
+  //! Test if the distribution is tabular in the secondary dimension
+  bool isSecondaryDimensionTabular() const override;
+
+  //! Test if the distribution is continuous in the secondary dimension
+  bool isSecondaryDimensionContinuous() const override;
+
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const override;
 
 private:
 
@@ -204,6 +221,14 @@ typedef UnitAwareSeparableBivariateDistribution<void,void,void,void> SeparableBi
 
 BOOST_DISTRIBUTION2_CLASS_VERSION( UnitAwareSeparableBivariateDistribution, 0 );
 BOOST_DISTRIBUTION2_CLASS_EXPORT_KEY2( SeparableBivariateDistribution );
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_SeparableBivariateDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_HPP
 
