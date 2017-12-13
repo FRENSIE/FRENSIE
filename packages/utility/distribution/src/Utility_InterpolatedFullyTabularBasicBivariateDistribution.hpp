@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The interpolated fully tabular two-dimensional dist. class decl.
+//! \brief  The interpolated fully tabular basic bivariate dist. class decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -14,52 +14,8 @@
 
 namespace Utility{
 
-namespace Details{
-
-//! Helper class used to construct a cdf interpolation policy
-template<typename YProcessingTag, typename XProcessingTag>
-struct CDFInterpolationHelper
-{ /* ... */ };
-
-//! Helper class used to construct a LinLinLin cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<LinIndepVarProcessingTag,LinIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLinLin CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLinLog cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLinLog CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogLin cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogLin CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogLog cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogLog CDFInterpPolicy;
-};
-  
-} // end Details namespace
-
-// The CDF interpolation policy
-  typedef typename CDFInterpolationHelper<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
-
 /*! The unit-aware inteprolated fully tabular bivariate distribution
- * \ingroup two_d_distribution
+ * \ingroup bivariate_distributions
  */
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -88,7 +44,7 @@ class UnitAwareInterpolatedFullyTabularBasicBivariateDistribution : public UnitA
 public:
 
   //! This type
-  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
   
   //! The primary independent quantity type
   typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
@@ -207,7 +163,16 @@ template<typename TwoDInterpPolicy> using InterpolatedFullyTabularBasicBivariate
 } // end Utility namespace
 
 BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, 0 );
-BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_STANDARD_KEY( InterpolatedFullyTabularBasicBivariateDistribution );
+
+#define BOOST_SERIALIZATION_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
+  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, Utility ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
+    UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, Utility, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedFullyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy> + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void ) )
+
+BOOST_SERIALIZATION_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
 
 //---------------------------------------------------------------------------//
 // Template Includes

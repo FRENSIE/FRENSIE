@@ -16,7 +16,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
-#include "Utility_UniformDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
 

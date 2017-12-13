@@ -20,6 +20,47 @@ BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedFullyTa
 
 namespace Utility{
 
+namespace Details{
+
+//! Helper class used to construct a cdf interpolation policy
+template<typename YProcessingTag, typename XProcessingTag>
+struct CDFInterpolationHelper
+{ /* ... */ };
+
+//! Helper class used to construct a LinLinLin cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LinIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLinLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLinLog cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLinLog CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLin cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLog cdf interpolation policy
+template<>
+struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLog CDFInterpPolicy;
+};
+  
+} // end Details namespace
+
 // Constructor
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -89,12 +130,14 @@ double UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPol
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
+  typedef typename Details::CDFInterpolationHelper<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
+  
   return this->template evaluateImpl<CDFInterpPolicy,double>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseUnivariateDistributionType::evaluateCDF,
-                                      0.0,
-                                      1.0 );
+                                  primary_indep_var_value,
+                                  secondary_indep_var_value,
+                                  &BaseUnivariateDistributionType::evaluateCDF,
+                                  0.0,
+                                  1.0 );
 }
 
 // Return a random sample from the secondary conditional PDF and the index
@@ -487,22 +530,34 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
 }
 
 // Method for placing the object in an output stream
-void toStream( std::ostream& os ) const
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+void UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
   this->toStreamTabularDistImpl( os, "InterpolatedFullyTabularBasicBivariateDistribution" );
 }
 
 // Save the distribution to an archive
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
 template<typename Archive>
-void save( Archive& ar, const unsigned version ) const
+void UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 }
 
 // Load the distribution from an archive
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
 template<typename Archive>
-void load( Archive& ar, const unsigned version )
+void UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
