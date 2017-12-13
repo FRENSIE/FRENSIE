@@ -1,27 +1,39 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HistogramFullyTabularBivariateDistribution.hpp
+//! \file   Utility_HistogramFullyTabularBasicBivariateDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The histogram fully tabular two-dimensional dist. class definition
+//! \brief  The histogram fully tabular basic bivariate dist. class definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
-#define UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
+#ifndef UTILITY_HISTOGRAM_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
+#define UTILITY_HISTOGRAM_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_SortAlgorithms.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
+BOOST_SERIALIZATION_DISTRIBUTION3_EXPORT_IMPLEMENT( UnitAwareHistogramFullyTabularBasicBivariateDistribution );
+
 namespace Utility{
+
+// Constructor
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareHistogramFullyTabularBasicBivariateDistribution(
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions )
+  : BaseType( primary_indep_grid, secondary_distributions )
+{ 
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
 
 // Evaluate the secondary conditional CDF
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+double UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
@@ -35,7 +47,7 @@ double UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUni
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 unsigned& primary_bin_index,
                 unsigned& secondary_bin_index ) const -> SecondaryIndepQuantity
@@ -56,7 +68,7 @@ auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+auto UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
                    const PrimaryIndepQuantity primary_indep_var_value,
                    const double random_number ) const -> SecondaryIndepQuantity
 {
@@ -78,7 +90,7 @@ auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+auto UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
@@ -103,7 +115,7 @@ auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -127,11 +139,44 @@ auto UnitAwareHistogramFullyTabularBivariateDistribution<PrimaryIndependentUnit,
 
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
+
+// Method for placing the object in an output stream
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+void UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
+{
+  this->toStreamTabularDistImpl( os, "HistogramFullyTabularBasicBivariateDistribution" );
+}
+
+// Save the distribution to an archive
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+template<typename Archive>
+void UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+}
+
+// Load the distribution from an archive
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+template<typename Archive>
+void UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+}
   
 } // end Utility namespace
 
-#endif // end UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramFullyTabularBasicBivariateDistribution<void,void,void> );
+
+#endif // end UTILITY_HISTOGRAM_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_HistogramFullyTabularBivariateDistribution_def.hpp
+// end Utility_HistogramFullyTabularBasicBivariateDistribution_def.hpp
 //---------------------------------------------------------------------------//

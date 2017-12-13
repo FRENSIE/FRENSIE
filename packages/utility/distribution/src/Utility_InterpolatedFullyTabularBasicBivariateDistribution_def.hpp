@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_InterpolatedFullyTabularBivariateDistribution_def.hpp
+//! \file   Utility_InterpolatedFullyTabularBasicBivariateDistribution_def.hpp
 //! \author Alex Robinson
-//! \brief  The interpolated fully tabular two-dimensional dist. class def.
+//! \brief  The interpolated fully tabular basic bivariate dist. class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
-#define UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
+#ifndef UTILITY_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
+#define UTILITY_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_TabularDistribution.hpp"
@@ -16,6 +16,8 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
+BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution );
+
 namespace Utility{
 
 // Constructor
@@ -23,37 +25,59 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-template<template<typename T, typename... Args> class ArrayA,
-         template<typename T, typename... Args> class ArrayB,
-         template<typename T, typename... Args> class SubarrayB,
-         template<typename T, typename... Args> class ArrayC,
-         template<typename T, typename... Args> class SubarrayC>
-UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularBivariateDistribution(
-       const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-       const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
-       const ArrayC<SubarrayC<DepQuantity> >& dependent_values )
+UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions )
+  : BaseType( primary_indep_grid, secondary_distributions )
 {
-  // Make sure the grids are valid
-  testPrecondition( Sort::isSortedAscending( primary_indep_grid.begin(),
-                                             primary_indep_grid.end() ) );
-  testPrecondition( primary_indep_grid.size() > 1 );
-  testPrecondition( primary_indep_grid.size() == secondary_indep_grids.size());
-  testPrecondition( primary_indep_grid.size() == dependent_values.size() );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
 
-  // Construct the 2D distribution
-  DistributionType distribution( primary_indep_grid.size() );
+// Grid constructor
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
+       const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+       const std::vector<std::vector<SecondaryIndepQuantity> >& secondary_indep_grids,
+       const std::vector<std::vector<DepQuantity> >& dependent_values )
+{
+  TEST_FOR_EXCEPTION( primary_indep_grid.size() != secondary_indep_grids.size(),
+                      Utility::BadBivariateDistributionParameter,
+                      "The interpolated fully tabular basic bivariate "
+                      "distribution cannot be constructed because the number "
+                      "of primary grid points ("
+                      << primary_indep_grid.size() << ") does not match the "
+                      "number of secondary indep grids ("
+                      << secondary_indep_grids.size() << ")!" );
+
+  TEST_FOR_EXCEPTION( primary_indep_grid.size() != dependent_values.size(),
+                      Utility::BadBivariateDistributionParameter,
+                      "The interpolated fully tabular basic bivariate "
+                      "distribution cannot be constructed because the number "
+                      "of primary grid points ("
+                      << primary_indep_grid.size() << ") does not match the "
+                      "number of dependent value grids ("
+                      << dependent_values.size() << ")!" );
+  
+  // Construct the univariate distributions
+  std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >
+    secondary_distributions( primary_indep_grid.size() );
   
   for( size_t i = 0; i < primary_indep_grid.size(); ++i )
   {
-    Utility::get<0>( distribution[i] ) = primary_indep_grid[i];
-    Utility::get<1>( distribution[i] ).reset(
+    secondary_distributions[i].reset(
           new UnitAwareTabularDistribution<typename TwoDInterpPolicy::SecondaryBasePolicy,SecondaryIndependentUnit,DependentUnit>(
                                                       secondary_indep_grids[i],
                                                       dependent_values[i] ) );
   }
 
-  // Set the 2D distribution
-  this->setDistribution( distribution );
+  // Set the distribution data
+  this->setDistribution( primary_indep_grid, secondary_distributions );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Evaluate the secondary conditional CDF
@@ -61,7 +85,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+double UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
@@ -81,7 +105,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             unsigned& primary_bin_index,
                             unsigned& secondary_bin_index ) const
@@ -112,7 +136,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
                             unsigned& primary_bin_index,
@@ -137,7 +161,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const
   -> SecondaryIndepQuantity
@@ -161,7 +185,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
@@ -186,7 +210,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -277,7 +301,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExact(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExact(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -296,7 +320,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const
   -> SecondaryIndepQuantity
@@ -344,7 +368,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactInSubrange(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
@@ -366,7 +390,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -461,11 +485,42 @@ auto UnitAwareInterpolatedFullyTabularBivariateDistribution<TwoDInterpPolicy,Pri
                                       primary_indep_var_value, random_number );
   }
 }
+
+// Method for placing the object in an output stream
+void toStream( std::ostream& os ) const
+{
+  this->toStreamTabularDistImpl( os, "InterpolatedFullyTabularBasicBivariateDistribution" );
+}
+
+// Save the distribution to an archive
+template<typename Archive>
+void save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+}
+
+// Load the distribution from an archive
+template<typename Archive>
+void load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+}
   
 } // end Utility namespace
 
-#endif // UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin,void,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLogLin,void,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLog,void,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLogLog,void,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLinLin,void,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLogLin,void,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLinLog,void,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLogLog,void,void,void> );
+
+#endif // UTILITY_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_InterpolatedFullyTabularBivariateDistribution_def.hpp
+// end Utility_InterpolatedFullyTabularBasicBivariateDistribution_def.hpp
 //---------------------------------------------------------------------------//

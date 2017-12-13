@@ -14,7 +14,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
-BOOST_DISTRIBUTION2_CLASS_EXPORT_IMPLEMENT( UnitAwareSeparableBivariateDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareSeparableBivariateDistribution );
 
 namespace Utility{
 
@@ -39,7 +39,7 @@ UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentU
                       "The separable distribution cannot be constructed "
                       "because the secondary distribution is NULL!" );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Evaluate the distribution

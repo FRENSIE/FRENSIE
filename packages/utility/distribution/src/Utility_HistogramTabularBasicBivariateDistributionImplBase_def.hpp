@@ -1,22 +1,40 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HistogramTabularBivariateDistributionImplBase_def.hpp
+//! \file   Utility_HistogramTabularBasicBivariateDistributionImplBase_def.hpp
 //! \author Alex Robinson
-//! \brief  The histogram tabular two-dimensional dist. helper class def.
+//! \brief  The histogram tabular basic bivariate dist. helper class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_HISTOGRAM_TABULAR_TWO_D_DISTRIBUTION_IMPL_BASE_DEF_HPP
-#define UTILITY_HISTOGRAM_TABULAR_TWO_D_DISTRIBUTION_IMPL_BASE_DEF_HPP
+#ifndef UTILITY_HISTOGRAM_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_DEF_HPP
+#define UTILITY_HISTOGRAM_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
+#include "Utility_FullyTabularBasicBivariateDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
+// Constructor
+template<typename Distribution>
+UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::UnitAwareHistogramTabularBasicBivariateDistributionImplBase(
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions )
+  : BaseType( primary_indep_grid, secondary_distributions )
+{ 
+  // Make sure that there is at least one bin specified
+  TEST_FOR_EXCEPTION( primary_indep_grid.size() <= 1,
+                      Utility::BadBivariateDistributionParameter,
+                      "The histogram tabular basic bivariate distribution "
+                      "cannot be created because at least one primary bin "
+                      "needs to be specified!" );
+}
+  
 // Evaluate the distribution
 template<typename Distribution>
-auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::evaluate(
+auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::evaluate(
   const PrimaryIndepQuantity primary_indep_var_value,
   const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
 {
@@ -27,7 +45,7 @@ auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::evalu
 
 // Evaluate the secondary conditional PDF
 template<typename Distribution>
-auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDF(
+auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
@@ -41,12 +59,12 @@ auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::evalu
 // Evaluate the distribution using the desired evaluation method
 template<typename Distribution>
 template<typename ReturnType, typename EvaluationMethod>
-inline ReturnType UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::evaluateImpl(
+inline ReturnType UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::evaluateImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -67,13 +85,13 @@ inline ReturnType UnitAwareHistogramTabularBivariateDistributionImplBase<Distrib
 // Sample from the distribution using the desired sampling functor
 template<typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::sampleDetailedImpl(
+inline auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::sampleDetailedImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             unsigned& primary_bin_index ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -104,7 +122,7 @@ inline auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>
 // Sample from the distribution using the desired sampling functor
 template<typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::sampleImpl(
+inline auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::sampleImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
@@ -119,7 +137,7 @@ inline auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>
 
 // Return a random sample from the secondary conditional PDF
 template<typename Distribution>
-auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::sampleSecondaryConditional(
+auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::sampleSecondaryConditional(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -134,7 +152,7 @@ auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::sampl
 
 // Return a random sample and record the number of trials
 template<typename Distribution>
-auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::sampleSecondaryConditionalAndRecordTrials(
+auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             DistributionTraits::Counter& trials ) const -> SecondaryIndepQuantity
 {
@@ -150,11 +168,11 @@ auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::sampl
 
 // Return the upper bound of the conditional distribution
 template<typename Distribution>
-auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::getUpperBoundOfConditionalIndepVar(
+auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::getUpperBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -165,11 +183,11 @@ auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::getUp
 
 // Return the lower bound of the conditional distribution
 template<typename Distribution>
-auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::getLowerBoundOfConditionalIndepVar(
+auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::getLowerBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -180,15 +198,36 @@ auto UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::getLo
 
 // Test if the distribution is continuous in the primary dimension
 template<typename Distribution>
-bool UnitAwareHistogramTabularBivariateDistributionImplBase<Distribution>::isPrimaryDimensionContinuous() const
+bool UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::isPrimaryDimensionContinuous() const
 {
   return true;
+}
+
+// Save the distribution to an archive
+template<typename Distribution>
+template<typename Archive>
+void UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+}
+
+// Load the distribution from an archive
+template<typename Distribution>
+template<typename Archive>
+void UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 }
   
 } // end Utility namespace
 
-#endif // end UTILITY_HISTOGRAM_TABULAR_TWO_D_DISTRIBUTION_IMPL_BASE_DEF_HPP
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
+
+#endif // end UTILITY_HISTOGRAM_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_HistogramTabularBivariateDistributionImplBase_def.hpp
+// end Utility_HistogramTabularBasicBivariateDistributionImplBase_def.hpp
 //---------------------------------------------------------------------------//

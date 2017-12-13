@@ -21,7 +21,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareMaxwellFissionDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareMaxwellFissionDistribution );
 
 namespace Utility{
 
@@ -55,7 +55,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -82,7 +82,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -97,7 +97,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

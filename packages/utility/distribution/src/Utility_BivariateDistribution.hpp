@@ -164,8 +164,8 @@ private:
 
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION2( UnitAwareBivariateDistribution );
-BOOST_DISTRIBUTION2_CLASS_VERSION( UnitAwareBivariateDistribution, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION3( UnitAwareBivariateDistribution );
+BOOST_DISTRIBUTION_DISTRIBUTION3_VERSION( UnitAwareBivariateDistribution, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

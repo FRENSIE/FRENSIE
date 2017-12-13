@@ -282,8 +282,17 @@ template<typename InterpolationPolicy> using TabularDistribution =
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION1_CLASS_VERSION_EXTRA( UnitAwareTabularDistribution, typename, InterpolationPolicy, 0 );
-BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2_EXTRA( TabularDistribution, typename, InterpolationPolicy );
+BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareTabularDistribution, Utility, 0 );
+
+#define BOOST_SERIALIZATION_TABULAR_DISRIBUTION_EXPORT_STANDARD_KEY()   \
+  BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAwareTabularDistribution, Utility ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
+    UnitAwareTabularDistribution, Utility,                                \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "TabularDistribution<" ) + Utility::typeName<InterpPolicy>() + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy ) )
+
+BOOST_SERIALIZATION_TABULAR_DISRIBUTION_EXPORT_STANDARD_KEY();
 
 //---------------------------------------------------------------------------//
 // Template inludes.

@@ -218,8 +218,8 @@ typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareUniformDistribution, 0 );
-BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( UniformDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareUniformDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_STANDARD_KEY( UniformDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

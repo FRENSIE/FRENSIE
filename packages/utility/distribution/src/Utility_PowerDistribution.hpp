@@ -209,9 +209,34 @@ template<unsigned N> using PowerDistribution =
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION1_CLASS_VERSION_EXTRA( UnitAwarePowerDistribution, size_t, N, 0 );
-BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2_EXTRA_INT( PowerDistribution, size_t, N );
+#define BOOST_SERIALIZATION_POWER_DISTRIBUTION_VERSION( VERSION )       \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+    UnitAwarePowerDistribution, Utility, VERSION,                         \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( size_t N, typename T, typename U ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( N, T, U ) )
 
+//---------------------------------------------------------------------------//
+// Update the version number here
+//---------------------------------------------------------------------------//
+BOOST_SERIALIZATION_POWER_DISTRIBUTION_VERSION( 0 );
+
+//---------------------------------------------------------------------------//
+
+#define BOOST_SERIALIZATION_POWER_DISTRIBUTION_EXPORT_STANDARD_KEY()    \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL( \
+    UnitAwarePowerDistribution, Utility, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "UnitAwarePowerDistribution<" ) + Utility::toString( N ) + "," + Utility::typeName<T,U>() + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( size_t N, typename T, typename U ),  \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( N, T, U ) )          \
+                                                                        \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
+    UnitAwarePowerDistribution, Utility, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "PowerDistribution<" ) + Utility::toString( N ) + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( size_t N ),  \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( N, void, void ) )
+
+BOOST_SERIALIZATION_POWER_DISTRIBUTION_EXPORT_STANDARD_KEY()
+                                   
 //---------------------------------------------------------------------------//
 // Template includes
 //---------------------------------------------------------------------------//

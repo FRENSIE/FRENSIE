@@ -236,8 +236,8 @@ typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
   
 } // end Utility namespace
 
-BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareDiscreteDistribution, 0 );
-BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( DiscreteDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareDiscreteDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_STANDARD_KEY( DiscreteDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

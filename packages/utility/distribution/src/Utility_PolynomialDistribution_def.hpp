@@ -18,7 +18,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwarePolynomialDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwarePolynomialDistribution );
 
 namespace Utility{
 
@@ -47,7 +47,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
   this->initializeDistribution( IndepQuantity( min_indep_limit ),
 				IndepQuantity( max_indep_limit ) );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -93,7 +93,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
 
   this->initializeDistribution( min_indep_limit, max_indep_limit );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -107,7 +107,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
 		            dist_instance.d_indep_limits_to_series_powers_p1 ),
     d_norm_constant( DNQT::initializeQuantity(dist_instance.d_norm_constant) )
 {
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

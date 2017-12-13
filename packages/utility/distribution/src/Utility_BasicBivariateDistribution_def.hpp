@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_ComparisonPolicy.hpp"
+#include "Utility_ExplicitDistributionTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 

@@ -22,7 +22,7 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
-#include "Utility_UnivariateDistributionHelpers.hpp"
+#include "Utility_DistributionSerializationHelpers.hpp"
 
 /*! \defgroup univariate_distributions Univariate Distributions
  */
@@ -189,8 +189,8 @@ public:
   
 } // end Utility namespace
   
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION1( UnitAwareUnivariateDistribution );
-BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareUnivariateDistribution, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION2( UnitAwareUnivariateDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareUnivariateDistribution, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

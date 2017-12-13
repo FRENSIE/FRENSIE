@@ -21,7 +21,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareDiscreteDistribution );
 
 namespace Utility{
 
@@ -46,7 +46,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 				dependent_values,
 				interpret_dependent_values_as_cdf );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // CDF Constructor (potentially dangerous)
@@ -64,7 +64,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   this->initializeDistributionFromCDF( independent_quantities,
 				       dependent_values );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Constructor
@@ -84,7 +84,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   this->initializeDistribution( independent_quantities,
 				dependent_quantities );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -117,7 +117,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 
   this->initializeDistribution( input_indep_quantities, input_dep_quantities );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -141,7 +141,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 
   this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

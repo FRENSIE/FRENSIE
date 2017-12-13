@@ -17,7 +17,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareNormalDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareNormalDistribution );
 
 namespace Utility{
 
@@ -55,7 +55,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
                                     d_min_independent_value,
                                     d_max_independent_value );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -75,7 +75,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
     d_min_independent_value( dist_instance.d_min_independent_value ),
     d_max_independent_value( dist_instance.d_max_independent_value )
 {
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -87,7 +87,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
     d_min_independent_value( IQT::initializeQuantity( unitless_dist_instance.d_min_independent_value ) ),
     d_max_independent_value( IQT::initializeQuantity( unitless_dist_instance.d_max_independent_value ) )
 {
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

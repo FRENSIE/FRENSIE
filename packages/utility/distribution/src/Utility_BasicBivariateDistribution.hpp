@@ -20,7 +20,7 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
-#include "Utility_BivariateDistributionHelpers.hpp"
+#include "Utility_DistributionSerializationHelpers.hpp"
 
 /*! \defgroup bivariate_distributions Bivariate Distributions
  */
@@ -180,8 +180,8 @@ public:
   
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION2( UnitAwareBasicBivariateDistribution );
-BOOST_DISTRIBUTION2_CLASS_VERSION( UnitAwareBasicBivariateDistribution, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION3( UnitAwareBasicBivariateDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION3_VERSION( UnitAwareBasicBivariateDistribution, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

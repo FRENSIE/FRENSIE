@@ -91,8 +91,8 @@ typedef UnitAwareTabularUnivariateDistribution<void,void> TabularUnivariateDistr
 
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION1( UnitAwareTabularUnivariateDistribution );
-BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareTabularUnivariateDistribution, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION2( UnitAwareTabularUnivariateDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareTabularUnivariateDistribution, 0 );
 
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularUnivariateDistribution<void,void> );
 

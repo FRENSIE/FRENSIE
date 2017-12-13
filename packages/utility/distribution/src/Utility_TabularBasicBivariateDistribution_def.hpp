@@ -9,55 +9,33 @@
 #ifndef UTILITY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP 
 #define UTILITY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
 
+// Std Lib Includes
+#include <algorithm>
+
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 // Constructor
-/*! \details The independent values must be sorted in ascending order
- */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         template<typename T, typename U> class BaseUnivariateDistribution>
-UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::UnitAwareTabularBivariateDistribution( const DistributionType& distribution )
-  : d_distribution( distribution.begin(), distribution.end() ),
-    d_extend_beyond_primary_limits( false )
-{
-  // Make sure the distribution is valid
-  testPrecondition( Sort::isSortedAscending<FIRST>( distribution.begin(),
-                                                    distribution.end() ) );
-}
-
-// Constructor
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit,
-         template<typename T, typename U> class BaseUnivariateDistribution>
-template<template<typename T, typename... Args> class ArrayA,
-         template<typename T, typename... Args> class ArrayB>
+         typename DependentUnit>
 UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::UnitAwareTabularBivariateDistribution(
-                const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                const ArrayB<std::shared_ptr<const BaseUnivariateDistributionType> >&
-                secondary_distributions )
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions )
   : d_distribution( primary_indep_grid.size() ),
     d_extend_beyond_primary_limits( false )
 {
-  // Make sure the independent grid is valid
-  testPrecondition( Sort::isSortedAscending( primary_indep_grid.begin(),
-                                             primary_indep_grid.end() ) );
-  testPrecondition( primary_indep_grid.size() ==
-                    secondary_distributions.size() );
+  // Check that the distribution data is valid
+  this->verifyValidData( primary_indep_grid, secondary_distributions );
 
-  // Set the distribution
-  for( unsigned i = 0u; i < primary_indep_grid.size(); ++i )
-  {
-    Utility::get<0>( d_distribution[i] ) = primary_indep_grid[i];
-    Utility::get<1>( d_distribution[i] ) = secondary_distributions[i];
-  }
+  // Initialize the distribution
+  this->initialize( primary_indep_grid, secondary_distributions );
 }
 
 // Extend the distribution beyond the primary independent variable limits
@@ -143,13 +121,16 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::setDistribution( const DistributionType distribution )
+void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::setDistribution(
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions );
 {
-  // Make sure the distribution is valid
-  testPrecondition( Sort::isSortedAscending<FIRST>( distribution.begin(),
-                                                    distribution.end() ) );
+  // Check that the distribution data is valid
+  this->verifyValidData( primary_indep_grid, secondary_distributions );
 
-  d_distribution = distribution;
+  // Initialize the distribution
+  this->initialize( primary_indep_grid, secondary_distributions );
 }
 
 // Find the bin boundaries
@@ -231,7 +212,117 @@ bool UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndep
   return all_continuous;
 }
 
+// Add tabular distribution data to the stream
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseUnivariateDistribution>
+template<typename... Types>
+void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::toStreamTabularDistImpl(
+                                                   std::ostream& os,
+                                                   const std::string& name,
+                                                   const Types&... data ) const
+{
+  this->toStreamDistImpl( os,
+                          name,
+                          std::make_pair( "grid", d_distribution ),
+                          data... );
+}
+
+// Initialize the distribution
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseUnivariateDistribution>
+void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::initialize(
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions )
+{
+  d_distribution.resize( primary_indep_grid.size() );
+  
+  for( size_t i = 0; i < primary_indep_grid.size(); ++i )
+  {
+    Utility::get<0>( d_distribution[i] ) = primary_indep_grid[i];
+    Utility::get<1>( d_distribution[i] ) = secondary_distributions[i];
+  }
+}
+
+// Verify that the distribution data is valid
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseUnivariateDistribution>
+void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::verifyValidData(
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions 
+{
+  // Make sure that the primary grid is valid
+  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( primary_indep_grid.begin(),
+                                                primary_indep_grid.end() ),
+                      Utility::BadBivariateDistributionParameter,
+                      "The tabular basic bivariate distribution cannot be "
+                      "created because the primary grid is not sorted!" );
+
+  // Make sure that the secondary distributions are valid
+  TEST_FOR_EXCEPTION( primary_indep_grid.size() != secondary_distributions.size(),
+                      Utility::BadBivariateDistributionParameter,
+                      "The tabular basic bivariate distribution cannot be "
+                      "created because the number of primary grid points ("
+                      << primary_indep_grid.size() << ") does not match the "
+                      "number of provided secondary distributions ("
+                      << secondary_distributions.size() << ")!" );
+
+  typename std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >::const_iterator bad_secondary_dist =
+    std::find_if( secondary_distributions.begin(),
+                  secondary_distributions.end(),
+                  [](const std::shared_ptr<const BaseUnivariateDistributionType>& dist){ return dist.get() == NULL; } );
+
+  TEST_FOR_EXCEPTION( bad_secondary_dist != secondary_distributions.end(),
+                      Utility::BadBivariateDistributionParameter,
+                      "The tabular basic bivariate distribution cannot be "
+                      "created because the secondary distribution at index "
+                      << std::distance( secondary_distributions.begin(), bad_secondary_dist ) <<
+                      " is NULL!" );
+}
+
+// Save the distribution to an archive
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseUnivariateDistribution>
+template<typename Archive>
+void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_extend_beyond_primary_limits );
+}
+
+// Load the distribution from an archive
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseUnivariateDistribution>
+template<typename Archive>
+void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_extend_beyond_primary_limits );
+}
+
 } // end Utility namespace
+
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularBasicBivariateDistribution<void,void,void,Utility::UnitAwareUnivariateDistribution> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularBasicBivariateDistribution<void,void,void,Utility::UnitAwareTabularUnivariateDistribution> );
 
 #endif // end UTILITY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP 
   

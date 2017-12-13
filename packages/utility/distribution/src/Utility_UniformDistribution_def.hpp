@@ -14,7 +14,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareUniformDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareUniformDistribution );
 
 namespace Utility{
 
@@ -41,7 +41,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
   // Calculate the pdf value
   this->calculatePDFValue();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -64,7 +64,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
   // Calculate the pdf value
   this->calculatePDFValue();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -78,7 +78,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
   // Calculate the pdf value
   this->calculatePDFValue();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

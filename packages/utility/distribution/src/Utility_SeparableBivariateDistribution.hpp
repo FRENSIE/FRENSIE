@@ -219,8 +219,8 @@ typedef UnitAwareSeparableBivariateDistribution<void,void,void,void> SeparableBi
   
 } // end Utility namespace
 
-BOOST_DISTRIBUTION2_CLASS_VERSION( UnitAwareSeparableBivariateDistribution, 0 );
-BOOST_DISTRIBUTION2_CLASS_EXPORT_KEY2( SeparableBivariateDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareSeparableBivariateDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_STANDARD_KEY( SeparableBivariateDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

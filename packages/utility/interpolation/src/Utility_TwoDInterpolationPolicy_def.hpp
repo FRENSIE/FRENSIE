@@ -1438,49 +1438,49 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 // The name of the policy
 inline const std::string LinLinLin::name()
 {
-  return "LinLinLin";
+  return Utility::typeName<LinLinLin>();
 }
 
 // The name of the policy
 inline const std::string LinLogLin::name()
 {
-  return "LinLogLin";
+  return Utility::typeName<LinLogLin>();
 }
 
 // The name of the policy
 inline const std::string LinLinLog::name()
 {
-  return "LinLinLog";
+  return Utility::typeName<LinLinLog>();
 }
 
 // The name of the policy
 inline const std::string LinLogLog::name()
 {
-  return "LinLogLog";
+  return Utility::typeName<LinLogLog>();
 }
 
 // The name of the policy
 inline const std::string LogLinLin::name()
 {
-  return "LogLinLin";
+  return Utility::typeName<LogLinLin>();
 }
 
 // The name of the policy
 inline const std::string LogLogLin::name()
 {
-  return "LogLogLin";
+  return Utility::typeName<LogLogLin>();
 }
 
 // The name of the policy
 inline const std::string LogLinLog::name()
 {
-  return "LogLinLog";
+  return Utility::typeName<LogLinLog>();
 }
 
 // The name of the policy
 inline const std::string LogLogLog::name()
 {
-  return "LogLogLog";
+  return Utility::typeName<LogLogLog>();
 }
 
 } // end Utility namespace

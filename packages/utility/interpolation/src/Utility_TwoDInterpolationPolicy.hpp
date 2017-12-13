@@ -16,6 +16,7 @@
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -538,6 +539,15 @@ struct LogLogLog : public TwoDInterpolationPolicyImpl<LogLog,LogLog>
   //! The name of the policy
   static const std::string name();
 };
+
+TYPE_NAME_TRAITS_QUICK_DECL( LinLinLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLinLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LinLogLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLinLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogLin );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLinLog );
+TYPE_NAME_TRAITS_QUICK_DECL( LogLogLog );
 
 } // end Utility namespace
 

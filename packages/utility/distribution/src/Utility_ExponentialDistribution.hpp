@@ -214,8 +214,8 @@ typedef UnitAwareExponentialDistribution<void,void> ExponentialDistribution;
   
 } // end Utility namespace
 
-BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareExponentialDistribution, 0 );
-BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( ExponentialDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareExponentialDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_STANDARD_KEY( ExponentialDistribution );
 
 //---------------------------------------------------------------------------//
 // Template Includes

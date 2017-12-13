@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_BasicBivariateDistribution.cpp
+//! \file   Utility_HistogramTabularBasicBivariateDistributionImplBase.cpp
 //! \author Alex Robinson
-//! \brief  The basic bivariate distribution class template instantiations
+//! \brief  The histogram tabular basic bivariate dist. helper class template
+//!         explicit instantiation
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,17 +16,18 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
-#include "Utility_BasicBivariateDistribution.hpp"
+#include "Utility_HistogramTabularBasicBivariateDistribution.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
 
 namespace Utility{
 
-// Explicit instantiation
-EXPLICIT_DISTRIBUTION_INST( UnitAwareBasicBivariateDistribution<void,void,void> );
-  
+EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<FullyTabularBasicBivariateDistribution<void,void,void> > );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<PartiallyTabularBasicBivariateDistribution<void,void,void> > );
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_BasicBivariateDistribution.cpp
+// end Utility_HistogramTabularBasicBivariateDistributionImplBase.cpp
 //---------------------------------------------------------------------------//
+

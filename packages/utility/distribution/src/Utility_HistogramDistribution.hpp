@@ -245,8 +245,8 @@ typedef UnitAwareHistogramDistribution<void,void> HistogramDistribution;
 
 } // end Utility namespace
 
-BOOST_DISTRIBUTION1_CLASS_VERSION( UnitAwareHistogramDistribution, 0 );
-BOOST_DISTRIBUTION1_CLASS_EXPORT_KEY2( HistogramDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_VERSION( UnitAwareHistogramDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_STANDARD_KEY( HistogramDistribution );
 
 //---------------------------------------------------------------------------//
 // Template includes.

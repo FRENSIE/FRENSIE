@@ -18,7 +18,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareDeltaDistribution );
 
 namespace Utility{
 
@@ -33,7 +33,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
 {
   this->verifyValidShapeParameters( d_location, d_multiplier );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -54,7 +54,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::UnitAwareDeltaDistrib
 {
   this->verifyValidShapeParameters( d_location, d_multiplier );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -66,7 +66,7 @@ const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int )
 {
   this->verifyValidShapeParameters( d_location, d_multiplier );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

@@ -20,7 +20,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareEquiprobableBinDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareEquiprobableBinDistribution );
 
 namespace Utility{
 
@@ -35,7 +35,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
   
   this->initializeDistribution( bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Constructor
@@ -50,7 +50,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
   
   this->initializeDistribution( bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -68,7 +68,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 {
   this->initializeDistribution( dist_instance.d_bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -79,7 +79,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 {
   this->initializeDistribution( unitless_dist_instance.d_bin_boundaries );
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

@@ -16,7 +16,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareExponentialDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareExponentialDistribution );
 
 namespace Utility{
 
@@ -49,7 +49,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
   // Initialize the distribution
   this->initialize();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -70,7 +70,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
   // Initialize the distribution
   this->initialize();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -84,7 +84,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
   // Initialize the distribution
   this->initialize();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

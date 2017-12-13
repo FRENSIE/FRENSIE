@@ -16,7 +16,13 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT_EXTRA( UnitAwarePowerDistribution, size_t, N );
+#define BOOST_SERIALIZATION_POWER_DISTRIBUTION_EXPORT_IMPLEMENT()       \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_IMPLEMENT_IMPL(      \
+    UnitAwarePowerDistribution, Utility,                           \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( size_t N, typename T, typename U ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( N, T, U ) )
+
+BOOST_SERIALIZATION_POWER_DISTRIBUTION_EXPORT_IMPLEMENT();
 
 namespace Utility{
 
@@ -131,7 +137,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
 
   this->initializeDistribution();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -165,7 +171,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
 
   this->initializeDistribution();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -180,7 +186,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
 {
   this->initializeDistribution();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)

@@ -17,7 +17,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_DISTRIBUTION1_CLASS_EXPORT_IMPLEMENT( UnitAwareEvaporationDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareEvaporationDistribution );
 
 namespace Utility{
 
@@ -51,7 +51,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -78,7 +78,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -93,7 +93,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 
-  BOOST_DISTRIBUTION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
