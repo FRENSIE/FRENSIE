@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_InterpolatedPartiallyTabularBivariateDistribution_def.hpp
+//! \file   Utility_InterpolatedPartiallyTabularBasicBivariateDistribution_def.hpp
 //! \author Alex Robinson
 //! \brief  The interpolated partially tabular basic bivariate dist. class
 //!         declaration
@@ -17,12 +17,22 @@ BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedPartial
 
 namespace Utility{
 
+// Default constructor
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution()
+{ 
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
+
 // Constructor
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-UnitAwareInterpolatedPartiallyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedPartiallyTabularBivariateDistribution(
+UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions )
@@ -36,7 +46,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-void UnitAwareInterpolatedPartiallyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
+void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
   this->toStreamTabularDistImpl( os, "InterpolatedPartiallyTabularBasicBivariateDistribution" );
 }
@@ -47,7 +57,7 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename Archive>
-void UnitAwareInterpolatedPartiallyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -59,7 +69,7 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename Archive>
-void UnitAwareInterpolatedPartiallyTabularBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -79,5 +89,5 @@ EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBiv
 #endif // end UTILITY_INTERPOLATED_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_InterpolatedPartiallyTabularBivariateDistribution_def.hpp
+// end Utility_InterpolatedPartiallyTabularBasicBivariateDistribution_def.hpp
 //---------------------------------------------------------------------------//

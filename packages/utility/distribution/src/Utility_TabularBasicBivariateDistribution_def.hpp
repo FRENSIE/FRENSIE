@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_TabularBivariateDistribution_def.hpp
+//! \file   Utility_TabularBasicBivariateDistribution_def.hpp
 //! \author Alex Robinson
 //! \brief  The tabular bivariate distribution class definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP 
-#define UTILITY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP
+#ifndef UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP 
+#define UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 // Std Lib Includes
 #include <algorithm>
@@ -23,8 +23,9 @@ namespace Utility{
 // Constructor
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit>
-UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::UnitAwareTabularBivariateDistribution(
+         typename DependentUnit,
+         template<typename T, typename U> class BaseUnivariateDistribution>
+UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::UnitAwareTabularBasicBivariateDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions )
@@ -49,7 +50,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::extendBeyondPrimaryIndepLimits()
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::extendBeyondPrimaryIndepLimits()
 {
   d_extend_beyond_primary_limits = true;
 }
@@ -65,7 +66,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::limitToPrimaryIndepLimits()
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::limitToPrimaryIndepLimits()
 {
   d_extend_beyond_primary_limits = false;
 }
@@ -81,7 +82,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-bool UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::arePrimaryLimitsExtended() const
+bool UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::arePrimaryLimitsExtended() const
 {
   return d_extend_beyond_primary_limits;
 }
@@ -91,7 +92,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-auto UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::getUpperBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
+auto UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::getUpperBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
 {
   return Utility::get<0>(d_distribution.back());
 }
@@ -101,7 +102,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-auto UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::getLowerBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
+auto UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::getLowerBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
 {
   return Utility::get<0>(d_distribution.front());
 }
@@ -111,7 +112,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-bool UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::isPrimaryDimensionTabular() const
+bool UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::isPrimaryDimensionTabular() const
 {
   return true;
 }
@@ -121,10 +122,10 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::setDistribution(
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::setDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
-     secondary_distributions );
+     secondary_distributions )
 {
   // Check that the distribution data is valid
   this->verifyValidData( primary_indep_grid, secondary_distributions );
@@ -141,10 +142,10 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-inline void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::findBinBoundaries(
+inline void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::findBinBoundaries(
           const PrimaryIndepQuantity primary_independent_var_value,
-          typename DistributionType::const_iterator& lower_bin_boundary,
-          typename DistributionType::const_iterator& upper_bin_boundary ) const
+          DistributionDataConstIterator& lower_bin_boundary,
+          DistributionDataConstIterator& upper_bin_boundary ) const
 {
   if( primary_independent_var_value < Utility::get<0>(d_distribution.front()) )
   {
@@ -184,8 +185,8 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-size_t UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::calculateBinIndex(
-                typename DistributionType::const_iterator& bin_boundary ) const
+inline size_t UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::calculateBinIndex(
+                      const DistributionDataConstIterator& bin_boundary ) const
 {
   return std::distance( d_distribution.begin(), bin_boundary );
 }
@@ -195,7 +196,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-bool UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::areSecondaryDistributionsContinuous() const
+bool UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::areSecondaryDistributionsContinuous() const
 {
   bool all_continuous = true;
   
@@ -218,14 +219,27 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
 template<typename... Types>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::toStreamTabularDistImpl(
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::toStreamTabularDistImpl(
                                                    std::ostream& os,
                                                    const std::string& name,
                                                    const Types&... data ) const
 {
+  // Extract the primary grid and secondary distribution strings
+  std::vector<PrimaryIndepQuantity> primary_indep_grid( d_distribution.size() );
+  std::vector<std::string> secondary_dist_strings( d_distribution.size() );
+
+  for( size_t i = 0; i < primary_indep_grid.size(); ++i )
+  {
+    primary_indep_grid[i] = Utility::get<0>( d_distribution[i] );
+
+    secondary_dist_strings[i] =
+      Utility::toString( *Utility::get<1>( d_distribution[i] ) );
+  }
+
   this->toStreamDistImpl( os,
                           name,
-                          std::make_pair( "grid", d_distribution ),
+                          std::make_pair( "primary indep grid", primary_indep_grid ),
+                          std::make_pair( "secondary dists", secondary_dist_strings ),
                           data... );
 }
 
@@ -234,7 +248,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::initialize(
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::initialize(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions )
@@ -253,10 +267,10 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::verifyValidData(
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::verifyValidData(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
-     secondary_distributions 
+     secondary_distributions )
 {
   // Make sure that the primary grid is valid
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( primary_indep_grid.begin(),
@@ -293,7 +307,7 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
 template<typename Archive>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::save( Archive& ar, const unsigned version ) const
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -309,7 +323,7 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseUnivariateDistribution>
 template<typename Archive>
-void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::load( Archive& ar, const unsigned version )
+void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -324,8 +338,8 @@ void UnitAwareTabularBivariateDistribution<PrimaryIndependentUnit,SecondaryIndep
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularBasicBivariateDistribution<void,void,void,Utility::UnitAwareUnivariateDistribution> );
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularBasicBivariateDistribution<void,void,void,Utility::UnitAwareTabularUnivariateDistribution> );
 
-#endif // end UTILITY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP 
+#endif // end UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP 
   
 //---------------------------------------------------------------------------//
-// end Utility_TabularBivariateDistribution_def.hpp
+// end Utility_TabularBasicBivariateDistribution_def.hpp
 //---------------------------------------------------------------------------//

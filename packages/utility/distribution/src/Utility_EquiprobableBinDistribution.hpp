@@ -94,7 +94,7 @@ public:
   IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample and sampled index from the corresponding CDF
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
+  IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
 
   //! Return a random sample from the corresponding CDF in a subrange
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;
@@ -142,7 +142,7 @@ private:
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
-				      unsigned& sampled_bin_index ) const;
+				      size_t& sampled_bin_index ) const;
 
   // Initialize the distribution
   void initializeDistribution( const std::vector<double>& bin_boundaries );

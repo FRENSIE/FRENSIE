@@ -9,9 +9,14 @@
 #ifndef UTILITY_HISTOGRAM_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_HPP
 #define UTILITY_HISTOGRAM_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_HPP
 
+// FRENSIE Includes
+#include "Utility_TabularBasicBivariateDistribution.hpp"
+
 namespace Utility{
 
-//! The histogram tabular bivariate dist. base implementation class
+/*! The histogram tabular bivariate dist. base implementation class
+ * \ingroup bivariate_distributions
+ */
 template<typename Distribution>
 class UnitAwareHistogramTabularBasicBivariateDistributionImplBase : public Distribution
 {
@@ -24,22 +29,19 @@ protected:
   //! The parent distribution type
   typedef Distribution BaseType;
 
-  // The base univariate distribution type
-  typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
-
-  // Typedef for QuantityTraits<double>
+  //! Typedef for QuantityTraits<double>
   typedef typename BaseType::QT QT;
 
-  // Typedef for QuantityTraits<PrimaryIndepQuantity>
+  //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename BaseType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename BaseType::SIQT SIQT;
 
-  // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
+  //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
   typedef typename BaseType::ISIQT ISIQT;
 
-  // Typedef for QuantityTraits<DepQuantity>
+  //! Typedef for QuantityTraits<DepQuantity>
   typedef typename BaseType::DQT DQT;
 
   //! The distribution data const iterator
@@ -147,7 +149,7 @@ private:
 } // end Utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS1( UnitAwareHistogramTabularBasicBivariateDistributionImplBase, Utility );
-BOOST_SERIALIZATION_CLASS1_VERSION( UnitAwareHistigramTabularBasicBivariateDistributionImplBase, Utility, 0 );
+BOOST_SERIALIZATION_CLASS1_VERSION( UnitAwareHistogramTabularBasicBivariateDistributionImplBase, Utility, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

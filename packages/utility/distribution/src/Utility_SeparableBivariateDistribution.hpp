@@ -94,21 +94,21 @@ public:
 
   //! Evaluate the joint PDF
   InverseIndepQuantity evaluateJointPDF(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+       const PrimaryIndepQuantity primary_indep_var_value,
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
   //! Evaluate the primary marginal PDF
   InversePrimaryIndepQuantity evaluatePrimaryMarginalPDF(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+           const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
   //! Evaluate the secondary marginal PDF
   InverseSecondaryIndepQuantity evaluateSecondaryMarginalPDF(
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
   //! Evaluate the primary conditional PDF
   InversePrimaryIndepQuantity evaluatePrimaryConditionalPDF(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+       const PrimaryIndepQuantity primary_indep_var_value,
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
   
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
@@ -116,27 +116,27 @@ public:
        const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
   //! Return a random sample from the primary marginal PDF
-  PrimaryIndepQuantity samplePrimaryMarginal() const;
+  PrimaryIndepQuantity samplePrimaryMarginal() const override;
 
   //! Return a random sample and record the number of trials
   PrimaryIndepQuantity samplePrimaryMarginalAndRecordTrials(
-                                   DistributionTraits::Counter& trials ) const;
+                          DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample from the secondary marginal PDF
-  SecondarIndepQuantity sampleSecondaryMarginal() const;
+  SecondaryIndepQuantity sampleSecondaryMarginal() const override;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryMarginalAndRecordTrials(
-                                   DistributionTraits::Counter& trials ) const;
+                          DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample from the primary conditional PDF
   PrimaryIndepQuantity samplePrimaryConditional(
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
   //! Return a random sample and record the number of trials
   PrimaryIndepQuantity samplePrimaryConditionalAndRecordTrials(
                         const SecondaryIndepQuantity secondary_indep_var_value,
-                        DistributionTraits::Counter& trials ) const;
+                        DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample from the secondary conditional PDF
   SecondaryIndepQuantity sampleSecondaryConditional(

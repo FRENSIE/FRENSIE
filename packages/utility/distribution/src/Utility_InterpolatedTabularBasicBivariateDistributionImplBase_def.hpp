@@ -41,12 +41,12 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
   Distribution::setDistribution( primary_indep_grid, secondary_distributions );
   
   // Verify that the distribution data is valid
-  this->verifyValidData( primary_indep_grid, secondary_distributions )
+  this->verifyValidData( primary_indep_grid, secondary_distributions );
 }
 
 // Verify that the distribution data is valid
 template<typename TwoDInterpPolicy, typename Distribution>
-void verifyValidData(
+void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,Distribution>::verifyValidData(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions )
@@ -114,7 +114,7 @@ inline ReturnType UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase
                         const ReturnType above_upper_bound_return ) const
 {
   // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -212,17 +212,17 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index ) const
+                            size_t& primary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  typename DistributionType::const_iterator sampled_bin_boundary =
+  DistributionDataConstIterator sampled_bin_boundary =
     this->sampleBinBoundary( primary_indep_var_value,
                              lower_bin_boundary,
                              upper_bin_boundary );
@@ -235,11 +235,11 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
   raw_sample = sample_functor( *Utility::get<1>( *sampled_bin_boundary ) );
 
   // Calculate the intermediate grid limits
-  SecondaryIndepQuantity y_x_min = this->getLowerBoundOfConditionalIndepVar(
-                                                     primary_indep_var_value );
+  SecondaryIndepQuantity y_x_min =
+    this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
 
-  SecondaryIndepQuantity y_x_max = this->getUpperBoundOfConditionalIndepVar(
-                                                     primary_indep_var_value );
+  SecondaryIndepQuantity y_x_max =
+    this->getUpperBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
 
   typename QuantityTraits<SecondaryIndepQuantity>::RawType
     intermediate_grid_length =
@@ -280,7 +280,7 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
 {
   // Dummy variables
   SecondaryIndepQuantity dummy_raw_sample;
-  unsigned dummy_primary_bin_index;
+  size_t dummy_primary_bin_index;
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sample_functor,
@@ -294,12 +294,11 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
  * been extended.
  */
 template<typename TwoDInterpPolicy, typename Distribution>
-auto
-UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleBinBoundary(
+auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,Distribution>::sampleBinBoundary(
     const PrimaryIndepQuantity primary_indep_var_value,
-    const typename DistributionType::const_iterator lower_bin_boundary,
-    const typename DistributionType::const_iterator upper_bin_boundary ) const
-  -> typename DistributionType::const_iterator
+    const DistributionDataConstIterator& lower_bin_boundary,
+    const DistributionDataConstIterator& upper_bin_boundary ) const
+  -> DistributionDataConstIterator
 {
   if( lower_bin_boundary != upper_bin_boundary )
   {
@@ -348,7 +347,7 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -379,7 +378,7 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -431,23 +430,23 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLin,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLin,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLog,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLog,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLin,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLin,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLog,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLog,Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLin,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLin,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLog,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLog,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLin,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLin,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLog,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLog,Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLin,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLin,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLog,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLog,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLin,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLin,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLog,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLog,Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLin,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLin,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLog,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLog,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLin,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLin,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLog,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLog,Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
 
 
 #endif // end UTILITY_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_DEF_HPP

@@ -16,6 +16,15 @@ BOOST_SERIALIZATION_DISTRIBUTION3_EXPORT_IMPLEMENT( UnitAwareHistogramFullyTabul
 
 namespace Utility{
 
+// Default constructor
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareHistogramFullyTabularBasicBivariateDistribution()
+{
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
+
 // Constructor
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
@@ -49,15 +58,15 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit>
 auto UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                 const PrimaryIndepQuantity primary_indep_var_value,
-                unsigned& primary_bin_index,
-                unsigned& secondary_bin_index ) const -> SecondaryIndepQuantity
+                size_t& primary_bin_index,
+                size_t& secondary_bin_index ) const -> SecondaryIndepQuantity
 {
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
-                            std::placeholders::_1,
-                            std::ref( secondary_bin_index ) );
+                      &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
+                      std::placeholders::_1,
+                      std::ref( secondary_bin_index ) );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -98,7 +107,7 @@ auto UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependent
   // Make sure the max secondary independent variable is above the lower
   // bound of the conditional independent variable
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ) );
 
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
@@ -124,7 +133,7 @@ auto UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependent
   // Make sure the max secondary independent variable is above the lower
   // bound of the conditional independent variable
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ) );
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );

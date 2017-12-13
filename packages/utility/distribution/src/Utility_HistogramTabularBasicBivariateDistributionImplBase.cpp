@@ -16,14 +16,14 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
-#include "Utility_HistogramTabularBasicBivariateDistribution.hpp"
+#include "Utility_HistogramTabularBasicBivariateDistributionImplBase.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
 
 namespace Utility{
 
-EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<PartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
 
 } // end Utility namespace
 

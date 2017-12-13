@@ -22,14 +22,14 @@
 
 namespace Utility{
 
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LinLinLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LinLogLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LinLinLog,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LinLogLog,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LogLinLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LogLogLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LogLinLog,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBivariateDistribution<Utility::LogLogLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLogLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLogLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLinLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLogLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLinLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LogLogLog,void,void,void> );
   
 } // end Utility namespace
 

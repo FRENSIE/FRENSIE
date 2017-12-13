@@ -20,7 +20,7 @@ namespace Utility{
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareBasicBivariateDistribution : public UnitAwareBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareBivariateDistribution : public UnitAwareBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
 
   // Typedef for this type
@@ -63,11 +63,17 @@ public:
   //! The primary independent quantity type
   typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
+  //! The inverse primary independent quantity type
+  typedef typename InversePrimaryIndepUnitTraits::template GetQuantityType<double>::type InversePrimaryIndepQuantity;
+
   //! The secondary independent quantity type
   typedef typename BaseType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
   typedef typename BaseType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename InverseIndepUnitTraits::template GetQuantityType<double>::type InverseIndepQuantity;
 
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
@@ -106,7 +112,7 @@ public:
                                DistributionTraits::Counter& trials ) const = 0;
 
   //! Return a random sample from the secondary marginal PDF
-  virtual SecondarIndepQuantity sampleSecondaryMarginal() const = 0;
+  virtual SecondaryIndepQuantity sampleSecondaryMarginal() const = 0;
 
   //! Return a random sample and record the number of trials
   virtual SecondaryIndepQuantity sampleSecondaryMarginalAndRecordTrials(
@@ -165,7 +171,7 @@ private:
 } // end Utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION3( UnitAwareBivariateDistribution );
-BOOST_DISTRIBUTION_DISTRIBUTION3_VERSION( UnitAwareBivariateDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION3_VERSION( UnitAwareBivariateDistribution, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

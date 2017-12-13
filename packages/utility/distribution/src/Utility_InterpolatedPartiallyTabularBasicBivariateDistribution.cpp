@@ -22,14 +22,14 @@
 
 namespace Utility{
 
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LinLinLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LinLogLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LinLinLog,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LinLogLog,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LogLinLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LogLogLin,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LogLinLog,void,void,void> );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBivariateDistribution<Utility::LogLogLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLinLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLogLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLinLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLogLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLinLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLogLin,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLinLog,void,void,void> );
+EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLogLog,void,void,void> );
   
 } // end Utility namespace
 

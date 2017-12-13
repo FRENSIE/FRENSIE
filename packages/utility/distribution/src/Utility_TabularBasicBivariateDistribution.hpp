@@ -33,15 +33,15 @@ class UnitAwareTabularBasicBivariateDistribution : public UnitAwareBasicBivariat
 {
 
   // Typedef for this type
-  typedef UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > ThisType;
-
-  // The distribution data type
-  typedef std::vector<std::pair<typename BaseType::PrimaryIndepQuantity,BaseUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > DistributionDataType;
-
-protected:
+  typedef UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution> ThisType;
 
   //! The parent distribution type
   typedef UnitAwareBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
+
+  // The distribution data type
+  typedef std::vector<std::pair<typename BaseType::PrimaryIndepQuantity,std::shared_ptr<const BaseUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > > > DistributionDataType;
+
+protected:
 
   //! Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -79,13 +79,13 @@ public:
   typedef BaseUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> BaseUnivariateDistributionType;
 
   //! Constructor
-  UnitAwareTabularBivariateDistribution(
+  UnitAwareTabularBasicBivariateDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions );
 
   //! Destructor
-  virtual ~UnitAwareTabularBivariateDistribution()
+  virtual ~UnitAwareTabularBasicBivariateDistribution()
   { /* ... */ }
 
   //! Extend the distribution beyond the primary independent variable limits
@@ -109,7 +109,7 @@ public:
 protected:
 
   //! Default constructor
-  UnitAwareTabularBivariateDistribution()
+  UnitAwareTabularBasicBivariateDistribution()
   { /* ... */ }
 
   //! Set the distribution
@@ -121,12 +121,11 @@ protected:
   //! Find the bin boundaries
   void findBinBoundaries(
             const PrimaryIndepQuantity primary_indep_var_value,
-            typename DistributionDataConstIterator& lower_bin_boundary,
-            typename DistributionDataConstIterator& upper_bin_boundary ) const;
+            DistributionDataConstIterator& lower_bin_boundary,
+            DistributionDataConstIterator& upper_bin_boundary ) const;
 
   //! Calculate the index of the desired bin
-  size_t calculateBinIndex(
-               typename DistributionDataConstIterator& bin_boundary ) const;
+  size_t calculateBinIndex( const DistributionDataConstIterator& bin_boundary ) const;
 
   // Check that all secondary distributions are continuous
   bool areSecondaryDistributionsContinuous() const;

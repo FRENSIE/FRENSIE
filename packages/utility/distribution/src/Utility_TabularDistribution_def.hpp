@@ -244,7 +244,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -268,7 +268,7 @@ template<typename InterpolationPolicy,
 	 typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -283,7 +283,7 @@ typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,Depend
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumber(
 					     const double random_number ) const
 {
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -324,7 +324,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
@@ -336,7 +336,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleImplementation(
 					    double random_number,
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -552,7 +552,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   d_distribution.resize( independent_values.size() );
 
   // Assign the raw distribution data
-  for( unsigned i = 0; i < independent_values.size(); ++i )
+  for( size_t i = 0; i < independent_values.size(); ++i )
   {
     Utility::get<0>(d_distribution[i]) =
       IndepQuantity( independent_values[i] );
@@ -580,7 +580,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   independent_values.resize( d_distribution.size() );
   dependent_values.resize( d_distribution.size() );
 
-  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  for( size_t i = 0u; i < d_distribution.size(); ++i )
   {
     independent_values[i] = Utility::get<0>(d_distribution[i]);
 
@@ -600,7 +600,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   independent_values.resize( d_distribution.size() );
   dependent_values.resize( d_distribution.size() );
 
-  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  for( size_t i = 0u; i < d_distribution.size(); ++i )
   {
     independent_values[i] =
       getRawQuantity( Utility::get<0>(d_distribution[i]) );
@@ -623,7 +623,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   quantities.resize( unitless_values.size() );
 
   // Copy the bin boundaries
-  for( unsigned i = 0u; i < unitless_values.size(); ++i )
+  for( size_t i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
 }
 

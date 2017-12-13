@@ -171,12 +171,12 @@ double UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::eval
     return 1.0;
   else
   {
-    unsigned bin_index =
+    size_t bin_index =
       Search::binaryLowerBoundIndex( d_bin_boundaries.begin(),
 				     d_bin_boundaries.end(),
 				     indep_var_value );
 
-    unsigned bins = d_bin_boundaries.size()-1;
+    size_t bins = d_bin_boundaries.size()-1;
 
     double bin_contribution = (indep_var_value - d_bin_boundaries[bin_index])/
       (d_bin_boundaries[bin_index+1] - d_bin_boundaries[bin_index]);
@@ -192,7 +192,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sample() co
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -211,7 +211,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRe
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -228,7 +228,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithR
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -253,7 +253,7 @@ template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImplementation(
 				            double random_number,
-				            unsigned& sampled_bin_index ) const
+				            size_t& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -261,7 +261,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImple
 
   double bin_location = random_number*(d_bin_boundaries.size()-1);
 
-  sampled_bin_index = (unsigned)floor(bin_location);
+  sampled_bin_index = (size_t)floor(bin_location);
 
   return d_bin_boundaries[sampled_bin_index] +
     (bin_location - sampled_bin_index)*(d_bin_boundaries[sampled_bin_index+1]-
@@ -285,7 +285,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithR
   double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
@@ -383,7 +383,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initia
   d_bin_boundaries.resize( bin_boundaries.size() );
 
   // Copy the bin boundaries
-  for( unsigned i = 0; i < bin_boundaries.size(); ++i )
+  for( size_t i = 0; i < bin_boundaries.size(); ++i )
     setQuantity( d_bin_boundaries[i], bin_boundaries[i] );
 }
 
@@ -403,7 +403,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initia
   d_bin_boundaries.resize( bin_boundaries.size() );
 
   // Explicitly cast each bin boundary to the desired quantity
-  for( unsigned i = 0; i < bin_boundaries.size(); ++i )
+  for( size_t i = 0; i < bin_boundaries.size(); ++i )
     d_bin_boundaries[i] = IndepQuantity( bin_boundaries[i] );
 }
 

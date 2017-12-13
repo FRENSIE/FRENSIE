@@ -89,15 +89,15 @@ public:
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const = 0;
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const;
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(

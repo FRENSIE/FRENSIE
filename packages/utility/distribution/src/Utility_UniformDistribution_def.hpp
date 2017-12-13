@@ -256,7 +256,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNum
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   sampled_bin_index = 0u;
 

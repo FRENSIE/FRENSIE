@@ -40,6 +40,9 @@ class UnitAwareInterpolatedFullyTabularBasicBivariateDistribution : public UnitA
 
   // Typedef for QuantityTraits<DepQuantity>
   typedef typename BaseType::DQT DQT;
+
+  //! The distribution data const iterator
+  typedef typename BaseType::DistributionDataConstIterator DistributionDataConstIterator;
   
 public:
 
@@ -57,9 +60,6 @@ public:
 
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
-
-  //! The distribution type
-  typedef typename BaseType::DistributionType DistributionType;
 
   //! The base univariate distribution type
   typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
@@ -88,15 +88,15 @@ public:
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const override;
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const override;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const override;
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const override;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -139,6 +139,9 @@ public:
 
 private:
 
+  // Default constructor
+  UnitAwareInterpolatedFullyTabularBasicBivariateDistribution();
+
   // Save the distribution to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;
@@ -168,9 +171,9 @@ BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareInterpolatedFullyTabularBasi
   BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, Utility ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
     UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, Utility, \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedFullyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy> + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedFullyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy>() + ">" ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void ) )
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void, void ) )
 
 BOOST_SERIALIZATION_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
 

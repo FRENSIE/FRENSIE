@@ -64,7 +64,7 @@ inline ReturnType UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Di
                         const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const
 {
-  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -88,10 +88,10 @@ template<typename SampleFunctor>
 inline auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::sampleDetailedImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
-                            unsigned& primary_bin_index ) const
+                            size_t& primary_bin_index ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -110,7 +110,7 @@ inline auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribu
     else
     {
       THROW_EXCEPTION( std::logic_error,
-                       "Error: Sampling beyond the primary grid boundaries "
+                       "Sampling beyond the primary grid boundaries "
                        "cannot be done unless the grid has been extended ("
                        << primary_indep_var_value << " not in ["
                        << this->getLowerBoundOfPrimaryIndepVar() << ","
@@ -128,7 +128,7 @@ inline auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribu
   -> SecondaryIndepQuantity
 {
   // Dummy variables
-  unsigned dummy_primary_bin_index;
+  size_t dummy_primary_bin_index;
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sample_functor,
@@ -172,7 +172,7 @@ auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -187,7 +187,7 @@ auto UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
-  typename DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -223,8 +223,8 @@ void UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution>::
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::FullyTabularBasicBivariateDistribution<void,void,void> > );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::PartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
 
 #endif // end UTILITY_HISTOGRAM_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_DEF_HPP
 

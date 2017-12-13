@@ -13,16 +13,27 @@ BOOST_SERIALIZATION_DISTRIBUTION3_EXPORT_IMPLEMENT( UnitAwareHistogramPartiallyT
 
 namespace Utility{
 
+// Default constructor
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareHistogramPartiallyTabularBasicBivariateDistribution()
+{ 
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
+
 // Constructor
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareHistogramPartiallyTabularBasicBivariateDistribution(
-       const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-       const std::vector<std::shared_ptr<const BaseUnivariateDistributionType>&
-       secondary_distributions )
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions )
   : BaseType( primary_indep_grid, secondary_distributions )
-{ /* ... */ }
+{ 
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
 
 // Method for placing the object in an output stream
 template<typename PrimaryIndependentUnit,
@@ -58,6 +69,8 @@ void UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<PrimaryIndepen
 } // end Utility namespace
 
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<void,void,void> );
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_HISTOGRAM_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

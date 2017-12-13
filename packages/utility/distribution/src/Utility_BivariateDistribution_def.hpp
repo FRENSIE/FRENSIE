@@ -15,7 +15,7 @@ namespace Utility{
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-bool UnitAwareBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSameSecodaryBounds( const UnitAwareBivariateDistribution& distribution ) const
+bool UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSameSecodaryBounds( const UnitAwareBivariateDistribution& distribution ) const
 {
   return
     (RelativeErrorComparisonPolicy::compare(

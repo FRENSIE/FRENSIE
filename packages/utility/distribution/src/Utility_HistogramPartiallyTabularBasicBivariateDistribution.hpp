@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_HistogramPartiallyTabularBasicBivariateDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The histogram partially tabular two-dimensional dist. class decl.
+//! \brief  The histogram partially tabular basic bivariate dist. class decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,7 +10,7 @@
 #define UTILITY_HISTOGRAM_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_HistogramTabularBivariateDistributionImplBase.hpp"
+#include "Utility_HistogramTabularBasicBivariateDistributionImplBase.hpp"
 
 namespace Utility{
 
@@ -47,11 +47,9 @@ public:
 
   //! Constructor
   UnitAwareHistogramPartiallyTabularBasicBivariateDistribution(
-       const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-       const std::vector<std::shared_ptr<const BaseUnivariateDistributionType>&
-       secondary_distributions )
-    : BaseType( primary_indep_grid, secondary_distributions )
-  { /* ... */ }
+     const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
+     const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
+     secondary_distributions );
 
   //! Destructor
   ~UnitAwareHistogramPartiallyTabularBasicBivariateDistribution()
@@ -61,6 +59,9 @@ public:
   void toStream( std::ostream& os ) const override;
 
 private:
+
+  // Default constructor
+  UnitAwareHistogramPartiallyTabularBasicBivariateDistribution();
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -86,8 +87,14 @@ typedef UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<void,void,v
 BOOST_SERIALIZATION_DISTRIBUTION3_VERSION( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution, 0 );
 BOOST_SERIALIZATION_DISTRIBUTION3_EXPORT_STANDARD_KEY( HistogramPartiallyTabularBasicBivariateDistribution );
 
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_HistogramPartiallyTabularBasicBivariateDistribution_def.hpp"
+
 #endif // end UTILITY_HISTOGRAM_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_HistogramPartiallyTabularBivariateDistribution.hpp
+// end Utility_HistogramPartiallyTabularBasicBivariateDistribution.hpp
 //---------------------------------------------------------------------------//

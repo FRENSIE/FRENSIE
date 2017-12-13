@@ -14,8 +14,9 @@
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/singleton.hpp>
-#include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/unique_ptr.hpp>
+
+// FRENSIE Includes
+#include "Utility_SmartPtr.hpp"
 
 /*! \defgroup boost_serialization_helpers Boost Serialization Helpers
  */
@@ -110,16 +111,16 @@ namespace serialization{                            \
  * system. Calling this macro handles the registration.
  * \ingroup boost_serialization_helpers
  */
-#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_TEMPLATE_CLASS_IMPL( ClassName, Namespace, TemplateParamPackDecl, TemplateParamPack )
+#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_TEMPLATE_CLASS_IMPL( ClassName, Namespace, TemplateParamPackDecl, TemplateParamPack ) \
 namespace boost{                                                      \
 namespace serialization{                                              \
                                                                       \
   template<TemplateParamPackDecl>                                     \
-  struct is_abstract<Namespace::ClassType<TemplateParamPack> > : boost::true_type \
+  struct is_abstract<Namespace::ClassName<TemplateParamPack> > : boost::true_type \
   { /* ... */ };                                                       \
                                                                        \
   template<TemplateParamPackDecl>                                      \
-  struct is_abstract<const Namespace::ClassType<TemplateParamPack> > : boost::true_type \
+  struct is_abstract<const Namespace::ClassName<TemplateParamPack> > : boost::true_type \
   { /* ... */ };                                                       \
 }                                                                      \
 }
@@ -212,11 +213,11 @@ namespace ext{                                                        \
  * \ingroup boost_serialization_helpers
  */
 #define BOOST_SERIALIZATION_TEMPLATE_CLASS_STANDARD_GUID_IMPL( ClassName, Namespace, TemplateParamPackDecl, TemplateParamPack ) \
-  BOOST_SERIALIZATION_TEMPLATE_CLASS_GUID_IMPL( \
+   BOOST_SERIALIZATION_TEMPLATE_CLASS_GUID_IMPL(                       \
     ClassName, Namespace,                         \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( #ClassName"<" ) + Utility::typeName<TemplateParamPack>() + ">" ), \
-    TemplateParamPackDecl,                                              \
-    TemplateParamPack )
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPackDecl ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPack ) )
 
 /*! Declare the GUID (key) of a template class
  *
@@ -228,9 +229,14 @@ namespace ext{                                                        \
  */
 #define BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL( ClassName, Namespace, GUID, TemplateParamPackDecl, TemplateParamPack ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_DECL_GUID_DEFINED_IMPL(          \
-    ClassName, Namespace, TemplateParamPackDecl, TemplateParamPack ) \
+    ClassName, Namespace, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPackDecl ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPack ) ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_GUID_IMPL(                      \
-    ClassName, Namespace, GUID, TemplateParamPackDecl, TemplateParamPack )
+    ClassName, Namespace, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( GUID ),              \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPackDecl ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPack ) )
 
 /*! Declare the GUID (key) of a template class
  *
@@ -241,11 +247,15 @@ namespace ext{                                                        \
  * will be used by the boost::serialization extended RTTI system.
  * \ingroup boost_serialization_helpers
  */
-#define BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_STANDARD_KEY_IMPL( ClassName, Namespace, TemplateParamPackDecl, TemplateParamPac, ) \
+#define BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_STANDARD_KEY_IMPL( ClassName, Namespace, TemplateParamPackDecl, TemplateParamPack ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_DECL_GUID_DEFINED_IMPL(          \
-    ClassName, Namespace, TemplateParamPackDecl, TemplateParamPack ) \
+    ClassName, Namespace, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPackDecl ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPack ) ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_STANDARD_GUID_IMPL(             \
-    ClassName, Namespace, TemplateParamPackDecl, TemplateParamPack )
+    ClassName, Namespace, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPackDecl ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPack ) )
                       
 /*! Declare the GUID (key) of a class with no template parameters
  * 
@@ -317,8 +327,8 @@ namespace extra_detail{ \
     static const guid_initializer<Namespace::ClassName<TemplateParamPack> >& g; \
   };                                                                    \
                                                                         \
-  template<TemplateParamPackDecl>
-const guid_initializer<Namespace::ClassName<TemplateParamPack> >& init_guid<Namespace::ClassName<TemplateParamPack> >::g = \
+  template<TemplateParamPackDecl>                                       \
+  const guid_initializer<Namespace::ClassName<TemplateParamPack> >& init_guid<Namespace::ClassName<TemplateParamPack> >::g = \
   ::boost::serialization::singleton<guid_initializer<Namespace::ClassName<TemplateParamPack> > >::get_mutable_instance().export_guid(); \
 }                                                                       \
 }                                                                       \

@@ -61,6 +61,16 @@ struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
   
 } // end Details namespace
 
+// Default constructor
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution()
+{
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
+  
 // Constructor
 template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
@@ -150,8 +160,8 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Dummy variable
@@ -160,9 +170,9 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
-                            std::placeholders::_1,
-                            std::ref( secondary_bin_index ) );
+                      &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
+                      std::placeholders::_1,
+                      std::ref( secondary_bin_index ) );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -182,8 +192,8 @@ template<typename TwoDInterpPolicy,
 auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor
@@ -236,7 +246,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
   // Make sure the max secondary independent variable is above the lower
   // bound of the conditional independent variable
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ) );
   
   // Generate a random number
   double random_number =
@@ -262,25 +272,25 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
   // Make sure the max secondary independent variable is above the lower
   // bound of the conditional independent variable
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ) );
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
 
   SecondaryIndepQuantity intermediate_grid_upper_bound =
-    this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
+    this->getUpperBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
 
   // Generate a sample in the subrange
   if( max_secondary_indep_var_value < intermediate_grid_upper_bound )
   {
     // Find the bin boundaries
-    typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+    DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
     this->findBinBoundaries( primary_indep_var_value,
                              lower_bin_boundary,
                              upper_bin_boundary );
 
-    typename DistributionType::const_iterator sampled_bin_boundary =
+    DistributionDataConstIterator sampled_bin_boundary =
       this->sampleBinBoundary( primary_indep_var_value,
                                lower_bin_boundary,
                                upper_bin_boundary );
@@ -292,7 +302,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
          Utility::get<1>( *sampled_bin_boundary )->getUpperBoundOfIndepVar() );
 
     SecondaryIndepQuantity intermediate_grid_lower_bound =
-    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
+    this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
                                                                          
     typename QuantityTraits<SecondaryIndepQuantity>::RawType
       intermediate_grid_length =
@@ -373,7 +383,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
   testPrecondition( random_number <= 1.0 );
   
   // Find the bin boundaries
-  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -444,16 +454,16 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
   testPrecondition( random_number <= 1.0 );
   // Make sure the secondary limit is valid
   testPrecondition( max_secondary_indep_var_value >
-                    this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
+                    this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ) );
 
   SecondaryIndepQuantity intermediate_grid_upper_bound =
-    this->getUpperBoundOfConditionalIndepVar( primary_indep_var_value );
+    this->getUpperBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
 
   // Generate a sample in the subrange
   if( max_secondary_indep_var_value < intermediate_grid_upper_bound )
   {
     // Find the bin boundaries
-    typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+    DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
   
     this->findBinBoundaries( primary_indep_var_value,
                              lower_bin_boundary,
@@ -473,7 +483,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolic
            Utility::get<1>( *upper_bin_boundary )->getUpperBoundOfIndepVar() );
 
       SecondaryIndepQuantity intermediate_grid_lower_bound =
-        this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value );
+        this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
 
       typename QuantityTraits<SecondaryIndepQuantity>::RawType
         intermediate_grid_length =

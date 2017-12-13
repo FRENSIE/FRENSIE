@@ -78,8 +78,8 @@ public:
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const override;
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const override;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -101,6 +101,9 @@ public:
   void toStream( std::ostream& os ) const override;
 
 private:
+
+  // Default constructor
+  UnitAwareHistogramFullyTabularBasicBivariateDistribution();
 
   // Save the distribution to an archive
   template<typename Archive>

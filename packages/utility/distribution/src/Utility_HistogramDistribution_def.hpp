@@ -228,7 +228,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -247,7 +247,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTr
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -264,7 +264,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomN
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -289,7 +289,7 @@ template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleImplementation(
 					    double random_number,
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -327,7 +327,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomN
   double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
@@ -483,7 +483,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   setQuantity( Utility::get<2>(d_distribution[0]), 0.0 );
 
     // Assign the distribution
-    for( unsigned i = 1; i < bin_boundaries.size(); ++i )
+    for( size_t i = 1; i < bin_boundaries.size(); ++i )
     {
       Utility::get<0>(d_distribution[i]) =
         IndepQuantity( bin_boundaries[i] );
@@ -525,7 +525,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   d_distribution.resize( bin_boundaries.size() );
 
   // Construct the distribution
-  for( unsigned i = 0; i < bin_boundaries.size(); ++i )
+  for( size_t i = 0; i < bin_boundaries.size(); ++i )
   {
     // Assign the min and max bin boundaries (respectively)
     Utility::get<0>(d_distribution[i]) =
@@ -572,7 +572,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
   else
     bin_values.clear();
   
-  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  for( size_t i = 0u; i < d_distribution.size(); ++i )
   {
     bin_boundaries[i] = Utility::get<0>(d_distribution[i]);
 
@@ -598,7 +598,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
   else
     bin_values.clear();
 
-  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  for( size_t i = 0u; i < d_distribution.size(); ++i )
   {
     bin_boundaries[i] =
       Utility::getRawQuantity( Utility::get<0>(d_distribution[i]) );
@@ -622,7 +622,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::convertUnitl
   quantities.resize( unitless_values.size() );
 
   // Copy the bin boundaries
-  for( unsigned i = 0u; i < unitless_values.size(); ++i )
+  for( size_t i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
 }
 

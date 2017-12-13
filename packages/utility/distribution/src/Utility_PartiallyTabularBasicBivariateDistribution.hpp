@@ -82,7 +82,7 @@ public:
 protected:
 
   //! Default constructor
-  UnitAwarePariallyTabularBasicBivariateDistribution()
+  UnitAwarePartiallyTabularBasicBivariateDistribution()
   { /* ... */ }
 
 private:

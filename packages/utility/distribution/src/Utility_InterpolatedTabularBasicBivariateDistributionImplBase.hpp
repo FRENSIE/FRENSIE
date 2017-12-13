@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_TabularBasicBivariateDistribution.hpp"
 
 namespace Utility{
 
@@ -29,30 +30,30 @@ class UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase : public Di
 {
 
   // Typedef for this type
-  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Distribution> ThisType;
+  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,Distribution> ThisType;
   
 protected:
   
-  // The parent distribution type
+  //! The parent distribution type
   typedef Distribution BaseType;
 
-  // The base univariate distribution type
-  typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
-
-  // Typedef for QuantityTrais<double>
+  //! Typedef for QuantityTrais<double>
   typedef typename BaseType::QT QT;
 
-  // Typedef for QuantityTraits<PrimaryIndepQuantity>
+  //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename BaseType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename BaseType::SIQT SIQT;
 
-  // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
+  //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
   typedef typename BaseType::ISIQT ISIQT;
 
-  // Typedef for QuantityTraits<DepQuantity>
+  //! Typedef for QuantityTraits<DepQuantity>
   typedef typename BaseType::DQT DQT;
+
+  //! The distribution data const iterator
+  typedef typename BaseType::DistributionDataConstIterator DistributionDataConstIterator;
 
 public:
 
@@ -142,7 +143,7 @@ protected:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index ) const;
+                            size_t& primary_bin_index ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
@@ -151,11 +152,11 @@ protected:
                             SampleFunctor sample_functor ) const;
 
   //! Sample the bin boundary that will be used for stochastic sampling
-  typename DistributionType::const_iterator
+  DistributionDataConstIterator
   sampleBinBoundary(
     const PrimaryIndepQuantity primary_indep_var_value,
-    const typename DistributionType::const_iterator lower_bin_boundary,
-    const typename DistributionType::const_iterator upper_bin_boundary ) const;
+    const DistributionDataConstIterator& lower_bin_boundary,
+    const DistributionDataConstIterator& upper_bin_boundary ) const;
 
 private:
 

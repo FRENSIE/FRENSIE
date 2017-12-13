@@ -113,7 +113,7 @@ public:
 				const double random_number );
 
   //! Return a random sample and sampled index from the corresponding CDF
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
+  IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
 
   //! Return a random sample from the corresponding CDF in a subrange
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;

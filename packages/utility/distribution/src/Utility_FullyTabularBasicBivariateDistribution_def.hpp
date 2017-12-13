@@ -50,8 +50,8 @@ template<typename PrimaryIndependentUnit,
 auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   raw_sample = this->sampleSecondaryConditionalAndRecordBinIndices(

@@ -272,7 +272,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -291,7 +291,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTri
 template<typename IndependentUnit,typename DependentUnit>
 typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -304,7 +304,7 @@ typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuan
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumber(
 					     const double random_number ) const
 {
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -328,7 +328,7 @@ template<typename IndependentUnit,typename DependentUnit>
 inline typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementation(
 					    double random_number,
-					    unsigned& sampled_bin_index ) const
+					    size_t& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -360,7 +360,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNu
   double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
@@ -507,7 +507,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   d_distribution.resize( independent_quantities.size() );
 
   // Assign the distribution
-  for( unsigned i = 0; i < cdf_values.size(); ++i )
+  for( size_t i = 0; i < cdf_values.size(); ++i )
   {
     Utility::get<0>(d_distribution[i]) =
       IndepQuantity( independent_quantities[i] );
@@ -518,7 +518,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   // Verify that the CDF is normalized (in event of round-off errors)
   if( cdf_values.back() != 1.0 )
   {
-    for( unsigned i = 0; i < d_distribution.size(); ++i )
+    for( size_t i = 0; i < d_distribution.size(); ++i )
     {
       Utility::get<1>(d_distribution[i]) /=
         Utility::get<1>(d_distribution.back());
@@ -549,7 +549,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
   Utility::setQuantity( d_norm_constant, 0.0 );
 
   // Assign the raw distribution data
-  for( unsigned i = 0; i < dependent_values.size(); ++i )
+  for( size_t i = 0; i < dependent_values.size(); ++i )
   {
     Utility::get<0>(d_distribution[i]) =
       IndepQuantity( independent_values[i] );
@@ -576,7 +576,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
   independent_quantities.resize( d_distribution.size() );
   dependent_quantities.resize( d_distribution.size() );
 
-  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  for( size_t i = 0u; i < d_distribution.size(); ++i )
   {
     independent_quantities[i] = Utility::get<0>(d_distribution[i]);
 
@@ -604,7 +604,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
   independent_values.resize( d_distribution.size() );
   dependent_values.resize( d_distribution.size() );
 
-  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  for( size_t i = 0u; i < d_distribution.size(); ++i )
   {
     independent_values[i] =
       Utility::getRawQuantity( Utility::get<0>(d_distribution[i]) );
@@ -634,7 +634,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitle
   quantities.resize( unitless_values.size() );
 
   // Copy the values
-  for( unsigned i = 0u; i < unitless_values.size(); ++i )
+  for( size_t i = 0u; i < unitless_values.size(); ++i )
     setQuantity( quantities[i], unitless_values[i] );
 }
 

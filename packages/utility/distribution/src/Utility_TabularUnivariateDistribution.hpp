@@ -48,7 +48,7 @@ public:
 
   //! Return a random sample from the distribution and the sampled index
   virtual IndepQuantity sampleAndRecordBinIndex(
-				       unsigned& sampled_bin_index ) const = 0;
+				         size_t& sampled_bin_index ) const = 0;
 
   //! Return a random sample from the distribution at the given CDF value
   virtual IndepQuantity sampleWithRandomNumber( const double random_number ) const = 0;

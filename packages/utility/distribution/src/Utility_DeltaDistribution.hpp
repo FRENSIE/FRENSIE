@@ -90,7 +90,7 @@ public:
   IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample from the distribution and the sampled index
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
+  IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
   IndepQuantity sampleWithRandomNumber( const double random_number ) const override;

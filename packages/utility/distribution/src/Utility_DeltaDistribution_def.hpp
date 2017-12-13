@@ -164,7 +164,7 @@ UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-					    unsigned& sampled_bin_index ) const
+					      size_t& sampled_bin_index ) const
 {
   sampled_bin_index = 0;
 

@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
+#include "Utility_TypeTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -124,12 +125,12 @@ inline typename ZYLowerFunctor::result_type TwoDInterpolationPolicyImpl<ZYInterp
                             const ZYUpperFunctor& evaluate_z_with_y_1_functor )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // All types must be a floating point type
-  testStaticPrecondition( (QuantityTraits<FirstIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<SecondIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYLowerFunctor::result_type>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYUpperFunctor::result_type>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<FirstIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<SecondIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType>::value) );
   // Make sure the first independent variables are valid
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_0) );
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_1) );
@@ -198,13 +199,13 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
 						ZIterator end_dep_grid_1 )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x_0 ) );
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf( indep_var_x_1 ) );
@@ -327,7 +328,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
 						ZIterator end_dep_grid_1 )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolate<FIRST,FIRST>( indep_var_x_0,
                                              indep_var_x_1,
@@ -375,12 +376,12 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
     const typename ZYLowerFunctor::result_type above_upper_limit_return_value )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // All types must be a floating point type
-  testStaticPrecondition( (QuantityTraits<FirstIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<SecondIndepType>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYLowerFunctor::result_type>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<typename ZYUpperFunctor::result_type>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<FirstIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<SecondIndepType>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYLowerFunctor::result_type>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<typename ZYUpperFunctor::result_type>::RawType>::value) );
   // Make sure the first independent variables are valid
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_0) );
   testPrecondition( !QuantityTraits<FirstIndepType>::isnaninf(indep_var_x_1) );
@@ -549,13 +550,13 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 						ZIterator end_dep_grid_1 )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the second independent variables are valid
   testPrecondition( start_indep_y_grid_0 != end_indep_y_grid_0 );
   testPrecondition( Sort::isSortedAscending<YIndepMember>(start_indep_y_grid_0,
@@ -671,7 +672,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
 				     ZIterator end_dep_var_1 )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateUnitBase<FIRST,FIRST>( indep_var_x_0,
                                                      indep_var_x_1,
@@ -712,13 +713,13 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 				      ZIterator end_processed_dep_grid_1 )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_0 ) );
@@ -856,7 +857,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 				      ZIterator end_processed_dep_grid_1 )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateProcessed<FIRST,FIRST>(
 					        processed_indep_var_x_0,
@@ -898,13 +899,13 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 				      ZIterator end_processed_dep_grid_1 )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the first independent variables are valid
   testPrecondition( !Utility::QuantityTraits<T>::isnaninf(
 						   processed_indep_var_x_0 ) );
@@ -1080,7 +1081,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 				      ZIterator end_processed_dep_grid_1 )
 {
   // Make sure no tuples are being used
-  testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
 
   return ThisType::interpolateProcessedUnitBase<FIRST,FIRST>(
 					        processed_indep_var_x_0,
@@ -1268,13 +1269,13 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
 						  ZIterator end_dep_grid )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the second independent variables are valid
   testPrecondition( start_indep_y_grid != end_indep_y_grid );
   testPrecondition( Sort::isSortedAscending<YIndepMember>( start_indep_y_grid,
@@ -1354,13 +1355,13 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 					ZIterator end_processed_dep_grid )
 {
   // The interpolation type on the Z variable must be consistent
-  testStaticPrecondition( (boost::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
+  testStaticPrecondition( (std::is_same<typename ZYInterpPolicy::DepVarProcessingTag,typename ZXInterpPolicy::DepVarProcessingTag>::value) );
   // T must be a floating point type
-  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  testStaticPrecondition( (std::is_floating_point<T>::value) );
   // The y iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<YIndepMember,typename std::iterator_traits<YIterator>::value_type>::type,T>::value) );
   // The z iterator must have T as the value type
-  testStaticPrecondition( (boost::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
+  testStaticPrecondition( (std::is_same<typename TupleElement<DepMember,typename std::iterator_traits<ZIterator>::value_type>::type,T>::value) );
   // Make sure the second independent variables are valid
   testPrecondition( start_processed_indep_y_grid !=
 		    end_processed_indep_y_grid );
