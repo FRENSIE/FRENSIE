@@ -1115,7 +1115,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   // First bin
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
@@ -1428,7 +1428,7 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   // First bin
   quantity<MegaElectronVolt> sample =

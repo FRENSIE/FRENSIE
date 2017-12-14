@@ -185,7 +185,7 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordTrials )
 // Check that the distribution can be sampled
 FRENSIE_UNIT_TEST( DeltaDistribution, sampleAndRecordBinIndex )
 {
-  unsigned bin_index = 0;
+  size_t bin_index = 0;
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -196,7 +196,7 @@ FRENSIE_UNIT_TEST( DeltaDistribution, sampleAndRecordBinIndex )
 // Check that the unit-aware distribution can be sampled
 FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, sampleAndRecordBinIndex )
 {
-  unsigned bin_index = 0;
+  size_t bin_index = 0;
 
   quantity<si::time> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );

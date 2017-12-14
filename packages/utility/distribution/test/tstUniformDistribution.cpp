@@ -379,7 +379,7 @@ FRENSIE_UNIT_TEST( UniformDistribution, sampleAndRecordBinIndex )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   FRENSIE_CHECK_EQUAL( sample, -1.0 );
@@ -407,7 +407,7 @@ FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, sampleAndRecordBinIndex )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   quantity<si::energy> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );

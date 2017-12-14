@@ -407,7 +407,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   FRENSIE_CHECK_EQUAL( sample, 1e-3 );
@@ -441,7 +441,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   quantity<MegaElectronVolt> sample =
     unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );

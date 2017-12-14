@@ -697,7 +697,7 @@ FRENSIE_UNIT_TEST( HistogramDistribution, sampleAndRecordBinIndex )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   // Test the first bin
   double sample = tab_pdf_distribution->sampleAndRecordBinIndex( bin_index );
@@ -801,7 +801,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, sampleAndRecordBinIndex )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   // Test the first bin
   quantity<MegaElectronVolt> sample =

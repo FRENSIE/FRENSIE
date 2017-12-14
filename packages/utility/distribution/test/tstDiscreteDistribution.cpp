@@ -767,7 +767,7 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, sampleAndRecordBinIndex )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
+  size_t bin_index;
 
   // Test the first bin
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
@@ -914,7 +914,7 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, sampleAndRecordBinIndex )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index = 0;
+  size_t bin_index = 0;
 
   // Test the first bin
   quantity<ElectronVolt> sample =
