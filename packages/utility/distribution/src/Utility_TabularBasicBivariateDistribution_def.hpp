@@ -238,7 +238,7 @@ void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,Secondary
 
   this->toStreamDistImpl( os,
                           name,
-                          std::make_pair( "primary indep grid", primary_indep_grid ),
+                          std::make_pair( "primary grid", primary_indep_grid ),
                           std::make_pair( "secondary dists", secondary_dist_strings ),
                           data... );
 }

@@ -314,9 +314,10 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
   ADD_OPTION( "number_of_tests",
               boost::program_options::value<int>()->default_value(0),
               "expected number of tests" );
-  ADD_OPTION( "number_of_checks",
-              boost::program_options::value<int>()->default_value(0),
-              "expected number of checks" );
+
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "number_of_checks",
+                                        expected_number_of_checks, 0,
+                                        "expected number of checks" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -324,7 +325,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   ASSIGN_OPTION_VALUE( expected_number_of_tests, "number_of_tests" );
   expected_number_of_tests *= Utility::GlobalMPISession::size();
 
-  ASSIGN_OPTION_VALUE( expected_number_of_checks, "number_of_checks" );
   expected_number_of_checks *= Utility::GlobalMPISession::size();
 }
 

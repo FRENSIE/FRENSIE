@@ -66,11 +66,7 @@
  * \ingroup univariate_distributions
  */
 #define BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_STANDARD_KEY( BaseName ) \
-  BOOST_SERIALIZATION_CLASS2_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility ) \
-  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
-    UnitAware##BaseName, Utility, std::string( #BaseName ),               \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__(),                    \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( void, void ) ) 
+  BOOST_SERIALIZATION_CLASS2_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility ) 
 
 /*! \brief Declare the GUID (key) of a distribution class that has three 
  * template parameters.
@@ -80,11 +76,7 @@
  * \ingroup bivariate_distributions
  */
 #define BOOST_SERIALIZATION_DISTRIBUTION3_EXPORT_STANDARD_KEY( BaseName ) \
-  BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility ) \
-  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
-    UnitAware##BaseName, Utility, std::string( #BaseName ),               \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__(),                    \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( void, void, void ) )
+  BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility )
 
 /*! \brief Declare the GUID (key) of a distribution class that has four 
  * template parameters.
@@ -94,11 +86,7 @@
  * \ingroup bivariate_distributions
  */
 #define BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_STANDARD_KEY( BaseName ) \
-  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility ) \
-  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
-    UnitAware##BaseName, Utility, std::string( #BaseName ),               \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__(),                    \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( void, void, void, void ) )
+  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility ) 
 
 /*! Register the GUID of a distribution class with two template parameters.
  *

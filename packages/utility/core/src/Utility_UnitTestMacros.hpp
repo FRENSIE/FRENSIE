@@ -75,12 +75,22 @@
 //! Add a custom command line option
 #define ADD_OPTION( ... )                        \
   FRENSIE_CHECKPOINT();                          \
-  setOption( __VA_ARGS__ ) 
+  setOption( __VA_ARGS__ )
+
+//! Add a standard custom command line option
+#define ADD_STANDARD_OPTION( name, type, default_val, description )   \
+  FRENSIE_CHECKPOINT();                                                 \
+  setOption( name, boost::program_options::value<type>()->default_value(default_val), description )
+
+//! Add a standard custom command line option and assign it
+#define ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( name, storage_variable, default_val, description ) \
+  FRENSIE_CHECKPOINT();                                                 \
+  setOption( name, boost::program_options::value<decltype(storage_variable)>(&storage_variable)->default_value(default_val), description )
 
 //! Assign a command line option
 #define ASSIGN_OPTION_VALUE( value, name )            \
   FRENSIE_CHECKPOINT();                                         \
-  value = this->getOptionValue<decltype(value)>( name );
+  value = this->getOptionValue<decltype(value)>( name )
 
 //! Define a basic unit test
 #define FRENSIE_UNIT_TEST( TEST_GROUP, TEST_NAME )      \

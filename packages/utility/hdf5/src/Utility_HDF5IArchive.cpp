@@ -32,22 +32,22 @@ template void HDF5IArchiveImpl<HDF5IArchive>::load( double& );
 template void HDF5IArchiveImpl<HDF5IArchive>::load( long double& );
 template void HDF5IArchiveImpl<HDF5IArchive>::load( std::string& );
 
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<bool>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<char>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned char>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<signed char>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<short>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned short>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<int>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<long>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned long>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<long long>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<unsigned long long>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<float>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<double>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<long double>&, unsigned int );
-template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array<std::string>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<bool>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<char>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<unsigned char>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<signed char>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<short>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<unsigned short>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<int>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<unsigned>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<long>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<unsigned long>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<long long>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<unsigned long long>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<float>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<double>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<long double>&, unsigned int );
+template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<std::string>&, unsigned int );
   
 } // end Utility namespace
 

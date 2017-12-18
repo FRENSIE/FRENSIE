@@ -8,7 +8,6 @@
 
 #ifndef UTILITY_HISTOGRAM_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 #define UTILITY_HISTOGRAM_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
-
 BOOST_SERIALIZATION_DISTRIBUTION3_EXPORT_IMPLEMENT( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution );
 
 namespace Utility{
@@ -31,7 +30,7 @@ UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<PrimaryIndependentU
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions )
   : BaseType( primary_indep_grid, secondary_distributions )
-{ 
+{
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 

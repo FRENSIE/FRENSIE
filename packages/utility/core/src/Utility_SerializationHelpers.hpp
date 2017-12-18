@@ -14,12 +14,25 @@
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/singleton.hpp>
-
-// FRENSIE Includes
-#include "Utility_SmartPtr.hpp"
+#include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/unique_ptr.hpp>
 
 /*! \defgroup boost_serialization_helpers Boost Serialization Helpers
  */
+
+namespace Utility{
+namespace Details{
+
+/*!  \brief Indirection layer for assigning a std::string guid instead of a 
+ * const char*
+ * \ingroup boost_serialization_helpers
+ */
+template<typename T>
+struct GuidStringWrapper
+{ /* ... */ };
+  
+} // end Detail namespace
+} // end Utility namespace
 
 /*! Forward a complicated argument to another macro as a single argument
  * \ingroup boost_serialization_helpers
@@ -193,17 +206,45 @@ namespace serialization{                                              \
  * \ingroup boost_serialization_helpers
  */
 #define BOOST_SERIALIZATION_TEMPLATE_CLASS_GUID_IMPL( ClassName, Namespace, GUID, TemplateParamPackDecl, TemplateParamPack ) \
-namespace boost{                                              \
-namespace serialization{                                    \
-namespace ext{                                                        \
-  template<TemplateParamPackDecl>                                      \
+namespace Utility{                                                      \
+namespace Details{                                                      \
+  template<TemplateParamPackDecl>                                       \
+  struct GuidStringWrapper<Namespace::ClassName<TemplateParamPack> >    \
+  {                                                                     \
+    bool isGuidAssigned() const                                         \
+    { return !d_guid.empty(); }                                         \
+                                                                        \
+    void assignGuid( const std::string& guid )                          \
+    { d_guid = guid; }                                                  \
+                                                                        \
+    const char* getGuid() const                                         \
+    { return d_guid.c_str(); }                                          \
+                                                                        \
+  private:                                                              \
+    std::string d_guid;                                                 \
+  };                                                                    \
+}                                                                       \
+}                                                                       \
+namespace boost{                                                        \
+namespace serialization{                                                \
+namespace ext{                                                          \
+  template<TemplateParamPackDecl>                                       \
   struct guid_impl<Namespace::ClassName<TemplateParamPack> >            \
   {                                                                     \
+    typedef boost::serialization::singleton<Utility::Details::GuidStringWrapper<Namespace::ClassName<TemplateParamPack> > > WrappedGuid; \
+                                                                        \
     static inline const char* call()                                    \
-    { return (GUID).c_str(); }                                          \
+    {                                                                   \
+      if( !WrappedGuid::get_const_instance().isGuidAssigned() )         \
+      {                                                                 \
+        WrappedGuid::get_mutable_instance().assignGuid( GUID );         \
+      }                                                                 \
+                                                                        \
+      return WrappedGuid::get_const_instance().getGuid();               \
+    }                                                                   \
   };                                                                    \
-}  \
-}  \
+}                                                                       \
+}                                                                       \
 }
 
 /*! Define the template class GUID registration method

@@ -57,6 +57,16 @@ void HDF5OArchiveImpl<Archive>::init( unsigned flags )
                                        "in hdf5 archive "
                                        << this->getFilename() << "!" );
   }
+
+  // Create the group that will contain all serialized data
+  this->createGroup( this->getDataDir() );
+
+  // Create the group that will contain links to tracked objects
+  this->createGroup( this->getTrackedObjectsDir() );
+
+  // Create the group that will contain the hierarchical information
+  // associated with the serialized objects
+  this->createGroup( this->getTreeDir() );
 }
 
 // Save opaque object
@@ -71,10 +81,24 @@ inline void HDF5OArchiveImpl<Archive>::save_binary( const void* address,
 template<typename Archive>
 template<typename ValueType>
 inline void HDF5OArchiveImpl<Archive>::save_array(
-                               const boost::serialization::array<ValueType>& a,
-                               unsigned int )
+                       const boost::serialization::array_wrapper<ValueType>& a,
+                       unsigned int )
 {
   this->saveImpl( a.address(), a.count() );
+}
+
+// Start a save
+template<typename Archive>
+void HDF5OArchiveImpl<Archive>::save_start( const char* name )
+{
+  this->startHDF5Group( name );
+}
+
+// Finish a save
+template<typename Archive>
+void HDF5OArchiveImpl<Archive>::save_end( const char* name )
+{
+  this->endHDF5Group();
 }
 
 // Intercept any type that is not a name-value pair or an attribute here
@@ -84,29 +108,31 @@ inline void HDF5OArchiveImpl<Archive>::save_array(
  */
 template<typename Archive>
 template<typename T>
-void HDF5OArchiveImpl<Archive>::save_override( const T& t, BOOST_PFTO int )
+void HDF5OArchiveImpl<Archive>::save_override( const T& t )
 {
   testStaticPrecondition((boost::serialization::is_wrapper<T>::type::value));
 
   // This should never be called
-  this->CommonOArchive::save_override( t, 0 );
+  this->CommonOArchive::save_override( t );
 }
 
 // Save a type that is wrapped in a boost::serialization::nvp
 template<typename Archive>
 template<typename T>
 inline void HDF5OArchiveImpl<Archive>::save_override(
-                        const boost::serialization::nvp<T>& t, BOOST_PFTO int )
+                        const boost::serialization::nvp<T>& t )
 {
-  this->startHDF5Group(t.name());
+  this->save_start( t.name() );
+  
   this->saveIntercept(t.const_value(), typename std::conditional<IsTuple<T>::value && Utility::HDF5TypeTraits<T>::IsSpecialized::value,std::true_type,std::false_type>::type());
-  this->endHDF5Group();
+  
+  this->save_end( t.name() );
 }
 
 // Save a boost::archive::object_id_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                      const boost::archive::object_id_type& t, BOOST_PFTO int )
+                      const boost::archive::object_id_type& t )
 {
   unsigned object_id = t;
   this->writeToCurrentGroupAttribute( "object_id", &object_id, 1 );
@@ -119,7 +145,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::object_reference_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-               const boost::archive::object_reference_type& t, BOOST_PFTO int )
+               const boost::archive::object_reference_type& t )
 {
   unsigned object_reference = t;
   this->writeToCurrentGroupAttribute( "object_reference", &object_reference, 1 );
@@ -132,7 +158,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::version_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                        const boost::archive::version_type& t, BOOST_PFTO int )
+                        const boost::archive::version_type& t )
 {
   unsigned version = t;
   this->writeToCurrentGroupAttribute( "version", &version, 1 );
@@ -144,7 +170,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_id_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                       const boost::archive::class_id_type& t, BOOST_PFTO int )
+                       const boost::archive::class_id_type& t )
 {
   size_t class_id = t;
   this->writeToCurrentGroupAttribute( "class_id", &class_id, 1 );
@@ -156,7 +182,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_id_optional_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-              const boost::archive::class_id_optional_type& t, BOOST_PFTO int )
+              const boost::archive::class_id_optional_type& t )
 {
   // Ignore the writing of this type - it is not needed by this archive type
   // Note: this implementation of this method is similar to the implementation
@@ -173,7 +199,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_id_reference_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-             const boost::archive::class_id_reference_type& t, BOOST_PFTO int )
+             const boost::archive::class_id_reference_type& t )
 {
   size_t class_id_reference = t;
   this->writeToCurrentGroupAttribute( "class_id_reference", &class_id_reference, 1 );
@@ -185,10 +211,10 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_name_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                     const boost::archive::class_name_type& t, BOOST_PFTO int )
+                     const boost::archive::class_name_type& t )
 {
   const std::string class_name( t );
-  this->writeToCurrentGroupAttribute( "class_name", class_name.data(), class_name.size() );
+  this->writeToCurrentGroupAttribute( "class_name", &class_name, 1 );
 
   d_next_object_is_attribute = true;
   this->save( class_name );
@@ -197,7 +223,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::tracking_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                       const boost::archive::tracking_type& t, BOOST_PFTO int )
+                       const boost::archive::tracking_type& t )
 {
   this->writeToCurrentGroupAttribute( "class_tracking", &t.t, 1 );
 
@@ -282,7 +308,7 @@ template<typename Archive>
 template<typename T>
 void HDF5OArchiveImpl<Archive>::saveIntercept( const T& t, std::false_type is_fast_serializable_tuple )
 {
-  this->CommonOArchive::save_override(t, 0);
+  this->CommonOArchive::save_override( t );
 }
 
 // Save implementation
@@ -339,6 +365,9 @@ void HDF5OArchiveImpl<Archive>::startHDF5Group( const char* group_name )
     full_group_name << group_name << "_g" << d_group_count;
 
   d_group_stack.push_back( full_group_name.str() );
+
+  this->createGroup( this->getTreeObjectPath() );
+  
   ++d_group_count;
 }
 

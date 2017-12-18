@@ -118,10 +118,10 @@ private:
  */
 #define HDF5_FILE_EXCEPTION_CATCH_RETHROW( raw_msg ) \
   EXCEPTION_CATCH_RETHROW_AS( Utility::HDF5File::Exception, Utility::HDF5ArchiveException, raw_msg ) \
-catch( ... )                                                           \
-{                                                                    \
-  THROW_EXCEPTION( HDF5ArchiveException, raw_msg );                  \
-}                                                                   
+  catch( ... )                                                          \
+  {                                                                   \
+    THROW_EXCEPTION( HDF5ArchiveException, raw_msg ); \
+  }
 
 #endif // end UTILITY_HDF5_COMMON_ARCHIVE_HPP
 

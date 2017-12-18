@@ -20,11 +20,20 @@
 #include <boost/serialization/binary_object.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/pfto.hpp>
 
 // FRENSIE Includes
 #include "Utility_HDF5CommonArchive.hpp"
 #include "Utility_Deque.hpp"
+
+namespace boost{
+namespace archive{
+namespace detail{
+
+template<class Archive> class interface_oarchive;
+  
+} // end detail namespace
+} // end archive namespace
+} // end boost namespace
 
 namespace Utility{
 
@@ -62,7 +71,7 @@ public:
 
   //! Save an array
   template<typename ValueType>
-  void save_array( const boost::serialization::array<ValueType>& a,
+  void save_array( const boost::serialization::array_wrapper<ValueType>& a,
                    unsigned int version );
 
 protected:
@@ -70,43 +79,52 @@ protected:
   //! The common archive type
   typedef boost::archive::detail::common_oarchive<Archive> CommonOArchive;
 
+  //! The interface_oarchive is a friend
+  friend class boost::archive::detail::interface_oarchive<Archive>;
+
   //! Constructor
   HDF5OArchiveImpl( const std::string& hdf5_filename, unsigned flags );
 
   //! Initialize the archive
   void init( unsigned flags );
 
+  //! Start a save (required by boost::serialization::polymorphic_oarchive_route)
+  void save_start( const char* name );
+
+  //! Finish a save (required by boost::serialization::polymorphic_oarchive_route)
+  void save_end( const char* name );
+
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
-  void save_override( const T& t, BOOST_PFTO int );
+  void save_override( const T& t );
 
   //! Save a type that is wrapped in a boost::serialization::nvp
   template<typename T>
-  void save_override( const boost::serialization::nvp<T>& t, BOOST_PFTO int );
+  void save_override( const boost::serialization::nvp<T>& t );
 
   //! Save a boost::archive::object_id_type attribute
-  void save_override( const boost::archive::object_id_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::object_id_type& t );
 
   //! Save a boost::archive::object_reference_type attribute
-  void save_override( const boost::archive::object_reference_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::object_reference_type& t );
 
   //! Save a boost::archive::version_type attribute
-  void save_override( const boost::archive::version_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::version_type& t );
 
   //! Save a boost::archive::class_id_type attribute
-  void save_override( const boost::archive::class_id_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::class_id_type& t );
 
   //! Save a boost::archive::class_id_optional_type attribute
-  void save_override( const boost::archive::class_id_optional_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::class_id_optional_type& t );
 
   //! Save a boost::archive::class_id_reference_type attribute
-  void save_override( const boost::archive::class_id_reference_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::class_id_reference_type& t );
 
   //! Save a boost::archive::class_name_type attribute
-  void save_override( const boost::archive::class_name_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::class_name_type& t );
 
   //! Save a boost::archive::tracking_type attribute
-  void save_override( const boost::archive::tracking_type& t, BOOST_PFTO int );
+  void save_override( const boost::archive::tracking_type& t );
 
   //! Save any type with a Utility::HDF5TypeTraits specialization
   template<typename T>

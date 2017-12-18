@@ -19,10 +19,19 @@
 #include <boost/serialization/item_version_type.hpp>
 #include <boost/serialization/binary_object.hpp>
 #include <boost/serialization/nvp.hpp>
-#include <boost/serialization/pfto.hpp>
 
 // FRENSIE Includes
 #include "Utility_HDF5CommonArchive.hpp"
+
+namespace boost{
+namespace archive{
+namespace detail{
+
+template<class Archive> class interface_iarchive;
+  
+} // end detail namespace
+} // end archive namespace
+} // end boost namespace
 
 namespace Utility{
 
@@ -53,13 +62,16 @@ public:
 
   //! Load an array
   template<typename ValueType>
-  void load_array( boost::serialization::array<ValueType>& array,
+  void load_array( boost::serialization::array_wrapper<ValueType>& array,
                    unsigned version );
 
 protected:
 
   //! The common archive type
   typedef boost::archive::detail::common_iarchive<Archive> CommonIArchive;
+
+  //! The interface_iarchive is a friend
+  friend class boost::archive::detail::interface_iarchive<Archive>;
 
   //! Constructor
   HDF5IArchiveImpl( const std::string& hdf5_filename, unsigned flags );
@@ -69,35 +81,35 @@ protected:
 
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
-  void load_override( T& t, BOOST_PFTO int );
+  void load_override( T& t );
 
   //! Load a type that is wrapped in a boost::serialization::nvp
   template<typename T>
-  void load_override( const boost::serialization::nvp<T>& t, BOOST_PFTO int );
+  void load_override( const boost::serialization::nvp<T>& t );
 
   //! Load a boost::archive::object_id_type attribute
-  void load_override( boost::archive::object_id_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::object_id_type& t );
 
   //! Load a boost::archive::object_reference_type attribute
-  void load_override( boost::archive::object_reference_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::object_reference_type& t );
 
   //! Load a boost::archive::version_type attribute
-  void load_override( boost::archive::version_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::version_type& t );
 
   //! Load a boost::archive::class_id_type attribute
-  void load_override( boost::archive::class_id_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::class_id_type& t );
 
   //! Load a boost::archive::class_id_optional_type attribute
-  void load_override( boost::archive::class_id_optional_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::class_id_optional_type& t );
 
   //! Load a boost::archive::class_id_reference_type attribute
-  void load_override( boost::archive::class_id_reference_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::class_id_reference_type& t );
 
   //! Load a boost::archive::class_name_type attribute
-  void load_override( boost::archive::class_name_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::class_name_type& t );
 
   //! Load a boost::archive::tracking_type attribute
-  void load_override( boost::archive::tracking_type& t, BOOST_PFTO int );
+  void load_override( boost::archive::tracking_type& t );
 
   //! Load any type with a Utility::HDF5TypeTraits specialization
   template<typename T>

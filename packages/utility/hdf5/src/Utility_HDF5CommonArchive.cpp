@@ -85,7 +85,7 @@ std::string HDF5CommonArchive::getTrackedObjectsPath(
                                                   const unsigned object_id )
 {
   std::ostringstream oss;
-  oss << s_tracked_objects_dir << "_o" << object_id;
+  oss << s_tracked_objects_dir << "/_o" << object_id;
 
   return oss.str();
 }
