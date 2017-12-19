@@ -49,6 +49,9 @@ public:
     //! Initialize the unit test manager
     void initializeUnitTestManager( int argc, char** argv, size_t& checkpoint );
 
+    //! Finalize the unit test manager
+    void finalizeUnitTestManager( size_t& checkpoint );
+    
     //! Destructor
     virtual ~Initializer()
     { /* ... */ }
@@ -71,6 +74,12 @@ public:
     
     //! Custom manager initialization method
     virtual void customUnitTestManagerInitialization( size_t& checkpoint );
+
+    //! Get the start checkpoint for the manager finalization method
+    virtual size_t getCustomUnitTestManagerFinalizationCheckpoint() const;
+    
+    //! Custom manager finalization method
+    virtual void customUnitTestManagerFinalization( size_t& checkpoint );
 
     //! Shortcut for adding command line options (functor)
     boost::program_options::options_description_easy_init setOption;
@@ -136,6 +145,11 @@ protected:
   virtual void printInitializationStatusNotification(
                                               const double initialization_time,
                                               const bool global_success );
+
+  //! Print the finalization status notification
+  virtual void printFinalizationStatusNotification(
+                                                const double finalization_time,
+                                                const bool global_success );
 
   //! Print the sorting tests notification
   virtual void printSortingTestsNotification();
@@ -315,6 +329,13 @@ private:
                                     const bool local_success,
                                     const bool global_success );
 
+  // Summarize the finalization results
+  void summarizeFinalizationResults(
+                                    std::ostringstream& log,
+                                    const double finalization_time,
+                                    const bool local_success,
+                                    const bool global_success );
+  
   // Summarize failed tests
   void summarizeFailedTests(
                          const std::vector<std::string>& global_failed_tests,

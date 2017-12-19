@@ -72,6 +72,12 @@
   { return __LINE__; }                                                  \
   void customUnitTestManagerInitialization( size_t& __CHECKPOINT__ ) override
 
+//! Define a custom unit test finalization
+#define FRENSIE_CUSTOM_UNIT_TEST_FINAL()     \
+  size_t getCustomUnitTestManagerFinalizationCheckpoint() const override \
+  { return __LINE__; }                                                  \
+  void customUnitTestManagerFinalization( size_t& __CHECKPOINT__ ) override
+
 //! Add a custom command line option
 #define ADD_OPTION( ... )                        \
   FRENSIE_CHECKPOINT();                          \

@@ -328,6 +328,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   expected_number_of_checks *= Utility::GlobalMPISession::size();
 }
 
+FRENSIE_CUSTOM_UNIT_TEST_FINAL()
+{
+  std::cout << "Nothing to clear!" << std::endl;
+}
+
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//

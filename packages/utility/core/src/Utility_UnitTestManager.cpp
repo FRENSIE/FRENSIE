@@ -58,6 +58,10 @@ protected:
   void printInitializationStatusNotification( const double initialization_time,
                                               const bool global_success ) override;
 
+  //! Print the finalization status notification
+  void printFinalizationStatusNotification( const double finalization_time,
+                                            const bool global_success ) override;
+
   //! Print the sorting tests notification
   void printSortingTestsNotification() override;
 
@@ -1115,6 +1119,33 @@ int UnitTestManager::runUnitTests( int argc,
       
     this->summarizeTestStats( test_timer->elapsed().count(),
                               local_success );
+
+    // All output will be redirected to the log
+    d_data->redirectStdOutput( log );
+
+    std::shared_ptr<Timer> finalization_timer = mpi_session.createTimer();
+    finalization_timer->start();
+    
+    size_t finalize_checkpoint = 0;
+    local_success = true;
+
+    try{
+      d_data->getInitializer().finalizeUnitTestManager( finalize_checkpoint );
+    }
+    __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, finalize_checkpoint, d_data->getUnexpectedExceptionsCounter(), s_details_right_shift );
+
+    finalization_timer->stop();
+
+    d_data->restoreStdOutput();
+
+    // Make sure that every node initialized successfully
+    global_success = mpi_session.isGloballyTrue( local_success );
+
+    // Summarize the finalization results
+    this->summarizeFinalizationResults( log,
+                                        init_timer->elapsed().count(),
+                                        local_success,
+                                        global_success );
   }
 
   // Summarize the test results
@@ -1769,7 +1800,51 @@ void DistributedUnitTestManager::printInitializationStatusNotification(
     UnitTestManager::printInitializationStatusNotification( initialization_time, global_success );
 
   Utility::GlobalMPISession::barrier();
-} 
+}
+
+// Summarize the finalization results
+void UnitTestManager::summarizeFinalizationResults(
+                                              std::ostringstream& log,
+                                              const double finalization_time,
+                                              const bool local_success,
+                                              const bool global_success )
+{
+  this->printFinalizationStatusNotification( finalization_time,
+                                             global_success );
+
+  // Report the finalization details
+  if( this->shouldUnitTestDetailsBeReported( global_success ) )
+    this->printOperationLog( local_success, "", log, true );
+}
+
+// Print the finalization status notification
+void UnitTestManager::printFinalizationStatusNotification(
+                                              const double finalization_time,
+                                              const bool global_success )
+{
+  // Report the results of the finalization
+  d_data->getReportSink() << "Finalization ";
+  
+  if( global_success )
+    d_data->getReportSink() << "completed";
+  else
+    d_data->getReportSink() << Utility::Red("Failed");
+
+  d_data->getReportSink() << " ";
+
+  // Report the finalization time for each process
+  UnitTestManager::printOperationTime( finalization_time, true, true );
+}
+
+void DistributedUnitTestManager::printFinalizationStatusNotification(
+                                              const double finalization_time,
+                                              const bool global_success )
+{
+  if( Utility::GlobalMPISession::rank() == 0 )
+    UnitTestManager::printFinalizationStatusNotification( finalization_time, global_success );
+
+  Utility::GlobalMPISession::barrier();
+}
 
 // Summarize the test results
 void UnitTestManager::summarizeTestStats( const double program_execution_time,
@@ -2382,6 +2457,18 @@ void UnitTestManager::Initializer::initializeUnitTestManager( int argc,
   this->customUnitTestManagerInitialization( checkpoint );
 }
 
+// Finalize the unit test manager
+void UnitTestManager::Initializer::finalizeUnitTestManager( size_t& checkpoint )
+{
+  checkpoint = d_start_checkpoint;
+
+  // Finalize the manager
+  if( this->getCustomUnitTestManagerFinalizationCheckpoint() > 0 )
+    checkpoint = this->getCustomUnitTestManagerFinalizationCheckpoint();
+
+  this->customUnitTestManagerFinalization( checkpoint );
+}
+
 // Get command line option value
 boost::program_options::variable_value
 UnitTestManager::Initializer::getRawOptionValue( const std::string& option_name ) const
@@ -2414,6 +2501,19 @@ size_t UnitTestManager::Initializer::getCustomUnitTestManagerInitializationCheck
  * to be initialized in a specific way.
  */
 void UnitTestManager::Initializer::customUnitTestManagerInitialization( size_t& checkpoint )
+{ /* ... */ }
+
+// Get the start checkpoint for the manager finalization method
+size_t UnitTestManager::Initializer::getCustomUnitTestManagerFinalizationCheckpoint() const
+{
+  return d_start_checkpoint;
+}
+    
+// Custom manager finalization method
+/*! \details Derived classes can override this method if test data needs
+ * to be cleared in a specific way (e.g. created files need to be deleted)
+ */
+void UnitTestManager::Initializer::customUnitTestManagerFinalization( size_t& checkpoint )
 { /* ... */ }
   
 } // end Utility namespace
