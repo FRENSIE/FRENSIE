@@ -22,9 +22,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -34,6 +33,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -712,140 +719,172 @@ FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( ExponentialDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ExponentialDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_exponential_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_exponential_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some exponential distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::ExponentialDistribution dist_a;
     Utility::ExponentialDistribution dist_b( 2.0 );
     Utility::ExponentialDistribution dist_c( 2.0, 3.0 );
     Utility::ExponentialDistribution dist_d( 2.0, 3.0, 1.0 );
     Utility::ExponentialDistribution dist_e( 2.0, 3.0, 1.0, 2.0 );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_d ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_e ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e ) );
     FRENSIE_REQUIRE_NO_THROW(
-                          archive << BOOST_SERIALIZATION_NVP( distribution ) );
+                      (*oarchive) << BOOST_SERIALIZATION_NVP( distribution ) );
   }
 
-  // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
 
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+  
   Utility::ExponentialDistribution dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::ExponentialDistribution() );
 
   Utility::ExponentialDistribution dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, Utility::ExponentialDistribution( 2.0 ) );
 
   Utility::ExponentialDistribution dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, Utility::ExponentialDistribution( 2.0, 3.0 ) );
 
   Utility::ExponentialDistribution dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_d ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d ) );
   FRENSIE_CHECK_EQUAL( dist_d, Utility::ExponentialDistribution( 2.0, 3.0, 1.0 ) );
 
   Utility::ExponentialDistribution dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_e ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e ) );
   FRENSIE_CHECK_EQUAL( dist_e, Utility::ExponentialDistribution( 2.0, 3.0, 1.0, 2.0 ) );
 
   std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::ExponentialDistribution*>( shared_dist.get() ),
                        *dynamic_cast<Utility::ExponentialDistribution*>( distribution.get() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareExponentialDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_unit_aware_exponential_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_exponential_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some exponential distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_a;
     Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_b( 2.0*si::mole );
     Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_c( 2.0*si::mole, 3.0/cgs::centimeter );
     Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_d( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter );
     Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_e( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_d ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_e ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e ) );
     FRENSIE_REQUIRE_NO_THROW(
-               archive << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+           (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>()) );
 
   Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole )) );
 
   Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter )) );
 
   Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_d ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d ) );
   FRENSIE_CHECK_EQUAL( dist_d, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter )) );
 
   Utility::UnitAwareExponentialDistribution<cgs::length,si::amount> dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_e ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e ) );
   FRENSIE_CHECK_EQUAL( dist_e, (Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>( 2.0*si::mole, 3.0/cgs::centimeter, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount>> shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( shared_dist.get() )),
                        (*dynamic_cast<Utility::UnitAwareExponentialDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
 }

@@ -21,9 +21,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -33,6 +32,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -1587,136 +1594,168 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( HistogramDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( HistogramDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_histogram_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_histogram_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some histogram distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
     
     Utility::HistogramDistribution dist_a( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 2.0} );
     Utility::HistogramDistribution dist_b( {-2.0, -1.0, 1.0, 2.0}, {2.0, 4.0, 6.0}, true );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
 
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_c", pdf_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_d", tab_pdf_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_e", cdf_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_f", tab_cdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_c", pdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_d", tab_pdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_e", cdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_f", tab_cdf_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::HistogramDistribution dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_a) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_a) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::HistogramDistribution( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 2.0} ) );
 
   Utility::HistogramDistribution dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_b) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_b) );
   FRENSIE_CHECK_EQUAL( dist_b, Utility::HistogramDistribution( {-2.0, -1.0, 1.0, 2.0}, {2.0, 4.0, 6.0}, true ) );
 
   std::shared_ptr<Utility::UnivariateDistribution> dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_c) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_c) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::HistogramDistribution*>(dist_c.get()),
                        *dynamic_cast<Utility::HistogramDistribution*>(pdf_distribution.get()) );
 
   std::shared_ptr<Utility::TabularUnivariateDistribution> dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_d) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_d) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::HistogramDistribution*>(dist_d.get()),
                        *dynamic_cast<Utility::HistogramDistribution*>(tab_pdf_distribution.get()) );
 
   std::shared_ptr<Utility::UnivariateDistribution> dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_e) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_e) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::HistogramDistribution*>(dist_e.get()),
                        *dynamic_cast<Utility::HistogramDistribution*>(cdf_distribution.get()) );
 
   std::shared_ptr<Utility::TabularUnivariateDistribution> dist_f;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_f) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_f) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::HistogramDistribution*>(dist_f.get()),
                        *dynamic_cast<Utility::HistogramDistribution*>(tab_cdf_distribution.get()) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareHistogramDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareHistogramDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_unit_aware_histogram_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_histogram_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some histogram distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-    
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+        
     Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> dist_a( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 2.0} );
     Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> dist_b( {-2.0, -1.0, 1.0, 2.0}, {2.0, 4.0, 6.0}, true );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
 
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_c", unit_aware_pdf_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_d", unit_aware_tab_pdf_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_e", unit_aware_cdf_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_f", unit_aware_tab_cdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_c", unit_aware_pdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_d", unit_aware_tab_pdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_e", unit_aware_cdf_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_f", unit_aware_tab_cdf_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_a) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_a) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>( {-2.0, -1.0, 1.0, 2.0}, {2.0, 1.0, 2.0} )) );
 
   Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_b) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_b) );
   FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>( {-2.0, -1.0, 1.0, 2.0}, {2.0, 4.0, 6.0}, true )) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_c) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_c) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(dist_c.get())),
                        (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(unit_aware_pdf_distribution.get())) );
 
   std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> > dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_d) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_d) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(dist_d.get())),
                        (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(unit_aware_tab_pdf_distribution.get())) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_e) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_e) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(dist_e.get())),
                        (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(unit_aware_cdf_distribution.get())) );
 
   std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> > dist_f;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_f) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_f) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(dist_f.get())),
                        (*dynamic_cast<Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>*>(unit_aware_tab_cdf_distribution.get())) );
 }

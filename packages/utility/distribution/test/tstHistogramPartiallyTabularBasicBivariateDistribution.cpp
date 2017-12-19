@@ -14,18 +14,6 @@
 // Boost Includes
 #include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
-#include <boost/archive/polymorphic_text_iarchive.hpp>
-#include <boost/archive/polymorphic_text_oarchive.hpp>
-#include <boost/archive/polymorphic_binary_iarchive.hpp>
-#include <boost/archive/polymorphic_binary_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
 
 // FRENSIE Includes
 #include "Utility_HistogramPartiallyTabularBasicBivariateDistribution.hpp"
@@ -36,9 +24,8 @@
 #include "Utility_BarnUnit.hpp"
 #include "Utility_PolymorphicHDF5IArchive.hpp"
 #include "Utility_PolymorphicHDF5OArchive.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -52,62 +39,21 @@ using Utility::Units::barn;
 using Utility::Units::barns;
 namespace cgs = boost::units::cgs;
 
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
+
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::string archive_type;
-
 std::shared_ptr<Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> > 
   unit_aware_distribution;
 
 std::shared_ptr<Utility::PartiallyTabularBasicBivariateDistribution> distribution;
-
-//---------------------------------------------------------------------------//
-// Testing functions
-//---------------------------------------------------------------------------//
-std::shared_ptr<boost::archive::polymorphic_oarchive>
-createOArchive( std::string& base_archive_name,
-                std::ostringstream& oss )
-{
-  std::shared_ptr<boost::archive::polymorphic_oarchive> oarchive;
-
-  oss.str( "" );
-  oss.clear();
-  
-  if( archive_type == "hdf5" )
-  {
-    base_archive_name += ".h5a";
-
-    oss << base_archive_name;
-    
-    oarchive.reset( new Utility::PolymorphicHDF5OArchive( oss, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE ) );
-  }
-  else if( archive_type == "xml" )
-    oarchive.reset( new boost::archive::polymorphic_xml_oarchive( oss ) );
-  else if( archive_type == "text" )
-    oarchive.reset( new boost::archive::polymorphic_text_oarchive( oss ) );
-  else // archive_type == "bin"
-    oarchive.reset( new boost::archive::polymorphic_binary_oarchive( oss ) );
-
-  return oarchive;
-}
-
-std::shared_ptr<boost::archive::polymorphic_iarchive>
-createIArchive( std::istream& is )
-{
-  std::shared_ptr<boost::archive::polymorphic_iarchive> iarchive;
-
-  if( archive_type == "hdf5" )
-    iarchive.reset( new Utility::PolymorphicHDF5IArchive( is ) );
-  else if( archive_type == "xml" )
-    iarchive.reset( new boost::archive::polymorphic_xml_iarchive( is ) );
-  else if( archive_type == "text" )
-    iarchive.reset( new boost::archive::polymorphic_text_iarchive( is ) );
-  else // archive_type == "bin"
-    iarchive.reset( new boost::archive::polymorphic_binary_iarchive( is ) );
-
-  return iarchive;
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -1369,19 +1315,26 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be archived
-FRENSIE_UNIT_TEST( HistogramPartiallyTabularBasicBivariateDistribution,
-                   archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( HistogramPartiallyTabularBasicBivariateDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_base_name( "test_histogram_partially_tabular_basic_bivariate_dist" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_histogram_partially_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
   std::string test_dist_string;
 
   // Create and archive some distributions
   {
-    std::shared_ptr<boost::archive::polymorphic_oarchive> oarchive = 
-      createOArchive( archive_base_name, archive_ostream );
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
 
     std::vector<double> primary_grid( {-1.0, 1.0} );
     std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
@@ -1406,12 +1359,13 @@ FRENSIE_UNIT_TEST( HistogramPartiallyTabularBasicBivariateDistribution,
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( partially_tabular_dist ) );
   }
 
-  // Copy the ostream contents to an istream
+  // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
-  
+
   // Load the archived distributions
-  std::shared_ptr<boost::archive::polymorphic_iarchive> iarchive =
-    createIArchive( archive_istream );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   std::shared_ptr<Utility::HistogramPartiallyTabularBasicBivariateDistribution> concrete_dist;
 
@@ -1437,19 +1391,26 @@ FRENSIE_UNIT_TEST( HistogramPartiallyTabularBasicBivariateDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution,
-                   archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_base_name( "test_unit_aware_histogram_partially_tabular_basic_bivariate_dist" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_histogram_partially_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
   std::string test_dist_string;
 
   // Create and archive some distributions
   {
-    std::shared_ptr<boost::archive::polymorphic_oarchive> oarchive = 
-      createOArchive( archive_base_name, archive_ostream );
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
 
     std::vector<quantity<MegaElectronVolt> > primary_grid( {0.0*MeV, 1.0*MeV} );
     std::vector<std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<cgs::length,Barn> > >
@@ -1474,12 +1435,13 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution,
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( partially_tabular_dist ) );
   }
 
-  // Copy the ostream contents to an istream
+  // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
   
   // Load the archived distributions
-  std::shared_ptr<boost::archive::polymorphic_iarchive> iarchive =
-    createIArchive( archive_istream );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   std::shared_ptr<Utility::UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> > concrete_dist;
 
@@ -1508,27 +1470,8 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramPartiallyTabularBasicBivariateDistribution,
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
-{
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "archive_type",
-                                        archive_type, "hdf5",
-                                        "the achive type to test (hdf5, xml, text or bin)" );
-}
-
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  // Process the archive type
-  boost::algorithm::to_lower( archive_type );
-  
-  if( archive_type != "hdf5" &&
-      archive_type != "xml" &&
-      archive_type != "text" &&
-      archive_type != "bin" )
-  {
-    THROW_EXCEPTION( std::logic_error,
-                     "Unknown archive type " << archive_type << "! " );
-  }
-  
   // Create the two-dimensional distribution
   {
     std::vector<double> primary_grid( 4 );

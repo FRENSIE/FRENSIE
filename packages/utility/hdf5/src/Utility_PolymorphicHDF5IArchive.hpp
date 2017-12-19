@@ -24,6 +24,8 @@ namespace Utility{
  */
 typedef boost::archive::detail::polymorphic_iarchive_route<Utility::HDF5IArchive> PolymorphicHDF5IArchive;
 
+TYPE_NAME_TRAITS_QUICK_DECL( PolymorphicHDF5IArchive );
+
 } // end Utility namespace
 
 // The archive must be registered before we can use the export method

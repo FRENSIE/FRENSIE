@@ -74,6 +74,8 @@ private:
   }
 };
 
+TYPE_NAME_TRAITS_QUICK_DECL( HDF5IArchive );
+
 extern template void HDF5IArchiveImpl<HDF5IArchive>::load( bool& );
 extern template void HDF5IArchiveImpl<HDF5IArchive>::load( char& );
 extern template void HDF5IArchiveImpl<HDF5IArchive>::load( unsigned char& );

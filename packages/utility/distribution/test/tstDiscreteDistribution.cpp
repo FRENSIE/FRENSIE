@@ -22,10 +22,9 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing types
@@ -35,6 +34,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -1587,12 +1594,25 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( DiscreteDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DiscreteDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_discrete_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_discrete_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some discrete distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     std::vector<double> independent_values( 3 );
     independent_values[0] = -1.0;
     independent_values[1] = 0.0;
@@ -1606,18 +1626,21 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, archive )
     Utility::DiscreteDistribution
       discrete_dist_a( independent_values, dependent_values );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "discrete_dist_a", discrete_dist_a ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "discrete_dist_b", cdf_cons_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "discrete_dist_a", discrete_dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "discrete_dist_b", cdf_cons_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::DiscreteDistribution discrete_dist_a;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "discrete_dist_a", discrete_dist_a ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "discrete_dist_a", discrete_dist_a ) );
   FRENSIE_CHECK_EQUAL( discrete_dist_a.getLowerBoundOfIndepVar(), -1.0 );
   FRENSIE_CHECK_EQUAL( discrete_dist_a.getUpperBoundOfIndepVar(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_dist_a.evaluate( -2.0 ), 0.0 );
@@ -1630,7 +1653,7 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, archive )
 
   std::shared_ptr<Utility::UnivariateDistribution> discrete_dist_b;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "discrete_dist_b", discrete_dist_b ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "discrete_dist_b", discrete_dist_b ) );
   FRENSIE_CHECK_EQUAL( discrete_dist_b->getLowerBoundOfIndepVar(),-1.0 );
   FRENSIE_CHECK_EQUAL( discrete_dist_b->getUpperBoundOfIndepVar(), 1.0 );
   FRENSIE_CHECK_EQUAL( discrete_dist_b->evaluate( -2.0 ), 0.0 );
@@ -1644,12 +1667,25 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, archive )
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareDiscreteDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_unit_aware_discrete_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_discrete_dist" );
+  std::ostringstream archive_ostream;
 
   // Createand archive some discrete distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     std::vector<quantity<ElectronVolt> > independent_quantities( 4 );
     independent_quantities[0] = 0.1*eV;
     independent_quantities[1] = 1.0*eV;
@@ -1665,19 +1701,22 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, archive )
     Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>
       unit_aware_discrete_dist_a( independent_quantities, dependent_quantities );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "discrete_dist_a", unit_aware_discrete_dist_a ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "discrete_dist_b", unit_aware_cdf_cons_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "discrete_dist_a", unit_aware_discrete_dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "discrete_dist_b", unit_aware_cdf_cons_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>
     unit_aware_discrete_dist_a;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "discrete_dist_a", unit_aware_discrete_dist_a ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "discrete_dist_a", unit_aware_discrete_dist_a ) );
   FRENSIE_CHECK_EQUAL( unit_aware_discrete_dist_a.getLowerBoundOfIndepVar(), 0.1*eV );
   FRENSIE_CHECK_EQUAL( unit_aware_discrete_dist_a.getUpperBoundOfIndepVar(), 1e3*eV );
   FRENSIE_CHECK_EQUAL( unit_aware_discrete_dist_a.evaluate( 0.0*eV ),
@@ -1703,7 +1742,7 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, archive )
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<ElectronVolt,si::amount> >
     unit_aware_discrete_dist_b;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "discrete_dist_b", unit_aware_discrete_dist_b ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "discrete_dist_b", unit_aware_discrete_dist_b ) );
   FRENSIE_CHECK_EQUAL( unit_aware_discrete_dist_b->getLowerBoundOfIndepVar(), 0.1*eV );
   FRENSIE_CHECK_EQUAL( unit_aware_discrete_dist_b->getUpperBoundOfIndepVar(), 1e3*eV );
   FRENSIE_CHECK_EQUAL( unit_aware_discrete_dist_b->evaluate( 0.0*eV ),

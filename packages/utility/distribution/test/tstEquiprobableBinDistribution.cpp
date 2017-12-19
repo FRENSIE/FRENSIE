@@ -21,9 +21,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing types
@@ -33,6 +32,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -2183,32 +2190,48 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( EquiprobableBinDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EquiprobableBinDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_equiprobable_bin_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_equiprobable_bin_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some equiprobable bin distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     std::vector<double> bin_boundaries( {-16.0, -15.0, -14.0, -13.0, -12.0, -11.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -0.5, 0.0, 0.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0} );
 
     Utility::EquiprobableBinDistribution distribution_a( bin_boundaries );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP(distribution_a)
+                         (*oarchive) << BOOST_SERIALIZATION_NVP(distribution_a)
                              );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "distribution_b", distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "distribution_c", tab_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "distribution_b", distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "distribution_c", tab_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::EquiprobableBinDistribution distribution_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(distribution_a)
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(distribution_a)
                            );
   FRENSIE_CHECK_EQUAL( distribution_a.getLowerBoundOfIndepVar(), -16.0 );
   FRENSIE_CHECK_EQUAL( distribution_a.getUpperBoundOfIndepVar(), 16.0 );
@@ -2251,7 +2274,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, archive )
   std::shared_ptr<Utility::UnivariateDistribution> distribution_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(distribution_b)
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(distribution_b)
                            );
   FRENSIE_CHECK_EQUAL( distribution_b->getLowerBoundOfIndepVar(), -16.0 );
   FRENSIE_CHECK_EQUAL( distribution_b->getUpperBoundOfIndepVar(), 16.0 );
@@ -2294,7 +2317,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, archive )
   std::shared_ptr<Utility::TabularUnivariateDistribution> distribution_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(distribution_c)
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(distribution_c)
                            );
   FRENSIE_CHECK_EQUAL( distribution_c->getLowerBoundOfIndepVar(), -16.0 );
   FRENSIE_CHECK_EQUAL( distribution_c->getUpperBoundOfIndepVar(), 16.0 );
@@ -2337,12 +2360,25 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, archive )
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareEquiprobableBinDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_unit_aware_equiprobable_bin_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_equiprobable_bin_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some equiprobable bin distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     std::vector<quantity<KiloElectronVolt> > bin_boundaries( 5 );
     bin_boundaries[0] = 0.0*keV;
     bin_boundaries[1] = 1e2*keV;
@@ -2353,23 +2389,26 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, archive )
     Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>
       distribution_a( bin_boundaries );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP(distribution_a)
+                             (*oarchive) << BOOST_SERIALIZATION_NVP(distribution_a)
                              );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "distribution_b", unit_aware_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "distribution_c", unit_aware_tab_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "distribution_b", unit_aware_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "distribution_c", unit_aware_tab_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>
     distribution_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(distribution_a)
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(distribution_a)
                            );
   FRENSIE_CHECK_EQUAL( distribution_a.getLowerBoundOfIndepVar(), 0.0*MeV );
   FRENSIE_CHECK_EQUAL( distribution_a.getUpperBoundOfIndepVar(), 10*MeV );
@@ -2384,7 +2423,7 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, archive )
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > distribution_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(distribution_b)
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(distribution_b)
                            );
   FRENSIE_CHECK_EQUAL( distribution_b->getLowerBoundOfIndepVar(), 0.0*MeV );
   FRENSIE_CHECK_EQUAL( distribution_b->getUpperBoundOfIndepVar(), 10*MeV );
@@ -2399,7 +2438,7 @@ FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution, archive )
   std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<MegaElectronVolt,si::amount> > distribution_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(distribution_c)
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(distribution_c)
                            );
   FRENSIE_CHECK_EQUAL( distribution_c->getLowerBoundOfIndepVar(), 0.0*MeV );
   FRENSIE_CHECK_EQUAL( distribution_c->getUpperBoundOfIndepVar(), 10*MeV );

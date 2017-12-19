@@ -21,9 +21,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -33,6 +32,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -635,68 +642,100 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( PolynomialDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PolynomialDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_polynomial_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_polynomial_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some polynomial distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
 
     Utility::PolynomialDistribution dist_a( {3.0, 2.0, 1.0}, 1.0, 2.0 );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_b", distribution ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_b", distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::PolynomialDistribution dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_a) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_a) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::PolynomialDistribution( {3.0, 2.0, 1.0}, 1.0, 2.0 ) );
 
   std::shared_ptr<Utility::UnivariateDistribution> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_b) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_b) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::PolynomialDistribution*>(dist_b.get()),
                        *dynamic_cast<Utility::PolynomialDistribution*>(distribution.get()) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePolynomialDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_unit_aware_polynomial_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_polynomial_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some polynomial distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+    std::unique_ptr<OArchive> oarchive;
 
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> dist_a( {3.0, 2.0, 1.0}, 1.0*MeV, 2.0*MeV );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "dist_b", unit_aware_distribution ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "dist_b", unit_aware_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
 
+  createIArchive( archive_istream, iarchive );
+  
   Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_a) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_a) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {3.0, 2.0, 1.0}, 1.0*MeV, 2.0*MeV )) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP(dist_b) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP(dist_b) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>(dist_b.get())),
                        (*dynamic_cast<Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>*>(unit_aware_distribution.get())) );
 }

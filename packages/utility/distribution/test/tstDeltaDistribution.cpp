@@ -22,9 +22,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing types
@@ -33,6 +32,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -518,35 +525,49 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( DeltaDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DeltaDistribution, archive, TestArchives )
 {
-  std::string archive_name( "test_delta_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_delta_dist" );
+  std::ostringstream archive_ostream;
   
   // Create and archive some delta distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+                    
     Utility::DeltaDistribution delta_dist_a( 0.0, 1.0 );
 
     std::shared_ptr<Utility::UnivariateDistribution> delta_dist_b( new Utility::DeltaDistribution( 1.0, 2.0 ) );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
   
   Utility::DeltaDistribution delta_dist_a;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
   FRENSIE_CHECK_EQUAL( delta_dist_a.getUpperBoundOfIndepVar(), 0.0 );
   FRENSIE_CHECK_EQUAL( delta_dist_a.getLowerBoundOfIndepVar(), 0.0 );
   FRENSIE_CHECK_EQUAL( delta_dist_a.evaluate( 0.0 ), 1.0 );
 
   std::shared_ptr<Utility::UnivariateDistribution> delta_dist_b;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
   FRENSIE_CHECK_EQUAL( delta_dist_b->getUpperBoundOfIndepVar(), 1.0 );
   FRENSIE_CHECK_EQUAL( delta_dist_b->getLowerBoundOfIndepVar(), 1.0 );
   FRENSIE_CHECK_EQUAL( delta_dist_b->evaluate( 1.0 ), 2.0 );  
@@ -554,29 +575,45 @@ FRENSIE_UNIT_TEST( DeltaDistribution, archive )
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareDeltaDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_unit_aware_delta_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_delta_dist" );
+  std::ostringstream archive_ostream;
   
   // Create and archive some delta distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UnitAwareDeltaDistribution<si::time,si::length>
       delta_dist_a( 0.0*si::seconds, 1.0*si::meters );
 
     std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::time,si::length> > delta_dist_b( new Utility::UnitAwareDeltaDistribution<si::time,si::length>( 1.0*si::seconds, 2.0*si::meters ) );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
-    FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
   
   Utility::UnitAwareDeltaDistribution<si::time,si::length> delta_dist_a;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "delta_dist_a", delta_dist_a ) );
   FRENSIE_CHECK_EQUAL( delta_dist_a.getUpperBoundOfIndepVar(), 0.0*si::seconds );
   FRENSIE_CHECK_EQUAL( delta_dist_a.getLowerBoundOfIndepVar(), 0.0*si::seconds );
   FRENSIE_CHECK_EQUAL( delta_dist_a.evaluate( 0.0*si::seconds ), 1.0*si::meters );
@@ -584,7 +621,7 @@ FRENSIE_UNIT_TEST( UnitAwareDeltaDistribution, archive )
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::time,si::length> >
     delta_dist_b;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "delta_dist_b", delta_dist_b ) );
   FRENSIE_CHECK_EQUAL( delta_dist_b->getUpperBoundOfIndepVar(), 1.0*si::seconds );
   FRENSIE_CHECK_EQUAL( delta_dist_b->getLowerBoundOfIndepVar(), 1.0*si::seconds );
   FRENSIE_CHECK_EQUAL( delta_dist_b->evaluate( 1.0*si::seconds ), 2.0*si::meters );  

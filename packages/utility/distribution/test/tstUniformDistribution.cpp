@@ -21,9 +21,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -33,6 +32,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -866,102 +873,130 @@ FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( UniformDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UniformDistribution, archive, TestArchives )
 {
-  std::string archive_name( "test_uniform_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_uniform_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some uniform distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+    std::unique_ptr<OArchive> oarchive;
 
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UniformDistribution dist_a( -1.0, 1.0, 0.5 );
     Utility::UniformDistribution dist_b( 0.0, 2.0, 1.0 );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-                      archive << BOOST_SERIALIZATION_NVP( tab_distribution ) );
+                  (*oarchive) << BOOST_SERIALIZATION_NVP( tab_distribution ) );
     FRENSIE_REQUIRE_NO_THROW(
-                          archive << BOOST_SERIALIZATION_NVP( distribution ) );
+                      (*oarchive) << BOOST_SERIALIZATION_NVP( distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UniformDistribution dist_a;
 
-  FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   Utility::UniformDistribution dist_b;
 
-  FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, Utility::UniformDistribution( 0.0, 2.0, 1.0 ) );
 
   std::shared_ptr<Utility::TabularUnivariateDistribution> shared_tab_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "tab_distribution", shared_tab_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "tab_distribution", shared_tab_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::UniformDistribution*>( shared_tab_dist.get() ),
                        *dynamic_cast<Utility::UniformDistribution*>( tab_distribution.get() ) );
 
   std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::UniformDistribution*>( shared_dist.get() ),
                        *dynamic_cast<Utility::UniformDistribution*>( distribution.get() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareUniformDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareUniformDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_uniform_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_uniform_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some uniform distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+    std::unique_ptr<OArchive> oarchive;
 
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UnitAwareUniformDistribution<si::energy,si::amount> dist_a( -1.0*si::joule, 1.0*si::joule, 0.5*si::mole );
     Utility::UnitAwareUniformDistribution<si::energy,si::amount> dist_b( 0.0*si::joule, 2.0*si::joule, 1.0*si::mole );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-           archive << BOOST_SERIALIZATION_NVP( unit_aware_tab_distribution ) );
+       (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_tab_distribution ) );
     FRENSIE_REQUIRE_NO_THROW(
-               archive << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+           (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
 
+  createIArchive( archive_istream, iarchive );
+  
   Utility::UnitAwareUniformDistribution<si::energy,si::amount> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareUniformDistribution<si::energy,si::amount>( -1.0*si::joule, 1.0*si::joule, 0.5*si::mole )) );
 
   Utility::UnitAwareUniformDistribution<si::energy,si::amount> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareUniformDistribution<si::energy,si::amount>( 0.0*si::joule, 2.0*si::joule, 1.0*si::mole )) );
 
   std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<si::energy,si::amount> > shared_tab_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_tab_distribution", shared_tab_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "unit_aware_tab_distribution", shared_tab_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( shared_tab_dist.get() )),
                        (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_tab_distribution.get() )) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<si::energy,si::amount> > shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( shared_dist.get() )),
                        (*dynamic_cast<Utility::UnitAwareUniformDistribution<si::energy,si::amount>*>( unit_aware_distribution.get() )) );
 }

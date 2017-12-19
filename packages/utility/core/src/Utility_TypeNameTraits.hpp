@@ -22,6 +22,21 @@
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_UnitTraits.hpp"
 
+namespace boost{
+namespace archive{
+
+class xml_oarchive;
+class xml_iarchive;
+class text_oarchive;
+class text_iarchive;
+class binary_oarchive;
+class binary_iarchive;
+class polymorphic_oarchive;
+class polymorphic_iarchive;
+  
+} // end archive namespace
+} // end boost namespace
+
 namespace Utility{
 
 TYPE_NAME_TRAITS_QUICK_DECL( void );
@@ -94,6 +109,118 @@ struct TypeNameTraits<boost::units::quantity<Unit,T> >
       Utility::UnitTraits<Unit>::name() + "," +
       TypeNameTraits<T>::name() +">";
   }
+};
+  
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::xml_oarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::xml_oarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::xml_oarchive"; }
+};
+
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::xml_iarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::xml_iarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::xml_iarchive"; }
+};
+
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::text_oarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::text_oarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::text_oarchive"; }
+};
+
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::text_iarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::text_iarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::text_iarchive"; }
+};
+
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::binary_oarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::binary_oarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::binary_oarchive"; }
+};
+
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::binary_iarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::binary_iarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::binary_iarchive"; }
+};
+
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::polymorphic_oarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::polymorphic_oarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::polymorphic_oarchive"; }
+};
+
+/*! \brief Specialization of Utility::TypeNameTraits for 
+ * boost::archive::polymorphic_iarchive 
+ * \ingroup type_name_traits
+ */
+template<>
+struct TypeNameTraits<boost::archive::polymorphic_iarchive>
+{
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "boost::archive::polymorphic_iarchive"; }
 };
 
 /*! Partial specialization of Utility::TypeNameTraits for const types
@@ -260,7 +387,6 @@ struct TypeNameParameterPackHelper<T,Types...>
     TypeNameParameterPackHelper<Types...>::appendName( parameter_pack_name );
   }
 };
-  
   
 } // end Details namespace
 

@@ -281,7 +281,22 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::save( Arch
   ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_exponent_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_lower_limit );
-  ar & BOOST_SERIALIZATION_NVP( d_upper_limit );
+
+  // We cannot safely serialize inf to all archive types - create flag that
+  // records if the upper limit is inf
+  const bool __upper_limit_is_inf__ = (d_upper_limit == IQT::inf());
+  
+  ar & BOOST_SERIALIZATION_NVP( __upper_limit_is_inf__ );
+  
+  if( __upper_limit_is_inf__ )
+  {
+    IndepQuantity tmp_upper_limit = IQT::max();
+    ar & boost::serialization::make_nvp( "d_upper_limit", tmp_upper_limit );
+  }
+  else
+  {
+    ar & BOOST_SERIALIZATION_NVP( d_upper_limit );
+  }
 }
 
 // Load the distribution from an archive
@@ -296,7 +311,16 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::load( Arch
   ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_exponent_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_lower_limit );
+
+  // Load the upper limit inf flag
+  bool __upper_limit_is_inf__;
+  ar & BOOST_SERIALIZATION_NVP( __upper_limit_is_inf__ );
+  
   ar & BOOST_SERIALIZATION_NVP( d_upper_limit );
+
+  // Restore the inf value of the upper limit
+  if( __upper_limit_is_inf__ )
+    d_upper_limit = IQT::inf();
 }
 
 // Method for testing if two objects are equivalent

@@ -299,8 +299,41 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::save( Archive& 
   ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_mean );
   ar & BOOST_SERIALIZATION_NVP( d_standard_deviation );
-  ar & BOOST_SERIALIZATION_NVP( d_min_independent_value );
-  ar & BOOST_SERIALIZATION_NVP( d_max_independent_value );
+
+  // We cannot safely serialize -inf to all archive types - create a flag that
+  // records if the lower limit is -inf
+  const bool __lower_limit_is_neg_inf__ =
+    (d_min_independent_value == -IQT::inf());
+
+  ar & BOOST_SERIALIZATION_NVP( __lower_limit_is_neg_inf__ );
+
+  if( __lower_limit_is_neg_inf__ )
+  {
+    IndepQuantity tmp_lower_limit = IQT::lowest();
+
+    ar & boost::serialization::make_nvp( "d_min_independent_value", tmp_lower_limit );
+  }
+  else
+  {
+    ar & BOOST_SERIALIZATION_NVP( d_min_independent_value );
+  }
+  
+  // We cannot safely serialize inf to all archive types - create a flag that
+  // records if the upper limit is inf
+  const bool __upper_limit_is_inf__ = (d_max_independent_value == IQT::inf());
+
+  ar & BOOST_SERIALIZATION_NVP( __upper_limit_is_inf__ );
+
+  if( __upper_limit_is_inf__ )
+  {
+    IndepQuantity tmp_upper_limit = IQT::max();
+
+    ar & boost::serialization::make_nvp( "d_max_independent_value", tmp_upper_limit );
+  }
+  else
+  {
+    ar & BOOST_SERIALIZATION_NVP( d_max_independent_value );
+  }
 }
 
 // Load the distribution from an archive
@@ -315,8 +348,25 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::load( Archive& 
   ar & BOOST_SERIALIZATION_NVP( d_constant_multiplier );
   ar & BOOST_SERIALIZATION_NVP( d_mean );
   ar & BOOST_SERIALIZATION_NVP( d_standard_deviation );
+
+  // Load the lower limit inf flag
+  bool __lower_limit_is_neg_inf__;
+  ar & BOOST_SERIALIZATION_NVP( __lower_limit_is_neg_inf__ );
+
   ar & BOOST_SERIALIZATION_NVP( d_min_independent_value );
+
+  // Restore the neg inf value of the lower limit
+  if( __lower_limit_is_neg_inf__ )
+    d_min_independent_value = -IQT::inf();
+
+  // Load the upper limit inf flag
+  bool __upper_limit_is_inf__;
+  ar & BOOST_SERIALIZATION_NVP( __upper_limit_is_inf__ );
+  
   ar & BOOST_SERIALIZATION_NVP( d_max_independent_value );
+
+  if( __upper_limit_is_inf__ )
+    d_max_independent_value = IQT::inf();
 }
 
 // Method for testing if two objects are equivalent

@@ -21,9 +21,8 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -33,6 +32,14 @@ using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -857,12 +864,23 @@ FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, ostream_operator )
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST( NormalDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( NormalDistribution, archive, TestArchives )
 {
-  std::string archive_name( "test_normal_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_normal_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some normal distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::NormalDistribution dist_a;
     Utility::NormalDistribution dist_b( 2.0 );
     Utility::NormalDistribution dist_c( 2.0, 3.0 );
@@ -870,78 +888,94 @@ FRENSIE_UNIT_TEST( NormalDistribution, archive )
     Utility::NormalDistribution dist_e( 2.0, 3.0, 4.0, -1.0 );
     Utility::NormalDistribution dist_f( 2.0, 3.0, 4.0, -1.0, 1.0 );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_d ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_e ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_f ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_f ) );
     FRENSIE_REQUIRE_NO_THROW(
-                          archive << BOOST_SERIALIZATION_NVP( distribution ) );
+                          (*oarchive) << BOOST_SERIALIZATION_NVP( distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::NormalDistribution dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::NormalDistribution() );
 
   Utility::NormalDistribution dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, Utility::NormalDistribution( 2.0 ) );
 
   Utility::NormalDistribution dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, Utility::NormalDistribution( 2.0, 3.0 ) );
 
   Utility::NormalDistribution dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_d ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d ) );
   FRENSIE_CHECK_EQUAL( dist_d, Utility::NormalDistribution( 2.0, 3.0, 4.0 ) );
 
   Utility::NormalDistribution dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_e ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e ) );
   FRENSIE_CHECK_EQUAL( dist_e, Utility::NormalDistribution( 2.0, 3.0, 4.0, -1.0 ) );
 
   Utility::NormalDistribution dist_f;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_f ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_f ) );
   FRENSIE_CHECK_EQUAL( dist_f, Utility::NormalDistribution( 2.0, 3.0, 4.0, -1.0, 1.0 ) );
 
   std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::NormalDistribution*>( shared_dist.get() ),
                        *dynamic_cast<Utility::NormalDistribution*>( distribution.get() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, archive )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareNormalDistribution,
+                                   archive,
+                                   TestArchives )
 {
-  std::string archive_name( "test_unit_aware_normal_dist.h5a" );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_unit_aware_normal_dist" );
+  std::ostringstream archive_ostream;
 
   // Create and archive some normal distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_a;
     Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_b( 2.0*cgs::centimeter );
     Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_c( 2.0*cgs::centimeter, 3.0*cgs::centimeter );
@@ -949,66 +983,69 @@ FRENSIE_UNIT_TEST( UnitAwareNormalDistribution, archive )
     Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_e( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter );
     Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_f( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter, 1.0*cgs::centimeter );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_d ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_d ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_e ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_e ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_f ) );
+                             (*oarchive) << BOOST_SERIALIZATION_NVP( dist_f ) );
     FRENSIE_REQUIRE_NO_THROW(
-               archive << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+               (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>()) );
 
   Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter )) );
 
   Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter )) );
 
   Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_d;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_d ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_d ) );
   FRENSIE_CHECK_EQUAL( dist_d, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole )) );
 
   Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_e;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_e ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_e ) );
   FRENSIE_CHECK_EQUAL( dist_e, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter )) );
 
   Utility::UnitAwareNormalDistribution<cgs::length,si::amount> dist_f;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_f ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_f ) );
   FRENSIE_CHECK_EQUAL( dist_f, (Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 2.0*cgs::centimeter, 3.0*cgs::centimeter, 4.0*si::mole, -1.0*cgs::centimeter, 1.0*cgs::centimeter )) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareNormalDistribution<cgs::length,si::amount>*>( shared_dist.get() )),
                        (*dynamic_cast<Utility::UnitAwareNormalDistribution<cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
 }

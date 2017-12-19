@@ -23,6 +23,8 @@ namespace Utility{
  * \ingroup hdf5
  */
 typedef boost::archive::detail::polymorphic_oarchive_route<Utility::HDF5OArchive> PolymorphicHDF5OArchive;
+
+TYPE_NAME_TRAITS_QUICK_DECL( PolymorphicHDF5OArchive );
   
 } // end Utility namespace
 

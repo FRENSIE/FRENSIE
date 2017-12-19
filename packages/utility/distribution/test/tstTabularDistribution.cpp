@@ -21,9 +21,8 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -39,6 +38,40 @@ typedef std::tuple<Utility::LinLin,
                    Utility::LinLog,
                    Utility::LogLog
                   > TestInterpPolicies;
+
+template<typename OArchive, typename IArchive>
+struct InterpPolicyArchiveList
+{
+  typedef std::tuple<
+    std::tuple<Utility::LinLin,OArchive,IArchive>,
+    std::tuple<Utility::LogLin,OArchive,IArchive>,
+    std::tuple<Utility::LinLog,OArchive,IArchive>,
+    std::tuple<Utility::LogLog,OArchive,IArchive>
+   > type;
+};
+
+template<typename... Types>
+struct MergeTypeLists;
+
+template<typename T, typename... Types>
+struct MergeTypeLists<T,Types...>
+{
+  typedef decltype(std::tuple_cat(T(), typename MergeTypeLists<Types...>::type())) type;
+};
+
+template<typename T>
+struct MergeTypeLists<T>
+{
+  typedef T type;
+};
+
+typedef typename MergeTypeLists<
+  typename InterpPolicyArchiveList<boost::archive::xml_oarchive*,boost::archive::xml_iarchive*>::type,
+  typename InterpPolicyArchiveList<boost::archive::text_oarchive*,boost::archive::text_iarchive*>::type,
+  typename InterpPolicyArchiveList<boost::archive::binary_oarchive*,boost::archive::binary_iarchive*>::type,
+  typename InterpPolicyArchiveList<Utility::HDF5OArchive*,Utility::HDF5IArchive*>::type,
+  typename InterpPolicyArchiveList<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>::type
+  >::type InterpPoliciesAndArchives;
 
 typedef std::tuple<
   std::tuple<si::energy,si::amount,cgs::energy,si::amount>,
@@ -993,86 +1026,111 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
-                            archive,
-                            TestInterpPolicies )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TabularDistribution,
+                                   archive,
+                                   InterpPoliciesAndArchives )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
+  FETCH_TEMPLATE_PARAM( 1, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 2, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  std::string archive_name( "test_tabular_" );
-  archive_name += InterpolationPolicy::name();
-  archive_name += "_dist.h5a";
+  std::string archive_base_name( "test_tabular_" );
+  archive_base_name += InterpolationPolicy::name();
+  archive_base_name += "_dist";
+
+  std::ostringstream archive_ostream;
 
   // Create and archive some tabular distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+    std::unique_ptr<OArchive> oarchive;
 
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::TabularDistribution<InterpolationPolicy> dist_a( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} );
 
     initialize<InterpolationPolicy>( distribution );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                          archive << BOOST_SERIALIZATION_NVP( distribution ) );
+                      (*oarchive) << BOOST_SERIALIZATION_NVP( distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::TabularDistribution<InterpolationPolicy> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::TabularDistribution<InterpolationPolicy>( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} ) );
 
   std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW(
-    archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::TabularDistribution<InterpolationPolicy>*>( shared_dist.get() ),
                        *dynamic_cast<Utility::TabularDistribution<InterpolationPolicy>*>( distribution.get() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
-                            archive,
-                            TestInterpPolicies )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareTabularDistribution,
+                                   archive,
+                                   InterpPoliciesAndArchives )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
+  FETCH_TEMPLATE_PARAM( 1, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 2, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  std::string archive_name( "test_tabular_" );
-  archive_name += InterpolationPolicy::name();
-  archive_name += "_dist.h5a";
+  std::string archive_base_name( "test_tabular_" );
+  archive_base_name += InterpolationPolicy::name();
+  archive_base_name += "_dist";
+
+  std::ostringstream archive_ostream;
 
   // Create and archive some tabular distributions
   {
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+    std::unique_ptr<OArchive> oarchive;
 
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> dist_a( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} );
 
     initialize<InterpolationPolicy>( unit_aware_distribution );
 
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-               archive << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+           (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
   }
 
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
   // Load the archived distributions
-  Utility::HDF5IArchive archive( archive_name );
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount> dist_a;
 
-  FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>( {1.0, 2.0, 3.0, 4.0}, {4.0, 3.0, 2.0, 1.0} )) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<MegaElectronVolt,si::amount> > shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW(
-    archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>*>( shared_dist.get() )),
                        (*dynamic_cast<Utility::UnitAwareTabularDistribution<InterpolationPolicy,MegaElectronVolt,si::amount>*>( unit_aware_distribution.get() ) ));
 }

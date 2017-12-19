@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5OArchiveImpl.hpp"
+#include "Utility_TypeNameTraits.hpp"
 
 namespace Utility{
 
@@ -72,6 +73,8 @@ private:
     return hdf5_file_name_oss->str();
   }
 };
+
+TYPE_NAME_TRAITS_QUICK_DECL( HDF5OArchive );
 
 extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const bool& );
 extern template void HDF5OArchiveImpl<HDF5OArchive>::save( const char& );

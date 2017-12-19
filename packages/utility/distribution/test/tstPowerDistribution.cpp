@@ -20,9 +20,8 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
@@ -44,7 +43,46 @@ typedef std::tuple<
   std::integral_constant<size_t,9>,
   std::integral_constant<size_t,10>
  > TestInts;
-  
+
+template<typename OArchive, typename IArchive>
+struct IntArchiveList
+{
+  typedef std::tuple<
+    std::tuple<std::integral_constant<size_t,1>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,2>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,3>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,4>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,5>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,6>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,7>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,8>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,9>,OArchive,IArchive>,
+    std::tuple<std::integral_constant<size_t,10>,OArchive,IArchive>
+   > type;
+};
+
+template<typename... Types>
+struct MergeTypeLists;
+
+template<typename T, typename... Types>
+struct MergeTypeLists<T,Types...>
+{
+  typedef decltype(std::tuple_cat(T(), typename MergeTypeLists<Types...>::type())) type;
+};
+
+template<typename T>
+struct MergeTypeLists<T>
+{
+  typedef T type;
+};
+
+typedef typename MergeTypeLists<
+  typename IntArchiveList<boost::archive::xml_oarchive*,boost::archive::xml_iarchive*>::type,
+  typename IntArchiveList<boost::archive::text_oarchive*,boost::archive::text_iarchive*>::type,
+  typename IntArchiveList<boost::archive::binary_oarchive*,boost::archive::binary_iarchive*>::type,
+  typename IntArchiveList<Utility::HDF5OArchive*,Utility::HDF5IArchive*>::type,
+  typename IntArchiveList<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>::type
+  >::type TestIntsAndArchives;
 
 typedef std::tuple<
   std::tuple<si::length,si::amount,cgs::length,si::amount>,
@@ -713,114 +751,144 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a distribution can be archived
-FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution, archive, TestInts )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PowerDistribution,
+                                   archive,
+                                   TestIntsAndArchives )
 {
   FETCH_TEMPLATE_PARAM( 0, WrappedN );
-  
-  std::string archive_name( "test_power_dist" );
-  archive_name += Utility::toString( WrappedN::value );
-  archive_name += ".h5a";
+  FETCH_TEMPLATE_PARAM( 1, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 2, RawIArchive );
 
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_power_dist_" );
+  archive_base_name += Utility::toString( WrappedN::value );
+  
+  std::ostringstream archive_ostream;
+  
   // Create and archive some power distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::PowerDistribution<WrappedN::value> dist_a;
     Utility::PowerDistribution<WrappedN::value> dist_b( 2.0 );
     Utility::PowerDistribution<WrappedN::value> dist_c( 3.0, 1.0, 2.0 );
     initializeDistribution<WrappedN::value,void,void>( distribution );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
     FRENSIE_REQUIRE_NO_THROW(
-                          archive << BOOST_SERIALIZATION_NVP( distribution ) );
+                      (*oarchive) << BOOST_SERIALIZATION_NVP( distribution ) );
   }
 
-  // Load the archived distribution
-  Utility::HDF5IArchive archive( archive_name );
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::PowerDistribution<WrappedN::value> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, Utility::PowerDistribution<WrappedN::value>() );
 
   Utility::PowerDistribution<WrappedN::value> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, Utility::PowerDistribution<WrappedN::value>( 2.0 ) );
 
   Utility::PowerDistribution<WrappedN::value> dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, Utility::PowerDistribution<WrappedN::value>( 3.0, 1.0, 2.0 ) );
 
   std::shared_ptr<Utility::UnivariateDistribution> shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( shared_dist.get() ),
                        *dynamic_cast<Utility::PowerDistribution<WrappedN::value>*>( distribution.get() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be archived
-FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution, archive, TestInts )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePowerDistribution,
+                                   archive,
+                                   TestIntsAndArchives )
 {
   FETCH_TEMPLATE_PARAM( 0, WrappedN );
+  FETCH_TEMPLATE_PARAM( 1, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 2, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  std::string archive_name( "test_unit_aware_power_dist" );
-  archive_name += Utility::toString( WrappedN::value );
-  archive_name += ".h5a";
+  std::string archive_base_name( "test_unit_aware_power_dist_" );
+  archive_base_name += Utility::toString( WrappedN::value );
+
+  std::ostringstream archive_ostream;
 
   // Create and archive some power distributions
   {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
     Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_a;
     Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_b( 2.0 );
     Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_c( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter );
     initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
-    Utility::HDF5OArchive archive( archive_name, Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
-
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_a ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_a ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_b ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_b ) );
     FRENSIE_REQUIRE_NO_THROW(
-                             archive << BOOST_SERIALIZATION_NVP( dist_c ) );
+                            (*oarchive) << BOOST_SERIALIZATION_NVP( dist_c ) );
     FRENSIE_REQUIRE_NO_THROW(
-               archive << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
+           (*oarchive) << BOOST_SERIALIZATION_NVP( unit_aware_distribution ) );
   }
 
-  // Load the archived distribution
-  Utility::HDF5IArchive archive( archive_name );
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+  
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
 
   Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_a ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_a ) );
   FRENSIE_CHECK_EQUAL( dist_a, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>()) );
 
   Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_b;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_b ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_b ) );
   FRENSIE_CHECK_EQUAL( dist_b, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 2.0 )) );
 
   Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount> dist_c;
 
   FRENSIE_REQUIRE_NO_THROW(
-                           archive >> BOOST_SERIALIZATION_NVP( dist_c ) );
+                           (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, (Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>( 3.0, 1.0*cgs::centimeter, 2.0*cgs::centimeter )) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<cgs::length,si::amount> > shared_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( archive >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "unit_aware_distribution", shared_dist ) );
   FRENSIE_CHECK_EQUAL( (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( shared_dist.get() )),
                        (*dynamic_cast<Utility::UnitAwarePowerDistribution<WrappedN::value,cgs::length,si::amount>*>( unit_aware_distribution.get() )) );
 }
