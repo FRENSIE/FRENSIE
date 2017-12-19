@@ -342,8 +342,7 @@ private:
                          const std::set<std::string>& local_failed_tests_set );
 
   // Summarize the test results
-  void summarizeTestStats( const double program_execution_time,
-                           const bool local_success );
+  void summarizeTestStats( const bool local_success );
 
   // Add a unit test stats summary table row
   void addUnitTestStatsSummaryTableRow(

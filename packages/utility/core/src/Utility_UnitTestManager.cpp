@@ -1117,8 +1117,7 @@ int UnitTestManager::runUnitTests( int argc,
 
     test_timer->stop();
       
-    this->summarizeTestStats( test_timer->elapsed().count(),
-                              local_success );
+    this->summarizeTestStats( local_success );
 
     // All output will be redirected to the log
     d_data->redirectStdOutput( log );
@@ -1143,9 +1142,14 @@ int UnitTestManager::runUnitTests( int argc,
 
     // Summarize the finalization results
     this->summarizeFinalizationResults( log,
-                                        init_timer->elapsed().count(),
+                                        finalization_timer->elapsed().count(),
                                         local_success,
                                         global_success );
+
+    // Total program execution time
+    this->printProgramExecutionTimeHeader( init_timer->elapsed().count()+
+                                           test_timer->elapsed().count()+
+                                           finalization_timer->elapsed().count() );
   }
 
   // Summarize the test results
@@ -1847,8 +1851,7 @@ void DistributedUnitTestManager::printFinalizationStatusNotification(
 }
 
 // Summarize the test results
-void UnitTestManager::summarizeTestStats( const double program_execution_time,
-                                          const bool local_success )
+void UnitTestManager::summarizeTestStats( const bool local_success )
 {
   // Construct the summary table
   std::unique_ptr<UnitTestDataTable> summary_table;
@@ -1868,9 +1871,6 @@ void UnitTestManager::summarizeTestStats( const double program_execution_time,
   this->addUnitTestStatsSummaryTableEndResultRow( summary_table, local_success, true );
   
   this->printUnitTestStatsSummaryTable( summary_table );
-
-  // Total program execution time
-  this->printProgramExecutionTimeHeader( program_execution_time );
 }
 
 // Initialize a unit test stats summary table
@@ -2344,7 +2344,7 @@ void DistributedUnitTestManager::printUnitTestStatsSummaryTable(
 void UnitTestManager::printProgramExecutionTimeHeader(
                                           const double program_execution_time )
 {
-  d_data->getReportSink() << "Program Execution Time: ";
+  d_data->getReportSink() << "\nProgram Execution Time: ";
 
   UnitTestManager::printOperationTime( program_execution_time, false, true );
 }
