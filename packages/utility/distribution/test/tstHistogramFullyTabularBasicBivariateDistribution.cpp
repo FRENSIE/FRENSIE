@@ -3578,7 +3578,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( HistogramFullyTabularBasicBivariateDistributi
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  std::string archive_base_name( "test_histogram_partially_tabular_basic_bivariate_dist" );
+  std::string archive_base_name( "test_histogram_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
   // Create and archive some distributions
@@ -3639,7 +3639,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareHistogramFullyTabularBasicBivariateD
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  std::string archive_base_name( "test_unit_aware_histogram_partially_tabular_basic_bivariate_dist" );
+  std::string archive_base_name( "test_unit_aware_histogram_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
   // Create and archive some distributions

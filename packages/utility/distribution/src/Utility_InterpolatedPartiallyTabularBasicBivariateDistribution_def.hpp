@@ -48,7 +48,9 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  this->toStreamTabularDistImpl( os, "InterpolatedPartiallyTabularBasicBivariateDistribution" );
+  this->toStreamTabularDistImpl( os,
+                                 "InterpolatedPartiallyTabularBasicBivariateDistribution",
+                                 std::make_pair( "interp", TwoDInterpPolicy::name() ) );
 }
 
 // Save the distribution to an archive
