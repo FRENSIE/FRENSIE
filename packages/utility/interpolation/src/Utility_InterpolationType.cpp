@@ -31,10 +31,11 @@ InterpolationType convertENDFInterpolationTypeToInterpolationType(
   }
 }
 
-// Convert the InterpolationType to a string
-std::string convertInterpolationTypeToString( const InterpolationType type )
+// Convert a Utility::UnivariateDistributionType to a string
+std::string ToStringTraits<InterpolationType>::toString(
+                                                  const InterpolationType obj )
 {
-  switch( type )
+  switch( obj )
   {
   case HISTOGRAM_INTERPOLATION:
     return "Histogram";
@@ -50,11 +51,18 @@ std::string convertInterpolationTypeToString( const InterpolationType type )
     return "Gamow";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: InterpolationType " << (unsigned)type <<
+                     "InterpolationType " << (unsigned)obj <<
                      " cannot be converted to a string!" );
   }
 }
-  
+
+// Place the Utility::UnivariateDistributionType in a stream
+void ToStringTraits<InterpolationType>::toStream( std::ostream& os,
+                                                  const InterpolationType obj )
+{
+  os << ToStringTraits<InterpolationType>::toString( obj );
+}
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

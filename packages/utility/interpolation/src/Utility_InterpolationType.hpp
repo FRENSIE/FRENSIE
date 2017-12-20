@@ -13,6 +13,9 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+
 namespace Utility{
 
 /*! The interpolation types
@@ -31,20 +34,34 @@ enum InterpolationType{
 InterpolationType convertENDFInterpolationTypeToInterpolationType(
                                              const unsigned endf_interp_type );
 
-//! Convert the InterpolationType to a string
-std::string convertInterpolationTypeToString( const InterpolationType type );
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * Utility::InterpolationType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<InterpolationType>
+{
+  //! Convert a Utility::UnivariateDistributionType to a string
+  static std::string toString( const InterpolationType obj );
 
+  //! Place the Utility::UnivariateDistributionType in a stream
+  static void toStream( std::ostream& os, const InterpolationType obj );
+};
+
+} // end Utility namespace
+
+namespace std{
+  
 //! Stream operator for printing InterpolationType enums
 inline std::ostream& operator<<( std::ostream& os,
-                                 const InterpolationType type )
+                                 const Utility::InterpolationType type )
 {
-  os << convertInterpolationTypeToString( type );
+  Utility::toStream( os, type );
 
   return os;
 }
   
-  
-} // end Utility namespace
+} // end std namespace
 
 #endif // end UTILITY_INTERPOLATION_TYPE_HPP
 

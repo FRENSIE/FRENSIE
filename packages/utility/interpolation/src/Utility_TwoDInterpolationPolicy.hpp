@@ -192,8 +192,8 @@ public:
                            const ZYUpperFunctor& evaluate_z_with_y_1_functor );
 
   //! Conduct the interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T>
@@ -211,8 +211,8 @@ public:
 			ZIterator end_dep_grid_1 );
 
   //! Conduct the interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename Iterator,
 	   typename T >
   static T interpolate( const T indep_var_x_0,
@@ -261,8 +261,8 @@ public:
     QuantityTraits<typename ZYLowerFunctor::result_type>::zero() );
 
   //! Conduct unit base interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T >
@@ -280,8 +280,8 @@ public:
 				ZIterator end_dep_grid_1 );
 
   //! Conduct the interpolation between two grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename Iterator,
 	   typename T>
   static T interpolateUnitBase( const T indep_var_x_0,
@@ -309,8 +309,8 @@ public:
 				ZIterator end_dep_var_1 );
 
   //! Conduct the interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename YIterator,
 	   typename ZIterator>
@@ -328,8 +328,8 @@ public:
 				 ZIterator end_processed_dep_grid_1 );
 
   //! Conduct the interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename Iterator>
   static T interpolateProcessed( const T processed_indep_var_x_0,
@@ -357,8 +357,8 @@ public:
 				 ZIterator end_processed_dep_grid_1 );
 
   //! Conduct unit base interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename YIterator,
 	   typename ZIterator>
@@ -377,8 +377,8 @@ public:
 				      ZIterator end_processed_dep_grid_1 );
 
   //! Conduct unit base interpolation between two processed grids
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename T,
 	   typename Iterator>
   static T interpolateProcessedUnitBase(
@@ -419,8 +419,8 @@ private:
   static T calculateFuzzyUpperBound( const T upper_bound );
 
   // Interpolate on the specified y grid
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T>
@@ -431,8 +431,8 @@ private:
                                ZIterator end_dep_grid );
 
   // Interpolate on the specified processed y grid
-  template<TupleMember YIndepMember,
-	   TupleMember DepMember,
+  template<size_t YIndepMember,
+	   size_t DepMember,
 	   typename YIterator,
 	   typename ZIterator,
 	   typename T>

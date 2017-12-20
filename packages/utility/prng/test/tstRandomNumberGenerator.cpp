@@ -18,13 +18,6 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
-// Instantiation Macros.
-//---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )
-
-//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the random number generator streams can be initialized

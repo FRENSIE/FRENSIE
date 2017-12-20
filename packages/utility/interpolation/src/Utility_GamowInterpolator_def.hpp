@@ -36,8 +36,8 @@ GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::GamowUnitAwareInter
   : d_threshold( threshold )
 {
   // T must be a floating point type
-  testStaticPrecondition( (IQT::is_floating_point::value) );
-  testStaticPrecondition( (DQT::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename IQT::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename DQT::RawType>::value) );
   // Make sure the threshold is valid
   testPrecondition( !IQT::isnaninf( threshold ) );
   testPrecondition( threshold >= IQT::zero() );

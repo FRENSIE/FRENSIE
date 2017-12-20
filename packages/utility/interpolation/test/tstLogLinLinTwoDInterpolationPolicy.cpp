@@ -9,136 +9,127 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
-// Instantiation macros.
+// Testing Types
 //---------------------------------------------------------------------------//
-#define TUPLE_TYPEDEFS()					\
-  typedef Utility::Pair<double,double> pair_d_d;			\
-  typedef Utility::Pair<unsigned,double> pair_u_d;			\
-  typedef Utility::Pair<double,unsigned> pair_d_u;			\
-  typedef Utility::Trip<double,double,double> trip_d_d_d;		\
-  typedef Utility::Trip<unsigned,double,double> trip_u_d_d;		\
-  typedef Utility::Trip<unsigned,double,unsigned> trip_u_d_u;		\
-  typedef Utility::Trip<double,double,unsigned> trip_d_d_u;		\
-  typedef Utility::Trip<unsigned,unsigned,double> trip_u_u_d;		\
-  typedef Utility::Trip<double,unsigned,double> trip_d_u_d;		\
-  typedef Utility::Trip<double,unsigned,unsigned> trip_d_u_u;		\
-  typedef Utility::Quad<double,double,double,double> quad_d_d_d_d;	\
-  typedef Utility::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
-  typedef Utility::Quad<unsigned,double,double,unsigned> quad_u_d_d_u;	\
-  typedef Utility::Quad<unsigned,double,double,double> quad_u_d_d_d;	\
-  typedef Utility::Quad<double,double,double,unsigned> quad_d_d_d_u;	\
-  typedef Utility::Quad<double,double,unsigned,unsigned> quad_d_d_u_u;	\
-  typedef Utility::Quad<double,unsigned,unsigned,double> quad_d_u_u_d;	\
-  typedef Utility::Quad<unsigned,double,unsigned,double> quad_u_d_u_d;	\
-  typedef Utility::Quad<unsigned,unsigned,unsigned,double> quad_u_u_u_d; \
-  typedef Utility::Quad<unsigned,unsigned,unsigned,unsigned> quad_u_u_u_u; \
-  typedef Utility::Quad<double,unsigned,double,unsigned> quad_d_u_d_u;	\
-  typedef Utility::Quad<double,double,unsigned,double> quad_d_d_u_d;	\
-  typedef Utility::Quad<unsigned,double,unsigned,unsigned> quad_u_d_u_u; \
-  typedef Utility::Quad<double,unsigned,double,double> quad_d_u_d_d; \
-  typedef Utility::Quad<unsigned,unsigned,double,unsigned> quad_u_u_d_u; \
 
-#define UNIT_TEST_INSTANTIATION_2_TUPLE( type, name ) \
-  TUPLE_TYPEDEFS() \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, FIRST, pair_d_d, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, SECOND, pair_d_d, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, SECOND, FIRST, pair_d_d, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, SECOND, SECOND, pair_d_d, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, FIRST, pair_d_u, pair_d_u ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, SECOND, SECOND, pair_u_d, pair_u_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, FIRST, trip_d_d_d, trip_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, SECOND, trip_d_d_d, trip_d_d_u ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, THIRD, trip_d_d_d, trip_u_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, SECOND, FIRST, trip_u_d_d, trip_d_u_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, THIRD, FIRST, trip_d_u_d, trip_d_u_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, THIRD, SECOND, trip_d_u_d, trip_u_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, FIRST, quad_d_d_d_d, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, SECOND, quad_d_d_d_d, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, THIRD, quad_d_d_d_d, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FIRST, FOURTH, quad_d_d_d_d, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, SECOND, FIRST, quad_d_d_d_d, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, THIRD, SECOND, quad_d_d_d_d, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT( type, name, FOURTH, THIRD, quad_u_d_d_d, quad_u_d_d_d ) \
+typedef std::tuple<
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double>,
+             std::integral_constant<size_t,0>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double>,
+             std::integral_constant<size_t,1>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double>,
+             std::integral_constant<size_t,0>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double>,
+             std::integral_constant<size_t,1>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,unsigned>,
+             std::integral_constant<size_t,0>,std::tuple<double,unsigned> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<unsigned,double>,
+             std::integral_constant<size_t,1>,std::tuple<unsigned,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double,double>,
+             std::integral_constant<size_t,0>,std::tuple<double,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double,double>,
+             std::integral_constant<size_t,1>,std::tuple<double,double,unsigned> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double,double>,
+             std::integral_constant<size_t,2>,std::tuple<unsigned,double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<unsigned,double,double>,
+             std::integral_constant<size_t,0>,std::tuple<double,unsigned,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::tuple<double,unsigned,double>,
+             std::integral_constant<size_t,0>,std::tuple<double,unsigned,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::tuple<double,unsigned,double>,
+             std::integral_constant<size_t,1>,std::tuple<unsigned,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double,double,double>,
+             std::integral_constant<size_t,0>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double,double,double>,
+             std::integral_constant<size_t,2>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double,double,double>,
+             std::integral_constant<size_t,3>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double,double,double>,
+             std::integral_constant<size_t,0>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::tuple<double,double,double,double>,
+             std::integral_constant<size_t,1>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,3>,std::tuple<unsigned,double,double,double>,
+             std::integral_constant<size_t,2>,std::tuple<unsigned,double,double,double> >
+  > TestTwoTupleTwoElementTypes;
 
-#define UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( type, name ) \
-  TUPLE_TYPEDEFS() \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, SECOND, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, FIRST, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, SECOND, trip_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, THIRD, trip_d_u_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, FIRST, trip_d_d_u ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, THIRD, trip_u_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, FIRST, trip_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, SECOND, trip_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, SECOND, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, THIRD, quad_d_u_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, FOURTH, quad_d_d_u_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, FIRST, quad_d_d_d_u ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, THIRD, quad_u_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, FOURTH, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, FIRST, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, SECOND, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, FOURTH, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FOURTH, FIRST, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FOURTH, SECOND, quad_d_d_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT( type, name, FOURTH, THIRD, quad_d_u_d_d ) \
+typedef std::tuple<
+  std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,1>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,0>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,1>,std::tuple<double,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,2>,std::tuple<double,unsigned,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,0>,std::tuple<double,double,unsigned> >,
+  std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,2>,std::tuple<unsigned,double,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,0>,std::tuple<double,double,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,1>,std::tuple<double,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,1>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,2>,std::tuple<double,unsigned,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::integral_constant<size_t,3>,std::tuple<double,double,unsigned,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,0>,std::tuple<double,double,double,unsigned> >,
+  std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,2>,std::tuple<unsigned,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::integral_constant<size_t,3>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,0>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,1>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::integral_constant<size_t,3>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,3>,std::integral_constant<size_t,0>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,3>,std::integral_constant<size_t,1>,std::tuple<double,double,double,double> >,
+  std::tuple<std::integral_constant<size_t,3>,std::integral_constant<size_t,2>,std::tuple<double,unsigned,double,double> >
+  > TestTupleTwoElementTypes;
 
-#define UNIT_TEST_INSTANTIATION_1_TUPLE( type, name ) \
-  TUPLE_TYPEDEFS() \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, pair_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, trip_d_u_d ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, trip_d_d_u ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, trip_u_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, FIRST, quad_d_u_d_d ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, quad_d_d_u_d ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, quad_d_d_d_u ) \
-  UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, FOURTH, quad_u_d_d_d ) \
+typedef std::tuple<
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,unsigned,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double,unsigned> >,
+  std::tuple<std::integral_constant<size_t,2>,std::tuple<unsigned,double,double> >,
+  std::tuple<std::integral_constant<size_t,0>,std::tuple<double,unsigned,double,double> >,
+  std::tuple<std::integral_constant<size_t,1>,std::tuple<double,double,unsigned,double> >,
+  std::tuple<std::integral_constant<size_t,2>,std::tuple<double,double,double,unsigned> >,
+  std::tuple<std::integral_constant<size_t,3>,std::tuple<unsigned,double,double,double> >
+  > TestTupleElementTypes;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
-					      LogLinLin,
-					      interpolate_separate_tuple_grids,
-					      ymember,
-					      zmember,
-					      ytuple,
-					      ztuple )
-
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolate_separate_tuple_grids,
+                                   TestTwoTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, ytuple );
+  FETCH_TEMPLATE_PARAM( 2, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 3, ztuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
-  Teuchos::Array<ytuple> y_0_grid( 4 );
+  std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0], -10.0 );
   Utility::set<ymember>( y_0_grid[1], -1.0 );
   Utility::set<ymember>( y_0_grid[2], 1.0 );
   Utility::set<ymember>( y_0_grid[3], 10.0 );
 
-  Teuchos::Array<ztuple> z_0_grid( 4 );
+  std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 100.0 );
   Utility::set<zmember>( z_0_grid[1], 0.1 );
   Utility::set<zmember>( z_0_grid[2], 1.0 );
   Utility::set<zmember>( z_0_grid[3], 10.0 );
 
-  Teuchos::Array<ytuple> y_1_grid( 3 );
+  std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], -10.0 );
   Utility::set<ymember>( y_1_grid[1], -5.0 );
   Utility::set<ymember>( y_1_grid[2], 10.0 );
 
-  Teuchos::Array<ztuple> z_1_grid( 3 );
+  std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 50.0 );
   Utility::set<zmember>( z_1_grid[1], 5.0 );
   Utility::set<zmember>( z_1_grid[2], 0.5 );
@@ -156,7 +147,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
 
   x = 0.0;
 
@@ -173,7 +164,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
 
   x = 1.0;
 
@@ -190,23 +181,25 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_TUPLE( LogLinLin, interpolate_separate_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
-					      LogLinLin,
-					      interpolate_combined_tuple_grids,
-					      ymember,
-					      zmember,
-					      tuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolate_combined_tuple_grids,
+                                   TestTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 2, tuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
-  Teuchos::Array<tuple> grid_0( 4 );
+  std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0], -10.0 );
   Utility::set<ymember>( grid_0[1], -1.0 );
   Utility::set<ymember>( grid_0[2], 1.0 );
@@ -216,7 +209,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   Utility::set<zmember>( grid_0[2], 1.0 );
   Utility::set<zmember>( grid_0[3], 10.0 );
 
-  Teuchos::Array<tuple> grid_1( 3 );
+  std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], -10.0 );
   Utility::set<ymember>( grid_1[1], -5.0 );
   Utility::set<ymember>( grid_1[2], 10.0 );
@@ -233,7 +226,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
 
   x = 0.0;
 
@@ -246,7 +239,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							grid_1.begin(),
 							grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
 
   x = 1.0;
 
@@ -259,36 +252,33 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							grid_1.begin(),
 							grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( LogLinLin,
-					  interpolate_combined_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear interpolation policy between four points
 // can be done
-TEUCHOS_UNIT_TEST( LogLinLin, interpolate_no_tuple_grids )
+FRENSIE_UNIT_TEST( LogLinLin, interpolate_no_tuple_grids )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
-  Teuchos::Array<double> y_0_grid( 4 );
+  std::vector<double> y_0_grid( 4 );
   y_0_grid[0] = -10.0;
   y_0_grid[1] = -1.0;
   y_0_grid[2] = 1.0;
   y_0_grid[3] = 10.0;
 
-  Teuchos::Array<double> z_0_grid( 4 );
+  std::vector<double> z_0_grid( 4 );
   z_0_grid[0] = 100.0;
   z_0_grid[1] = 0.1;
   z_0_grid[2] = 1.0;
   z_0_grid[3] = 10.0;
 
-  Teuchos::Array<double> y_1_grid( 3 );
+  std::vector<double> y_1_grid( 3 );
   y_1_grid[0] = -10.0;
   y_1_grid[1] = -5.0;
   y_1_grid[2] = 10.0;
 
-  Teuchos::Array<double> z_1_grid( 3 );
+  std::vector<double> z_1_grid( 3 );
   z_1_grid[0] = 50.0;
   z_1_grid[1] = 5.0;
   z_1_grid[2] = 0.5;
@@ -306,7 +296,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolate_no_tuple_grids )
 					      z_1_grid.begin(),
 					      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
 
   x = 0.0;
 
@@ -323,7 +313,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolate_no_tuple_grids )
 				       z_1_grid.begin(),
 				       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
 
   x = 1.0;
 
@@ -340,12 +330,12 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolate_no_tuple_grids )
 				       z_1_grid.begin(),
 				       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the intermediate grid length can be calculated
-TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateGridLength )
+FRENSIE_UNIT_TEST( LogLinLin, calculateIntermediateGridLength )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double L0 = 3.0, L1 = 5.0;
@@ -353,24 +343,24 @@ TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateGridLength )
   double Lx = Utility::LogLinLin::calculateIntermediateGridLength(
 							   x0, x1, x, L0, L1 );
 
-  TEST_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
 
   x = 0.0;
 
   Lx = Utility::LogLinLin::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
 
-  TEST_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
 
   x = 1.0;
 
   Lx = Utility::LogLinLin::calculateIntermediateGridLength(x0, x1, x, L0, L1 );
 
-  TEST_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the intermediate grid min value can be calculated
-TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateGridLimit )
+FRENSIE_UNIT_TEST( LogLinLin, calculateIntermediateGridLimit )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y0_min = -10.0, y1_min = 10.0;
@@ -378,54 +368,58 @@ TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateGridLimit )
   double yx_min = Utility::LogLinLin::calculateIntermediateGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( yx_min, 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, 0.0, 1e-15 );
 
   x = 0.0;
 
   yx_min = Utility::LogLinLin::calculateIntermediateGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( yx_min, -10.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -10.0, 1e-15 );
 
   x = 1.0;
 
   yx_min = Utility::LogLinLin::calculateIntermediateGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( yx_min, 10.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, 10.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
-				      LogLinLin,
-				      interpolateUnitBase_separate_tuple_grids,
-				      ymember,
-				      zmember,
-				      ytuple,
-				      ztuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolateUnitBase_separate_tuple_grids,
+                                   TestTwoTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, ytuple );
+  FETCH_TEMPLATE_PARAM( 2, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 3, ztuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
 
-  Teuchos::Array<ytuple> y_0_grid( 4 );
+  std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0], -2.0 );
   Utility::set<ymember>( y_0_grid[1], -1.0 );
   Utility::set<ymember>( y_0_grid[2], 1.0 );
   Utility::set<ymember>( y_0_grid[3], 2.0 );
 
-  Teuchos::Array<ztuple> z_0_grid( 4 );
+  std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 1e-3 );
   Utility::set<zmember>( z_0_grid[1], 1e-2 );
   Utility::set<zmember>( z_0_grid[2], 1e-1 );
   Utility::set<zmember>( z_0_grid[3], 1.0 );
 
-  Teuchos::Array<ytuple> y_1_grid( 3 );
+  std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], -1.0 );
   Utility::set<ymember>( y_1_grid[1], 0.0 );
   Utility::set<ymember>( y_1_grid[2], 2.0 );
 
-  Teuchos::Array<ztuple> z_1_grid( 3 );
+  std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 1e-2 );
   Utility::set<zmember>( z_1_grid[1], 1e-1 );
   Utility::set<zmember>( z_1_grid[2], 1.0 );
@@ -444,7 +438,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
 
   y = -1.5; // min possible y at x = 0.5
 
@@ -462,7 +456,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
 
   y = 2.0; // max possible y at x = 0.5
 
@@ -480,7 +474,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 0.0;
@@ -499,7 +493,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
 
   y = -2.0;
 
@@ -517,7 +511,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
   y = 2.0;
 
@@ -535,7 +529,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 1.0;
@@ -554,7 +548,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.1, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.1, 1e-12 );
 
   y = -1.0;
 
@@ -572,7 +566,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
   y = 2.0;
 
@@ -590,25 +584,26 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_TUPLE( LogLinLin,
-				 interpolateUnitBase_separate_tuple_grids);
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
-				      LogLinLin,
-				      interpolateUnitBase_combined_tuple_grids,
-				      ymember,
-				      zmember,
-				      tuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolateUnitBase_combined_tuple_grids,
+                                   TestTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 2, tuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
 
-  Teuchos::Array<tuple> grid_0( 4 );
+  std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0], -2.0 );
   Utility::set<ymember>( grid_0[1], -1.0 );
   Utility::set<ymember>( grid_0[2], 1.0 );
@@ -618,7 +613,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   Utility::set<zmember>( grid_0[2], 1e-1 );
   Utility::set<zmember>( grid_0[3], 1.0 );
 
-  Teuchos::Array<tuple> grid_1( 3 );
+  std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], -1.0 );
   Utility::set<ymember>( grid_1[1], 0.0 );
   Utility::set<ymember>( grid_1[2], 2.0 );
@@ -636,7 +631,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
 
   y = -1.5; // min possible y at x = 0.5
 
@@ -650,7 +645,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
 
   y = 2.0; // max possible y at x = 0.5
 
@@ -664,7 +659,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 0.0;
@@ -679,7 +674,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
 
   y = -2.0;
 
@@ -693,7 +688,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
   y = 2.0;
 
@@ -707,7 +702,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 1.0;
@@ -722,7 +717,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.1, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.1, 1e-12 );
 
   y = -1.0;
 
@@ -736,7 +731,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
   y = 2.0;
 
@@ -750,38 +745,34 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE(
-			            LogLinLin,
-				    interpolateUnitBase_combined_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear unit base interpolation policy between
 // four points can be done
-TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
+FRENSIE_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
 
-  Teuchos::Array<double> y_0_grid( 4 );
+  std::vector<double> y_0_grid( 4 );
   y_0_grid[0] = -2.0;
   y_0_grid[1] = -1.0;
   y_0_grid[2] = 1.0;
   y_0_grid[3] = 2.0;
 
-  Teuchos::Array<double> z_0_grid( 4 );
+  std::vector<double> z_0_grid( 4 );
   z_0_grid[0] = 1e-3;
   z_0_grid[1] = 1e-2;
   z_0_grid[2] = 1e-1;
   z_0_grid[3] = 1.0;
 
-  Teuchos::Array<double> y_1_grid( 3 );
+  std::vector<double> y_1_grid( 3 );
   y_1_grid[0] = -1.0;
   y_1_grid[1] = 0.0;
   y_1_grid[2] = 2.0;
 
-  Teuchos::Array<double> z_1_grid( 3 );
+  std::vector<double> z_1_grid( 3 );
   z_1_grid[0] = 1e-2;
   z_1_grid[1] = 1e-1;
   z_1_grid[2] = 1.0;
@@ -799,7 +790,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 						      z_1_grid.begin(),
 						      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
 
   y = -1.5; // min possible y at x = 0.5
 
@@ -816,7 +807,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
 
   y = 2.0; // max possible y at x = 0.5
 
@@ -833,7 +824,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 0.0;
@@ -851,7 +842,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
 
   y = -2.0;
 
@@ -868,7 +859,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
   y = 2.0;
 
@@ -885,7 +876,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 1.0;
@@ -903,7 +894,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.1, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.1, 1e-12 );
 
   y = -1.0;
 
@@ -920,7 +911,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
   y = 2.0;
 
@@ -937,97 +928,100 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateUnitBase_no_tuple_grids )
 					       z_1_grid.begin(),
 					       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the dependent variable can be processed
-TEUCHOS_UNIT_TEST( LogLinLin, processDepVar )
+FRENSIE_UNIT_TEST( LogLinLin, processDepVar )
 {
-  TEST_EQUALITY_CONST( log(0.1), Utility::LogLinLin::processDepVar( 0.1 ) );
-  TEST_EQUALITY_CONST( log(10.0), Utility::LogLinLin::processDepVar( 10.0 ) );
+  FRENSIE_CHECK_EQUAL( std::log(0.1), Utility::LogLinLin::processDepVar( 0.1 ) );
+  FRENSIE_CHECK_EQUAL( std::log(10.0), Utility::LogLinLin::processDepVar( 10.0 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a processed dependent variable can be recovered
-TEUCHOS_UNIT_TEST( LogLinLin, recoverProcessedDepVar )
+FRENSIE_UNIT_TEST( LogLinLin, recoverProcessedDepVar )
 {
-  TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 		       0.1,
-		       Utility::LogLinLin::recoverProcessedDepVar(log(0.1)),
+		       Utility::LogLinLin::recoverProcessedDepVar(std::log(0.1)),
 		       1e-15 );
-  TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
 		       10.0,
-		       Utility::LogLinLin::recoverProcessedDepVar(log(10.0)),
+		       Utility::LogLinLin::recoverProcessedDepVar(std::log(10.0)),
 		       1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the second independent variable can be processed
-TEUCHOS_UNIT_TEST( LogLinLin, processSecondIndepVar )
+FRENSIE_UNIT_TEST( LogLinLin, processSecondIndepVar )
 {
-  TEST_EQUALITY_CONST( -1.0, Utility::LogLinLin::processSecondIndepVar(-1.0) );
-  TEST_EQUALITY_CONST( 0.0, Utility::LogLinLin::processSecondIndepVar(0.0) );
-  TEST_EQUALITY_CONST( 1.0, Utility::LogLinLin::processSecondIndepVar(1.0) );
+  FRENSIE_CHECK_EQUAL( -1.0, Utility::LogLinLin::processSecondIndepVar(-1.0) );
+  FRENSIE_CHECK_EQUAL( 0.0, Utility::LogLinLin::processSecondIndepVar(0.0) );
+  FRENSIE_CHECK_EQUAL( 1.0, Utility::LogLinLin::processSecondIndepVar(1.0) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a processed second independent variable can be recovered
-TEUCHOS_UNIT_TEST( LogLinLin, recoverProcessedSecondIndepVar )
+FRENSIE_UNIT_TEST( LogLinLin, recoverProcessedSecondIndepVar )
 {
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		    -1.0,
 		    Utility::LogLinLin::recoverProcessedSecondIndepVar(-1.0) );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		    0.0,
 		    Utility::LogLinLin::recoverProcessedSecondIndepVar(0.0) );
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		    1.0,
 		    Utility::LogLinLin::recoverProcessedSecondIndepVar(1.0) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the first independent variable can be processed
-TEUCHOS_UNIT_TEST( LogLinLin, processFirstIndepVar )
+FRENSIE_UNIT_TEST( LogLinLin, processFirstIndepVar )
 {
-  TEST_EQUALITY_CONST( -1.0, Utility::LogLinLin::processFirstIndepVar(-1.0) );
-  TEST_EQUALITY_CONST( 0.0, Utility::LogLinLin::processFirstIndepVar(0.0) );
-  TEST_EQUALITY_CONST( 1.0, Utility::LogLinLin::processFirstIndepVar(1.0) );
+  FRENSIE_CHECK_EQUAL( -1.0, Utility::LogLinLin::processFirstIndepVar(-1.0) );
+  FRENSIE_CHECK_EQUAL( 0.0, Utility::LogLinLin::processFirstIndepVar(0.0) );
+  FRENSIE_CHECK_EQUAL( 1.0, Utility::LogLinLin::processFirstIndepVar(1.0) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a processed first independent variable can be processed
-TEUCHOS_UNIT_TEST( LogLinLin, recoverProcessedFirstIndepVar )
+FRENSIE_UNIT_TEST( LogLinLin, recoverProcessedFirstIndepVar )
 {
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		     -1.0,
 		     Utility::LogLinLin::recoverProcessedFirstIndepVar(-1.0) );
-  TEST_EQUALITY_CONST(0.0,
+  FRENSIE_CHECK_EQUAL(0.0,
 		      Utility::LogLinLin::recoverProcessedFirstIndepVar(0.0) );
-  TEST_EQUALITY_CONST(1.0,
+  FRENSIE_CHECK_EQUAL(1.0,
 		      Utility::LogLinLin::recoverProcessedFirstIndepVar(1.0) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
-				     LogLinLin,
-				     interpolateProcessed_separate_tuple_grids,
-				     ymember,
-				     zmember,
-				     ytuple,
-				     ztuple )
-
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolateProcessed_separate_tuple_grids,
+                                   TestTwoTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, ytuple );
+  FETCH_TEMPLATE_PARAM( 2, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 3, ztuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
-  Teuchos::Array<ytuple> y_0_grid( 4 );
+  std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0], -10.0 );
   Utility::set<ymember>( y_0_grid[1], -1.0 );
   Utility::set<ymember>( y_0_grid[2], 1.0 );
   Utility::set<ymember>( y_0_grid[3], 10.0 );
 
-  Teuchos::Array<ztuple> z_0_grid( 4 );
+  std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0],
 			 Utility::LogLinLin::processDepVar(100.0) );
   Utility::set<zmember>( z_0_grid[1],
@@ -1037,12 +1031,12 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   Utility::set<zmember>( z_0_grid[3],
 			 Utility::LogLinLin::processDepVar(10.0) );
 
-  Teuchos::Array<ytuple> y_1_grid( 3 );
+  std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], -10.0 );
   Utility::set<ymember>( y_1_grid[1], -5.0 );
   Utility::set<ymember>( y_1_grid[2], 10.0 );
 
-  Teuchos::Array<ztuple> z_1_grid( 3 );
+  std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0],
 			 Utility::LogLinLin::processDepVar(50.0) );
   Utility::set<zmember>( z_1_grid[1],
@@ -1064,7 +1058,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
 
   x = 0.0;
 
@@ -1082,7 +1076,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
 
   x = 1.0;
 
@@ -1100,24 +1094,25 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_TUPLE( LogLinLin,
-				 interpolateProcessed_separate_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear interpolation policy between four points
 // can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
-				     LogLinLin,
-				     interpolateProcessed_combined_tuple_grids,
-				     ymember,
-				     zmember,
-				     tuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolateProcessed_combined_tuple_grids,
+                                   TestTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 2, tuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
-  Teuchos::Array<tuple> grid_0( 4 );
+  std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0], -10.0 );
   Utility::set<ymember>( grid_0[1], -1.0 );
   Utility::set<ymember>( grid_0[2], 1.0 );
@@ -1131,7 +1126,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   Utility::set<zmember>( grid_0[3],
 			 Utility::LogLinLin::processDepVar(10.0) );
 
-  Teuchos::Array<tuple> grid_1( 3 );
+  std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], -10.0 );
   Utility::set<ymember>( grid_1[1], -5.0 );
   Utility::set<ymember>( grid_1[2], 10.0 );
@@ -1152,7 +1147,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
 
   x = 0.0;
 
@@ -1166,7 +1161,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							grid_1.begin(),
 							grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
 
   x = 1.0;
 
@@ -1180,36 +1175,33 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							grid_1.begin(),
 							grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE( LogLinLin,
-					  interpolateProcessed_combined_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear interpolation policy between four points
 // can be done
-TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessed_no_tuple_grids )
+FRENSIE_UNIT_TEST( LogLinLin, interpolateProcessed_no_tuple_grids )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
-  Teuchos::Array<double> y_0_grid( 4 );
+  std::vector<double> y_0_grid( 4 );
   y_0_grid[0] = -10.0;
   y_0_grid[1] = -1.0;
   y_0_grid[2] = 1.0;
   y_0_grid[3] = 10.0;
 
-  Teuchos::Array<double> z_0_grid( 4 );
+  std::vector<double> z_0_grid( 4 );
   z_0_grid[0] = Utility::LogLinLin::processDepVar(100.0);
   z_0_grid[1] = Utility::LogLinLin::processDepVar(0.1);
   z_0_grid[2] = Utility::LogLinLin::processDepVar(1.0);
   z_0_grid[3] = Utility::LogLinLin::processDepVar(10.0);
 
-  Teuchos::Array<double> y_1_grid( 3 );
+  std::vector<double> y_1_grid( 3 );
   y_1_grid[0] = -10.0;
   y_1_grid[1] = -5.0;
   y_1_grid[2] = 10.0;
 
-  Teuchos::Array<double> z_1_grid( 3 );
+  std::vector<double> z_1_grid( 3 );
   z_1_grid[0] = Utility::LogLinLin::processDepVar(50.0);
   z_1_grid[1] = Utility::LogLinLin::processDepVar(5.0);
   z_1_grid[2] = Utility::LogLinLin::processDepVar(0.5);
@@ -1227,7 +1219,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessed_no_tuple_grids )
 						       z_1_grid.begin(),
 						       z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.8566794230113355, 1e-12 );
 
   x = 0.0;
 
@@ -1244,7 +1236,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessed_no_tuple_grids )
 						z_1_grid.begin(),
 						z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.316227766016838, 1e-12 );
 
   x = 1.0;
 
@@ -1261,12 +1253,12 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessed_no_tuple_grids )
 						z_1_grid.begin(),
 						z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 2.320794416806389, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the intermediate grid length can be calculated
-TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateGridLengthProcessed )
+FRENSIE_UNIT_TEST( LogLinLin, calculateIntermediateGridLengthProcessed )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double L0 = 3.0, L1 = 5.0;
@@ -1274,26 +1266,26 @@ TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateGridLengthProcessed )
   double Lx = Utility::LogLinLin::calculateIntermediateGridLengthProcessed(
 							   x0, x1, x, L0, L1 );
 
-  TEST_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
 
   x = 0.0;
 
   Lx = Utility::LogLinLin::calculateIntermediateGridLengthProcessed(
 							   x0, x1, x, L0, L1 );
 
-  TEST_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
 
   x = 1.0;
 
   Lx = Utility::LogLinLin::calculateIntermediateGridLengthProcessed(
 							   x0, x1, x, L0, L1 );
 
-  TEST_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the intermediate grid min value can be calculated
-TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateProcessedGridLimit )
+FRENSIE_UNIT_TEST( LogLinLin, calculateIntermediateProcessedGridLimit )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y0_min = -10.0, y1_min = 10.0;
@@ -1301,43 +1293,47 @@ TEUCHOS_UNIT_TEST( LogLinLin, calculateIntermediateProcessedGridLimit )
   double yx_min = Utility::LogLinLin::calculateIntermediateProcessedGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( yx_min, 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, 0.0, 1e-15 );
 
   x = 0.0;
 
   yx_min = Utility::LogLinLin::calculateIntermediateProcessedGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( yx_min, -10.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, -10.0, 1e-15 );
 
   x = 1.0;
 
   yx_min = Utility::LogLinLin::calculateIntermediateProcessedGridLimit(
 						   x0, x1, x, y0_min, y1_min );
 
-  TEST_FLOATING_EQUALITY( yx_min, 10.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, 10.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
-			     LogLinLin,
-			     interpolateProcessedUnitBase_separate_tuple_grids,
-			     ymember,
-			     zmember,
-			     ytuple,
-			     ztuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolateProcessedUnitBase_separate_tuple_grids,
+                                   TestTwoTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, ytuple );
+  FETCH_TEMPLATE_PARAM( 2, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 3, ztuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
 
-  Teuchos::Array<ytuple> y_0_grid( 4 );
+  std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0], -2.0 );
   Utility::set<ymember>( y_0_grid[1], -1.0 );
   Utility::set<ymember>( y_0_grid[2], 1.0 );
   Utility::set<ymember>( y_0_grid[3], 2.0 );
 
-  Teuchos::Array<ztuple> z_0_grid( 4 );
+  std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0],
 			 Utility::LogLinLin::processDepVar(1e-3) );
   Utility::set<zmember>( z_0_grid[1],
@@ -1347,12 +1343,12 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
   Utility::set<zmember>( z_0_grid[3],
 			 Utility::LogLinLin::processDepVar(1.0) );
 
-  Teuchos::Array<ytuple> y_1_grid( 3 );
+  std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0], -1.0 );
   Utility::set<ymember>( y_1_grid[1], 0.0 );
   Utility::set<ymember>( y_1_grid[2], 2.0 );
 
-  Teuchos::Array<ztuple> z_1_grid( 3 );
+  std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0],
 			 Utility::LogLinLin::processDepVar(1e-2) );
   Utility::set<zmember>( z_1_grid[1],
@@ -1374,7 +1370,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
 
   y = -1.5; // min possible y at x = 0.5
 
@@ -1392,7 +1388,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
 
   y = 2.0; // max possible y at x = 0.5
 
@@ -1410,7 +1406,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 0.0;
@@ -1429,7 +1425,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
 
   y = -2.0;
 
@@ -1447,7 +1443,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
   y = 2.0;
 
@@ -1465,7 +1461,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 1.0;
@@ -1484,7 +1480,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.1, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.1, 1e-12 );
 
   y = -1.0;
 
@@ -1502,7 +1498,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
   y = 2.0;
 
@@ -1520,26 +1516,26 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(
 							      z_1_grid.begin(),
 							      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_TUPLE(
-			   LogLinLin,
-			   interpolateProcessedUnitBase_separate_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear unit base interpolation policy between
 // four points can be done
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
-			     LogLinLin,
-			     interpolateProcessedUnitBase_combined_tuple_grids,
-			     ymember,
-			     zmember,
-			     tuple )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LogLinLin,
+                                   interpolateProcessedUnitBase_combined_tuple_grids,
+                                   TestTupleTwoElementTypes )
 {
+  FETCH_TEMPLATE_PARAM( 0, WrappedYMember );
+  FETCH_TEMPLATE_PARAM( 1, WrappedZMember );
+  FETCH_TEMPLATE_PARAM( 2, tuple );
+
+  constexpr const size_t ymember = WrappedYMember::value;
+  constexpr const size_t zmember = WrappedZMember::value;
+  
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
 
-  Teuchos::Array<tuple> grid_0( 4 );
+  std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0], -2.0 );
   Utility::set<ymember>( grid_0[1], -1.0 );
   Utility::set<ymember>( grid_0[2], 1.0 );
@@ -1553,7 +1549,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
   Utility::set<zmember>( grid_0[3],
 			 Utility::LogLinLin::processDepVar(1.0) );
 
-  Teuchos::Array<tuple> grid_1( 3 );
+  std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0], -1.0 );
   Utility::set<ymember>( grid_1[1], 0.0 );
   Utility::set<ymember>( grid_1[2], 2.0 );
@@ -1574,7 +1570,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
 
   y = -1.5; // min possible y at x = 0.5
 
@@ -1588,7 +1584,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
 
   y = 2.0; // max possible y at x = 0.5
 
@@ -1602,7 +1598,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 0.0;
@@ -1617,7 +1613,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
 
   y = -2.0;
 
@@ -1631,7 +1627,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
   y = 2.0;
 
@@ -1645,7 +1641,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 1.0;
@@ -1660,7 +1656,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.1, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.1, 1e-12 );
 
   y = -1.0;
 
@@ -1674,7 +1670,7 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
   y = 2.0;
 
@@ -1688,38 +1684,34 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(
 							      grid_1.begin(),
 							      grid_1.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 }
-
-UNIT_TEST_INSTANTIATION_2_MEMBER_1_TUPLE(
-			   LogLinLin,
-			   interpolateProcessedUnitBase_combined_tuple_grids );
 
 //---------------------------------------------------------------------------//
 // Check that the log-linear-linear unit base interpolation policy between
 // four points can be done
-TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
+FRENSIE_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5, y = 0.0;
 
-  Teuchos::Array<double> y_0_grid( 4 );
+  std::vector<double> y_0_grid( 4 );
   y_0_grid[0] = -2.0;
   y_0_grid[1] = -1.0;
   y_0_grid[2] = 1.0;
   y_0_grid[3] = 2.0;
 
-  Teuchos::Array<double> z_0_grid( 4 );
+  std::vector<double> z_0_grid( 4 );
   z_0_grid[0] = Utility::LogLinLin::processDepVar(1e-3);
   z_0_grid[1] = Utility::LogLinLin::processDepVar(1e-2);
   z_0_grid[2] = Utility::LogLinLin::processDepVar(1e-1);
   z_0_grid[3] = Utility::LogLinLin::processDepVar(1.0);
 
-  Teuchos::Array<double> y_1_grid( 3 );
+  std::vector<double> y_1_grid( 3 );
   y_1_grid[0] = -1.0;
   y_1_grid[1] = 0.0;
   y_1_grid[2] = 2.0;
 
-  Teuchos::Array<double> z_1_grid( 3 );
+  std::vector<double> z_1_grid( 3 );
   z_1_grid[0] = Utility::LogLinLin::processDepVar(1e-2);
   z_1_grid[1] = Utility::LogLinLin::processDepVar(1e-1);
   z_1_grid[2] = Utility::LogLinLin::processDepVar(1.0);
@@ -1738,7 +1730,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 						      z_1_grid.begin(),
 						      z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.04941713361323838, 1e-12 );
 
   y = -1.5; // min possible y at x = 0.5
 
@@ -1755,7 +1747,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0026826957952797263, 1e-12 );
 
   y = 2.0; // max possible y at x = 0.5
 
@@ -1772,7 +1764,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 0.0;
@@ -1790,7 +1782,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.0316227766016838, 1e-12 );
 
   y = -2.0;
 
@@ -1807,7 +1799,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-3, 1e-12 );
 
   y = 2.0;
 
@@ -1824,7 +1816,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 0.0;
   x = 1.0;
@@ -1842,7 +1834,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 0.1, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.1, 1e-12 );
 
   y = -1.0;
 
@@ -1859,7 +1851,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1e-2, 1e-12 );
 
   y = 2.0;
 
@@ -1876,7 +1868,7 @@ TEUCHOS_UNIT_TEST( LogLinLin, interpolateProcessedUnitBase_no_tuple_grids )
 							z_1_grid.begin(),
 							z_1_grid.end() );
 
-  TEST_FLOATING_EQUALITY( z, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

@@ -36,7 +36,8 @@ enum UnivariateDistributionType{
   WATT_DISTRIBUTION
 };
 
-/*! Specializatio of Utility::ToStringTraits for Utility::UnivariateDistributionType
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * Utility::UnivariateDistributionType
  * \ingroup to_string_traits
  */
 template<>

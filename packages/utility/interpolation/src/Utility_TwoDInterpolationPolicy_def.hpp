@@ -178,8 +178,8 @@ inline typename ZYLowerFunctor::result_type TwoDInterpolationPolicyImpl<ZYInterp
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename YIterator,
 	 typename ZIterator,
 	 typename T >
@@ -274,8 +274,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename Iterator,
 	 typename T >
 inline T
@@ -530,8 +530,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename YIterator,
 	 typename ZIterator,
 	 typename T>
@@ -618,8 +618,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename Iterator,
 	 typename T>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
@@ -693,8 +693,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename T,
 	 typename YIterator,
 	 typename ZIterator>
@@ -804,8 +804,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * policy does not do extrapolation.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename T,
 	 typename Iterator>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateProcessed(
@@ -879,8 +879,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename T,
 	 typename YIterator,
 	 typename ZIterator>
@@ -1028,8 +1028,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
  * a value of 0.0 will be returned from this method.
  */
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename T,
 	 typename Iterator>
 inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateProcessedUnitBase(
@@ -1255,8 +1255,8 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::calculateIn
 
 // Interpolate on the specified y grid
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename YIterator,
 	 typename ZIterator,
 	 typename T>
@@ -1342,8 +1342,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
 
 // Interpolate on the specified processed y grid
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<TupleMember YIndepMember,
-	 TupleMember DepMember,
+template<size_t YIndepMember,
+	 size_t DepMember,
 	 typename YIterator,
 	 typename ZIterator,
 	 typename T>

@@ -74,13 +74,14 @@ MACRO(FRENSIE_ADD_TEST TEST_NAME_ROOT)
     LIST(APPEND FRENSIE_ADD_TEST_EXTRA_ARGS "--report_level=detailed")
   ENDIF()
 
-  IF(${FRENSIE_ADD_TEST_OPENMP_TEST})
-    LIST(APPEND FRENSIE_ADD_TEST_EXTRA_LABLES "openmp")
-  ENDIF()
-
   # Set the test labels
   SET(TEST_LABELS ${PACKAGE_LIBRARY})
   LIST(APPEND TEST_LABELS ${FRENSIE_ADD_TEST_EXTRA_LABELS})
+
+  # Add the openmp label if this test has been specified as an openmp test
+  IF(${FRENSIE_ADD_TEST_OPENMP_TEST})
+    LIST(APPEND TEST_LABELS openmp)
+  ENDIF()
 
   # Set the test name and preamble
   IF("${FRENSIE_ADD_TEST_MPI_PROCS}" STREQUAL "" OR
