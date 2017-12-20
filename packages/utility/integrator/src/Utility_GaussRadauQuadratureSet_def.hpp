@@ -12,15 +12,12 @@
 // std Includes
 #include <cmath>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_ConstTypeTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 
@@ -53,8 +50,8 @@ void GaussRadauQuadratureSet::integrate(
   // Make sure the integration limits are valid
   testPrecondition( lower_limit < upper_limit );
   // Make sure the integration limits are bounded
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( lower_limit ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( upper_limit ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( lower_limit ) );
+  testPrecondition( !Utility::QuantityTraits<double>::isnaninf( upper_limit ) );
 
   // Get the Radau quadrature weights and nodes
   std::vector<double> nodes( d_polynomial_order + 1 ),

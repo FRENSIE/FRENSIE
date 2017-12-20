@@ -1,20 +1,12 @@
-ADD_EXECUTABLE(tstGaussKronrodIntegrator
-  tstGaussKronrodIntegrator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussKronrodIntegrator utility_integrator)
-ADD_TEST(GaussKronrodIntegrator_test tstGaussKronrodIntegrator)
-SET_PROPERTY(TEST GaussKronrodIntegrator_test PROPERTY LABELS utility_integrator)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_integrator)
 
-ADD_EXECUTABLE(tstBoostIntegrator
-  tstBoostIntegrator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstBoostIntegrator utility_integrator)
-ADD_TEST(BoostIntegrator_test tstBoostIntegrator)
-SET_PROPERTY(TEST BoostIntegrator_test PROPERTY LABELS utility_integrator)
+FRENSIE_ADD_TEST_EXECUTABLE(GaussKronrodIntegrator DEPENDS tstGaussKronrodIntegrator.cpp)
+FRENSIE_ADD_TEST(GaussKronrodIntegrator)
 
-ADD_EXECUTABLE(tstGaussRadauQuadratureSet
-  tstGaussRadauQuadratureSet.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussRadauQuadratureSet utility_integrator)
-ADD_TEST(GaussRadauQuadratureSet_test tstGaussRadauQuadratureSet)
-SET_PROPERTY(TEST GaussRadauQuadratureSet_test PROPERTY LABELS utility_integrator)
+FRENSIE_ADD_TEST_EXECUTABLE(BoostIntegrator DEPENDS tstBoostIntegrator.cpp)
+FRENSIE_ADD_TEST(BoostIntegrator)
+
+FRENSIE_ADD_TEST_EXECUTABLE(GaussRadauQuadratureSet DEPENDS tstGaussRadauQuadratureSet.cpp)
+FRENSIE_ADD_TEST(GaussRadauQuadratureSet)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_integrator)

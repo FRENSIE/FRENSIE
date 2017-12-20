@@ -12,11 +12,12 @@
 // std Includes
 #include <queue>
 
-// Trillinos Includes
-#include <Teuchos_Array.hpp>
-
 // Boost Includes
 #include <boost/numeric/odeint.hpp>
+
+// FRENSIE Includes
+#include "Utility_Vector.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace Utility{
 
@@ -75,7 +76,7 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
   bool isExceptionThrownOnDirtyIntegration() const;
 
   //! Warn on dirty integration (default)
-  void warnOnDirtyIntegration( std::ostream* os_warn = &std::cerr );
+  void warnOnDirtyIntegration();
 
   //! Use heuristic roundoff errror estimator (default)
   void estimateRoundoff();
@@ -117,7 +118,7 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
   template<int Points, typename FunctorType = double,
                        typename ParameterType = double, typename Functor>
   void integrateAdaptively( Functor& integrand,
-                ParameterType integrand_parameter,
+                            ParameterType integrand_parameter,
 			    T lower_limit,
 			    T upper_limit,
 			    T& result,
@@ -155,7 +156,7 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
   template<typename FunctorType = double, typename Functor>
   void integrateAdaptivelyWynnEpsilon(
 			  Functor& integrand,
-			  const Teuchos::ArrayView<T>& points_of_interest,
+			  const Utility::ArrayView<T>& points_of_interest,
 			  T& result,
 			  T& absolute_error ) const;
 
@@ -163,8 +164,8 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
   template<typename FunctorType = double, typename ParameterType = double, typename Functor>
   void integrateAdaptivelyWynnEpsilon(
 			  Functor& integrand,
-              ParameterType integrand_parameter,
-			  const Teuchos::ArrayView<T>& points_of_interest,
+                          ParameterType integrand_parameter,
+			  const Utility::ArrayView<T>& points_of_interest,
 			  T& result,
 			  T& absolute_error ) const;
 
@@ -274,7 +275,7 @@ protected:
 
   // Sort the bin order from highest to lowest error
   void sortBins(
-        Teuchos::Array<int>& bin_order,
+        std::vector<int>& bin_order,
         BinArray& bin_array,
         const ExtrpolatedBinTraits<T>& bin_1,
         const ExtrpolatedBinTraits<T>& bin_2,
@@ -305,9 +306,6 @@ private:
 
   // Estimate roundoff error and throw exceptions/warnings
   bool d_estimate_roundoff;
-
-  // The warning output stream
-  std::ostream* d_os_warn;
 
   // return epsilon numerical limit for type T
   T getLimitEpsilon() const;

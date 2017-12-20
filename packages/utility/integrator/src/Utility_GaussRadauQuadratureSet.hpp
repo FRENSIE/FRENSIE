@@ -9,6 +9,9 @@
 #ifndef UTILITY_GAUSS_RADAU_QUADRATURE_SET_HPP
 #define UTILITY_GAUSS_RADAU_QUADRATURE_SET_HPP
 
+// FRENSIE Includes
+#include "Utility_Vector.hpp"
+
 namespace Utility{
 
 //! The Gauss-Radau quadrature set
