@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_LinearGridGenerator_def.hpp
+//! \file   Utility_GridGenerator_def.hpp
 //! \author Alex Robinson
-//! \brief  Linear grid generator class template definitions
+//! \brief  Grid generator class template definitions
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,10 +17,12 @@
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_ComparisonPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ComparisonTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_LoggingMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 
@@ -32,8 +34,7 @@ GridGenerator<InterpPolicy>::GridGenerator( const double convergence_tol,
   : d_convergence_tol( convergence_tol ),
     d_absolute_diff_tol( absolute_diff_tol ),
     d_distance_tol( distance_tol ),
-    d_throw_exceptions( false ),
-    d_os_warn( &std::cerr )
+    d_throw_exceptions( false )
 {
   // Make sure the convergence tolerance is valid
   testPrecondition( convergence_tol <= 1.0 );
@@ -65,12 +66,9 @@ void GridGenerator<InterpPolicy>::throwExceptionOnDirtyConvergence()
  * has not truely converged.
  */
 template<typename InterpPolicy>
-void GridGenerator<InterpPolicy>::warnOnDirtyConvergence(
-                                                        std::ostream* os_warn )
+void GridGenerator<InterpPolicy>::warnOnDirtyConvergence()
 {
   d_throw_exceptions = false;
-
-  d_os_warn = os_warn;
 }
 
 // Check if an exception will be thrown on dirty convergence
@@ -486,13 +484,11 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
   bool converged = false;
 
   // Calculate the convergence parameters
-  double relative_error = Utility::relError( y_mid_exact, y_mid_estimated );
+  double relative_error = Utility::RelativeErrorComparisonPolicy::calculateRelativeError( y_mid_exact, y_mid_estimated );
 
-  double absolute_difference =
-      Teuchos::ScalarTraits<double>::magnitude( y_mid_exact - y_mid_estimated);
+  double absolute_difference = Utility::CloseComparisonPolicy::calculateDistance( y_mid_exact, y_mid_estimated );
 
-  double relative_distance =
-    Utility::relError( lower_grid_point, upper_grid_point );
+  double relative_distance = Utility::RelativeErrorComparisonPolicy::calculateRelativeError( lower_grid_point, upper_grid_point );
 
   // Check if the distance tolerance was hit - dirty convergence
   if( relative_distance <= d_distance_tol &&
@@ -508,14 +504,13 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
 
     if( d_throw_exceptions )
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: " << oss.str() );
+      THROW_EXCEPTION( std::runtime_error, oss.str() );
     }
     else
     {
       converged = true;
-      
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+
+      FRENSIE_LOG_TAGGED_WARNING( "Grid Generator", oss.str() );
     }
   }
 
@@ -532,15 +527,13 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
 
     if( d_throw_exceptions )
     {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: " << oss.str() );
+      THROW_EXCEPTION( std::runtime_error, oss.str() );
     }
     else
     {
       converged = true;
       
-      d_os_warn->precision( 18 );
-      (*d_os_warn) << "Warning: " << oss.str() << std::endl;
+      FRENSIE_LOG_TAGGED_WARNING( "Grid Generator", oss.str() );
     }
   }
 
@@ -550,6 +543,11 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
 
   return converged;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GridGenerator<Utility::LinLin> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GridGenerator<Utility::LinLog> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GridGenerator<Utility::LogLin> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( GridGenerator<Utility::LogLog> );
 
 } // end Utility namespace
 

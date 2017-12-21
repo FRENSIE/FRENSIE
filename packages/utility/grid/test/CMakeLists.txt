@@ -1,17 +1,15 @@
-ADD_EXECUTABLE(tstGridGenerator 
-  tstGridGenerator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGridGenerator utility_interp)
-ADD_TEST(GridGenerator_test tstGridGenerator)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_grid)
 
-ADD_EXECUTABLE(tstTwoDGridGenerator
-  tstTwoDGridGenerator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDGridGenerator utility_interp)
-ADD_TEST(TwoDGridGenerator_test tstTwoDGridGenerator)
-SET_PROPERTY(TEST TwoDGridGenerator_test PROPERTY LABELS utility_interp)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-ADD_EXECUTABLE(tstStandardHashBasedGridSearcher 
-  tstStandardHashBasedGridSearcher.cpp)
-TARGET_LINK_LIBRARIES(tstStandardHashBasedGridSearcher utility_interp)
-ADD_TEST(StandardHashBasedGridSearcher_test tstStandardHashBasedGridSearcher)
+FRENSIE_ADD_TEST_EXECUTABLE(GridGenerator DEPENDS tstGridGenerator.cpp)
+FRENSIE_ADD_TEST(GridGenerator)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDGridGenerator DEPENDS tstTwoDGridGenerator.cpp)
+FRENSIE_ADD_TEST(TwoDGridGenerator)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardHashBasedGridSearcher DEPENDS tstStandardHashBasedGridSearcher.cpp)
+FRENSIE_ADD_TEST(StandardHashBasedGridSearcher)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(utility_grid)
+

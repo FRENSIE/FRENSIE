@@ -9,21 +9,16 @@
 // Std Lib Includes
 #include <string>
 #include <iostream>
-#include <list>
 
 // Boost Includes
 #include <boost/bind.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Utility_GridGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_List.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Functions
@@ -77,63 +72,63 @@ private:
 // Tests
 //---------------------------------------------------------------------------//
 // Check if exceptions/warnings on dirty convergence can be set
-TEUCHOS_UNIT_TEST( GridGenerator, dirty_convergence_handling )
+FRENSIE_UNIT_TEST( GridGenerator, dirty_convergence_handling )
 {
   Utility::GridGenerator<Utility::LinLin> generator;
 
-  TEST_ASSERT( !generator.isExceptionThrownOnDirtyConvergence() );
+  FRENSIE_CHECK( !generator.isExceptionThrownOnDirtyConvergence() );
 
   generator.throwExceptionOnDirtyConvergence();
 
-  TEST_ASSERT( generator.isExceptionThrownOnDirtyConvergence() );
+  FRENSIE_CHECK( generator.isExceptionThrownOnDirtyConvergence() );
 
   generator.warnOnDirtyConvergence();
 
-  TEST_ASSERT( !generator.isExceptionThrownOnDirtyConvergence() );
+  FRENSIE_CHECK( !generator.isExceptionThrownOnDirtyConvergence() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the convergence tolerance can be set
-TEUCHOS_UNIT_TEST( GridGenerator, setConvergenceTolerance )
+FRENSIE_UNIT_TEST( GridGenerator, setConvergenceTolerance )
 {
   Utility::GridGenerator<Utility::LinLin> generator;
 
-  TEST_EQUALITY_CONST( generator.getConvergenceTolerance(), 0.001 );
+  FRENSIE_CHECK_EQUAL( generator.getConvergenceTolerance(), 0.001 );
 
   generator.setConvergenceTolerance( 0.0001 );
 
-  TEST_EQUALITY_CONST( generator.getConvergenceTolerance(), 0.0001 );
+  FRENSIE_CHECK_EQUAL( generator.getConvergenceTolerance(), 0.0001 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the absolute difference tolerance can be set
-TEUCHOS_UNIT_TEST( GridGenerator, setAbsoluteDifferenceTolerance )
+FRENSIE_UNIT_TEST( GridGenerator, setAbsoluteDifferenceTolerance )
 {
   Utility::GridGenerator<Utility::LinLin> generator;
 
-  TEST_EQUALITY_CONST( generator.getAbsoluteDifferenceTolerance(), 1e-12 );
+  FRENSIE_CHECK_EQUAL( generator.getAbsoluteDifferenceTolerance(), 1e-12 );
 
   generator.setAbsoluteDifferenceTolerance( 1e-14 );
 
-  TEST_EQUALITY_CONST( generator.getAbsoluteDifferenceTolerance(), 1e-14 );
+  FRENSIE_CHECK_EQUAL( generator.getAbsoluteDifferenceTolerance(), 1e-14 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distance tolerance can be set
-TEUCHOS_UNIT_TEST( GridGenerator, setDistanceTolerance )
+FRENSIE_UNIT_TEST( GridGenerator, setDistanceTolerance )
 {
   Utility::GridGenerator<Utility::LinLin> generator;
 
-  TEST_EQUALITY_CONST( generator.getDistanceTolerance(), 1e-14 );
+  FRENSIE_CHECK_EQUAL( generator.getDistanceTolerance(), 1e-14 );
 
   generator.setDistanceTolerance( 1e-16 );
 
-  TEST_EQUALITY_CONST( generator.getDistanceTolerance(), 1e-16 );
+  FRENSIE_CHECK_EQUAL( generator.getDistanceTolerance(), 1e-16 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a grid can be generated for the functions
-TEUCHOS_UNIT_TEST( GridGenerator, generate )
+FRENSIE_UNIT_TEST( GridGenerator, generate )
 {
   // Create the different grid generators
   Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
@@ -142,19 +137,19 @@ TEUCHOS_UNIT_TEST( GridGenerator, generate )
   Utility::GridGenerator<Utility::LogLog> loglog_generator( 0.001, 1e-12 );
 
   // Create the initial grid
-  Teuchos::Array<double> initial_grid( 2 );
+  std::vector<double> initial_grid( 2 );
   initial_grid[0] = 0.0;
   initial_grid[1] = 10.0;
 
   // Create a lin-lin grid for x^2
   boost::function<double (double x)> function = &x2;
 
-  Teuchos::Array<double> grid;
+  std::vector<double> grid;
 
   linlin_generator.generate( grid, initial_grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 321 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 321 );
 
   grid.clear();
 
@@ -162,16 +157,16 @@ TEUCHOS_UNIT_TEST( GridGenerator, generate )
   initial_grid[0] = 1e-3;
   loglin_generator.generate( grid, initial_grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 214 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 214 );
 
   // Create a lin-lin grid for cos(x)
-  function = &cos;
+  function = static_cast<double(*)(double)>(&std::cos);
 
   linlin_generator.generate( grid, initial_grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 129 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 129 );
 
   grid.clear();
 
@@ -182,8 +177,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, generate )
 
   linlin_generator.generate( grid, initial_grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 708 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 708 );
 
   grid.clear();
 
@@ -192,8 +187,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, generate )
 
   loglin_generator.generate( grid, initial_grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 266 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 266 );
 
   // Create a lin-lin grid for x*cos(x) in [-1, 1]
   xcosxAB x_cos_x( -1, 1 );
@@ -210,13 +205,13 @@ TEUCHOS_UNIT_TEST( GridGenerator, generate )
 
   linlin_generator.generate( grid, initial_grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 69 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 69 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a grid can be generated for the functions
-TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluate )
+FRENSIE_UNIT_TEST( GridGenerator, generateAndEvaluate )
 {
   // Create the different grid generators
   Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
@@ -225,23 +220,23 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluate )
   Utility::GridGenerator<Utility::LogLog> loglog_generator( 0.001, 1e-12 );
 
   // Create the initial grid
-  Teuchos::Array<double> initial_grid( 2 );
+  std::vector<double> initial_grid( 2 );
   initial_grid[0] = 0.0;
   initial_grid[1] = 10.0;
 
   // Create a lin-lin grid for x^2
   boost::function<double (double x)> function = &x2;
 
-  Teuchos::Array<double> grid, evaluated_function;
+  std::vector<double> grid, evaluated_function;
 
   linlin_generator.generateAndEvaluate( grid,
 					evaluated_function,
 					initial_grid,
 					function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 321 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 321 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 321 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 321 );
 
   grid.clear();
   evaluated_function.clear();
@@ -254,22 +249,22 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluate )
 					initial_grid,
 					function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 214 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 214 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 214 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 214 );
 
   // Create a lin-lin grid for cos(x)
   initial_grid[0] = 0.0;
-  function = &cos;
+  function = static_cast<double(*)(double)>(&std::cos);
 
   linlin_generator.generateAndEvaluate( grid,
 					evaluated_function,
 					initial_grid,
 					function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 129 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 129 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 129 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 129 );
 
   grid.clear();
   evaluated_function.clear();
@@ -283,9 +278,9 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluate )
 					initial_grid,
 					function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 708 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 708 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 708 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 708 );
 
   // Create a log-lin grid for (x-2)^3
   initial_grid[0] = 2.0 + 1e-6;
@@ -295,8 +290,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluate )
 					initial_grid,
 					function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 266 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 266 );
 
   // Create a lin-lin grid for x*cos(x) in [-1, 1]
   xcosxAB x_cos_x( -1, 1 );
@@ -318,15 +313,15 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluate )
 					initial_grid,
 					function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid_list.begin(),
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid_list.begin(),
 						 grid_list.end() ));
-  TEST_EQUALITY_CONST( grid_list.size(), 69 );
-  TEST_EQUALITY_CONST( evaluated_function_list.size(), 69 );
+  FRENSIE_CHECK_EQUAL( grid_list.size(), 69 );
+  FRENSIE_CHECK_EQUAL( evaluated_function_list.size(), 69 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a grid can be generated for the functions
-TEUCHOS_UNIT_TEST( GridGenerator, generateInPlace )
+FRENSIE_UNIT_TEST( GridGenerator, generateInPlace )
 {
   // Create the different grid generators
   Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
@@ -335,19 +330,19 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateInPlace )
   Utility::GridGenerator<Utility::LogLog> loglog_generator( 0.001, 1e-12 );
 
   // Create the initial grid
-  Teuchos::Array<double> initial_grid( 2 );
+  std::vector<double> initial_grid( 2 );
   initial_grid[0] = 0.0;
   initial_grid[1] = 10.0;
 
   // Create a lin-lin grid for x^2
   boost::function<double (double x)> function = &x2;
 
-  Teuchos::Array<double> grid = initial_grid;
+  std::vector<double> grid = initial_grid;
 
   linlin_generator.generateInPlace( grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 321 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 321 );
 
   // Create a log-lin grid for x^2
   initial_grid[0] = 1e-3;
@@ -355,20 +350,20 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateInPlace )
 
   loglin_generator.generateInPlace( grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 214 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 214 );
 
 
   // Create a lin-lin grid for cos(x)
-  function = &cos;
+  function = static_cast<double(*)(double)>(&std::cos);
 
   initial_grid[0] = 0.0;
   grid = initial_grid;
 
   linlin_generator.generateInPlace( grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 129 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 129 );
 
   grid = initial_grid;
 
@@ -378,8 +373,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateInPlace )
 
   linlin_generator.generateInPlace( grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 708 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 708 );
 
   // Create a log-lin grid for (x-2)^3
   initial_grid[0] = 2 + 1e-6;
@@ -387,8 +382,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateInPlace )
 
   loglin_generator.generateInPlace( grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 266 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 266 );
 
   // Create a lin-lin grid for x*cos(x) in [-1, 1]
   xcosxAB x_cos_x( -1, 1 );
@@ -407,13 +402,13 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateInPlace )
 
   linlin_generator.generateInPlace( grid, function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 69 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 69 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a grid can be refined for the functions
-TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
+FRENSIE_UNIT_TEST( GridGenerator, refineInPlace )
 {
   // Create the different grid generators
   Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
@@ -422,7 +417,7 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
   Utility::GridGenerator<Utility::LogLog> loglog_generator( 0.001, 1e-12 );
 
   // Create the initial grid
-  Teuchos::Array<double> initial_grid( 4 );
+  std::vector<double> initial_grid( 4 );
   initial_grid[0] = -1.0;
   initial_grid[1] = 0.0;
   initial_grid[2] = 10.0;
@@ -431,12 +426,12 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
   // Create a lin-lin grid for x^2
   boost::function<double (double x)> function = &x2;
 
-  Teuchos::Array<double> grid = initial_grid;
+  std::vector<double> grid = initial_grid;
 
   linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 323 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 323 );
 
   // Create a log-lin grid for x^2
   initial_grid[0] = 1e-4;
@@ -445,12 +440,12 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
 
   loglin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 216 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 216 );
 
 
   // Create a lin-lin grid for cos(x)
-  function = &cos;
+  function = static_cast<double(*)(double)>(&std::cos);
 
   initial_grid[0] = -1.0;
   initial_grid[1] = 0.0;
@@ -458,8 +453,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
 
   linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 131 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 131 );
 
   grid = initial_grid;
 
@@ -469,8 +464,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
 
   linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 710 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 710 );
 
   // Create a log-lin grid for (x-2)^3
   initial_grid[0] = 2;
@@ -481,8 +476,8 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
 
   loglin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 268 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 268 );
 
   // Create a lin-lin grid for x*cos(x) in [-1, 1]
   xcosxAB x_cos_x( -1, 1 );
@@ -503,13 +498,13 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineInPlace )
 
   linlin_generator.refineInPlace( grid, function, initial_grid[1], initial_grid[7] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 71 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 71 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a grid can be generated for the functions
-TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
+FRENSIE_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
 {
   // Create the different grid generators
   Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
@@ -518,22 +513,22 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
   Utility::GridGenerator<Utility::LogLog> loglog_generator( 0.001, 1e-12 );
 
   // Create the initial grid
-  Teuchos::Array<double> initial_grid( 2 );
+  std::vector<double> initial_grid( 2 );
   initial_grid[0] = 0.0;
   initial_grid[1] = 10.0;
 
   // Create a lin-lin grid for x^2
   boost::function<double (double x)> function = &x2;
 
-  Teuchos::Array<double> grid = initial_grid, evaluated_function;
+  std::vector<double> grid = initial_grid, evaluated_function;
 
   linlin_generator.generateAndEvaluateInPlace( grid,
 					       evaluated_function,
 					       function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 321 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 321 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 321 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 321 );
 
   evaluated_function.clear();
 
@@ -545,9 +540,9 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
 					       evaluated_function,
 					       function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 214 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 214 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 214 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 214 );
 
   evaluated_function.clear();
 
@@ -555,15 +550,15 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
   initial_grid[0] = 0.0;
   grid = initial_grid;
 
-  function = &cos;
+  function = static_cast<double(*)(double)>(&std::cos);
 
   linlin_generator.generateAndEvaluateInPlace( grid,
 					       evaluated_function,
 					       function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 129 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 129 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 129 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 129 );
 
   grid = initial_grid;
   evaluated_function.clear();
@@ -576,9 +571,9 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
 					       evaluated_function,
 					       function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 708 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 708 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 708 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 708 );
 
   evaluated_function.clear();
 
@@ -590,9 +585,9 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
 					       evaluated_function,
 					       function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 266 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 266 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 266 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 266 );
 
   evaluated_function.clear();
 
@@ -616,14 +611,14 @@ TEUCHOS_UNIT_TEST( GridGenerator, generateAndEvaluateInPlace )
 					       evaluated_function,
 					       function );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 69 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 69 );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 69 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 69 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a grid can be refined for the functions
-TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
+FRENSIE_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
 {
   // Create the different grid generators
   Utility::GridGenerator<Utility::LinLin> linlin_generator( 0.001, 1e-12 );
@@ -650,17 +645,17 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
                         initial_grid[1],
                         initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 323 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 323 );
-  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
-  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
-  TEST_ASSERT( grid[2] > initial_grid[1] );
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 323 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 323 );
+  FRENSIE_CHECK_EQUAL( grid[0], initial_grid[0] );
+  FRENSIE_CHECK_EQUAL( grid[1], initial_grid[1] );
+  FRENSIE_CHECK( grid[2] > initial_grid[1] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[3] );
   grid.pop_back();
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[2] );
   grid.pop_back();
-  TEST_ASSERT( grid.back() < initial_grid[2] );
+  FRENSIE_CHECK( grid.back() < initial_grid[2] );
 
   evaluated_function.clear();
 
@@ -676,14 +671,14 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
                         initial_grid[1],
                         initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 216 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 216 );
-  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
-  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 216 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 216 );
+  FRENSIE_CHECK_EQUAL( grid[0], initial_grid[0] );
+  FRENSIE_CHECK_EQUAL( grid[1], initial_grid[1] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[3] );
   grid.pop_back();
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[2] );
 
   evaluated_function.clear();
 
@@ -692,7 +687,7 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
   initial_grid[1] = 0.0;
   grid = initial_grid;
 
-  function = &cos;
+  function = static_cast<double(*)(double)>(&std::cos);
 
   linlin_generator.refineAndEvaluateInPlace(
                         grid,
@@ -701,16 +696,16 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
                         initial_grid[1],
                         initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 131 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 131 );
-  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
-  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 131 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 131 );
+  FRENSIE_CHECK_EQUAL( grid[0], initial_grid[0] );
+  FRENSIE_CHECK_EQUAL( grid[1], initial_grid[1] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[3] );
   grid.pop_back();
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[2] );
   grid.pop_back();
-  TEST_ASSERT( grid.back() < initial_grid[2] );
+  FRENSIE_CHECK( grid.back() < initial_grid[2] );
 
   grid = initial_grid;
   evaluated_function.clear();
@@ -726,14 +721,14 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
                         initial_grid[1],
                         initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 710 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 710 );
-  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
-  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 710 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 710 );
+  FRENSIE_CHECK_EQUAL( grid[0], initial_grid[0] );
+  FRENSIE_CHECK_EQUAL( grid[1], initial_grid[1] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[3] );
   grid.pop_back();
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[2] );
 
   evaluated_function.clear();
 
@@ -749,14 +744,14 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
                         initial_grid[1],
                         initial_grid[2] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 268 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 268 );
-  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
-  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[3] );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 268 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 268 );
+  FRENSIE_CHECK_EQUAL( grid[0], initial_grid[0] );
+  FRENSIE_CHECK_EQUAL( grid[1], initial_grid[1] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[3] );
   grid.pop_back();
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[2] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[2] );
 
   evaluated_function.clear();
 
@@ -785,14 +780,14 @@ TEUCHOS_UNIT_TEST( GridGenerator, refineAndEvaluateInPlace )
                         initial_grid[1],
                         initial_grid[7] );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
-  TEST_EQUALITY_CONST( grid.size(), 71 );
-  TEST_EQUALITY_CONST( evaluated_function.size(), 71 );
-  TEST_EQUALITY_CONST( grid[0], initial_grid[0] );
-  TEST_EQUALITY_CONST( grid[1], initial_grid[1] );
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[8] );
+  FRENSIE_CHECK( Utility::Sort::isSortedAscending( grid.begin(), grid.end() ) );
+  FRENSIE_CHECK_EQUAL( grid.size(), 71 );
+  FRENSIE_CHECK_EQUAL( evaluated_function.size(), 71 );
+  FRENSIE_CHECK_EQUAL( grid[0], initial_grid[0] );
+  FRENSIE_CHECK_EQUAL( grid[1], initial_grid[1] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[8] );
   grid.pop_back();
-  TEST_EQUALITY_CONST( grid.back(), initial_grid[7] );
+  FRENSIE_CHECK_EQUAL( grid.back(), initial_grid[7] );
 }
 
 //---------------------------------------------------------------------------//

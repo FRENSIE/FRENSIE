@@ -263,6 +263,12 @@ struct CloseComparisonPolicy : public ComparisonPolicy<CloseComparisonPolicy>
                 const T& right_value,
                 const typename QuantityTraits<T>::RawType& distance_tolerance =
                 typename QuantityTraits<T>::RawType() );
+
+  //! Calculate the absolute distance between the two values
+  template<typename T>
+  static inline typename QuantityTraits<T>::RawType calculateDistance(
+                                                        const T& left_value,
+                                                        const T& right_value );
 };
 
 /*! The relative error comparison policy class
@@ -294,6 +300,12 @@ struct RelativeErrorComparisonPolicy : public ComparisonPolicy<RelativeErrorComp
           const T& right_value,
           const typename QuantityTraits<T>::RawType& relative_error_tolerance =
           typename QuantityTraits<T>::RawType() );
+
+  //! Calculate the relative error
+  template<typename T>
+  static typename QuantityTraits<T>::RawType calculateRelativeError(
+                                                        const T& left_value,
+                                                        const T& right_value );
 };
   
 } // end Utility namespace

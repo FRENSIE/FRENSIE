@@ -20,6 +20,8 @@
 // FRENSIE Includes
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_GridGenerator.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Deque.hpp"
 
 namespace Utility{
 
@@ -40,7 +42,7 @@ public:
   { /* ... */ }
 
   //! Set verbose mode to on
-  void setVerboseModeOn( std::ostream* os_log = &std::cout );
+  void setVerboseModeOn();
 
   //! Set verbose mode to off (default)
   void setVerboseModeOff();
@@ -52,7 +54,7 @@ public:
   void throwExceptionOnDirtyConvergence();
 
   //! Warn on dirty convergence (default)
-  void warnOnDirtyConvergence( std::ostream* os_warn = &std::cerr );
+  void warnOnDirtyConvergence();
 
   //! Check if an exception will be thrown on dirty convergence
   bool isExceptionThrownOnDirtyConvergence() const;
@@ -199,12 +201,6 @@ private:
 
   // Throw exception on dirty convergence
   bool d_throw_exceptions;
-
-  // The logging output stream
-  std::ostream* d_os_log;
-
-  // The warning output stream
-  std::ostream* d_os_warn;
 };
   
 } // end Utility namespace

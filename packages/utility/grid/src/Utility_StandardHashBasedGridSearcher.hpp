@@ -10,131 +10,133 @@
 #define UTILITY_STANDARD_HASH_BASED_GRID_SEARCHER_HPP
 
 // Std Lib Includes
-#include <vector>
+#include <memory>
 
 // FRENSIE Includes
 #include "Utility_HashBasedGridSearcher.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
 
 /*! The standard hash-based grid searcher (for processed grids)
- * \details To use this class, the grid must be strictly greater than zero.
- * If the grid is processed (the log of each grid point has been taken) it
- * must be specified. This class is based off of the paper by Forrest Brown
- * on the hash-based energy lookup algorithm. For minimum memory overhead,
- * use a smart array pointer class (e.g. ArrayRCP).
+ * \details To use this class, the grid must be strictly greater than zero due
+ * to the specific hashing function that is used. If the grid is processed 
+ * (i.e. the log of each grid point has been taken) it must be specified. This 
+ * class is based off of the paper by Forrest Brown on the hash-based energy 
+ * lookup algorithm. For minimum memory overhead, use a sequence container 
+ * wrapped in a smart pointer (e.g. std::shared_ptr<std::vector<double> >).
  */
 template<typename STLCompliantArray,bool processed_grid = false>
-class StandardHashBasedGridSearcher : public HashBasedGridSearcher
+class StandardHashBasedGridSearcher : public HashBasedGridSearcher<typename STLCompliantArray::value_type>
 {
+
+  // The base type
+  typedef HashBasedGridSearcher<typename STLCompliantArray::value_type> BaseType;
 
 public:
 
-  //! Basic constructor
-  StandardHashBasedGridSearcher( const STLCompliantArray grid,
-				 const unsigned hash_grid_bins );
+  //! This type
+  typedef StandardHashBasedGridSearcher<STLCompliantArray,processed_grid> ThisType;
 
-  //! Constructor
-  StandardHashBasedGridSearcher( const STLCompliantArray grid,
-			 const double min_grid_value,
-			 const double max_grid_value,
-			 const unsigned hash_grid_bins );
+  //! The value type
+  typedef typename BaseType::ValueType ValueType;
+
+  //! Basic constructor (copy grid)
+  StandardHashBasedGridSearcher( const STLCompliantArray& grid,
+				 const size_t hash_grid_bins );
+
+  //! Basic constructor (share grid)
+  StandardHashBasedGridSearcher(
+                   const std::shared_ptr<const STLCompliantArray>& shared_grid,
+                   const size_t hash_grid_bins );
+
+  //! Constructor (copy grid)
+  StandardHashBasedGridSearcher( const STLCompliantArray& grid,
+                                 const ValueType min_grid_value,
+                                 const ValueType max_grid_value,
+                                 const size_t hash_grid_bins );
+
+  //! Constructor (share grid)
+  StandardHashBasedGridSearcher(
+                          const std::shared_ptr<const STLCompliantArray>& grid,
+                          const ValueType min_grid_value,
+                          const ValueType max_grid_value,
+                          const size_t hash_grid_bins );
 
   //! Destructor
   ~StandardHashBasedGridSearcher()
   { /* ... */ }
 
   //! Test if a value falls within the bounds of the grid
-  bool isValueWithinGridBounds( const double value ) const;
+  bool isValueWithinGridBounds( const ValueType value ) const override;
 
   //! Return the index of the lower bin boundary that a value falls in
-  unsigned findLowerBinIndex( const double value ) const;
+  size_t findLowerBinIndex( const ValueType value ) const override;
 
-  private:
+private:
+
+  // Default Constructor
+  StandardHashBasedGridSearcher();
 
   // Initialize the hash grid
   void initializeHashGrid();
 
+  // Save the searcher to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the searcher from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The hash grid size
-  unsigned d_hash_grid_size;
+  size_t d_hash_grid_size;
 
   // The minimum hash grid value
-  double d_hash_grid_min;
+  ValueType d_hash_grid_min;
 
   // The max hash grid value (stored to avoid roundoff issues)
-  double d_hash_grid_max;
+  ValueType d_hash_grid_max;
 
   // The hash grid length
-  double d_hash_grid_length;
+  ValueType d_hash_grid_length;
+
+  // The grid
+  std::shared_ptr<const STLCompliantArray> d_grid;
 
   // The grid indices (iterators)
   std::vector<typename STLCompliantArray::const_iterator> d_hash_grid;
-
-  // The grid
-  STLCompliantArray d_grid;
-};
-
-/*! The standard hash-based grid searcher
- * \details To use this class, the grid must be strictly greater than zero.
- * If the grid is processed (the log of each grid point has been taken) it
- * must be specified. This class is based off of the paper by Forrest Brown
- * on the hash-based energy lookup algorithm. For minimum memory overhead,
- * use a smart array pointer class (e.g. ArrayRCP).
- */
-template<typename STLCompliantArray>
-class StandardHashBasedGridSearcher<STLCompliantArray,false> : public HashBasedGridSearcher
-{
-
-public:
-
-  //! Basic constructor
-  StandardHashBasedGridSearcher( const STLCompliantArray grid,
-				 const unsigned hash_grid_bins );
-
-  //! Constructor
-  StandardHashBasedGridSearcher( const STLCompliantArray grid,
-				 const double min_grid_value,
-				 const double max_grid_value,
-				 const unsigned hash_grid_bins );
-
-  //! Destructor
-  ~StandardHashBasedGridSearcher()
-  { /* ... */ }
-
-  //! Test if a value falls within the bounds of the grid
-  bool isValueWithinGridBounds( const double value ) const;
-
-  //! Return the index of the lower bin boundary that a value falls in
-  unsigned findLowerBinIndex( const double value ) const;
-
-  private:
-
-  // Test if a value is less than or equal to zero
-  static bool lessThanOrEqualToZero( const double value );
-
-  // Initialize the hash grid
-  void initializeHashGrid();
-
-  // The hash grid size
-  unsigned d_hash_grid_size;
-
-  // The minimum hash grid value
-  double d_hash_grid_min;
-
-  // The max hash grid value (stored to avoid roundoff issues)
-  double d_hash_grid_max;
-
-  // The hash grid length
-  double d_hash_grid_length;
-
-  // The grid indices (iterators)
-  std::vector<typename STLCompliantArray::const_iterator> d_hash_grid;
-
-  // The grid
-  STLCompliantArray d_grid;
 };
 
 } // end Utility namespace
+
+#define BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_VERSION( VERSION ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+    StandardHashBasedGridSearcher, Utility, VERSION,                      \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, bool ToF ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, ToF ) )
+
+//---------------------------------------------------------------------------//
+// Update the version number here
+//---------------------------------------------------------------------------//
+BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_VERSION( 0 );
+
+//---------------------------------------------------------------------------//
+
+#define BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_EXPORT_STANDARD_KEY()\
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL( \
+    StandardHashBasedGridSearcher, Utility,             \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "StandardHashBasedGridSearcher<" ) + Utility::typeName<T>() + (ToF == true ? "Processed" : "Raw")), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, bool ToF ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, ToF ) )
+
+BOOST_SERIALIZATION_STD_HASH_BASED_GRID_SEARCHER_EXPORT_STANDARD_KEY()
 
 //---------------------------------------------------------------------------//
 // Template Includes

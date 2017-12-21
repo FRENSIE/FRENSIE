@@ -414,16 +414,15 @@ public:
           const typename QuantityTraits<T>::RawType& distance_tolerance )
   {
     return ThisType::calculateDistance( left_value, right_value ) <=
-      QuantityTraits<T>::initializeQuantity( distance_tolerance );
+      distance_tolerance;
   }
 
-private:
-
-  // Compare two values
-  static inline T calculateDistance( const T& left_value,
-                                     const T& right_value )
+  //! Calculate the absolute distance between the two values
+  static inline typename QuantityTraits<T>::RawType calculateDistance(
+                                                         const T& left_value,
+                                                         const T& right_value )
   {
-    return Details::AbsoluteValueHelper<T>::abs( left_value - right_value );
+    return Utility::getRawQuantity( Details::AbsoluteValueHelper<T>::abs( left_value - right_value ) );
   }
 };
 
@@ -511,6 +510,17 @@ inline bool CloseComparisonPolicy::compare(
                                                            distance_tolerance );
 }
 
+// Calculate the absolute distance between the two values
+/*! \details This method will only compile for floating point types.
+ */
+template<typename T>
+inline typename QuantityTraits<T>::RawType
+CloseComparisonPolicy::calculateDistance( const T& left_value,
+                                          const T& right_value )
+{
+  return Details::CloseComparisonPolicyHelper<T>::calculateDistance( left_value, right_value );
+}
+
 namespace Details{
 
 //! Relative error comparison policy helper for floating point types
@@ -586,9 +596,7 @@ public:
       relative_error_tolerance;
   }
 
-private:
-
-  // Compute the relative error
+  //! Compute the relative error
   static inline typename QuantityTraits<T>::RawType calculateRelativeError(
                                                          const T& left_value,
                                                          const T& right_value )
@@ -694,6 +702,17 @@ inline bool RelativeErrorComparisonPolicy::compare(
                                                     left_value,
                                                     right_value,
                                                     relative_error_tolerance );
+}
+
+// Calculate the relative error
+/*! \details This method will only compile for floating point types.
+ */
+template<typename T>
+inline typename QuantityTraits<T>::RawType RelativeErrorComparisonPolicy::calculateRelativeError(
+                                                         const T& left_value,
+                                                         const T& right_value )
+{
+  return Details::RelativeErrorComparisonPolicyHelper<T>::calculateRelativeError( left_value, right_value );
 }
   
 } // end Utility namespace
