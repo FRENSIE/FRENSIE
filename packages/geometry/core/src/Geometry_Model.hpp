@@ -10,21 +10,22 @@
 #define GEOMETRY_MODEL_HPP
 
 // Std Lib Includes
-#include <unordered_set>
-#include <set>
-#include <unordered_map>
-#include <map>
-#include <vector>
 #include <memory>
-#include <tuple>
 #include <iostream>
+
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_Navigator.hpp"
 #include "Geometry_EstimatorType.hpp"
 #include "Geometry_ParticleType.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Tuple.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Geometry{
 
@@ -112,6 +113,23 @@ public:
   
   //! Create a navigator
   std::shared_ptr<Geometry::Navigator> createNavigator() const;
+
+private:
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const
+  { /* ... */ }
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 // Check if this is an advanced model
@@ -128,6 +146,9 @@ inline std::shared_ptr<Geometry::Navigator> Model::createNavigator() const
 }
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Model, Geometry );
+BOOST_SERIALIZATION_CLASS_VERSION( Model, Geometry, 0 );
 
 #endif // end GEOMETRY_MODEL_HPP
 

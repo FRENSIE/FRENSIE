@@ -6,12 +6,34 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <limits>
+
+// Boost Includes
+#include <boost/serialization/array_wrapper.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "Geometry_InfiniteMediumNavigator.hpp"
+#include "Geometry_ModuleTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
+
+// Default constructor
+InfiniteMediumNavigator::InfiniteMediumNavigator()
+  : InfiniteMediumNavigator( Geometry::ModuleTraits::invalid_internal_cell_handle )
+{ /* ... */ }
 
 // Constructor
 InfiniteMediumNavigator::InfiniteMediumNavigator(
@@ -213,8 +235,51 @@ InfiniteMediumNavigator* InfiniteMediumNavigator::clone() const
                                              this->getInternalRayDirection() );
   return clone;
 }
+
+// Save the model to an archive
+template<typename Archive>
+void InfiniteMediumNavigator::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+  
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+  
+  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<double>( d_position, 3 ) );
+  ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void InfiniteMediumNavigator::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+  
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+
+  // The position array should always be initialized - this check is added
+  // for extra safety
+  if( !d_position )
+    d_position = new double[3];
+  
+  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<double>( d_position, 3 ) );
+
+  // The direction array should always be initialized - this check is added
+  // for extra safety
+  if( !d_direction )
+    d_direction = new double[3];
+  
+  ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
+}
+
+EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumNavigator );
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( InfiniteMediumNavigator, Geometry );
 
 //---------------------------------------------------------------------------//
 // end Geometry_InfiniteMediumNavigator.cpp

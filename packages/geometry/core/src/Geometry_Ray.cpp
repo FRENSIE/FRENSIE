@@ -25,9 +25,9 @@ Ray::Ray( const double x_position,
     d_deep_copy_initialization( true )
 {
   // Make sure the position is valid
-  testPrecondition( !ST::isnaninf( x_position ) );
-  testPrecondition( !ST::isnaninf( y_position ) );
-  testPrecondition( !ST::isnaninf( z_position ) );
+  testPrecondition( !QT::isnaninf( x_position ) );
+  testPrecondition( !QT::isnaninf( y_position ) );
+  testPrecondition( !QT::isnaninf( z_position ) );
   // Make sure the direction is a unit vector
   testPrecondition( Utility::isUnitVector( x_direction,
                                            y_direction,
@@ -50,9 +50,9 @@ Ray::Ray( const double position[3],
     d_deep_copy_initialization( true )
 {
   // Make sure the position and direction are valid
-  testPrecondition( !ST::isnaninf( d_position[0] ) );
-  testPrecondition( !ST::isnaninf( d_position[1] ) );
-  testPrecondition( !ST::isnaninf( d_position[2] ) );
+  testPrecondition( !QT::isnaninf( d_position[0] ) );
+  testPrecondition( !QT::isnaninf( d_position[1] ) );
+  testPrecondition( !QT::isnaninf( d_position[2] ) );
   // Make sure the direction is a unit vector
   testPrecondition( Utility::isUnitVector( direction[0],
                                            direction[1],
@@ -81,9 +81,9 @@ Ray::Ray( double position[3],
   if( deep_copy )
   {
     // Make sure the position and direction are valid
-    testPrecondition( !ST::isnaninf( d_position[0] ) );
-    testPrecondition( !ST::isnaninf( d_position[1] ) );
-    testPrecondition( !ST::isnaninf( d_position[2] ) );
+    testPrecondition( !QT::isnaninf( d_position[0] ) );
+    testPrecondition( !QT::isnaninf( d_position[1] ) );
+    testPrecondition( !QT::isnaninf( d_position[2] ) );
     // Make sure the direction is a unit vector
     testPrecondition( Utility::isUnitVector( direction[0],
                                              direction[1],
@@ -189,7 +189,7 @@ void Ray::changeDirection( const double x_direction,
 void Ray::advanceHead( const double distance )
 {
   // Make sure the distance is valid
-  testPrecondition( !ST::isnaninf( distance ) );
+  testPrecondition( !QT::isnaninf( distance ) );
 
   d_position[0] += d_direction[0]*distance;
   d_position[1] += d_direction[1]*distance;
@@ -197,14 +197,18 @@ void Ray::advanceHead( const double distance )
 }
 
 // Print method implementation
-void Ray::print( std::ostream& os ) const
+void Ray::toStream( std::ostream& os ) const
 {
-  os.precision( 16 );
-  os << "Position: {" << d_position[0] << "," << d_position[1] << ","
-     << d_position[2] << "}" << std::endl;
-  os << "Direction: {" << d_direction[0] << ","
-     << d_direction[1] << ","
-     << d_direction[2] << "}" << std::endl;
+  os << "{{Position, {"
+     << Utility::toString(d_position[0]) << ","
+     << Utility::toString(d_position[1]) << ","
+     << Utility::toString(d_position[2])
+     << "}}, "
+     << "{Direction, {"
+     << Utility::toString(d_direction[0]) << ","
+     << Utility::toString(d_direction[1]) << ","
+     << Utility::toString(d_direction[2])
+     << "}}}";
 }
 
 } // end Geometry namespace

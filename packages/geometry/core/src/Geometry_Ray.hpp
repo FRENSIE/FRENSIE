@@ -9,22 +9,20 @@
 #ifndef GEOMETRY_RAY_HPP
 #define GEOMETRY_RAY_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
-#include "Utility_PrintableObject.hpp"
+#include "Utility_OStreamableObject.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Geometry{
 
 //! The ray class
-class Ray : public Utility::PrintableObject
+class Ray : public Utility::OStreamableObject
 {
 
 private:
 
   // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -84,7 +82,7 @@ public:
   void advanceHead( const double distance );
 
   //! Print method implementation
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const override;
 
 private:
 

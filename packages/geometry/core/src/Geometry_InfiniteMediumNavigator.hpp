@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Geometry_Navigator.hpp"
+#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
 
@@ -100,6 +101,22 @@ public:
 
 private:
 
+  // Default constructor
+  InfiniteMediumNavigator();
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The infinite medium cell id
   ModuleTraits::InternalCellHandle d_cell;
   
@@ -109,8 +126,12 @@ private:
   // The direction
   double* d_direction;
 };
-  
+
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( InfiniteMediumNavigator, Geometry, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( InfiniteMediumNavigator, Geometry );
+EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumNavigator );
 
 #endif // end GEOMETRY_INFINITE_MEDIUM_NAVIGATOR_HPP
 

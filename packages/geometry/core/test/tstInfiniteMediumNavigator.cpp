@@ -9,20 +9,30 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
-#include <vector>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
 
 // FRENSIE Includes
 #include "Geometry_InfiniteMediumNavigator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the location of a point w.r.t. a cell can be returned
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, getPointLocation )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, getPointLocation )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -32,31 +42,31 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, getPointLocation )
   
   Geometry::PointLocation location = navigator->getPointLocation( *ray, 1 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
   location = navigator->getPointLocation( *ray, 2 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
-  ray.reset( new Geometry::Ray( std::numeric_limits<double>::infinity(),
-                                std::numeric_limits<double>::infinity(),
-                                std::numeric_limits<double>::infinity(),
+  ray.reset( new Geometry::Ray( std::numeric_limits<double>::max(),
+                                std::numeric_limits<double>::max(),
+                                std::numeric_limits<double>::max(),
                                 1.0,
                                 0.0,
                                 0.0 ) );
 
   location = navigator->getPointLocation( *ray, 1 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
   location = navigator->getPointLocation( *ray, 2 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the surface normal at a point on the surface can be returned
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, getSurfaceNormal )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, getSurfaceNormal )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -68,14 +78,14 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, getSurfaceNormal )
 
   navigator->getSurfaceNormal( 0, *ray, normal.data() );
 
-  TEST_EQUALITY_CONST( normal[0], 0.0 );
-  TEST_EQUALITY_CONST( normal[1], 0.0 );
-  TEST_EQUALITY_CONST( normal[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( normal[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( normal[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( normal[2], 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell containing a ray can be found
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay_cache )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay_cache )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -88,27 +98,27 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay_cache )
   Geometry::ModuleTraits::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray, cell_cache );
 
-  TEST_EQUALITY_CONST( cell, 1 );
-  TEST_EQUALITY_CONST( cell_cache.size(), 1 );
-  TEST_ASSERT( cell_cache.count( 1 ) );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
+  FRENSIE_CHECK_EQUAL( cell_cache.size(), 1 );
+  FRENSIE_CHECK( cell_cache.count( 1 ) );
 
-  ray.reset( new Geometry::Ray( std::numeric_limits<double>::infinity(),
-                                std::numeric_limits<double>::infinity(),
-                                std::numeric_limits<double>::infinity(),
+  ray.reset( new Geometry::Ray( std::numeric_limits<double>::max(),
+                                std::numeric_limits<double>::max(),
+                                std::numeric_limits<double>::max(),
                                 1.0,
                                 0.0,
                                 0.0 ) );
 
   cell = navigator->findCellContainingRay( *ray, cell_cache );
 
-  TEST_EQUALITY_CONST( cell, 1 );
-  TEST_EQUALITY_CONST( cell_cache.size(), 1 );
-  TEST_ASSERT( cell_cache.count( 1 ) );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
+  FRENSIE_CHECK_EQUAL( cell_cache.size(), 1 );
+  FRENSIE_CHECK( cell_cache.count( 1 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell containing a ray can be found
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -119,65 +129,65 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay )
   Geometry::ModuleTraits::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray );
 
-  TEST_EQUALITY_CONST( cell, 1 );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
   
-  ray.reset( new Geometry::Ray( std::numeric_limits<double>::infinity(),
-                                std::numeric_limits<double>::infinity(),
-                                std::numeric_limits<double>::infinity(),
+  ray.reset( new Geometry::Ray( std::numeric_limits<double>::max(),
+                                std::numeric_limits<double>::max(),
+                                std::numeric_limits<double>::max(),
                                 1.0,
                                 0.0,
                                 0.0 ) );
 
   cell = navigator->findCellContainingRay( *ray );
 
-  TEST_EQUALITY_CONST( cell, 1 );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be set
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, setInternalRay )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, setInternalRay )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  TEST_ASSERT( navigator->isInternalRaySet() );
+  FRENSIE_CHECK( navigator->isInternalRaySet() );
 
   navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
 
-  TEST_ASSERT( navigator->isInternalRaySet() );
+  FRENSIE_CHECK( navigator->isInternalRaySet() );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
 
-  navigator->setInternalRay( std::numeric_limits<double>::infinity(),
-                             std::numeric_limits<double>::infinity(),
-                             std::numeric_limits<double>::infinity(),
+  navigator->setInternalRay( std::numeric_limits<double>::max(),
+                             std::numeric_limits<double>::max(),
+                             std::numeric_limits<double>::max(),
                              1.0,
                              0.0,
                              0.0 );
 
-  TEST_ASSERT( navigator->isInternalRaySet() );
+  FRENSIE_CHECK( navigator->isInternalRaySet() );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0],
-                       std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1],
-                       std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2],
-                       std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+                       std::numeric_limits<double>::max() );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+                       std::numeric_limits<double>::max() );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+                       std::numeric_limits<double>::max() );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be fired through the geometry
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, fireInternalRay )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireInternalRay )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -186,7 +196,7 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, fireInternalRay )
 
   double distance_to_boundary = navigator->fireInternalRay();
 
-  TEST_EQUALITY_CONST( distance_to_boundary,
+  FRENSIE_CHECK_EQUAL( distance_to_boundary,
                        std::numeric_limits<double>::infinity() );
 
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
@@ -195,15 +205,15 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, fireInternalRay )
   
   distance_to_boundary = navigator->fireInternalRay( &surface_hit );
 
-  TEST_EQUALITY_CONST( distance_to_boundary,
+  FRENSIE_CHECK_EQUAL( distance_to_boundary,
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( surface_hit,
+  FRENSIE_CHECK_EQUAL( surface_hit,
                        Geometry::ModuleTraits::invalid_internal_surface_handle );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be advanced to the cell boundary
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -212,17 +222,17 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
 
   bool reflected = navigator->advanceInternalRayToCellBoundary();
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getCellContainingInternalRay(), 1 );
-  TEST_ASSERT( !reflected );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK( !reflected );
 
   navigator->setInternalRay( 1.0, -1.0, 1.0, 1.0/sqrt(3), 1.0/sqrt(3), 1.0/sqrt(3) );
 
@@ -231,28 +241,28 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
   reflected =
     navigator->advanceInternalRayToCellBoundary( surface_normal.data() );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
                        std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0],
                        1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1],
                        1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2],
                        1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( navigator->getCellContainingInternalRay(), 1 );
-  TEST_ASSERT( !reflected );
-  TEST_EQUALITY_CONST( surface_normal[0], 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( surface_normal[1], 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( surface_normal[2], 1.0/sqrt(3.0) );
+  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK( !reflected );
+  FRENSIE_CHECK_EQUAL( surface_normal[0], 1.0/sqrt(3.0) );
+  FRENSIE_CHECK_EQUAL( surface_normal[1], 1.0/sqrt(3.0) );
+  FRENSIE_CHECK_EQUAL( surface_normal[2], 1.0/sqrt(3.0) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be advanced by a substep
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayBySubstep )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayBySubstep )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -261,34 +271,34 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayBySubstep )
 
   navigator->advanceInternalRayBySubstep( 1.0 );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
 
   navigator->setInternalRay( 1.0, -1.0, 1.0, 1.0/sqrt(3), 1.0/sqrt(3), -1.0/sqrt(3) );
 
   navigator->advanceInternalRayBySubstep( 2.0 );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
                        1.0+2.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
                        -1.0+2.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
                        1.0-2.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0],
                        1.0/sqrt(3) );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1],
                        1.0/sqrt(3) );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2],
                        -1.0/sqrt(3) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray direction can be changed
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, changeInternalRayDirection )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, changeInternalRayDirection )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -297,17 +307,17 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, changeInternalRayDirection )
 
   navigator->changeInternalRayDirection( 1.0, 0.0, 0.0 );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the navigator can be cloned
-TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, clone )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, clone )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
@@ -316,20 +326,76 @@ TEUCHOS_UNIT_TEST( InfiniteMediumNavigator, clone )
 
   std::unique_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
 
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[0],
                        navigator->getInternalRayPosition()[0] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[1],
                        navigator->getInternalRayPosition()[1] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[2],
                        navigator->getInternalRayPosition()[2] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[0],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[0],
                        navigator->getInternalRayDirection()[0] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[1],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[1],
                        navigator->getInternalRayDirection()[1] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[2],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[2],
                        navigator->getInternalRayDirection()[2] );
-  TEST_EQUALITY_CONST( navigator_clone->getCellContainingInternalRay(),
+  FRENSIE_CHECK_EQUAL( navigator_clone->getCellContainingInternalRay(),
                        navigator->getCellContainingInternalRay() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the navigator can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InfiniteMediumNavigator,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_infinite_medium_navigator" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some infinite medium navigators
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    Geometry::InfiniteMediumNavigator navigator( 1 );
+
+    std::unique_ptr<Geometry::Navigator> unique_navigator( new Geometry::InfiniteMediumNavigator( 2 ) );
+
+    std::shared_ptr<Geometry::Navigator> shared_navigator( new Geometry::InfiniteMediumNavigator( 3 ) );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( navigator ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( unique_navigator ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( shared_navigator ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Geometry::InfiniteMediumNavigator navigator( 100 );
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( navigator ) );
+  FRENSIE_CHECK_EQUAL( navigator.getCellContainingInternalRay(), 1 );
+
+  std::unique_ptr<Geometry::Navigator> unique_navigator;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( unique_navigator ) );
+  FRENSIE_CHECK_EQUAL( unique_navigator->getCellContainingInternalRay(), 2 );
+  
+  std::shared_ptr<Geometry::Navigator> shared_navigator;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_navigator ) );
+  FRENSIE_CHECK_EQUAL( shared_navigator->getCellContainingInternalRay(), 3 );
 }
 
 //---------------------------------------------------------------------------//

@@ -13,10 +13,14 @@
 #include <set>
 #include <sstream>
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+
 // FRENSIE Includes
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Ray.hpp"
 #include "Geometry_ModuleTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Geometry{
 
@@ -249,6 +253,23 @@ protected:
 
   // Convert an array to a string
   static std::string arrayToString( const double data[3] );
+
+private:
+
+  // Save the navigator to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const
+  { /* ... */ }
+
+  // Load the navigator from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version )
+  { /* ... */ }
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 // Get the location of a cell w.r.t. a given cell
@@ -360,6 +381,9 @@ inline std::string Navigator::arrayToString( const double data[3] )
 }
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Navigator, Geometry );
+BOOST_SERIALIZATION_CLASS_VERSION( Navigator, Geometry, 0 );
 
 #endif // end GEOMETRY_NAVIGATOR_HPP
 

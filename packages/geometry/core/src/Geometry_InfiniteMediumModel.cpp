@@ -9,8 +9,20 @@
 // Std Lib Includes
 #include <limits>
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "Geometry_InfiniteMediumModel.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 
 namespace Geometry{
 
@@ -112,8 +124,34 @@ InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced() const
 {
   return new InfiniteMediumNavigator( d_cell );
 }
+
+// Save the model to an archive
+template<typename Archive>
+void InfiniteMediumModel::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+  
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void InfiniteMediumModel::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+  
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+}
+
+EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumModel );
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( InfiniteMediumModel, Geometry );
 
 //---------------------------------------------------------------------------//
 // end Geometry_InfiniteMediumModel.cpp
