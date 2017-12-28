@@ -1126,30 +1126,33 @@ int UnitTestManager::runUnitTests( int argc,
     finalization_timer->start();
     
     size_t finalize_checkpoint = 0;
-    local_success = true;
+    bool local_finalization_success = true;
 
     try{
       d_data->getInitializer().finalizeUnitTestManager( finalize_checkpoint );
     }
-    __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_success, finalize_checkpoint, d_data->getUnexpectedExceptionsCounter(), s_details_right_shift );
+    __FRENSIE_TEST_CATCH_STATEMENTS__( log, true, local_finalization_success, finalize_checkpoint, d_data->getUnexpectedExceptionsCounter(), s_details_right_shift );
 
     finalization_timer->stop();
 
     d_data->restoreStdOutput();
 
     // Make sure that every node initialized successfully
-    global_success = mpi_session.isGloballyTrue( local_success );
+    bool global_finalization_success =
+      mpi_session.isGloballyTrue( local_finalization_success );
 
     // Summarize the finalization results
     this->summarizeFinalizationResults( log,
                                         finalization_timer->elapsed().count(),
-                                        local_success,
-                                        global_success );
+                                        local_finalization_success,
+                                        global_finalization_success );
 
     // Total program execution time
     this->printProgramExecutionTimeHeader( init_timer->elapsed().count()+
                                            test_timer->elapsed().count()+
                                            finalization_timer->elapsed().count() );
+
+    global_success = global_success && global_finalization_success;
   }
 
   // Summarize the test results

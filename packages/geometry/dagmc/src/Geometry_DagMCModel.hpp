@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <string>
 #include <stdexcept>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 #include <iostream>
 #include <memory>
 
@@ -29,7 +26,10 @@
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_AdvancedModel.hpp"
-#include "Utility_ContractException.hpp"
+#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Vector.hpp"
 
 namespace Geometry{
 
@@ -115,6 +115,7 @@ public:
 
   //! Create a raw, heap-allocated navigator
   DagMCNavigator* createNavigatorAdvanced() const override;
+  
 
 private:
 
@@ -196,6 +197,35 @@ private:
                                        EstimatorType& estimator_type,
                                        ParticleType& particle_type ) const;
 
+  //! Return the cell handler
+  const Geometry::DagMCCellHandler& getCellHandler() const;
+
+  //! Return the surface handler
+  const Geometry::DagMCSurfaceHandler& getSurfaceHandler() const;
+
+  //! Return the reflecting surfaces
+  const DagMCNavigator::ReflectingSurfaceIdHandleMap&
+  getReflectingSurfaceIdHandleMap() const;
+
+  //! Return the raw dagmc instance
+  moab::DagMC& getRawDagMCInstance() const;
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  // Declare the DagMCNavigator as a friend
+  friend class DagMCNavigator;
+
   // The DagMC model instance
   static std::shared_ptr<DagMCModel> s_instance;
   
@@ -203,10 +233,10 @@ private:
   moab::DagMC* d_dagmc;
 
   // The DagMC cell handler
-  std::shared_ptr<Geometry::DagMCCellHandler> d_cell_handler;
+  std::unique_ptr<const Geometry::DagMCCellHandler> d_cell_handler;
 
   // The DagMC surface handle
-  std::shared_ptr<Geometry::DagMCSurfaceHandler> d_surface_handler;
+  std::unique_ptr<const Geometry::DagMCSurfaceHandler> d_surface_handler;
 
   // The termination cells
   CellIdSet d_termination_cells;
@@ -214,7 +244,7 @@ private:
   // The reflecting surfaces
   typedef DagMCNavigator::ReflectingSurfaceIdHandleMap
   ReflectingSurfaceIdHandleMap;
-  std::shared_ptr<ReflectingSurfaceIdHandleMap> d_reflecting_surfaces;
+  ReflectingSurfaceIdHandleMap d_reflecting_surfaces;
 
   // The model properties
   std::unique_ptr<const DagMCModelProperties> d_model_properties;
@@ -232,6 +262,10 @@ public:
 };
 
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( DagMCModel, Geometry, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCModel, Geometry );
+EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModel );
 
 //---------------------------------------------------------------------------//
 // Template Includes

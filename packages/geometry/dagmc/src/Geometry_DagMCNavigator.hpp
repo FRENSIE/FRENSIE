@@ -20,8 +20,12 @@
 #include "Geometry_DagMCSurfaceHandler.hpp"
 #include "Geometry_DagMCRay.hpp"
 #include "Geometry_Navigator.hpp"
+#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
+
+// Forward declare the DagMCModel
+class DagMCModel;
 
 //! The DagMC ray tracer
 class DagMCNavigator : public Navigator
@@ -29,18 +33,12 @@ class DagMCNavigator : public Navigator
 
 public:
 
+  //! Constructor
+  DagMCNavigator( const std::shared_ptr<const DagMCModel>& dagmc_model );
+
   //! The reflecting surface map type
   typedef boost::bimap<ModuleTraits::InternalSurfaceHandle,moab::EntityHandle>
   ReflectingSurfaceIdHandleMap;
-
-  //! Constructor
-  DagMCNavigator( moab::DagMC* dagmc_instance,
-                  const std::shared_ptr<const Geometry::DagMCCellHandler>&
-                  cell_handler,
-                  const std::shared_ptr<const Geometry::DagMCSurfaceHandler>&
-                  surface_handler,
-                  const std::shared_ptr<const ReflectingSurfaceIdHandleMap>&
-                  reflecting_surfaces );
 
   //! Destructor
   ~DagMCNavigator()
@@ -124,6 +122,9 @@ public:
 
 private:
 
+  // Default constructor
+  DagMCNavigator();
+
   // Check if the surface handle is a reflecting surface
   bool isReflectingSurfaceHandle(
                                const moab::EntityHandle surface_handle ) const;
@@ -181,22 +182,26 @@ private:
                        const double z_direction,
                        const moab::EntityHandle current_cell_handle );
 
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The boundary tolerance
   static const double s_boundary_tol;
 
-  // The raw DagMC instance
-  moab::DagMC* d_dagmc;
+  // The DagMC model
+  std::shared_ptr<const DagMCModel> d_dagmc_model;
 
-  // The DagMC cell handler
-  std::shared_ptr<const Geometry::DagMCCellHandler> d_cell_handler;
-
-  // The DagMC surface handler
-  std::shared_ptr<const Geometry::DagMCSurfaceHandler> d_surface_handler;
-
-  // The reflecting surfaces
-  std::shared_ptr<const ReflectingSurfaceIdHandleMap> d_reflecting_surfaces;
-
-  // The internal rays
+  // The internal ray
   DagMCRay d_internal_ray;
 };
 
@@ -214,6 +219,10 @@ public:
 };
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( DagMCNavigator, Geometry, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCNavigator, Geometry );
+EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCNavigator );
 
 #endif // end GEOMETRY_DAGMC_NAVIGATOR_HPP
 

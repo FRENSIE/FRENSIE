@@ -10,6 +10,16 @@
 #include <exception>
 #include <unordered_set>
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "Geometry_DagMCModel.hpp"
 #include "Geometry_StandardDagMCCellHandler.hpp"
@@ -17,6 +27,8 @@
 #include "Geometry_StandardDagMCSurfaceHandler.hpp"
 #include "Geometry_FastDagMCSurfaceHandler.hpp"
 #include "Geometry_DagMCLoggingMacros.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -57,16 +69,13 @@ bool DagMCModel::isInitialized() const
 void DagMCModel::initialize( const DagMCModelProperties& model_properties,
                              const bool suppress_dagmc_output )
 {
-  // Make sure that the model has not been initialized yet
-  testPrecondition( !this->isInitialized() );
-  
   if( !this->isInitialized() )
   {
     // Cache the model properties
     d_model_properties.reset( new DagMCModelProperties( model_properties ) );
-    
+
     FRENSIE_LOG_DAGMC_NOTIFICATION( "Loading model "
-                                    << d_model_properties->getModelFileName()
+                                    << model_properties.getModelFileName()
                                     << " ..." );
     FRENSIE_FLUSH_ALL_LOGS();
 
@@ -75,8 +84,7 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Unable to load DagMC geometry file "
-                             << d_model_properties->getModelFileName() <<
-                             "!" );
+                             << model_properties.getModelFileName() << "!" );
 
     // Validate the properties in the geometry
     try{
@@ -84,7 +92,7 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Invalid DagMC geometry properties encountered!" );
-
+    
     // Parse the properties
     try{
       this->parseProperties();
@@ -116,12 +124,15 @@ void DagMCModel::initialize( const DagMCModelProperties& model_properties,
     FRENSIE_LOG_DAGMC_NOTIFICATION( "Finished loading model!" );
     FRENSIE_FLUSH_ALL_LOGS();
   }
+    
   // A model has already been loaded - ignore new model
   else
   {
     FRENSIE_LOG_DAGMC_WARNING( "Cannot load requested model ("
-                               << model_properties.getModelFileName() <<
-                               ") because a model has already been loaded!" );
+                               << model_properties.getModelFileName() << ") "
+                               "because a model ("
+                               << d_model_properties->getModelFileName() << ")"
+                               " has already been loaded!" );
   }
 }
 
@@ -315,14 +326,14 @@ void DagMCModel::extractReflectingSurfaces()
                            "Unable to parse the reflecting surfaces!" );
 
   // Initialize the reflecting surfaces
-  d_reflecting_surfaces.reset( new ReflectingSurfaceIdHandleMap );
+  d_reflecting_surfaces.clear();
   
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
     ModuleTraits::InternalSurfaceHandle surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
     
-    d_reflecting_surfaces->insert( ReflectingSurfaceIdHandleMap::value_type(
+    d_reflecting_surfaces.insert( ReflectingSurfaceIdHandleMap::value_type(
                                      surface_id, surfaces_with_property[i] ) );
   }
 }
@@ -776,8 +787,8 @@ bool DagMCModel::isReflectingSurface(
   // Make sure the surface exists
   testPrecondition( this->doesSurfaceExist( surface_id ) );
 
-  return d_reflecting_surfaces->left.find( surface_id ) !=
-    d_reflecting_surfaces->left.end();
+  return d_reflecting_surfaces.left.find( surface_id ) !=
+    d_reflecting_surfaces.left.end();
 }
 
 // Create a raw, heap-allocated navigator
@@ -786,10 +797,7 @@ DagMCNavigator* DagMCModel::createNavigatorAdvanced() const
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
   
-  return new DagMCNavigator( d_dagmc,
-                             d_cell_handler,
-                             d_surface_handler,
-                             d_reflecting_surfaces );
+  return new DagMCNavigator( DagMCModel::getInstance() );
 }
 
 // Get the cells associated with a property name
@@ -1017,7 +1025,63 @@ std::string DagMCModel::getName() const
   return d_model_properties->getModelFileName();
 }
 
+// Return the cell handler
+const Geometry::DagMCCellHandler& DagMCModel::getCellHandler() const
+{
+  return *d_cell_handler;
+}
+
+// Return the surface handler
+const Geometry::DagMCSurfaceHandler& DagMCModel::getSurfaceHandler() const
+{
+  return *d_surface_handler;
+}
+
+// Return the reflecting surfaces
+const DagMCNavigator::ReflectingSurfaceIdHandleMap&
+DagMCModel::getReflectingSurfaceIdHandleMap() const
+{
+  return d_reflecting_surfaces;
+}
+
+// Return the raw dagmc instance
+moab::DagMC& DagMCModel::getRawDagMCInstance() const
+{
+  return *d_dagmc;
+}
+
+// Save the model to an archive
+template<typename Archive>
+void DagMCModel::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
+
+  // Save the model properties - all other data will be reinitialized
+  ar & BOOST_SERIALIZATION_NVP( d_model_properties );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void DagMCModel::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdvancedModel );
+
+  // Load the model properties only - all other data must be reinitialized
+  decltype(d_model_properties) cached_model_properties;
+  
+  ar & boost::serialization::make_nvp( "d_model_properties",
+                                       cached_model_properties );
+
+  this->initialize( *cached_model_properties, true );
+}
+
+EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModel );
+
 }  // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( DagMCModel, Geometry );
 
 //---------------------------------------------------------------------------//
 // end Geometry_DagMC.cpp

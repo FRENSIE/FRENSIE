@@ -10,139 +10,149 @@
 #include <iostream>
 #include <algorithm>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Tuple.hpp>
-
 // FRENSIE Includes
 #include "Geometry_DagMCModelProperties.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the default properties are correct
-TEUCHOS_UNIT_TEST( DagMCModelProperties, default_properties )
+FRENSIE_UNIT_TEST( DagMCModelProperties, default_properties )
 {
   const Geometry::DagMCModelProperties default_properties( "dummy.sat" );
 
-  TEST_EQUALITY_CONST( default_properties.getFacetTolerance(), 1e-3 );
-  TEST_ASSERT( !default_properties.isFastIdLookupUsed() );
-  TEST_EQUALITY_CONST( default_properties.getTerminationCellPropertyName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getFacetTolerance(), 1e-3 );
+  FRENSIE_CHECK( !default_properties.isFastIdLookupUsed() );
+  FRENSIE_CHECK_EQUAL( default_properties.getTerminationCellPropertyName(),
                        "termination.cell" );
-  TEST_EQUALITY_CONST( default_properties.getReflectingSurfacePropertyName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getReflectingSurfacePropertyName(),
                        "reflecting.surface" );
-  TEST_EQUALITY_CONST( default_properties.getMaterialPropertyName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getMaterialPropertyName(),
                        "material" );
-  TEST_EQUALITY_CONST( default_properties.getDensityPropertyName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getDensityPropertyName(),
                        "density" );
-  TEST_EQUALITY_CONST( default_properties.getEstimatorPropertyName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getEstimatorPropertyName(),
                        "estimator" );
-  TEST_EQUALITY_CONST( default_properties.getSurfaceCurrentName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getSurfaceCurrentName(),
                        "surface.current" );
-  TEST_EQUALITY_CONST( default_properties.getSurfaceFluxName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getSurfaceFluxName(),
                        "surface.flux" );
-  TEST_EQUALITY_CONST( default_properties.getCellPulseHeightName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getCellPulseHeightName(),
                        "cell.pulse.height" );
-  TEST_EQUALITY_CONST( default_properties.getCellTrackLengthFluxName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getCellTrackLengthFluxName(),
                        "cell.tl.flux" );
-  TEST_EQUALITY_CONST( default_properties.getCellCollisionFluxName(),
+  FRENSIE_CHECK_EQUAL( default_properties.getCellCollisionFluxName(),
                        "cell.c.flux" );
-  TEST_EQUALITY_CONST( default_properties.getPhotonName(), "p" );
-  TEST_EQUALITY_CONST( default_properties.getNeutronName(), "n" );
-  TEST_EQUALITY_CONST( default_properties.getElectronName(), "e" );
-  TEST_EQUALITY_CONST( default_properties.getAdjointPhotonName(), "p*" );
-  TEST_EQUALITY_CONST( default_properties.getAdjointNeutronName(), "n*" );
-  TEST_EQUALITY_CONST( default_properties.getAdjointElectronName(), "e*" );
+  FRENSIE_CHECK_EQUAL( default_properties.getPhotonName(), "p" );
+  FRENSIE_CHECK_EQUAL( default_properties.getNeutronName(), "n" );
+  FRENSIE_CHECK_EQUAL( default_properties.getElectronName(), "e" );
+  FRENSIE_CHECK_EQUAL( default_properties.getAdjointPhotonName(), "p*" );
+  FRENSIE_CHECK_EQUAL( default_properties.getAdjointNeutronName(), "n*" );
+  FRENSIE_CHECK_EQUAL( default_properties.getAdjointElectronName(), "e*" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file name can be returned
-TEUCHOS_UNIT_TEST( DagMCModelProperties, getModelFileName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, getModelFileName )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
-  TEST_EQUALITY_CONST( properties.getModelFileName(), "test.sat" );
+  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "test.sat" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the facet tolerance can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setFacetTolerance )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setFacetTolerance )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setFacetTolerance( 5e-4 );
 
-  TEST_EQUALITY_CONST( properties.getFacetTolerance(), 5e-4 );
+  FRENSIE_CHECK_EQUAL( properties.getFacetTolerance(), 5e-4 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the id lookup type can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setIdLookup )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setIdLookup )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.useFastIdLookup();
 
-  TEST_ASSERT( properties.isFastIdLookupUsed() );
+  FRENSIE_CHECK( properties.isFastIdLookupUsed() );
 
   properties.useStandardIdLookup();
 
-  TEST_ASSERT( !properties.isFastIdLookupUsed() );
+  FRENSIE_CHECK( !properties.isFastIdLookupUsed() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the termination cell property name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setTerminationCellPropertyName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setTerminationCellPropertyName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setTerminationCellPropertyName( "graveyard" );
 
-  TEST_EQUALITY_CONST( properties.getTerminationCellPropertyName(),
+  FRENSIE_CHECK_EQUAL( properties.getTerminationCellPropertyName(),
                        "graveyard" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the reflecting surface property name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setReflectingSurfacePropertyName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setReflectingSurfacePropertyName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setReflectingSurfacePropertyName( "spec.reflect" );
 
-  TEST_EQUALITY_CONST( properties.getReflectingSurfacePropertyName(),
+  FRENSIE_CHECK_EQUAL( properties.getReflectingSurfacePropertyName(),
                        "spec.reflect" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the material property name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setMaterialPropertyName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setMaterialPropertyName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setMaterialPropertyName( "mat" );
 
-  TEST_EQUALITY_CONST( properties.getMaterialPropertyName(), "mat" );
+  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "mat" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the density property name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setDensityPropertyName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setDensityPropertyName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setDensityPropertyName( "rho" );
 
-  TEST_EQUALITY_CONST( properties.getDensityPropertyName(), "rho" );
+  FRENSIE_CHECK_EQUAL( properties.getDensityPropertyName(), "rho" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the estimator property name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setEstimatorPropertyName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setEstimatorPropertyName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setEstimatorPropertyName( "tally" );
 
-  TEST_EQUALITY_CONST( properties.getEstimatorPropertyName(), "tally" );
+  FRENSIE_CHECK_EQUAL( properties.getEstimatorPropertyName(), "tally" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that all of the property names can be returned
-TEUCHOS_UNIT_TEST( DagMCModelProperties, getPropertyNames )
+FRENSIE_UNIT_TEST( DagMCModelProperties, getPropertyNames )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   
@@ -150,275 +160,361 @@ TEUCHOS_UNIT_TEST( DagMCModelProperties, getPropertyNames )
 
   properties.getPropertyNames( property_names );
 
-  TEST_EQUALITY_CONST( property_names.size(), 5 );
-  TEST_ASSERT( std::find( property_names.begin(),
+  FRENSIE_CHECK_EQUAL( property_names.size(), 5 );
+  FRENSIE_CHECK( std::find( property_names.begin(),
                           property_names.end(),
                           "termination.cell" ) != property_names.end() );
-  TEST_ASSERT( std::find( property_names.begin(),
+  FRENSIE_CHECK( std::find( property_names.begin(),
                           property_names.end(),
                           "reflecting.surface" ) != property_names.end() );
-  TEST_ASSERT( std::find( property_names.begin(),
+  FRENSIE_CHECK( std::find( property_names.begin(),
                           property_names.end(),
                           "material" ) != property_names.end() );
-  TEST_ASSERT( std::find( property_names.begin(),
+  FRENSIE_CHECK( std::find( property_names.begin(),
                           property_names.end(),
                           "density" ) != property_names.end() );
-  TEST_ASSERT( std::find( property_names.begin(),
+  FRENSIE_CHECK( std::find( property_names.begin(),
                           property_names.end(),
                           "estimator" ) != property_names.end() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the surface current name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setSurfaceCurrentName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setSurfaceCurrentName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setSurfaceCurrentName( "surf.cur" );
 
-  TEST_EQUALITY_CONST( properties.getSurfaceCurrentName(), "surf.cur" );
+  FRENSIE_CHECK_EQUAL( properties.getSurfaceCurrentName(), "surf.cur" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the surface flux name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setSurfaceFluxName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setSurfaceFluxName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setSurfaceFluxName( "surf.flux" );
 
-  TEST_EQUALITY_CONST( properties.getSurfaceFluxName(), "surf.flux" );
+  FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxName(), "surf.flux" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell pusle height name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setCellPulseHeightName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setCellPulseHeightName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setCellPulseHeightName( "cell.ph" );
 
-  TEST_EQUALITY_CONST( properties.getCellPulseHeightName(), "cell.ph" );
+  FRENSIE_CHECK_EQUAL( properties.getCellPulseHeightName(), "cell.ph" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell track-length flux name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setCellTrackLengthFluxName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setCellTrackLengthFluxName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setCellTrackLengthFluxName( "cell.tl" );
 
-  TEST_EQUALITY_CONST( properties.getCellTrackLengthFluxName(), "cell.tl" );
+  FRENSIE_CHECK_EQUAL( properties.getCellTrackLengthFluxName(), "cell.tl" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell collision flux name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setCellCollisionFluxName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setCellCollisionFluxName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setCellCollisionFluxName( "cell.c" );
 
-  TEST_EQUALITY_CONST( properties.getCellCollisionFluxName(), "cell.c" );
+  FRENSIE_CHECK_EQUAL( properties.getCellCollisionFluxName(), "cell.c" );
 }
 
 //---------------------------------------------------------------------------//
 // Check if a cell estimator name is valid
-TEUCHOS_UNIT_TEST( DagMCModelProperties, isCellEstimatorNameValid )
+FRENSIE_UNIT_TEST( DagMCModelProperties, isCellEstimatorNameValid )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
-  TEST_ASSERT( properties.isCellEstimatorNameValid(
+  FRENSIE_CHECK( properties.isCellEstimatorNameValid(
                                        properties.getCellPulseHeightName() ) );
-  TEST_ASSERT( properties.isCellEstimatorNameValid(
+  FRENSIE_CHECK( properties.isCellEstimatorNameValid(
                                    properties.getCellTrackLengthFluxName() ) );
-  TEST_ASSERT( properties.isCellEstimatorNameValid(
+  FRENSIE_CHECK( properties.isCellEstimatorNameValid(
                                      properties.getCellCollisionFluxName() ) );
-  TEST_ASSERT( !properties.isCellEstimatorNameValid(
+  FRENSIE_CHECK( !properties.isCellEstimatorNameValid(
                                         properties.getSurfaceCurrentName() ) );
-  TEST_ASSERT( !properties.isCellEstimatorNameValid(
+  FRENSIE_CHECK( !properties.isCellEstimatorNameValid(
                                            properties.getSurfaceFluxName() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if a surface estimator name is valid
-TEUCHOS_UNIT_TEST( DagMCModelProperties, isSurfaceEstimatorNameValid )
+FRENSIE_UNIT_TEST( DagMCModelProperties, isSurfaceEstimatorNameValid )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
-  TEST_ASSERT( properties.isSurfaceEstimatorNameValid(
+  FRENSIE_CHECK( properties.isSurfaceEstimatorNameValid(
                                         properties.getSurfaceCurrentName() ) );
-  TEST_ASSERT( properties.isSurfaceEstimatorNameValid(
+  FRENSIE_CHECK( properties.isSurfaceEstimatorNameValid(
                                            properties.getSurfaceFluxName() ) );
-  TEST_ASSERT( !properties.isSurfaceEstimatorNameValid(
+  FRENSIE_CHECK( !properties.isSurfaceEstimatorNameValid(
                                        properties.getCellPulseHeightName() ) );
-  TEST_ASSERT( !properties.isSurfaceEstimatorNameValid(
+  FRENSIE_CHECK( !properties.isSurfaceEstimatorNameValid(
                                    properties.getCellTrackLengthFluxName() ) );
-  TEST_ASSERT( !properties.isSurfaceEstimatorNameValid(
+  FRENSIE_CHECK( !properties.isSurfaceEstimatorNameValid(
                                      properties.getCellCollisionFluxName() ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if an estimator name is valid
-TEUCHOS_UNIT_TEST( DagMCModelProperties, isEstimatorNameValid )
+FRENSIE_UNIT_TEST( DagMCModelProperties, isEstimatorNameValid )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
-  TEST_ASSERT( properties.isEstimatorNameValid(
+  FRENSIE_CHECK( properties.isEstimatorNameValid(
                                         properties.getSurfaceCurrentName() ) );
-  TEST_ASSERT( properties.isEstimatorNameValid(
+  FRENSIE_CHECK( properties.isEstimatorNameValid(
                                            properties.getSurfaceFluxName() ) );
-  TEST_ASSERT( properties.isEstimatorNameValid(
+  FRENSIE_CHECK( properties.isEstimatorNameValid(
                                        properties.getCellPulseHeightName() ) );
-  TEST_ASSERT( properties.isEstimatorNameValid(
+  FRENSIE_CHECK( properties.isEstimatorNameValid(
                                    properties.getCellTrackLengthFluxName() ) );
-  TEST_ASSERT( properties.isEstimatorNameValid(
+  FRENSIE_CHECK( properties.isEstimatorNameValid(
                                      properties.getCellCollisionFluxName() ) );
-  TEST_ASSERT( !properties.isEstimatorNameValid( "dummy" ) );
+  FRENSIE_CHECK( !properties.isEstimatorNameValid( "dummy" ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the estimator type can be returned
-TEUCHOS_UNIT_TEST( DagMCModelProperties, getEstimatorType )
+FRENSIE_UNIT_TEST( DagMCModelProperties, getEstimatorType )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
   Geometry::EstimatorType estimator_type =
     properties.getEstimatorType( properties.getSurfaceCurrentName() );
 
-  TEST_EQUALITY_CONST( estimator_type,
+  FRENSIE_CHECK_EQUAL( estimator_type,
                        Geometry::SURFACE_CURRENT_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getSurfaceFluxName() );
 
-  TEST_EQUALITY_CONST( estimator_type,
+  FRENSIE_CHECK_EQUAL( estimator_type,
                        Geometry::SURFACE_FLUX_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getCellPulseHeightName() );
 
-  TEST_EQUALITY_CONST( estimator_type,
+  FRENSIE_CHECK_EQUAL( estimator_type,
                        Geometry::CELL_PULSE_HEIGHT_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getCellTrackLengthFluxName() );
 
-  TEST_EQUALITY_CONST( estimator_type,
+  FRENSIE_CHECK_EQUAL( estimator_type,
                        Geometry::CELL_TRACK_LENGTH_FLUX_ESTIMATOR );
 
   estimator_type =
     properties.getEstimatorType( properties.getCellCollisionFluxName() );
 
-  TEST_EQUALITY_CONST( estimator_type,
+  FRENSIE_CHECK_EQUAL( estimator_type,
                        Geometry::CELL_COLLISION_FLUX_ESTIMATOR );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the photon name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setPhotonName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setPhotonName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setPhotonName( "photon" );
 
-  TEST_EQUALITY_CONST( properties.getPhotonName(), "photon" );
+  FRENSIE_CHECK_EQUAL( properties.getPhotonName(), "photon" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the neutron name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setNeutronName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setNeutronName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setNeutronName( "neutron" );
 
-  TEST_EQUALITY_CONST( properties.getNeutronName(), "neutron" );
+  FRENSIE_CHECK_EQUAL( properties.getNeutronName(), "neutron" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electron name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setElectronName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setElectronName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setElectronName( "electron" );
 
-  TEST_EQUALITY_CONST( properties.getElectronName(), "electron" );
+  FRENSIE_CHECK_EQUAL( properties.getElectronName(), "electron" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the adjoint photon name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setAdjointPhotonName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointPhotonName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setAdjointPhotonName( "adjoint-photon" );
 
-  TEST_EQUALITY_CONST( properties.getAdjointPhotonName(), "adjoint-photon" );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointPhotonName(), "adjoint-photon" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the adjoint neutron name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setAdjointNeutronName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointNeutronName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setAdjointNeutronName( "adjoint-neutron" );
 
-  TEST_EQUALITY_CONST( properties.getAdjointNeutronName(), "adjoint-neutron" );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointNeutronName(), "adjoint-neutron" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the adjoint electron name can be set
-TEUCHOS_UNIT_TEST( DagMCModelProperties, setAdjointElectronName )
+FRENSIE_UNIT_TEST( DagMCModelProperties, setAdjointElectronName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
   properties.setAdjointElectronName( "adjoint-electron" );
 
-  TEST_EQUALITY_CONST( properties.getAdjointElectronName(),
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronName(),
                        "adjoint-electron" );
 }
 
 //---------------------------------------------------------------------------//
 // Check if a particle name is valid
-TEUCHOS_UNIT_TEST( DagMCModelProperties, isParticleNameValid )
+FRENSIE_UNIT_TEST( DagMCModelProperties, isParticleNameValid )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
-  TEST_ASSERT( properties.isParticleNameValid( properties.getPhotonName() ) );
-  TEST_ASSERT( properties.isParticleNameValid( properties.getNeutronName() ) );
-  TEST_ASSERT( properties.isParticleNameValid( properties.getElectronName() ) );
-  TEST_ASSERT( properties.isParticleNameValid( properties.getAdjointPhotonName() ) );
-  TEST_ASSERT( properties.isParticleNameValid( properties.getAdjointNeutronName() ) );
-  TEST_ASSERT( properties.isParticleNameValid( properties.getAdjointElectronName() ) );
-  TEST_ASSERT( !properties.isParticleNameValid( "dummy" ) );
+  FRENSIE_CHECK( properties.isParticleNameValid( properties.getPhotonName() ) );
+  FRENSIE_CHECK( properties.isParticleNameValid( properties.getNeutronName() ) );
+  FRENSIE_CHECK( properties.isParticleNameValid( properties.getElectronName() ) );
+  FRENSIE_CHECK( properties.isParticleNameValid( properties.getAdjointPhotonName() ) );
+  FRENSIE_CHECK( properties.isParticleNameValid( properties.getAdjointNeutronName() ) );
+  FRENSIE_CHECK( properties.isParticleNameValid( properties.getAdjointElectronName() ) );
+  FRENSIE_CHECK( !properties.isParticleNameValid( "dummy" ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a particle type can be returned
-TEUCHOS_UNIT_TEST( DagMCModelProperties, getParticleType )
+FRENSIE_UNIT_TEST( DagMCModelProperties, getParticleType )
 {
   const Geometry::DagMCModelProperties properties( "test.sat" );
 
   Geometry::ParticleType particle_type =
     properties.getParticleType( properties.getPhotonName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::PHOTON );
+  FRENSIE_CHECK_EQUAL( particle_type, Geometry::PHOTON );
 
   particle_type = properties.getParticleType( properties.getNeutronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::NEUTRON );
+  FRENSIE_CHECK_EQUAL( particle_type, Geometry::NEUTRON );
 
   particle_type = properties.getParticleType( properties.getElectronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::ELECTRON );
+  FRENSIE_CHECK_EQUAL( particle_type, Geometry::ELECTRON );
 
   particle_type =
     properties.getParticleType( properties.getAdjointPhotonName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::ADJOINT_PHOTON );
+  FRENSIE_CHECK_EQUAL( particle_type, Geometry::ADJOINT_PHOTON );
 
   particle_type =
     properties.getParticleType( properties.getAdjointNeutronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::ADJOINT_NEUTRON );
+  FRENSIE_CHECK_EQUAL( particle_type, Geometry::ADJOINT_NEUTRON );
 
   particle_type =
     properties.getParticleType( properties.getAdjointElectronName() );
 
-  TEST_EQUALITY_CONST( particle_type, Geometry::ADJOINT_ELECTRON );
+  FRENSIE_CHECK_EQUAL( particle_type, Geometry::ADJOINT_ELECTRON );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModelProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_dagmc_model_properties" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some properties
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+    
+    Geometry::DagMCModelProperties properties( "dummy.sat" );
+    properties.setFacetTolerance( 1e-4 );
+    properties.setTerminationCellPropertyName( "graveyard" );
+    properties.setReflectingSurfacePropertyName( "ref.surf" );
+    properties.setMaterialPropertyName( "mat" );
+    properties.setDensityPropertyName( "rho" );
+    properties.setEstimatorPropertyName( "tally" );
+    properties.setSurfaceCurrentName( "s.cur" );
+    properties.setSurfaceFluxName( "s.flux" );
+    properties.setCellPulseHeightName( "c.pulse.h" );
+    properties.setCellTrackLengthFluxName( "c.tl.flux" );
+    properties.setCellCollisionFluxName( "c.c.flux" );
+    properties.setPhotonName( "gamma" );
+    properties.setNeutronName( "neutral" );
+    properties.setElectronName( "negatron" );
+    properties.setAdjointPhotonName( "agamma" );
+    properties.setAdjointNeutronName("aneutral" );
+    properties.setAdjointElectronName( "anegatron" );
+    
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Geometry::DagMCModelProperties properties( "?.sat" );
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( properties ) );
+
+  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.sat" );
+  FRENSIE_CHECK_EQUAL( properties.getFacetTolerance(), 1e-4 );
+  FRENSIE_CHECK( !properties.isFastIdLookupUsed() );
+  FRENSIE_CHECK_EQUAL( properties.getTerminationCellPropertyName(),
+                       "graveyard" );
+  FRENSIE_CHECK_EQUAL( properties.getReflectingSurfacePropertyName(),
+                       "ref.surf" );
+  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(),
+                       "mat" );
+  FRENSIE_CHECK_EQUAL( properties.getDensityPropertyName(),
+                       "rho" );
+  FRENSIE_CHECK_EQUAL( properties.getEstimatorPropertyName(),
+                       "tally" );
+  FRENSIE_CHECK_EQUAL( properties.getSurfaceCurrentName(),
+                       "s.cur" );
+  FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxName(),
+                       "s.flux" );
+  FRENSIE_CHECK_EQUAL( properties.getCellPulseHeightName(),
+                       "c.pulse.h" );
+  FRENSIE_CHECK_EQUAL( properties.getCellTrackLengthFluxName(),
+                       "c.tl.flux" );
+  FRENSIE_CHECK_EQUAL( properties.getCellCollisionFluxName(),
+                       "c.c.flux" );
+  FRENSIE_CHECK_EQUAL( properties.getPhotonName(), "gamma" );
+  FRENSIE_CHECK_EQUAL( properties.getNeutronName(), "neutral" );
+  FRENSIE_CHECK_EQUAL( properties.getElectronName(), "negatron" );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointPhotonName(), "agamma" );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointNeutronName(), "aneutral" );
+  FRENSIE_CHECK_EQUAL( properties.getAdjointElectronName(), "anegatron" );
 }
 
 //---------------------------------------------------------------------------//

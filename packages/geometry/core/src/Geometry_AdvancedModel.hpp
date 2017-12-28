@@ -41,7 +41,8 @@ public:
   { /* ... */ }
 
   //! Check if this is an advanced model
-  bool isAdvanced() const override;
+  bool isAdvanced() const override
+  { return true; }
 
   //! Check if the model has surface estimator data
   virtual bool hasSurfaceEstimatorData() const = 0;
@@ -63,15 +64,29 @@ public:
   //! Check if the surface is a reflecting surface
   virtual bool isReflectingSurface(
               const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
-};
 
-// Check if this is an advanced model
-inline bool AdvancedModel::isAdvanced() const
-{
-  return true;
-}
+private:
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model ); }
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version )
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model ); }
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+};
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AdvancedModel, Geometry );
+BOOST_SERIALIZATION_CLASS_VERSION( AdvancedModel, Geometry, 0 );
 
 #endif // end GEOMETRY_ADVANCED_MODEL_HPP
 

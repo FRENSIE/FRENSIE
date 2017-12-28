@@ -184,7 +184,7 @@ void DagMCRay::changeDirection( const double x_direction,
 
   // Reset the extra data
   this->resetIntersectionSurfaceData();
-  d_history.reset();
+  d_history.reset_to_last_intersection();
 }
 
 // Get the position

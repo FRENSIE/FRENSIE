@@ -13,9 +13,14 @@
 #include <string>
 #include <vector>
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+
 // FRENSIE Includes
 #include "Geometry_ParticleType.hpp"
 #include "Geometry_EstimatorType.hpp"
+#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Geometry{
 
@@ -169,6 +174,22 @@ public:
 
 private:
 
+  // Default constructor
+  DagMCModelProperties();
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The model file name
   std::string d_file_name;
 
@@ -227,8 +248,11 @@ private:
   std::string d_adjoint_electron_name;
 };
   
-  
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( DagMCModelProperties, Geometry, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCModelProperties, Geometry );
+EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModelProperties );
 
 #endif // end GEOMETRY_DAGMC_MODEL_PROPERTIES_HPP
 

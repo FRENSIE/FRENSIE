@@ -9,8 +9,8 @@
 #ifndef GEOMETRY_DAGMC_RAY_HPP
 #define GEOMETRY_DAGMC_RAY_HPP
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
+// Std Lib Includes
+#include <memory>
 
 // Moab Includes
 #include <DagMC.hpp>
@@ -122,7 +122,7 @@ public:
 private:
 
   // The basic ray
-  boost::scoped_ptr<Ray> d_basic_ray;
+  std::unique_ptr<Ray> d_basic_ray;
 
   // The current cell handle
   moab::EntityHandle d_cell_handle;
