@@ -18,6 +18,9 @@ INCLUDE(Version)
 # Include the macros that have been defined for this project
 INCLUDE(Macros)
 
+# Capture the command line and add to cache
+CAPTURE_COMMAND_LINE()
+
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
 
@@ -249,6 +252,7 @@ ADD_UNINSTALL_TARGET()
 
 ##---------------------------------------------------------------------------##
 ## Set Up the Project Directory Hierarchy
+##---------------------------------------------------------------------------##
 
 ADD_SUBDIRECTORY(scripts)
 
