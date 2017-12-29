@@ -19,8 +19,12 @@
 // FRENSIE Includes
 #include "Geometry_Navigator.hpp"
 #include "Geometry_ModuleTraits.hpp"
+#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
+
+// Forward declare the RootModel
+class RootModel;
 
 /*! The Root ray tracer
  * \details Ray tracing can be done in two ways: With Geometry::Ray objects or
@@ -38,8 +42,7 @@ public:
   CellIdToTGeoVolumeFunction;
 
   //! Constructor
-  RootNavigator( TGeoManager* manager,
-                 const CellIdToTGeoVolumeFunction& get_volume_ptr );
+  RootNavigator( const std::shared_ptr<const RootModel>& root_model );
 
   //! Destructor
   ~RootNavigator();
@@ -120,6 +123,9 @@ private:
   // Deep copy an array
   static void deepCopy( double* copy_array, const double* orig_array );
 
+  // Default constructor
+  RootNavigator();
+
   // Find the node containing the point
   TGeoNode* findNodeContainingRay( const double position[3],
                                    const double direction[3] ) const;
@@ -127,19 +133,35 @@ private:
   // Set the internal ray set flag
   void internalRaySet();
 
+  // Create internal ray
+  static TGeoNavigator* createInternalRay( TGeoManager* manager );
+  
+  // Free internal ray
+  void freeInternalRay();
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The tolerance used to determine the location of points within cells
   static const double s_tol;
 
-  // The geometry manager
-  TGeoManager* d_manager;
-
-  // The function used to convert cell id to TGeoVolume*
-  CellIdToTGeoVolumeFunction d_get_volume_ptr;
+  // The Root model
+  std::shared_ptr<const RootModel> d_root_model;
 
   // Keeps track of whether or not the navigator rays have been set
   bool d_internal_ray_set;
 
-  // The geometry navigators
+  // The geometry navigator
   TGeoNavigator* d_navigator;
 };
 
@@ -153,6 +175,10 @@ inline void RootNavigator::deepCopy( double* copy_array,
 }
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( RootNavigator, Geometry, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootNavigator, Geometry );
+EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootNavigator );
 
 #endif // end GEOMETRY_ROOT_NAVIGATOR_HPP
 

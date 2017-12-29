@@ -545,7 +545,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, clone )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a model can be archived
+// Check that a navigator can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCNavigator, archive, TestArchives )
 {
   FETCH_TEMPLATE_PARAM( 0, RawOArchive );

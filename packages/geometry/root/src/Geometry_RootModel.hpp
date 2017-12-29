@@ -12,8 +12,6 @@
 // Std Lib Includes
 #include <string>
 #include <stdexcept>
-#include <unordered_map>
-#include <vector>
 
 // Root Includes
 #include <TGeoManager.h>
@@ -25,6 +23,8 @@
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Model.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -125,11 +125,30 @@ private:
   // Get the cell
   TGeoVolume* getVolumePtr( const ModuleTraits::InternalCellHandle& cell_id ) const;
 
+  // Get the manager
+  TGeoManager* getManager() const;
+
   // The custom root error handler
   static void handleRootError( int level,
                                Bool_t abort,
                                const char* location,
                                const char* msg );
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  // Declare the RootNavigator as a friend
+  friend class RootNavigator;
 
   // The Root model instance
   static std::shared_ptr<RootModel> s_instance;
@@ -158,6 +177,10 @@ public:
 };
 
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( RootModel, Geometry, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootModel, Geometry );
+EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModel );
 
 //---------------------------------------------------------------------------//
 // Template Includes

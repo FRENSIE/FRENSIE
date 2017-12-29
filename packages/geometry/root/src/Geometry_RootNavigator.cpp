@@ -6,8 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "Geometry_RootNavigator.hpp"
+#include "Geometry_RootModel.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ContractException.hpp"
@@ -17,20 +30,24 @@ namespace Geometry{
 // Initialize static member data
 const double RootNavigator::s_tol = 1e-5;
 
-// Constructor
-RootNavigator::RootNavigator(
-                             TGeoManager* manager,
-                             const CellIdToTGeoVolumeFunction& get_volume_ptr )
-  : d_manager( manager ),
-    d_get_volume_ptr( get_volume_ptr ),
+// Default constructor
+RootNavigator::RootNavigator()
+  : d_root_model(),
     d_internal_ray_set( false ),
-    d_navigator( d_manager->AddNavigator() )
+    d_navigator( NULL )
+{ /* ... */ }
+  
+// Constructor
+RootNavigator::RootNavigator( const std::shared_ptr<const RootModel>& root_model )
+  : d_root_model( root_model ),
+    d_internal_ray_set( false ),
+    d_navigator( RootNavigator::createInternalRay( d_root_model->getManager() ) )
 { /* ... */ }
 
 // Destructor
 RootNavigator::~RootNavigator()
 {
-  d_manager->RemoveNavigator( d_navigator );
+  this->freeInternalRay();
 }
 
 // Get the point location w.r.t. a given cell
@@ -44,7 +61,7 @@ PointLocation RootNavigator::getPointLocation(
                          const double*,
                          const ModuleTraits::InternalCellHandle cell_id ) const
 {
-  TGeoVolume* cell = d_get_volume_ptr( cell_id );
+  TGeoVolume* cell = d_root_model->getVolumePtr( cell_id );
 
   PointLocation location;
 
@@ -352,7 +369,7 @@ void RootNavigator::changeInternalRayDirection( const double x_direction,
 RootNavigator* RootNavigator::clone() const
 {
   // Copy the geometry data
-  RootNavigator* clone = new RootNavigator( d_manager, d_get_volume_ptr );
+  RootNavigator* clone = new RootNavigator( d_root_model );
 
   // Copy the position, direction and cell
   dynamic_cast<Navigator*>( clone )->setInternalRay(
@@ -361,8 +378,83 @@ RootNavigator* RootNavigator::clone() const
                                         this->getCellContainingInternalRay() );
   return clone;
 }
+
+// Create internal ray
+TGeoNavigator* RootNavigator::createInternalRay( TGeoManager* manager )
+{
+  return manager->AddNavigator();
+}
+
+// Free internal ray
+void RootNavigator::freeInternalRay()
+{
+  if( d_navigator )
+  {
+    d_root_model->getManager()->RemoveNavigator( d_navigator );
+  
+    d_navigator = NULL;
+  }
+}
+
+// Save the model to an archive
+template<typename Archive>
+void RootNavigator::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+
+  // Save the local data
+  ar & BOOST_SERIALIZATION_NVP( d_root_model );
+  ar & BOOST_SERIALIZATION_NVP( d_internal_ray_set );
+
+  if( d_internal_ray_set )
+  {
+    ModuleTraits::InternalCellHandle current_cell =
+      this->getCellContainingInternalRay();
+
+    ar & BOOST_SERIALIZATION_NVP( current_cell );
+    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(this->getInternalRayPosition()), 3 ) );
+    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( const_cast<double*>(this->getInternalRayDirection()), 3 ) );
+  }
+}
+
+// Load the model from an archive
+template<typename Archive>
+void RootNavigator::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_root_model );
+  ar & BOOST_SERIALIZATION_NVP( d_internal_ray_set );
+
+  // Create a new internal ray
+  if( d_navigator )
+    this->freeInternalRay();
+
+  d_navigator = this->createInternalRay( d_root_model->getManager() );
+
+  // Set the internal ray state (if one was archived)
+  if( d_internal_ray_set )
+  {
+    ModuleTraits::InternalCellHandle current_cell;
+    double current_position[3];
+    double current_direction[3];
+    
+    ar & BOOST_SERIALIZATION_NVP( current_cell );
+    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( current_position, 3 ) );
+    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
+    
+    dynamic_cast<Navigator*>(this)->setInternalRay( current_position, current_direction, current_cell );
+  }
+}
+
+EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootNavigator );
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( RootNavigator, Geometry );
 
 //---------------------------------------------------------------------------//
 // end Geometry_RootNavigator.cpp

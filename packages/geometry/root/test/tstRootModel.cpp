@@ -8,41 +8,50 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <fstream>
 #include <memory>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Geometry_RootModel.hpp"
-#include "Geometry_RootModelPropertiesFactory.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 std::shared_ptr<const Geometry::RootModelProperties> model_properties;
 
+bool cache_test_archive;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that Root can be initialized
-TEUCHOS_UNIT_TEST( RootModel, initialize )
+FRENSIE_UNIT_TEST( RootModel, initialize )
 {
   std::shared_ptr<Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
   
-  TEST_ASSERT( !model->isInitialized() );
-  TEST_NOTHROW( model->initialize( *model_properties ) );
-  TEST_ASSERT( model->isInitialized() );
+  FRENSIE_CHECK( !model->isInitialized() );
+  FRENSIE_CHECK_NO_THROW( model->initialize( *model_properties ) );
+  FRENSIE_CHECK( model->isInitialized() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the model properties can be returned
-TEUCHOS_UNIT_TEST( RootModel, getModelProperties )
+FRENSIE_UNIT_TEST( RootModel, getModelProperties )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
@@ -50,34 +59,34 @@ TEUCHOS_UNIT_TEST( RootModel, getModelProperties )
   const Geometry::RootModelProperties& properties =
     model->getModelProperties();
 
-  TEST_ASSERT( properties.getModelFileName().find( "basic_root_geometry.root" ) < properties.getModelFileName().size() );
-  TEST_EQUALITY_CONST( properties.getMaterialPropertyName(), "mat" );
-  TEST_EQUALITY_CONST( properties.getVoidMaterialName(), "void" );
-  TEST_EQUALITY_CONST( properties.getTerminalMaterialName(), "graveyard" );
+  FRENSIE_CHECK( properties.getModelFileName().find( "basic_root_geometry.root" ) < properties.getModelFileName().size() );
+  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "mat" );
+  FRENSIE_CHECK_EQUAL( properties.getVoidMaterialName(), "void" );
+  FRENSIE_CHECK_EQUAL( properties.getTerminalMaterialName(), "graveyard" );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the model has cell estimator data
-TEUCHOS_UNIT_TEST( RootModel, hasCellEstimatorData )
+FRENSIE_UNIT_TEST( RootModel, hasCellEstimatorData )
 {
-  TEST_ASSERT( !Geometry::RootModel::getInstance()->hasCellEstimatorData() );
+  FRENSIE_CHECK( !Geometry::RootModel::getInstance()->hasCellEstimatorData() );
 }
 
 //---------------------------------------------------------------------------//
 // Get the material ids
-TEUCHOS_UNIT_TEST( RootModel, getMaterialIds )
+FRENSIE_UNIT_TEST( RootModel, getMaterialIds )
 {
   Geometry::Model::MaterialIdSet material_ids;
 
   Geometry::RootModel::getInstance()->getMaterialIds( material_ids );
 
-  TEST_EQUALITY_CONST( material_ids.size(), 1 );
-  TEST_ASSERT( material_ids.count( 1 ) );
+  FRENSIE_CHECK_EQUAL( material_ids.size(), 1 );
+  FRENSIE_CHECK( material_ids.count( 1 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the cells can be returned
-TEUCHOS_UNIT_TEST( RootModel, getCells )
+FRENSIE_UNIT_TEST( RootModel, getCells )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
@@ -87,45 +96,45 @@ TEUCHOS_UNIT_TEST( RootModel, getCells )
   // Get all cells except the termination cells
   model->getCells( cells, true, false );
 
-  TEST_EQUALITY_CONST( cells.size(), 2 );
-  TEST_ASSERT( cells.count( 1 ) );
-  TEST_ASSERT( cells.count( 2 ) );
-  TEST_ASSERT( !cells.count( 3 ) );
+  FRENSIE_CHECK_EQUAL( cells.size(), 2 );
+  FRENSIE_CHECK( cells.count( 1 ) );
+  FRENSIE_CHECK( cells.count( 2 ) );
+  FRENSIE_CHECK( !cells.count( 3 ) );
 
   cells.clear();
 
   // Get all cells except the void and termination cells
   model->getCells( cells, false, false );
 
-  TEST_EQUALITY_CONST( cells.size(), 1 );
-  TEST_ASSERT( !cells.count( 1 ) );
-  TEST_ASSERT( cells.count( 2 ) );
-  TEST_ASSERT( !cells.count( 3 ) );
+  FRENSIE_CHECK_EQUAL( cells.size(), 1 );
+  FRENSIE_CHECK( !cells.count( 1 ) );
+  FRENSIE_CHECK( cells.count( 2 ) );
+  FRENSIE_CHECK( !cells.count( 3 ) );
 
   cells.clear();
 
   // Get all cells except the void cells
   model->getCells( cells, false, true );
 
-  TEST_EQUALITY_CONST( cells.size(), 2 );
-  TEST_ASSERT( !cells.count( 1 ) );
-  TEST_ASSERT( cells.count( 2 ) );
-  TEST_ASSERT( cells.count( 3 ) );
+  FRENSIE_CHECK_EQUAL( cells.size(), 2 );
+  FRENSIE_CHECK( !cells.count( 1 ) );
+  FRENSIE_CHECK( cells.count( 2 ) );
+  FRENSIE_CHECK( cells.count( 3 ) );
 
   cells.clear();
 
   // Get all cells
   model->getCells( cells, true, true );
 
-  TEST_EQUALITY_CONST( cells.size(), 3 );
-  TEST_ASSERT( cells.count( 1 ) );
-  TEST_ASSERT( cells.count( 2 ) );
-  TEST_ASSERT( cells.count( 3 ) );
+  FRENSIE_CHECK_EQUAL( cells.size(), 3 );
+  FRENSIE_CHECK( cells.count( 1 ) );
+  FRENSIE_CHECK( cells.count( 2 ) );
+  FRENSIE_CHECK( cells.count( 3 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Get the cell material names
-TEUCHOS_UNIT_TEST( RootModel, getCellMaterialNames )
+FRENSIE_UNIT_TEST( RootModel, getCellMaterialNames )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
@@ -135,19 +144,19 @@ TEUCHOS_UNIT_TEST( RootModel, getCellMaterialNames )
 
   model->getCellMaterialNames( cell_id_material_name_map );
 
-  TEST_EQUALITY_CONST( cell_id_material_name_map.size(), 3 );
-  TEST_ASSERT( cell_id_material_name_map.count( 1 ) );
-  TEST_ASSERT( cell_id_material_name_map.count( 2 ) );
-  TEST_ASSERT( cell_id_material_name_map.count( 3 ) );
-  TEST_EQUALITY_CONST( cell_id_material_name_map.find( 1 )->second, "void" );
-  TEST_EQUALITY_CONST( cell_id_material_name_map.find( 2 )->second, "mat_1" );
-  TEST_EQUALITY_CONST( cell_id_material_name_map.find( 3 )->second,
+  FRENSIE_CHECK_EQUAL( cell_id_material_name_map.size(), 3 );
+  FRENSIE_CHECK( cell_id_material_name_map.count( 1 ) );
+  FRENSIE_CHECK( cell_id_material_name_map.count( 2 ) );
+  FRENSIE_CHECK( cell_id_material_name_map.count( 3 ) );
+  FRENSIE_CHECK_EQUAL( cell_id_material_name_map.find( 1 )->second, "void" );
+  FRENSIE_CHECK_EQUAL( cell_id_material_name_map.find( 2 )->second, "mat_1" );
+  FRENSIE_CHECK_EQUAL( cell_id_material_name_map.find( 3 )->second,
                        "graveyard" );
 }
 
 //---------------------------------------------------------------------------//
 // Get the cell material ids
-TEUCHOS_UNIT_TEST( RootModel, getCellMaterialIds )
+FRENSIE_UNIT_TEST( RootModel, getCellMaterialIds )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
@@ -156,14 +165,14 @@ TEUCHOS_UNIT_TEST( RootModel, getCellMaterialIds )
 
   model->getCellMaterialIds( cell_id_mat_id_map );
 
-  TEST_EQUALITY_CONST( cell_id_mat_id_map.size(), 1 );
-  TEST_ASSERT( cell_id_mat_id_map.count( 2 ) );
-  TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 2 )->second, 1 );
+  FRENSIE_CHECK_EQUAL( cell_id_mat_id_map.size(), 1 );
+  FRENSIE_CHECK( cell_id_mat_id_map.count( 2 ) );
+  FRENSIE_CHECK_EQUAL( cell_id_mat_id_map.find( 2 )->second, 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Get the cell densities
-TEUCHOS_UNIT_TEST( RootModel, getCellDensities )
+FRENSIE_UNIT_TEST( RootModel, getCellDensities )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
@@ -172,14 +181,14 @@ TEUCHOS_UNIT_TEST( RootModel, getCellDensities )
 
   model->getCellDensities( cell_id_density_map );
 
-  TEST_EQUALITY_CONST( cell_id_density_map.size(), 1 );
-  TEST_ASSERT( cell_id_density_map.count( 2 ) );
-  TEST_EQUALITY_CONST( cell_id_density_map.find( 2 )->second, 1 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.size(), 1 );
+  FRENSIE_CHECK( cell_id_density_map.count( 2 ) );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 2 )->second, 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Get the cell estimator data (there shouldn't be any)
-TEUCHOS_UNIT_TEST( RootModel, getCellEstimatorData )
+FRENSIE_UNIT_TEST( RootModel, getCellEstimatorData )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
@@ -188,112 +197,150 @@ TEUCHOS_UNIT_TEST( RootModel, getCellEstimatorData )
 
   model->getCellEstimatorData( cell_estimator_id_data_map );
 
-  TEST_EQUALITY_CONST( cell_estimator_id_data_map.size(), 0 );
+  FRENSIE_CHECK_EQUAL( cell_estimator_id_data_map.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check if the cell exists
-TEUCHOS_UNIT_TEST( RootModel, doesCellExist )
+FRENSIE_UNIT_TEST( RootModel, doesCellExist )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
   
-  TEST_ASSERT( model->doesCellExist( 1 ) );
-  TEST_ASSERT( model->doesCellExist( 2 ) );
-  TEST_ASSERT( model->doesCellExist( 3 ) );
+  FRENSIE_CHECK( model->doesCellExist( 1 ) );
+  FRENSIE_CHECK( model->doesCellExist( 2 ) );
+  FRENSIE_CHECK( model->doesCellExist( 3 ) );
 
-  TEST_ASSERT( !model->doesCellExist( 4 ) );
+  FRENSIE_CHECK( !model->doesCellExist( 4 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if a cell is a termination cell
-TEUCHOS_UNIT_TEST( RootModel, isTerminationCell )
+FRENSIE_UNIT_TEST( RootModel, isTerminationCell )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
   
-  TEST_ASSERT( !model->isTerminationCell( 1 ) );
-  TEST_ASSERT( !model->isTerminationCell( 2 ) );
-  TEST_ASSERT( model->isTerminationCell( 3 ) );
+  FRENSIE_CHECK( !model->isTerminationCell( 1 ) );
+  FRENSIE_CHECK( !model->isTerminationCell( 2 ) );
+  FRENSIE_CHECK( model->isTerminationCell( 3 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check if a cell is a void cell
-TEUCHOS_UNIT_TEST( RootModel, isVoidCell )
+FRENSIE_UNIT_TEST( RootModel, isVoidCell )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
   
-  TEST_ASSERT( model->isVoidCell( 1 ) );
-  TEST_ASSERT( !model->isVoidCell( 2 ) );
-  TEST_ASSERT( !model->isVoidCell( 3 ) );
+  FRENSIE_CHECK( model->isVoidCell( 1 ) );
+  FRENSIE_CHECK( !model->isVoidCell( 2 ) );
+  FRENSIE_CHECK( !model->isVoidCell( 3 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Get if the cell volume
-TEUCHOS_UNIT_TEST( RootModel, getCellVolume )
+FRENSIE_UNIT_TEST( RootModel, getCellVolume )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
   
-  TEST_FLOATING_EQUALITY( model->getCellVolume( 1 ),
-                          934.550153050213,
-                          1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 1 ),
+                                   934.550153050213,
+                                   1e-9 );
 
-  TEST_FLOATING_EQUALITY( model->getCellVolume( 2 ),
-                          65.4498469497874,
-                          1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 2 ),
+                                   65.4498469497874,
+                                   1e-9 );
 
-  TEST_FLOATING_EQUALITY( model->getCellVolume( 3 ),
-                          1744.0,
-                          1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 3 ),
+                                   1744.0,
+                                   1e-9 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a Root navigator can be created
-TEUCHOS_UNIT_TEST( RootModel, createNavigatorAdvanced )
+FRENSIE_UNIT_TEST( RootModel, createNavigatorAdvanced )
 {
   std::shared_ptr<Geometry::RootNavigator> navigator(
                Geometry::RootModel::getInstance()->createNavigatorAdvanced() );
 
-  TEST_ASSERT( navigator.get() != NULL );
+  FRENSIE_CHECK( navigator.get() != NULL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a navigator can be created
-TEUCHOS_UNIT_TEST( RootModel, createNavigator )
+FRENSIE_UNIT_TEST( RootModel, createNavigator )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     Geometry::RootModel::getInstance()->createNavigator();
 
-  TEST_ASSERT( navigator.get() != NULL );
+  FRENSIE_CHECK( navigator.get() != NULL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( RootModel, archive, TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_name( "test_root_model" );
+  std::ostringstream archive_ostream;
+
+  std::unique_ptr<OArchive> oarchive;
+
+  createOArchive( archive_name, archive_ostream, oarchive );
+
+  auto model = Geometry::RootModel::getInstance();
+
+  FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "model", model ) );
+
+  if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
+  {
+    std::unique_ptr<std::ofstream> ofstream;
+    
+    if( archive_name.find( ".bin" ) < archive_name.size() )
+    {
+      ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
+    }
+    else
+    {
+      ofstream.reset( new std::ofstream( archive_name ) );
+    }
+
+    (*ofstream) << archive_ostream.str();
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string xml_file_name;
+std::string test_root_geom_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_xml_file",
-                   &xml_file_name,
-                   "Model properties xml file name" );
-
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_root_file",
+                                        test_root_geom_file_name, "",
+                                        "Test ROOT file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "cache_test_archive",
+                                        cache_test_archive, false,
+                                        "Cache the test archive" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  Teuchos::RCP<const Teuchos::ParameterList> raw_model_properties =
-    Teuchos::getParametersFromXmlFile( xml_file_name );
+  Geometry::RootModelProperties local_properties( test_root_geom_file_name );
 
-  model_properties = Geometry::RootModelPropertiesFactory::createProperties(
-                                                       *raw_model_properties );
+  model_properties.reset( new Geometry::RootModelProperties( local_properties ) );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstRoot.cpp

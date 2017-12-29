@@ -12,6 +12,13 @@
 // Std Lib Includes
 #include <string>
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+
+// FRENSIE Includes
+#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
+
 namespace Geometry{
 
 //! The Root model properties
@@ -50,6 +57,22 @@ public:
 
 private:
 
+  // Default constructor
+  RootModelProperties();
+
+  // Save the model to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the model from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The model file name
   std::string d_file_name;
 
@@ -64,6 +87,10 @@ private:
 };
   
 } // end Geometry namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( RootModelProperties, Geometry, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootModelProperties, Geometry );
+EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModelProperties );
 
 #endif // end GEOMETRY_ROOT_MODEL_PROPERTIES_HPP
 

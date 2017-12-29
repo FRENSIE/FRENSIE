@@ -8,30 +8,39 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <fstream>
 #include <memory>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Geometry_RootNavigator.hpp"
 #include "Geometry_RootModel.hpp"
-#include "Geometry_RootModelPropertiesFactory.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 std::shared_ptr<const Geometry::RootModel> model;
 
+bool cache_test_archive;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a point location w.r.t. a given cell can be determined
-TEUCHOS_UNIT_TEST( RootNavigator, getPointLocation )
+FRENSIE_UNIT_TEST( RootNavigator, getPointLocation )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
   
@@ -43,30 +52,30 @@ TEUCHOS_UNIT_TEST( RootNavigator, getPointLocation )
   Geometry::PointLocation location =
     navigator->getPointLocation( *ray, 2 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
   location = navigator->getPointLocation( *ray, 1 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   location = navigator->getPointLocation( *ray, 3 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   // Point on boundary between cell 2 and cell 1
   ray.reset( new Geometry::Ray( 0.0, 0.0, 2.5, 0.0, 0.0, 1.0 ) );
 
   location = navigator->getPointLocation( *ray, 2 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
   location = navigator->getPointLocation( *ray, 1 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   location = navigator->getPointLocation( *ray, 3 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   // Point in cell 1
   ray.reset( new Geometry::Ray( 0.0, 0.0, 4.0, 0.0, 0.0, 1.0 ) );
@@ -75,19 +84,19 @@ TEUCHOS_UNIT_TEST( RootNavigator, getPointLocation )
                                           ray->getDirection(),
                                           2 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   location = navigator->getPointLocation( ray->getPosition(),
                                           ray->getDirection(),
                                           1 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
   location = navigator->getPointLocation( ray->getPosition(),
                                           ray->getDirection(),
                                           3 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   // Point on boundary between cell 1 and 3
   ray.reset( new Geometry::Ray( 0.0, 0.0, 5.0, 0.0, 0.0, 1.0 ) );
@@ -96,19 +105,19 @@ TEUCHOS_UNIT_TEST( RootNavigator, getPointLocation )
                                           ray->getDirection(),
                                           2 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   location = navigator->getPointLocation( ray->getPosition(),
                                           ray->getDirection(),
                                           1 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
   location = navigator->getPointLocation( ray->getPosition(),
                                           ray->getDirection(),
                                           3 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   // Point in cell 3
   ray.reset( new Geometry::Ray( 0.0, 0.0, 6.0, 0.0, 0.0, 1.0 ) );
@@ -117,24 +126,24 @@ TEUCHOS_UNIT_TEST( RootNavigator, getPointLocation )
                                           ray->getDirection(),
                                           2 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   location = navigator->getPointLocation( ray->getPosition(),
                                           ray->getDirection(),
                                           1 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
   location = navigator->getPointLocation( ray->getPosition(),
                                           ray->getDirection(),
                                           3 );
 
-  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+  FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the surface normal can be returned
-TEUCHOS_UNIT_TEST( RootNavigator, getSurfaceNormal )
+FRENSIE_UNIT_TEST( RootNavigator, getSurfaceNormal )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
 
@@ -145,38 +154,38 @@ TEUCHOS_UNIT_TEST( RootNavigator, getSurfaceNormal )
 
   navigator->getSurfaceNormal( 0, *ray, normal );
 
-  UTILITY_TEST_FLOATING_EQUALITY( normal[0], 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[1], 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[2], 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( normal[0], 1.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[1], 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[2], 1e-15 );
 
   ray.reset( new Geometry::Ray( 2.5, 0.0, 0.0, -1.0, 0.0, 0.0 ) );
 
   navigator->getSurfaceNormal( 0, *ray, normal );
 
-  UTILITY_TEST_FLOATING_EQUALITY( normal[0], -1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[1], 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[2], 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( normal[0], -1.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[1], 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[2], 1e-15 );
   
   ray.reset( new Geometry::Ray( 2.5, 0.0, 0.0, 1/sqrt(3), 1/sqrt(3), 1/sqrt(3) ) );
 
   navigator->getSurfaceNormal( 0, *ray, normal );
 
-  UTILITY_TEST_FLOATING_EQUALITY( normal[0], 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[1], 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[2], 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( normal[0], 1.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[1], 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[2], 1e-15 );
 
   ray.reset( new Geometry::Ray( 2.5, 0.0, 0.0, -1/sqrt(3), -1/sqrt(3), -1/sqrt(3) ) );
 
   navigator->getSurfaceNormal( 0, *ray, normal );
 
-  UTILITY_TEST_FLOATING_EQUALITY( normal[0], -1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[1], 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( normal[2], 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( normal[0], -1.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[1], 1e-15 );
+  FRENSIE_CHECK_SMALL( normal[2], 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell containing the external ray can be found can cached
-TEUCHOS_UNIT_TEST( RootNavigator, findCellContainingRay_cache )
+FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay_cache )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
 
@@ -191,7 +200,7 @@ TEUCHOS_UNIT_TEST( RootNavigator, findCellContainingRay_cache )
 
   cell = navigator->findCellContainingRay( *ray, found_cell_cache );
 
-  TEST_EQUALITY_CONST( cell, 2 );
+  FRENSIE_CHECK_EQUAL( cell, 2 );
 
   // Check that the direction is used to correctly determine the cell when
   // on a boundary
@@ -199,24 +208,24 @@ TEUCHOS_UNIT_TEST( RootNavigator, findCellContainingRay_cache )
 
   cell = navigator->findCellContainingRay( *ray, found_cell_cache );
 
-  TEST_EQUALITY_CONST( cell, 1 );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
 
   ray.reset( new Geometry::Ray( 0.0, 0.0, 2.5, 0.0, 0.0, -1.0 ) );
 
   cell = navigator->findCellContainingRay( ray->getPosition(),
                                            ray->getDirection() );
 
-  TEST_EQUALITY_CONST( cell, 2 );
+  FRENSIE_CHECK_EQUAL( cell, 2 );
 
   // Check the found cell cache
-  TEST_EQUALITY_CONST( found_cell_cache.size(), 2 );
-  TEST_ASSERT( found_cell_cache.count( 1 ) );
-  TEST_ASSERT( found_cell_cache.count( 2 ) );
+  FRENSIE_CHECK_EQUAL( found_cell_cache.size(), 2 );
+  FRENSIE_CHECK( found_cell_cache.count( 1 ) );
+  FRENSIE_CHECK( found_cell_cache.count( 2 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a cell containing an external ray can be determined
-TEUCHOS_UNIT_TEST( RootNavigator, findCellContainingRay )
+FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
   
@@ -228,7 +237,7 @@ TEUCHOS_UNIT_TEST( RootNavigator, findCellContainingRay )
 
   cell = navigator->findCellContainingRay( *ray );
 
-  TEST_EQUALITY_CONST( cell, 2 );
+  FRENSIE_CHECK_EQUAL( cell, 2 );
 
   // Check that the direction is used to correctly determine the cell when
   // on a boundary
@@ -236,54 +245,54 @@ TEUCHOS_UNIT_TEST( RootNavigator, findCellContainingRay )
 
   cell = navigator->findCellContainingRay( *ray );
 
-  TEST_EQUALITY_CONST( cell, 1 );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
 
   ray.reset( new Geometry::Ray( 0.0, 0.0, 2.5, 0.0, 0.0, -1.0 ) );
 
   cell = navigator->findCellContainingRay( ray->getPosition(),
                                            ray->getDirection() );
 
-  TEST_EQUALITY_CONST( cell, 2 );
+  FRENSIE_CHECK_EQUAL( cell, 2 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be set
-TEUCHOS_UNIT_TEST( RootNavigator, setInternalRay )
+FRENSIE_UNIT_TEST( RootNavigator, setInternalRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
   
   std::shared_ptr<Geometry::Ray>
     ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
 
-  TEST_ASSERT( !navigator->isInternalRaySet() );
+  FRENSIE_CHECK( !navigator->isInternalRaySet() );
   
   navigator->setInternalRay( *ray );
 
-  TEST_ASSERT( navigator->isInternalRaySet() );
+  FRENSIE_CHECK( navigator->isInternalRaySet() );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 0.0 );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
 
-  TEST_EQUALITY_CONST( navigator->getCellContainingInternalRay(), 2 );
+  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 2 );
 
   ray.reset( new Geometry::Ray( 1.0, 1.0, 1.0, 0.0, 1.0, 0.0 ) );
 
   navigator->setInternalRay( ray->getPosition(), ray->getDirection() );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 1.0 );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
 
-  TEST_EQUALITY_CONST( navigator->getCellContainingInternalRay(), 2 );
+  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 2 );
 
   navigator->setInternalRay( -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 2 );
 
@@ -292,21 +301,21 @@ TEUCHOS_UNIT_TEST( RootNavigator, setInternalRay )
   Geometry::ModuleTraits::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[0], -1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[1], -1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayPosition()[2], -1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], -1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], -1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], -1.0 );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
 
-  TEST_EQUALITY_CONST( cell, 1 );
-  TEST_EQUALITY_CONST( navigator->getCellContainingInternalRay(), 2 );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
+  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 2 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an internal ray can be fired
-TEUCHOS_UNIT_TEST( RootNavigator, fireInternalRay )
+FRENSIE_UNIT_TEST( RootNavigator, fireInternalRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
   
@@ -316,12 +325,12 @@ TEUCHOS_UNIT_TEST( RootNavigator, fireInternalRay )
   // Fire a ray through the geometry
   double distance_to_boundary = navigator->fireInternalRay();
 
-  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray direction can be changed
-TEUCHOS_UNIT_TEST( RootNavigator, changeInternalRayDirection )
+FRENSIE_UNIT_TEST( RootNavigator, changeInternalRayDirection )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
   
@@ -330,9 +339,9 @@ TEUCHOS_UNIT_TEST( RootNavigator, changeInternalRayDirection )
 
   navigator->changeInternalRayDirection( 1.0, 0.0, 0.0 );
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
 
   {
     const double direction[3] = {0.0, 1.0, 0.0};
@@ -340,14 +349,14 @@ TEUCHOS_UNIT_TEST( RootNavigator, changeInternalRayDirection )
     navigator->changeInternalRayDirection( direction );
   }
 
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[0], 0.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[1], 1.0 );
-  TEST_EQUALITY_CONST( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a simple internal ray trace can be done
-TEUCHOS_UNIT_TEST( RootNavigator, ray_trace )
+FRENSIE_UNIT_TEST( RootNavigator, ray_trace )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
   
@@ -357,31 +366,31 @@ TEUCHOS_UNIT_TEST( RootNavigator, ray_trace )
   Geometry::ModuleTraits::InternalCellHandle cell =
     navigator->getCellContainingInternalRay();
 
-  TEST_EQUALITY_CONST( cell, 2 );
+  FRENSIE_CHECK_EQUAL( cell, 2 );
 
   // Fire a ray through the geometry
   double distance_to_boundary = navigator->fireInternalRay();
 
-  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
 
   double surface_normal[3];
   
   // Advance the ray to the cell boundary
   navigator->advanceInternalRayToCellBoundary( surface_normal );
 
-  TEST_EQUALITY_CONST( surface_normal[0], 0.0 );
-  TEST_EQUALITY_CONST( surface_normal[1], 0.0 );
-  TEST_EQUALITY_CONST( surface_normal[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( surface_normal[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( surface_normal[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( surface_normal[2], 1.0 );
 
   // Find the new cell
   cell = navigator->getCellContainingInternalRay();
 
-  TEST_EQUALITY_CONST( cell, 1 );
+  FRENSIE_CHECK_EQUAL( cell, 1 );
 
   // Fire a ray through the geometry
   distance_to_boundary = navigator->fireInternalRay();
 
-  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-6 );
 
   // Advance the ray a substep
   navigator->advanceInternalRayBySubstep( 0.5*distance_to_boundary );
@@ -392,7 +401,7 @@ TEUCHOS_UNIT_TEST( RootNavigator, ray_trace )
   // Fire a ray through the geometry
   distance_to_boundary = navigator->fireInternalRay();
 
-  TEST_FLOATING_EQUALITY( distance_to_boundary, 5.0, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_boundary, 5.0, 1e-9 );
 
   // Advance the ray to the cell boundary
   navigator->advanceInternalRayToCellBoundary();
@@ -400,12 +409,12 @@ TEUCHOS_UNIT_TEST( RootNavigator, ray_trace )
   // Find the new cell
   cell = navigator->getCellContainingInternalRay();
 
-  TEST_EQUALITY_CONST( cell, 3 );
+  FRENSIE_CHECK_EQUAL( cell, 3 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the ray can be cloned
-TEUCHOS_UNIT_TEST( RootNavigator, clone )
+FRENSIE_UNIT_TEST( RootNavigator, clone )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
 
@@ -415,55 +424,93 @@ TEUCHOS_UNIT_TEST( RootNavigator, clone )
   // Clone the ray
   std::shared_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
 
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[0],
                        navigator->getInternalRayPosition()[0] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[1],
                        navigator->getInternalRayPosition()[1] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[2],
                        navigator->getInternalRayPosition()[2] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[0],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[0],
                        navigator->getInternalRayDirection()[0] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[1],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[1],
                        navigator->getInternalRayDirection()[1] );
-  TEST_EQUALITY_CONST( navigator_clone->getInternalRayDirection()[2],
+  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[2],
                        navigator->getInternalRayDirection()[2] );
-  TEST_EQUALITY_CONST( navigator_clone->getCellContainingInternalRay(),
+  FRENSIE_CHECK_EQUAL( navigator_clone->getCellContainingInternalRay(),
                        navigator->getCellContainingInternalRay() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a navigator can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( RootNavigator, archive, TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_name( "test_root_navigator" );
+  std::ostringstream archive_ostream;
+
+  std::unique_ptr<OArchive> oarchive;
+
+  createOArchive( archive_name, archive_ostream, oarchive );
+
+  std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
+
+  // Initialize the ray
+  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+
+  FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( navigator ) );
+
+  if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
+  {
+    std::unique_ptr<std::ofstream> ofstream;
+    
+    if( archive_name.find( ".bin" ) < archive_name.size() )
+    {
+      ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
+    }
+    else
+    {
+      ofstream.reset( new std::ofstream( archive_name ) );
+    }
+
+    (*ofstream) << archive_ostream.str();
+  }
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string xml_file_name;
+std::string test_root_geom_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_xml_file",
-                   &xml_file_name,
-                   "Model properties xml file name" );
-
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_root_file",
+                                        test_root_geom_file_name, "",
+                                        "Test ROOT file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "cache_test_archive",
+                                        cache_test_archive, false,
+                                        "Cache the test archive" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  Teuchos::RCP<const Teuchos::ParameterList> raw_model_properties =
-    Teuchos::getParametersFromXmlFile( xml_file_name );
-
-  std::shared_ptr<const Geometry::RootModelProperties> model_properties =
-    Geometry::RootModelPropertiesFactory::createProperties(
-                                                       *raw_model_properties );
-
+  Geometry::RootModelProperties local_properties( test_root_geom_file_name );
+  
   std::shared_ptr<Geometry::RootModel> tmp_model =
     Geometry::RootModel::getInstance();
 
-  tmp_model->initialize( *model_properties );
+  tmp_model->initialize( local_properties );
 
   model = tmp_model;
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstRootNavigator.cpp

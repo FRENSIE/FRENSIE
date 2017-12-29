@@ -20,7 +20,7 @@ MACRO(ENABLE_BOOST_SUPPORT)
     # component from being appended to the list. Unit tests that have been
     # written using the boost unit test API need to add ${BOOST_TEST_LIBRARY}
     # to the TARGET_LINK_LIBRARIES macro call.
-    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS test_exec_monitor)
+    FIND_PACKAGE(Boost 1.65.0 REQUIRED COMPONENTS test_exec_monitor)
 
     IF(${CMAKE_BUILD_TYPE} EQUAL RELEASE)
       SET(BOOST_TEST_LIBRARY ${Boost_TEST_EXEC_MONITOR_LIBRARY_RELEASE})
@@ -38,7 +38,7 @@ MACRO(ENABLE_BOOST_SUPPORT)
       SET(BOOST_COMPONENTS_LIST ${BOOST_COMPONENTS_LIST} mpi)
     ENDIF()
     
-    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS_LIST})
+    FIND_PACKAGE(Boost 1.65.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS_LIST})
 
     # Set the include paths for Boost
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})

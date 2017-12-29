@@ -9,24 +9,16 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
-#include <map>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_Tuple.hpp>
 
 // FRENSIE Includes
 #include "Geometry_RootNavigator.hpp"
 #include "Geometry_RootModel.hpp"
-#include "Geometry_RootModelPropertiesFactory.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -35,14 +27,14 @@ std::shared_ptr<const Geometry::RootModel> model;
 
 //---------------------------------------------------------------------------//
 // Check that a parallel internal ray trace can be done
-TEUCHOS_UNIT_TEST( Root, parallel_ray_trace )
+FRENSIE_UNIT_TEST( Root, parallel_ray_trace )
 {
-  Teuchos::Array<Utility::Trip<Geometry::ModuleTraits::InternalCellHandle,
+  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  Teuchos::Array<Utility::Trip<double,double,double> >
+  std::vector<std::tuple<double,double,double> >
     distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
@@ -110,57 +102,51 @@ TEUCHOS_UNIT_TEST( Root, parallel_ray_trace )
   }
 
   // Check that each of the rays traces were successful
-  Teuchos::Array<Utility::Trip<Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
+                         Geometry::ModuleTraits::InternalCellHandle,
+                         Geometry::ModuleTraits::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i] = std::make_tuple( 2, 1, 3 );
 
-  UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
+  FRENSIE_CHECK_EQUAL( cell_ids, correct_cell_ids );
 
-  Teuchos::Array<Utility::Trip<double,double,double> >
+  std::vector<std::tuple<double,double,double> >
     correct_distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   for( unsigned i = 0; i < correct_distances.size(); ++i )
     correct_distances[i] = std::make_tuple( 2.5, 2.5, 5.0 );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( distances, correct_distances, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distances, correct_distances, 1e-6 );
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string xml_file_name;
-int threads = 1;
+std::string test_root_geom_file_name;
+int threads;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_xml_file",
-                   &xml_file_name,
-                   "Model properties xml file name" );
-
-  clp().setOption( "threads",
-                   &threads,
-                   "Number of threads to use" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_root_file",
+                                        test_root_geom_file_name, "",
+                                        "Test ROOT file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "threads",
+                                        threads, 1,
+                                        "Number of threads to use" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  Teuchos::RCP<const Teuchos::ParameterList> raw_model_properties =
-    Teuchos::getParametersFromXmlFile( xml_file_name );
-
-  std::shared_ptr<const Geometry::RootModelProperties> model_properties =
-    Geometry::RootModelPropertiesFactory::createProperties(
-                                                       *raw_model_properties );
-
+  Geometry::RootModelProperties local_properties( test_root_geom_file_name );
+  
   std::shared_ptr<Geometry::RootModel> tmp_model =
     Geometry::RootModel::getInstance();
 
-  tmp_model->initialize( *model_properties );
+  tmp_model->initialize( local_properties );
 
   model = tmp_model;
 
@@ -168,7 +154,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstSharedParallelRoot.cpp

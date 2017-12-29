@@ -10,63 +10,120 @@
 #include <iostream>
 #include <algorithm>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Tuple.hpp>
-
 // FRENSIE Includes
 #include "Geometry_RootModelProperties.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the default properties are correct
-TEUCHOS_UNIT_TEST( RootModelProperties, default_properties )
+FRENSIE_UNIT_TEST( RootModelProperties, default_properties )
 {
   const Geometry::RootModelProperties default_properties( "dummy.c" );
 
-  TEST_EQUALITY_CONST( default_properties.getMaterialPropertyName(), "mat" );
-  TEST_EQUALITY_CONST( default_properties.getVoidMaterialName(), "void" );
-  TEST_EQUALITY_CONST( default_properties.getTerminalMaterialName(), "graveyard" );
+  FRENSIE_CHECK_EQUAL( default_properties.getMaterialPropertyName(), "mat" );
+  FRENSIE_CHECK_EQUAL( default_properties.getVoidMaterialName(), "void" );
+  FRENSIE_CHECK_EQUAL( default_properties.getTerminalMaterialName(), "graveyard" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file name can be returned
-TEUCHOS_UNIT_TEST( RootModelProperties, getModelFileName )
+FRENSIE_UNIT_TEST( RootModelProperties, getModelFileName )
 {
   const Geometry::RootModelProperties properties( "dummy.c" );
 
-  TEST_EQUALITY_CONST( properties.getModelFileName(), "dummy.c" );
+  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.c" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the material property name can be set
-TEUCHOS_UNIT_TEST( RootModelProperties, setMaterialPropertyName )
+FRENSIE_UNIT_TEST( RootModelProperties, setMaterialPropertyName )
 {
   Geometry::RootModelProperties properties( "dummy.c" );
   properties.setMaterialPropertyName( "fill" );
 
-  TEST_EQUALITY_CONST( properties.getMaterialPropertyName(), "fill" );
+  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "fill" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the void material name can be set
-TEUCHOS_UNIT_TEST( RootModelProperties, setVoidMaterialName )
+FRENSIE_UNIT_TEST( RootModelProperties, setVoidMaterialName )
 {
   Geometry::RootModelProperties properties( "dummy.c" );
   properties.setVoidMaterialName( "empty" );
 
-  TEST_EQUALITY_CONST( properties.getVoidMaterialName(), "empty" );
+  FRENSIE_CHECK_EQUAL( properties.getVoidMaterialName(), "empty" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the terminal material name can be set
-TEUCHOS_UNIT_TEST( RootModelProperties, setTerminalMaterialName )
+FRENSIE_UNIT_TEST( RootModelProperties, setTerminalMaterialName )
 {
   Geometry::RootModelProperties properties( "dummy.c" );
   properties.setTerminalMaterialName( "blackhole" );
 
-  TEST_EQUALITY_CONST( properties.getTerminalMaterialName(), "blackhole" );
+  FRENSIE_CHECK_EQUAL( properties.getTerminalMaterialName(), "blackhole" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( RootModelProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_dagmc_model_properties" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some properties
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    Geometry::RootModelProperties properties( "dummy.root" );
+    
+    properties.setMaterialPropertyName( "fill" );
+    properties.setVoidMaterialName( "empty" );
+    properties.setTerminalMaterialName( "graveyard" );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Geometry::RootModelProperties properties( "?.root" );
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( properties ) );
+  
+  FRENSIE_CHECK_EQUAL( properties.getModelFileName(), "dummy.root" );
+  FRENSIE_CHECK_EQUAL( properties.getVoidMaterialName(), "empty" );
+  FRENSIE_CHECK_EQUAL( properties.getTerminalMaterialName(), "graveyard" );
 }
 
 //---------------------------------------------------------------------------//
