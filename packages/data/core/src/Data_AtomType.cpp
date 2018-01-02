@@ -120,236 +120,136 @@ AtomType convertAtomicNumberToAtomTypeEnum( const unsigned atomic_number )
   case 100: return Fm_ATOM;
   default:
     THROW_EXCEPTION( std::runtime_error,
-		     "Error: atomic number " << atomic_number <<
+		     "Atomic number " << atomic_number <<
 		     "is not valid!" );
   }
 }
 
+} // end Data namespace
+
+namespace Utility{
+
 // Convert an AtomType enumeration to a string
-std::string convertAtomTypeEnumToString( const AtomType atom )
+  std::string ToStringTraits<Data::AtomType>::toString(
+                                                    const Data::AtomType atom )
 {
   switch( atom )
   {
-  case H_ATOM: return "H";
-  case He_ATOM: return "He";
-  case Li_ATOM: return "Li";
-  case Be_ATOM: return "Be";
-  case B_ATOM: return "B";
-  case C_ATOM: return "C";
-  case N_ATOM: return "N";
-  case O_ATOM: return "O";
-  case F_ATOM: return "F";
-  case Ne_ATOM: return "Ne";
-  case Na_ATOM: return "Na";
-  case Mg_ATOM: return "Mg";
-  case Al_ATOM: return "Al";
-  case Si_ATOM: return "Si";
-  case P_ATOM: return "P";
-  case S_ATOM: return "S";
-  case Cl_ATOM: return "Cl";
-  case Ar_ATOM: return "Ar";
-  case K_ATOM: return "K";
-  case Ca_ATOM: return "Ca";
-  case Sc_ATOM: return "Sc";
-  case Ti_ATOM: return "Ti";
-  case V_ATOM: return "V";
-  case Cr_ATOM: return "Cr";
-  case Mn_ATOM: return "Mn";
-  case Fe_ATOM: return "Fe";
-  case Co_ATOM: return "Co";
-  case Ni_ATOM: return "Ni";
-  case Cu_ATOM: return "Cu";
-  case Zn_ATOM: return "Zn";
-  case Ga_ATOM: return "Ga";
-  case Ge_ATOM: return "Ge";
-  case As_ATOM: return "As";
-  case Se_ATOM: return "Se";
-  case Br_ATOM: return "Br";
-  case Kr_ATOM: return "Kr";
-  case Rb_ATOM: return "Rb";
-  case Sr_ATOM: return "Sr";
-  case Y_ATOM: return "Y";
-  case Zr_ATOM: return "Zr";
-  case Nb_ATOM: return "Nb";
-  case Mo_ATOM: return "Mo";
-  case Tc_ATOM: return "Tc";
-  case Ru_ATOM: return "Ru";
-  case Rh_ATOM: return "Rh";
-  case Pd_ATOM: return "Pd";
-  case Ag_ATOM: return "Ag";
-  case Cd_ATOM: return "Cd";
-  case In_ATOM: return "In";
-  case Sn_ATOM: return "Sn";
-  case Sb_ATOM: return "Sb";
-  case Te_ATOM: return "Te";
-  case I_ATOM: return "I";
-  case Xe_ATOM: return "Xe";
-  case Cs_ATOM: return "Cs";
-  case Ba_ATOM: return "Ba";
-  case La_ATOM: return "La";
-  case Ce_ATOM: return "Ce";
-  case Pr_ATOM: return "Pr";
-  case Nd_ATOM: return "Nd";
-  case Pm_ATOM: return "Pm";
-  case Sm_ATOM: return "Sm";
-  case Eu_ATOM: return "Eu";
-  case Gd_ATOM: return "Gd";
-  case Tb_ATOM: return "Tb";
-  case Dy_ATOM: return "Dy";
-  case Ho_ATOM: return "Ho";
-  case Er_ATOM: return "Er";
-  case Tm_ATOM: return "Tm";
-  case Yb_ATOM: return "Yb";
-  case Lu_ATOM: return "Lu";
-  case Hf_ATOM: return "Hf";
-  case Ta_ATOM: return "Ta";
-  case W_ATOM: return "W";
-  case Re_ATOM: return "Re";
-  case Os_ATOM: return "Os";
-  case Ir_ATOM: return "Ir";
-  case Pt_ATOM: return "Pt";
-  case Au_ATOM: return "Au";
-  case Hg_ATOM: return "Hg";
-  case Tl_ATOM: return "Tl";
-  case Pb_ATOM: return "Pb";
-  case Bi_ATOM: return "Bi";
-  case Po_ATOM: return "Po";
-  case At_ATOM: return "At";
-  case Rn_ATOM: return "Rn";
-  case Fr_ATOM: return "Fr";
-  case Ra_ATOM: return "Ra";
-  case Ac_ATOM: return "Ac";
-  case Th_ATOM: return "Th";
-  case Pa_ATOM: return "Pa";
-  case U_ATOM: return "U";
-  case Np_ATOM: return "Np";
-  case Pu_ATOM: return "Pu";
-  case Am_ATOM: return "Am";
-  case Cm_ATOM: return "Cm";
-  case Bk_ATOM: return "Bk";
-  case Cf_ATOM: return "Cf";
-  case Es_ATOM: return "Es";
-  case Fm_ATOM: return "Fm";
-  defalut:
+  case Data::H_ATOM:  return "H";
+  case Data::He_ATOM: return "He";
+  case Data::Li_ATOM: return "Li";
+  case Data::Be_ATOM: return "Be";
+  case Data::B_ATOM:  return "B";
+  case Data::C_ATOM:  return "C";
+  case Data::N_ATOM:  return "N";
+  case Data::O_ATOM:  return "O";
+  case Data::F_ATOM:  return "F";
+  case Data::Ne_ATOM: return "Ne";
+  case Data::Na_ATOM: return "Na";
+  case Data::Mg_ATOM: return "Mg";
+  case Data::Al_ATOM: return "Al";
+  case Data::Si_ATOM: return "Si";
+  case Data::P_ATOM:  return "P";
+  case Data::S_ATOM:  return "S";
+  case Data::Cl_ATOM: return "Cl";
+  case Data::Ar_ATOM: return "Ar";
+  case Data::K_ATOM:  return "K";
+  case Data::Ca_ATOM: return "Ca";
+  case Data::Sc_ATOM: return "Sc";
+  case Data::Ti_ATOM: return "Ti";
+  case Data::V_ATOM:  return "V";
+  case Data::Cr_ATOM: return "Cr";
+  case Data::Mn_ATOM: return "Mn";
+  case Data::Fe_ATOM: return "Fe";
+  case Data::Co_ATOM: return "Co";
+  case Data::Ni_ATOM: return "Ni";
+  case Data::Cu_ATOM: return "Cu";
+  case Data::Zn_ATOM: return "Zn";
+  case Data::Ga_ATOM: return "Ga";
+  case Data::Ge_ATOM: return "Ge";
+  case Data::As_ATOM: return "As";
+  case Data::Se_ATOM: return "Se";
+  case Data::Br_ATOM: return "Br";
+  case Data::Kr_ATOM: return "Kr";
+  case Data::Rb_ATOM: return "Rb";
+  case Data::Sr_ATOM: return "Sr";
+  case Data::Y_ATOM:  return "Y";
+  case Data::Zr_ATOM: return "Zr";
+  case Data::Nb_ATOM: return "Nb";
+  case Data::Mo_ATOM: return "Mo";
+  case Data::Tc_ATOM: return "Tc";
+  case Data::Ru_ATOM: return "Ru";
+  case Data::Rh_ATOM: return "Rh";
+  case Data::Pd_ATOM: return "Pd";
+  case Data::Ag_ATOM: return "Ag";
+  case Data::Cd_ATOM: return "Cd";
+  case Data::In_ATOM: return "In";
+  case Data::Sn_ATOM: return "Sn";
+  case Data::Sb_ATOM: return "Sb";
+  case Data::Te_ATOM: return "Te";
+  case Data::I_ATOM:  return "I";
+  case Data::Xe_ATOM: return "Xe";
+  case Data::Cs_ATOM: return "Cs";
+  case Data::Ba_ATOM: return "Ba";
+  case Data::La_ATOM: return "La";
+  case Data::Ce_ATOM: return "Ce";
+  case Data::Pr_ATOM: return "Pr";
+  case Data::Nd_ATOM: return "Nd";
+  case Data::Pm_ATOM: return "Pm";
+  case Data::Sm_ATOM: return "Sm";
+  case Data::Eu_ATOM: return "Eu";
+  case Data::Gd_ATOM: return "Gd";
+  case Data::Tb_ATOM: return "Tb";
+  case Data::Dy_ATOM: return "Dy";
+  case Data::Ho_ATOM: return "Ho";
+  case Data::Er_ATOM: return "Er";
+  case Data::Tm_ATOM: return "Tm";
+  case Data::Yb_ATOM: return "Yb";
+  case Data::Lu_ATOM: return "Lu";
+  case Data::Hf_ATOM: return "Hf";
+  case Data::Ta_ATOM: return "Ta";
+  case Data::W_ATOM:  return "W";
+  case Data::Re_ATOM: return "Re";
+  case Data::Os_ATOM: return "Os";
+  case Data::Ir_ATOM: return "Ir";
+  case Data::Pt_ATOM: return "Pt";
+  case Data::Au_ATOM: return "Au";
+  case Data::Hg_ATOM: return "Hg";
+  case Data::Tl_ATOM: return "Tl";
+  case Data::Pb_ATOM: return "Pb";
+  case Data::Bi_ATOM: return "Bi";
+  case Data::Po_ATOM: return "Po";
+  case Data::At_ATOM: return "At";
+  case Data::Rn_ATOM: return "Rn";
+  case Data::Fr_ATOM: return "Fr";
+  case Data::Ra_ATOM: return "Ra";
+  case Data::Ac_ATOM: return "Ac";
+  case Data::Th_ATOM: return "Th";
+  case Data::Pa_ATOM: return "Pa";
+  case Data::U_ATOM:  return "U";
+  case Data::Np_ATOM: return "Np";
+  case Data::Pu_ATOM: return "Pu";
+  case Data::Am_ATOM: return "Am";
+  case Data::Cm_ATOM: return "Cm";
+  case Data::Bk_ATOM: return "Bk";
+  case Data::Cf_ATOM: return "Cf";
+  case Data::Es_ATOM: return "Es";
+  case Data::Fm_ATOM: return "Fm";
+  default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: encountered an atom without an associated "
+		     "Encountered an AtomType without an associated "
 		     "string!" );
   }
 }
 
-//! Convert an atomic number to a string
-std::string convertAtomicNumberToString( const unsigned atomic_number )
+// Place the Data::AtomType in a stream
+void ToStringTraits<Data::AtomType>::toStream( std::ostream& os,
+                                               const Data::AtomType atom )
 {
-  switch( atomic_number )
-  {
-  case 1: return "H";
-  case 2: return "He";
-  case 3: return "Li";
-  case 4: return "Be";
-  case 5: return "B";
-  case 6: return "C";
-  case 7: return "N";
-  case 8: return "O";
-  case 9: return "F";
-  case 10: return "Ne";
-  case 11: return "Na";
-  case 12: return "Mg";
-  case 13: return "Al";
-  case 14: return "Si";
-  case 15: return "P";
-  case 16: return "S";
-  case 17: return "Cl";
-  case 18: return "Ar";
-  case 19: return "K";
-  case 20: return "Ca";
-  case 21: return "Sc";
-  case 22: return "Ti";
-  case 23: return "V";
-  case 24: return "Cr";
-  case 25: return "Mn";
-  case 26: return "Fe";
-  case 27: return "Co";
-  case 28: return "Ni";
-  case 29: return "Cu";
-  case 30: return "Zn";
-  case 31: return "Ga";
-  case 32: return "Ge";
-  case 33: return "As";
-  case 34: return "Se";
-  case 35: return "Br";
-  case 36: return "Kr";
-  case 37: return "Rb";
-  case 38: return "Sr";
-  case 39: return "Y";
-  case 40: return "Zr";
-  case 41: return "Nb";
-  case 42: return "Mo";
-  case 43: return "Tc";
-  case 44: return "Ru";
-  case 45: return "Rh";
-  case 46: return "Pd";
-  case 47: return "Ag";
-  case 48: return "Cd";
-  case 49: return "In";
-  case 50: return "Sn";
-  case 51: return "Sb";
-  case 52: return "Te";
-  case 53: return "I";
-  case 54: return "Xe";
-  case 55: return "Cs";
-  case 56: return "Ba";
-  case 57: return "La";
-  case 58: return "Ce";
-  case 59: return "Pr";
-  case 60: return "Nd";
-  case 61: return "Pm";
-  case 62: return "Sm";
-  case 63: return "Eu";
-  case 64: return "Gd";
-  case 65: return "Tb";
-  case 66: return "Dy";
-  case 67: return "Ho";
-  case 68: return "Er";
-  case 69: return "Tm";
-  case 70: return "Yb";
-  case 71: return "Lu";
-  case 72: return "Hf";
-  case 73: return "Ta";
-  case 74: return "W";
-  case 75: return "Re";
-  case 76: return "Os";
-  case 77: return "Ir";
-  case 78: return "Pt";
-  case 79: return "Au";
-  case 80: return "Hg";
-  case 81: return "Tl";
-  case 82: return "Pb";
-  case 83: return "Bi";
-  case 84: return "Po";
-  case 85: return "At";
-  case 86: return "Rn";
-  case 87: return "Fr";
-  case 88: return "Ra";
-  case 89: return "Ac";
-  case 90: return "Th";
-  case 91: return "Pa";
-  case 92: return "U";
-  case 93: return "Np";
-  case 94: return "Pu";
-  case 95: return "Am";
-  case 96: return "Cm";
-  case 97: return "Bk";
-  case 98: return "Cf";
-  case 99: return "Es";
-  case 100: return "Fm";
-  defalut:
-    THROW_EXCEPTION( std::logic_error,
-		     "Error: encountered an atom without an associated "
-		     "string!" );
-  }
+  os << ToStringTraits<Data::AtomType>::toString( atom );
 }
 
-} // end Data namespace
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end Data_AtomType.cpp
