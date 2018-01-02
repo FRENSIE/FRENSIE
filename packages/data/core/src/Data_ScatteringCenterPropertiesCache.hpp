@@ -15,17 +15,21 @@
 
 // Boost Includes
 #include <boost/filesystem/path.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
 #include "Data_ScatteringCenterProperties.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ArchivableObject.hpp"
+#include "Utility_Map.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
 
 //! The scattering center properties cache
-class ScatteringCenterPropertiesCache
+class ScatteringCenterPropertiesCache : public Utility::ArchivableObject<ScatteringCenterPropertiesCache>
 {
 
 public:
@@ -42,7 +46,7 @@ public:
   { /* ... */ }
 
   // The cache name used in an archive
-  static const std::string& getArchiveName();
+  virtual const char* getArchiveName() const override;
 
   //! Add scattering center properties to the cache
   void addProperties( const ScatteringCenterProperties& properties );
@@ -50,9 +54,15 @@ public:
   //! Remove scattering center properties from the cache
   void removeProperties( const std::string& name );
 
+  //! Check if properties with the name or alias of interest exist
+  bool doPropertiesExist( const std::string& name_or_alias ) const;
+
   //! Return the desired properties
   const ScatteringCenterProperties& getProperties(
                                       const std::string& name_or_alias ) const;
+
+  //! Return the number of stored properties
+  size_t getNumberOfProperties() const;
 
   //! List the properties names
   void listPropertiesNames( std::ostream& os = std::cout ) const;
@@ -64,28 +74,24 @@ public:
   //! Remove a scattering center properties alias
   void removePropertiesAlias( const std::string& alias );
 
-  //! Clear dangling aliases
-  void clearDanglingAliases();
+  //! Check if an alias exists
+  bool doesAliasExist( const std::string& alias ) const;
+
+  //! Return the number of aliases
+  size_t getNumberOfAliases() const;
 
   //! List the aliases
   void listAliases( std::ostream& os = std::cout ) const;
 
-  //! Export the cache
-  void save( const boost::filesystem::path& cache_name_with_path ) const;
-
-  //! Import the cache
-  void load( const boost::filesystem::path& cache_name_with_path );
+  //! Clear the cache
+  void clear();
 
 private:
-
-  // Create an output archive
-  static void createOArchive(
-             const boost::filesystem::path& archive_name_with_path,
-             std::unique_ptr<boost::archive::polymorphic_oarchive>& oarchive );
 
   // Create an input archive
   static void createIArchive(
              const boost::filesystem::path& archive_name_with_path,
+             std::unique_ptr<std::istream>& iarchive_stream,
              std::unique_ptr<boost::archive::polymorphic_iarchive>& iarchive );
 
   // Save the model to an archive

@@ -139,6 +139,9 @@ public:
 
 private:
 
+  // Default constructor
+  StandardNuclideProperties();
+
   // Save the properties to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;

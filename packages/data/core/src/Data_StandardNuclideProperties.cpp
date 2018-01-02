@@ -25,6 +25,10 @@
 
 namespace Data{
 
+// Default constructor
+StandardNuclideProperties::StandardNuclideProperties()
+{ /* ... */ }
+
 // Constructor
 StandardNuclideProperties::StandardNuclideProperties(
                       const std::string& name,
@@ -364,6 +368,8 @@ void StandardNuclideProperties::load( Archive& ar, const unsigned version )
 EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( StandardNuclideProperties );
   
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( StandardNuclideProperties, Data );
 
 //---------------------------------------------------------------------------//
 // end Data_StandardNuclideProperties.cpp
