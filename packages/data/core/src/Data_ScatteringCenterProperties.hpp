@@ -16,6 +16,8 @@
 #include "Data_AtomType.hpp"
 #include "Data_NuclearDataProperties.hpp"
 #include "Data_AdjointNuclearDataProperties.hpp"
+#include "Data_PhotonuclearDataProperties.hpp"
+#include "Data_AdjointPhotonuclearDataProperties.hpp"
 #include "Data_PhotoatomicDataProperties.hpp"
 #include "Data_AdjointPhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
@@ -79,6 +81,18 @@ public:
 
   //! Get the adjoint nuclear data
   virtual const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const = 0;
+
+  //! Check if there is photonuclear data
+  virtual bool photonuclearDataAvailable() const = 0;
+
+  //! Get the photonuclear data properties
+  virtual const PhotonuclearDataProperties* getPhotonuclearDataProperties() const = 0;
+
+  //! Check if there is adjoit photonuclear data
+  virtual bool adjointPhotonuclearDataAvailable() const = 0;
+
+  //! Get the adjoint photonuclear data properties
+  virtual const AdjointPhotonuclearDataProperties* getAdjointPhotonuclearDataProperties() const = 0;
 
   //! Check if there is photoatomic data
   virtual bool photoatomicDataAvailable() const = 0;

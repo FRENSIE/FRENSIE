@@ -92,6 +92,18 @@ public:
   //! Get the adjoint nuclear data
   const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override;
 
+  //! Check if there is photonuclear data
+  bool photonuclearDataAvailable() const override;
+
+  //! Get the photonuclear data properties
+  const PhotonuclearDataProperties* getPhotonuclearDataProperties() const override;
+
+  //! Check if there is adjoint photonuclear data
+  bool adjointPhotonuclearDataAvailable() const override;
+
+  //! Get the adjoint photonuclear data
+  const AdjointPhotonuclearDataProperties* getAdjointPhotonuclearDataProperties() const override;
+
   //! Check if there is photoatomic data
   bool photoatomicDataAvailable() const override;
 

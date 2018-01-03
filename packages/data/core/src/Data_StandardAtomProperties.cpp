@@ -165,6 +165,30 @@ const AdjointNuclearDataProperties* StandardAtomProperties::getAdjointNuclearDat
   return NULL;
 }
 
+// Check if there is photonuclear data
+bool StandardAtomProperties::photonuclearDataAvailable() const
+{
+  return false;
+}
+
+// Get the photonuclear data properties
+const PhotonuclearDataProperties* StandardAtomProperties::getPhotonuclearDataProperties() const
+{
+  return NULL;
+}
+
+// Check if there is adjoint photonuclear data
+bool StandardAtomProperties::adjointPhotonuclearDataAvailable() const
+{
+  return false;
+}
+
+// Get the adjoint photonuclear data
+const AdjointPhotonuclearDataProperties* StandardAtomProperties::getAdjointPhotonuclearDataProperties() const
+{
+  return NULL;
+}
+
 // Check if there is photoatomic data
 bool StandardAtomProperties::photoatomicDataAvailable() const
 {

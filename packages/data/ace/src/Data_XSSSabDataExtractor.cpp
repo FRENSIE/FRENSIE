@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "Data_XSSSabDataExtractor.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -19,28 +20,47 @@ namespace Data{
  * subtracted from all indices so that the correct array location is accessed).
  */
 XSSSabDataExtractor::XSSSabDataExtractor(
-				   const Teuchos::ArrayView<const int>& nxs,
-				   const Teuchos::ArrayView<const int>& jxs,
-				   const Teuchos::ArrayRCP<const double>& xss )
-  : d_nxs( nxs ),
-    d_jxs( jxs ),
-    d_xss( xss )
+                       const Utility::ArrayView<const int>& nxs,
+                       const Utility::ArrayView<const int>& jxs,
+		       const std::shared_ptr<const std::vector<double> >& xss )
+  : d_nxs( nxs.begin(), nxs.end() ),
+    d_jxs( jxs.begin(), jxs.end() ),
+    d_xss( xss ),
+    d_xss_view(),
+    d_itie_block(),
+    d_itce_block()
 {
+  // Make sure that the xss array exists
+  testPrecondition( xss.get() );
+  
   // Make sure the arrays have the correct size
-  testPrecondition( nxs.size() == 16 );
-  testPrecondition( jxs.size() == 32 );
-  testPrecondition( xss.size() == nxs[0] );
+  TEST_FOR_EXCEPTION( nxs.size() != 16,
+                      std::runtime_error,
+                      "Invalid nxs array encountered!" );
+
+  TEST_FOR_EXCEPTION( jxs.size() != 32,
+                      std::runtime_error,
+                      "Invalid jxs array encountered!" );
+
+  TEST_FOR_EXCEPTION( xss->size() != nxs[0],
+                      std::runtime_error,
+                      "The nxs array expected the xss array to have size "
+                      << nxs[0] << " but it was found to have size "
+                      << xss->size() << "!" );
 
   // Adjust the indices in the JXS array so that they correspond to a C-array
-  for( unsigned i = 0; i < d_jxs.size(); ++i )
+  for( size_t i = 0; i < d_jxs.size(); ++i )
     d_jxs[i] -= 1;
 
+  // Create the XSS view
+  d_xss_view = Utility::arrayViewOfConst( *d_xss );
+
   // Extract and cache the ITIE block and the ITCE block
-  d_itie_block = d_xss( d_jxs[0], (int)d_xss[d_jxs[0]]*2 + 1 );
+  d_itie_block = d_xss_view( d_jxs[0], (int)d_xss_view[d_jxs[0]]*2 + 1 );
 
   // Extract and cache the ITCE block
   if( d_jxs[3] != -1 )
-    d_itce_block = d_xss( d_jxs[3], (int)d_xss[d_jxs[3]]*2 + 1 );
+    d_itce_block = d_xss_view( d_jxs[3], (int)d_xss_view[d_jxs[3]]*2 + 1 );
 }
 
 // Return the inelastic scattering mode
@@ -79,70 +99,70 @@ SabElasticMode XSSSabDataExtractor::getElasticScatteringMode() const
 }
 
 // Extract the ITIE block from the XSS array
-Teuchos::ArrayView<const double> XSSSabDataExtractor::extractITIEBlock() const
+Utility::ArrayView<const double> XSSSabDataExtractor::extractITIEBlock() const
 {
   return d_itie_block;
 }
 
 // Extract the inelastic energy grid from the XSS array
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractInelasticEnergyGrid() const
 {
   return d_itie_block( 1, (int)d_itie_block[0] );
 }
 
 // Extract the inelastic cross section from the XSS array
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractInelasticCrossSection() const
 {
   return d_itie_block( 1+(int)d_itie_block[0], (int)d_itie_block[0] );
 }
 
 // Extract the ITCE block from the XSS array
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractITCEBlock() const
 {
   return d_itce_block;
 }
 
 // Extract the elastic energy grid from the XSS array
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractElasticEnergyGrid() const
 {
   if( hasElasticScatteringCrossSectionData() )
     return d_itce_block( 1, (int)d_itce_block[0] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the elastic cross section from the XSS array
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractElasticCrossSection() const
 {
   if( hasElasticScatteringCrossSectionData() )
     return d_itce_block( 1+(int)d_itce_block[0], (int)d_itce_block[0] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 // Extract the ITXE block from the XSS array
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractITXEBlock() const
 {
   if( hasElasticScatteringCrossSectionData() )
-    return d_xss( d_jxs[2], d_jxs[3] - d_jxs[2] );
+    return d_xss_view( d_jxs[2], d_jxs[3] - d_jxs[2] );
   else
-    return d_xss( d_jxs[2], d_nxs[0] - d_jxs[2] );
+    return d_xss_view( d_jxs[2], d_nxs[0] - d_jxs[2] );
 }
 
 // Extract the ITCA block from the XSS array
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 XSSSabDataExtractor::extractITCABlock() const
 {
   if( hasElasticScatteringAngularDistributionData() )
-    return d_xss( d_jxs[5], d_nxs[0] - d_jxs[5] );
+    return d_xss_view( d_jxs[5], d_nxs[0] - d_jxs[5] );
   else
-    return Teuchos::ArrayView<const double>();
+    return Utility::ArrayView<const double>();
 }
 
 } // end Data namespace

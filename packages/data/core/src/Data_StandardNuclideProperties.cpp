@@ -29,7 +29,7 @@ namespace Data{
 StandardNuclideProperties::StandardNuclideProperties()
 { /* ... */ }
 
-// Constructor
+// Partial constructor (forward data only, no photonuclear data)
 StandardNuclideProperties::StandardNuclideProperties(
                       const std::string& name,
                       const unsigned atomic_number,
@@ -49,6 +49,8 @@ StandardNuclideProperties::StandardNuclideProperties(
     d_atomic_weight_ratio( atomic_weight_ratio ),
     d_nuclear_data_properties( nuclear_data_properties ),
     d_adjoint_nuclear_data_properties(),
+    d_photonuclear_data_properties(),
+    d_adjoint_photonuclear_data_properties(),
     d_photoatomic_data_properties( photoatomic_data_properties ),
     d_adjoint_photoatomic_data_properties(),
     d_electroatomic_data_properties( electroatomic_data_properties ),
@@ -66,7 +68,49 @@ StandardNuclideProperties::StandardNuclideProperties(
   testPrecondition( electroatomic_data_properties.get() );
 }
 
-// Constructor
+// Partial constructor (forward data only)
+StandardNuclideProperties::StandardNuclideProperties(
+                      const std::string& name,
+                      const unsigned atomic_number,
+                      const unsigned atomic_mass_number,
+                      const unsigned isomer_number,
+                      const double atomic_weight_ratio,
+                      const std::shared_ptr<const NuclearDataProperties>&
+                      nuclear_data_properties,
+                      const std::shared_ptr<const PhotonuclearDataProperties>&
+                      photonuclear_data_properties,
+                      const std::shared_ptr<const PhotoatomicDataProperties>&
+                      photoatomic_data_properties,
+                      const std::shared_ptr<const ElectroatomicDataProperties>&
+                      electroatomic_data_properties )
+  : d_name( name ),
+    d_atomic_number( atomic_number ),
+    d_atomic_mass_number( atomic_mass_number ),
+    d_isomer_number( isomer_number ),
+    d_atomic_weight_ratio( atomic_weight_ratio ),
+    d_nuclear_data_properties( nuclear_data_properties ),
+    d_adjoint_nuclear_data_properties(),
+    d_photonuclear_data_properties( photonuclear_data_properties ),
+    d_adjoint_photonuclear_data_properties(),
+    d_photoatomic_data_properties( photoatomic_data_properties ),
+    d_adjoint_photoatomic_data_properties(),
+    d_electroatomic_data_properties( electroatomic_data_properties ),
+    d_adjoint_electroatomic_data_properties()
+{
+  // Make sure that the name is valid
+  testPrecondition( !name.empty() );
+  // Make sure that the atomic mass number is valid
+  testPrecondition( atomic_mass_number >= atomic_number );
+  // Make sure that the atomic weight ratio is valid
+  testPrecondition( atomic_weight_ratio > 0.0 );
+  // Make sure that the properties are valid
+  testPrecondition( nuclear_data_properties.get() );
+  testPrecondition( photonuclear_data_properties.get() );
+  testPrecondition( photoatomic_data_properties.get() );
+  testPrecondition( electroatomic_data_properties.get() );
+}
+
+// Complete constructor (forward and adjoint data, no photonuclear data)
 StandardNuclideProperties::StandardNuclideProperties(
                const std::string& name,
                const unsigned atomic_number,
@@ -92,6 +136,8 @@ StandardNuclideProperties::StandardNuclideProperties(
     d_atomic_weight_ratio( atomic_weight_ratio ),
     d_nuclear_data_properties( nuclear_data_properties ),
     d_adjoint_nuclear_data_properties( adjoint_nuclear_data_properties ),
+    d_photonuclear_data_properties(),
+    d_adjoint_photonuclear_data_properties(),
     d_photoatomic_data_properties( photoatomic_data_properties ),
     d_adjoint_photoatomic_data_properties( adjoint_photoatomic_data_properties ),
     d_electroatomic_data_properties( electroatomic_data_properties ),
@@ -111,6 +157,123 @@ StandardNuclideProperties::StandardNuclideProperties(
   testPrecondition( electroatomic_data_properties.get() );
   testPrecondition( adjoint_electroatomic_data_properties.get() );
 }
+
+// Complete constructor (forward and adjoint data)
+StandardNuclideProperties::StandardNuclideProperties(
+               const std::string& name,
+               const unsigned atomic_number,
+               const unsigned atomic_mass_number,
+               const unsigned isomer_number,
+               const double atomic_weight_ratio,
+               const std::shared_ptr<const NuclearDataProperties>&
+               nuclear_data_properties,
+               const std::shared_ptr<const AdjointNuclearDataProperties>&
+               adjoint_nuclear_data_properties,
+               const std::shared_ptr<const PhotonuclearDataProperties>&
+               photonuclear_data_properties,
+               const std::shared_ptr<const AdjointPhotonuclearDataProperties>&
+               adjoint_photonuclear_data_properties,
+               const std::shared_ptr<const PhotoatomicDataProperties>&
+               photoatomic_data_properties,
+               const std::shared_ptr<const AdjointPhotoatomicDataProperties>&
+               adjoint_photoatomic_data_properties,
+               const std::shared_ptr<const ElectroatomicDataProperties>&
+               electroatomic_data_properties,
+               const std::shared_ptr<const AdjointElectroatomicDataProperties>&
+               adjoint_electroatomic_data_properties )
+  : d_name(),
+    d_atomic_number( atomic_number ),
+    d_atomic_mass_number( atomic_mass_number ),
+    d_isomer_number( isomer_number ),
+    d_atomic_weight_ratio( atomic_weight_ratio ),
+    d_nuclear_data_properties( nuclear_data_properties ),
+    d_adjoint_nuclear_data_properties( adjoint_nuclear_data_properties ),
+    d_photonuclear_data_properties( photonuclear_data_properties ),
+    d_adjoint_photonuclear_data_properties( adjoint_photonuclear_data_properties),
+    d_photoatomic_data_properties( photoatomic_data_properties ),
+    d_adjoint_photoatomic_data_properties( adjoint_photoatomic_data_properties ),
+    d_electroatomic_data_properties( electroatomic_data_properties ),
+    d_adjoint_electroatomic_data_properties( adjoint_electroatomic_data_properties )
+{
+  // Make sure that the name is valid
+  testPrecondition( !name.empty() );
+  // Make sure that the atomic mass number is valid
+  testPrecondition( atomic_mass_number >= atomic_number );
+  // Make sure that the atomic weight ratio is valid
+  testPrecondition( atomic_weight_ratio > 0.0 );
+  // Make sure that the properties are valid
+  testPrecondition( nuclear_data_properties.get() );
+  testPrecondition( adjoint_nuclear_data_properties.get() );
+  testPrecondition( photonuclear_data_properties.get() );
+  testPrecondition( adjoint_photonuclear_data_properties.get() );
+  testPrecondition( photoatomic_data_properties.get() );
+  testPrecondition( adjoint_photoatomic_data_properties.get() );
+  testPrecondition( electroatomic_data_properties.get() );
+  testPrecondition( adjoint_electroatomic_data_properties.get() );
+}
+
+// Clone constructor
+StandardNuclideProperties::StandardNuclideProperties(
+               const std::string& name,
+               const unsigned atomic_number,
+               const unsigned atomic_mass_number,
+               const unsigned isomer_number,
+               const double atomic_weight_ratio,
+               const std::shared_ptr<const NuclearDataProperties>&
+               nuclear_data_properties,
+               const std::shared_ptr<const AdjointNuclearDataProperties>&
+               adjoint_nuclear_data_properties,
+               const std::shared_ptr<const PhotonuclearDataProperties>&
+               photonuclear_data_properties,
+               const std::shared_ptr<const AdjointPhotonuclearDataProperties>&
+               adjoint_photonuclear_data_properties,
+               const std::shared_ptr<const PhotoatomicDataProperties>&
+               photoatomic_data_properties,
+               const std::shared_ptr<const AdjointPhotoatomicDataProperties>&
+               adjoint_photoatomic_data_properties,
+               const std::shared_ptr<const ElectroatomicDataProperties>&
+               electroatomic_data_properties,
+               const std::shared_ptr<const AdjointElectroatomicDataProperties>&
+               adjoint_electroatomic_data_properties,
+               int )
+  : d_name(),
+    d_atomic_number( atomic_number ),
+    d_atomic_mass_number( atomic_mass_number ),
+    d_isomer_number( isomer_number ),
+    d_atomic_weight_ratio( atomic_weight_ratio ),
+    d_nuclear_data_properties( nuclear_data_properties ),
+    d_adjoint_nuclear_data_properties( adjoint_nuclear_data_properties ),
+    d_photonuclear_data_properties( photonuclear_data_properties ),
+    d_adjoint_photonuclear_data_properties( adjoint_photonuclear_data_properties),
+    d_photoatomic_data_properties( photoatomic_data_properties ),
+    d_adjoint_photoatomic_data_properties( adjoint_photoatomic_data_properties ),
+    d_electroatomic_data_properties( electroatomic_data_properties ),
+    d_adjoint_electroatomic_data_properties( adjoint_electroatomic_data_properties )
+{
+  // Make sure that the name is valid
+  testPrecondition( !name.empty() );
+  // Make sure that the atomic mass number is valid
+  testPrecondition( atomic_mass_number >= atomic_number );
+  // Make sure that the atomic weight ratio is valid
+  testPrecondition( atomic_weight_ratio > 0.0 );
+}
+
+// Copy constructor
+StandardNuclideProperties::StandardNuclideProperties( const StandardNuclideProperties& other )
+  : d_name( other.d_name ),
+    d_atomic_number( other.d_atomic_number ),
+    d_atomic_mass_number( other.d_atomic_mass_number ),
+    d_isomer_number( other.d_isomer_number ),
+    d_atomic_weight_ratio( other.d_atomic_weight_ratio ),
+    d_nuclear_data_properties( other.d_nuclear_data_properties ),
+    d_adjoint_nuclear_data_properties( other.d_adjoint_nuclear_data_properties ),
+    d_photonuclear_data_properties( other.d_photonuclear_data_properties ),
+    d_adjoint_photonuclear_data_properties( other.d_adjoint_photonuclear_data_properties ),
+    d_photoatomic_data_properties( other.d_photoatomic_data_properties ),
+    d_adjoint_photoatomic_data_properties( other.d_adjoint_photoatomic_data_properties ),
+    d_electroatomic_data_properties( other.d_electroatomic_data_properties ),
+    d_adjoint_electroatomic_data_properties( other.d_adjoint_electroatomic_data_properties )
+{ /* ... */ }
 
 // Check if the scattering center is an atom
 bool StandardNuclideProperties::isAtom() const
@@ -190,6 +353,30 @@ const AdjointNuclearDataProperties* StandardNuclideProperties::getAdjointNuclear
   return d_adjoint_nuclear_data_properties.get();
 }
 
+// Check if there is photonuclear data
+bool StandardNuclideProperties::photonuclearDataAvailable() const
+{
+  return d_photonuclear_data_properties.get();
+}
+
+// Get the photonuclear data properties
+const PhotonuclearDataProperties* StandardNuclideProperties::getPhotonuclearDataProperties() const
+{
+  return d_photonuclear_data_properties.get();
+}
+
+// Check if there is adjoint photonuclear data
+bool StandardNuclideProperties::adjointPhotonuclearDataAvailable() const
+{
+  return d_adjoint_photonuclear_data_properties.get();
+}
+
+// Get the adjoint photonuclear data
+const AdjointPhotonuclearDataProperties* StandardNuclideProperties::getAdjointPhotonuclearDataProperties() const
+{
+  return d_adjoint_photonuclear_data_properties.get();
+}
+
 // Check if there is photoatomic data
 bool StandardNuclideProperties::photoatomicDataAvailable() const
 {
@@ -241,62 +428,85 @@ const AdjointElectroatomicDataProperties* StandardNuclideProperties::getAdjointE
 // Clone the properties
 StandardNuclideProperties* StandardNuclideProperties::clone() const
 {
-  if( d_adjoint_nuclear_data_properties &&
-      d_adjoint_photoatomic_data_properties &&
-      d_adjoint_electroatomic_data_properties )
-  {
-    return new StandardNuclideProperties(
-                                     d_name,
-                                     d_atomic_number,
-                                     d_atomic_mass_number,
-                                     d_isomer_number,
-                                     d_atomic_weight_ratio,
-                                     d_nuclear_data_properties,
-                                     d_adjoint_nuclear_data_properties,
-                                     d_photoatomic_data_properties,
-                                     d_adjoint_photoatomic_data_properties,
-                                     d_electroatomic_data_properties,
-                                     d_adjoint_electroatomic_data_properties );
-  }
-  else
-  {
-    return new StandardNuclideProperties( d_name,
-                                          d_atomic_number,
-                                          d_atomic_mass_number,
-                                          d_isomer_number,
-                                          d_atomic_weight_ratio,
-                                          d_nuclear_data_properties,
-                                          d_photoatomic_data_properties,
-                                          d_electroatomic_data_properties );
-  }
+  return new StandardNuclideProperties( *this );
 }
 
 // Deep clone the properties
 StandardNuclideProperties* StandardNuclideProperties::deepClone() const
 {
+  // Clone the nuclear data properties
   std::shared_ptr<const NuclearDataProperties>
-    nuclear_data_properties_clone( d_nuclear_data_properties->clone() );
+    nuclear_data_properties_clone;
 
-  std::shared_ptr<const PhotoatomicDataProperties>
-    photoatomic_data_properties_clone( d_photoatomic_data_properties->clone() );
-
-  std::shared_ptr<const ElectroatomicDataProperties>
-    electroatomic_data_properties_clone( d_electroatomic_data_properties->clone() );
-
-  if( d_adjoint_nuclear_data_properties &&
-      d_adjoint_photoatomic_data_properties &&
-      d_adjoint_electroatomic_data_properties )
+  if( d_nuclear_data_properties )
   {
-    std::shared_ptr<const AdjointNuclearDataProperties>
-      adjoint_nuclear_data_properties_clone( d_adjoint_nuclear_data_properties->clone() );
+    nuclear_data_properties_clone.reset( d_nuclear_data_properties->clone() );
+  }
 
-    std::shared_ptr<const AdjointPhotoatomicDataProperties>
-      adjoint_photoatomic_data_properties_clone( d_adjoint_photoatomic_data_properties->clone() );
+  // Clone the adjoint nuclear data properties
+  std::shared_ptr<const AdjointNuclearDataProperties>
+    adjoint_nuclear_data_properties_clone;
 
-    std::shared_ptr<const AdjointElectroatomicDataProperties>
-      adjoint_electroatomic_data_properties_clone( d_adjoint_electroatomic_data_properties->clone() );
-    
-    return new StandardNuclideProperties(
+  if( d_adjoint_nuclear_data_properties )
+  {
+    adjoint_nuclear_data_properties_clone.reset( d_adjoint_nuclear_data_properties->clone() );
+  }
+
+  // Clone the photonuclear data properties
+  std::shared_ptr<const PhotonuclearDataProperties>
+    photonuclear_data_properties_clone;
+
+  if( d_photonuclear_data_properties )
+  {
+    photonuclear_data_properties_clone.reset( d_photonuclear_data_properties->clone() );
+  }
+
+  // Clone the adjoint photonuclear data properties
+  std::shared_ptr<const AdjointPhotonuclearDataProperties>
+    adjoint_photonuclear_data_properties_clone;
+
+  if( d_adjoint_photonuclear_data_properties )
+  {
+    adjoint_photonuclear_data_properties_clone.reset( d_adjoint_photonuclear_data_properties->clone() );
+  }
+
+  // Clone the photoatomic data properties
+  std::shared_ptr<const PhotoatomicDataProperties>
+    photoatomic_data_properties_clone;
+
+  if( d_photoatomic_data_properties )
+  {
+    photoatomic_data_properties_clone.reset( d_photoatomic_data_properties->clone() );
+  }
+
+  // Clone the adjoint photoatomic data properties
+  std::shared_ptr<const AdjointPhotoatomicDataProperties>
+    adjoint_photoatomic_data_properties_clone;
+
+  if( d_adjoint_photoatomic_data_properties )
+  {
+    adjoint_photoatomic_data_properties_clone.reset( d_adjoint_photoatomic_data_properties->clone() );
+  }
+
+  // Clone the electroatomic data properties
+  std::shared_ptr<const ElectroatomicDataProperties>
+    electroatomic_data_properties_clone;
+
+  if( d_electroatomic_data_properties )
+  {
+    electroatomic_data_properties_clone.reset( d_electroatomic_data_properties->clone() );
+  }
+
+  // Clone the adjoint electroatomic data properties
+  std::shared_ptr<const AdjointElectroatomicDataProperties>
+    adjoint_electroatomic_data_properties_clone;
+
+  if( d_adjoint_electroatomic_data_properties )
+  {
+    adjoint_electroatomic_data_properties_clone.reset( d_adjoint_electroatomic_data_properties->clone() );
+  }
+
+  return new StandardNuclideProperties(
                                  d_name,
                                  d_atomic_number,
                                  d_atomic_mass_number,
@@ -304,23 +514,13 @@ StandardNuclideProperties* StandardNuclideProperties::deepClone() const
                                  d_atomic_weight_ratio,
                                  nuclear_data_properties_clone,
                                  adjoint_nuclear_data_properties_clone,
+                                 photonuclear_data_properties_clone,
+                                 adjoint_photonuclear_data_properties_clone,
                                  photoatomic_data_properties_clone,
                                  adjoint_photoatomic_data_properties_clone,
                                  electroatomic_data_properties_clone,
-                                 adjoint_electroatomic_data_properties_clone );
-  }
-  else
-  {
-    return new StandardNuclideProperties(
-                                         d_name,
-                                         d_atomic_number,
-                                         d_atomic_mass_number,
-                                         d_isomer_number,
-                                         d_atomic_weight_ratio,
-                                         nuclear_data_properties_clone,
-                                         photoatomic_data_properties_clone,
-                                         electroatomic_data_properties_clone );
-  }
+                                 adjoint_electroatomic_data_properties_clone,
+                                 0 );
 }
 
 // Save the properties to an archive
@@ -338,6 +538,8 @@ void StandardNuclideProperties::save( Archive& ar, const unsigned version ) cons
   ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
   ar & BOOST_SERIALIZATION_NVP( d_nuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_nuclear_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_photonuclear_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photonuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
@@ -359,6 +561,8 @@ void StandardNuclideProperties::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
   ar & BOOST_SERIALIZATION_NVP( d_nuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_nuclear_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_photonuclear_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photonuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );

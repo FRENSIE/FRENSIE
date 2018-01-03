@@ -11,11 +11,12 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_Tuple.hpp>
+// FRENSIE Includes
+#include "Utility_Vector.hpp"
+#include "Utility_Array.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace Data{
 
@@ -45,7 +46,7 @@ public:
   //! Constructor
   ACEFileHandler( const std::string& file_name,
 		  const std::string& table_name,
-		  const unsigned table_start_line,
+		  const size_t table_start_line,
 		  const bool is_ascii = true );
 
   //! Destructor
@@ -73,19 +74,19 @@ public:
   const std::string& getTableMatId() const;
 
   //! Get the table zaids
-  Teuchos::ArrayView<const int> getTableZAIDs() const;
+  Utility::ArrayView<const int> getTableZAIDs() const;
 
   //! Get the table atomic weight ratios
-  Teuchos::ArrayView<const double> getTableAtomicWeightRatios() const;
+  Utility::ArrayView<const double> getTableAtomicWeightRatios() const;
 
   //! Get the table NXS array
-  Teuchos::ArrayView<const int> getTableNXSArray() const;
+  Utility::ArrayView<const int> getTableNXSArray() const;
 
   //! Get the table JXS array
-  Teuchos::ArrayView<const int> getTableJXSArray() const;
+  Utility::ArrayView<const int> getTableJXSArray() const;
 
   //! Get the table XSS array
-  Teuchos::ArrayRCP<const double> getTableXSSArray() const;
+  std::shared_ptr<const std::vector<double> > getTableXSSArray() const;
 
 private:
 
@@ -95,7 +96,7 @@ private:
 
   // Read the ACE table
   void readACETable( const std::string& table_name,
-		     const unsigned table_start_line );
+		     const size_t table_start_line );
 
   // Remove white space from string
   void removeWhiteSpaceFromString( std::string& string ) const;
@@ -125,19 +126,19 @@ private:
   double d_temperature;
 
   // The ace table zaids
-  Teuchos::Tuple<int,16> d_zaids;
+  std::array<int,16> d_zaids;
 
   // The ace table atomic weight ratios
-  Teuchos::Tuple<double,16> d_atomic_weight_ratios;
+  std::array<double,16> d_atomic_weight_ratios;
 
   // The ace table NXS array
-  Teuchos::Tuple<int,16> d_nxs;
+  std::array<int,16> d_nxs;
 
   // The ace table JXS array
-  Teuchos::Tuple<int,32> d_jxs;
+  std::array<int,32> d_jxs;
 
   // The ace table XSS array
-  Teuchos::ArrayRCP<double> d_xss;
+  std::shared_ptr<std::vector<double> > d_xss;
 };
 
 } // end Data namespace

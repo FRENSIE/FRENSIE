@@ -11,16 +11,16 @@
 
 // FRENSIE Includes
 #include "Data_ACEFileHandler.hpp"
+#include "Data_ACEHelperWrappers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Data_ACEHelperWrappers.hpp"
 
 namespace Data{
 
 // Constructor
 ACEFileHandler::ACEFileHandler( const std::string& file_name,
 				const std::string& table_name,
-				const unsigned table_start_line,
+				const size_t table_start_line,
 				const bool is_ascii )
   : d_ace_file_id( 1 ),
     d_ace_library_name( file_name ),
@@ -34,7 +34,7 @@ ACEFileHandler::ACEFileHandler( const std::string& file_name,
     d_atomic_weight_ratios(),
     d_nxs(),
     d_jxs(),
-    d_xss()
+    d_xss( new std::vector<double> )
 {
   openACEFile( file_name, is_ascii );
   readACETable( table_name, table_start_line );
@@ -54,23 +54,25 @@ void ACEFileHandler::openACEFile( const std::string& file_name,
   // Binary files cannot currently be handled
   TEST_FOR_EXCEPTION( !is_ascii,
 		      std::runtime_error,
-		      "Fatal Error: Binary ACE files cannot currently be read ("+ file_name + ")." );
+		      "Binary ACE files cannot currently be read ("+
+                      file_name + ")." );
 
   // Check that the file exists
   bool ace_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(),
 						       file_name.size() );
   TEST_FOR_EXCEPTION( !ace_file_exists,
 		      std::runtime_error,
-		      "Fatal Error: ACE file " + file_name +
-		      " does not exists." );
+		      "ACE file " + file_name + " does not exists." );
 
   // Check that the file can be opened
-  bool ace_file_is_readable = (bool)fileIsReadableUsingFortran( file_name.c_str(),
-							        file_name.size() );
+  bool ace_file_is_readable =
+    (bool)fileIsReadableUsingFortran( file_name.c_str(),
+                                      file_name.size() );
+  
   TEST_FOR_EXCEPTION( !ace_file_is_readable,
 		      std::runtime_error,
-		      "Fatal Error: ACE file " + file_name +
-		      " exists but is not readable." );
+		      "ACE file " + file_name +
+                      " exists but is not readable." );
 
   // Open the file
   openFileUsingFortran( file_name.c_str(), file_name.size(), d_ace_file_id );
@@ -81,8 +83,10 @@ void ACEFileHandler::openACEFile( const std::string& file_name,
 
 // Read a table in the ACE file
 void ACEFileHandler::readACETable( const std::string& table_name,
-				   const unsigned table_start_line )
+				   const size_t table_start_line )
 {
+  testPrecondition( table_start_line <= (size_t)std::numeric_limits<int>::max() );
+  
   // Move to the start of the ACE table in the ACE file
   moveToLineUsingFortran( d_ace_file_id, static_cast<int>( table_start_line ) );
 
@@ -94,29 +98,16 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 			   &d_ace_table_processing_date[0] );
 
   // Clear white space from the ace table name and processing date
-  removeWhiteSpaceFromString( d_ace_table_name );
-  removeWhiteSpaceFromString( d_ace_table_processing_date );
+  this->removeWhiteSpaceFromString( d_ace_table_name );
+  this->removeWhiteSpaceFromString( d_ace_table_processing_date );
 
   // Test that the table name is the same as the desired table name
-  {
-    bool expected_table_name =
-      (table_name.compare( d_ace_table_name ) == 0 ? true : false);
-
-    if( !expected_table_name )
-    {
-      std::stringstream ss;
-
-      ss << "Fatal Error: Expected table " << table_name << " at line "
-	 << table_start_line << " of ACE library " << d_ace_library_name
-	 << " but found table " << d_ace_table_name
-	 << ". The cross_sections.xml file is likely corrupted."
-	 << std::endl;
-
-      TEST_FOR_EXCEPTION( !expected_table_name,
-			  std::runtime_error,
-			  ss.str() );
-    }
-  }
+  TEST_FOR_EXCEPTION( table_name != d_ace_table_name,
+                      std::runtime_error,
+                      "Expected table " << table_name << " at line "
+                      << table_start_line << " of ACE library "
+                      << d_ace_library_name << " but found table "
+                      << d_ace_table_name << "!" );
 
   // Read the second line of the ACE table header
   readAceTableHeaderLine2( d_ace_file_id,
@@ -125,20 +116,20 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 
   // Read the zaids and awrs
   readAceTableZaidsAndAwrs( d_ace_file_id,
-			    d_zaids.getRawPtr(),
-			    d_atomic_weight_ratios.getRawPtr() );
+			    d_zaids.data(),
+			    d_atomic_weight_ratios.data() );
 
   // Read the nxs array
-  readAceTableNXSArray( d_ace_file_id, d_nxs.getRawPtr() );
+  readAceTableNXSArray( d_ace_file_id, d_nxs.data() );
 
   // Read the jxs array
-  readAceTableJXSArray( d_ace_file_id, d_jxs.getRawPtr() );
+  readAceTableJXSArray( d_ace_file_id, d_jxs.data() );
 
   // Resize the xss array
-  d_xss.resize( d_nxs[0] );
+  d_xss->resize( d_nxs[0] );
 
   // Read the xss array
-  readAceTableXSSArray( d_ace_file_id, d_xss.getRawPtr(), d_xss.size() );
+  readAceTableXSSArray( d_ace_file_id, d_xss->data(), d_xss->size() );
 
   // Close the ACE File
   closeFileUsingFortran( d_ace_file_id );
@@ -200,34 +191,34 @@ const std::string& ACEFileHandler::getTableMatId() const
 }
 
 // Get the table zaids
-Teuchos::ArrayView<const int> ACEFileHandler::getTableZAIDs() const
+Utility::ArrayView<const int> ACEFileHandler::getTableZAIDs() const
 {
-  return d_zaids();
+  return Utility::arrayViewOfConst(d_zaids);
 }
 
 // Get the table atomic weight ratios
-Teuchos::ArrayView<const double>
+Utility::ArrayView<const double>
 ACEFileHandler::getTableAtomicWeightRatios() const
 {
-  return d_atomic_weight_ratios();
+  return Utility::arrayViewOfConst(d_atomic_weight_ratios);
 }
 
 // Get the table NXS array
-Teuchos::ArrayView<const int> ACEFileHandler::getTableNXSArray() const
+Utility::ArrayView<const int> ACEFileHandler::getTableNXSArray() const
 {
-  return d_nxs();
+  return Utility::arrayViewOfConst( d_nxs );
 }
 
 // Get the table JXS array
-Teuchos::ArrayView<const int> ACEFileHandler::getTableJXSArray() const
+Utility::ArrayView<const int> ACEFileHandler::getTableJXSArray() const
 {
-  return d_jxs();
+  return Utility::arrayViewOfConst( d_jxs );
 }
 
 // Get the table XSS array
-Teuchos::ArrayRCP<const double> ACEFileHandler::getTableXSSArray() const
+std::shared_ptr<const std::vector<double> > ACEFileHandler::getTableXSSArray() const
 {
-  return d_xss.getConst();
+  return d_xss;
 }
 
 } // end Data namespace

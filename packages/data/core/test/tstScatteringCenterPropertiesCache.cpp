@@ -90,6 +90,22 @@ public:
   const Data::AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override
   { return NULL; }
 
+  //! Check if there is photonuclear data
+  bool photonuclearDataAvailable() const override
+  { return false; }
+
+  //! Get the photonuclear data properties
+  const Data::PhotonuclearDataProperties* getPhotonuclearDataProperties() const override
+  { return NULL; }
+
+  //! Check if there is adjoint photonuclear data
+  bool adjointPhotonuclearDataAvailable() const override
+  { return false; }
+
+  //! Get the adjoint photonuclear data
+  const Data::AdjointPhotonuclearDataProperties* getAdjointPhotonuclearDataProperties() const override
+  { return NULL; }
+
   //! Check if there is photoatomic data
   bool photoatomicDataAvailable() const override
   { return false; }
