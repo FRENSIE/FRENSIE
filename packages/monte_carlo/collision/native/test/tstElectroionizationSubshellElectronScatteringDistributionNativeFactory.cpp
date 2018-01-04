@@ -28,7 +28,7 @@
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
-  native_distribution, exact_native_distribution;
+  native_distribution, direct_native_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -110,13 +110,13 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 0.0, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 8.829e-2 + 3e-8, 1.0001e-08 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 11110995.37814653106, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0003754845021108e+08, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 9.12175e-2, 4.275e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.7244825069878232e+02, 1e-12 );
 
   pdf = native_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.4697917348662668e+02, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.7348902024846652e+02, 1e-6 );
 
   pdf = native_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5701193026053988, 1e-12 );
@@ -221,7 +221,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   sample_exact )
+                   sample_direct )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -235,7 +235,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
          scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  exact_native_distribution->samplePrimaryAndSecondary( incoming_energy,
+  direct_native_distribution->samplePrimaryAndSecondary( incoming_energy,
                                                         outgoing_energy,
                                                         knock_on_energy,
                                                         scattering_angle_cosine,
@@ -250,7 +250,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
   TEST_FLOATING_EQUALITY( knock_on_energy, 9.9920072216264089e-16, 1e-12 );
 
   // sample the electron
-  exact_native_distribution->samplePrimaryAndSecondary( incoming_energy,
+  direct_native_distribution->samplePrimaryAndSecondary( incoming_energy,
                                                         outgoing_energy,
                                                         knock_on_energy,
                                                         scattering_angle_cosine,
@@ -331,7 +331,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
-                   scatterElectron_exact )
+                   scatterElectron_direct )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -348,7 +348,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
     electron.setDirection( 0.0, 0.0, 1.0 );
 
     // Analytically scatter electron
-    exact_native_distribution->scatterElectron( electron,
+    direct_native_distribution->scatterElectron( electron,
                                                 bank,
                                                 shell_of_interaction );
 
@@ -365,7 +365,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
     electron.setDirection( 0.0, 0.0, 1.0 );
 
     // Analytically scatter electron
-    exact_native_distribution->scatterElectron( electron,
+    direct_native_distribution->scatterElectron( electron,
                                                 bank,
                                                 shell_of_interaction );
 
@@ -404,18 +404,18 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::set<unsigned> subshells = data_container->getSubshells();
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
     *data_container,
     *subshells.begin(),
     binding_energy,
     native_distribution );
 
   // Create the electroionization subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Exact>(
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Correlated>(
     *data_container,
     *subshells.begin(),
     binding_energy,
-    exact_native_distribution );
+    direct_native_distribution );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

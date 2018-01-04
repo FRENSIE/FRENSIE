@@ -55,12 +55,12 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, getMaxEnergy )
 // Check that the distribution can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate )
 {
-  // LinLinLin interpoation used.
+  // LinLinLin interpolation used.
   double pdf = twobs_brem_dist->evaluate( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
 
   pdf = twobs_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.64260698105842E+02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0746668573912197e+02, 1e-12 );
 
   pdf = twobs_brem_dist->evaluate( 1.0e5, 2.0e4 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
@@ -70,12 +70,12 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate )
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF )
 {
-  // LinLinLin interpoation used.
+  // LinLinLin interpolation used.
   double pdf = twobs_brem_dist->evaluatePDF( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
-std::cout << std::setprecision(20) << pdf << std::endl;
+
   pdf = twobs_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.64260698105842E+02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0746668573912197e+02, 1e-12 );
 
   pdf = twobs_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
@@ -86,10 +86,10 @@ std::cout << std::setprecision(20) << pdf << std::endl;
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    evaluateCDF )
 {
-  // LinLinLin interpoation used.
+  // LinLinLin interpolation used.
   double cdf = twobs_brem_dist->evaluateCDF( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 4.974034148027E-01, 1e-12 );
-std::cout << std::setprecision(20) << cdf << std::endl;
+
   cdf = twobs_brem_dist->evaluateCDF( 9.0e-4, 9.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 
@@ -366,7 +366,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
             function_data ) );
 
   // Create the scattering distributions

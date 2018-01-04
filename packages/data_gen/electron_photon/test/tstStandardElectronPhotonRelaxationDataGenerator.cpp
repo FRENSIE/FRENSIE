@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstStandardElectronPhotonRelaxationDataGenerator.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kerstings
 //! \brief  Standard electron-photon-relaxation data generator unit tests
 //!
 //---------------------------------------------------------------------------//
@@ -75,7 +75,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
@@ -116,7 +116,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator, constructor )
   TEST_EQUALITY_CONST( generator.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
@@ -329,15 +329,23 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                                                        h_endl_data_container );
 
   TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+
+  generator.setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
                        MonteCarlo::CORRELATED_SAMPLING );
 
-  generator.setElectronTwoDSamplingPolicy( MonteCarlo::EXACT_SAMPLING );
+  generator.setElectronTwoDSamplingPolicy( MonteCarlo::DIRECT_SAMPLING );
   TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::EXACT_SAMPLING );
+                       MonteCarlo::DIRECT_SAMPLING );
 
-  generator.setElectronTwoDSamplingPolicy( MonteCarlo::STOCHASTIC_SAMPLING );
+  generator.setElectronTwoDSamplingPolicy( MonteCarlo::UNIT_BASE_SAMPLING );
   TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::STOCHASTIC_SAMPLING );
+                       MonteCarlo::UNIT_BASE_SAMPLING );
+
+  generator.setElectronTwoDSamplingPolicy( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( generator.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
@@ -366,7 +374,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLIN_INTERPOLATION );
-    raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
+    raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
     raw_data_generator->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
     raw_data_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 );
     raw_data_generator->setDefaultPhotonGridDistanceTolerance( 1e-20 );
@@ -399,7 +407,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Lin" );
-  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Unit-base Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -695,12 +703,11 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   threshold =
     data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 15 );
+  TEST_EQUALITY_CONST( threshold, 63 );
 
-  cross_section =
-    data_container.getScreenedRutherfordElasticCrossSection();
+  cross_section = data_container.getScreenedRutherfordElasticCrossSection();
 
-  TEST_EQUALITY_CONST( cross_section.front(), 1.54213098883628845e+02 );
+  TEST_EQUALITY_CONST( cross_section.front(), 5.70357400551438332e+00 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29045336560270462e+04);
   TEST_EQUALITY_CONST( cross_section.size(), 343-threshold );
 
@@ -941,7 +948,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
     raw_data_generator->setNumberOfMomentPreservingAngles( 1 );
     raw_data_generator->setTabularEvaluationTolerance( 1e-7 );
     raw_data_generator->setElectronTwoDInterpPolicy( MonteCarlo::LINLINLOG_INTERPOLATION );
-    raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
+    raw_data_generator->setElectronTwoDSamplingPolicy( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
     raw_data_generator->setDefaultPhotonGridConvergenceTolerance( 1e-3 );
     raw_data_generator->setDefaultPhotonGridAbsoluteDifferenceTolerance( 1e-80 );
     raw_data_generator->setDefaultPhotonGridDistanceTolerance( 1e-20 );
@@ -975,7 +982,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 1 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Unit-base Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -1547,7 +1554,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Log" );
-  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Unit-base Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -2124,7 +2131,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 2 );
   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
-  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
+  TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Unit-base Correlated" );
   TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
   TEST_EQUALITY_CONST(
     data_container.getGridAbsoluteDifferenceTolerance(), 1e-80 );
@@ -2414,8 +2421,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   discrete_angles =
     data_container.getMomentPreservingElasticDiscreteAngles( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32890919907420679e-01 );
-  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98015592866181911e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.front(), 9.32887510289664434e-01 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 9.98006165786147204e-01 );
   TEST_EQUALITY_CONST( discrete_angles.size(), 2 );
 
   std::vector<double> discrete_weights =
@@ -2427,8 +2434,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   discrete_weights = data_container.getMomentPreservingElasticWeights( 20.0 );
 
-  TEST_EQUALITY_CONST( discrete_weights.front(), 2.37321981772591799e-03 );
-  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97626780182274131e-01 );
+  TEST_EQUALITY_CONST( discrete_weights.front(), 2.39458310561493307e-03 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 9.97605416894385089e-01 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
   unsigned threshold = data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
@@ -2485,8 +2492,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   elastic_pdf = data_container.getCutoffElasticPDF(20.0);
 
-  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.57657148989572720e-10 );
-  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.61023246742115472e+05 );
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.48894126477090926e-10 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.60861506006574957e+05 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 95 );
 
   // Check the electroionization data
@@ -2691,7 +2698,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //   TEST_EQUALITY_CONST( data_container.getNumberOfMomentPreservingAngles(), 0 );
 //   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
 //   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Log-Log-Log" );
-//   TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
+//   TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Unit-base Correlated" );
 //   TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" );
 //   TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 //   TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
@@ -3475,7 +3482,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //   TEST_EQUALITY_CONST( data_container.getMaxElectronEnergy(), 1.0e+5 );
 //   TEST_EQUALITY_CONST( data_container.getElectronTabularEvaluationTolerance(), 1e-7 );
 //   TEST_EQUALITY_CONST( data_container.getElectronTwoDInterpPolicy(), "Lin-Lin-Lin" );
-//   TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Correlated" );
+//   TEST_EQUALITY_CONST( data_container.getElectronTwoDSamplingPolicy(), "Unit-base Correlated" );
 //   TEST_EQUALITY_CONST( data_container.getElectronCrossSectionInterpPolicy(), "Log-Log" );
 //   TEST_EQUALITY_CONST( data_container.getCutoffElasticInterpPolicy(), "Lin-Lin" );
 //   TEST_EQUALITY_CONST( data_container.getElectroionizationRecoilInterpPolicy(), "Lin-Lin" );
@@ -3847,12 +3854,12 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 //   TEST_EQUALITY_CONST( discrete_weights.back(), 9.99488571265172321e-01 );
 //   TEST_EQUALITY_CONST( discrete_weights.size(), 2 );
 
-//   threshold =
+//   unsigned threshold =
 //     data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
 //   TEST_EQUALITY_CONST( threshold, 0 );
 
-//   cross_section =
+//   std::vector<double> cross_section =
 //     data_container.getCutoffElasticCrossSection();
 
 //   TEST_EQUALITY_CONST( cross_section.front(), 3.06351e+9 );

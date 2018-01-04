@@ -23,14 +23,14 @@ class TeuchosUnitTestInitializer
 {
 
 public:
-  
+
   //! Initialize the unit tests
   static void initializeUnitTests( int argc, char** argv, std::ostream* os );
 
   //! Destructor
   virtual ~TeuchosUnitTestInitializer()
   { /* ... */ }
-  
+
 protected:
 
   //! Set the initializer
@@ -38,7 +38,7 @@ protected:
 
   //! Get the initializer
   static TeuchosUnitTestInitializer& getInitializer();
-  
+
   //! Constructor
   TeuchosUnitTestInitializer()
   { /* ... */ }
@@ -57,7 +57,7 @@ private:
   // The initializer singleton instance
   static std::unique_ptr<TeuchosUnitTestInitializer> s_initializer;
 };
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_TEUCHOS_UNIT_TEST_INITIALIZER_HPP

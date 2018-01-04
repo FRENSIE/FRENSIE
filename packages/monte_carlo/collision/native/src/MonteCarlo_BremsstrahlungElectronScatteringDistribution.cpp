@@ -75,8 +75,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluate(
             incoming_energy,
             photon_energy,
             [](const double& energy){return 1e-7;},
-            [](const double& energy){return energy;},
-            false );
+            [](const double& energy){return energy;} );
 }
 
 // Evaluate the PDF value for a given incoming and photon energy
@@ -93,8 +92,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
             incoming_energy,
             photon_energy,
             [](const double& energy){return 1e-7;},
-            [](const double& energy){return energy;},
-            false );
+            [](const double& energy){return energy;} );
 }
 
 // Evaluate the CDF value for a given incoming and photon energy
@@ -111,8 +109,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluateCDF(
             incoming_energy,
             photon_energy,
             [](const double& energy){return 1e-7;},
-            [](const double& energy){return energy;},
-            false );
+            [](const double& energy){return energy;} );
 }
 
 // Sample the photon energy and direction from the distribution

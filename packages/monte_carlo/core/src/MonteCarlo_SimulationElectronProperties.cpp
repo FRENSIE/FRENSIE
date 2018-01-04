@@ -24,7 +24,7 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_max_electron_energy( 20.0 ),
     d_evaluation_tol( 1e-7 ),
     d_electron_interpolation_type( LOGLOGLOG_INTERPOLATION ),
-    d_electron_sampling_type( CORRELATED_SAMPLING ),
+    d_electron_sampling_type( UNIT_BASE_CORRELATED_SAMPLING ),
     d_num_electron_hash_grid_bins( 1000 ),
     d_atomic_relaxation_mode_on( true ),
     d_elastic_mode_on( true ),

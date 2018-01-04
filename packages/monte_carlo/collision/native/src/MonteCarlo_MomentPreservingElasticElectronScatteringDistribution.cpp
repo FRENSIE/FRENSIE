@@ -30,6 +30,10 @@ MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticEl
 
 
 // Evaluate the distribution
+/*! \details Currently there is no implementation to evaluate the moment
+ *  preserving distribution. An exception will be thrown if this function is
+ *  called.
+ */
 double MomentPreservingElasticElectronScatteringDistribution::evaluate(
     const double incoming_energy,
     const double scattering_angle_cosine ) const
@@ -39,13 +43,20 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // evaluate the distribution at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluate(
-                        incoming_energy,
-                        scattering_angle_cosine );
+  THROW_EXCEPTION( std::runtime_error,
+                   "Error: evaluation of the moment-preserving distribution" <<
+                   " is currently not supported!" );
+
+  // // evaluate the distribution at the incoming energy and scattering_angle_cosine
+  // return d_discrete_scattering_distribution->evaluate(
+  //                       incoming_energy,
+  //                       scattering_angle_cosine );
 }
 
 // Evaluate the PDF
+/*! \details Currently there is no implementation to evaluate the moment
+ *  preserving PDF. An exception will be thrown if this function is called.
+ */
 double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
                             const double incoming_energy,
                             const double scattering_angle_cosine ) const
@@ -55,13 +66,20 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // evaluate the PDF at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateSecondaryConditionalPDF(
-                        incoming_energy,
-                        scattering_angle_cosine );
+  THROW_EXCEPTION( std::runtime_error,
+                   "Error: evaluation of the moment-preserving PDF is" <<
+                   " currently not supported!" );
+
+  // // evaluate the PDF at the incoming energy and scattering_angle_cosine
+  // return d_discrete_scattering_distribution->evaluateSecondaryConditionalPDF(
+  //                       incoming_energy,
+  //                       scattering_angle_cosine );
 }
 
 // Evaluate the CDF
+/*! \details Currently there is no implementation to evaluate the moment
+ *  preserving CDF. An exception will be thrown if this function is called.
+ */
 double MomentPreservingElasticElectronScatteringDistribution::evaluateCDF(
                             const double incoming_energy,
                             const double scattering_angle_cosine ) const
@@ -71,10 +89,16 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // evaluate the CDF at the incoming energy and scattering_angle_cosine
-  return d_discrete_scattering_distribution->evaluateSecondaryConditionalCDF(
-                        incoming_energy,
-                        scattering_angle_cosine );
+  THROW_EXCEPTION( std::runtime_error,
+                   "Error: evaluation of the moment-preserving CDF is" <<
+                   " currently not supported!" );
+
+  // // evaluate the CDF at the incoming energy and scattering_angle_cosine
+  // return d_discrete_scattering_distribution->evaluateSecondaryConditionalCDF(
+  //                       incoming_energy,
+  //                       scattering_angle_cosine,
+  //                       lower_bound,
+  //                       upper_bound );
 }
 
 // Sample an outgoing energy and direction from the distribution

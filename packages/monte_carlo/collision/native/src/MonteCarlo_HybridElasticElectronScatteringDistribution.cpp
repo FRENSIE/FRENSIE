@@ -48,13 +48,17 @@ double HybridElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
-  {
-    return d_hybrid_distribution->evaluate(
-              incoming_energy, scattering_angle_cosine, true );
-  }
-  else
-    return 0.0;
+  THROW_EXCEPTION( std::runtime_error,
+                   "Error: evaluation of the hybrid distribution" <<
+                   " is currently not supported!" );
+
+  // if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
+  // {
+  //   return d_hybrid_distribution->evaluate(
+  //             incoming_energy, scattering_angle_cosine );
+  // }
+  // else
+  //   return 0.0;
 }
 
 // Evaluate the PDF at the given energy and scattering angle cosine
@@ -70,21 +74,22 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
-  {
-    return d_hybrid_distribution->evaluateSecondaryConditionalPDF(
-              incoming_energy,
-              scattering_angle_cosine,
-              [](const double& x){return -1.0;},
-              [this](const double& x){return d_cutoff_angle_cosine;},
-              false );
-  }
-  else
-    return 0.0;
+  THROW_EXCEPTION( std::runtime_error,
+                   "Error: evaluation of the hybrid PDF is" <<
+                   " currently not supported!" );
+
+  // if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
+  // {
+  //   return d_hybrid_distribution->evaluateSecondaryConditionalPDF(
+  //             incoming_energy,
+  //             scattering_angle_cosine );
+  // }
+  // else
+  //   return 0.0;
 }
 
 // Evaluate the CDF
-/*! \details Unline the evaluate and evaluatePDF function the CDF can be
+/*! \details Unlike the evaluate and evaluatePDF function the CDF can be
  *  evaluated across the entire range of the angle cosine.
  */
 double HybridElasticElectronScatteringDistribution::evaluateCDF(
@@ -97,7 +102,7 @@ double HybridElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   return d_hybrid_distribution->evaluateSecondaryConditionalCDF(
-            incoming_energy, scattering_angle_cosine, false );
+            incoming_energy, scattering_angle_cosine );
 }
 
 // Sample an outgoing energy and direction from the distribution

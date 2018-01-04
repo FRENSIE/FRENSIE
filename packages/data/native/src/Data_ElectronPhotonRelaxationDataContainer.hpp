@@ -262,20 +262,20 @@ public:
   //! Return the elastic angular energy grid
   const std::vector<double>& getElasticAngularEnergyGrid() const;
 
-  //! Return the cutoff elastic scatering interpolation policy
+  //! Return the cutoff elastic scattering interpolation policy
   const std::string& getCutoffElasticInterpPolicy() const;
 
   //! Return the map of the cutoff elastic scattering angles
   const std::map<double,std::vector<double> >& getCutoffElasticAngles() const;
 
-  //! Return the map of the cutoff elastic scatering pdf
+  //! Return the map of the cutoff elastic scattering pdf
   const std::map<double,std::vector<double> >& getCutoffElasticPDF() const;
 
   //! Return the cutoff elastic scattering angles for an incoming energy
   const std::vector<double>& getCutoffElasticAngles(
                     const double incoming_energy ) const;
 
-  //! Return the cutoff elastic scatering pdf for an incoming energy
+  //! Return the cutoff elastic scattering pdf for an incoming energy
   const std::vector<double>& getCutoffElasticPDF(
                     const double incoming_energy ) const;
 

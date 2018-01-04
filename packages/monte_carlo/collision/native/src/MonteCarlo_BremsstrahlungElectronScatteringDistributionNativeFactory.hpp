@@ -26,7 +26,7 @@ public:
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Stochastic>
+            typename TwoDSamplePolicy = Utility::UnitBase>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double>& bremsstrahlung_energy_grid,
@@ -36,7 +36,7 @@ public:
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
@@ -45,7 +45,7 @@ public:
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
@@ -55,7 +55,7 @@ public:
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
@@ -66,7 +66,7 @@ public:
 
   //! Create the energy loss function
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> bremsstrahlung_energy_grid,

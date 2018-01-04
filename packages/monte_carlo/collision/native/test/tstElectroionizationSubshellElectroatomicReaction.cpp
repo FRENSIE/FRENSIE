@@ -220,28 +220,28 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         1.70425200079801E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 8.3901060351505814e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 1.0422076549158518e+08, 1e-12 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.70425200079802E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 8.3901060351502438e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 1.0422076549158294e+08, 1e-12 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         1.98284583249127E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 3.7030604178188080e+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 6.3604864772376753e+07, 1e-12 );
 
   diff_cross_section =
     native_first_subshell_reaction->getDifferentialCrossSection(
         2.00191878322064E-03,
         8.52126000399011E-04 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 6.2461923119910896e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 5.9982050362880379e+07, 1e-12 );
 
 
   // Last subshell
@@ -250,35 +250,35 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
         0.0025118800000459599528,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3290196570735972e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239695450508114e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118800000459773,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section,2.3290196570650961e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239695450507767e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.002511885,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3264933944920450e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239636906804170e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118897153524992472,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3241109412175182e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239581696372867e+07, 1e-12 );
 
   diff_cross_section =
     native_last_subshell_reaction->getDifferentialCrossSection(
         0.0025118908794333669708,
         0.0012514500000459765489 );
 
-  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239668947055083e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( diff_cross_section, 2.3239481392953299e+07, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -554,7 +554,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
         electroionization_subshell_distribution;
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
@@ -591,12 +591,12 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
         *shell );
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
         electroionization_subshell_distribution,
-        1e-15 );
+        1e-12 );
 
 
     // Create the subshell electroelectric reaction

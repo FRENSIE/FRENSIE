@@ -33,7 +33,7 @@ public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createElectroatomCore(
        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -53,7 +53,7 @@ private:
 
   //! Create the elastic reaction for a electroatom core
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createElasticElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,

@@ -35,7 +35,7 @@ CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDi
   this->setSamplingMethod( sampling_method );
 }
 
-//! Set the sampling method ( Simplified Unoin - Default )
+//! Set the sampling method ( Simplified Union - Default )
 void CoupledElasticElectronScatteringDistribution::setSamplingMethod(
     const CoupledElasticSamplingMethod& method )
 {
@@ -97,8 +97,7 @@ double CoupledElasticElectronScatteringDistribution::evaluate(
   {
     // evaluate on the cutoff distribution
     return d_coupled_dist->evaluate( incoming_energy,
-                                     scattering_angle_cosine,
-                                     false );
+                                     scattering_angle_cosine );
   }
 }
 
@@ -129,8 +128,7 @@ double CoupledElasticElectronScatteringDistribution::evaluatePDF(
     // evaluate on the cutoff distribution
     return d_coupled_dist->evaluateSecondaryConditionalPDF(
                                 incoming_energy,
-                                scattering_angle_cosine,
-                                false );
+                                scattering_angle_cosine );
   }
 }
 
@@ -161,8 +159,7 @@ double CoupledElasticElectronScatteringDistribution::evaluateCDF(
     // evaluate CDF on the cutoff distribution
     return d_coupled_dist->evaluateSecondaryConditionalCDF(
                     incoming_energy,
-                    scattering_angle_cosine,
-                    false );
+                    scattering_angle_cosine );
   }
 }
 
@@ -250,8 +247,7 @@ double CoupledElasticElectronScatteringDistribution::evaluateAtCutoff(
                     const double incoming_energy ) const
 {
   return d_coupled_dist->evaluate( incoming_energy,
-                                   ElasticTraits::mu_peak,
-                                   false );
+                                   ElasticTraits::mu_peak );
 }
 
 // Evaluate the PDF at the cutoff angle cosine
@@ -259,7 +255,7 @@ double CoupledElasticElectronScatteringDistribution::evaluatePDFAtCutoff(
                     const double incoming_energy ) const
 {
   return d_coupled_dist->evaluateSecondaryConditionalPDF(
-                            incoming_energy, ElasticTraits::mu_peak, false );
+                            incoming_energy, ElasticTraits::mu_peak );
 
 //  return this->evaluateAtCutoff( incoming_energy )*
 //         this->evaluateCDFAtCutoff( incoming_energy );
@@ -423,8 +419,8 @@ double CoupledElasticElectronScatteringDistribution::sampleOneDUnion(
  *  screened Rutherford distribution. The energy grid for the cross section
  *  ratios is much finer than the energy grid for the elastic secondary
  *  distribution, resulting in a difference in the sample values below the
- *  cuotff due to interpolation errors. This difference is handled by
- *  normalizing the sampled values of the tabular Cuotff disitrbution to range
+ *  cutoff due to interpolation errors. This difference is handled by
+ *  normalizing the sampled values of the tabular Cutoff distribution to range
  *  from -1 to 0.999999 exactly.
  */
 double CoupledElasticElectronScatteringDistribution::sampleTwoDUnion(
@@ -476,7 +472,7 @@ double CoupledElasticElectronScatteringDistribution::sampleTwoDUnion(
  *  screened Rutherford distribution. The energy grid for the cross section
  *  ratios is much finer than the energy grid for the elastic secondary
  *  distribution, resulting in a difference in the sample values below the
- *  cuotff due to interpolation errors. This difference is assumed small and
+ *  cutoff due to interpolation errors. This difference is assumed small and
  *  ignored.
  */
 double CoupledElasticElectronScatteringDistribution::sampleSimplifiedUnion(

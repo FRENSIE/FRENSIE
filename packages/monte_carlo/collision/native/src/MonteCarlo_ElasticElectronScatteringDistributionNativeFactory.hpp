@@ -99,7 +99,7 @@ public:
 
   //! Calculate the moment preserving cross sections
   template<typename TwoDInterpPolicy = Utility::LogLogCosLog,
-           typename TwoDSamplePolicy = Utility::Exact>
+           typename TwoDSamplePolicy = Utility::Correlated>
   static void calculateMomentPreservingCrossSections(
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
@@ -159,7 +159,7 @@ public:
 
   //! Calculate the moment preserving cross sections
   template<typename TwoDInterpPolicy = Utility::LogLogCosLog,
-           typename TwoDSamplePolicy = Utility::Exact>
+           typename TwoDSamplePolicy = Utility::Correlated>
   static void calculateMomentPreservingCrossSections(
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
@@ -224,7 +224,7 @@ public:
 
   //! Create a moment preserving elastic distribution
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::Exact>
+           typename TwoDSamplePolicy = Utility::Correlated>
   static void createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -249,7 +249,7 @@ public:
 
   //! Return angle cosine grid with the evaluated pdf for the given energy and cutoff angle
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::Exact>
+           typename TwoDSamplePolicy = Utility::Correlated>
   static void getAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,

@@ -33,7 +33,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
   TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
   TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
   TEST_ASSERT( properties.isElasticModeOn() );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
@@ -132,17 +132,21 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDSamplingPolicy )
   MonteCarlo::SimulationElectronProperties properties;
 
   TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
 
   MonteCarlo::TwoDSamplingType type = MonteCarlo::CORRELATED_SAMPLING;
   properties.setElectronTwoDSamplingPolicy( type );
   TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
 
-  type = MonteCarlo::EXACT_SAMPLING;
+  type = MonteCarlo::DIRECT_SAMPLING;
   properties.setElectronTwoDSamplingPolicy( type );
   TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
 
-  type = MonteCarlo::STOCHASTIC_SAMPLING;
+  type = MonteCarlo::UNIT_BASE_SAMPLING;
+  properties.setElectronTwoDSamplingPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
+
+  type = MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING;
   properties.setElectronTwoDSamplingPolicy( type );
   TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
 }

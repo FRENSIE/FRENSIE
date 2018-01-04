@@ -100,7 +100,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
     if( electron_interp == "Log-Log-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::Correlated>(
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -109,7 +109,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     }
     else if( electron_interp == "Lin-Lin-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::Correlated>(
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -118,7 +118,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     }
     else if( electron_interp == "Lin-Lin-Lin" )
     {
-      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::Correlated>(
+      AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
                         raw_adjoint_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -155,7 +155,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
 
     if( electron_interp == "Log-Log-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::Correlated>(
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
                                 raw_adjoint_electroatom_data,
                                 energy_grid,
                                 grid_searcher,
@@ -164,7 +164,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     }
     else if( electron_interp == "Lin-Lin-Log" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::Correlated>(
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                                 raw_adjoint_electroatom_data,
                                 energy_grid,
                                 grid_searcher,
@@ -173,7 +173,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     }
     else if( electron_interp == "Lin-Lin-Lin" )
     {
-      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::Correlated>(
+      AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
                                 raw_adjoint_electroatom_data,
                                 energy_grid,
                                 grid_searcher,

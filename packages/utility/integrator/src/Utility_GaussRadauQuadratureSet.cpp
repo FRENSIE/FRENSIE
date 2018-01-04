@@ -153,7 +153,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
     // Make an initial guess that the roots are equal to the roots of the Chebyshev Polynomial
     root_k = -cos( ( 2.0*k + 1.0 )/( 2.0 * n )* PhysicalConstants::pi );
 
-    // Actual root is known to be inbetween roots of Chebyshev Polynomial
+    // Actual root is known to be in between roots of Chebyshev Polynomial
     if (k > 0)
     {
       root_k = ( root_k + roots[k-1] )/2.0;

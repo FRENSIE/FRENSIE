@@ -64,7 +64,7 @@ public:
   //! Return the electron 2D interpolation policy
   TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron 2D sampling policy (Correlated by default)
+  //! Set the electron 2D sampling policy (UnitBaseCorrelated by default)
   void setElectronTwoDSamplingPolicy( TwoDSamplingType sampling_type );
 
   //! Return the electron 2D sampling policy
@@ -175,7 +175,7 @@ private:
   // The electron 2D interpolation type ( LogLogLog - default )
   TwoDInterpolationType d_electron_interpolation_type;
 
-  // The electron 2D sampling type ( Correlated - default )
+  // The electron 2D sampling type ( UnitBaseCorrelated - default )
   TwoDSamplingType d_electron_sampling_type;
 
   // The number of electron hash grid bins

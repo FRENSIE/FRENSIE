@@ -31,10 +31,10 @@ void TeuchosUnitTestInitializer::initializeUnitTests( int argc,
   // Get the initializer
   TeuchosUnitTestInitializer& initializer =
     TeuchosUnitTestInitializer::getInitializer();
-  
+
   // Force the command line processor to throw exceptions
   initializer.clp().throwExceptions( true );
-  
+
   // Set the command line processor options
   initializer.setCommandLineProcessorOptions();
 
@@ -56,7 +56,7 @@ void TeuchosUnitTestInitializer::setInitializer(
 
 // Get the initializer
 /*! \details Returns the singleton instance "just-in-time".
- */ 
+ */
 TeuchosUnitTestInitializer& TeuchosUnitTestInitializer::getInitializer()
 {
   if( !s_initializer.get() )
@@ -73,9 +73,9 @@ Teuchos::CommandLineProcessor& TeuchosUnitTestInitializer::clp() const
 
 // Set the command line processor options
 /*! \details Derived classes can override this method if a unit test suite
- * needs additional command line options. Only modify the command line 
+ * needs additional command line options. Only modify the command line
  * processor returned from the TeuchosUnitTestInitializer::clp method. Note:
- * this method is non-const because of how it can be used by the 
+ * this method is non-const because of how it can be used by the
  * unit test harness extensions.
  */
 void TeuchosUnitTestInitializer::setCommandLineProcessorOptions()
@@ -87,7 +87,7 @@ void TeuchosUnitTestInitializer::setCommandLineProcessorOptions()
  */
 void TeuchosUnitTestInitializer::initialize() const
 { /* ... */ }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

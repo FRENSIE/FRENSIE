@@ -58,7 +58,7 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
     d_number_of_moment_preserving_angles( 0 ),
     d_tabular_evaluation_tol( 1e-7 ),
     d_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_two_d_sampling( MonteCarlo::CORRELATED_SAMPLING )
+    d_two_d_sampling( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING )
 { 
   // Make sure the ace data is valid
   testPrecondition( ace_epr_data.get() );
@@ -287,7 +287,7 @@ MonteCarlo::TwoDInterpolationType StandardElectronPhotonRelaxationDataGenerator:
   return d_two_d_interp;
 }
 
-// Set the electron TwoDSamplingPolicy (Correlated by default)
+// Set the electron TwoDSamplingPolicy (UnitBaseCorrelated by default)
 void StandardElectronPhotonRelaxationDataGenerator::setElectronTwoDSamplingPolicy(
     MonteCarlo::TwoDSamplingType two_d_sampling )
 {
@@ -1338,7 +1338,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
     (*d_os_log) << "   Setting " << Utility::Italicized( "subshell " )
                 << Utility::Italicized(Data::convertENDFDesignatorToSubshellEnum(
                            impulse_approx_incoherent_cs_evaluators[i].first ) )
-                << Utility::Italicized(" impusle approx incoherent " )
+                << Utility::Italicized(" impulse approx incoherent " )
                 << "cross section...";
     d_os_log->flush();
     this->createCrossSectionOnUnionEnergyGrid(
@@ -1489,7 +1489,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 //---------------------------------------------------------------------------//
 // Set Electron Cross Section Data Data
 //---------------------------------------------------------------------------//
-/*! \details The cross section data is needed for caluculating the
+/*! \details The cross section data is needed for calculating the
  *  moment preserving data and must be set first.
  */
   (*d_os_log) << " Setting the electron cross section data:" << std::endl;
@@ -1666,7 +1666,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
     /*! \details There is conflicting documentation on the proper interpolation
      *  of the electroionization cross section data. The endl data file interp flag
-     *  specifies lin-lin, but the documentation wrtie-up says to use log-log
+     *  specifies lin-lin, but the documentation write-up says to use log-log
      *  interpolation on all cross sections. It was decided to match MCNP which
      *  uses log-log interpolation for electroionization.
      */
@@ -1675,7 +1675,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                 d_endl_data_container->getElectroionizationCrossSection(*shell),
                 electroionization_cross_section[i].second );
 
-    // Set the shell indentifier
+    // Set the shell identifier
     electroionization_cross_section[i].first = *shell;
     ++i;
   }
@@ -1871,7 +1871,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   {
     raw_cross_section[i] = total_cross_section[i] - cutoff_cross_section[i];
 
-    // Calcualte the relative difference between the total and cutoff cross sections
+    // Calculate the relative difference between the total and cutoff cross sections
     double relative_difference = raw_cross_section[i]/total_cross_section[i];
 
     // Check for roundoff error and reduce to zero if needed
@@ -1995,7 +1995,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 
   if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2009,7 +2009,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
   else if ( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2023,7 +2023,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
   else if ( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -2690,7 +2690,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalCrossS
                        data_container.getAtomicExcitationCrossSection(),
                        total_cross_section );
 
-  // Add the bremsstrhlung cs
+  // Add the bremsstrahlung cs
   this->addCrossSectionToTotalCrossSection(
                        energy_grid,
                        data_container.getBremsstrahlungCrossSection(),
@@ -2723,7 +2723,7 @@ void StandardElectronPhotonRelaxationDataGenerator::addCrossSectionToTotalCrossS
     total_cross_section[start_index+i] += cross_section[i];
 }
 
-// Calculate the elastic anglular distribution for the angle cosine
+// Calculate the elastic angular distribution for the angle cosine
 void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
     const std::vector<double>& raw_elastic_angle,
     const std::vector<double>& raw_elastic_pdf,
@@ -2776,7 +2776,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateDiscreteAnglesAndWe
   discrete_angles.pop_back();
   weights.pop_back();
 
-  // Renormalize weights and set the cross_section_reduction to the sum of the weights 
+  // Re-normalize weights and set the cross_section_reduction to the sum of the weights 
   cross_section_reduction = 0.0;
   for( int i = 0; i < weights.size(); ++i )
   {
@@ -2817,7 +2817,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
 
     if ( d_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -2827,7 +2827,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -2837,7 +2837,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElectronTotalElasti
     }
     else if ( d_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
             cutoff_endl_distribution,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),

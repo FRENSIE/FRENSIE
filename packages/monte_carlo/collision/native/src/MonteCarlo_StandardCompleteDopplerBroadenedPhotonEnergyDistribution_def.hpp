@@ -64,7 +64,7 @@ StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
 
 // Evaluate the distribution with the electron momentum projection
 /*! \details The electron momentum projection must be in me*c units 
- * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distrubition
+ * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distribution
  * will have units of barns since the unitless momentum is being used.
  */
 template<typename ComptonProfilePolicy>
@@ -106,7 +106,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
 
 // Evaluate the exact distribution
-/*! \details The distrubition has units of barns/MeV.
+/*! \details The distribution has units of barns/MeV.
  */
 template<typename ComptonProfilePolicy>
 double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateExact( 
@@ -148,7 +148,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
 // Evaluate the subshell distribution with the electron momentum projection
 /*! \details The electron momentum projection must be in me*c units 
- * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distrubition
+ * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distribution
  * will have units of barns since the unitless momentum is being used.
  */
 template<typename ComptonProfilePolicy>
@@ -212,7 +212,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
     
 // Evaluate the exact subshell distribution
-  /*! \details The distrubition has units of barns/MeV.
+  /*! \details The distribution has units of barns/MeV.
  */
 template<typename ComptonProfilePolicy>
 double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellExact( 

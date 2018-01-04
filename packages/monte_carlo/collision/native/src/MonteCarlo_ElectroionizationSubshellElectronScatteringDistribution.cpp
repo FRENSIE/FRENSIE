@@ -112,8 +112,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
             incoming_energy,
             knock_on_energy,
             min_energy_functor,
-            max_energy_functor,
-            false );
+            max_energy_functor );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -158,8 +157,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
             incoming_energy,
             knock_on_energy,
             min_energy_functor,
-            max_energy_functor,
-            false );
+            max_energy_functor );
 }
 
 // Evaluate the CDF value for a given incoming and outgoing energy
@@ -203,8 +201,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
             incoming_energy,
             knock_on_energy,
             min_energy_functor,
-            max_energy_functor,
-            false );
+            max_energy_functor );
 }
 
 // Sample an knock on energy and direction from the distribution

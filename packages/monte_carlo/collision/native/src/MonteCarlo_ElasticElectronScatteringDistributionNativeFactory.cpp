@@ -335,7 +335,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffCrossSectio
 
 // Create the scattering function at the given energy
 /*! \details This function has been overloaded so it can be called without using
- *  the native data container. This functionality is neccessary for generating
+ *  the native data container. This functionality is necessary for generating
  *  native moment preserving data without first creating native data files.
  */
 void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(

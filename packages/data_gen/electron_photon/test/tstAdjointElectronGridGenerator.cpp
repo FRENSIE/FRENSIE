@@ -129,39 +129,41 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.361E-05, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.4343617058156762e+14,
+                                  2.8259853613553445e+13,
                                   1e-5 );
 
-                                  cross_section =
+  cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.88E-05, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  8.1171570255268375e+13,
+                                  1.5012051754783895e+13,
                                   1e-5 );
 
-                                  cross_section =
+  cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.123900E-02, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  2.2828472702795178e+08,
+                                  1.8693697855518397e+07,
                                   1e-5 );
 
-                                  cross_section =
+  cross_section =
     grid_generator.evaluateAdjointCrossSection( 8.75350E-01, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  1.3345997787251073e+05,
+                                  2.7467207608280925e+04,
                                   1e-5 );
 
-                                  cross_section = grid_generator.evaluateAdjointCrossSection(
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection(
                             max_ionization_subshell_adjoint_energy - 6.0e-8,
                             precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  6.1798992994583510e+04,
+                                  1.9462275129042428e+04,
                                   1e-5 );
 
-                                  cross_section = grid_generator.evaluateAdjointCrossSection(
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection(
                                         max_ionization_subshell_adjoint_energy,
                                         precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  6.1716905827527538e+04,
+                                  1.9445701148603432e+04,
                                   1e-5 );
   }
 
@@ -171,7 +173,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
     grid_generator( h_brem_reaction,
                     brem_energy_grid,
                     min_energy,
-                    1e5 -1e-9,
+                    1e5 - 1e-5,
                     1e-9,
                     0.0,
                     convergence_tol,
@@ -181,19 +183,55 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  5.0802122257288431e+01,
+                                  1.6837683241416762e+01,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  2.7987603105003295e+01,
+                                  8.9374265084435329,
                                   1e-5 );
 
   cross_section =
     grid_generator.evaluateAdjointCrossSection( 6.0e4, precision );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  9.4882896334965172e-01,
+                                  1.4200314623419494e-01,
+                                  1e-5 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 1.0e5, precision );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  }
+
+  // Native Bremsstrahlung
+  {
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LogLogLog>
+    grid_generator( h_brem_reaction,
+                    brem_energy_grid,
+                    min_energy,
+                    1e5 - 1e-5,
+                    1e-9,
+                    0.0,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 1.0e-5, precision );
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  1.6837683241416762e+01,
+                                  1e-5 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 5.0e-4, precision );
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  8.9374265084435329,
+                                  1e-5 );
+
+  cross_section =
+    grid_generator.evaluateAdjointCrossSection( 6.0e4, precision );
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  1.4200314623419494e-01,
                                   1e-5 );
 
   cross_section =
@@ -225,13 +263,13 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1.88E-05, 1.0E-04, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  7.1754545819361993e-03,
+                                  3.8798354723063463e-02,
                                   1e-5 );
 
                                   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 1.123900E-02, 3.16228, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  9.3419377265560366e-06,
+                                  1.1408238447187018e-04,
                                   1e-6 );
 
                                   diff_cross_section =
@@ -239,7 +277,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
                                        max_ionization_subshell_adjoint_energy,
                                        1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  2.5184106495505150e-06,
+                                  7.6551190817011801e-07,
                                   1.0e-5 );
   }
 
@@ -259,13 +297,43 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.1768973008863717,
+                                  3.6854609980444470,
                                   1e-5 );
 
                                   diff_cross_section =
     grid_generator.evaluateAdjointPDF( 6.0e4, 1.0e5, 1.0e-4 );
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  6.6585493962017790e-07,
+                                  4.4490736202820424e-06,
+                                  1e-5 );
+
+                                  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 1.0e5-5.0e-8, 1.0e5, 1.0e-4 );
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+  }
+
+  // Native Bremsstrahlung
+  {
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LogLogLog>
+    grid_generator( h_brem_reaction,
+                    brem_energy_grid,
+                    min_energy,
+                    1e5 -1e-9,
+                    1e-9,
+                    0.0,
+                    convergence_tol,
+                    absolute_diff_tol,
+                    distance_tol );
+
+  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 5.0e-4, 5.0e-3, 1.0e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  3.6854609980444470,
+                                  1e-5 );
+
+                                  diff_cross_section =
+    grid_generator.evaluateAdjointPDF( 6.0e4, 1.0e5, 1.0e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  4.4490736202820424e-06,
                                   1e-5 );
 
                                   diff_cross_section =
@@ -313,35 +381,101 @@ TEUCHOS_UNIT_TEST( AdjointElectronGridGenerator,
           0 );
 
   // Check the generated outgoing energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 564 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 991 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
                                   0.01 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
 
   // Check the evaluated pdf
-  TEST_EQUALITY_CONST( pdf[0.01].size(), 564 );
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 991 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
-                                  1.5161262343764289e+06,
+                                  1.0831428661238090e+06,
                                   1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(),
-                                  3.2673401383651226e-06,
+                                  1.7350912728678646e-07,
                                   1e-6 );
 
   // Check the generated max energy grid
-  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 425 );
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 482 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
                                   1.0 + 2e-7 + 1e-9,
                                   1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
 
   // Check the evaluated cross section
-  TEST_EQUALITY_CONST( pdf[1.0].size(), 425 );
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 482 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
-                                  2.0022600336684578e+05,
+                                  1.4404679211211676e+05,
                                   1e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
-                                  1.5670747187916670e-04,
+                                  7.4522027154863208e-06,
+                                  1e-6 );
+
+
+
+  DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction,Utility::LogLogLog>
+    log_grid_generator( h_brem_reaction,
+                        brem_energy_grid,
+                        min_energy,
+                        max_energy,
+                        max_energy_nudge_value,
+                        energy_to_outgoing_energy_nudge_value,
+                        convergence_tol,
+                        absolute_diff_tol,
+                        distance_tol );
+
+  // // Set the primary energy grid
+  // std::vector<double> primary_energy_grid(2);
+  // primary_energy_grid[0] = 0.01;
+  // primary_energy_grid[1] = 1.0;
+
+  // // cross section values
+  // std::vector<double> cross_sections(2);
+  // cross_sections[0] = 1.0;
+  // cross_sections[1] = 1.0;
+
+  // std::map<double,std::vector<double> > outgoing_energy_grid, pdf;
+
+  // Generate an outgoing energy grid at E=0.01 MeV
+  log_grid_generator.generateAndEvaluateDistributionOnPrimaryEnergyGrid(
+          outgoing_energy_grid,
+          pdf,
+          1e-6,
+          primary_energy_grid,
+          cross_sections,
+          0 );
+
+  // Check the generated outgoing energy grid
+  TEST_EQUALITY_CONST( outgoing_energy_grid[0.01].size(), 663 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].front(),
+                                  0.01 + 2e-7 + 1e-9,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[0.01].back(), 20.2, 1e-6 );
+
+  // Check the evaluated pdf
+  TEST_EQUALITY_CONST( pdf[0.01].size(), 663 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].front(),
+                                  1.0831428661238090e+06,
+                                  1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[0.01].back(),
+                                  1.7350912728678646e-07,
+                                  1e-6 );
+
+  // Check the generated max energy grid
+  TEST_EQUALITY_CONST( outgoing_energy_grid[1.0].size(), 357 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].front(),
+                                  1.0 + 2e-7 + 1e-9,
+                                  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( outgoing_energy_grid[1.0].back(), 20.2, 1e-6 );
+
+  // Check the evaluated cross section
+  TEST_EQUALITY_CONST( pdf[1.0].size(), 357 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].front(),
+                                  1.4404679211211676e+05,
+                                  1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf[1.0].back(),
+                                  7.4522027154863208e-06,
                                   1e-6 );
 }
 
@@ -361,7 +495,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  double evaluation_tol = 1e-7;
 
   // Create the H distributions
   {
@@ -381,6 +514,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 union_energy_grid[0],
                 union_energy_grid[union_energy_grid.size()-1],
                 union_energy_grid.size()/10 + 1 ) );
+
+    double evaluation_tol = 3e-6;
 
     MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
         data_container,
@@ -402,6 +537,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Get the energies for which knock-on sampling tables are given
     ionization_energy_grid =
       data_container.getElectroionizationEnergyGrid( *shell );
+
+    evaluation_tol = 1e-7;
 
     // Create the subshell electroelectric reaction
     MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(

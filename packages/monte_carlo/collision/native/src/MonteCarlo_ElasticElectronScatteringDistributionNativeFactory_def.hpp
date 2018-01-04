@@ -361,7 +361,7 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
 
 // Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
 /*! \details This function has been overloaded so it can be called without using
- *  the native data container. This functionality is neccessary for generating
+ *  the native data container. This functionality is necessary for generating
  *  native moment preserving data without first creating native data files.
  */
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
@@ -667,25 +667,31 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     function_data[1].second.reset(
       new const TabularDist( upper_bin->second, pdf.at( upper_bin->first ) ) );
 
+    // Max scattering angle cosine
+    double max_angle_cosine =
+        std::max( lower_bin->second.back(), upper_bin->second.back() );
+
+    // Fuzzy bound tolerance
+    double fuzzy_bound_tol = 1e-6;
+    
     // Create the TwoDDistribution between the two distributions
     std::shared_ptr<TwoDDist> scattering_function(
       new Utility::ElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
         function_data,
-        1e-6,
+        max_angle_cosine,
+        fuzzy_bound_tol,
         evaluation_tol ) );
 
     // Use the angular grid for the energy bin closes to the energy
     if ( energy - lower_bin->first <= upper_bin->first - energy )
     {
-      angular_grid = ThisType::getAngularGrid(
-                            lower_bin->second,
-                            cutoff_angle_cosine );
+      angular_grid = ThisType::getAngularGrid( lower_bin->second,
+                                               cutoff_angle_cosine );
     }
     else
     {
-      angular_grid = ThisType::getAngularGrid(
-                            upper_bin->second,
-                            cutoff_angle_cosine );
+      angular_grid = ThisType::getAngularGrid( upper_bin->second,
+                                               cutoff_angle_cosine );
     }
 
     // Evaluate the pdf on the angular grid
@@ -693,7 +699,8 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     for ( unsigned i = 0; i < angular_grid.size(); ++i )
     {
       evaluated_pdf[i] =
-        scattering_function->evaluate( energy, angular_grid[i], false );
+        scattering_function->evaluateSecondaryConditionalPDF( energy,
+                                                              angular_grid[i] );
     }
     testPostcondition( evaluated_pdf.size() > 1 );
     testPostcondition( angular_grid.size() > 1 );
@@ -750,8 +757,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
     double cutoff_cdf =
             cutoff_scattering_function->evaluateSecondaryConditionalCDF(
                                                         energy_grid[n],
-                                                        cutoff_angle_cosine,
-                                                        false );
+                                                        cutoff_angle_cosine );
 
     // Get the reduced cutoff cross section
     double reduced_cross_section = cutoff_cross_section[n]*cutoff_cdf;
@@ -860,7 +866,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
 
 // Create the scattering function
 /*! \details This function has been overloaded so it can be called without using
- *  the native data container. This functionality is neccessary for generating
+ *  the native data container. This functionality is necessary for generating
  *  native moment preserving data without first creating native data files.
  */
 template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>

@@ -340,14 +340,14 @@ public:
   //! Return the map of the cutoff elastic scattering angles
   const std::map<double,std::vector<double> >& getAdjointCutoffElasticAngles() const;
 
-  //! Return the map of the cutoff elastic scatering pdf
+  //! Return the map of the cutoff elastic scattering pdf
   const std::map<double,std::vector<double> >& getAdjointCutoffElasticPDF() const;
 
   //! Return the cutoff elastic scattering angles for an incoming energy
   const std::vector<double>& getAdjointCutoffElasticAngles(
                            const double incoming_adjoint_energy ) const;
 
-  //! Return the cutoff elastic scatering pdf for an incoming energy
+  //! Return the cutoff elastic scattering pdf for an incoming energy
   const std::vector<double>& getAdjointCutoffElasticPDF(
                            const double incoming_adjoint_energy ) const;
 

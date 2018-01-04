@@ -214,7 +214,7 @@ createSubshellElectroionizationReaction(
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
+  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<MonteCarlo::ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -248,7 +248,7 @@ createSubshellElectroionizationReactions(
 
   // Create the reaction
   std::vector<std::shared_ptr<ElectroatomicReaction> > reactions;
-  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
+  ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,
@@ -295,7 +295,7 @@ createBremsstrahlungReaction(
 
   // Create the reaction
   std::shared_ptr<ElectroatomicReaction> reaction;
-  ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::Correlated>(
+  ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_electroatom_data,
       energy_grid,
       grid_searcher,

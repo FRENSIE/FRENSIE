@@ -128,7 +128,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   TEST_EQUALITY_CONST( cdf, 0.0 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 8.829e-2 + 3e-8, 1.0001e-8 );
-  TEST_FLOATING_EQUALITY( cdf, 6.9444444444523190e-07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf, 6.9444444444408311e-07, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 9.12175e-2, 4.275e-4 );
   TEST_FLOATING_EQUALITY( cdf, 2.9200970177296481e-01, 1e-12 );

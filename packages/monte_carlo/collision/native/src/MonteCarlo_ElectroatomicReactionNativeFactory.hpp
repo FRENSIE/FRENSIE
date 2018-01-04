@@ -53,7 +53,7 @@ public:
 
   //! Create an coupled elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Exact>
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -64,7 +64,7 @@ public:
 
   //! Create a hybrid elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Exact>
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -75,7 +75,7 @@ public:
 
   //! Create a decoupled elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Exact>
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -85,7 +85,7 @@ public:
 
   //! Create an cutoff elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Exact>
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -103,7 +103,7 @@ public:
 
   //! Create the moment preserving elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Exact>
+            typename TwoDSamplePolicy = Utility::Correlated>
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -122,7 +122,7 @@ public:
   //! Create the subshell electroionization electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -134,7 +134,7 @@ public:
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -146,7 +146,7 @@ public:
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,

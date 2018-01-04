@@ -217,7 +217,7 @@ public:
 
 private:
 
-    //! Evaluate the distribution using the desired evaluation method
+  //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,
            typename ReturnType,
            typename EvaluationMethod>
@@ -238,6 +238,27 @@ private:
     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
       max_secondary_indep_var_functor,
     EvaluationMethod evaluate,
+    unsigned max_number_of_iterations = 500 ) const;
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename EvaluationMethod>
+  double evaluateCDFImpl(
+                    const PrimaryIndepQuantity incoming_energy,
+                    const SecondaryIndepQuantity angle_cosine,
+                    EvaluationMethod evaluateCDF ) const;
+
+  //! Evaluate the distribution using the desired evaluation method
+  template<typename LocalTwoDInterpPolicy,
+           typename EvaluationMethod>
+  double evaluateCDFImpl(
+    const PrimaryIndepQuantity incoming_energy,
+    const SecondaryIndepQuantity angle_cosine,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+      min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+      max_secondary_indep_var_functor,
+    EvaluationMethod evaluateCDF,
     unsigned max_number_of_iterations = 500 ) const;
 
   //! Sample from the distribution using the desired sampling functor

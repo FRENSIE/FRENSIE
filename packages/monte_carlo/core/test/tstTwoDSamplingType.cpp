@@ -24,8 +24,10 @@
 TEUCHOS_UNIT_TEST( TwoDSamplingType, convert_to_int )
 {
   TEST_EQUALITY_CONST( (unsigned)MonteCarlo::CORRELATED_SAMPLING, 1 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::EXACT_SAMPLING, 2 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::STOCHASTIC_SAMPLING, 3 );
+  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING, 2 );
+  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::DIRECT_SAMPLING, 3 );
+  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::UNIT_BASE_SAMPLING, 4 );
+  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::CUMULATIVE_POINTS_SAMPLING, 5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -37,12 +39,20 @@ TEUCHOS_UNIT_TEST( TwoDSamplingType, convertTwoDSamplingTypeToString )
   TEST_EQUALITY_CONST( type_string, "Correlated" );
 
   type_string =
-    MonteCarlo::convertTwoDSamplingTypeToString( MonteCarlo::EXACT_SAMPLING );
-  TEST_EQUALITY_CONST( type_string, "Exact" );
+    MonteCarlo::convertTwoDSamplingTypeToString( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( type_string, "Unit-base Correlated" );
 
   type_string =
-    MonteCarlo::convertTwoDSamplingTypeToString( MonteCarlo::STOCHASTIC_SAMPLING );
-  TEST_EQUALITY_CONST( type_string, "Stochastic" );
+    MonteCarlo::convertTwoDSamplingTypeToString( MonteCarlo::DIRECT_SAMPLING );
+  TEST_EQUALITY_CONST( type_string, "Direct" );
+
+  type_string =
+    MonteCarlo::convertTwoDSamplingTypeToString( MonteCarlo::UNIT_BASE_SAMPLING );
+  TEST_EQUALITY_CONST( type_string, "Unit-base" );
+
+  type_string =
+    MonteCarlo::convertTwoDSamplingTypeToString( MonteCarlo::CUMULATIVE_POINTS_SAMPLING );
+  TEST_EQUALITY_CONST( type_string, "Cumulative Points" );
 }
 
 //---------------------------------------------------------------------------//
@@ -55,12 +65,20 @@ TEUCHOS_UNIT_TEST( TwoDSamplingType, stream_operator )
   TEST_EQUALITY_CONST( ss.str(), "Correlated" );
 
   ss.str( "" );
-  ss << MonteCarlo::EXACT_SAMPLING;
-  TEST_EQUALITY_CONST( ss.str(), "Exact" );
+  ss << MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING;
+  TEST_EQUALITY_CONST( ss.str(), "Unit-base Correlated" );
 
   ss.str( "" );
-  ss << MonteCarlo::STOCHASTIC_SAMPLING;
-  TEST_EQUALITY_CONST( ss.str(), "Stochastic" );
+  ss << MonteCarlo::DIRECT_SAMPLING;
+  TEST_EQUALITY_CONST( ss.str(), "Direct" );
+
+  ss.str( "" );
+  ss << MonteCarlo::UNIT_BASE_SAMPLING;
+  TEST_EQUALITY_CONST( ss.str(), "Unit-base" );
+
+  ss.str( "" );
+  ss << MonteCarlo::CUMULATIVE_POINTS_SAMPLING;
+  TEST_EQUALITY_CONST( ss.str(), "Cumulative Points" );
 }
 
 //---------------------------------------------------------------------------//
@@ -84,37 +102,73 @@ TEUCHOS_UNIT_TEST( TwoDSamplingType,
 //---------------------------------------------------------------------------//
 // Check that a string can be converted to a TwoDSamplingType
 TEUCHOS_UNIT_TEST( TwoDSamplingType,
-                   convertStringToTwoDSamplingType_Exact )
+                   convertStringToTwoDSamplingType_UnitBaseCorrelated )
 {
   MonteCarlo::TwoDSamplingType interp =
-    MonteCarlo::convertStringToTwoDSamplingType( "Exact" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::EXACT_SAMPLING );
+    MonteCarlo::convertStringToTwoDSamplingType( "Unit-base Correlated" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
 
   interp =
-    MonteCarlo::convertStringToTwoDSamplingType( "exact" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::EXACT_SAMPLING );
+    MonteCarlo::convertStringToTwoDSamplingType( "unit-base correlated" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
 
   interp =
-    MonteCarlo::convertStringToTwoDSamplingType( "EXACT" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::EXACT_SAMPLING );
+    MonteCarlo::convertStringToTwoDSamplingType( "UNIT-BASE CORRELATED" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a string can be converted to a TwoDSamplingType
 TEUCHOS_UNIT_TEST( TwoDSamplingType,
-                   convertStringToTwoDSamplingType_Stochastic )
+                   convertStringToTwoDSamplingType_Direct )
 {
   MonteCarlo::TwoDSamplingType interp =
-    MonteCarlo::convertStringToTwoDSamplingType( "Stochastic" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::STOCHASTIC_SAMPLING );
+    MonteCarlo::convertStringToTwoDSamplingType( "Direct" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::DIRECT_SAMPLING );
 
   interp =
-    MonteCarlo::convertStringToTwoDSamplingType( "stochastic" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::STOCHASTIC_SAMPLING );
+    MonteCarlo::convertStringToTwoDSamplingType( "direct" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::DIRECT_SAMPLING );
 
   interp =
-    MonteCarlo::convertStringToTwoDSamplingType( "STOCHASTIC" );
-  TEST_EQUALITY_CONST( interp, MonteCarlo::STOCHASTIC_SAMPLING );
+    MonteCarlo::convertStringToTwoDSamplingType( "DIRECT" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::DIRECT_SAMPLING );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a string can be converted to a TwoDSamplingType
+TEUCHOS_UNIT_TEST( TwoDSamplingType,
+                   convertStringToTwoDSamplingType_UnitBase )
+{
+  MonteCarlo::TwoDSamplingType interp =
+    MonteCarlo::convertStringToTwoDSamplingType( "Unit-base" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::UNIT_BASE_SAMPLING );
+
+  interp =
+    MonteCarlo::convertStringToTwoDSamplingType( "unit-base" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::UNIT_BASE_SAMPLING );
+
+  interp =
+    MonteCarlo::convertStringToTwoDSamplingType( "UNIT-BASE" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::UNIT_BASE_SAMPLING );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a string can be converted to a TwoDSamplingType
+TEUCHOS_UNIT_TEST( TwoDSamplingType,
+                   convertStringToTwoDSamplingType_CumulativePoints )
+{
+  MonteCarlo::TwoDSamplingType interp =
+    MonteCarlo::convertStringToTwoDSamplingType( "Cumulative Points" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::CUMULATIVE_POINTS_SAMPLING );
+
+  interp =
+    MonteCarlo::convertStringToTwoDSamplingType( "cumulative points" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::CUMULATIVE_POINTS_SAMPLING );
+
+  interp =
+    MonteCarlo::convertStringToTwoDSamplingType( "CUMULATIVE POINTS" );
+  TEST_EQUALITY_CONST( interp, MonteCarlo::CUMULATIVE_POINTS_SAMPLING );
 }
 
 //---------------------------------------------------------------------------//

@@ -18,8 +18,10 @@ namespace MonteCarlo{
 //! The two d Sampling types
 enum TwoDSamplingType{
   CORRELATED_SAMPLING = 1,
-  EXACT_SAMPLING = 2,
-  STOCHASTIC_SAMPLING = 3,
+  UNIT_BASE_CORRELATED_SAMPLING = 2,
+  DIRECT_SAMPLING = 3,
+  UNIT_BASE_SAMPLING = 4,
+  CUMULATIVE_POINTS_SAMPLING = 5
 };
 
 //! Convert the TwoDSamplingType to a string

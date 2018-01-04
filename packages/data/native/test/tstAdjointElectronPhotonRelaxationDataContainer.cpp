@@ -1295,7 +1295,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setElectronTwoDSamplingPolicy )
 {
-  std::string sampling = "Exact";
+  std::string sampling = "Direct";
   epr_data_container.setElectronTwoDSamplingPolicy( sampling );
 
   TEST_EQUALITY_CONST( sampling,

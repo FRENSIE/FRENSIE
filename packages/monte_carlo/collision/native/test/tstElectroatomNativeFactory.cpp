@@ -549,7 +549,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  properties.setElectronTwoDSamplingPolicy( MonteCarlo::EXACT_SAMPLING );
+  properties.setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
   properties.setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
   properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setElectronEvaluationTolerance( evaluation_tol );
@@ -567,7 +567,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         cutoff_elastic_distribution,
         *data_container,
         properties.getElasticCutoffAngleCosine(),
@@ -766,7 +766,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_elastic )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         cutoff_elastic_distribution,
         *data_container,
         1.0,

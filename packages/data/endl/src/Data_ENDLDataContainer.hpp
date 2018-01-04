@@ -309,14 +309,14 @@ public:
   const std::vector<double>& getCutoffElasticAnglesAtEnergy(
                                         const double incident_energy ) const;
 
-  //! Return the cutoff elastic scatering pdf for an incident energy
+  //! Return the cutoff elastic scattering pdf for an incident energy
   const std::vector<double>& getCutoffElasticPDFAtEnergy(
                                         const double incident_energy ) const;
 
   //! Return the cutoff elastic scattering angles for all incident energy
   const std::map<double,std::vector<double> >& getCutoffElasticAngles() const;
 
-  //! Return the cutoff elastic scatering pdf for all incident energy
+  //! Return the cutoff elastic scattering pdf for all incident energy
   const std::map<double,std::vector<double> >& getCutoffElasticPDF() const;
 
   //! Return the total elastic electron cross section

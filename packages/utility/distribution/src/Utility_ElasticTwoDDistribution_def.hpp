@@ -139,16 +139,16 @@ double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,Primar
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  if ( CosSamplingPolicy::name() == "Direct" )
+  if ( CosSamplingPolicy::name() == "Unit-base" )
   {
-    return this->evaluateImpl<TwoDInterpPolicy,double>(
+    return this->evaluateCDFImpl<CDFInterpPolicy>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluateCDF );
   }
   else
   {
-    return this->evaluateImpl<CDFInterpPolicy,double>(
+    return this->evaluateCDFImpl<TwoDInterpPolicy>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluateCDF );
@@ -298,6 +298,123 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
       return ((*lower_bin_boundary->second).*evaluate)(angle_cosine);
     else
       return QuantityTraits<ReturnType>::zero();
+  }
+}
+
+// Evaluate the CDF using the desired evaluation method
+template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+template<typename LocalTwoDInterpPolicy,
+         typename EvaluationMethod>
+inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateCDFImpl(
+                        const PrimaryIndepQuantity incoming_energy,
+                        const SecondaryIndepQuantity angle_cosine,
+                        EvaluationMethod evaluateCDF ) const
+{
+  // Make sure the angle cosine is valid
+  testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
+  testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
+
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( incoming_energy,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    // Create the lower bound functor
+    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+      min_secondary_indep_var_functor =
+        [this](const PrimaryIndepQuantity x){
+          return d_lower_bound_conditional_indep_var;
+        };
+
+    // Create the upper bound functor
+    std::function<SecondaryIndepQuantity(const PrimaryIndepQuantity)>
+      max_secondary_indep_var_functor =
+        [this](const PrimaryIndepQuantity x){
+          return d_upper_bound_conditional_indep_var;
+        };
+
+    return CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+        incoming_energy,
+        angle_cosine,
+        min_secondary_indep_var_functor,
+        max_secondary_indep_var_functor,
+        evaluateCDF,
+        lower_bin_boundary,
+        upper_bin_boundary,
+        this->getFuzzyBoundTolerance(),
+        this->getRelativeErrorTolerance(),
+        this->getErrorTolerance(),
+        500 );
+  }
+  // Check for a primary value outside of the primary grid limits
+  else
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return ((*lower_bin_boundary->second).*evaluateCDF)(angle_cosine);
+    else
+      return 0.0;
+  }
+}
+
+// Evaluate the CDF using the desired evaluation method
+template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+template<typename LocalTwoDInterpPolicy,
+         typename EvaluationMethod>
+inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateCDFImpl(
+            const PrimaryIndepQuantity incoming_energy,
+            const SecondaryIndepQuantity angle_cosine,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
+            EvaluationMethod evaluateCDF,
+            unsigned max_number_of_iterations ) const
+{
+  // Make sure the angle cosine is valid
+  testPrecondition( angle_cosine >= d_lower_bound_conditional_indep_var );
+  testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
+
+  // Find the bin boundaries
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+
+  this->findBinBoundaries( incoming_energy,
+                           lower_bin_boundary,
+                           upper_bin_boundary );
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+        incoming_energy,
+        angle_cosine,
+        min_secondary_indep_var_functor,
+        max_secondary_indep_var_functor,
+        evaluateCDF,
+        lower_bin_boundary,
+        upper_bin_boundary,
+        this->getFuzzyBoundTolerance(),
+        this->getRelativeErrorTolerance(),
+        this->getErrorTolerance(),
+        500 );
+  }
+  // Check for a primary value outside of the primary grid limits
+  else
+  {
+    if( this->arePrimaryLimitsExtended() )
+      return ((*lower_bin_boundary->second).*evaluateCDF)(angle_cosine);
+    else
+      return 0.0;
   }
 }
 

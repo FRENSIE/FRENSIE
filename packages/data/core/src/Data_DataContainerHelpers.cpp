@@ -55,7 +55,8 @@ bool isTwoDInterpPolicyValid( const std::string value )
 // Test if the TwoDSamplingPolicy is valid
 bool isTwoDSamplingPolicyValid( const std::string value )
 {
-  if ( value == "Correlated" || value == "Exact" || value == "Stochastic" )
+  if ( value == "Unit-base Correlated" || value == "Correlated" ||
+       value == "Unit-base" || value == "Direct" )
     return true;
   else
     return false;

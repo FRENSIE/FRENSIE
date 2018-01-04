@@ -515,7 +515,7 @@ MonteCarlo::BremsstrahlungElectronScatteringDistributionACEFactory::createBremss
 
     // Create the scattering function
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> b_energy_loss_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
             function_data ) );
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>

@@ -78,7 +78,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
   TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
   TEST_EQUALITY_CONST( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),

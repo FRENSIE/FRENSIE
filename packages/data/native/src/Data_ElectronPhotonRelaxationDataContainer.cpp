@@ -515,7 +515,7 @@ ElectronPhotonRelaxationDataContainer::getElasticAngularEnergyGrid() const
   return d_angular_energy_grid;
 }
 
-// Return the cutoff elastic scatering interpolation policy
+// Return the cutoff elastic scattering interpolation policy
 const std::string&
 ElectronPhotonRelaxationDataContainer::getCutoffElasticInterpPolicy() const
 {

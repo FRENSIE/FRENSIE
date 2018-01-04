@@ -26,6 +26,7 @@ namespace DataGen{
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
+    const MonteCarlo::TwoDSamplingType two_d_sample,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol )
 
@@ -46,29 +47,61 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
                                data_container.getElectronEnergyGrid().end() );
 
   // Create the coupled elastic distribution (combined Cutoff and Screened Rutherford)
-  if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+  if ( two_d_sample == MonteCarlo::UNIT_BASE_SAMPLING ||
+       two_d_sample == MonteCarlo::DIRECT_SAMPLING )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
-    d_coupled_distribution,
-    data_container,
-    MonteCarlo::TWO_D_UNION,
-    tabular_evaluation_tol );
+    if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Direct>(
+      d_coupled_distribution,
+      data_container,
+      MonteCarlo::TWO_D_UNION,
+      tabular_evaluation_tol );
+    }
+    else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Direct>(
+      d_coupled_distribution,
+      data_container,
+      MonteCarlo::TWO_D_UNION,
+      tabular_evaluation_tol );
+    }
+    else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Direct>(
+      d_coupled_distribution,
+      data_container,
+      MonteCarlo::TWO_D_UNION,
+      tabular_evaluation_tol );
+    }
   }
-  else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+  else if ( two_d_sample == MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING ||
+            two_d_sample == MonteCarlo::CORRELATED_SAMPLING )
   {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Exact>(
-    d_coupled_distribution,
-    data_container,
-    MonteCarlo::TWO_D_UNION,
-    tabular_evaluation_tol );
-  }
-  else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
-  {
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
-    d_coupled_distribution,
-    data_container,
-    MonteCarlo::TWO_D_UNION,
-    tabular_evaluation_tol );
+    if ( two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+      d_coupled_distribution,
+      data_container,
+      MonteCarlo::TWO_D_UNION,
+      tabular_evaluation_tol );
+    }
+    else if( two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
+      d_coupled_distribution,
+      data_container,
+      MonteCarlo::TWO_D_UNION,
+      tabular_evaluation_tol );
+    }
+    else if( two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
+    {
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+      d_coupled_distribution,
+      data_container,
+      MonteCarlo::TWO_D_UNION,
+      tabular_evaluation_tol );
+    }
   }
 
   // Construct the hash-based grid searcher for this atom
@@ -153,7 +186,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
       d_grid_searcher ) );
 }
 
-// Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+// Evaluate the Legendre Polynomial expansion of the screened rutherford pdf
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
         const double scattering_angle_cosine,
         const double incoming_energy,
@@ -179,7 +212,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
   return pdf_value*legendre_value;
 }
 
-// Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+// Evaluate the Legendre Polynomial expansion of the screened rutherford pdf
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
         const double scattering_angle_cosine,
         const double incoming_energy,
@@ -208,7 +241,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
   return pdf_value*legendre_value;
 }
 
-// Evaluate the Legnendre Polynomial expansion of the elastic scttering PDF
+// Evaluate the Legendre Polynomial expansion of the elastic scttering PDF
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
                                     const double scattering_angle_cosine,
                                     const double incoming_energy,

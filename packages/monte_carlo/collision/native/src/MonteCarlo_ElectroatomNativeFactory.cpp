@@ -54,7 +54,15 @@ void ElectroatomNativeFactory::createElectroatom(
    */
   if( electron_interp == LOGLOGLOG_INTERPOLATION )
   {
-    if( electron_sampling == CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == CORRELATED_SAMPLING )
     {
       ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Correlated>(
                               raw_electroatom_data,
@@ -62,17 +70,9 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == EXACT_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_SAMPLING )
     {
-      ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Exact>(
-                              raw_electroatom_data,
-                              atomic_relaxation_model,
-                              properties,
-                              core );
-    }
-    else if( electron_sampling == EXACT_SAMPLING )
-    {
-      ThisType::createElectroatomCore<Utility::LogLogLog,Utility::Stochastic>(
+      ThisType::createElectroatomCore<Utility::LogLogLog,Utility::UnitBase>(
                               raw_electroatom_data,
                               atomic_relaxation_model,
                               properties,
@@ -86,7 +86,15 @@ void ElectroatomNativeFactory::createElectroatom(
   }
   else if( electron_interp == LINLINLIN_INTERPOLATION )
   {
-    if( electron_sampling == CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == CORRELATED_SAMPLING )
     {
       ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Correlated>(
                               raw_electroatom_data,
@@ -94,17 +102,9 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == EXACT_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_SAMPLING )
     {
-      ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Exact>(
-                              raw_electroatom_data,
-                              atomic_relaxation_model,
-                              properties,
-                              core );
-    }
-    else if( electron_sampling == EXACT_SAMPLING )
-    {
-      ThisType::createElectroatomCore<Utility::LinLinLin,Utility::Stochastic>(
+      ThisType::createElectroatomCore<Utility::LinLinLin,Utility::UnitBase>(
                               raw_electroatom_data,
                               atomic_relaxation_model,
                               properties,
@@ -118,7 +118,15 @@ void ElectroatomNativeFactory::createElectroatom(
   }
   else if( electron_interp == LINLINLOG_INTERPOLATION )
   {
-    if( electron_sampling == CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    {
+      ThisType::createElectroatomCore<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+                              raw_electroatom_data,
+                              atomic_relaxation_model,
+                              properties,
+                              core );
+    }
+    else if( electron_sampling == CORRELATED_SAMPLING )
     {
       ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Correlated>(
                               raw_electroatom_data,
@@ -126,17 +134,9 @@ void ElectroatomNativeFactory::createElectroatom(
                               properties,
                               core );
     }
-    else if( electron_sampling == EXACT_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_SAMPLING )
     {
-      ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Exact>(
-                              raw_electroatom_data,
-                              atomic_relaxation_model,
-                              properties,
-                              core );
-    }
-    else if( electron_sampling == EXACT_SAMPLING )
-    {
-      ThisType::createElectroatomCore<Utility::LinLinLog,Utility::Stochastic>(
+      ThisType::createElectroatomCore<Utility::LinLinLog,Utility::UnitBase>(
                               raw_electroatom_data,
                               atomic_relaxation_model,
                               properties,

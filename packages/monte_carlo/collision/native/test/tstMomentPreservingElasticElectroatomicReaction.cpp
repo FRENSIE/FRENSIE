@@ -164,7 +164,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getMomentPreservingElasticDiscreteAngles(
             angular_energy_grid[n] ) );
 
-    // Get the cutoff elastic scatering pdf at the energy
+    // Get the cutoff elastic scattering pdf at the energy
     std::vector<double> weights(
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
@@ -178,7 +178,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
 
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Exact>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
         function_data ) );
 
     discrete_elastic_distribution.reset(
@@ -194,7 +194,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Moment preserving elastic cross section
     std::vector<double> moment_preserving_cross_sections;
     unsigned threshold_index;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                threshold_index,
                                data_container,

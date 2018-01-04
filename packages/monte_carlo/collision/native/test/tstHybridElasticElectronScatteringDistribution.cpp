@@ -71,183 +71,195 @@ double angle_cosine_cutoff = 0.9;
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   evaluate )
+                   evaluate_logloglog )
 {
-  double energy, scattering_angle_cosine, pdf_value;
+  TEST_THROW( hybrid_distribution->evaluate( 1e-3, -1.0 ),
+              std::runtime_error );
 
-  // Test: below lowest bin
-  energy = 1e-6;
+  TEST_THROW( hybrid_distribution->evaluate( 1e-4, angle_cosine_cutoff ),
+              std::runtime_error );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // double energy, scattering_angle_cosine, pdf_value;
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: below lowest bin
+  // energy = 1e-6;
 
-  // Test: Inbetween bins
-  energy = 1e-4;
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.0535587703057387e-01, 1e-12 );
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: between bins
+  // energy = 1e-4;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 3.0535587703057387e-01, 1e-12 );
 
-  // Test: On bin
-  energy = 1e-3;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.9520884073343972e-01, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: On bin
+  // energy = 1e-3;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 1.9520884073343972e-01, 1e-12 );
 
-  // Test on highest bin
-  energy = 1e5;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 2.8685662935501774e-08, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test on highest bin
+  // energy = 1e5;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 2.8685662935501774e-08, 1e-12 );
 
-  // Test: above highest bin
-  energy = 1e6;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: above highest bin
+  // energy = 1e6;
+
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   evaluatePDF )
+                   evaluatePDF_logloglog )
 {
-  double energy, scattering_angle_cosine, pdf_value;
+  TEST_THROW( hybrid_distribution->evaluatePDF( 1e-3, -1.0 ),
+              std::runtime_error );
 
-  // Test: below lowest bin
-  energy = 1e-6;
+  TEST_THROW( hybrid_distribution->evaluatePDF( 1e-4, angle_cosine_cutoff ),
+              std::runtime_error );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // double energy, scattering_angle_cosine, pdf_value;
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: below lowest bin
+  // energy = 1e-6;
 
-  // Test: Inbetween bins
-  energy = 1e-4;
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 8.0877272007709344e-01, 1e-12 );
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: in between bins
+  // energy = 1e-4;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 8.0877272007709344e-01, 1e-12 );
 
-  // Test: On bin
-  energy = 1e-3;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.3009586997586640, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: On bin
+  // energy = 1e-3;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 1.3009586997586640, 1e-12 );
 
-  // Test on highest bin
-  energy = 1e5;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.3022053062175981e-03, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test on highest bin
+  // energy = 1e5;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 3.3022053062175981e-03, 1e-12 );
 
-  // Test: above highest bin
-  energy = 1e6;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: above highest bin
+  // energy = 1e6;
+
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cdf can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   evaluateCDF )
+                   evaluateCDF_logloglog )
 {
   double energy, scattering_angle_cosine, cdf_value;
 
@@ -264,18 +276,18 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
 
-  // Test: Inbetween bins
+  // Test: between bins
   energy = 1e-4;
 
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 8.5424427950788118e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 7.2973328907193880e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff+1e-10;
   cdf_value = hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 8.5424427983082440e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 7.2973328962368389e-01, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
@@ -345,7 +357,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   sampleAndRecordTrialsImpl )
+                   sampleAndRecordTrialsImpl_logloglog )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -501,7 +513,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   sample )
+                   sample_logloglog )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -528,7 +540,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   sampleAndRecordTrials )
+                   sampleAndRecordTrials_logloglog )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -558,7 +570,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   ScatterElectron )
+                   ScatterElectron_logloglog )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -587,7 +599,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   ScatterAdjointElectron )
+                   ScatterAdjointElectron_logloglog )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -619,183 +631,196 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   evaluate_lin )
+                   evaluate_linlinlin )
 {
-  double energy, scattering_angle_cosine, pdf_value;
+  TEST_THROW( lin_hybrid_distribution->evaluate( 1e-3, -1.0 ),
+              std::runtime_error );
 
-  // Test: below lowest bin
-  energy = 1e-6;
+  TEST_THROW( lin_hybrid_distribution->evaluate( 1e-4, angle_cosine_cutoff ),
+              std::runtime_error );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // double energy, scattering_angle_cosine, pdf_value;
 
-  // Test: Inbetween bins
-  energy = 1e-4;
+  // // Test: below lowest bin
+  // energy = 1e-6;
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 4.5197683215255630e-01, 1e-12 );
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: in between bins
+  // energy = 1e-4;
 
-  // Test: On bin
-  energy = 1e-3;
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 4.5197683215255630e-01, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.9520884073343972e-01, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: On bin
+  // energy = 1e-3;
 
-  // Test on highest bin
-  energy = 1e5;
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 1.9520884073343972e-01, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 2.8685662935501784e-08, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test on highest bin
+  // energy = 1e5;
 
-  // Test: above highest bin
-  energy = 1e6;
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 2.8685662935501784e-08, 1e-12 );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test: above highest bin
+  // energy = 1e6;
+
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   evaluatePDF_lin )
+                   evaluatePDF_linlinlin )
 {
-  double energy, scattering_angle_cosine, pdf_value;
+  TEST_THROW( lin_hybrid_distribution->evaluatePDF( 1e-3, -1.0 ),
+              std::runtime_error );
 
-  // Test: below lowest bin
-  energy = 1e-6;
+  TEST_THROW( lin_hybrid_distribution->evaluatePDF( 1e-4, angle_cosine_cutoff ),
+              std::runtime_error );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // double energy, scattering_angle_cosine, pdf_value;
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: below lowest bin
+  // energy = 1e-6;
 
-  // Test: Inbetween bins
-  energy = 1e-4;
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 5.7535378734118769e-01, 1e-12 );
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: in between bins
+  // energy = 1e-4;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 5.7535378734118769e-01, 1e-12 );
 
-  // Test: On bin
-  energy = 1e-3;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.3009586997586640, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: On bin
+  // energy = 1e-3;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 1.3009586997586640, 1e-12 );
 
-  // Test on highest bin
-  energy = 1e5;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.3022053062175981e-03, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test on highest bin
+  // energy = 1e5;
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 3.3022053062175981e-03, 1e-12 );
 
-  // Test: above highest bin
-  energy = 1e6;
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: above highest bin
+  // energy = 1e6;
+
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = lin_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cdf can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   evaluateCDF_lin )
+                   evaluateCDF_linlinlin )
 {
   double energy, scattering_angle_cosine, cdf_value;
 
@@ -812,18 +837,18 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
 
-  // Test: Inbetween bins
+  // Test: in between bins
   energy = 1e-4;
 
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 9.5563251157373030e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 9.5119576273110340e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff+1e-10;
   cdf_value = lin_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 9.5563251162401563e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 9.5119576278641726e-01, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
@@ -888,7 +913,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   sampleAndRecordTrialsImpl_lin )
+                   sampleAndRecordTrialsImpl_linlinlin )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
@@ -950,7 +975,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   sample_lin )
+                   sample_linlinlin )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -977,7 +1002,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   sampleAndRecordTrials_lin )
+                   sampleAndRecordTrials_linlinlin )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -1007,7 +1032,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   ScatterElectron_lin )
+                   ScatterElectron_linlinlin )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -1035,7 +1060,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
-                   ScatterAdjointElectron_lin )
+                   ScatterAdjointElectron_linlinlin )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
@@ -1068,87 +1093,94 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                    evaluate_linlinlog )
 {
-  double energy, scattering_angle_cosine, pdf_value;
+  TEST_THROW( linlog_hybrid_distribution->evaluate( 1e-3, -1.0 ),
+              std::runtime_error );
 
-  // Test: below lowest bin
-  energy = 1e-6;
+  TEST_THROW( linlog_hybrid_distribution->evaluate( 1e-4, angle_cosine_cutoff ),
+              std::runtime_error );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // double energy, scattering_angle_cosine, pdf_value;
 
-  // Test: Inbetween bins
-  energy = 1e-4;
+  // // Test: below lowest bin
+  // energy = 1e-6;
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.3643123601395386e-01, 1e-12 );
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: in between bins
+  // energy = 1e-4;
 
-  // Test: On bin
-  energy = 1e-3;
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 3.3643123601395386e-01, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.9520884073343972e-01, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: On bin
+  // energy = 1e-3;
 
-  // Test on highest bin
-  energy = 1e5;
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 1.9520884073343972e-01, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 2.8685662935501774e-08, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test on highest bin
+  // energy = 1e5;
 
-  // Test: above highest bin
-  energy = 1e6;
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 2.8685662935501774e-08, 1e-12 );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test: above highest bin
+  // energy = 1e6;
+
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluate( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1156,87 +1188,93 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                    evaluatePDF_linlinlog )
 {
-  double energy, scattering_angle_cosine, pdf_value;
+  TEST_THROW( linlog_hybrid_distribution->evaluatePDF( 1e-3, -1.0 ),
+              std::runtime_error );
 
-  // Test: below lowest bin
-  energy = 1e-6;
+  TEST_THROW( linlog_hybrid_distribution->evaluatePDF( 1e-4, angle_cosine_cutoff ),
+              std::runtime_error );
+              
+  // double energy, scattering_angle_cosine, pdf_value;
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: below lowest bin
+  // energy = 1e-6;
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test: Inbetween bins
-  energy = 1e-4;
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 9.0187599792905204e-01, 1e-12 );
+  // // Test: in between bins
+  // energy = 1e-4;
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 9.0187599792905204e-01, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test: On bin
-  energy = 1e-3;
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.3009586997586640, 1e-12 );
+  // // Test: On bin
+  // energy = 1e-3;
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 1.3009586997586640, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test on highest bin
-  energy = 1e5;
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.3022053062175981e-03, 1e-12 );
+  // // Test on highest bin
+  // energy = 1e5;
 
-  // Test 2: right above the cutoff angle
-  scattering_angle_cosine = angle_cosine_cutoff+1e-10;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 3.3022053062175981e-03, 1e-12 );
 
-  // Test 3: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 2: right above the cutoff angle
+  // scattering_angle_cosine = angle_cosine_cutoff+1e-10;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test: above highest bin
-  energy = 1e6;
+  // // Test 3: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 
-  // Test 1: at the min angle
-  scattering_angle_cosine = -1.0;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test: above highest bin
+  // energy = 1e6;
 
-  // Test 2: at the max angle
-  scattering_angle_cosine = 1.0;
-  pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+  // // Test 1: at the min angle
+  // scattering_angle_cosine = -1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
+
+  // // Test 2: at the max angle
+  // scattering_angle_cosine = 1.0;
+  // pdf_value = linlog_hybrid_distribution->evaluatePDF( energy, scattering_angle_cosine );
+  // TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1259,18 +1297,18 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
   cdf_value = linlog_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
   TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
 
-  // Test: Inbetween bins
+  // Test: in between bins
   energy = 1e-4;
 
   // Test 1: at cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff;
   cdf_value = linlog_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 9.5709613200531629e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 9.1419226401063258e-01, 1e-12 );
 
   // Test 2: right above the cutoff angle
   scattering_angle_cosine = angle_cosine_cutoff+1e-10;
   cdf_value = linlog_hybrid_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( cdf_value, 9.5709613205559063e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 9.1419226411118126e-01, 1e-12 );
 
   // Test 3: at the max angle
   scattering_angle_cosine = 1.0;
@@ -1550,7 +1588,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   unsigned mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Exact>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                data_container,
@@ -1575,7 +1613,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog,Utility::Correlated>(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1612,7 +1650,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LogLogCosLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LogLogCosLog,Utility::Correlated>(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -1641,7 +1679,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin,Utility::Correlated>(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1678,7 +1716,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLin,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLin,Utility::Correlated>(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -1707,7 +1745,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog,Utility::Correlated>(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1745,7 +1783,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLog,Utility::Exact>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLog,Utility::Correlated>(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),

@@ -55,7 +55,7 @@ private:
 
   //! Create the elastic reaction for a electroatom core
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createElasticElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,

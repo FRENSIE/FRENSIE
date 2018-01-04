@@ -88,7 +88,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
   return d_old_subshell_binding_energy[old_subshell_index];
 }
 
-// Return the occupancy of a subshell (default is the ENDF occupacy)
+// Return the occupancy of a subshell (default is the ENDF occupancy)
 template<typename ComptonProfilePolicy>
 double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy(
                                             const Data::SubshellType subshell ) const
@@ -105,7 +105,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 /*! \details Because the old subshell binding energies and subshell occupancy
  * data are used the procedure for evaluating the total cross section must be
  * changed. The electron momentum projection must be in me*c units 
- * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distrubition
+ * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distribution
  * will have units of barns since the unitless momentum is being used.
  */
 template<typename ComptonProfilePolicy>
@@ -165,7 +165,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 // Evaluate the exact distribution
 /*! \details Because the old subshell binding energies and subshell occupancy
  * data are used the procedure for evaluating the total cross section must be
- * changed. The distrubition has units of barns/MeV.
+ * changed. The distribution has units of barns/MeV.
  */
 template<typename ComptonProfilePolicy>
 double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateExact(

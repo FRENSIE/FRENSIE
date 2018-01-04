@@ -78,7 +78,7 @@ createDecoupledElasticReaction(
       grid_searcher,
       reaction,
       evaluation_tol );
-  
+
 
   // Make sure the reaction was created correctly
   testPostcondition( reaction.use_count() > 0 );
@@ -107,7 +107,7 @@ createHybridElasticReaction(
 
   // Create the reaction
   std::shared_ptr<AdjointElectroatomicReaction> reaction;
-  AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog,Utility::Exact>(
+  AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
       grid_searcher,

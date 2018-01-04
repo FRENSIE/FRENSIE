@@ -170,7 +170,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
 
     // Create the scattering function with LogLogLog interp (eprdata14)
     subshell_distribution.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Exact>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
             function_data,
             1e-6,
             evaluation_tol ) );
@@ -190,7 +190,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
     }
     // Create the scattering function with LinLinLin interp (eprdata12)
     subshell_distribution.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
             function_data,
             1e-6,
             evaluation_tol ) );

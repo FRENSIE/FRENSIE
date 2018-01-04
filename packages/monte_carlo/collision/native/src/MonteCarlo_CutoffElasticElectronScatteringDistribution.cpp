@@ -67,8 +67,7 @@ double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRa
 
   return d_full_cutoff_distribution->evaluateSecondaryConditionalCDF(
                                                         incoming_energy,
-                                                        d_cutoff_angle_cosine,
-                                                        false );
+                                                        d_cutoff_angle_cosine );
 }
 
 // Evaluate the distribution
@@ -85,8 +84,7 @@ double CutoffElasticElectronScatteringDistribution::evaluate(
     return 0.0;
   else
     return d_partial_cutoff_distribution->evaluate( incoming_energy,
-                                                    scattering_angle_cosine,
-                                                    false );
+                                                    scattering_angle_cosine );
 }
 
 // Evaluate the PDF
@@ -104,8 +102,7 @@ double CutoffElasticElectronScatteringDistribution::evaluatePDF(
   else
     return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDF(
                         incoming_energy,
-                        scattering_angle_cosine,
-                        false );
+                        scattering_angle_cosine );
 }
 
 // Evaluate the CDF
@@ -123,8 +120,7 @@ double CutoffElasticElectronScatteringDistribution::evaluateCDF(
   else
     return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDF(
                         incoming_energy,
-                        scattering_angle_cosine,
-                        false );
+                        scattering_angle_cosine );
 }
 
 // Sample an outgoing energy and direction from the distribution

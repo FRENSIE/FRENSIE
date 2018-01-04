@@ -765,7 +765,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectronTwoDSamplingPolicy )
 {
-  std::string sampling = "Correlated";
+  std::string sampling = "Unit-base Correlated";
   epr_data_container.setElectronTwoDSamplingPolicy( sampling );
 
   TEST_EQUALITY_CONST( sampling,

@@ -293,7 +293,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
     typename DistributionArray::const_iterator lower_bin_boundary =
                 Search::binaryLowerBound<FIRST>( d_cutoff_distribution.begin(),
                                                  d_cutoff_distribution.end(),
-                                                  indep_var_value );
+                                                 indep_var_value );
 
     typename DistributionArray::const_iterator upper_bin_boundary =
                                                             lower_bin_boundary;

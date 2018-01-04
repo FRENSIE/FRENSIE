@@ -22,6 +22,7 @@
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
 
 
 namespace DataGen{
@@ -43,6 +44,7 @@ public:
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
+    const MonteCarlo::TwoDSamplingType two_d_sample,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol );
 
@@ -63,20 +65,20 @@ public:
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
 
-  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+  //! Evaluate the Legendre Polynomial expansion of the screened rutherford pdf
   double evaluateLegendreExpandedRutherford(
             const double scattering_angle_cosine,
             const double incoming_energy,
             const int polynomial_order = 0 ) const;
 
-  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+  //! Evaluate the Legendre Polynomial expansion of the screened rutherford pdf
   double evaluateLegendreExpandedRutherford(
             const double scattering_angle_cosine,
             const double incoming_energy,
             const double eta,
             const int polynomial_order = 0 ) const;
 
-  //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
+  //! Evaluate the Legendre Polynomial expansion of the differential hard elastic pdf
   double evaluateLegendreExpandedPDF(
             const double scattering_angle_cosine,
             const double incoming_energy,

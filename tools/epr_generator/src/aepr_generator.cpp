@@ -73,9 +73,9 @@ int main( int argc, char** argv )
   std::string electron_two_d_interp = "Log-Log-Log";
   MonteCarlo::TwoDInterpolationType electron_interp =
                                         MonteCarlo::LOGLOGLOG_INTERPOLATION;
-  std::string electron_two_d_sampling = "Correlated";
+  std::string electron_two_d_sampling = "Unit-base Correlated";
   MonteCarlo::TwoDSamplingType electron_sampling =
-                                        MonteCarlo::CORRELATED_SAMPLING;
+                                        MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING;
   double adjoint_electron_grid_convergence_tol = 0.001;
   double adjoint_electron_grid_absolute_diff_tol = 1e-16;
   double adjoint_electron_grid_distance_tol = 1e-8;
@@ -127,7 +127,7 @@ int main( int argc, char** argv )
                                 &subdirectory_name,
                                 "Subdirectory in the cross section directory "
                                 "where the generated table will be placed. If "
-                                "the foward_file option is used this option "
+                                "the forward_file option is used this option "
                                 "will be ignored." );
   aepr_generator_clp.setOption( "notes",
                                 &table_notes,
@@ -314,7 +314,7 @@ int main( int argc, char** argv )
   else if( forward_file_name.size() != 0 && cross_section_alias.size() != 0 )
   {
     std::cerr << Utility::BoldMagenta( "Warning: " )
-              << "both the foward_file option and the cross_sec_alias option "
+              << "both the forward_file option and the cross_sec_alias option "
               << "were used. The cross_sec_alias option will be ignored!"
               << std::endl;
   }
@@ -628,7 +628,7 @@ int main( int argc, char** argv )
     return 1;
   }
 
-  // 25.) The bremsstrahlung energy to oloutgoing energy nudge value must be >= 0.0
+  // 25.) The bremsstrahlung energy to outgoing energy nudge value must be >= 0.0
   if( adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value < 0.0 )
   {
     (*out) << Utility::BoldRed( "Error: " )

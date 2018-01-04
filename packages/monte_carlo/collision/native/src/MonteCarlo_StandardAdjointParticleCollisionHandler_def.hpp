@@ -70,7 +70,7 @@ void StandardAdjointParticleCollisionHandler<DerivedHandlerTypeTraits>::collideW
 
   if( !collision_complete )
   {
-    // Mutliply the particle weight by the adjoint weight factor
+    // Multiply the particle weight by the adjoint weight factor
     particle.multiplyWeight(
                        material.getAdjointWeightFactor(particle.getEnergy()) );
     

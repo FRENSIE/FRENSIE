@@ -73,7 +73,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_electron_distance_tol( 1e-8 ),
     d_tabular_evaluation_tol( 1e-8 ),
     d_electron_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_electron_two_d_sampling( MonteCarlo::CORRELATED_SAMPLING ),
+    d_electron_two_d_sampling( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING ),
     d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
     d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
     d_adjoint_bremsstrahlung_evaluation_tol( 1e-6 ),
@@ -2043,7 +2043,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
@@ -2053,7 +2053,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
     else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Exact>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
@@ -2063,7 +2063,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
     else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
@@ -2431,7 +2431,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2441,7 +2441,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin,Utility::Correlated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2451,7 +2451,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LogLogLog,Utility::Correlated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2498,7 +2498,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2508,7 +2508,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin,Utility::Correlated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2518,7 +2518,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LogLogLog,Utility::Correlated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,

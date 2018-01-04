@@ -118,7 +118,7 @@ AdjointElectronGridGenerator<ElectroatomicReaction,TwoDInterpPolicy>::AdjointEle
   d_integration_points.front() = d_min_energy;
   d_integration_points.back() = d_max_energy;
 
-  // If neccessary add the nudged max energy to the end of the energy grid
+  // If necessary add the nudged max energy to the end of the energy grid
   if ( d_nudged_max_energy != d_max_energy )
     d_integration_points.push_back( d_nudged_max_energy );
 }

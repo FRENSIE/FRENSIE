@@ -52,7 +52,7 @@ public:
 
 Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
   ace_electroionization_distribution, native_electroionization_distribution,
-  exact_electroionization_distribution;
+  direct_electroionization_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluate( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.64832262108575378, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0671460400747981e+02, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluate( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 683.2234482287432229, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 676.64832262108575378, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0671460400747981e+02, 1e-12 );
 
   pdf = ace_electroionization_distribution->evaluatePDF( 1.0, 1.33136131511529e-1 );
   UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4576996990397919074, 1e-12 );
@@ -254,7 +254,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
  * knock-on energies. A unit based sampling routine was used to fix the problem.
  */
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
-                   sample_knock_on_native_exact )
+                   sample_knock_on_native_direct )
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 3 );
@@ -267,7 +267,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   double knock_on_energy, knock_on_angle_cosine;
 
   // sample the electron at the min random number
-  exact_electroionization_distribution->sample( incoming_energy,
+  direct_electroionization_distribution->sample( incoming_energy,
                                                 knock_on_energy,
                                                 knock_on_angle_cosine );
 
@@ -276,7 +276,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( knock_on_energy, 1.0E-07, 1e-12 );
 
   // sample the electron at the max random number
-  exact_electroionization_distribution->sample( incoming_energy,
+  direct_electroionization_distribution->sample( incoming_energy,
                                                 knock_on_energy,
                                                 knock_on_angle_cosine );
 
@@ -491,7 +491,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
             function_data,
             1e-6,
             1e-13 ) );
@@ -551,7 +551,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
             function_data,
             1e-6,
             1e-16 ) );
@@ -565,13 +565,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   {
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Exact>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
             function_data,
             1e-6,
             1e-16 ) );
 
   // Create the distributions
-  exact_electroionization_distribution.reset(
+  direct_electroionization_distribution.reset(
         new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
                             subshell_distribution,
                             binding_energy ) );

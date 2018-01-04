@@ -1244,6 +1244,7 @@ ReturnType Correlated::evaluatePDFCos(
        * the LogCosLog equation reduces to the LinLin equation.
        */
       if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" ||
+           TwoDInterpPolicy::YXInterpPolicy::name() == "LinLog" ||
          ( lower_y_value == upper_y_value && lower_y_value == y_indep_value ) )
       {
         /* The PDF for lin-lin interpolation is defined as:
@@ -1252,7 +1253,8 @@ ReturnType Correlated::evaluatePDFCos(
           */
         return (lower_eval*upper_eval)/LinLin::interpolate( beta, upper_eval, lower_eval );
       }
-      else if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" )
+      else if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" ||
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLin" )
       {
         /* The PDF for log-log interpolation is defined as:
           * f(x,y) = (1/y)*( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
@@ -1261,7 +1263,7 @@ ReturnType Correlated::evaluatePDFCos(
         auto lower_product = lower_eval*TwoDInterpPolicy::YXInterpPolicy::convertCosineVar(lower_y_value);
         auto upper_product = upper_eval*TwoDInterpPolicy::YXInterpPolicy::convertCosineVar(upper_y_value);
 
-        return (lower_eval*upper_eval)/
+        return (lower_product*upper_product)/
                (LinLin::interpolate( beta, upper_product, lower_product )*
                TwoDInterpPolicy::YXInterpPolicy::convertCosineVar(y_indep_value) );
       }
@@ -1402,7 +1404,8 @@ ReturnType Correlated::evaluatePDF(
       return lower_eval;
     else
     {
-      if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" )
+      if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" ||
+           TwoDInterpPolicy::YXInterpPolicy::name() == "LinLog" )
       {
         /* The PDF for lin-lin interpolation is defined as:
         * f(x,y) = ( f_0( y_0 ) * f_1( y_1 ) )/
@@ -1411,7 +1414,9 @@ ReturnType Correlated::evaluatePDF(
         return (lower_eval*upper_eval)/LinLin::interpolate( beta, upper_eval, lower_eval );
       }
       else if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LogLog" ||
-                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" )
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" ||
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogLin" ||
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLin" )
       {
         /* The PDF for log-log interpolation is defined as:
         * f(x,y) = (1/y)*( y_0*f_0( y_0 ) * y_1*f_1( y_1 ) )/
@@ -2252,7 +2257,8 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
       return lower_eval;
     else
     {
-      if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" )
+      if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" ||
+           TwoDInterpPolicy::YXInterpPolicy::name() == "LinLog" )
       {
         /* The PDF for lin-lin interpolation is defined as:
         * f(x,y) = 1/L * ( L_0f_0( y_0 ) * L_1f_1( y_1 ) )/
@@ -2264,7 +2270,9 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
         return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/intermediate_grid_length;
       }
       else if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LogLog" ||
-                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" )
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLog" ||
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogLin" ||
+                TwoDInterpPolicy::YXInterpPolicy::name() == "LogCosLin" )
       {
         /* The PDF for log-log interpolation is defined as:
         * f(x,y) = 1/(eta*L)*( eta_0*L_0*f_0( y_0 ) * eta_1*L_1*f_1( y_1 ) )/
@@ -2281,7 +2289,7 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
       else
       {
         THROW_EXCEPTION( std::runtime_error,
-                          "The interpolation mode " << TwoDInterpPolicy::ZXInterpPolicy::name() <<
+                          "The interpolation mode " << TwoDInterpPolicy::YXInterpPolicy::name() <<
                           " is currently not supported.\n" );
       }
     }

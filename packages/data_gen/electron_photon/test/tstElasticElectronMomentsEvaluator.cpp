@@ -30,7 +30,7 @@ class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomen
 public:
   TestElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container )
-    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, -1.0, 1e-7 )
+    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, MonteCarlo::CORRELATED_SAMPLING, -1.0, 1e-7 )
   { /* ... */ }
 
   TestElasticElectronMomentsEvaluator(
@@ -105,14 +105,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   eta = 2.68213671998009;
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-4, eta, n );
-  pdf = 4.56422406725248706039e+01; legendre_expansion = 1.0;
+  pdf = 9.94523849754938460421e-01; legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
 
   expanded_pdf =
     pb_evaluator->evaluateLegendreExpandedRutherford( 1.0, 5.5e-4, eta, n );
-  pdf = 7.90638709255061939984e+01; legendre_expansion = 1.0;
+  pdf = 3.71440503761483808987; legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
@@ -145,7 +145,7 @@ n = 2;
 //---------------------------------------------------------------------------//
 // Check that the legendre expanded screened rutherford pdf can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
-                   evaluateLegendreExpandedRutherford_lin )
+                   evaluateLegendreExpandedRutherford_linlinlin )
 {
   int n = 4;
 
@@ -161,13 +161,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   eta = 2.68213671998009;
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 1.0e-4, eta, n );
-  pdf =  8.70768063187152741023; legendre_expansion = 1.0;
+  pdf = 5.49697935897833889207e-01; legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedRutherford( 1.0, 5.5e-4, eta, n );
-  pdf = 4.97460806770419097234e+01; legendre_expansion = 1.0;
+  pdf = 1.09277911944359495955; legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
@@ -209,17 +209,17 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-4, n );
-  pdf = 5.48421667820421232520e-01;
+  pdf = 5.44146428818567340358e-01;
   legendre_expansion = 1.0;
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-4, n );
-  pdf = 4.56422066383051969751e+01;
+  pdf = 9.94523108164633629080e-01;
   legendre_expansion = 0.99999000002250015839;
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf = pb_evaluator->evaluateLegendreExpandedPDF( 0.999999, 5.5e-4, n );
-  pdf = 7.90638119696549637183e+01;
+  pdf = 3.71440226788059302265e+00;
   legendre_expansion = 0.99999000002250015839;
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
@@ -268,21 +268,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( -1.0, 1.0e-4, n );
-  pdf = 5.08804144149269776953e-01;
+  pdf = 5.07486059346235807155e-01;
   legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 1.0e-4, n );
-  pdf = 8.70767413878286511419;
+  pdf = 5.49697526002525749256e-01;
   legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
 
   expanded_pdf =
     pb_lin_evaluator->evaluateLegendreExpandedPDF( 0.999999, 5.5e-4, n );
-  pdf = 4.97460435826965650108e+01;
+  pdf = 1.09277830458691727067e+00;
   legendre_expansion = 0.99999000002250015839;
 
   UTILITY_TEST_FLOATING_EQUALITY( expanded_pdf, pdf*legendre_expansion, 1e-12 );
@@ -1145,6 +1145,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   full_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *pb_data,
                                     MonteCarlo::LINLINLOG_INTERPOLATION,
+                                    MonteCarlo::CORRELATED_SAMPLING,
                                     -1.0,
                                     1e-7 ) );
 
@@ -1244,7 +1245,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     coupled_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Exact>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -1282,6 +1283,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   pb_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   MonteCarlo::LINLINLOG_INTERPOLATION,
+                                                  MonteCarlo::CORRELATED_SAMPLING,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol ) );
 
@@ -1289,6 +1291,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   pb_lin_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   MonteCarlo::LINLINLIN_INTERPOLATION,
+                                                  MonteCarlo::CORRELATED_SAMPLING,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol ) );
   }

@@ -714,7 +714,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering distribution
     ace_scattering_distribution.reset(
-        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Exact>(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
                 ace_data ) );
 
     // Create the distributions
@@ -757,7 +757,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     Teuchos::Array<double> angles(
         data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
 
-    // Get the cutoff elastic scatering pdf at the energy
+    // Get the cutoff elastic scattering pdf at the energy
     Teuchos::Array<double> pdfs(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
@@ -793,11 +793,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering distribution
   native_scattering_distribution.reset(
-    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Exact>( native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Correlated>( native_data ) );
 
   // Create the scattering distribution
   partial_native_scattering_distribution.reset(
-    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Exact>( partial_native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Correlated>( partial_native_data ) );
 
   // Create cutoff distributions
   native_elastic_distribution.reset(

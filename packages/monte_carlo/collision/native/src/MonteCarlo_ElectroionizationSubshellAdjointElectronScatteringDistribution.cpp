@@ -43,7 +43,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluate(
 
   // evaluate the distribution
   return d_ionization_subshell_dist->evaluate(
-            incoming_energy, outgoing_energy, false );
+            incoming_energy, outgoing_energy );
 }
 
 // Evaluate the PDF value for a given incoming and outgoing energy
@@ -57,7 +57,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateP
 
   // evaluate the distribution
   return d_ionization_subshell_dist->evaluateSecondaryConditionalPDF(
-            incoming_energy, outgoing_energy, false );
+            incoming_energy, outgoing_energy );
 }
 
 // Evaluate the CDF value for a given incoming and outgoing energy
@@ -71,7 +71,7 @@ double ElectroionizationSubshellAdjointElectronScatteringDistribution::evaluateC
 
   // evaluate the distribution
   return d_ionization_subshell_dist->evaluateSecondaryConditionalCDF(
-            incoming_energy, outgoing_energy, false );
+            incoming_energy, outgoing_energy );
 }
 
 

@@ -17,21 +17,21 @@ namespace Utility{
 namespace {
 
 //! Helper class used to construct a cdf interpolation policy
-template<typename YProcessingTag, typename XProcessingTag>
+template<typename TwoDSamplePolicy, typename YProcessingTag, typename XProcessingTag>
 struct CDFInterpolationHelper
 { /* ... */ };
 
 //! Helper class used to construct a LinLinLin cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<LinIndepVarProcessingTag,LinIndepVarProcessingTag>
+template<typename TwoDSamplePolicy>
+struct CDFInterpolationHelper<TwoDSamplePolicy,LinIndepVarProcessingTag,LinIndepVarProcessingTag>
 {
   //! The cdf interpolation policy
   typedef LinLinLin CDFInterpPolicy;
 };
 
 //! Helper class used to construct a LinLinLog cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
+template<typename TwoDSamplePolicy>
+struct CDFInterpolationHelper<TwoDSamplePolicy,LinIndepVarProcessingTag,LogIndepVarProcessingTag>
 {
   //! The cdf interpolation policy
   typedef LinLinLog CDFInterpPolicy;
@@ -39,7 +39,15 @@ struct CDFInterpolationHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
 
 //! Helper class used to construct a LinLogLin cdf interpolation policy
 template<>
-struct CDFInterpolationHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
+struct CDFInterpolationHelper<Direct,LogIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LogLogLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLin cdf interpolation policy
+template<typename TwoDSamplePolicy>
+struct CDFInterpolationHelper<TwoDSamplePolicy,LogIndepVarProcessingTag,LinIndepVarProcessingTag>
 {
   //! The cdf interpolation policy
   typedef LinLogLin CDFInterpPolicy;
@@ -47,7 +55,15 @@ struct CDFInterpolationHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
 
 //! Helper class used to construct a LinLogLog cdf interpolation policy
 template<>
-struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
+struct CDFInterpolationHelper<Direct,LogIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogLog CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogLog cdf interpolation policy
+template<typename TwoDSamplePolicy>
+struct CDFInterpolationHelper<TwoDSamplePolicy,LogIndepVarProcessingTag,LogIndepVarProcessingTag>
 {
   //! The cdf interpolation policy
   typedef LinLogLog CDFInterpPolicy;
@@ -55,18 +71,34 @@ struct CDFInterpolationHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
 
 //! Helper class used to construct a LinLogCosLin cdf interpolation policy
 template<>
-struct CDFInterpolationHelper<LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
+struct CDFInterpolationHelper<Direct,LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
 {
   //! The cdf interpolation policy
-  typedef LinLogLin CDFInterpPolicy;
+  typedef LinLogCosLin CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogCosLin cdf interpolation policy
+template<typename TwoDSamplePolicy>
+struct CDFInterpolationHelper<TwoDSamplePolicy,LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogCosLin CDFInterpPolicy;
 };
 
 //! Helper class used to construct a LinLogCosLog cdf interpolation policy
 template<>
-struct CDFInterpolationHelper<LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
+struct CDFInterpolationHelper<Direct,LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
 {
   //! The cdf interpolation policy
-  typedef LinLogLog CDFInterpPolicy;
+  typedef LinLogCosLog CDFInterpPolicy;
+};
+
+//! Helper class used to construct a LinLogCosLog cdf interpolation policy
+template<typename TwoDSamplePolicy>
+struct CDFInterpolationHelper<TwoDSamplePolicy,LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The cdf interpolation policy
+  typedef LinLogCosLog CDFInterpPolicy;
 };
 
 } // end local namespace
@@ -109,7 +141,7 @@ protected:
   typedef typename ParentType::DQT DQT;
 
   // The CDF interpolation policy
-  typedef typename CDFInterpolationHelper<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
+  typedef typename CDFInterpolationHelper<TwoDSamplePolicy,typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
   
 public:
   
