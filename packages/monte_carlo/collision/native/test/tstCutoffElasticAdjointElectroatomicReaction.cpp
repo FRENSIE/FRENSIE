@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticAdjointElectroatomicReaction,
   cross_section = cutoff_elastic_reaction->getCrossSection( 1.0E-03 );
   TEST_FLOATING_EQUALITY( cross_section, 2.8205052827449557e+06*ratio, 1e-12 );
 
-  ratio = 8.0903053369940162e-06;
+  ratio = 8.1267604271225102e-06;
   cross_section = cutoff_elastic_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section, 3.0472762372903748e+02*ratio, 1e-9 );
 }
@@ -143,7 +143,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   // Get native data container
-  std::shared_ptr<Data::AdjointElectronPhotonRelaxationDataContainer> 
+  std::shared_ptr<Data::AdjointElectronPhotonRelaxationDataContainer>
     data_container( new Data::AdjointElectronPhotonRelaxationDataContainer(
                              test_native_file_name ) );
 
@@ -170,7 +170,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-15;
 
     // Create the distribution
-    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
+    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
                 elastic_scattering_distribution,
                 *data_container,
                 cutoff_angle_cosine,
@@ -198,7 +198,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
-    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Exact>(
+    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
                 cutoff_distribution,
                 *data_container,
                 cutoff_angle_cosine,

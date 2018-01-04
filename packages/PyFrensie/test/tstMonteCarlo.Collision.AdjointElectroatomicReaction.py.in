@@ -37,7 +37,7 @@ class AdjointCoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLogLogLogExactCoupledElasticReaction( self.data, "Simplified Union", 1e-7 )
+        self.reaction = Collision.createLogLogLogDirectCoupledElasticReaction( self.data, "Simplified Union", 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCoupledElasticReaction getThresholdEnergy method"
@@ -65,7 +65,7 @@ class AdjointDecoupledElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLinLinLogExactDecoupledElasticReaction( self.data, 1e-7 )
+        self.reaction = Collision.createLinLinLogDirectDecoupledElasticReaction( self.data, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createDecoupledElasticReaction getThresholdEnergy method"
@@ -93,7 +93,7 @@ class AdjointHybridElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLogLogLogExactHybridElasticReaction( self.data, 0.9, 1e-7 )
+        self.reaction = Collision.createLogLogLogCorrelatedHybridElasticReaction( self.data, 0.9, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createHybridElasticReaction getThresholdEnergy method"
@@ -107,12 +107,12 @@ class AdjointHybridElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*2.7336893667900169e+08 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.9960014899641152e+06,
-                                delta=1e-12*1.9960014899641152e+06 )
+                                1.9778260498147749e+06,
+                                delta=1e-12*1.9778260498147749e+06 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.0523455605114753e+00,
-                                delta=1e-9*2.0523455605114753e+00 )
+                                2.0987213022929017,
+                                delta=1e-9*2.0987213022929017 )
 
 #-----------------------------------------------------------------------------#
 # Test the cutoff adjoint electroatomic reaction
@@ -121,7 +121,7 @@ class AdjointCutoffElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLinLinLogExactCutoffElasticReaction( self.data, 1.0, 1e-7 )
+        self.reaction = Collision.createLinLinLogDirectCutoffElasticReaction( self.data, 1.0, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createCutoffElasticReaction getThresholdEnergy method"
@@ -173,7 +173,7 @@ class AdjointMomentPreservingElasticReactionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = Native.AdjointElectronPhotonRelaxationDataContainer( options.nativefile )
-        self.reaction = Collision.createLogLogLogExactMomentPreservingElasticReaction( self.data, 0.9, 1e-7 )
+        self.reaction = Collision.createLogLogLogCorrelatedMomentPreservingElasticReaction( self.data, 0.9, 1e-7 )
 
     def testgetThresholdEnergy(self):
         "*Test MonteCarlo.Collision.createMomentPreservingElasticReaction getThresholdEnergy method"
@@ -191,8 +191,8 @@ class AdjointMomentPreservingElasticReactionTestCase(unittest.TestCase):
                                 delta=1e-12*1.6718090696147881e+06 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                2.0498802209908908,
-                                delta=1e-9*2.0498802209908908 )
+                                2.0962448538993295,
+                                delta=1e-9*2.0962448538993295 )
 
 #-----------------------------------------------------------------------------#
 # Test the atomic excitation adjoint electroatomic reaction
@@ -241,16 +241,16 @@ class AdjointSubshellElectroionizationReactionsTestCase(unittest.TestCase):
         # Test first subshell
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.6575878222818077e+10,
-                                delta=1e-12*4.6575878222818077e+10 )
+                                9.7827919403215561e+09,
+                                delta=1e-12*9.7827919403215561e+09 )
         energy = 1e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.6529456750610253e+07,
-                                delta=1e-12*1.6529456750610253e+07 )
+                                3.1642572388486927e+06,
+                                delta=1e-12*3.1642572388486927e+06 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                6.2196745667489216e+04,
-                                delta=1e-9*6.2196745667489216e+04 )
+                                1.9411954266669640e+04,
+                                delta=1e-9*1.9411954266669640e+04 )
 
 
 #-----------------------------------------------------------------------------#
@@ -270,16 +270,16 @@ class AdjointBremsstrahlungReactionTestCase(unittest.TestCase):
         "*Test MonteCarlo.Collision.createBremsstrahlungReaction getCrossSection method"
         energy = 1e-5
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                4.6329278793906738e+01,
-                                delta=1e-12*4.6329278793906738e+01 )
+                                1.3037203891519097e+01,
+                                delta=1e-12*1.3037203891519097e+01 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                1.6620526718982738e+01,
-                                delta=1e-12*1.6620526718982738e+01 )
+                                4.3377231534698861,
+                                delta=1e-12*4.3377231534698861 )
         energy = 20.0
         self.assertAlmostEqual( self.reaction.getCrossSection(energy),
-                                7.7114113565473230e-01,
-                                delta=1e-9*7.7114113565473230e-01 )
+                                1.5197338425584794e-01,
+                                delta=1e-9*1.5197338425584794e-01 )
 
 #-----------------------------------------------------------------------------#
 # Custom main
@@ -320,7 +320,7 @@ if __name__ == "__main__":
 
     # Exit
     sys.exit(errs_plus_fails)
-    
+
 #-----------------------------------------------------------------------------#
 # end tstMonteCarlo.Collision.PhotonKinematics.py
 #-----------------------------------------------------------------------------#

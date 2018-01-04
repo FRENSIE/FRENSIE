@@ -48,23 +48,29 @@
 // Set LogLogLog Functions
 %template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogLogLog, Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Exact ) ) FUNC_NAME( FUNCTION, Utility::LogLogLog, Utility::Exact );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogLogLog, Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Stochastic ) ) FUNC_NAME( FUNCTION, Utility::LogLogLog, Utility::Stochastic );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogLogLog, Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogLogLog, Utility::UnitBase );
 
 // Set LinLinLin Functions
 %template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Exact ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Exact );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Stochastic ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Stochastic );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Direct ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::UnitBase );
 
 // Set LinLinLog Functions
 %template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Exact ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Exact );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Stochastic ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Stochastic );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::UnitBase );
 
 %enddef
 
@@ -76,23 +82,29 @@
 // Set LogLogLog Functions
 %template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Exact ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Exact );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Stochastic ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Stochastic );
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LogLogLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LogLogCosLog, Utility::UnitBase );
 
 // Set LinLinLin Functions
 %template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Exact ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Exact );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Stochastic ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Stochastic );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, Direct ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLin, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LinLinLin, Utility::UnitBase );
 
 // Set LinLinLog Functions
 %template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Correlated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Correlated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Exact ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Exact );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, UnitBaseCorrelated ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::UnitBaseCorrelated );
 
-%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Stochastic ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Stochastic );
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, Direct ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::Direct );
+
+%template( FUNC_NEW_NAME( FUNCTION, LinLinLog, UnitBase ) ) FUNC_NAME( FUNCTION, Utility::LinLinLog, Utility::UnitBase );
 
 %enddef
 

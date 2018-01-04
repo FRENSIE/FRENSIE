@@ -54,15 +54,15 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluate( 1e-5, 2.3711E-5 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.3788969296159603e+03, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.1267734344071564e+03, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluate( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.3366961039011547e-02, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 9.1691374669833677e-03, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluate( 20.0, 20.00002722 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.2512921394646681e+04, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.4387687006479819e+04, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluate( 20.01, 22.1 );
@@ -82,15 +82,15 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   pdf = native_distribution->evaluatePDF( 1e-5, 2.3711E-5 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.3681482028672447e+03, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.1205889922878184e+03, 1e-12 );
 
   // Check between two bins
   pdf = native_distribution->evaluatePDF( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.2685439033656161e-02, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 9.1176302719148047e-03, 1e-6 );
 
   // Check the last bin
   pdf = native_distribution->evaluatePDF( 20.0, 20.00002722 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.8946964865956943e+04, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.0908192711775724e+04, 1e-12 );
 
   // Check above the last bin
   pdf = native_distribution->evaluatePDF( 20.01, 22.1 );
@@ -110,11 +110,11 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
 
   // Check the first bin
   cdf = native_distribution->evaluateCDF( 1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 7.2659988750326421e-02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 6.1558984421280320e-02, 1e-12 );
 
   // Check between two bins
   cdf = native_distribution->evaluateCDF( 1.1e-5, 0.2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 7.4054897543668188e-02, 1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 6.2436859002209043e-02, 1e-6 );
 
   // Check the last bin
   cdf = native_distribution->evaluateCDF( 20.0, 20.00002722 );
@@ -144,8 +144,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                scattering_angle_cosine );
 
   // Test scattered electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 5.0455412637947922e-03, 1e-10 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 6.3804079381001788e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 4.6276138252271349e-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 8.5982581539504133e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -171,8 +171,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
   TEST_EQUALITY_CONST( trials, 1.0 );
 
   // Test scattered electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 5.0455412637947922e-03, 1e-10 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 6.3804079381001788e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 4.6276138252271349e-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 8.5982581539504133e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -199,8 +199,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectronScatteringDistributio
                                                shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 5.0455412637947922e-03, 1e-10 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 6.3804079381001788e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 4.6276138252271349e-03, 1e-10 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.5982581539504133e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -338,7 +338,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   { // Create the LinLinLog scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
             function_data,
             1e-6,
             evaluation_tol ) );
@@ -352,7 +352,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   { // Create the LogLogLog scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
             function_data,
             1e-6,
             evaluation_tol ) );

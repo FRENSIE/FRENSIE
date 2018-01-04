@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
     MonteCarlo::SIMPLIFIED_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Exact>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -79,7 +79,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -116,7 +116,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog,Utility::Exact>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -191,7 +191,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-15;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogCosLog,Utility::Exact>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -219,7 +219,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.0498802209908908, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.096244853899329463, 1e-12 );
 
   // Clear the reaction
   reaction.reset();
@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   std::vector<std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> > reactions;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::Correlated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         energy_grid,
         grid_searcher,
@@ -285,13 +285,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test the first shell's stored cross section is correct
   double cross_section = reactions.front()->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 4.6575878222818077e+10, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.7827919403215561e+09, 1e-12 );
 
   cross_section = reactions.front()->getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.6529456750610253e+07, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.1642572388486927e+06, 1e-12 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 6.2196745667489216e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.9411954266669640e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::Correlated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         energy_grid,
         grid_searcher,
@@ -315,13 +315,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double cross_section = reaction->getCrossSection( reaction->getThresholdEnergy() );
-  TEST_FLOATING_EQUALITY( cross_section, 4.6329278793906738e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3037203891519097e+01, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.6620526718982738e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.3377231534698861e+00, 1e-12 );
 
   cross_section = reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 7.7114113565473230e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.5197338425584794e-01, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

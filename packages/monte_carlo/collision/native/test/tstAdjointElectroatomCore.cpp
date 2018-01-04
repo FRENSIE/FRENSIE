@@ -84,21 +84,21 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
                           b_reaction.getCrossSection( 1e-5 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          4.6329278793906738e+01 + 6.1243057898416743e+07,
+                          1.3037203891519097e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.6620526718982738e+01 + 1.0551636170350602e+07,
+                          4.3377231534698861e+00 + 1.0551636170350602e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          7.7114113565473230e-01 + 8.1829299836129925e+04,
+                          1.5197338425584794e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 
@@ -124,10 +124,10 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
   TEST_EQUALITY_CONST( grid_index, 0u );
 
   grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
-  TEST_EQUALITY_CONST( grid_index, 53 );
+  TEST_EQUALITY_CONST( grid_index, 52 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  TEST_EQUALITY_CONST( grid_index, 142 );
+  TEST_EQUALITY_CONST( grid_index, 139 );
 }
 
 //---------------------------------------------------------------------------//
@@ -231,7 +231,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-7;
 
     // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::Correlated>(
+    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         b_distribution,

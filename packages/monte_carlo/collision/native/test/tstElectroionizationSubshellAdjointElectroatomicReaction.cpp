@@ -99,23 +99,23 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCro
 {
   // First Subshell
   double cross_section = first_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.6303270887674353e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.4128823247733122e+08, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.0811715370165553e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6436642468488299e+03, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.0141974126108344e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.6370505176074055e+03, 1e-12 );
 
   // Last Subshell
   cross_section = last_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.3606805988184300e+11, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.8771649905870941e+10, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.1332522477164047e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.5464554895009438e+04, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.1872062043218795e+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.7103044584348776e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -202,7 +202,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-7;
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::Correlated>(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),
@@ -248,7 +248,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistribution>
         electroionization_subshell_distribution;
 
-    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::Correlated>(
+    MonteCarlo::ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
         *data_container,
         *shell,
         data_container->getSubshellBindingEnergy( *shell ),

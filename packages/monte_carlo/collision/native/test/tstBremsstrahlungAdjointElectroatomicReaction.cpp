@@ -71,13 +71,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmitte
 TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = bremsstrahlung_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 4.6329278793906738e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3037203891519097e+01, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 2e-2 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.8802257008600090, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.2018091943558356e-01, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 7.7114113565473230e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.5197338425584794e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -127,7 +127,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     double evaluation_tol = 1e-7;
 
-    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
+    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         scattering_distribution,

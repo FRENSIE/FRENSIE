@@ -231,7 +231,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> two_d_cross_section;
   {
   two_d_cross_section.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
         data_container.getAdjointPhotonEnergyGrid(),
         data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
         data_container.getAdjointWallerHartreeIncoherentCrossSection() ) );
