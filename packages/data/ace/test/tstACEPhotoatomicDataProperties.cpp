@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstACEPhotonuclearDataProperties.cpp
+//! \file   tstACEPhotoatomicDataProperties.cpp
 //! \author Alex Robinson
-//! \brief  ACEPhotonuclearDataProperties class unit tests
+//! \brief  ACEPhotoatomicDataProperties class unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,7 +12,7 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "Data_ACEPhotonuclearDataProperties.hpp"
+#include "Data_ACEPhotoatomicDataProperties.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "ArchiveTestHelpers.hpp"
 
@@ -31,80 +31,66 @@ typedef std::tuple<
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::unique_ptr<const Data::ACEPhotonuclearDataProperties> properties;
+std::unique_ptr<const Data::PhotoatomicDataProperties> properties;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the atom can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atom )
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, atom )
 {
   FRENSIE_CHECK_EQUAL( properties->atom(), Data::H_ATOM );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the atomic mass number can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atomicMassNumber )
-{
-  FRENSIE_CHECK_EQUAL( properties->atomicMassNumber(), 1 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the isomer number can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, isomerNumber )
-{
-  FRENSIE_CHECK_EQUAL( properties->isomerNumber(), 0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the atomic weight can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atomicWeight )
-{
-  FRENSIE_CHECK_EQUAL( properties->atomicWeight(), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the file type can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, fileType )
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, fileType )
 {
   FRENSIE_CHECK_EQUAL( properties->fileType(),
-                       Data::PhotonuclearDataProperties::ACE_FILE );
+                       Data::PhotoatomicDataProperties::ACE_EPR_FILE );
+
+  Data::ACEPhotoatomicDataProperties local_properties( "photoatomic_data/h_data.txt",
+                                                       10,
+                                                       "1000.04p" );
+
+  FRENSIE_CHECK_EQUAL( local_properties.fileType(),
+                       Data::PhotoatomicDataProperties::ACE_FILE );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file path can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, filePath )
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, filePath )
 {
   FRENSIE_CHECK_EQUAL( properties->filePath().string(),
-                       "photonuclear_data/h_data.txt" );
+                       "photoatomic_data/h_data.txt" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file start line can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, fileStartLine )
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, fileStartLine )
 {
   FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 10 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the file version can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, fileVersion )
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, fileVersion )
 {
-  FRENSIE_CHECK_EQUAL( properties->fileVersion(), 70 );
+  FRENSIE_CHECK_EQUAL( properties->fileVersion(), 12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the table name can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, tableName )
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, tableName )
 {
-  FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.70u" );
+  FRENSIE_CHECK_EQUAL( properties->tableName(), "1000.12p" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the properties can be cloned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, clone )
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, clone )
 {
-  std::unique_ptr<const Data::ACEPhotonuclearDataProperties>
+  std::unique_ptr<const Data::PhotoatomicDataProperties>
     properties_clone( properties->clone() );
 
   FRENSIE_REQUIRE( properties_clone.get() != NULL );
@@ -113,7 +99,7 @@ FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, clone )
 
 //---------------------------------------------------------------------------//
 // Check that the properties can be archived
-FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotoatomicDataProperties,
                                    archive,
                                    TestArchives )
 {
@@ -123,7 +109,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  std::string archive_base_name( "test_ace_photonuclear_data_properties" );
+  std::string archive_base_name( "test_ace_photoatomic_data_properties" );
   std::ostringstream archive_ostream;
 
   // Create and archive some properties
@@ -132,12 +118,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    Data::ACEPhotonuclearDataProperties local_properties( 4.0,
-                                                          "photonuclear_data/he_data.txt",
+    Data::ACEPhotoatomicDataProperties local_properties( "photoatomic_data/he_data.txt",
                                                           2,
-                                                          "2004.24u" );
+                                                          "2000.04p" );
 
-    std::shared_ptr<const Data::PhotonuclearDataProperties>
+    std::shared_ptr<const Data::PhotoatomicDataProperties>
       shared_properties( properties->clone() );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( local_properties ) );
@@ -152,35 +137,29 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
 
   createIArchive( archive_istream, iarchive );
 
-  Data::ACEPhotonuclearDataProperties
-    local_properties( 0.1, "dummy", 100000, "1000.00u" );
+  Data::ACEPhotoatomicDataProperties
+    local_properties( "dummy", 100000, "1000.00p" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
   FRENSIE_CHECK_EQUAL( local_properties.atom(), Data::He_ATOM );
   FRENSIE_CHECK_EQUAL( local_properties.atomicNumber(), 2 );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicMassNumber(), 4 );
-  FRENSIE_CHECK_EQUAL( local_properties.isomerNumber(), 0 );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicWeight(), 4.0 );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(),
-                       "photonuclear_data/he_data.txt" );
+                       "photoatomic_data/he_data.txt" );
   FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 2 );
-  FRENSIE_CHECK_EQUAL( local_properties.fileVersion(), 24 );
-  FRENSIE_CHECK_EQUAL( local_properties.tableName(), "2004.24u" );
+  FRENSIE_CHECK_EQUAL( local_properties.fileVersion(), 4 );
+  FRENSIE_CHECK_EQUAL( local_properties.tableName(), "2000.04p" );
 
-  std::shared_ptr<const Data::PhotonuclearDataProperties>
+  std::shared_ptr<const Data::PhotoatomicDataProperties>
     shared_properties;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
   FRENSIE_CHECK_EQUAL( shared_properties->atom(), Data::H_ATOM );
   FRENSIE_CHECK_EQUAL( shared_properties->atomicNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicMassNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( shared_properties->isomerNumber(), 0 );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(),
-                       "photonuclear_data/h_data.txt" );
+                       "photoatomic_data/h_data.txt" );
   FRENSIE_CHECK_EQUAL( shared_properties->fileStartLine(), 10 );
-  FRENSIE_CHECK_EQUAL( shared_properties->fileVersion(), 70 );
-  FRENSIE_CHECK_EQUAL( shared_properties->tableName(), "1001.70u" );
+  FRENSIE_CHECK_EQUAL( shared_properties->fileVersion(), 12 );
+  FRENSIE_CHECK_EQUAL( shared_properties->tableName(), "1000.12p" );
 }
 
 //---------------------------------------------------------------------------//
@@ -190,14 +169,13 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  properties.reset( new Data::ACEPhotonuclearDataProperties( 1.0,
-                                                             "photonuclear_data/h_data.txt",
-                                                             10,
-                                                             "1001.70u" ) );
+  properties.reset( new Data::ACEPhotoatomicDataProperties( "photoatomic_data/h_data.txt",
+                                                            10,
+                                                            "1000.12p" ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstACEPhotonuclearDataProperties.cpp
+// end tstACEPhotoatomicDataProperties.cpp
 //---------------------------------------------------------------------------//

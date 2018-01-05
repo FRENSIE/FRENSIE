@@ -26,6 +26,7 @@ std::string ToStringTraits<Data::ElectroatomicDataProperties::FileType>::toStrin
 {
   switch( type )
   {
+    case Data::ElectroatomicDataProperties::ACE_FILE: return "ACE";
     case Data::ElectroatomicDataProperties::ACE_EPR_FILE: return "ACE EPR";
     case Data::ElectroatomicDataProperties::Native_FILE: return "Native";
     default:
