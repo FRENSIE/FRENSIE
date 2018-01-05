@@ -223,7 +223,7 @@ FRENSIE_UNIT_TEST( ZAID, assignment_operator )
 }
 
 //---------------------------------------------------------------------------//
-// Check tht a ZAID can be archived
+// Check that a ZAID can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ZAID, archive, TestArchives )
 {
   FETCH_TEMPLATE_PARAM( 0, RawOArchive );

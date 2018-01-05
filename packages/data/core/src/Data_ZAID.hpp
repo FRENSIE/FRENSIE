@@ -27,7 +27,7 @@ public:
   ZAID();
 
   //! Raw ZAID constructor
-  explicit ZAID( const unsigned raw_zaid );
+  ZAID( const unsigned raw_zaid );
 
   //! Component constructor
   ZAID( const unsigned atomic_number,
@@ -41,7 +41,7 @@ public:
   ZAID& operator=( const ZAID& that );
 
   //! Destructor
-  ~ZAID()
+  virtual ~ZAID()
   { /* ... */ }
 
   //! Equality operator

@@ -52,6 +52,9 @@ FRENSIE_ADD_TEST(XSSElectronDataExtractor
   --b_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_b_electron_ace_file.txt
   --b_ace_table=5000.03e)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ACETableName DEPENDS tstACETableName.cpp)
+FRENSIE_ADD_TEST(ACETableName)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ACENuclearDataProperties DEPENDS tstACENuclearDataProperties.cpp)
 FRENSIE_ADD_TEST(ACENuclearDataProperties)
 
