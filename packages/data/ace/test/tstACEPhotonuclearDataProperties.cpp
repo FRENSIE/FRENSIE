@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstACENuclearDataProperties.cpp
+//! \file   tstACEPhotonuclearDataProperties.cpp
 //! \author Alex Robinson
-//! \brief  ACENuclearDataProperties class unit tests
+//! \brief  ACEPhotonuclearDataProperties class unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,7 +12,7 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "Data_ACENuclearDataProperties.hpp"
+#include "Data_ACEPhotonuclearDataProperties.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "ArchiveTestHelpers.hpp"
 
@@ -31,97 +31,81 @@ typedef std::tuple<
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::unique_ptr<const Data::ACENuclearDataProperties> properties;
+std::unique_ptr<const Data::ACEPhotonuclearDataProperties> properties;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the atom can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, atom )
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atom )
 {
   FRENSIE_CHECK_EQUAL( properties->atom(), Data::H_ATOM );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atomic mass number can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, atomicMassNumber )
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atomicMassNumber )
 {
   FRENSIE_CHECK_EQUAL( properties->atomicMassNumber(), 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the isomer number can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, isomerNumber )
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, isomerNumber )
 {
   FRENSIE_CHECK_EQUAL( properties->isomerNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atomic weight can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, atomicWeightRatio )
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atomicWeight )
 {
-  FRENSIE_CHECK_EQUAL( properties->atomicWeightRatio(), 1.0 );
+  FRENSIE_CHECK_EQUAL( properties->atomicWeight(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the evaluation temperature can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, evaluationTemperatureInMeV )
-{
-  FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(), 2.5301e-8 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the evaluation temperature can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, evaluationTemperatureInKelvin )
-{
-  FRENSIE_CHECK_FLOATING_EQUALITY( properties->evaluationTemperatureInKelvin(),
-                                   293.6059397103837227,
-                                   1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the data file type can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, fileType )
+// Check that the file type can be returned
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, fileType )
 {
   FRENSIE_CHECK_EQUAL( properties->fileType(),
-                       Data::NuclearDataProperties::ACE_FILE );
+                       Data::PhotonuclearDataProperties::ACE_FILE );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the data file path can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, filePath )
+// Check that the file path can be returned
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, filePath )
 {
   FRENSIE_CHECK_EQUAL( properties->filePath().string(),
-                       "neutron_data/h_data.txt" );
+                       "photonuclear_data/h_data.txt" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the data file start line can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, fileStartLine )
+// Check that the file start line can be returned
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, fileStartLine )
 {
   FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 10 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the data file version can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, fileVersion )
+// Check that the file version can be returned
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, fileVersion )
 {
   FRENSIE_CHECK_EQUAL( properties->fileVersion(), 70 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the data table name can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, tableName )
+// Check that the table name can be returned
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, tableName )
 {
-  FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.70c" );
+  FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.70u" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the properties can be cloned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, clone )
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, clone )
 {
-  std::unique_ptr<const Data::ACENuclearDataProperties> properties_clone(
-                                                         properties->clone() );
+  std::unique_ptr<const Data::ACEPhotonuclearDataProperties>
+    properties_clone( properties->clone() );
 
   FRENSIE_REQUIRE( properties_clone.get() != NULL );
   FRENSIE_CHECK( properties_clone.get() != properties.get() );
@@ -129,7 +113,7 @@ FRENSIE_UNIT_TEST( ACENuclearDataProperties, clone )
 
 //---------------------------------------------------------------------------//
 // Check that the properties can be archived
-FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
                                    archive,
                                    TestArchives )
 {
@@ -148,13 +132,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    Data::ACENuclearDataProperties local_properties( 16.0,
-                                                     2.5301e-8,
-                                                     "neutron_data/o_data.txt",
-                                                     0,
-                                                     "8016.81c" );
+    Data::ACEPhotonuclearDataProperties local_properties( 4.0,
+                                                          "photonuclear_data/he_data.txt",
+                                                          2,
+                                                          "2004.24u" );
 
-    std::shared_ptr<const Data::NuclearDataProperties>
+    std::shared_ptr<const Data::PhotonuclearDataProperties>
       shared_properties( properties->clone() );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( local_properties ) );
@@ -169,24 +152,22 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
 
   createIArchive( archive_istream, iarchive );
 
-  Data::ACENuclearDataProperties
-    local_properties( 0.1, 0.1, "dummy", 100000, "1000.00c" );
+  Data::ACEPhotonuclearDataProperties
+    local_properties( 0.1, "dummy", 100000, "1000.00u" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
-  FRENSIE_CHECK_EQUAL( local_properties.atom(), Data::O_ATOM );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicNumber(), 8 );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicMassNumber(), 16 );
+  FRENSIE_CHECK_EQUAL( local_properties.atom(), Data::He_ATOM );
+  FRENSIE_CHECK_EQUAL( local_properties.atomicNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( local_properties.atomicMassNumber(), 4 );
   FRENSIE_CHECK_EQUAL( local_properties.isomerNumber(), 0 );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicWeightRatio(), 16.0 );
-  FRENSIE_CHECK_EQUAL( local_properties.evaluationTemperatureInMeV(),
-                       2.5301e-8 );
+  FRENSIE_CHECK_EQUAL( local_properties.atomicWeight(), 4.0 );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(),
-                       "neutron_data/o_data.txt" );
-  FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 0 );
-  FRENSIE_CHECK_EQUAL( local_properties.fileVersion(), 81 );
-  FRENSIE_CHECK_EQUAL( local_properties.tableName(), "8016.81c" );
+                       "photonuclear_data/he_data.txt" );
+  FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 2 );
+  FRENSIE_CHECK_EQUAL( local_properties.fileVersion(), 24 );
+  FRENSIE_CHECK_EQUAL( local_properties.tableName(), "2004.24u" );
 
-  std::shared_ptr<const Data::NuclearDataProperties>
+  std::shared_ptr<const Data::PhotonuclearDataProperties>
     shared_properties;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
@@ -194,14 +175,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
   FRENSIE_CHECK_EQUAL( shared_properties->atomicNumber(), 1 );
   FRENSIE_CHECK_EQUAL( shared_properties->atomicMassNumber(), 1 );
   FRENSIE_CHECK_EQUAL( shared_properties->isomerNumber(), 0 );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicWeightRatio(), 1.0 );
-  FRENSIE_CHECK_EQUAL( shared_properties->evaluationTemperatureInMeV(),
-                       2.5301e-8 );
+  FRENSIE_CHECK_EQUAL( shared_properties->atomicWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(),
-                       "neutron_data/h_data.txt" );
+                       "photonuclear_data/h_data.txt" );
   FRENSIE_CHECK_EQUAL( shared_properties->fileStartLine(), 10 );
   FRENSIE_CHECK_EQUAL( shared_properties->fileVersion(), 70 );
-  FRENSIE_CHECK_EQUAL( shared_properties->tableName(), "1001.70c" );
+  FRENSIE_CHECK_EQUAL( shared_properties->tableName(), "1001.70u" );
 }
 
 //---------------------------------------------------------------------------//
@@ -211,15 +190,14 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  properties.reset( new Data::ACENuclearDataProperties( 1.0,
-                                                        2.5301e-8,
-                                                        "neutron_data/h_data.txt",
-                                                        10,
-                                                        "1001.70c" ) );
+  properties.reset( new Data::ACEPhotonuclearDataProperties( 1.0,
+                                                             "photonuclear_data/h_data.txt",
+                                                             10,
+                                                             "1001.70u" ) );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstACENuclearDataProperties.cpp
+// end tstACEPhotonuclearDataProperties.cpp
 //---------------------------------------------------------------------------//

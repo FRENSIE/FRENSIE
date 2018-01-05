@@ -55,4 +55,7 @@ FRENSIE_ADD_TEST(XSSElectronDataExtractor
 FRENSIE_ADD_TEST_EXECUTABLE(ACENuclearDataProperties DEPENDS tstACENuclearDataProperties.cpp)
 FRENSIE_ADD_TEST(ACENuclearDataProperties)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ACEPhotonuclearDataProperties DEPENDS tstACEPhotonuclearDataProperties.cpp)
+FRENSIE_ADD_TEST(ACEPhotonuclearDataProperties)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(data_ace)

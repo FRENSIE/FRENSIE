@@ -5,6 +5,9 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 FRENSIE_ADD_TEST_EXECUTABLE(SubshellTypeHelpers DEPENDS tstSubshellTypeHelpers.cpp)
 FRENSIE_ADD_TEST(SubshellTypeHelpers)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ZAID DEPENDS tstZAID.cpp)
+FRENSIE_ADD_TEST(ZAID)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ScatteringCenterPropertiesCache DEPENDS tstScatteringCenterPropertiesCache.cpp)
 FRENSIE_ADD_TEST(ScatteringCenterPropertiesCache)
 

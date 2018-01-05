@@ -17,6 +17,7 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
+#include "Data_AtomType.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -39,11 +40,21 @@ public:
   virtual ~PhotonuclearDataProperties()
   { /* ... */ }
 
-  //! Get the nuclear data evaluation temperature (MeV)
-  virtual double evaluationTemperatureInMeV() const = 0;
+  //! Get the atom that the file specifies data for
+  virtual AtomType atom() const = 0;
 
-  //! Get the nuclear data evaluation temperature (Kelvin)
-  virtual double evaluationTemperatureInKelvin() const;
+  //! Get the atomic number that the file specifies data for
+  virtual unsigned atomicNumber() const
+  { return this->atom(); }
+
+  //! Get the atomic mass number that the file specifies data for
+  virtual unsigned atomicMassNumber() const = 0;
+
+  //! Get the isomer number that the file specifies data for
+  virtual unsigned isomerNumber() const = 0;
+
+  //! Get the atomic weight of the nuclide that the file specifies data for
+  virtual double atomicWeight() const = 0;
 
   //! Get the nuclear data file type
   virtual FileType fileType() const = 0;
@@ -53,6 +64,9 @@ public:
 
   //! Get the nuclear data file start line
   virtual size_t fileStartLine() const = 0;
+
+  //! Get the nuclear data file version
+  virtual size_t fileVersion() const = 0;
 
   //! Get the nuclear data file table name
   virtual std::string tableName() const = 0;

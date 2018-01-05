@@ -17,12 +17,6 @@ namespace Data{
 PhotonuclearDataProperties::PhotonuclearDataProperties()
 { /* ... */ }
 
-// Get the nuclear data evaluation temperature (Kelvin)
-double PhotonuclearDataProperties::evaluationTemperatureInKelvin() const
-{
-  return this->evaluationTemperatureInMeV()/Utility::PhysicalConstants::boltzmann_constant;
-}
-
 } // end Data namespace
 
 namespace Utility{

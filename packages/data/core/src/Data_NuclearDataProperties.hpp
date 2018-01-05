@@ -17,6 +17,7 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
+#include "Data_AtomType.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -38,6 +39,22 @@ public:
   //! Destructor
   virtual ~NuclearDataProperties()
   { /* ... */ }
+
+  //! Get the atom that the file specifies data for
+  virtual AtomType atom() const = 0;
+
+  //! Get the atomic number that the file specifies data for
+  virtual unsigned atomicNumber() const
+  { return this->atom(); }
+
+  //! Get the atomic mass number that the file specifies data for
+  virtual unsigned atomicMassNumber() const = 0;
+
+  //! Get the isomer number that the file specifies data for
+  virtual unsigned isomerNumber() const = 0;
+
+  //! Get the atomic weight ratio of the nuclide that the file specifies data for
+  virtual double atomicWeightRatio() const = 0;
 
   //! Get the nuclear data evaluation temperature (MeV)
   virtual double evaluationTemperatureInMeV() const = 0;

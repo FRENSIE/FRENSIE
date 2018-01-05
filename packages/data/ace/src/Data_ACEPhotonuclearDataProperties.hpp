@@ -1,36 +1,35 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_ACENuclearDataProperties.hpp
+//! \file   Data_ACEPhotonuclearDataProperties.hpp
 //! \author Alex Robinson
-//! \brief  The ACE nuclear data properties class declaration
+//! \brief  The ACE photonuclear data properties class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_ACE_NUCLEAR_DATA_PROPERTIES_HPP
-#define DATA_ACE_NUCLEAR_DATA_PROPERTIES_HPP
+#ifndef DATA_ACE_PHOTONUCLEAR_DATA_PROPERTIES_HPP
+#define DATA_ACE_PHOTONUCLEAR_DATA_PROPERTIES_HPP
 
 // FRENSIE Includes
-#include "Data_NuclearDataProperties.hpp"
+#include "Data_PhotonuclearDataProperties.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Data_ZAID.hpp"
 
 namespace Data{
 
-//! The ACE nuclear data properties class
-class ACENuclearDataProperties : public NuclearDataProperties
+//! The ACE photonuclear data properties class
+class ACEPhotonuclearDataProperties : public PhotonuclearDataProperties
 {
 
 public:
 
   //! Constructor
-  ACENuclearDataProperties( const double atomic_weight_ratio,
-                            const double evaluation_temp_in_mev,
-                            const boost::filesystem::path& file_path,
-                            const size_t file_start_line,
-                            const std::string& file_table_name );
+  ACEPhotonuclearDataProperties( const double atomic_weight,
+                                 const boost::filesystem::path& file_path,
+                                 const size_t file_start_line,
+                                 const std::string& file_table_name );
 
   //! Destructor
-  ~ACENuclearDataProperties()
+  ~ACEPhotonuclearDataProperties()
   { /* ... */ }
 
   //! Get the atom that the file specifies data for
@@ -42,11 +41,8 @@ public:
   //! Get the isomer number that the file specifies data for
   unsigned isomerNumber() const override;
 
-  //! Get the atomic weight ratio of the nuclide that the file specifies data for
-  double atomicWeightRatio() const override;
-
-  //! Get the nuclear data evaluation temperature (MeV)
-  double evaluationTemperatureInMeV() const override;
+  //! Get the atomic weight of the nuclide that the file specifies data for
+  double atomicWeight() const override;
 
   //! Get the nuclear data file type
   FileType fileType() const override;
@@ -64,18 +60,18 @@ public:
   std::string tableName() const override;
 
   //! Clone the properties
-  ACENuclearDataProperties* clone() const override;
+  ACEPhotonuclearDataProperties* clone() const override;
 
 private:
 
   // Default constructor
-  ACENuclearDataProperties();
+  ACEPhotonuclearDataProperties();
 
   // Copy constructor
-  ACENuclearDataProperties( const ACENuclearDataProperties& other );
+  ACEPhotonuclearDataProperties( const ACEPhotonuclearDataProperties& other );
 
   // Assignment operator
-  ACENuclearDataProperties& operator=( const ACENuclearDataProperties& other );
+  ACEPhotonuclearDataProperties& operator=( const ACEPhotonuclearDataProperties& other );
 
   // Save the properties to an archive
   template<typename Archive>
@@ -93,11 +89,8 @@ private:
   // The ZAID of the nuclide that the file specifies data for
   Data::ZAID d_zaid;
 
-  // The atomic weight ratio of the nuclide that the file specifies data for
-  double d_atomic_weight_ratio;
-
-  // The evaluation temperature (MeV)
-  double d_evaluation_temp;
+  // The atomic weight of the nuclide that the file specifies data for
+  double d_atomic_weight;
 
   // The file path (relative to the data directory)
   boost::filesystem::path d_file_path;
@@ -114,12 +107,12 @@ private:
   
 } // end Data namespace
 
-BOOST_SERIALIZATION_CLASS_VERSION( ACENuclearDataProperties, Data, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ACENuclearDataProperties, Data );
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACENuclearDataProperties );
+BOOST_SERIALIZATION_CLASS_VERSION( ACEPhotonuclearDataProperties, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ACEPhotonuclearDataProperties, Data );
+EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACEPhotonuclearDataProperties );
 
-#endif // end DATA_ACE_NUCLEAR_DATA_PROPERTIES_HPP
+#endif // end DATA_ACE_PHOTONUCLEAR_DATA_PROPERTIES_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_ACENuclearDataProperties.hpp
+// end Data_ACEPhotonuclearDataProperties.hpp
 //---------------------------------------------------------------------------//
