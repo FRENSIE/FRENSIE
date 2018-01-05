@@ -18,9 +18,11 @@ namespace MonteCarlo{
 
 // Constructor
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
-    const int atomic_number )
+    const int atomic_number,
+    const bool seltzer_modification_on )
 {
-  d_elastic_traits.reset( new ElasticTraits( atomic_number ) );
+  d_elastic_traits.reset( new ElasticTraits( atomic_number,
+                                             seltzer_modification_on ) );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine

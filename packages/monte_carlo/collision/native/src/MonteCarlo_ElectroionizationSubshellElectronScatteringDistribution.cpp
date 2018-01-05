@@ -20,17 +20,21 @@ namespace MonteCarlo{
  * indistinguishable and by convention the one with lower energy is considered
  * the knock-on electron. To reduce space, the tabulated data only gives pdf
  * values up to the max allowable knock-on energy (+- roundoff), which is
- * given as: 1/2(incoming energy - binding energy). 
+ * given as: 1/2(incoming energy - binding energy).
  */
 ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double binding_energy )
+    const double binding_energy,
+    const bool bank_secondary_particles,
+    const bool limit_knock_on_energy_range )
   : d_electroionization_shell_distribution(
       electroionization_subshell_scattering_distribution ),
-    d_binding_energy( binding_energy )
+    d_binding_energy( binding_energy ),
+    d_bank_secondary_particles( bank_secondary_particles ),
+    d_limit_knock_on_energy_range( limit_knock_on_energy_range )
 {
-  // Make sure the arraies are valid
+  // Make sure the arrays are valid
   testPrecondition( d_electroionization_shell_distribution.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
   testPrecondition( d_electroionization_shell_distribution->getLowerBoundOfPrimaryIndepVar()
@@ -86,7 +90,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluate(
   testPrecondition( outgoing_energy_1 > 0.0 );
   testPrecondition( incoming_energy > outgoing_energy_1 );
 
-  // calcualte the energy of the second outgoing electron
+  // calculate the energy of the second outgoing electron
   double outgoing_energy_2 = incoming_energy - outgoing_energy_1 - d_binding_energy;
 
   if ( outgoing_energy_2 <= 0.0 )
@@ -130,7 +134,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
   testPrecondition( outgoing_energy_1 > 0.0 );
   testPrecondition( incoming_energy > outgoing_energy_1 );
 
-  // calcualte the energy of the second outgoing electron
+  // calculate the energy of the second outgoing electron
   double outgoing_energy_2 = incoming_energy - outgoing_energy_1 - d_binding_energy;
 
   // Assume the lower of the two outgoing energies is the knock-on electron
@@ -175,7 +179,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::evaluateCDF(
   testPrecondition( outgoing_energy_1 > 0.0 );
   testPrecondition( incoming_energy > outgoing_energy_1 );
 
-  // calcualte the energy of the second outgoing electron
+  // calculate the energy of the second outgoing electron
   double outgoing_energy_2 = incoming_energy - outgoing_energy_1 - d_binding_energy;
 
   if ( outgoing_energy_2 <= 0.0 )
@@ -218,12 +222,17 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   testPrecondition( incoming_energy > d_binding_energy );
 
   // Sample knock-on electron energy
-  knock_on_energy = std::min(
-    incoming_energy - d_binding_energy,
+  knock_on_energy =
     d_electroionization_shell_distribution->sampleSecondaryConditional(
       incoming_energy,
       [this]( const double& energy ){return this->getMinSecondaryEnergyAtIncomingEnergy( energy );},
-      [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} ) );
+      [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} );
+
+  if( d_limit_knock_on_energy_range )
+  {
+    knock_on_energy =
+      std::min( incoming_energy - d_binding_energy, knock_on_energy );
+  }
 
   // Calculate the outgoing angle cosine for the knock on electron
   knock_on_angle_cosine = outgoingAngle( incoming_energy,
@@ -256,7 +265,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePrimaryAndSe
   scattering_angle_cosine = outgoingAngle( incoming_energy,
                                            outgoing_energy );
 
-  testPostcondition( knock_on_energy <= incoming_energy - d_binding_energy );
+  // testPostcondition( knock_on_energy <= incoming_energy - d_binding_energy );
   testPostcondition( outgoing_energy < incoming_energy - d_binding_energy );
   testPostcondition( knock_on_energy > 0.0 );
   testPostcondition( knock_on_angle_cosine <= 1.0 );
@@ -283,14 +292,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                                 ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const
 {
-  // Make sure the position and direction are valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( electron.getXPosition() ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( electron.getYPosition() ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( electron.getZPosition() ) );
-
-  // Make sure the direction is a unit vector
-  testPrecondition( Utility::validDirection( electron.getDirection() ) );
-
   // The energy of the outgoing and knock-on electron
   double outgoing_energy, knock_on_energy;
 
@@ -304,20 +305,23 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                                    scattering_angle_cosine,
                                    knock_on_angle_cosine );
 
-  // Create new elecrton
-  Teuchos::RCP<ParticleState> knock_on_electron(
-                           new ElectronState( electron, true, true ) );
+  if( d_bank_secondary_particles )
+  {
+    // Create new electron
+    Teuchos::RCP<ParticleState> knock_on_electron(
+                            new ElectronState( electron, true, true ) );
 
-  // Set knock-on electron energy
-  knock_on_electron->setEnergy( knock_on_energy );
+    // Set knock-on electron energy
+    knock_on_electron->setEnergy( knock_on_energy );
 
 
-  // Set the direction of the knock-on electron
-  knock_on_electron->rotateDirection( knock_on_angle_cosine,
-                                      this->sampleAzimuthalAngle() );
+    // Set the direction of the knock-on electron
+    knock_on_electron->rotateDirection( knock_on_angle_cosine,
+                                        this->sampleAzimuthalAngle() );
 
-  // Bank the knock-on electron
-  bank.push( knock_on_electron );
+    // Bank the knock-on electron
+    bank.push( knock_on_electron );
+  }
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();

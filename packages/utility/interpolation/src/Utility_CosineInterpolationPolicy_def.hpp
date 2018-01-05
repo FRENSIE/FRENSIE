@@ -224,7 +224,7 @@ inline bool LogCosLog::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-  
+
   return dep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
          dep_var < QuantityTraits<T>::one();
 }
@@ -308,7 +308,7 @@ InterpolationHelper<LogLogCos>::calculateUnitBaseIndepVar(
 }
 
 // Calculate the independent variable (from eta)
-/*! \details It has been found that a tolerance of 1e-3 works best for most 
+/*! \details It has been found that a tolerance of 1e-3 works best for most
  * applications. Due to conversion of the independent values from a cosine (mu)
  * to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, the negative of eta
  * is used to ensure a positive value.
@@ -333,7 +333,7 @@ InterpolationHelper<LogLogCos>::calculateIndepVar(
   testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
-    LogLogCos::recoverProcessedIndepVar( 
+    LogLogCos::recoverProcessedIndepVar(
                     LogLogCos::processIndepVar( indep_var_min ) -
                     indep_grid_length*eta ) ) );
 
@@ -407,7 +407,7 @@ T InterpolationHelper<LogLogCos>::interpolate( const T processed_indep_var_0,
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
+
   return LogLogCos::recoverProcessedDepVar(
                processed_dep_var_0 +
                processed_slope*(processed_indep_var_0 - processed_indep_var) );
@@ -520,7 +520,7 @@ inline bool LogLogCos::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-  
+
   return dep_var > QuantityTraits<T>::zero();
 }
 
@@ -678,7 +678,7 @@ inline bool LogCosLin::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-  
+
   return dep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
          dep_var < QuantityTraits<T>::one();
 }
@@ -762,7 +762,7 @@ InterpolationHelper<LinLogCos>::calculateUnitBaseIndepVar(
 }
 
 // Calculate the independent variable (from eta)
-/*! \details It has been found that a tolerance of 1e-3 works best for most 
+/*! \details It has been found that a tolerance of 1e-3 works best for most
  * applications. Due to conversion of the independent values from a cosine (mu)
  * to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, the negative of eta
  * is used to ensure a positive value.
@@ -787,7 +787,7 @@ InterpolationHelper<LinLogCos>::calculateIndepVar(
   testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
-    LinLogCos::recoverProcessedIndepVar( 
+    LinLogCos::recoverProcessedIndepVar(
                     LinLogCos::processIndepVar( indep_var_min ) -
                     indep_grid_length*eta ) ) );
 
@@ -863,7 +863,7 @@ T InterpolationHelper<LinLogCos>::interpolate( const T processed_indep_var_0,
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
+
   return LinLogCos::recoverProcessedDepVar(
                processed_dep_var_0 +
                processed_slope*(processed_indep_var_0 - processed_indep_var) );
@@ -956,7 +956,7 @@ inline bool LinLogCos::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-  
+
   return true;
 }
 

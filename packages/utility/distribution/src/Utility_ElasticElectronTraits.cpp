@@ -20,7 +20,7 @@ double ElasticElectronTraits::delta_mu_peak = 1e-6;
 // The scattering angle cosine above which the screened Rutherford distribution is used
 double ElasticElectronTraits::mu_peak = 0.999999;
 
-// A parameter for moliere's screening factor  ( 1/2 * (fsc/0.885)**2 * Z**(2/3) )
+// A parameter for moliere's screening factor  ( 1/2 * (fsc/0.885)**2 )
 double ElasticElectronTraits::s_screening_param1 =
         Utility::PhysicalConstants::fine_structure_constant *
         Utility::PhysicalConstants::fine_structure_constant/( 1.56645L );
@@ -105,7 +105,7 @@ double ElasticElectronTraits::evaluateMoliereScreeningConstant(
 
   // Calculate the energy-momentum^2 in units of electron rest mass energy ( Pc / mc^2 )^2
   double energy_momentum_squared =
-    Utility::calculateDimensionlessRelativisticMomentumSquared( energy_in_mc);
+    Utility::calculateDimensionlessRelativisticMomentumSquared( energy_in_mc );
 
   // Modify eta if Seltzer modification is turned on
   if ( d_seltzer_modification_on )

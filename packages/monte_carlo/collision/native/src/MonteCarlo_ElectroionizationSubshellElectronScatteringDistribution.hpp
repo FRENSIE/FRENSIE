@@ -36,7 +36,9 @@ public:
   ElectroionizationSubshellElectronScatteringDistribution(
     const std::shared_ptr<TwoDDist>&
       electroionization_subshell_scattering_distribution,
-    const double binding_energy );
+    const double binding_energy,
+    const bool bank_secondary_particles = true,
+    const bool limit_knock_on_energy_range = true );
 
   //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
@@ -99,6 +101,12 @@ private:
 
   // Subshell binding energy
   double d_binding_energy;
+
+  // Turn secondary particle on/off
+  bool d_bank_secondary_particles;
+
+  // Limit energy range of the knock-on electron
+  bool d_limit_knock_on_energy_range;
 };
 
 } // end MonteCarlo namespace

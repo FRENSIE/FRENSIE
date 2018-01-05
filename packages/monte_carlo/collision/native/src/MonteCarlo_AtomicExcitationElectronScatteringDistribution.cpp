@@ -33,7 +33,7 @@ void AtomicExcitationElectronScatteringDistribution::sample(
   // Theree is no angle scattering
   scattering_angle_cosine = 1.0;
 
-  // Get enery loss
+  // Get energy loss
   double energy_loss = d_energy_loss_distribution->evaluate( incoming_energy );
 
   // Calculate outgoing energy

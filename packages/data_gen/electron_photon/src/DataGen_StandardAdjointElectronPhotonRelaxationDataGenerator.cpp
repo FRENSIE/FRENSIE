@@ -233,7 +233,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointIncoherentM
 
   d_adjoint_incoherent_max_energy_nudge_value = max_energy_nudge_value;
 }
-  
+
 // Return the adjoint incoherent max energy nudge value
 double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointIncoherentMaxEnergyNudgeValue() const
 {
@@ -346,7 +346,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahl
 
   d_adjoint_bremsstrahlung_max_energy_nudge_value = max_energy_nudge_value;
 }
-  
+
 // Return the adjoint bremsstrahlung max energy nudge value
 double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungMaxEnergyNudgeValue() const
 {
@@ -380,7 +380,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointBremsstrahl
 
   d_adjoint_bremsstrahlung_evaluation_tol = evaluation_tolerance;
 }
-  
+
 // Get the evaluation tolerance for the adjoint bremsstrahlung cross section
 double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointBremsstrahlungEvaluationTolerance() const
 {
@@ -448,7 +448,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectroioni
 
   d_adjoint_electroionization_evaluation_tol = evaluation_tolerance;
 }
-  
+
 // Get the evaluation tolerance for the adjoint electroionization cross section
 double StandardAdjointElectronPhotonRelaxationDataGenerator::getAdjointElectroionizationEvaluationTolerance() const
 {
@@ -725,13 +725,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationD
 {
   // Extract and set the subshells
   const std::set<unsigned>& subshells = d_forward_epr_data->getSubshells();
-  
+
   data_container.setSubshells( subshells );
 
   // Extract and set the other subshell data
   std::set<unsigned>::const_iterator subshell_it =
     subshells.begin();
-  
+
   while( subshell_it != subshells.end() )
   {
     data_container.setSubshellOccupancy(
@@ -755,7 +755,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setComptonProfileData
 
   std::set<unsigned>::const_iterator subshell_it =
     subshells.begin();
-  
+
   // Extract and set the Compton profiles and grids
   while( subshell_it != subshells.end() )
   {
@@ -866,7 +866,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
   (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
 
   (*d_os_log) << " Setting the photon cross section data:" << std::endl;
-  
+
   // Extract the coherent cross section
   std::shared_ptr<const Utility::OneDDistribution> waller_hartree_coherent_cs(
        new Utility::TabularDistribution<Utility::LinLin>(
@@ -884,36 +884,36 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
        new Utility::TabularDistribution<Utility::LinLin>(
                    d_forward_epr_data->getPhotonEnergyGrid(),
                    d_forward_epr_data->getImpulseApproxTotalCrossSection() ) );
-  
+
   // Create the Waller-Hartree incoherent adjoint cross section evaluator
   std::shared_ptr<const MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
     waller_hartree_incoherent_adjoint_cs_evaluator;
 
   this->createWallerHartreeIncoherentAdjointCrossSectionEvaluator(
                               waller_hartree_incoherent_adjoint_cs_evaluator );
-  
+
   // Create the impulse approx. incoherent adjoint cross section evaluators
   Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >
     impulse_approx_incoherent_adjoint_cs_evaluators;
 
   this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluators(
                              impulse_approx_incoherent_adjoint_cs_evaluators );
-  
+
   // Create the union energy grid
   (*d_os_log) << "   Creating " << Utility::Italicized( "union energy grid" );
   d_os_log->flush();
-  
+
   std::list<double> union_energy_grid;
-  
+
   this->initializeAdjointPhotonUnionEnergyGrid( union_energy_grid );
-  
+
   // Calculate the union energy grid
   this->updateAdjointPhotonUnionEnergyGrid(
            union_energy_grid, waller_hartree_incoherent_adjoint_cs_evaluator );
-  
+
   this->updateAdjointPhotonUnionEnergyGrid(
           union_energy_grid, impulse_approx_incoherent_adjoint_cs_evaluators );
-  
+
   this->updateAdjointPhotonUnionEnergyGrid(
                                union_energy_grid, waller_hartree_coherent_cs );
 
@@ -940,7 +940,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                 << Utility::Italicized( "Waller-Hartree incoherent adjoint" )
                 << " cross section...";
     d_os_log->flush();
-    
+
     this->createCrossSectionOnUnionEnergyGrid(
                                 union_energy_grid,
                                 waller_hartree_incoherent_adjoint_cs_evaluator,
@@ -985,7 +985,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
     this->calculateAdjointImpulseApproxTotalIncoherentCrossSection(
                                                               data_container );
     (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
-    
+
   }
 
   // Create and set the 1-D cross sections
@@ -1062,7 +1062,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPhotonData(
                 << Utility::Italicized( "adjoint pair production" )
                 << " energy distribution data...";
     d_os_log->flush();
-    
+
     this->setAdjointPairProductionEnergyDistribution( data_container );
 
     (*d_os_log) << Utility::BoldGreen( "done." ) << std::endl;
@@ -1097,7 +1097,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProduct
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
-  
+
   energy_grid[0] = 2*Utility::PhysicalConstants::electron_rest_mass_energy +
     d_adjoint_pair_production_energy_dist_norm_const_nudge_value;
   energy_grid[1] = this->getMaxPhotonEnergy();
@@ -1119,7 +1119,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointPairProduct
                       2*Utility::PhysicalConstants::electron_rest_mass_energy);
   energy_dist_norm_constants.insert( energy_dist_norm_constants.begin(),
                                      0.0 );
- 
+
   // Set the norm constants
   data_container.setAdjointPairProductionEnergyDistributionNormConstantGrid(
                                                                  energy_grid );
@@ -1159,7 +1159,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointTripletProd
 
   // Create the energy distribution norm constant grid
   std::vector<double> energy_grid( 2 ), energy_dist_norm_constants;
-  
+
   energy_grid[0] = 4*Utility::PhysicalConstants::electron_rest_mass_energy +
     d_adjoint_triplet_production_energy_dist_norm_const_nudge_value;
   energy_grid[1] = this->getMaxPhotonEnergy();
@@ -1213,7 +1213,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createWallerHartreeIn
          new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseCentimeter,void>(
           d_forward_epr_data->getWallerHartreeScatteringFunctionMomentumGrid(),
           d_forward_epr_data->getWallerHartreeScatteringFunction() ) );
-    
+
   std::shared_ptr<const MonteCarlo::ScatteringFunction> scattering_function(
          new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseCentimeter>(
                                                    raw_scattering_function ) );
@@ -1241,7 +1241,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
 
   Teuchos::Array<std::pair<unsigned,std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution> > >::iterator
     cs_evaluators_it = cs_evaluators.begin();
-  
+
   // Extract and set the occupation numbers and grids
   while( subshell_it != subshells.end() )
   {
@@ -1250,7 +1250,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
     this->createSubshellImpulseApproxIncoherentAdjointCrossSectionEvaluator(
                                                     cs_evaluators_it->first,
                                                     cs_evaluators_it->second );
-    
+
     ++subshell_it;
     ++cs_evaluators_it;
   }
@@ -1279,7 +1279,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createSubshellImpulse
                       d_forward_epr_data->getSubshellBindingEnergy( subshell ),
                       occupation_number ) );
 }
-  
+
 // Initialize the adjoint photon union energy grid
 // Note: We will start the with the forward photon energy grid and then
 //       eliminate the grid points before the min photon energy and beyond the
@@ -1359,7 +1359,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
 
     const std::shared_ptr<const MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>& cs_evaluator =
       cs_evaluators[i].second;
-    
+
     // Create an adjoint incoherent grid generator
     AdjointIncoherentGridGenerator<Utility::LinLinLin>
       grid_generator( this->getMaxPhotonEnergy(),
@@ -1404,7 +1404,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::updateAdjointPhotonUn
     std::bind<double>( &Utility::OneDDistribution::evaluate,
                        std::cref( *cs_evaluator ),
                        std::placeholders::_1 );
-  
+
   try{
     this->getDefaultGridGenerator().generateInPlace( union_energy_grid,
                                                      cs_evaluation_wrapper );
@@ -1452,7 +1452,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
 
   std::vector<std::vector<double> >::iterator max_energy_grid_it =
     max_energy_grid.begin();
-  
+
   std::vector<std::vector<double> >::iterator cross_section_it =
     cross_section.begin();
 
@@ -1474,7 +1474,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
                                   *energy_grid_it );
       cross_section_it->insert( cross_section_it->begin(), 0.0 );
     }
-    
+
     ++energy_grid_it;
     ++max_energy_grid_it;
     ++cross_section_it;
@@ -1516,7 +1516,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
 
   std::vector<std::vector<double> >::iterator max_energy_grid_it =
     max_energy_grid.begin();
-  
+
   std::vector<std::vector<double> >::iterator cross_section_it =
     cross_section.begin();
 
@@ -1540,7 +1540,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createCrossSectionOnU
                   *energy_grid_it + cs_evaluator->getSubshellBindingEnergy() );
       cross_section_it->insert( cross_section_it->begin(), 0.0 );
     }
-    
+
     ++energy_grid_it;
     ++max_energy_grid_it;
     ++cross_section_it;
@@ -1594,7 +1594,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
   for( unsigned i = 0u; i < energy_grid.size(); ++i )
   {
     local_max_energy_grid.clear();
-    
+
     std::set<unsigned>::const_iterator subshell = subshells.begin();
 
     while( subshell != subshells.end() )
@@ -1603,7 +1603,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
         local_max_energy_grid.end(),
         data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i].begin(),
         data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell )[i].end() );
-      
+
       ++subshell;
     }
 
@@ -1613,7 +1613,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
     // Remove duplicate grid points from the local max energy grid
     local_max_energy_grid.unique();
 
-    // Assigne the max energy grid at this energy
+    // Assign the max energy grid at this energy
     max_energy_grid[i].assign( local_max_energy_grid.begin(),
                                local_max_energy_grid.end() );
     cross_section[i].resize( max_energy_grid[i].size(), 0 );
@@ -1629,7 +1629,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointImpul
 
       for( unsigned j = 0u; j < max_energy_grid[i].size(); ++j )
         cross_section[i][j] += subshell_cs.evaluate( max_energy_grid[i][j] );
-      
+
       ++subshell;
     }
   }
@@ -1656,7 +1656,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::calculateAdjointPhoto
   // Get the max energy grid and initialize the cross section
   std::vector<std::vector<double> > max_energy_grid;
   std::vector<std::vector<double> > total_cross_section;
-  
+
   if( use_waller_hartree_adjoint_incoherent_cs )
   {
     max_energy_grid =
@@ -2037,7 +2037,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     data_container.setAdjointMomentPreservingElasticWeights(
         d_forward_epr_data->getMomentPreservingElasticWeights() );
 
-    // Calcualte the reduced cutoff elastic cross section ratio
+    // calculate the reduced cutoff elastic cross section ratio
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
@@ -2145,7 +2145,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     this->updateCrossSectionOnUnionEnergyGrid(
         union_energy_grid,
         old_adjoint_bremsstrahlung_union_energy_grid,
-        old_adjoint_bremsstrahlung_cs,  
+        old_adjoint_bremsstrahlung_cs,
         bremsstrahlung_grid_function,
         cross_section,
         threshold );
@@ -2187,7 +2187,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     this->updateCrossSectionOnUnionEnergyGrid(
         union_energy_grid,
         old_adjoint_electroionization_union_energy_grid[*shell],
-        old_adjoint_electroionization_cs[*shell],  
+        old_adjoint_electroionization_cs[*shell],
         ionization_grid_functions[*shell],
         cross_section,
         threshold );
@@ -2339,13 +2339,13 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
   std::advance( energy_gain_start, start_index );
 
   // Make sure the first adjoint energy grid point is above the min electron energy
-  while ( *energy_grid_start - *energy_gain_start < this->getMinElectronEnergy()  )
+  while ( *energy_grid_start - *energy_gain_start < this->getMinElectronEnergy() )
   {
     ++energy_grid_start;
     ++energy_gain_start;
   }
 
-  // Include the energy right below the min electron energy for interpolation purposes 
+  // Include the energy right below the min electron energy for interpolation purposes
   --energy_grid_start;
   --energy_gain_start;
 
@@ -2358,7 +2358,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
     d_forward_epr_data->getAtomicExcitationEnergyLoss().begin();
 
   // Advance the energy_gain_end to the same index as the energy_grid_end
-  std::advance( energy_gain_end, end_index ); 
+  std::advance( energy_gain_end, end_index );
 
   std::vector<double> adjoint_excitation_energy_gain(
     energy_gain_start,
@@ -2371,7 +2371,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
   std::vector<double> adjoint_excitation_cross_section(
     adjoint_excitation_energy_gain.size() );
 
-  // Calcualte the adjoint icoming energy grid from the forward incoming energy grid and energy loss
+  // calculate the adjoint icoming energy grid from the forward incoming energy grid and energy loss
   for ( int i = 0; i < adjoint_excitation_energy_grid.size(); ++i )
   {
     // Evaluate the cross section at the forward energy
@@ -2483,7 +2483,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 // Create the adjoint electroionization subshell grid generator
 /*! \details This function uses the electroionization subshell reaction
  * and the primary (incoming) energy grids of the pdf subshell distributions
- * to construct the adjoint grid generator for the subshell. 
+ * to construct the adjoint grid generator for the subshell.
  */
 void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroionizationSubshellGridGenerator(
     const Teuchos::ArrayRCP<const double>& forward_electron_energy_grid,

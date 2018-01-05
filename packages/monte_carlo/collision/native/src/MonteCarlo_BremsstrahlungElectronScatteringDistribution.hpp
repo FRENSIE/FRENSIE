@@ -30,12 +30,14 @@ public:
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution );
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool bank_secondary_particles = true );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution );
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool bank_secondary_particles = true );
 
   //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
@@ -100,6 +102,9 @@ private:
   // The outgoing angle function pointer
   std::function<double ( const double, const double )>
                                         d_angular_distribution_func;
+
+  // Turn secondary particle on/off
+  bool d_bank_secondary_particles;
 };
 
 } // end MonteCarlo namespace

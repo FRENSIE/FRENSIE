@@ -17,8 +17,10 @@ namespace MonteCarlo{
 
 // Constructor with simple analytical photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution )
-  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool bank_secondary_particles )
+  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
+    d_bank_secondary_particles( bank_secondary_particles )
 {
   // Make sure the array is valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
@@ -34,11 +36,13 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 // Constructor with detailed 2BS photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution )
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool bank_secondary_particles )
   : d_atomic_number( atomic_number ),
-    d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
+    d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
+    d_bank_secondary_particles( bank_secondary_particles )
 {
-  // Make sure the arraies are valid
+  // Make sure the arrays are valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.use_count() > 0 );
 
   // Use detailed photon angular distribution
@@ -119,7 +123,7 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy = 
+  photon_energy =
     d_bremsstrahlung_scattering_distribution->sampleSecondaryConditional(
       incoming_energy,
       [](double energy){return 1e-7;},
@@ -157,19 +161,23 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   double photon_energy, photon_angle_cosine;
   this->sample( electron.getEnergy(), photon_energy, photon_angle_cosine );
 
-  // Create new photon
-  Teuchos::RCP<PhotonState> bremsstrahlung_photon(
-                           new PhotonState( electron, true, true ) );
+  // Check if bremsstrahlung photon will be banked
+  if ( d_bank_secondary_particles )
+  {
+    // Create new photon
+    Teuchos::RCP<PhotonState> bremsstrahlung_photon(
+                            new PhotonState( electron, true, true ) );
 
-  // Set photon energy
-  bremsstrahlung_photon->setEnergy( photon_energy );
+    // Set photon energy
+    bremsstrahlung_photon->setEnergy( photon_energy );
 
-  // Set the photon outgoing angle cosine
-  bremsstrahlung_photon->rotateDirection( photon_angle_cosine,
-                                          sampleAzimuthalAngle() );
+    // Set the photon outgoing angle cosine
+    bremsstrahlung_photon->rotateDirection( photon_angle_cosine,
+                                            sampleAzimuthalAngle() );
 
-  // Bank the photon
-  bank.push( bremsstrahlung_photon );
+    // Bank the photon
+    bank.push( bremsstrahlung_photon );
+  }
 
   // Set the new electron energy (if zero then set as gone)
   double outgoing_energy = electron.getEnergy() - photon_energy;

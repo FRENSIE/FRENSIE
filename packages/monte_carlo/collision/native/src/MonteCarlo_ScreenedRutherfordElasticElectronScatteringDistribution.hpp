@@ -37,7 +37,8 @@ public:
 
   //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
-    const int atomic_number );
+    const int atomic_number,
+    const bool seltzer_modification_on = true );
 
   //! Destructor
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()

@@ -125,18 +125,18 @@ class ScreenedRutherfordElasticElectronScatteringDistributionTestCase(unittest.T
                                 3.9999999926322096,
                                 delta=1e-12*3.9999999926322096 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 1.0),
-                                9.9355053047417485e+17,
-                                delta=1e-12*9.9355053047417485e+17 )
+                                9.9355052957473690e+17,
+                                delta=1e-12*9.9355052957473690e+17 )
         energy = 1.0e-4
         self.assertAlmostEqual( self.dist.evaluate(energy, 0.999999),
                                 9.9999999999999944e-01,
                                 delta=1e-12*9.9999999999999944e-01 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 0.9999995),
-                                1.0000101255012976,
-                                delta=1e-12*1.0000101255012976 )
+                                1.0000070135424843,
+                                delta=1e-12*1.0000070135424843 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 1.0),
-                                1.0000202511563834,
-                                delta=1e-12*1.0000202511563834 )
+                                1.0000140271587523,
+                                delta=1e-12*1.0000140271587523 )
 
     def testEvaluatePDF(self):
         "*Test MonteCarlo.Collision.createScreenedRutherfordElasticDistribution evaluatePDF method"
@@ -148,18 +148,18 @@ class ScreenedRutherfordElasticElectronScatteringDistributionTestCase(unittest.T
                                 3.9999999926322096,
                                 delta=1e-12*3.9999999926322096 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1.0),
-                                9.9355053047417485e+17,
-                                delta=1e-12*9.9355053047417485e+17 )
+                                9.9355052957473690e+17,
+                                delta=1e-12*9.9355052957473690e+17 )
         energy = 1.0e-4
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.999999),
                                 9.9999999999999944e-01,
                                 delta=1e-12*9.9999999999999944e-01 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 0.9999995),
-                                1.0000101255012976,
-                                delta=1e-12*1.0000101255012976 )
+                                1.0000070135424843,
+                                delta=1e-12*1.0000070135424843 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1.0),
-                                1.0000202511563834,
-                                delta=1e-12*1.0000202511563834 )
+                                1.0000140271587523,
+                                delta=1e-12*1.0000140271587523 )
 
     def testEvaluateCDF(self):
         "*Test MonteCarlo.Collision.createScreenedRutherfordElasticDistribution evaluateCDF method"
@@ -178,8 +178,8 @@ class ScreenedRutherfordElasticElectronScatteringDistributionTestCase(unittest.T
                                 1.00000000002876,
                                 delta=1e-12*1.0 )
         self.assertAlmostEqual( self.dist.evaluateCDF(energy, 0.9999995),
-                                5.0000253132778305e-01,
-                                delta=1e-12*5.0000253132778305e-01 )
+                                5.0000175334141328e-01,
+                                delta=1e-12*5.0000175334141328e-01 )
         self.assertAlmostEqual( self.dist.evaluateCDF(energy, 1.0),
                                 0.0,
                                 delta=1e-12 )
@@ -499,7 +499,7 @@ if __name__ == "__main__":
 
     # Exit
     sys.exit(errs_plus_fails)
-    
+
 #-----------------------------------------------------------------------------#
 # end tstMonteCarlo.Collision.ElectronScatteringACEDistribution.py
 #-----------------------------------------------------------------------------#

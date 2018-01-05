@@ -90,7 +90,9 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
-        binding_energies[shell_index] ) );
+        binding_energies[shell_index],
+        true,
+        false ) );
 }
 
 // Create a electroionization subshell distribution
@@ -120,7 +122,9 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
   electroionization_subshell_distribution.reset(
     new ElectroionizationSubshellElectronScatteringDistribution(
         subshell_distribution,
-        binding_energy ) );
+        binding_energy,
+        true,
+        false ) );
 }
 
 // Create the scattering function

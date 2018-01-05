@@ -21,7 +21,7 @@ ElectroionizationSubshellAdjointElectronScatteringDistribution::Electroionizatio
   : d_ionization_subshell_dist( electroionization_subshell_distribution ),
     d_binding_energy( binding_energy )
 {
-  // Make sure the arraies are valid
+  // Make sure the arrays are valid
   testPrecondition( d_ionization_subshell_dist.use_count() > 0 );
   testPrecondition( binding_energy > 0.0 );
 }

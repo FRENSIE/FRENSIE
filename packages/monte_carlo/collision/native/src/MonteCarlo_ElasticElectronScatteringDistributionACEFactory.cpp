@@ -44,7 +44,8 @@ void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordEl
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                atomic_number ) );
+                atomic_number,
+                false ) );
 }
 
 // Create the scattering function
