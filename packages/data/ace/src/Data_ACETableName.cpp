@@ -30,6 +30,11 @@ namespace Data{
 ACETableName::ACETableName()
 { /* ... */ }
 
+// C-string constructor
+ACETableName::ACETableName( const char* raw_ace_table_name )
+  : ACETableName( std::string( raw_ace_table_name ) )
+{ /* ... */ }
+
 // String constructor
 ACETableName::ACETableName( const std::string& raw_ace_table_name )
   : d_raw_table_name( raw_ace_table_name ),
@@ -112,19 +117,19 @@ bool ACETableName::operator!=( const ACETableName& that ) const
 }
 
 // Return the zaid
-const Data::ZAID& ACETableName::zaid()
+const Data::ZAID& ACETableName::zaid() const
 {
   return d_table_name_zaid;
 }
 
 // Return the table version
-size_t ACETableName::version()
+size_t ACETableName::version() const
 {
   return d_table_name_version;
 }
 
 // Return the type key
-char ACETableName::typeKey()
+char ACETableName::typeKey() const
 {
   return d_table_name_type_key;
 }

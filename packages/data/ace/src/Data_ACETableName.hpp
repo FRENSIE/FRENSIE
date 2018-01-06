@@ -26,6 +26,9 @@ public:
   //! Default constructor
   ACETableName();
 
+  //! C-string constructor
+  ACETableName( const char* raw_ace_table_name );
+
   //! String constructor
   ACETableName( const std::string& raw_ace_table_name );
 
@@ -51,13 +54,13 @@ public:
   bool operator!=( const ACETableName& that ) const;
 
   //! Return the zaid
-  const Data::ZAID& zaid();
+  const Data::ZAID& zaid() const;
 
   //! Return the table version
-  size_t version();
+  size_t version() const;
 
   //! Return the type key
-  char typeKey();
+  char typeKey() const;
 
   //! Return the raw table name
   const std::string& toRaw() const;

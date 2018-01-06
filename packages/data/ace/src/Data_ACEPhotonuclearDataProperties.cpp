@@ -36,56 +36,31 @@ ACEPhotonuclearDataProperties::ACEPhotonuclearDataProperties(
                                       const double atomic_weight,
                                       const boost::filesystem::path& file_path,
                                       const size_t file_start_line,
-                                      const std::string& file_table_name )
-  : d_zaid(),
-    d_atomic_weight( atomic_weight ),
+                                      const ACETableName& file_table_name )
+  : d_atomic_weight( atomic_weight ),
     d_file_path( file_path ),
     d_file_start_line( file_start_line ),
-    d_file_version( 0 ),
     d_file_table_name( file_table_name )
 {
   // Make sure that the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
-  // Make sure that the table name is valid
-  testPrecondition( !file_table_name.empty() );
 
   // Convert to the preferred path format
   d_file_path.make_preferred();
 
-  // Extract the raw zaid and file version from the table name
-  std::vector<std::string> table_name_components;
-
-  boost::split( table_name_components,
-                file_table_name,
-                boost::is_any_of( "." ) );
-
-  TEST_FOR_EXCEPTION( table_name_components.size() != 2,
+  TEST_FOR_EXCEPTION( d_file_table_name.typeKey() != 'u',
                       std::runtime_error,
-                      "The table name must have a format of \"zaid.##u\"!" );
-
-  d_zaid = Data::ZAID( Utility::fromString<unsigned>( table_name_components.front() ) );
-
-  TEST_FOR_EXCEPTION( table_name_components.back().find( "u" ) >
-                      table_name_components.back().size(),
-                      std::runtime_error,
-                      "The table name does not correspond to a photonuclear "
-                      "table!" );
-
-  boost::algorithm::erase_all( table_name_components.back(), "u" );
-
-  d_file_version = Utility::fromString<size_t>( table_name_components.back() );
+                      "The photonuclear data table type is not supported!" );
 }
 
 // Copy constructor
 ACEPhotonuclearDataProperties::ACEPhotonuclearDataProperties(
                                    const ACEPhotonuclearDataProperties& other )
-  : d_zaid( other.d_zaid ),
-    d_atomic_weight( other.d_atomic_weight ),
+  : d_atomic_weight( other.d_atomic_weight ),
     d_file_path( other.d_file_path ),
     d_file_start_line( other.d_file_start_line ),
-    d_file_version( other.d_file_version ),
     d_file_table_name( other.d_file_table_name )
 {
   // Convert to the preferred path format
@@ -95,19 +70,19 @@ ACEPhotonuclearDataProperties::ACEPhotonuclearDataProperties(
 // Get the atom that the file specifies data for
 AtomType ACEPhotonuclearDataProperties::atom() const 
 {
-  return d_zaid.atom();
+  return d_file_table_name.zaid().atom();
 }
 
 // Get the atomic mass number that the file specifies data for
 unsigned ACEPhotonuclearDataProperties::atomicMassNumber() const 
 {
-  return d_zaid.atomicMassNumber();
+  return d_file_table_name.zaid().atomicMassNumber();
 }
 
 // Get the isomer number that the file specifies data for
 unsigned ACEPhotonuclearDataProperties::isomerNumber() const 
 {
-  return d_zaid.isomerNumber();
+  return d_file_table_name.zaid().isomerNumber();
 }
 
 // Get the atomic weight of the nuclide that the file specifies data for
@@ -137,13 +112,13 @@ size_t ACEPhotonuclearDataProperties::fileStartLine() const
 // Get the nuclear data file version
 size_t ACEPhotonuclearDataProperties::fileVersion() const 
 {
-  return d_file_version;
+  return d_file_table_name.version();
 }
 
 // Get the nuclear data file table name
 std::string ACEPhotonuclearDataProperties::tableName() const 
 {
-  return d_file_table_name;
+  return d_file_table_name.toRaw();
 }
 
 // Clone the properties
@@ -160,14 +135,12 @@ void ACEPhotonuclearDataProperties::save( Archive& ar, const unsigned version ) 
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotonuclearDataProperties );
 
   // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaid );
   ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
 
   std::string raw_path = d_file_path.string();
   
   ar & BOOST_SERIALIZATION_NVP( raw_path );
   ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
   ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
 }
 
@@ -179,7 +152,6 @@ void ACEPhotonuclearDataProperties::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotonuclearDataProperties );
 
   // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaid );
   ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
 
   std::string raw_path;  
@@ -189,7 +161,6 @@ void ACEPhotonuclearDataProperties::load( Archive& ar, const unsigned version )
   d_file_path.make_preferred();
   
   ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
-  ar & BOOST_SERIALIZATION_NVP( d_file_version );
   ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
 }
 

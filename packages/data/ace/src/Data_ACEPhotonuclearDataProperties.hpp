@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Data_PhotonuclearDataProperties.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
-#include "Data_ZAID.hpp"
+#include "Data_ACETableName.hpp"
 
 namespace Data{
 
@@ -26,7 +26,7 @@ public:
   ACEPhotonuclearDataProperties( const double atomic_weight,
                                  const boost::filesystem::path& file_path,
                                  const size_t file_start_line,
-                                 const std::string& file_table_name );
+                                 const ACETableName& file_table_name );
 
   //! Destructor
   ~ACEPhotonuclearDataProperties()
@@ -86,9 +86,6 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The ZAID of the nuclide that the file specifies data for
-  Data::ZAID d_zaid;
-
   // The atomic weight of the nuclide that the file specifies data for
   double d_atomic_weight;
 
@@ -98,11 +95,8 @@ private:
   // The file start line
   size_t d_file_start_line;
 
-  // The file version
-  size_t d_file_version;
-
   // The file table name
-  std::string d_file_table_name;
+  ACETableName d_file_table_name;
 };
   
 } // end Data namespace
