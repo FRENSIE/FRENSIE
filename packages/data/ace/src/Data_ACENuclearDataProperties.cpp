@@ -71,22 +71,10 @@ ACENuclearDataProperties::ACENuclearDataProperties(
   d_file_path.make_preferred();
 }
 
-// Get the atom that the file specifies data for
-AtomType ACENuclearDataProperties::atom() const
+// Get the ZAID that the file specifies data for
+Data::ZAID ACENuclearDataProperties::zaid() const
 {
-  return d_file_table_name.zaid().atom();
-}
-
-// Get the atomic mass number that the file specifies data for
-unsigned ACENuclearDataProperties::atomicMassNumber() const
-{
-  return d_file_table_name.zaid().atomicMassNumber();
-}
-
-// Get the isomer number that the file specifies data for
-unsigned ACENuclearDataProperties::isomerNumber() const
-{
-  return d_file_table_name.zaid().isomerNumber();
+  return d_file_table_name.zaid();
 }
 
 // Get the atomic weight ratio of the nuclide that the file specifies data for
@@ -120,7 +108,7 @@ size_t ACENuclearDataProperties::fileStartLine() const
 }
 
 //! Get the nuclear data file version
-size_t ACENuclearDataProperties::fileVersion() const
+unsigned ACENuclearDataProperties::fileVersion() const
 {
   return d_file_table_name.version();
 }

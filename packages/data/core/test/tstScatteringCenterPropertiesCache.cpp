@@ -48,31 +48,17 @@ public:
   bool isNuclide() const override
   { return false; }
 
-  /*! \brief Check if the scattering center is a mixture, compound or lattice
-   * (or a single nuclide within one of these).
-   */
-  bool isMixture() const override
-  { return false; }
-
   //! Get the name of the properties
   std::string name() const override
   { return d_name; }
 
-  //! Get the atomic number(s)
-  std::vector<unsigned> atomicNumbers() const override
-  { return {1}; }
+  //! Get the zaid
+  Data::ZAID zaid() const override
+  { return Data::ZAID( 1000 ); }
 
-  //! Get the atomic mass number(s)
-  std::vector<unsigned> atomicMassNumbers() const override
-  { return {2}; }
-
-  //! Get the isomer number(s)
-  std::vector<unsigned> isomerNumbers() const override
-  { return {0}; }
-
-  //! Get the atomic weight(s)
-  std::vector<double> atomicWeights() const override
-  { return {2.0}; }
+  //! Get the atomic weight
+  double atomicWeight() const override
+  { return 1.0; }
 
   //! Check if there is nuclear data
   bool nuclearDataAvailable() const override
@@ -82,12 +68,28 @@ public:
   const Data::NuclearDataProperties* getNuclearDataProperties() const override
   { return NULL; }
 
+  //! Check if there is any thermal nuclear data
+  bool thermalNuclearDataAvailable() const override
+  { return false; }
+
+  //! Get the thermal nuclear data properties
+  const Data::ThermalNuclearDataProperties* getThermalNuclearDataProperties() const override
+  { return NULL; }
+
   //! Check if there is adjoint nuclear data
   bool adjointNuclearDataAvailable() const override
   { return false; }
 
   //! Get the adjoint nuclear data
   const Data::AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override
+  { return NULL; }
+
+  //! Check if there is any adjoint thermal nuclear data
+  bool adjointThermalNuclearDataAvailable() const override
+  { return false; }
+
+  //! Get the adjoint thermal nuclear data
+  const Data::AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties() const override
   { return NULL; }
 
   //! Check if there is photonuclear data

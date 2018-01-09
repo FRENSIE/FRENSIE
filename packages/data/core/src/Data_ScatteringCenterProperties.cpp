@@ -16,16 +16,10 @@ namespace Data{
 ScatteringCenterProperties::ScatteringCenterProperties()
 { /* ... */ }
 
-// Get the atomic weight ratio(s) (atomic weight/neutron weight)
-std::vector<double> ScatteringCenterProperties::atomicWeightRatios() const
+// Get the atomic weight ratio (atomic weight/neutron weight)
+double ScatteringCenterProperties::atomicWeightRatio() const
 {
-  std::vector<double> atomic_weight_ratios = this->atomicWeights();
-  
-  for( size_t i = 0; i < atomic_weight_ratios.size(); ++i )
-  {
-    atomic_weight_ratios[i] /=
-      Utility::PhysicalConstants::neutron_rest_mass_amu;
-  }
+  return this->atomicWeight()/Utility::PhysicalConstants::neutron_rest_mass_amu;
 }
 
 // Deep clone the properties

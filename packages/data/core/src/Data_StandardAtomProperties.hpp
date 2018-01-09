@@ -14,10 +14,6 @@
 
 // FRENSIE Includes
 #include "Data_ScatteringCenterProperties.hpp"
-#include "Data_PhotoatomicDataProperties.hpp"
-#include "Data_AdjointPhotoatomicDataProperties.hpp"
-#include "Data_ElectroatomicDataProperties.hpp"
-#include "Data_AdjointElectroatomicDataProperties.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Data{
@@ -28,30 +24,11 @@ class StandardAtomProperties : public ScatteringCenterProperties
 
 public:
 
-  //! Partial constructor (forward data only)
-  StandardAtomProperties(
-                      const std::string& name,
-                      const unsigned atomic_number,
-                      const double atomic_weight,
-                      const std::shared_ptr<const PhotoatomicDataProperties>&
-                      photoatomic_data_properties,
-                      const std::shared_ptr<const ElectroatomicDataProperties>&
-                      electroatomic_data_properties );
-
-  //! Complete constructor (forward and adjoint data)
-  StandardAtomProperties(
-               const std::string& name,
-               const unsigned atomic_number,
-               const double atomic_weight,
-               const std::shared_ptr<const PhotoatomicDataProperties>&
-               photoatomic_data_properties,
-               const std::shared_ptr<const AdjointPhotoatomicDataProperties>&
-               adjoint_photoatomic_data_properties,
-               const std::shared_ptr<const ElectroatomicDataProperties>&
-               electroatomic_data_properties,
-               const std::shared_ptr<const AdjointElectroatomicDataProperties>&
-               adjoint_electroatomic_data_properties );
-
+  //! Constructor
+  StandardAtomProperties( const std::string& name,
+                          const ZAID& zaid,
+                          const double atomic_weight );
+                         
   //! Destructor
   ~StandardAtomProperties()
   { /* ... */ }
@@ -60,49 +37,52 @@ public:
   bool isAtom() const override;
 
   //! Check if the scattering center is a nuclide
-  bool isNuclide() const override;
-
-  //! Check if the scattering center is a mixture (or lattice)
-  bool isMixture() const override;
+  virtual bool isNuclide() const override;
 
   //! Get the name of the properties
   std::string name() const override;
 
-  //! Get the atomic number(s)
-  std::vector<unsigned> atomicNumbers() const override;
+  //! Get the zaid
+  Data::ZAID zaid() const override;
 
-  //! Get the atomic mass number(s)
-  std::vector<unsigned> atomicMassNumbers() const override;
-
-  //! Get the isomer number(s)
-  std::vector<unsigned> isomerNumbers() const override;
-
-  //! Get the atomic weight(s)
-  std::vector<double> atomicWeights() const override;
+  //! Get the atomic weight
+  virtual double atomicWeight() const override;
 
   //! Check if there is nuclear data
-  bool nuclearDataAvailable() const override;
+  virtual bool nuclearDataAvailable() const override;
 
   //! Get the nuclear data properties
-  const NuclearDataProperties* getNuclearDataProperties() const override;
+  virtual const NuclearDataProperties* getNuclearDataProperties() const override;
+
+  //! Check if there is any thermal nuclear data
+  virtual bool thermalNuclearDataAvailable() const override;
+
+  //! Get the thermal nuclear data properties
+  virtual const ThermalNuclearDataProperties* getThermalNuclearDataProperties() const override;
 
   //! Check if there is adjoint nuclear data
-  bool adjointNuclearDataAvailable() const override;
+  virtual bool adjointNuclearDataAvailable() const override;
 
-  //! Get the adjoint nuclear data
-  const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override;
+  //! Get the adjoint nuclear data properties
+  virtual const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override;
+
+  //! Check if there is any adjoint thermal nuclear data
+  virtual bool adjointThermalNuclearDataAvailable() const override;
+
+  //! Get the adjoint thermal nuclear data
+  virtual const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties() const override;
 
   //! Check if there is photonuclear data
-  bool photonuclearDataAvailable() const override;
+  virtual bool photonuclearDataAvailable() const override;
 
   //! Get the photonuclear data properties
-  const PhotonuclearDataProperties* getPhotonuclearDataProperties() const override;
+  virtual const PhotonuclearDataProperties* getPhotonuclearDataProperties() const override;
 
   //! Check if there is adjoint photonuclear data
-  bool adjointPhotonuclearDataAvailable() const override;
+  virtual bool adjointPhotonuclearDataAvailable() const override;
 
   //! Get the adjoint photonuclear data
-  const AdjointPhotonuclearDataProperties* getAdjointPhotonuclearDataProperties() const override;
+  virtual const AdjointPhotonuclearDataProperties* getAdjointPhotonuclearDataProperties() const override;
 
   //! Check if there is photoatomic data
   bool photoatomicDataAvailable() const override;
@@ -110,11 +90,17 @@ public:
   //! Get the photoatomic data
   const PhotoatomicDataProperties* getPhotoatomicDataProperties() const override;
 
+  //! Set the photoatomic data
+  void setPhotoatomicDataProperties( const std::shared_ptr<const PhotoatomicDataProperties>& properties );
+
   //! Check if there is adjoint photoatomic data
   bool adjointPhotoatomicDataAvailable() const override;
 
   //! Get the adjoint photoatomic data properties
   const AdjointPhotoatomicDataProperties* getAdjointPhotoatomicDataProperties() const override;
+
+  //! Set the adjoint photoatomic data properties
+  void setAdjointPhotoatomicDataProperties( const std::shared_ptr<const AdjointPhotoatomicDataProperties>& properties );
 
   //! Check if there is electroatomic data
   bool electroatomicDataAvailable() const override;
@@ -122,22 +108,41 @@ public:
   //! Get the electroatomic data properties
   const ElectroatomicDataProperties* getElectroatomicDataProperties() const override;
 
+  //! Set the electroatomic data properties
+  void setElectroatomicDataProperties( const std::shared_ptr<const ElectroatomicDataProperties>& properties );
+
   //! Check if there is adjoint electroatomic data
   bool adjointElectroatomicDataAvailable() const override;
 
   //! Get the adjoint electroatomic data properties
   const AdjointElectroatomicDataProperties* getAdjointElectroatomicDataProperties() const override;
 
+  //! Set the adjoint electroatomic data properties
+  void setAdjointElectroatomicDataProperties( const std::shared_ptr<const AdjointElectroatomicDataProperties>& properties );
+
   //! Clone the properties
-  StandardAtomProperties* clone() const override;
+  virtual StandardAtomProperties* clone() const override;
 
   //! Deep clone the properties
-  StandardAtomProperties* deepClone() const override;
+  virtual StandardAtomProperties* deepClone() const override;
 
-private:
+protected:
 
   // Default constructor
   StandardAtomProperties();
+
+  // Copy constructor
+  StandardAtomProperties( const StandardAtomProperties& other );
+
+  // Clone the stored properties
+  static void cloneStoredAtomProperties(
+                             const StandardAtomProperties& original_properties,
+                             StandardAtomProperties& new_properties );
+
+private:
+
+  // Assignment operator
+  StandardAtomProperties& operator=( const StandardAtomProperties& other );
 
   // Save the properties to an archive
   template<typename Archive>
@@ -155,9 +160,9 @@ private:
   // The properties name
   std::string d_name;
 
-  // The atomic number
-  unsigned d_atomic_number;
-
+  // The zaid
+  Data::ZAID d_zaid;
+  
   // The atomic weight
   double d_atomic_weight;
 

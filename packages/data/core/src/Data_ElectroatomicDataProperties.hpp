@@ -59,7 +59,7 @@ public:
   virtual size_t fileStartLine() const = 0;
 
   //! Get the photoatomic data file version
-  virtual size_t fileVersion() const = 0;
+  virtual unsigned fileVersion() const = 0;
 
   //! Get the electroatomic table name
   virtual std::string tableName() const = 0;

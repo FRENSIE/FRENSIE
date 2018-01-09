@@ -32,14 +32,8 @@ public:
   ~ACEPhotonuclearDataProperties()
   { /* ... */ }
 
-  //! Get the atom that the file specifies data for
-  AtomType atom() const override;
-
-  //! Get the atomic mass number that the file specifies data for
-  unsigned atomicMassNumber() const override;
-
-  //! Get the isomer number that the file specifies data for
-  unsigned isomerNumber() const override;
+  //! Get the ZAID that the file specifies data for
+  Data::ZAID zaid() const override;
 
   //! Get the atomic weight of the nuclide that the file specifies data for
   double atomicWeight() const override;
@@ -54,7 +48,7 @@ public:
   size_t fileStartLine() const override;
 
   //! Get the nuclear data file version
-  size_t fileVersion() const override;
+  unsigned fileVersion() const override;
 
   //! Get the nuclear data file table name
   std::string tableName() const override;

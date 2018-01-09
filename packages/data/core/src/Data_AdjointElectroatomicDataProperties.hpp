@@ -17,6 +17,7 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
+#include "Data_AtomType.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -39,6 +40,13 @@ public:
   virtual ~AdjointElectroatomicDataProperties()
   { /* ... */ }
 
+  //! Get the atom that the file specifies data for
+  virtual AtomType atom() const = 0;
+
+  //! Get the atomic number that the file specifies data for
+  virtual unsigned atomicNumber() const
+  { return this->atom(); }
+
   //! Get the electroatomic data file type
   virtual FileType fileType() const = 0;
 
@@ -47,6 +55,9 @@ public:
 
   //! Get the electroatomic data file start line
   virtual size_t fileStartLine() const = 0;
+
+  //! Get the nuclear data file version
+  virtual unsigned fileVersion() const = 0;
 
   //! Get the electroatomic table name
   virtual std::string tableName() const = 0;

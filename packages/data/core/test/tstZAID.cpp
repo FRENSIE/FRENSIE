@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
+#include "Utility_Map.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "ArchiveTestHelpers.hpp"
 
@@ -220,6 +221,42 @@ FRENSIE_UNIT_TEST( ZAID, assignment_operator )
   FRENSIE_CHECK_EQUAL( h1_zaid_copy.toRaw(), 1001 );
   FRENSIE_CHECK_EQUAL( (unsigned)h1_zaid_copy, 1001 );
   FRENSIE_CHECK_EQUAL( h1_zaid,  h1_zaid_copy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a ZAID can be used as a map key
+FRENSIE_UNIT_TEST( ZAID, map_key )
+{
+  std::map<Data::ZAID,Data::AtomType> zaid_map;
+
+  zaid_map[Data::ZAID(1001)] = Data::H_ATOM;
+  zaid_map[Data::ZAID(1002)] = Data::H_ATOM;
+  zaid_map[Data::ZAID(92238)] = Data::U_ATOM;
+
+  FRENSIE_CHECK( zaid_map.count( Data::ZAID(1001) ) );
+  FRENSIE_CHECK( zaid_map.count( Data::ZAID(1002) ) );
+  FRENSIE_CHECK( !zaid_map.count( Data::ZAID(1000) ) );
+  FRENSIE_CHECK( !zaid_map.count( Data::ZAID(1003) ) );
+  FRENSIE_CHECK( !zaid_map.count( Data::ZAID(2003) ) );
+  FRENSIE_CHECK( zaid_map.count( Data::ZAID(92238) ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a ZAID can be used as an unordered_map key
+FRENSIE_UNIT_TEST( ZAID, unordered_map_key )
+{
+  std::unordered_map<Data::ZAID,Data::AtomType> zaid_map;
+
+  zaid_map[Data::ZAID(1001)] = Data::H_ATOM;
+  zaid_map[Data::ZAID(1002)] = Data::H_ATOM;
+  zaid_map[Data::ZAID(92238)] = Data::U_ATOM;
+
+  FRENSIE_CHECK( zaid_map.count( Data::ZAID(1001) ) );
+  FRENSIE_CHECK( zaid_map.count( Data::ZAID(1002) ) );
+  FRENSIE_CHECK( !zaid_map.count( Data::ZAID(1000) ) );
+  FRENSIE_CHECK( !zaid_map.count( Data::ZAID(1003) ) );
+  FRENSIE_CHECK( !zaid_map.count( Data::ZAID(2003) ) );
+  FRENSIE_CHECK( zaid_map.count( Data::ZAID(92238) ) );
 }
 
 //---------------------------------------------------------------------------//

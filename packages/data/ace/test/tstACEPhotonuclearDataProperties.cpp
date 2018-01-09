@@ -36,24 +36,12 @@ std::unique_ptr<const Data::ACEPhotonuclearDataProperties> properties;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the atom can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atom )
+// Check that the zaid can be returned
+FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, zaid )
 {
-  FRENSIE_CHECK_EQUAL( properties->atom(), Data::H_ATOM );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the atomic mass number can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atomicMassNumber )
-{
-  FRENSIE_CHECK_EQUAL( properties->atomicMassNumber(), 1 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the isomer number can be returned
-FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, isomerNumber )
-{
-  FRENSIE_CHECK_EQUAL( properties->isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( properties->zaid().atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( properties->zaid().atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( properties->zaid().isomerNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -156,11 +144,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
     local_properties( 0.1, "dummy", 100000, "1000.00u" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
-  FRENSIE_CHECK_EQUAL( local_properties.atom(), Data::He_ATOM );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicNumber(), 2 );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicMassNumber(), 4 );
-  FRENSIE_CHECK_EQUAL( local_properties.isomerNumber(), 0 );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicWeight(), 4.0 );
+  FRENSIE_CHECK_EQUAL( local_properties.zaid(), Data::ZAID( 2004 ) );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(),
                        "photonuclear_data/he_data.txt" );
   FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 2 );
@@ -171,10 +155,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
     shared_properties;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
-  FRENSIE_CHECK_EQUAL( shared_properties->atom(), Data::H_ATOM );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicMassNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( shared_properties->isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( shared_properties->zaid(), Data::ZAID( 1001 ) );
   FRENSIE_CHECK_EQUAL( shared_properties->atomicWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(),
                        "photonuclear_data/h_data.txt" );

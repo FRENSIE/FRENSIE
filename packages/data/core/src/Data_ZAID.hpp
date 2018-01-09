@@ -9,10 +9,14 @@
 #ifndef DATA_ZAID_HPP
 #define DATA_ZAID_HPP
 
+// Std Lib Includes
+#include <functional>
+
 // FRENSIE Includes
 #include "Data_AtomType.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_TypeTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
@@ -49,6 +53,9 @@ public:
 
   //! Inequality operator
   bool operator!=( const ZAID& that );
+
+  //! Less than operator
+  bool operator<( const ZAID& that );
 
   //! Return the AtomType
   AtomType atom() const;
@@ -109,6 +116,13 @@ struct ToStringTraits<Data::ZAID>
   //! Place the Data::ZAID in a stream
   static void toStream( std::ostream& os, const Data::ZAID obj );
 };
+
+/*! Specialization of Utility::IsHashable for Data::ZAID
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<Data::ZAID> : public std::true_type
+{ /* ... */ };
   
 } // end Utility namespace
 
@@ -121,6 +135,11 @@ inline std::ostream& operator<<( std::ostream& os, const Data::ZAID obj )
   
   return os;
 }
+
+//! Specialization of std::hash for Data::ZAID
+template<>
+struct hash<Data::ZAID> : public hash<unsigned>
+{ /* ... */ };
 
 } // end std namespace
 

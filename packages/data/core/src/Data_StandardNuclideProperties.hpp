@@ -13,129 +13,34 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "Data_ScatteringCenterProperties.hpp"
-#include "Data_NuclearDataProperties.hpp"
-#include "Data_AdjointNuclearDataProperties.hpp"
-#include "Data_PhotonuclearDataProperties.hpp"
-#include "Data_AdjointPhotonuclearDataProperties.hpp"
-#include "Data_PhotoatomicDataProperties.hpp"
-#include "Data_AdjointPhotoatomicDataProperties.hpp"
-#include "Data_ElectroatomicDataProperties.hpp"
-#include "Data_AdjointElectroatomicDataProperties.hpp"
+#include "Data_StandardAtomProperties.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Data{
 
 //! The standard nuclide properties
-class StandardNuclideProperties : public ScatteringCenterProperties
+class StandardNuclideProperties : public StandardAtomProperties
 {
 
 public:
 
-  //! Partial constructor (forward data only, no photonuclear data)
-  StandardNuclideProperties(
-                      const std::string& name,
-                      const unsigned atomic_number,
-                      const unsigned atomic_mass_number,
-                      const unsigned isomer_number,
-                      const double atomic_weight_ratio,
-                      const std::shared_ptr<const NuclearDataProperties>&
-                      nuclear_data_properties,
-                      const std::shared_ptr<const PhotoatomicDataProperties>&
-                      photoatomic_data_properties,
-                      const std::shared_ptr<const ElectroatomicDataProperties>&
-                      electroatomic_data_properties );
-
-  //! Partial constructor (forward data only)
-  StandardNuclideProperties(
-                      const std::string& name,
-                      const unsigned atomic_number,
-                      const unsigned atomic_mass_number,
-                      const unsigned isomer_number,
-                      const double atomic_weight_ratio,
-                      const std::shared_ptr<const NuclearDataProperties>&
-                      nuclear_data_properties,
-                      const std::shared_ptr<const PhotonuclearDataProperties>&
-                      photonuclear_data_properties,
-                      const std::shared_ptr<const PhotoatomicDataProperties>&
-                      photoatomic_data_properties,
-                      const std::shared_ptr<const ElectroatomicDataProperties>&
-                      electroatomic_data_properties );  
-
-  //! Complete constructor (forward and adjoint data, no photonuclear data)
-  StandardNuclideProperties(
-               const std::string& name,
-               const unsigned atomic_number,
-               const unsigned atomic_mass_number,
-               const unsigned isomer_number,
-               const double atomic_weight_ratio,
-               const std::shared_ptr<const NuclearDataProperties>&
-               nuclear_data_properties,
-               const std::shared_ptr<const AdjointNuclearDataProperties>&
-               adjoint_nuclear_data_properties,
-               const std::shared_ptr<const PhotoatomicDataProperties>&
-               photoatomic_data_properties,
-               const std::shared_ptr<const AdjointPhotoatomicDataProperties>&
-               adjoint_photoatomic_data_properties,
-               const std::shared_ptr<const ElectroatomicDataProperties>&
-               electroatomic_data_properties,
-               const std::shared_ptr<const AdjointElectroatomicDataProperties>&
-               adjoint_electroatomic_data_properties );
-
-  //! Complete constructor (forward and adjoint data)
-  StandardNuclideProperties(
-               const std::string& name,
-               const unsigned atomic_number,
-               const unsigned atomic_mass_number,
-               const unsigned isomer_number,
-               const double atomic_weight_ratio,
-               const std::shared_ptr<const NuclearDataProperties>&
-               nuclear_data_properties,
-               const std::shared_ptr<const AdjointNuclearDataProperties>&
-               adjoint_nuclear_data_properties,
-               const std::shared_ptr<const PhotonuclearDataProperties>&
-               photonuclear_data_properties,
-               const std::shared_ptr<const AdjointPhotonuclearDataProperties>&
-               adjoint_photonuclear_data_properties,
-               const std::shared_ptr<const PhotoatomicDataProperties>&
-               photoatomic_data_properties,
-               const std::shared_ptr<const AdjointPhotoatomicDataProperties>&
-               adjoint_photoatomic_data_properties,
-               const std::shared_ptr<const ElectroatomicDataProperties>&
-               electroatomic_data_properties,
-               const std::shared_ptr<const AdjointElectroatomicDataProperties>&
-               adjoint_electroatomic_data_properties );
-
+  //! Constructor
+  StandardNuclideProperties( const std::string& name,
+                             const ZAID& zaid,
+                             const double atomic_weight_ratio );
+  
   //! Destructor
   ~StandardNuclideProperties()
   { /* ... */ }
 
-  //! Check if the scattering center is an atom
-  bool isAtom() const override;
-
   //! Check if the scattering center is a nuclide
   bool isNuclide() const override;
 
-  //! Check if the scattering center is a mixture (or lattice)
-  bool isMixture() const override;
+  //! Get the atomic weight
+  double atomicWeight() const override;
 
-  //! Get the name of the properties
-  std::string name() const override;
-
-  //! Get the atomic number(s)
-  std::vector<unsigned> atomicNumbers() const override;
-
-  //! Get the atomic mass number(s)
-  std::vector<unsigned> atomicMassNumbers() const override;
-
-  //! Get the isomer number(s)
-  std::vector<unsigned> isomerNumbers() const override;
-
-  //! Get the atomic weight(s)
-  std::vector<double> atomicWeights() const override;
-
-  //! Get the atomic weight ratio(s) (atomic weight/neutron weight)
-  std::vector<double> atomicWeightRatios() const override;
+  //! Get the atomic weight ratio (atomic weight/neutron weight)
+  double atomicWeightRatio() const override;
 
   //! Check if there is nuclear data
   bool nuclearDataAvailable() const override;
@@ -143,11 +48,35 @@ public:
   //! Get the nuclear data properties
   const NuclearDataProperties* getNuclearDataProperties() const override;
 
+  //! Set the nuclear data properties
+  void setNuclearDataProperties( const std::shared_ptr<const NuclearDataProperties>& properties );
+
+  //! Check if there is any thermal nuclear data
+  bool thermalNuclearDataAvailable() const override;
+
+  //! Get the thermal nuclear data properties
+  const ThermalNuclearDataProperties* getThermalNuclearDataProperties() const override;
+
+  //! Set the thermal nuclear data properties
+  void setThermalNuclearDataProperties( const std::shared_ptr<const ThermalNuclearDataProperties>& properties );
+
   //! Check if there is adjoint nuclear data
   bool adjointNuclearDataAvailable() const override;
 
-  //! Get the adjoint nuclear data
+  //! Get the adjoint nuclear data properties
   const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override;
+
+  //! Set the adjoint nuclear data properties
+  void setAdjointNuclearDataProperties( const std::shared_ptr<const AdjointNuclearDataProperties>& properties );
+
+  //! Check if there is any adjoint thermal nuclear data
+  bool adjointThermalNuclearDataAvailable() const override;
+
+  //! Get the adjoint thermal nuclear data
+  const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties() const override;
+
+  //! Set the adjoint thermal nuclear data properties
+  void setAdjointThermalNuclearDataProperties( const std::shared_ptr<const AdjointThermalNuclearDataProperties>& properties );
 
   //! Check if there is photonuclear data
   bool photonuclearDataAvailable() const override;
@@ -155,35 +84,17 @@ public:
   //! Get the photonuclear data properties
   const PhotonuclearDataProperties* getPhotonuclearDataProperties() const override;
 
+  //! Set the photonuclear data properties
+  void setPhotonuclearDataProperties( const std::shared_ptr<const PhotonuclearDataProperties>& properties );
+
   //! Check if there is adjoint photonuclear data
   bool adjointPhotonuclearDataAvailable() const override;
 
   //! Get the adjoint photonuclear data
   const AdjointPhotonuclearDataProperties* getAdjointPhotonuclearDataProperties() const override;
 
-  //! Check if there is photoatomic data
-  bool photoatomicDataAvailable() const override;
-
-  //! Get the photoatomic data
-  const PhotoatomicDataProperties* getPhotoatomicDataProperties() const override;
-
-  //! Check if there is adjoint photoatomic data
-  bool adjointPhotoatomicDataAvailable() const override;
-
-  //! Get the adjoint photoatomic data properties
-  const AdjointPhotoatomicDataProperties* getAdjointPhotoatomicDataProperties() const override;
-
-  //! Check if there is electroatomic data
-  bool electroatomicDataAvailable() const override;
-
-  //! Get the electroatomic data properties
-  const ElectroatomicDataProperties* getElectroatomicDataProperties() const override;
-
-  //! Check if there is adjoint electroatomic data
-  bool adjointElectroatomicDataAvailable() const override;
-
-  //! Get the adjoint electroatomic data properties
-  const AdjointElectroatomicDataProperties* getAdjointElectroatomicDataProperties() const override;
+  //! Set the adjoint photonuclear data properties
+  void setAdjointPhotonuclearDataProperties( const std::shared_ptr<const AdjointPhotonuclearDataProperties>& properties );
 
   //! Clone the properties
   StandardNuclideProperties* clone() const override;
@@ -196,33 +107,11 @@ private:
   // Default constructor
   StandardNuclideProperties();
 
-  // Clone constructor
-  StandardNuclideProperties(
-               const std::string& name,
-               const unsigned atomic_number,
-               const unsigned atomic_mass_number,
-               const unsigned isomer_number,
-               const double atomic_weight_ratio,
-               const std::shared_ptr<const NuclearDataProperties>&
-               nuclear_data_properties,
-               const std::shared_ptr<const AdjointNuclearDataProperties>&
-               adjoint_nuclear_data_properties,
-               const std::shared_ptr<const PhotonuclearDataProperties>&
-               photonuclear_data_properties,
-               const std::shared_ptr<const AdjointPhotonuclearDataProperties>&
-               adjoint_photonuclear_data_properties,
-               const std::shared_ptr<const PhotoatomicDataProperties>&
-               photoatomic_data_properties,
-               const std::shared_ptr<const AdjointPhotoatomicDataProperties>&
-               adjoint_photoatomic_data_properties,
-               const std::shared_ptr<const ElectroatomicDataProperties>&
-               electroatomic_data_properties,
-               const std::shared_ptr<const AdjointElectroatomicDataProperties>&
-               adjoint_electroatomic_data_properties,
-               int );
-
   // Copy constructor
   StandardNuclideProperties( const StandardNuclideProperties& other );
+
+  // Assignment operator
+  StandardNuclideProperties& operator=( const StandardNuclideProperties& other );
 
   // Save the properties to an archive
   template<typename Archive>
@@ -237,28 +126,21 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The properties name
-  std::string d_name;
-
-  // The atomic number
-  unsigned d_atomic_number;
-
-  // The atomic mass number
-  unsigned d_atomic_mass_number;
-
-  // The isomer number
-  unsigned d_isomer_number;
-
-  // The atomic weight ratio
-  double d_atomic_weight_ratio;
-
   // The nuclear data properties
   std::shared_ptr<const NuclearDataProperties>
   d_nuclear_data_properties;
 
+  // The thermal nuclear data properties
+  std::shared_ptr<const ThermalNuclearDataProperties>
+  d_thermal_nuclear_data_properties;
+
   // The adjoint nuclear data properties
   std::shared_ptr<const AdjointNuclearDataProperties>
   d_adjoint_nuclear_data_properties;
+
+  // The thermal adjoint nuclear data properties
+  std::shared_ptr<const AdjointThermalNuclearDataProperties>
+  d_adjoint_thermal_nuclear_data_properties;
 
   // The photonuclear data properties
   std::shared_ptr<const PhotonuclearDataProperties>
@@ -267,22 +149,6 @@ private:
   // The adjoint photonuclear data properties
   std::shared_ptr<const AdjointPhotonuclearDataProperties>
   d_adjoint_photonuclear_data_properties;
-
-  // The photoatomic data properties
-  std::shared_ptr<const PhotoatomicDataProperties>
-  d_photoatomic_data_properties;
-
-  // The adjoint photoatomic data properties
-  std::shared_ptr<const AdjointPhotoatomicDataProperties>
-  d_adjoint_photoatomic_data_properties;
-
-  // The electroatomic data properties
-  std::shared_ptr<const ElectroatomicDataProperties>
-  d_electroatomic_data_properties;
-
-  // The adjoint electroatomic data properties
-  std::shared_ptr<const AdjointElectroatomicDataProperties>
-  d_adjoint_electroatomic_data_properties;
 };
 
 } // end Data namespace

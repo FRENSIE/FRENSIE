@@ -111,7 +111,7 @@ private:
   static const std::string s_archive_name;
 
   // The scattering center properties
-  typedef std::map<std::string,std::unique_ptr<const ScatteringCenterProperties> > ScatteringCenterNamePropertiesMap;
+  typedef std::map<std::string,std::unique_ptr<ScatteringCenterProperties> > ScatteringCenterNamePropertiesMap;
   
    ScatteringCenterNamePropertiesMap d_properties;
 

@@ -44,7 +44,7 @@ public:
   size_t fileStartLine() const override;
 
   //! Get the photoatomic data file version
-  size_t fileVersion() const override;
+  unsigned fileVersion() const override;
 
   //! Get the electroatomic table name
   std::string tableName() const override;

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_NuclearDataProperties.hpp
+//! \file   Data_AdjointThermalNuclearDataProperties.hpp
 //! \author Alex Robinson
-//! \brief  The nuclear data properties class declaration
+//! \brief  The adjoint thermal nuclear data properties class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_NUCLEAR_DATA_PROPERTIES_HPP
-#define DATA_NUCLEAR_DATA_PROPERTIES_HPP
+#ifndef DATA_ADJOINT_THERMAL_NUCLEAR_DATA_PROPERTIES
+#define DATA_ADJOINT_THERMAL_NUCLEAR_DATA_PROPERTIES
 
 // Std Lib Includes
 #include <string>
@@ -18,33 +18,38 @@
 
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Map.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
 
-//! The nuclear data properties base class
-class NuclearDataProperties
+//! The adjoint thermal nuclear data properties base class
+class AdjointThermalNuclearDataProperties
 {
 
 public:
 
   enum FileType{
-    ACE_FILE
+    Native_FILE
   };
 
   //! Default constructor
-  NuclearDataProperties();
+  AdjointThermalNuclearDataProperties();
 
   //! Destructor
-  virtual ~NuclearDataProperties()
+  virtual ~AdjointThermalNuclearDataProperties()
   { /* ... */ }
 
-  //! Get the ZAID that the file specifies data for
-  virtual Data::ZAID zaid() const = 0;
+  //! Get the name of the properties
+  virtual std::string name() const = 0;
 
-  //! Get the atomic weight ratio of the nuclide that the file specifies data for
-  virtual double atomicWeightRatio() const = 0;
+  //! Check if the file specifies data for the ZAID of interest
+  virtual bool hasDataForZAID( const Data::ZAID& zaid ) const = 0;
+
+  //! Get the ZAIDS that the file specifies data for
+  virtual std::set<Data::ZAID> zaids() const = 0;
 
   //! Get the nuclear data evaluation temperature (MeV)
   virtual double evaluationTemperatureInMeV() const = 0;
@@ -68,7 +73,7 @@ public:
   virtual std::string tableName() const = 0;
 
   //! Clone the properties
-  virtual NuclearDataProperties* clone() const = 0;
+  virtual AdjointThermalNuclearDataProperties* clone() const = 0;
 
 private:
 
@@ -93,26 +98,26 @@ private:
 namespace Utility{
 
 /*! \brief Specialization of Utility::ToStringTraits for 
- * Data::NuclearDataProperties::FileType
+ * Data::AdjointThermalNuclearDataProperties::FileType
  * \ingroup to_string_traits
  */
 template<>
-struct ToStringTraits<Data::NuclearDataProperties::FileType>
+struct ToStringTraits<Data::AdjointThermalNuclearDataProperties::FileType>
 {
-  //! Convert a Data::NuclearDataProperties::FileType to a string
-  static std::string toString( const Data::NuclearDataProperties::FileType type );
+  //! Convert a Data::AdjointThermalNuclearDataProperties::FileType to a string
+  static std::string toString( const Data::AdjointThermalNuclearDataProperties::FileType type );
 
-  //! Place the Data::NuclearDataProperties::FileType in a stream
-  static void toStream( std::ostream& os, const Data::NuclearDataProperties::FileType type );
+  //! Place the Data::AdjointThermalNuclearDataProperties::FileType in a stream
+  static void toStream( std::ostream& os, const Data::AdjointThermalNuclearDataProperties::FileType type );
 };
   
 } // end Utility namespace
 
 namespace std{
 
-//! Stream operator for printing Datea::NuclearDataProperties::FileType enums
+//! Stream operator for printing Datea::AdjointThermalNuclearDataProperties::FileType enums
 inline std::ostream& operator<<( std::ostream& os,
-                                 const Data::NuclearDataProperties::FileType type )
+                                 const Data::AdjointThermalNuclearDataProperties::FileType type )
 {
   Utility::toStream( os, type );
 
@@ -121,11 +126,11 @@ inline std::ostream& operator<<( std::ostream& os,
   
 } // end std namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( NuclearDataProperties, Data );
-BOOST_SERIALIZATION_CLASS_VERSION( NuclearDataProperties, Data, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AdjointThermalNuclearDataProperties, Data );
+BOOST_SERIALIZATION_CLASS_VERSION( AdjointThermalNuclearDataProperties, Data, 0 );
 
-#endif // end DATA_NUCLEAR_DATA_PROPERTIES_HPP
+#endif // end DATA_ADJOINT_THERMAL_NUCLEAR_DATA_PROPERTIES
 
 //---------------------------------------------------------------------------//
-// end Data_NuclearDataProperties.hpp
+// end Data_AdjointThermalNuclearDataProperties.hpp
 //---------------------------------------------------------------------------//

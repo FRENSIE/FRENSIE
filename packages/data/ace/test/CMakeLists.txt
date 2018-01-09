@@ -58,6 +58,9 @@ FRENSIE_ADD_TEST(ACETableName)
 FRENSIE_ADD_TEST_EXECUTABLE(ACENuclearDataProperties DEPENDS tstACENuclearDataProperties.cpp)
 FRENSIE_ADD_TEST(ACENuclearDataProperties)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ACEThermalNuclearDataProperties DEPENDS tstACEThermalNuclearDataProperties.cpp)
+FRENSIE_ADD_TEST(ACEThermalNuclearDataProperties)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ACEPhotonuclearDataProperties DEPENDS tstACEPhotonuclearDataProperties.cpp)
 FRENSIE_ADD_TEST(ACEPhotonuclearDataProperties)
 

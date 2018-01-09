@@ -23,6 +23,12 @@ class ACETableName
 
 public:
 
+  //! Split the table name into its components
+  static void splitTableNameIntoComponents( const std::string& table_name,
+                                            std::string& simple_table_name,
+                                            unsigned& table_version,
+                                            char& table_type_key );
+
   //! Default constructor
   ACETableName();
 
@@ -34,7 +40,7 @@ public:
 
   //! Component constructor
   ACETableName( const Data::ZAID& zaid,
-                const size_t table_version,
+                const unsigned table_version,
                 const char table_type_key );
 
   //! Copy constructor
@@ -57,7 +63,7 @@ public:
   const Data::ZAID& zaid() const;
 
   //! Return the table version
-  size_t version() const;
+  unsigned version() const;
 
   //! Return the type key
   char typeKey() const;
@@ -90,7 +96,7 @@ private:
   Data::ZAID d_table_name_zaid;
 
   // The table name version
-  size_t d_table_name_version;
+  unsigned d_table_name_version;
 
   // The table name type key
   char d_table_name_type_key;

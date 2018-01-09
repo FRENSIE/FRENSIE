@@ -425,11 +425,11 @@
 #define __FRENSIE_CHECK_ADVANCED_OPERATOR_WITH_RETURN_IMPL__( ComparePolicy, lhs, rhs, extra_data, log, test_success, ... ) \
   __FRENSIE_COMPARE_WITH_OPTIONAL_RETURN__( ComparePolicy, lhs, rhs, extra_data, log, test_success, true, ##__VA_ARGS__ )
 
-#define FRENSIE_CHECK( statement, ... )                                     \
-  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success, ##__VA_ARGS__ )
+#define FRENSIE_CHECK( statement )                                     \
+  __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success, SHOW_LHS )
 
-#define FRENSIE_REQUIRE( statement, ... )                                   \
-  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success, ##__VA_ARGS__ )
+#define FRENSIE_REQUIRE( statement )                                   \
+  __FRENSIE_CHECK_BASIC_OPERATOR_WITH_RETURN_IMPL__( Utility::EqualityComparisonPolicy, statement, true, log, success, SHOW_LHS )
 
 #define FRENSIE_CHECK_EQUAL( lhs, rhs, ... )                                \
   __FRENSIE_CHECK_BASIC_OPERATOR_IMPL__( Utility::EqualityComparisonPolicy, lhs, rhs, log, success, ##__VA_ARGS__ )

@@ -13,9 +13,11 @@
 #include <boost/filesystem/path.hpp>
 
 // FRENSIE Includes
-#include "Data_AtomType.hpp"
+#include "Data_ZAID.hpp"
 #include "Data_NuclearDataProperties.hpp"
+#include "Data_ThermalNuclearDataProperties.hpp"
 #include "Data_AdjointNuclearDataProperties.hpp"
+#include "Data_AdjointThermalNuclearDataProperties.hpp"
 #include "Data_PhotonuclearDataProperties.hpp"
 #include "Data_AdjointPhotonuclearDataProperties.hpp"
 #include "Data_PhotoatomicDataProperties.hpp"
@@ -44,43 +46,41 @@ public:
   //! Check if the scattering center is a nuclide
   virtual bool isNuclide() const = 0;
 
-  /*! \brief Check if the scattering center is a mixture, compound or lattice
-   * (or a single nuclide within one of these).
-   */
-  virtual bool isMixture() const = 0;
-
   //! Get the name of the properties
   virtual std::string name() const = 0;
 
-  //! Get the atom type(s)
-  std::vector<AtomType> atoms() const;
+  //! Get the zaid
+  virtual Data::ZAID zaid() const = 0;
 
-  //! Get the atomic number(s)
-  virtual std::vector<unsigned> atomicNumbers() const = 0;
+  //! Get the atomic weight
+  virtual double atomicWeight() const = 0;
 
-  //! Get the atomic mass number(s)
-  virtual std::vector<unsigned> atomicMassNumbers() const = 0;
+  //! Get the atomic weight ratio (atomic weight/neutron weight)
+  virtual double atomicWeightRatio() const;
 
-  //! Get the isomer number(s)
-  virtual std::vector<unsigned> isomerNumbers() const = 0;
-
-  //! Get the atomic weight(s)
-  virtual std::vector<double> atomicWeights() const = 0;
-
-  //! Get the atomic weight ratio(s) (atomic weight/neutron weight)
-  virtual std::vector<double> atomicWeightRatios() const;
-  
-  //! Check if there is nuclear data
+    //! Check if there is nuclear data
   virtual bool nuclearDataAvailable() const = 0;
 
   //! Get the nuclear data properties
   virtual const NuclearDataProperties* getNuclearDataProperties() const = 0;
 
+  //! Check if there is any thermal nuclear data
+  virtual bool thermalNuclearDataAvailable() const = 0;
+
+  //! Get the thermal nuclear data properties
+  virtual const ThermalNuclearDataProperties* getThermalNuclearDataProperties() const = 0;
+  
   //! Check if there is adjoint nuclear data
   virtual bool adjointNuclearDataAvailable() const = 0;
 
   //! Get the adjoint nuclear data
   virtual const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const = 0;
+
+  //! Check if there is any adjoint thermal nuclear data
+  virtual bool adjointThermalNuclearDataAvailable() const = 0;
+
+  //! Get the adjoint thermal nuclear data
+  virtual const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties() const = 0;
 
   //! Check if there is photonuclear data
   virtual bool photonuclearDataAvailable() const = 0;

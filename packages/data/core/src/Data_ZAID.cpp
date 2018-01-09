@@ -118,6 +118,12 @@ bool ZAID::operator!=( const ZAID& that )
     d_isomer_number != that.d_isomer_number;
 }
 
+// Less than operator
+bool ZAID::operator<( const ZAID& that )
+{
+  return this->toRaw() < that.toRaw();
+}
+
 // Return the AtomType
 AtomType ZAID::atom() const
 {

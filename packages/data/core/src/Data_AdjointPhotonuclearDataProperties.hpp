@@ -14,6 +14,7 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
+#include "Data_ZAID.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -36,6 +37,9 @@ public:
   virtual ~AdjointPhotonuclearDataProperties()
   { /* ... */ }
 
+  //! Get the ZAID that the file specifies data for
+  virtual Data::ZAID zaid() const = 0;
+
   //! Get the adjoint nuclear data evaluation temperature (MeV)
   virtual double evaluationTemperatureInMeV() const = 0;
 
@@ -50,6 +54,9 @@ public:
 
   //! Get the adjoint nuclear data file start line
   virtual size_t fileStartLine() const = 0;
+
+  //! Get the nuclear data file version
+  virtual unsigned fileVersion() const = 0;
 
   //! Get the adjoint nuclear data file table name
   virtual std::string tableName() const = 0;

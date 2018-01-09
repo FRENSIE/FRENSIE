@@ -26,6 +26,34 @@
 
 namespace Data{
 
+// Split the table name into its components
+void ACETableName::splitTableNameIntoComponents(const std::string& table_name,
+                                                std::string& simple_table_name,
+                                                unsigned& table_version,
+                                                char& table_type_key )
+{
+  // Extract the raw zaid and version from the table name
+  std::vector<std::string> table_name_components;
+  
+  boost::split( table_name_components, table_name, boost::is_any_of( "." ) );
+
+  TEST_FOR_EXCEPTION( table_name_components.size() != 2,
+                      std::runtime_error,
+                      "The table name must have a format of \"zaid.##@\" or "
+                      "\"SABname.##@\"!" );
+
+  simple_table_name = table_name_components.front();
+
+  TEST_FOR_EXCEPTION( table_name_components.back().size() != 3,
+                      std::runtime_error,
+                      "The table name version/key component is invalid!" );
+
+  table_version = 
+    Utility::fromString<size_t>( table_name_components.back().substr( 0, 2 ) );
+  
+  table_type_key = table_name_components.back()[2];
+}
+
 // Default constructor
 ACETableName::ACETableName()
 { /* ... */ }
@@ -45,31 +73,20 @@ ACETableName::ACETableName( const std::string& raw_ace_table_name )
   // Make sure that the raw ace table name is valid
   testPrecondition( !raw_ace_table_name.empty() );
 
-  // Extract the raw zaid and version from the table name
-  std::vector<std::string> table_name_components;
+  // Extract the raw zaid, version and type key from the table name
+  std::string raw_zaid;
 
-  boost::split( table_name_components,
-                raw_ace_table_name,
-                boost::is_any_of( "." ) );
+  ACETableName::splitTableNameIntoComponents( raw_ace_table_name,
+                                              raw_zaid,
+                                              d_table_name_version,
+                                              d_table_name_type_key );
 
-  TEST_FOR_EXCEPTION( table_name_components.size() != 2,
-                      std::runtime_error,
-                      "The table name must have a format of \"zaid.##@\"!" );
-
-  d_table_name_zaid = Data::ZAID( Utility::fromString<unsigned>( table_name_components.front() ) );
-
-  TEST_FOR_EXCEPTION( table_name_components.back().size() != 3,
-                      std::runtime_error,
-                      "The table name version/key component is invalid!" );
-
-  d_table_name_version =
-    Utility::fromString<size_t>( table_name_components.back().substr( 0, 2 ) );
-  d_table_name_type_key = table_name_components.back()[2];
+  d_table_name_zaid = Data::ZAID( Utility::fromString<unsigned>( raw_zaid ) );
 }
 
 // Component constructor
 ACETableName::ACETableName( const Data::ZAID& zaid,
-                            const size_t table_version,
+                            const unsigned table_version,
                             const char table_type_key )
   : d_raw_table_name( Utility::toString( zaid ) + "." +
                       Utility::toString( table_version ) + table_type_key ),
@@ -123,7 +140,7 @@ const Data::ZAID& ACETableName::zaid() const
 }
 
 // Return the table version
-size_t ACETableName::version() const
+unsigned ACETableName::version() const
 {
   return d_table_name_version;
 }

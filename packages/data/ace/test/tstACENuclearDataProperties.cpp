@@ -36,24 +36,12 @@ std::unique_ptr<const Data::ACENuclearDataProperties> properties;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the atom can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, atom )
+// Check that the zaid can be returned
+FRENSIE_UNIT_TEST( ACENuclearDataProperties, zaid )
 {
-  FRENSIE_CHECK_EQUAL( properties->atom(), Data::H_ATOM );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the atomic mass number can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, atomicMassNumber )
-{
-  FRENSIE_CHECK_EQUAL( properties->atomicMassNumber(), 1 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the isomer number can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, isomerNumber )
-{
-  FRENSIE_CHECK_EQUAL( properties->isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( properties->zaid().atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( properties->zaid().atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( properties->zaid().isomerNumber(), 0 )
 }
 
 //---------------------------------------------------------------------------//
@@ -173,10 +161,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
     local_properties( 0.1, 0.1, "dummy", 100000, "1000.00c" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
-  FRENSIE_CHECK_EQUAL( local_properties.atom(), Data::O_ATOM );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicNumber(), 8 );
-  FRENSIE_CHECK_EQUAL( local_properties.atomicMassNumber(), 16 );
-  FRENSIE_CHECK_EQUAL( local_properties.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( local_properties.zaid(), Data::ZAID( 8016 ) );
   FRENSIE_CHECK_EQUAL( local_properties.atomicWeightRatio(), 16.0 );
   FRENSIE_CHECK_EQUAL( local_properties.evaluationTemperatureInMeV(),
                        2.5301e-8 );
@@ -190,10 +175,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
     shared_properties;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
-  FRENSIE_CHECK_EQUAL( shared_properties->atom(), Data::H_ATOM );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicMassNumber(), 1 );
-  FRENSIE_CHECK_EQUAL( shared_properties->isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( shared_properties->zaid(), Data::ZAID( 1001 ) );
   FRENSIE_CHECK_EQUAL( shared_properties->atomicWeightRatio(), 1.0 );
   FRENSIE_CHECK_EQUAL( shared_properties->evaluationTemperatureInMeV(),
                        2.5301e-8 );

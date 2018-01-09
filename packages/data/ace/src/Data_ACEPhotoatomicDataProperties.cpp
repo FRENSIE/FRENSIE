@@ -89,7 +89,7 @@ size_t ACEPhotoatomicDataProperties::fileStartLine() const
 }
 
 // Get the photoatomic data file version
-size_t ACEPhotoatomicDataProperties::fileVersion() const
+unsigned ACEPhotoatomicDataProperties::fileVersion() const
 {
   return d_file_table_name.version();
 }

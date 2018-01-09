@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_PhotonuclearDataProperties.hpp
+//! \file   Data_ThermalNuclearDataProperties.hpp
 //! \author Alex Robinson
-//! \brief  The photonuclear data properties class declaration
+//! \brief  The thermal nuclear data properties class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_PHOTONUCLEAR_DATA_PROPERTIES_HPP
-#define DATA_PHOTONUCLEAR_DATA_PROPERTIES_HPP
+#ifndef DATA_THERMAL_NUCLEAR_DATA_PROPERTIES
+#define DATA_THERMAL_NUCLEAR_DATA_PROPERTIES
 
 // Std Lib Includes
 #include <string>
@@ -18,33 +18,44 @@
 
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
+#include "Utility_Set.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
 
-//! The photonuclear data properties base class
-class PhotonuclearDataProperties
+//! The thermal nuclear data properties base class
+class ThermalNuclearDataProperties
 {
 
 public:
 
   enum FileType{
-    ACE_FILE
+    STANDARD_ACE_FILE,
+    MCNP6_ACE_FILE
   };
 
   //! Default constructor
-  PhotonuclearDataProperties();
+  ThermalNuclearDataProperties();
 
   //! Destructor
-  virtual ~PhotonuclearDataProperties()
+  virtual ~ThermalNuclearDataProperties()
   { /* ... */ }
 
-  //! Get the ZAID that the file specifies data for
-  virtual Data::ZAID zaid() const = 0;
+  //! Get the name of the properties
+  virtual std::string name() const = 0;
 
-  //! Get the atomic weight of the nuclide that the file specifies data for
-  virtual double atomicWeight() const = 0;
+  //! Check if the file specifies data for the ZAID of interest
+  virtual bool hasDataForZAID( const Data::ZAID& zaid ) const = 0;
+
+  //! Get the ZAIDS that the file specifies data for
+  virtual std::set<Data::ZAID> zaids() const = 0;
+
+  //! Get the nuclear data evaluation temperature (MeV)
+  virtual double evaluationTemperatureInMeV() const = 0;
+
+  //! Get the nuclear data evaluation temperature (Kelvin)
+  virtual double evaluationTemperatureInKelvin() const;
 
   //! Get the nuclear data file type
   virtual FileType fileType() const = 0;
@@ -62,7 +73,7 @@ public:
   virtual std::string tableName() const = 0;
 
   //! Clone the properties
-  virtual PhotonuclearDataProperties* clone() const = 0;
+  virtual ThermalNuclearDataProperties* clone() const = 0;
 
 private:
 
@@ -87,26 +98,26 @@ private:
 namespace Utility{
 
 /*! \brief Specialization of Utility::ToStringTraits for 
- * Data::PhotonuclearDataProperties::FileType
+ * Data::ThermalNuclearDataProperties::FileType
  * \ingroup to_string_traits
  */
 template<>
-struct ToStringTraits<Data::PhotonuclearDataProperties::FileType>
+struct ToStringTraits<Data::ThermalNuclearDataProperties::FileType>
 {
-  //! Convert a Data::PhotonuclearDataProperties::FileType to a string
-  static std::string toString( const Data::PhotonuclearDataProperties::FileType type );
+  //! Convert a Data::ThermalNuclearDataProperties::FileType to a string
+  static std::string toString( const Data::ThermalNuclearDataProperties::FileType type );
 
-  //! Place the Data::PhotonuclearDataProperties::FileType in a stream
-  static void toStream( std::ostream& os, const Data::PhotonuclearDataProperties::FileType type );
+  //! Place the Data::ThermalNuclearDataProperties::FileType in a stream
+  static void toStream( std::ostream& os, const Data::ThermalNuclearDataProperties::FileType type );
 };
   
 } // end Utility namespace
 
 namespace std{
 
-//! Stream operator for printing Datea::PhotonuclearDataProperties::FileType enums
+//! Stream operator for printing Datea::ThermalNuclearDataProperties::FileType enums
 inline std::ostream& operator<<( std::ostream& os,
-                                 const Data::PhotonuclearDataProperties::FileType type )
+                                 const Data::ThermalNuclearDataProperties::FileType type )
 {
   Utility::toStream( os, type );
 
@@ -115,11 +126,11 @@ inline std::ostream& operator<<( std::ostream& os,
   
 } // end std namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( PhotonuclearDataProperties, Data );
-BOOST_SERIALIZATION_CLASS_VERSION( PhotonuclearDataProperties, Data, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ThermalNuclearDataProperties, Data );
+BOOST_SERIALIZATION_CLASS_VERSION( ThermalNuclearDataProperties, Data, 0 );
 
-#endif // end DATA_PHOTONUCLEAR_DATA_PROPERTIES_HPP
+#endif // end DATA_THERMAL_NUCLEAR_DATA_PROPERTIES
 
 //---------------------------------------------------------------------------//
-// end Data_PhotonuclearDataProperties.hpp
+// end Data_ThermalNuclearDataProperties.hpp
 //---------------------------------------------------------------------------//
