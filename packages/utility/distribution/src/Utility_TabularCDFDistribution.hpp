@@ -154,7 +154,7 @@ public:
   OneDDistributionType getDistributionType() const;
 
   //! Return if the distribution was continuous from a CDF
-  bool wasContructedFromCDF() const;
+  bool wasConstructedFromCDF() const;
 
   //! Test if the distribution is continuous
   bool isContinuous() const;
@@ -179,7 +179,7 @@ protected:
   //! Test if the independent variable is compatible with Lin processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LinIndepVarProcessingTag ) const;
-  
+
   //! Test if the independent variable is compatible with Log processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;

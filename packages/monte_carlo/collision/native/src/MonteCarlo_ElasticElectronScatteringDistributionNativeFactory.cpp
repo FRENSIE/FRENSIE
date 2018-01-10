@@ -145,7 +145,7 @@ double ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreser
   double rutherford_cross_section =
     total_elastic_cross_section - cutoff_cross_section;
 
-  // calculate the relative difference between the total and cutoff cross sections
+  // Calculate the relative difference between the total and cutoff cross sections
   double relative_difference = rutherford_cross_section/total_elastic_cross_section;
 
   // Check for roundoff error and reduce to zero if needed

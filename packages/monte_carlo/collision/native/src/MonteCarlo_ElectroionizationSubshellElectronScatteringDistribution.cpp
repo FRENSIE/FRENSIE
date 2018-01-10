@@ -345,7 +345,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
                                             const double incoming_energy,
                                             const double outgoing_energy ) const
 {
-  testPrecondition( incoming_energy - d_binding_energy >= outgoing_energy )
+  // testPrecondition( incoming_energy - d_binding_energy >= outgoing_energy )
+  testPrecondition( incoming_energy >= outgoing_energy )
 
   // The normalized incoming electron energy
 //  double normalized_incoming_energy =

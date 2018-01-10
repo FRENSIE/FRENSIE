@@ -2,7 +2,7 @@
 //!
 //! \file   Data_ENDLDataContainer.hpp
 //! \author Luke Kersting
-//! \brief  The native eadl container class decl.
+//! \brief  The native endl container class decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -25,7 +25,7 @@
 
 namespace Data{
 
-//! The eadl container
+//! The endl container
 class ENDLDataContainer : public Utility::StandardArchivableObject<ENDLDataContainer,false>, public Utility::StandardSerializableObject<ENDLDataContainer,false>
 {
 

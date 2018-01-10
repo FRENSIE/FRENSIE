@@ -133,7 +133,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
  const UnitAwareTabularCDFDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
   : d_distribution(),
     d_norm_constant(),
-    d_interpret_dependent_values_as_cdf( dist_instance.wasContructedFromCDF() )
+    d_interpret_dependent_values_as_cdf( dist_instance.wasConstructedFromCDF() )
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
@@ -142,7 +142,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
 
   typedef typename UnitAwareTabularCDFDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
-  
+
   // Reconstruct the original input distribution
   Teuchos::Array<InputIndepQuantity> input_indep_values;
 
@@ -152,7 +152,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
 
     dist_instance.reconstructOriginalCDFDistribution( input_indep_values,
                                                       input_cdf_values );
-    
+
     this->initializeDistributionFromCDF( input_indep_values, input_cdf_values );
   }
   else
@@ -173,7 +173,7 @@ template<typename InterpolationPolicy,
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularCDFDistribution( const UnitAwareTabularCDFDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
   : d_distribution(),
     d_norm_constant(),
-    d_interpret_dependent_values_as_cdf( unitless_dist_instance.wasContructedFromCDF() )
+    d_interpret_dependent_values_as_cdf( unitless_dist_instance.wasConstructedFromCDF() )
 {
   // Make sure the distribution is valid
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
@@ -484,7 +484,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
 template<typename InterpolationPolicy,
 typename IndependentUnit,
 typename DependentUnit>
-bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::wasContructedFromCDF() const
+bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::wasConstructedFromCDF() const
 {
   return d_interpret_dependent_values_as_cdf;
 }
@@ -605,7 +605,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 
   // Read the ","
   std::getline( is, separator, ',' );
-  
+
   std::string interpret_dependent_values_as_cdf_rep;
   std::getline( is, interpret_dependent_values_as_cdf_rep, '}' );
 
