@@ -185,7 +185,7 @@ void StandardNuclideProperties::setAdjointPhotonuclearDataProperties( const std:
 // Clone the properties
 StandardNuclideProperties* StandardNuclideProperties::clone() const
 {
-  new StandardNuclideProperties( *this );
+  return new StandardNuclideProperties( *this );
 }
 
 // Deep clone the properties

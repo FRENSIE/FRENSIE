@@ -239,7 +239,7 @@ void StandardAtomProperties::setAdjointElectroatomicDataProperties( const std::s
 // Clone the properties
 StandardAtomProperties* StandardAtomProperties::clone() const
 {
-  new StandardAtomProperties( *this );
+  return new StandardAtomProperties( *this );
 }
 
 // Deep clone the properties

@@ -70,4 +70,10 @@ FRENSIE_ADD_TEST(ACEPhotoatomicDataProperties)
 FRENSIE_ADD_TEST_EXECUTABLE(ACEElectroatomicDataProperties DEPENDS tstACEElectroatomicDataProperties.cpp)
 FRENSIE_ADD_TEST(ACEElectroatomicDataProperties)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ACEStandardAtomProperties DEPENDS tstACEStandardAtomProperties.cpp)
+FRENSIE_ADD_TEST(ACEStandardAtomProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ACEStandardNuclideProperties DEPENDS tstACEStandardNuclideProperties.cpp)
+FRENSIE_ADD_TEST(ACEStandardNuclideProperties)
+
 FRENSIE_FINALIZE_PACKAGE_TESTS(data_ace)
