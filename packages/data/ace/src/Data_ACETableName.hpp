@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_Tuple.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -42,6 +43,9 @@ public:
   ACETableName( const Data::ZAID& zaid,
                 const unsigned table_version,
                 const char table_type_key );
+
+  //! Component constructor
+  ACETableName( const std::tuple<std::string,unsigned,char>& components );
 
   //! Copy constructor
   ACETableName( const ACETableName& that );

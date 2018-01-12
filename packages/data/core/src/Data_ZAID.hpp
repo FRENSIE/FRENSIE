@@ -30,6 +30,12 @@ public:
   //! Default constructor
   ZAID();
 
+  //! String constructor
+  ZAID( const std::string& zaid_string );
+
+  //! C-string constructor
+  ZAID( const char* zaid_string );
+  
   //! Raw ZAID constructor
   ZAID( const unsigned raw_zaid );
 

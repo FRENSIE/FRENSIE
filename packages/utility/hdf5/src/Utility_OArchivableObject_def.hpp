@@ -11,6 +11,7 @@
 
 // Boost Includes
 #include <boost/serialization/nvp.hpp>
+#include <boost/filesystem.hpp>
 
 namespace Utility{
 
@@ -47,8 +48,19 @@ public:
  * (e.g. .xml, .txt, .bin, .h5fa)
  */
 template<typename DerivedType>
-void OArchivableObject<DerivedType>::saveToFile( const boost::filesystem::path& archive_name_with_path ) const
+void OArchivableObject<DerivedType>::saveToFile(
+                         const boost::filesystem::path& archive_name_with_path,
+                         const bool overwrite ) const
 {
+  // Check if overwriting is permitted
+  if( !overwrite )
+  {
+    TEST_FOR_EXCEPTION( boost::filesystem::exists( archive_name_with_path ),
+                        std::runtime_error,
+                        "A file with the specified path and name already "
+                        "exists!" );
+  }
+  
   // Create the output archive
   std::unique_ptr<std::ostream> oarchive_stream;
   std::unique_ptr<boost::archive::polymorphic_oarchive> oarchive;

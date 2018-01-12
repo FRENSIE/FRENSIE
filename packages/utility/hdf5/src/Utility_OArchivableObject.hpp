@@ -38,7 +38,8 @@ public:
   virtual const char* getOArchiveName() const = 0;
 
   //! Archive the object
-  void saveToFile( const boost::filesystem::path& archive_name_with_path ) const;
+  void saveToFile( const boost::filesystem::path& archive_name_with_path,
+                   const bool overwrite = false ) const;
 };
   
 } // end Utility namespace

@@ -99,6 +99,13 @@ ACETableName::ACETableName( const Data::ZAID& zaid,
                       "The table version must currently be <= 99!" );
 }
 
+// Component constructor
+ACETableName( const std::tuple<std::string,unsigned,char>& components )
+  : ACETableName( Utility::get<0>( components ),
+                  Utility::get<1>( components ),
+                  Utility::get<2>( components ) )
+{ /* ... */ }
+
 // Copy constructor
 ACETableName::ACETableName( const ACETableName& that )
   : d_raw_table_name( that.d_raw_table_name ),

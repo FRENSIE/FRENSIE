@@ -20,6 +20,7 @@
 #include "Data_ZAID.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
+#include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -27,6 +28,16 @@ namespace Data{
 
 // Default constructor
 ZAID::ZAID()
+{ /* ... */ }
+
+// String constructor
+ZAID( const std::string& zaid_string )
+  : ZAID( Utility::fromString<unsigned>( zaid_string ) )
+{ /* ... */ }
+
+// C-string constructor
+ZAID( const char* zaid_string )
+  : ZAID( Utility::fromString<unsigned>( zaid_string ) )
 { /* ... */ }
 
 // Raw ZAID constructor

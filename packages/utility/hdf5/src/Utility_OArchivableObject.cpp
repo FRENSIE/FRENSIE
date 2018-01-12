@@ -10,7 +10,6 @@
 #include <boost/archive/polymorphic_text_oarchive.hpp>
 #include <boost/archive/polymorphic_xml_oarchive.hpp>
 #include <boost/archive/polymorphic_binary_oarchive.hpp>
-#include <boost/filesystem.hpp>
 
 // FRENSIE Includes
 #include "Utility_OArchivableObject.hpp"
