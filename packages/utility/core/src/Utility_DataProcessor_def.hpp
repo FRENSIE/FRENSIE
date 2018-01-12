@@ -390,7 +390,7 @@ DataProcessor::calculateContinuousCDF( Array &data,
   set<cdfMember>( *data_point_1, CDFQT::zero() );
 
   // Calculate the CDF
-  // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x2)-PDF(x1))/(x2-x1)*(x-x1)^2
+  // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x)-PDF(x1))/(x2-x1)*(x-x1)^2
   while( data_point_2 != end )
   {
     cdf_value = get<cdfMember>( *data_point_1 ) +

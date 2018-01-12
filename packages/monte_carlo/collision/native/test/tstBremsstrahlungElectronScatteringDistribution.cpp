@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_HistogramDistribution.hpp"
@@ -30,10 +31,7 @@
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  ace_dipole_brem_dist;
-
-std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-  twobs_brem_dist;
+  ace_dipole_brem_dist, twobs_brem_dist, native_brem_dist;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -53,7 +51,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, getMaxEnergy )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated for a given incoming and knock-on energy
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate )
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate_ace )
 {
   // LinLinLin interpolation used.
   double pdf = twobs_brem_dist->evaluate( 1.0e-5, 1.0e-6 );
@@ -67,8 +65,22 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate_native )
+{
+  double pdf = native_brem_dist->evaluate( 0.02, 1.0e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
+
+  pdf = native_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0746668573912197e+02, 1e-12 );
+
+  pdf = native_brem_dist->evaluate( 1.0e5, 2.0e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated for a given incoming and knock-on energy
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF )
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF_ace )
 {
   // LinLinLin interpolation used.
   double pdf = twobs_brem_dist->evaluatePDF( 1.0e-5, 1.0e-6 );
@@ -82,9 +94,24 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluatePDF )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the PDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+                   evaluatePDF_native )
+{
+  double pdf = native_brem_dist->evaluatePDF( 0.02, 1.0e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
+
+  pdf = native_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0746668573912197e+02, 1e-12 );
+
+  pdf = native_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated for a given incoming and knock-on energy
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-                   evaluateCDF )
+                   evaluateCDF_ace )
 {
   // LinLinLin interpolation used.
   double cdf = twobs_brem_dist->evaluateCDF( 1.0e-5, 1.0e-6 );
@@ -94,6 +121,21 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 
   cdf = twobs_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.575978856479E-01, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated for a given incoming and knock-on energy
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+                   evaluateCDF_native )
+{
+  double cdf = native_brem_dist->evaluateCDF( 0.02, 1.0e-7 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.0, 1e-12 );
+
+  cdf = native_brem_dist->evaluateCDF( 9.0e-4, 9.0e-4 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
+
+  cdf = native_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.575978856479E-01, 1e-12 );
 }
 
@@ -304,6 +346,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_ace_file_name, test_ace_table_name;
+std::string test_native_file_name;
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
@@ -313,75 +356,127 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
   clp().setOption( "test_ace_table",
                    &test_ace_table_name,
                    "Test ACE table name" );
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
 }
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-                                 new Data::ACEFileHandler( test_ace_file_name,
-                                                           test_ace_table_name,
-                                                           1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor(
-                                      ace_file_handler->getTableNXSArray(),
-                                      ace_file_handler->getTableJXSArray(),
-                                      ace_file_handler->getTableXSSArray() ) );
-
-  // Extract the elastic scattering information data block (BREMI)
-  Teuchos::ArrayView<const double> bremi_block(
-                                      xss_data_extractor->extractBREMIBlock() );
-
-  // Extract the number of tabulated distributions
-  int N = bremi_block.size()/3;
-
-  // Extract the electron energy grid for bremsstrahlung energy distributions
-  Teuchos::Array<double> energy_grid(bremi_block(0,N));
-
-  // Extract the table lengths for bremsstrahlung energy distributions
-  Teuchos::Array<double> table_length(bremi_block(N,N));
-
-  // Extract the offsets for bremsstrahlung energy distributions
-  Teuchos::Array<double> offset(bremi_block(2*N,N));
-
-  // Extract the bremsstrahlung photon energy distributions block (BREME)
-  Teuchos::ArrayView<const double> breme_block =
-    xss_data_extractor->extractBREMEBlock();
-
-  // Create the scattering function
-  Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
-
-  for( unsigned n = 0; n < N; ++n )
+  // Create the ACE Distributions
   {
-    function_data[n].first = energy_grid[n];
+    // Create a file handler and data extractor
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+                                  new Data::ACEFileHandler( test_ace_file_name,
+                                                            test_ace_table_name,
+                                                            1u ) );
+    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+                              new Data::XSSEPRDataExtractor(
+                                        ace_file_handler->getTableNXSArray(),
+                                        ace_file_handler->getTableJXSArray(),
+                                        ace_file_handler->getTableXSSArray() ) );
 
-    Teuchos::Array<double> photon_energy( breme_block( offset[n], table_length[n]) );
+    // Extract the elastic scattering information data block (BREMI)
+    Teuchos::ArrayView<const double> bremi_block(
+                                        xss_data_extractor->extractBREMIBlock() );
 
-    function_data[n].second.reset(
-        new Utility::HistogramDistribution(
-              photon_energy,
-              breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-              true ) );
+    // Extract the number of tabulated distributions
+    int N = bremi_block.size()/3;
+
+    // Extract the electron energy grid for bremsstrahlung energy distributions
+    Teuchos::Array<double> energy_grid(bremi_block(0,N));
+
+    // Extract the table lengths for bremsstrahlung energy distributions
+    Teuchos::Array<double> table_length(bremi_block(N,N));
+
+    // Extract the offsets for bremsstrahlung energy distributions
+    Teuchos::Array<double> offset(bremi_block(2*N,N));
+
+    // Extract the bremsstrahlung photon energy distributions block (BREME)
+    Teuchos::ArrayView<const double> breme_block =
+      xss_data_extractor->extractBREMEBlock();
+
+    // Create the scattering function
+    Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
+
+    for( unsigned n = 0; n < N; ++n )
+    {
+      function_data[n].first = energy_grid[n];
+
+      Teuchos::Array<double> photon_energy( breme_block( offset[n], table_length[n]) );
+
+      function_data[n].second.reset(
+          new Utility::HistogramDistribution(
+                photon_energy,
+                breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
+                true ) );
+    }
+
+    // Create the scattering function
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_distribution(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+              function_data ) );
+
+    // Create the scattering distributions
+    ace_dipole_brem_dist.reset(
+      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+          scattering_distribution ) );
+
+    twobs_brem_dist.reset(
+      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+          xss_data_extractor->extractAtomicNumber(),
+          scattering_distribution ) );
+
+    // Clear setup data
+    ace_file_handler.reset();
+    xss_data_extractor.reset();
   }
 
-  // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
-            function_data ) );
+  // Create the Native Distribution
+  {
+    // Create the native data file container
+    std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container(
+        new Data::ElectronPhotonRelaxationDataContainer(
+              test_native_file_name ) );
 
-  // Create the scattering distributions
-  ace_dipole_brem_dist.reset(
-    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-        scattering_distribution ) );
+    // Get the energy grid for bremsstrahlung energy distributions
+    std::vector<double> energy_grid =
+          data_container->getBremsstrahlungEnergyGrid();
 
-  twobs_brem_dist.reset(
-    new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-        xss_data_extractor->extractAtomicNumber(),
-        scattering_distribution ) );
+    // Get the function data
+    Utility::FullyTabularTwoDDistribution::DistributionType
+      function_data( energy_grid.size() );
 
-  // Clear setup data
-  ace_file_handler.reset();
-  xss_data_extractor.reset();
+    for( unsigned n = 0; n < energy_grid.size(); ++n )
+    {
+      function_data[n].first = energy_grid[n];
+
+      // Get the energy of the bremsstrahlung photon at the incoming energy
+      std::vector<double> photon_energy(
+          data_container->getBremsstrahlungPhotonEnergy( energy_grid[n] ) );
+
+      // Get the bremsstrahlung photon pdf at the incoming energy
+      std::vector<double> pdf(
+          data_container->getBremsstrahlungPhotonPDF( energy_grid[n] ) );
+
+      function_data[n].second.reset(
+        new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
+                                                                 pdf ) );
+    }
+
+    double eval_tol = 1e-12;
+
+    // Create the scattering function
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+              function_data,
+              1e-6,
+              eval_tol ) );
+
+    native_brem_dist.reset(
+        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+              energy_loss_function ) );
+  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

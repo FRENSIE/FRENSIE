@@ -248,7 +248,7 @@ double Direct::evaluateCDF(
  * will not match the direct evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -286,7 +286,7 @@ YIndepType Direct::sample(
  * will not match the direct evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -319,7 +319,7 @@ YIndepType Direct::sampleCos( const SampleFunctor& sample_functor,
  * will not match the direct evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -370,7 +370,7 @@ YIndepType Direct::sampleInSubrange(
  * will not match the direct evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -449,7 +449,7 @@ YZIterator Direct::sampleBinBoundary(
   double interpolation_fraction;
 
   {
-    const double processed_lower_bin_boundary = 
+    const double processed_lower_bin_boundary =
       TwoDInterpPolicy::processFirstIndepVar( lower_bin_boundary->first );
 
     interpolation_fraction =
@@ -780,7 +780,7 @@ double UnitBase::evaluateCDF(
  * will not match the unit-base evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -820,7 +820,7 @@ YIndepType UnitBase::sample(
  * will not match the unit-base evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -855,7 +855,7 @@ YIndepType UnitBase::sampleCos( const SampleFunctor& sample_functor,
  * will not match the unit-base evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -952,7 +952,7 @@ YIndepType UnitBase::sampleInSubrange(
  * will not match the unit-base evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
  * distribution.
- */ 
+ */
 template<typename TwoDInterpPolicy,
          typename XIndepType,
          typename YIndepType,
@@ -987,7 +987,7 @@ YIndepType UnitBase::sampleDetailed(
     intermediate_grid_length =
     TwoDInterpPolicy::ZYInterpPolicy::calculateUnitBaseGridLength(
                 min_y_indep_value, max_y_indep_value );
-  
+
   // Calculate the unit base variable on the bin boundary corresponding to the
   // raw sample
   typename QuantityTraits<YIndepType>::RawType eta;
@@ -1059,7 +1059,7 @@ YZIterator UnitBase::sampleBinBoundary(
   double interpolation_fraction;
 
   {
-    const double processed_lower_bin_boundary = 
+    const double processed_lower_bin_boundary =
       TwoDInterpPolicy::processFirstIndepVar( lower_bin_boundary->first );
 
     interpolation_fraction =
@@ -1177,7 +1177,7 @@ ReturnType Correlated::evaluatePDFCos(
     YIndepType lower_y_value, upper_y_value;
 
     // Check for a secondary indep value outside of the secondary indep grid limits
-    if ( y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value ) 
+    if ( y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value )
       return QuantityTraits<ReturnType>::zero();
     else if ( y_indep_value == min_y_indep_value ) // At min y value
     {
@@ -1345,7 +1345,7 @@ ReturnType Correlated::evaluatePDF(
     YIndepType lower_y_value, upper_y_value;
 
     // Check for a secondary indep value outside of the secondary indep grid limits
-    if ( y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value ) 
+    if ( y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value )
       return QuantityTraits<ReturnType>::zero();
     else if ( y_indep_value == min_y_indep_value) // At min y value
     {
@@ -1801,7 +1801,7 @@ YIndepType Correlated::sample(
             dummy_raw_sample );
 }
 
-// Sample between bin boundaries using the desired sampling functor 
+// Sample between bin boundaries using the desired sampling functor
 /*! \details The SampleFunctor must return a Cosine variable.
  * A direct correlated routine is used to sample the distribution.
  */
@@ -2258,7 +2258,8 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
     else
     {
       if ( TwoDInterpPolicy::YXInterpPolicy::name() == "LinLin" ||
-           TwoDInterpPolicy::YXInterpPolicy::name() == "LinLog" )
+           TwoDInterpPolicy::YXInterpPolicy::name() == "LinLog" ||
+           eta == 0.0 )
       {
         /* The PDF for lin-lin interpolation is defined as:
         * f(x,y) = 1/L * ( L_0f_0( y_0 ) * L_1f_1( y_1 ) )/
@@ -2280,11 +2281,11 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
         */
         auto lower_product =
           lower_eval*( lower_y_value - lower_bin_boundary->second->getLowerBoundOfIndepVar() );
-        auto upper_product = 
+        auto upper_product =
           upper_eval*( upper_y_value - upper_bin_boundary->second->getLowerBoundOfIndepVar() );
-        auto product = eta*intermediate_grid_length;
+        auto product = (y_indep_value - min_y_indep_value);
 
-        return (lower_product*upper_product)/(LinLin::interpolate( beta, upper_product, lower_product )*y_indep_value)/product;
+        return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/product;
       }
       else
       {

@@ -684,7 +684,7 @@ ADD_EXECUTABLE(tstBremsstrahlungElectronScatteringDistribution
   tstBremsstrahlungElectronScatteringDistribution.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(BremsstrahlungElectronScatteringDistribution_test tstBremsstrahlungElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(BremsstrahlungElectronScatteringDistribution_test tstBremsstrahlungElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST BremsstrahlungElectronScatteringDistribution_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstBremsstrahlungAdjointElectronScatteringDistribution
