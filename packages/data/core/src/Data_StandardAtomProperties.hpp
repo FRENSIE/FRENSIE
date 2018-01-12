@@ -51,26 +51,70 @@ public:
   //! Check if there is nuclear data
   virtual bool nuclearDataAvailable() const override;
 
+  //! Check if there is nuclear data available at the evaluation temp
+  virtual bool nuclearDataAvailable( const double evaluation_temp_in_mev ) const override;
+
+  //! Check if the nuclear data is evaluated at discrete temps
+  virtual bool nuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the nuclear data evaluation temps (in MeV)
+  virtual std::vector<double> getNuclearDataEvaluationTemps() const override;
+
   //! Get the nuclear data properties
-  virtual const NuclearDataProperties* getNuclearDataProperties() const override;
+  virtual const NuclearDataProperties* getNuclearDataProperties(
+                                        const double evaluation_temp_in_mev,
+                                        const bool find_exact ) const override;
 
   //! Check if there is any thermal nuclear data
   virtual bool thermalNuclearDataAvailable() const override;
 
+  //! Check if there is thermal nuclear data available at the evaluation temp
+  virtual bool thermalNuclearDataAvailable( const double evaluation_temp_in_mev ) const override;
+
+  //! Check if the thermal nuclear data is evaluated at discrete temps
+  virtual bool thermalNuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the thermal nuclear data evaluation temps
+  virtual std::vector<double> getThermalNuclearDataEvaluationTemps() const override;
+
   //! Get the thermal nuclear data properties
-  virtual const ThermalNuclearDataProperties* getThermalNuclearDataProperties() const override;
+  virtual const ThermalNuclearDataProperties* getThermalNuclearDataProperties(
+                                        const double evaluation_temp_in_mev,
+                                        const bool find_exact ) const override;
 
   //! Check if there is adjoint nuclear data
   virtual bool adjointNuclearDataAvailable() const override;
 
-  //! Get the adjoint nuclear data properties
-  virtual const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override;
+  //! Check if there is adjoint nuclear data available at the evaluation temp
+  virtual bool adjointNuclearDataAvailable( const double evaluation_temp_in_mev ) const override;
+
+  //! Check if the adjoint nuclear data is evaluation at discrete temps
+  virtual bool adjointNuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the adjoint nuclear data evaluation temps
+  virtual std::vector<double> getAdjointNuclearDataEvaluationTemps() const override;
+
+  //! Get the adjoint nuclear data
+  virtual const AdjointNuclearDataProperties* getAdjointNuclearDataProperties(
+                                        const double evaluation_temp_in_mev,
+                                        const bool find_exact ) const override;
 
   //! Check if there is any adjoint thermal nuclear data
   virtual bool adjointThermalNuclearDataAvailable() const override;
 
+  //! Check if there is adjoint thermal nuclear data available at the evaluation temp
+  virtual bool adjointThermalNuclearDataAvailable( const double evaluation_temp_in_mev ) const override;
+
+  //! Check if the adjoint thermal nuclear data is evaluated at discrete temps
+  virtual bool adjointThermalNuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the adjoint thermal nuclear data evaluation temps
+  virtual std::vector<double> getAdjointThermalNuclearDataEvaluationTemps() const override;
+
   //! Get the adjoint thermal nuclear data
-  virtual const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties() const override;
+  virtual const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties(
+                                        const double evaluation_temp_in_mev,
+                                        const bool find_exact ) const override;
 
   //! Check if there is photonuclear data
   virtual bool photonuclearDataAvailable() const override;

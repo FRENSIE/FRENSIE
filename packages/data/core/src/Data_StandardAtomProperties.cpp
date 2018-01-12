@@ -94,8 +94,27 @@ bool StandardAtomProperties::nuclearDataAvailable() const
   return false;
 }
 
-// Get the nuclear data properties
-const NuclearDataProperties* StandardAtomProperties::getNuclearDataProperties() const
+// Check if there is nuclear data available at the evaluation temp
+bool StandardAtomProperties::nuclearDataAvailable( const double ) const
+{
+  return false;
+}
+
+// Check if the nuclear data is evaluated at discrete temps
+bool StandardAtomProperties::nuclearDataEvaluatedAtDiscreteTemps() const
+{
+  return false;
+}
+
+// Get the nuclear data evaluation temps (in MeV)
+std::vector<double> StandardAtomProperties::getNuclearDataEvaluationTemps() const
+{
+  return std::vector<double>();
+}
+
+//  Get the nuclear data properties
+const NuclearDataProperties* StandardAtomProperties::getNuclearDataProperties(
+                                               const double, const bool ) const
 {
   return NULL;
 }
@@ -106,11 +125,28 @@ bool StandardAtomProperties::thermalNuclearDataAvailable() const
   return false;
 }
 
-// Get the thermal nuclear data properties
-const ThermalNuclearDataProperties* StandardAtomProperties::getThermalNuclearDataProperties() const
+// Check if there is thermal nuclear data available at the evaluation temp
+bool thermalNuclearDataAvailable( const double ) const
 {
-  return NULL;
+  return false;
 }
+
+// Check if the thermal nuclear data is evaluated at discrete temps
+bool thermalNuclearDataEvaluatedAtDiscreteTemps() const
+{
+  return false;
+}
+
+// Get the thermal nuclear data evaluation temps
+std::vector<double> getThermalNuclearDataEvaluationTemps() const
+{
+  return std::vector<double>
+}
+
+// Get the thermal nuclear data properties
+const ThermalNuclearDataProperties* getThermalNuclearDataProperties(
+                                        const double evaluation_temp_in_mev,
+                                        const bool find_exact ) const override;
 
 // Check if there is adjoint nuclear data
 bool StandardAtomProperties::adjointNuclearDataAvailable() const

@@ -22,6 +22,34 @@ double ScatteringCenterProperties::atomicWeightRatio() const
   return this->atomicWeight()/Utility::PhysicalConstants::neutron_rest_mass_amu;
 }
 
+// Get the nuclear data properties (closest to evaluation temp)
+const NuclearDataProperties* ScatteringCenterProperties::getNuclearDataProperties(
+                                    const double evaluation_temp_in_mev ) const
+{
+  return this->getNuclearDataProperties( evaluation_temp_in_mev, false );
+}
+
+// Get the thermal nuclear data properties
+const ThermalNuclearDataProperties* ScatteringCenterProperties::getThermalNuclearDataProperties(
+                                   c onst double evaluation_temp_in_mev ) const
+{
+  return this->getThermalNuclearDataProperties( evaluation_temp_in_mev, false );
+}
+
+// Get the adjoint nuclear data
+const AdjointNuclearDataProperties* ScatteringCenterProperties::getAdjointNuclearDataProperties(
+                                    const double evaluation_temp_in_mev ) const
+{
+  return this->getAdjointNuclearDataProperties( evaluation_temp_in_mev, false );
+}
+
+// Get the adjoint thermal nuclear data
+const AdjointThermalNuclearDataProperties* ScatteringCenterProperties::getAdjointThermalNuclearDataProperties(
+                                    const double evaluation_temp_in_mev ) const
+{
+  return this->getAdjointThermalNuclearDataProperties( evaluation_temp_in_mev, false );
+}
+
 // Deep clone the properties
 ScatteringCenterProperties* ScatteringCenterProperties::deepClone() const
 {
