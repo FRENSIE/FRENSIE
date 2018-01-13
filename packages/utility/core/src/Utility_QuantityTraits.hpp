@@ -920,6 +920,14 @@ public:
   static inline void setQuantity( QuantityType& quantity,
 				  const RawType& raw_quantity )
   { quantity = raw_quantity; }
+
+  //! Reinterpret quantity memory
+  static inline RawType* reinterpretAsRaw( QuantityType* quantity )
+  { return quantity; }
+
+  //! Reinterpret quantity memory
+  static inline const RawType* reinterpretAsRaw( const QuantityType* quantity )
+  { return quantity; }
 };
 
 /*! The QuantityToPowerTypeHelper (default not defined)
@@ -1100,6 +1108,14 @@ public:
   static inline void setQuantity( QuantityType& quantity,
 				  const RawType& raw_quantity )
   { quantity = QuantityType::from_value( raw_quantity ); }
+
+  //! Reinterpret quantity type memory as raw type memory 
+  static inline RawType* reinterpretAsRaw( QuantityType* quantity )
+  { return reinterpret_cast<RawType*>( quantity ); }
+
+  //! Reinterpret const quantity type memory as raw type memory
+  static inline const RawType* reinterpretAsRaw( const QuantityType* quantity )
+  { return reinterpret_cast<const RawType*>( quantity ); }
 };
 
 } // end Details namespace

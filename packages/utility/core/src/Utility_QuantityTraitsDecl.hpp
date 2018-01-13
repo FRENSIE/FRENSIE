@@ -273,6 +273,14 @@ struct QuantityTraits
   static inline void setQuantity( QuantityType& quantity,
 				  const RawType& raw_quantity ) noexcept
   { UndefinedQuantityTraits<T>::notDefined(); }
+
+  //! Reinterpret quantity type memory as raw type memory 
+  static inline RawType* reinterpretAsRaw( QuantityType* quantity )
+  { return UndefinedQuantityTraits<T>::notDefined(); }
+
+  //! Reinterpret const quantity type memory as raw type memory
+  static inline const RawType* reinterpretAsRaw( const QuantityType* quantity )
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 };
 
 /*! This function is a shortcut to the abs QuantityTraits function
@@ -389,6 +397,18 @@ inline void setQuantity( Quantity& quantity,
 			 const typename QuantityTraits<Quantity>::RawType& raw_quantity )
 {
   QuantityTraits<Quantity>::setQuantity( quantity, raw_quantity );
+}
+
+/*! This method is a shortcut to the reinterpretAsRaw QuantityTraits method
+ * \details This method should only be used in very rare cases when an array
+ * of quantities needs to be passed through an interface that only excepts
+ * arrays of the raw type
+ * \ingroup quantity_traits
+ */
+template<typename Quantity>
+inline typename std::conditional<std::is_const<Quantity>::value,const typename QuantityTraits<typename std::remove_const<Quantity>::type>::RawType,typename QuantityTraits<typename std::remove_const<Quantity>::type>::RawType>::type* reinterpretAsRaw( Quantity* quantity )
+{
+  return QuantityTraits<typename std::remove_const<Quantity>::type>::reinterpretAsRaw( quantity );
 }
 
 } // end Utility namespace

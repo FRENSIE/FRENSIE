@@ -172,7 +172,7 @@ FRENSIE_UNIT_TEST( InfiniteMediumModel, getCellVolume )
   Geometry::InfiniteMediumModel model( 1 );
 
   FRENSIE_CHECK_EQUAL( model.getCellVolume( 1 ),
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Model::Volume>::inf() );
 }
 
 //---------------------------------------------------------------------------//

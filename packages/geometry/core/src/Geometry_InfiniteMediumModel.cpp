@@ -27,8 +27,7 @@
 namespace Geometry{
 
 // Constructor
-InfiniteMediumModel::InfiniteMediumModel(
-                                  const ModuleTraits::InternalCellHandle cell )
+InfiniteMediumModel::InfiniteMediumModel( const InternalCellHandle cell )
   : Model(),
     d_cell( cell )
 { /* ... */ }
@@ -79,8 +78,7 @@ void InfiniteMediumModel::getCellEstimatorData( CellEstimatorIdDataMap& ) const
 { /* ... */ }
 
 // Check if a cell exists
-bool InfiniteMediumModel::doesCellExist(
-                            const ModuleTraits::InternalCellHandle cell ) const
+bool InfiniteMediumModel::doesCellExist( const InternalCellHandle cell ) const
 {
   if( cell == d_cell )
     return true;
@@ -91,8 +89,7 @@ bool InfiniteMediumModel::doesCellExist(
 // Check if the cell is a termination cell
 /*! \details An infinite medium has no termination cell.
  */
-bool InfiniteMediumModel::isTerminationCell(
-                                 const ModuleTraits::InternalCellHandle ) const
+bool InfiniteMediumModel::isTerminationCell( const InternalCellHandle ) const
 {
   return false;
 }
@@ -100,8 +97,7 @@ bool InfiniteMediumModel::isTerminationCell(
 // Check if a cell is void
 /*! \details By default there will only be a single void cell with an id of 1.
  */
-bool InfiniteMediumModel::isVoidCell(
-                            const ModuleTraits::InternalCellHandle cell ) const
+bool InfiniteMediumModel::isVoidCell( const InternalCellHandle cell ) const
 {
   if( cell == d_cell )
     return true;
@@ -110,13 +106,13 @@ bool InfiniteMediumModel::isVoidCell(
 }
 
 // Get the cell volume
-double InfiniteMediumModel::getCellVolume(
-                            const ModuleTraits::InternalCellHandle cell ) const
+auto InfiniteMediumModel::getCellVolume(
+                                const InternalCellHandle cell ) const -> Volume
 {
   if( cell == d_cell )
-    return std::numeric_limits<double>::infinity();
+    return Utility::QuantityTraits<Volume>::inf();
   else
-    return 0.0;
+    return Utility::QuantityTraits<Volume>::zero();
 }
 
 // Create a raw, heap-allocated navigator

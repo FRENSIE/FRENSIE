@@ -1,21 +1,33 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Geometry_Ray.cpp
+//! \file   Geometry_Navigator.cpp
 //! \author Alex Robinson
-//! \brief  Ray class definition
+//! \brief  The geometry navigator base class definition
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <limits>
+
 // FRENSIE Includes
-#include "Geometry_Ray.hpp"
+#include "Geometry_Navigator.hpp"
 
 namespace Geometry{
 
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareRay<void> );
-EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareRay<boost::units::cgs::length> );
+// The invalid cell handle
+auto Navigator::invalidCellHandle() -> InternalCellHandle
+{
+  return 0;
+}
 
+// The invalid surface handle
+auto Navigator::invalidSurfaceHandle() -> InternalSurfaceHandle
+{
+  return 0;
+}
+  
 } // end Geometry namespace
 
 //---------------------------------------------------------------------------//
-// end Geometry_Ray.cpp
+// end Geomtry_Navigator.cpp
 //---------------------------------------------------------------------------//

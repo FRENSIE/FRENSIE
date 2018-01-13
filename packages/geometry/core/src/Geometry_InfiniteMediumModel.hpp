@@ -23,7 +23,7 @@ class InfiniteMediumModel : public Model
 public:
 
   //! Constructor
-  InfiniteMediumModel( const ModuleTraits::InternalCellHandle cell = 1 );
+  InfiniteMediumModel( const InternalCellHandle cell = 1 );
 
   //! Destructor
   ~InfiniteMediumModel()
@@ -54,20 +54,16 @@ public:
            CellEstimatorIdDataMap& cell_estimator_id_data_map ) const override;
 
   //! Check if a cell exists
-  bool doesCellExist(
-                  const ModuleTraits::InternalCellHandle cell ) const override;
+  bool doesCellExist( const InternalCellHandle cell ) const override;
 
   //! Check if the cell is a termination cell
-  bool isTerminationCell(
-                  const ModuleTraits::InternalCellHandle cell ) const override;
+  bool isTerminationCell( const InternalCellHandle cell ) const override;
 
   //! Check if a cell is void
-  bool isVoidCell(
-                  const ModuleTraits::InternalCellHandle cell ) const override;
+  bool isVoidCell( const InternalCellHandle cell ) const override;
 
   //! Get the cell volume
-  double getCellVolume(
-                  const ModuleTraits::InternalCellHandle cell ) const override;
+  Volume getCellVolume( const InternalCellHandle cell ) const override;
 
   //! Create a raw, heap-allocated navigator
   InfiniteMediumNavigator* createNavigatorAdvanced() const override;
@@ -88,7 +84,7 @@ private:
   friend class boost::serialization::access;
 
   // The infinite medium cell id
-  ModuleTraits::InternalCellHandle d_cell;
+  InternalCellHandle d_cell;
 };
   
 } // end Geometry namespace

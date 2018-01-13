@@ -20,6 +20,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+namespace cgs = boost::units::cgs;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -37,8 +39,11 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, getPointLocation )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  std::unique_ptr<Geometry::Ray>
-    ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+  std::unique_ptr<Geometry::Navigator::Ray>
+    ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0, 0.0, 1.0 ) );
   
   Geometry::PointLocation location = navigator->getPointLocation( *ray, 1 );
 
@@ -48,12 +53,11 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, getPointLocation )
 
   FRENSIE_CHECK_EQUAL( location, Geometry::POINT_OUTSIDE_CELL );
 
-  ray.reset( new Geometry::Ray( std::numeric_limits<double>::max(),
-                                std::numeric_limits<double>::max(),
-                                std::numeric_limits<double>::max(),
-                                1.0,
-                                0.0,
-                                0.0 ) );
+  ray.reset( new Geometry::Navigator::Ray(
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   1.0, 0.0, 0.0 ) );
 
   location = navigator->getPointLocation( *ray, 1 );
 
@@ -71,8 +75,11 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, getSurfaceNormal )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  std::unique_ptr<Geometry::Ray>
-    ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+  std::unique_ptr<Geometry::Navigator::Ray>
+    ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0, 0.0, 1.0 ) );
 
   std::vector<double> normal( 3 );
 
@@ -90,24 +97,26 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay_cache )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  std::unique_ptr<Geometry::Ray>
-    ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+  std::unique_ptr<Geometry::Navigator::Ray>
+    ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0, 0.0, 1.0 ) );
 
   Geometry::Navigator::CellIdSet cell_cache;
   
-  Geometry::ModuleTraits::InternalCellHandle cell =
+  Geometry::Navigator::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray, cell_cache );
 
   FRENSIE_CHECK_EQUAL( cell, 1 );
   FRENSIE_CHECK_EQUAL( cell_cache.size(), 1 );
   FRENSIE_CHECK( cell_cache.count( 1 ) );
 
-  ray.reset( new Geometry::Ray( std::numeric_limits<double>::max(),
-                                std::numeric_limits<double>::max(),
-                                std::numeric_limits<double>::max(),
-                                1.0,
-                                0.0,
-                                0.0 ) );
+  ray.reset( new Geometry::Navigator::Ray(
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   1.0, 0.0, 0.0 ) );
 
   cell = navigator->findCellContainingRay( *ray, cell_cache );
 
@@ -123,20 +132,22 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  std::unique_ptr<Geometry::Ray>
-    ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+  std::unique_ptr<Geometry::Navigator::Ray>
+    ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0*cgs::centimeter,
+                                       0.0, 0.0, 1.0 ) );
 
-  Geometry::ModuleTraits::InternalCellHandle cell =
+  Geometry::Navigator::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray );
 
   FRENSIE_CHECK_EQUAL( cell, 1 );
   
-  ray.reset( new Geometry::Ray( std::numeric_limits<double>::max(),
-                                std::numeric_limits<double>::max(),
-                                std::numeric_limits<double>::max(),
-                                1.0,
-                                0.0,
-                                0.0 ) );
+  ray.reset( new Geometry::Navigator::Ray(
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   1.0, 0.0, 0.0 ) );
 
   cell = navigator->findCellContainingRay( *ray );
 
@@ -152,33 +163,38 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, setInternalRay )
 
   FRENSIE_CHECK( navigator->isInternalRaySet() );
 
-  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+  navigator->setInternalRay( 0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0, 0.0, 1.0 );
 
   FRENSIE_CHECK( navigator->isInternalRaySet() );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+                       0.0*cgs::centimeter );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
   FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
 
-  navigator->setInternalRay( std::numeric_limits<double>::max(),
-                             std::numeric_limits<double>::max(),
-                             std::numeric_limits<double>::max(),
-                             1.0,
-                             0.0,
-                             0.0 );
+  navigator->setInternalRay(
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
+                   1.0, 0.0, 0.0 );
 
   FRENSIE_CHECK( navigator->isInternalRaySet() );
 
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
-                       std::numeric_limits<double>::max() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::max() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
-                       std::numeric_limits<double>::max() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::max() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
-                       std::numeric_limits<double>::max() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::max() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
@@ -192,23 +208,30 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireInternalRay )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+  navigator->setInternalRay( 0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0, 0.0, 1.0 );
 
-  double distance_to_boundary = navigator->fireInternalRay();
+  Geometry::Navigator::Length distance_to_boundary =
+    navigator->fireInternalRay();
 
   FRENSIE_CHECK_EQUAL( distance_to_boundary,
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
 
-  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-  navigator->setInternalRay( 1.0, -1.0, 1.0, 1.0, 0.0, 0.0 );
+  navigator->setInternalRay( 1.0*cgs::centimeter,
+                             -1.0*cgs::centimeter,
+                             1.0*cgs::centimeter,
+                             1.0, 0.0, 0.0 );
   
   distance_to_boundary = navigator->fireInternalRay( &surface_hit );
 
   FRENSIE_CHECK_EQUAL( distance_to_boundary,
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( surface_hit,
-                       Geometry::ModuleTraits::invalid_internal_surface_handle );
+                       Geometry::Navigator::invalidSurfaceHandle() );
 }
 
 //---------------------------------------------------------------------------//
@@ -218,23 +241,29 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+  navigator->setInternalRay( 0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0, 0.0, 1.0 );
 
   bool reflected = navigator->advanceInternalRayToCellBoundary();
 
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
   FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
   FRENSIE_CHECK( !reflected );
 
-  navigator->setInternalRay( 1.0, -1.0, 1.0, 1.0/sqrt(3), 1.0/sqrt(3), 1.0/sqrt(3) );
+  navigator->setInternalRay( 1.0*cgs::centimeter,
+                             -1.0*cgs::centimeter,
+                             1.0*cgs::centimeter,
+                             1.0/sqrt(3), 1.0/sqrt(3), 1.0/sqrt(3) );
 
   std::vector<double> surface_normal( 3 );
 
@@ -242,11 +271,11 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
     navigator->advanceInternalRayToCellBoundary( surface_normal.data() );
 
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
-                       std::numeric_limits<double>::infinity() );
+                       Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0],
                        1.0/sqrt(3.0) );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1],
@@ -267,27 +296,36 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayBySubstep )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+  navigator->setInternalRay( 0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0, 0.0, 1.0 );
 
-  navigator->advanceInternalRayBySubstep( 1.0 );
+  navigator->advanceInternalRayBySubstep( 1.0*cgs::centimeter );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+                       1.0*cgs::centimeter );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
 
-  navigator->setInternalRay( 1.0, -1.0, 1.0, 1.0/sqrt(3), 1.0/sqrt(3), -1.0/sqrt(3) );
+  navigator->setInternalRay( 1.0*cgs::centimeter,
+                             -1.0*cgs::centimeter,
+                             1.0*cgs::centimeter,
+                             1.0/sqrt(3), 1.0/sqrt(3), -1.0/sqrt(3) );
 
-  navigator->advanceInternalRayBySubstep( 2.0 );
+  navigator->advanceInternalRayBySubstep( 2.0*cgs::centimeter );
 
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
-                       1.0+2.0/sqrt(3.0) );
+                       (1.0+2.0/sqrt(3.0))*cgs::centimeter );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
-                       -1.0+2.0/sqrt(3.0) );
+                       (-1.0+2.0/sqrt(3.0))*cgs::centimeter );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
-                       1.0-2.0/sqrt(3.0) );
+                       (1.0-2.0/sqrt(3.0))*cgs::centimeter );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0],
                        1.0/sqrt(3) );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1],
@@ -303,13 +341,19 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, changeInternalRayDirection )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+  navigator->setInternalRay( 0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0, 0.0, 1.0 );
 
   navigator->changeInternalRayDirection( 1.0, 0.0, 0.0 );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+                       0.0*cgs::centimeter );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
   FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
@@ -322,7 +366,10 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, clone )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+  navigator->setInternalRay( 0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0*cgs::centimeter,
+                             0.0, 0.0, 1.0 );
 
   std::unique_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
 

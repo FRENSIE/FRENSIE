@@ -15,11 +15,15 @@
 
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
+#include <boost/units/systems/cgs/length.hpp>
+#include <boost/units/systems/cgs/volume.hpp>
 
 // FRENSIE Includes
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Ray.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace Geometry{
@@ -33,8 +37,23 @@ class Navigator
 
 public:
 
+  //! The internal cell handle type
+  typedef unsigned long long InternalCellHandle;
+
+  //! The internal surface handle type
+  typedef unsigned long long InternalSurfaceHandle;
+
+  //! The length unit
+  typedef boost::units::cgs::length LengthUnit;
+
+  //! The length quantity
+  typedef boost::units::quantity<LengthUnit> Length;
+
+  //! The ray type used by the navigator
+  typedef UnitAwareRay<LengthUnit> Ray;
+
   //! The cell id set
-  typedef std::set<ModuleTraits::InternalCellHandle> CellIdSet;
+  typedef std::set<InternalCellHandle> CellIdSet;
   
   //! Constructor
   Navigator()
@@ -50,34 +69,32 @@ public:
    * outside of the cell when close to a boundary.
    */
   virtual PointLocation getPointLocation(
-                       const double position[3],
-                       const double direction[3],
-                       const ModuleTraits::InternalCellHandle cell ) const = 0;
+                                     const Length position[3],
+                                     const double direction[3],
+                                     const InternalCellHandle cell ) const = 0;
   
   /*! Get the location of a cell w.r.t. a given cell
    *
    * The direction can be used to help determine if the point is inside or
    * outside of the cell when close to a boundary.
    */
-  PointLocation getPointLocation(
-                           const Ray& ray,
-                           const ModuleTraits::InternalCellHandle cell ) const;
+  PointLocation getPointLocation( const Ray& ray,
+                                  const InternalCellHandle cell ) const;
 
   /*! Get the surface normal at a point on the surface
    *
    * The dot product of the direction and normal must be positive defined.
    */
-  virtual void getSurfaceNormal(
-                          const ModuleTraits::InternalSurfaceHandle surface_id,
-                          const double position[3],
-                          const double direction[3],
-                          double normal[3] ) const = 0;
+  virtual void getSurfaceNormal( const InternalSurfaceHandle surface_id,
+                                 const Length position[3],
+                                 const double direction[3],
+                                 double normal[3] ) const = 0;
 
   /*! Get the surface normal at a point on the surface
    *
    * The dot product of the direction and normal will be positive defined.
    */
-  void getSurfaceNormal( const ModuleTraits::InternalSurfaceHandle surface_id,
+  void getSurfaceNormal( const InternalSurfaceHandle surface_id,
                          const Ray& ray,
                          double normal[3] ) const;
 
@@ -89,8 +106,8 @@ public:
    * cache. A std::runtime_error (or class derived from it) will be thrown if 
    * an error occurs.
    */
-  virtual ModuleTraits::InternalCellHandle findCellContainingRay(
-                                       const double position[3],
+  virtual InternalCellHandle findCellContainingRay(
+                                       const Length position[3],
                                        const double direction[3],
                                        CellIdSet& found_cell_cache ) const = 0;
 
@@ -102,7 +119,7 @@ public:
    * cache. A std::runtime_error (or class derived from it) will be thrown if 
    * an error occurs.
    */
-  ModuleTraits::InternalCellHandle findCellContainingRay(
+  InternalCellHandle findCellContainingRay(
                                            const Ray& ray,
                                            CellIdSet& found_cell_cache ) const;
 
@@ -112,8 +129,8 @@ public:
    * the point when close to a boundary. A std::runtime_error (or class 
    * derived from it) must be thrown if an error occurs.
    */
-  virtual ModuleTraits::InternalCellHandle findCellContainingRay(
-                                         const double position[3],
+  virtual InternalCellHandle findCellContainingRay(
+                                         const Length position[3],
                                          const double direction[3] ) const = 0;
   
   /*! Find the cell that contains a given ray
@@ -124,8 +141,7 @@ public:
    * A std::runtime_error (or class derived from it) will be thrown if an error
    * occurs.
    */
-  ModuleTraits::InternalCellHandle findCellContainingRay(
-                                                        const Ray& ray ) const;
+  InternalCellHandle findCellContainingRay( const Ray& ray ) const;
 
   //! Check if an internal ray has been set
   virtual bool isInternalRaySet() const = 0;
@@ -135,9 +151,9 @@ public:
    * A std::runtime_error (or class derived from it) must be thrown if
    * an error occurs.
    */
-  virtual void setInternalRay( const double x_position,
-                               const double y_position,
-                               const double z_position,
+  virtual void setInternalRay( const Length x_position,
+                               const Length y_position,
+                               const Length z_position,
                                const double x_direction,
                                const double y_direction,
                                const double z_direction ) = 0;
@@ -147,7 +163,7 @@ public:
    * A std::runtime_error (or class derived from it) must be thrown if
    * an error occurs.
    */
-  void setInternalRay( const double position[3], const double direction[3] );
+  void setInternalRay( const Length position[3], const double direction[3] );
 
   /*! Set the internal ray with unknown starting cell
    *
@@ -162,14 +178,13 @@ public:
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  virtual void setInternalRay(
-                       const double x_position,
-                       const double y_position,
-                       const double z_position,
-                       const double x_direction,
-                       const double y_direction,
-                       const double z_direction,
-                       const ModuleTraits::InternalCellHandle start_cell ) = 0;
+  virtual void setInternalRay( const Length x_position,
+                               const Length y_position,
+                               const Length z_position,
+                               const double x_direction,
+                               const double y_direction,
+                               const double z_direction,
+                               const InternalCellHandle start_cell ) = 0;
 
   /*! Set the internal ray with known starting cell
    *
@@ -177,9 +192,9 @@ public:
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  void setInternalRay( const double position[3],
+  void setInternalRay( const Length position[3],
                        const double direction[3],
-                       const ModuleTraits::InternalCellHandle start_cell );
+                       const InternalCellHandle start_cell );
 
   /*! Set the internal ray with known starting cell
    *
@@ -188,10 +203,10 @@ public:
    * if an error occurs.
    */
   void setInternalRay( const Ray& ray,
-                       const ModuleTraits::InternalCellHandle start_cell );
+                       const InternalCellHandle start_cell );
 
   //! Get the internal ray position
-  virtual const double* getInternalRayPosition() const = 0;
+  virtual const Length* getInternalRayPosition() const = 0;
 
   //! Get the internal ray direction
   virtual const double* getInternalRayDirection() const = 0;
@@ -201,22 +216,21 @@ public:
    * A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  virtual ModuleTraits::InternalCellHandle getCellContainingInternalRay() const = 0;
+  virtual InternalCellHandle getCellContainingInternalRay() const = 0;
 
   /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown if a ray 
    * tracing error occurs.
    */
-  virtual double fireInternalRay(
-                        ModuleTraits::InternalSurfaceHandle* surface_hit ) = 0;
+  virtual Length fireInternalRay( InternalSurfaceHandle* surface_hit ) = 0;
 
   /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown if a ray 
    * tracing error occurs.
    */
-  double fireInternalRay();
+  Length fireInternalRay();
 
   /*! Advance the internal ray to the cell boundary
    *
@@ -233,7 +247,7 @@ public:
   bool advanceInternalRayToCellBoundary();
 
   //! Advance the internal ray by a substep (less than distance to boundary)
-  virtual void advanceInternalRayBySubstep( const double step_size ) = 0;
+  virtual void advanceInternalRayBySubstep( const Length step_size ) = 0;
 
   //! Change the internal ray direction
   virtual void changeInternalRayDirection( const double x_direction,
@@ -242,6 +256,12 @@ public:
 
   //! Change the internal ray direction
   void changeInternalRayDirection( const double direction[3] );
+
+  //! The invalid cell handle
+  static InternalCellHandle invalidCellHandle();
+
+  //! The invalid surface handle
+  static InternalSurfaceHandle invalidSurfaceHandle();
 
   /*! Clone the navigator
    *
@@ -252,7 +272,8 @@ public:
 protected:
 
   // Convert an array to a string
-  static std::string arrayToString( const double data[3] );
+  template<typename T>
+  static std::string arrayToString( const T data[3] );
 
 private:
 
@@ -274,17 +295,17 @@ private:
 
 // Get the location of a cell w.r.t. a given cell
 inline PointLocation Navigator::getPointLocation(
-                            const Ray& ray,
-                            const ModuleTraits::InternalCellHandle cell ) const
+                                          const Ray& ray,
+                                          const InternalCellHandle cell ) const
 {
   return this->getPointLocation( ray.getPosition(), ray.getDirection(), cell );
 }
 
 // Get the surface normal at a point on the surface
 inline void Navigator::getSurfaceNormal(
-                          const ModuleTraits::InternalSurfaceHandle surface_id,
-                          const Ray& ray,
-                          double normal[3] ) const
+                                        const InternalSurfaceHandle surface_id,
+                                        const Ray& ray,
+                                        double normal[3] ) const
 {
   this->getSurfaceNormal( surface_id,
                           ray.getPosition(),
@@ -293,9 +314,9 @@ inline void Navigator::getSurfaceNormal(
 }
 
 // Find the cell that contains a given ray
-inline ModuleTraits::InternalCellHandle Navigator::findCellContainingRay(
-                                            const Ray& ray,
-                                            CellIdSet& found_cell_cache ) const
+inline auto Navigator::findCellContainingRay(
+                      const Ray& ray,
+                      CellIdSet& found_cell_cache ) const -> InternalCellHandle
 {
   return this->findCellContainingRay( ray.getPosition(),
                                       ray.getDirection(),
@@ -303,14 +324,13 @@ inline ModuleTraits::InternalCellHandle Navigator::findCellContainingRay(
 }
 
 // Find the cell that contains a given ray
-inline ModuleTraits::InternalCellHandle Navigator::findCellContainingRay(
-                                                         const Ray& ray ) const
+inline auto Navigator::findCellContainingRay( const Ray& ray ) const -> InternalCellHandle
 {
   return this->findCellContainingRay( ray.getPosition(), ray.getDirection() );
 }
 
 // Set the internal ray with unknown starting cell
-inline void Navigator::setInternalRay( const double position[3],
+inline void Navigator::setInternalRay( const Length position[3],
                                        const double direction[3] )
 {
   this->setInternalRay( position[0],
@@ -328,30 +348,24 @@ inline void Navigator::setInternalRay( const Ray& ray )
 }
 
 // Set the internal ray with known starting cell
-inline void Navigator::setInternalRay(
-                            const double position[3],
-                            const double direction[3],
-                            const ModuleTraits::InternalCellHandle start_cell )
+inline void Navigator::setInternalRay( const Length position[3],
+                                       const double direction[3],
+                                       const InternalCellHandle start_cell )
 {
-  this->setInternalRay( position[0],
-                        position[1],
-                        position[2],
-                        direction[0],
-                        direction[1],
-                        direction[2],
+  this->setInternalRay( position[0], position[1], position[2],
+                        direction[0], direction[1], direction[2],
                         start_cell );
 }
 
 // Set the internal ray with known starting cell
-inline void Navigator::setInternalRay(
-                            const Ray& ray,
-                            const ModuleTraits::InternalCellHandle start_cell )
+inline void Navigator::setInternalRay( const Ray& ray,
+                                       const InternalCellHandle start_cell )
 {
   this->setInternalRay( ray.getPosition(), ray.getDirection() );
 }
 
 // Fire the internal ray through the geometry
-inline double Navigator::fireInternalRay()
+inline auto Navigator::fireInternalRay() -> Length
 {
   return this->fireInternalRay( NULL );
 }
@@ -371,13 +385,10 @@ inline void Navigator::changeInternalRayDirection( const double direction[3] )
 }
 
 // Convert an array to a string
-inline std::string Navigator::arrayToString( const double data[3] )
+template<typename T>
+inline std::string Navigator::arrayToString( const T data[3] )
 {
-  std::ostringstream oss;
-
-  oss << "{" << data[0] << "," << data[1] << "," << data[2] << "}";
-
-  return oss.str();
+  return Utility::toString( Utility::ArrayView<T>( data, 3 ) );
 }
   
 } // end Geometry namespace

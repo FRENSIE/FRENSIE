@@ -13,6 +13,9 @@
 #include <boost/serialization/nvp.hpp>
 #include <boost/filesystem.hpp>
 
+// FRENSIE Includes
+#include "Utility_ExceptionTestMacros.hpp"
+
 namespace Utility{
 
 namespace Details{

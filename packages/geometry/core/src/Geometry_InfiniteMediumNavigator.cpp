@@ -22,7 +22,6 @@
 
 // FRENSIE Includes
 #include "Geometry_InfiniteMediumNavigator.hpp"
-#include "Geometry_ModuleTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
@@ -32,19 +31,19 @@ namespace Geometry{
 
 // Default constructor
 InfiniteMediumNavigator::InfiniteMediumNavigator()
-  : InfiniteMediumNavigator( Geometry::ModuleTraits::invalid_internal_cell_handle )
+  : InfiniteMediumNavigator( Geometry::Navigator::invalidCellHandle() )
 { /* ... */ }
 
 // Constructor
 InfiniteMediumNavigator::InfiniteMediumNavigator(
-               const ModuleTraits::InternalCellHandle infinite_medium_cell_id )
+                             const InternalCellHandle infinite_medium_cell_id )
   : d_cell( infinite_medium_cell_id ),
-    d_position( new double[3] ),
+    d_position( new Length[3] ),
     d_direction( new double[3] )
 {
-  d_position[0] = 0.0;
-  d_position[1] = 0.0;
-  d_position[2] = 0.0;
+  d_position[0] = 0.0*boost::units::cgs::centimeter;
+  d_position[1] = 0.0*boost::units::cgs::centimeter;;
+  d_position[2] = 0.0*boost::units::cgs::centimeter;;
 
   d_direction[0] = 0.0;
   d_direction[1] = 0.0;
@@ -60,9 +59,9 @@ InfiniteMediumNavigator::~InfiniteMediumNavigator()
 
 // Get the location of a point w.r.t. a given cell
 PointLocation InfiniteMediumNavigator::getPointLocation(
-                            const double*,
-                            const double*,
-                            const ModuleTraits::InternalCellHandle cell ) const
+                                          const Length*,
+                                          const double*,
+                                          const InternalCellHandle cell ) const
 {
   if( cell == d_cell )
     return POINT_INSIDE_CELL;
@@ -74,11 +73,10 @@ PointLocation InfiniteMediumNavigator::getPointLocation(
 /*! \details An infinite medium has no surface. A normal of (0,0,1) will
  * always be returned.
  */
-void InfiniteMediumNavigator::getSurfaceNormal(
-                                     const ModuleTraits::InternalSurfaceHandle,
-                                     const double*,
-                                     const double*,
-                                     double normal[3] ) const
+void InfiniteMediumNavigator::getSurfaceNormal( const InternalSurfaceHandle,
+                                                const Length*,
+                                                const double*,
+                                                double normal[3] ) const
 {
   normal[0] = 0.0;
   normal[1] = 0.0;
@@ -86,11 +84,10 @@ void InfiniteMediumNavigator::getSurfaceNormal(
 }
 
 // Find the cell that contains a given ray
-ModuleTraits::InternalCellHandle
-InfiniteMediumNavigator::findCellContainingRay(
-                                            const double*,
-                                            const double*,
-                                            CellIdSet& found_cell_cache ) const
+auto InfiniteMediumNavigator::findCellContainingRay(
+                      const Length*,
+                      const double*,
+                      CellIdSet& found_cell_cache ) const -> InternalCellHandle
 {
   found_cell_cache.insert( d_cell );
 
@@ -98,9 +95,9 @@ InfiniteMediumNavigator::findCellContainingRay(
 }
 
 // Find the cell that contains a given ray
-ModuleTraits::InternalCellHandle
-InfiniteMediumNavigator::findCellContainingRay( const double*,
-                                                const double* ) const
+auto InfiniteMediumNavigator::findCellContainingRay(
+                                    const Length*,
+                                    const double* ) const -> InternalCellHandle
 {
   return d_cell;
 }
@@ -112,9 +109,9 @@ bool InfiniteMediumNavigator::isInternalRaySet() const
 }
 
 // Set the internal ray with unknown starting cell
-void InfiniteMediumNavigator::setInternalRay( const double x_position,
-                                              const double y_position,
-                                              const double z_position,
+void InfiniteMediumNavigator::setInternalRay( const Length x_position,
+                                              const Length y_position,
+                                              const Length z_position,
                                               const double x_direction,
                                               const double y_direction,
                                               const double z_direction )
@@ -132,21 +129,20 @@ void InfiniteMediumNavigator::setInternalRay( const double x_position,
 }
 
 // Set the internal ray with known starting cell
-void InfiniteMediumNavigator::setInternalRay(
-                            const double x_position,
-                            const double y_position,
-                            const double z_position,
-                            const double x_direction,
-                            const double y_direction,
-                            const double z_direction,
-                            const ModuleTraits::InternalCellHandle )
+void InfiniteMediumNavigator::setInternalRay( const Length x_position,
+                                              const Length y_position,
+                                              const Length z_position,
+                                              const double x_direction,
+                                              const double y_direction,
+                                              const double z_direction,
+                                              const InternalCellHandle )
 {
   this->setInternalRay( x_position, y_position, z_position,
                         x_direction, y_direction, z_direction );
 }
 
 // Get the internal ray position
-const double* InfiniteMediumNavigator::getInternalRayPosition() const
+auto InfiniteMediumNavigator::getInternalRayPosition() const -> const Length*
 {
   return d_position;
 }
@@ -158,8 +154,7 @@ const double* InfiniteMediumNavigator::getInternalRayDirection() const
 }
 
 // Get the cell that contains the internal ray
-ModuleTraits::InternalCellHandle
-InfiniteMediumNavigator::getCellContainingInternalRay() const
+auto InfiniteMediumNavigator::getCellContainingInternalRay() const -> InternalCellHandle
 {
   return d_cell;
 }
@@ -168,13 +163,13 @@ InfiniteMediumNavigator::getCellContainingInternalRay() const
 /*! \details An infinite medium has no surface. The surface hit will be set
  * to the invalid surface.
  */
-double InfiniteMediumNavigator::fireInternalRay(
-                             ModuleTraits::InternalSurfaceHandle* surface_hit )
+auto InfiniteMediumNavigator::fireInternalRay(
+                                 InternalSurfaceHandle* surface_hit ) -> Length
 {
   if( surface_hit != NULL )
-    *surface_hit = ModuleTraits::invalid_internal_surface_handle;
+    *surface_hit = Navigator::invalidSurfaceHandle();
 
-  return std::numeric_limits<double>::infinity();
+  return Utility::QuantityTraits<Length>::inf();
 }
 
 // Advance the internal ray to the cell boundary
@@ -186,7 +181,7 @@ bool InfiniteMediumNavigator::advanceInternalRayToCellBoundary(
                                                        double* surface_normal )
 {
   // Move the ray position to infinity
-  d_position[0] = std::numeric_limits<double>::infinity();
+  d_position[0] = Utility::QuantityTraits<Length>::inf();
   d_position[1] = d_position[0];
   d_position[2] = d_position[0];
 
@@ -204,7 +199,7 @@ bool InfiniteMediumNavigator::advanceInternalRayToCellBoundary(
 
 // Advance the internal ray by a substep (less than distance to boundary)
 void InfiniteMediumNavigator::advanceInternalRayBySubstep(
-                                                       const double step_size )
+                                                       const Length step_size )
 {
   d_position[0] += d_direction[0]*step_size;
   d_position[1] += d_direction[1]*step_size;
@@ -246,7 +241,7 @@ void InfiniteMediumNavigator::save( Archive& ar, const unsigned version ) const
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cell );
   
-  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<double>( d_position, 3 ) );
+  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
   ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
 }
 
@@ -263,9 +258,9 @@ void InfiniteMediumNavigator::load( Archive& ar, const unsigned version )
   // The position array should always be initialized - this check is added
   // for extra safety
   if( !d_position )
-    d_position = new double[3];
+    d_position = new Length[3];
   
-  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<double>( d_position, 3 ) );
+  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
 
   // The direction array should always be initialized - this check is added
   // for extra safety
