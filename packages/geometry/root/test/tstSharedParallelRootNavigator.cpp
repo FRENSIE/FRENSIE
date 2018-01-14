@@ -21,6 +21,12 @@
 #include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+namespace cgs = boost::units::cgs;
+
+//---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 std::shared_ptr<const Geometry::RootModel> model;
@@ -29,9 +35,9 @@ std::shared_ptr<const Geometry::RootModel> model;
 // Check that a parallel internal ray trace can be done
 FRENSIE_UNIT_TEST( Root, parallel_ray_trace )
 {
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle> >
     cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   std::vector<std::tuple<double,double,double> >
@@ -44,67 +50,97 @@ FRENSIE_UNIT_TEST( Root, parallel_ray_trace )
     
     // Initialize the ray
     if( Utility::GlobalOpenMPSession::getThreadId()%6 == 0 )
-      navigator->setInternalRay( 0.0, 0.0, 0.0, 1.0, 0.0, 0.0 );
+    {
+      navigator->setState( 0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           1.0, 0.0, 0.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 1 )
-      navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+    {
+      navigator->setState( 0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0, 1.0, 0.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 2 )
-      navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+    {
+      navigator->setState( 0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0, 0.0, 1.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 3 )
-      navigator->setInternalRay( 0.0, 0.0, 0.0, -1.0, 0.0, 0.0 );
+    {
+      navigator->setState( 0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           -1.0, 0.0, 0.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 4)
-      navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, -1.0, 0.0 );
+    {
+      navigator->setState( 0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0, -1.0, 0.0 );
+    }
     else
-      navigator->setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, -1.0 );
+    {
+      navigator->setState( 0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0*cgs::centimeter,
+                           0.0, 0.0, -1.0 );
+    }
 
     Utility::get<0>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
-      navigator->getCellContainingInternalRay();
+      navigator->getCurrentCell();
 
     // Fire a ray through the geometry
     Utility::get<0>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      navigator->fireInternalRay();
+      navigator->fireRay().value();
 
     // Advance the ray to the cell boundary
-    navigator->advanceInternalRayToCellBoundary();
+    navigator->advanceToCellBoundary();
 
     Utility::get<1>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
-      navigator->getCellContainingInternalRay();
+      navigator->getCurrentCell();
 
     // Fire a ray through the geometry
-    double distance_to_boundary = navigator->fireInternalRay();
+    Geometry::Navigator::Length distance_to_boundary = navigator->fireRay();
     
     Utility::get<1>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_boundary;
+      distance_to_boundary.value();
 
     // Advance the ray a substep
-    navigator->advanceInternalRayBySubstep( 0.5*distance_to_boundary );
+    navigator->advanceBySubstep( 0.5*distance_to_boundary );
 
     // Change the ray direction
     double new_direction[3];
 
     Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
-                                     0.0,
-                                     0.0,
-                                     navigator->getInternalRayDirection(),
-                                     new_direction );
+                                                     0.0,
+                                                     0.0,
+                                                     navigator->getDirection(),
+                                                     new_direction );
 
-    navigator->changeInternalRayDirection( new_direction );
+    navigator->changeDirection( new_direction );
 
     // Fire a ray through the geometry
     Utility::get<2>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      navigator->fireInternalRay();
+      navigator->fireRay().value();
 
     // Advance the ray to the cell boundary
-    navigator->advanceInternalRayToCellBoundary();
+    navigator->advanceToCellBoundary();
 
     // Find the new cell
     Utility::get<2>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
-      navigator->getCellContainingInternalRay();
+      navigator->getCurrentCell();
   }
 
   // Check that each of the rays traces were successful
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
-                         Geometry::ModuleTraits::InternalCellHandle,
-                         Geometry::ModuleTraits::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
@@ -115,7 +151,7 @@ FRENSIE_UNIT_TEST( Root, parallel_ray_trace )
   std::vector<std::tuple<double,double,double> >
     correct_distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_distances.size(); ++i )
+  for( size_t i = 0; i < correct_distances.size(); ++i )
     correct_distances[i] = std::make_tuple( 2.5, 2.5, 5.0 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( distances, correct_distances, 1e-6 );

@@ -57,15 +57,15 @@ RootNavigator::~RootNavigator()
  * cell or interest).
  */
 PointLocation RootNavigator::getPointLocation(
-                         const double position[3],
-                         const double*,
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+                                       const Length position[3],
+                                       const double*,
+                                       const InternalCellHandle cell_id ) const
 {
   TGeoVolume* cell = d_root_model->getVolumePtr( cell_id );
 
   PointLocation location;
 
-  if( cell->Contains( position ) )
+  if( cell->Contains( Utility::reinterpretAsRaw(position) ) )
   {
     location = POINT_INSIDE_CELL;
 
@@ -85,7 +85,7 @@ PointLocation RootNavigator::getPointLocation(
 
         TGeoVolume* daughter_volume = daughter_node->GetVolume();
 
-        if( daughter_volume->Contains( position ) )
+        if( daughter_volume->Contains( Utility::reinterpretAsRaw(position) ) )
         {
           location = POINT_OUTSIDE_CELL;
 
@@ -104,19 +104,18 @@ PointLocation RootNavigator::getPointLocation(
 /*! \details The surface id will not be used. The dot product of the normal
  * and the direction will be positive defined.
  */
-void RootNavigator::getSurfaceNormal(
-                          const ModuleTraits::InternalSurfaceHandle,
-                          const double position[3],
-                          const double direction[3],
-                          double normal[3] ) const
+void RootNavigator::getSurfaceNormal( const InternalSurfaceHandle,
+                                      const Length position[3],
+                                      const double direction[3],
+                                      double normal[3] ) const
 {
   TGeoNode* node = this->findNodeContainingRay( position, direction );
   
   // Note: This is basically a reimplementation of the
-  // TGeoNavigator::GetNormalFast method. Because we want to preserve our
+  // TGeoNavigator::GetNormalFast method but because we want to preserve our
   // internal ray state this reimplementation is necessary
   double local_position[3];
-  node->MasterToLocal( position, local_position );
+  node->MasterToLocal( Utility::reinterpretAsRaw(position), local_position );
   
   double local_direction[3];
   node->MasterToLocal( direction, local_direction );
@@ -139,12 +138,12 @@ void RootNavigator::getSurfaceNormal(
  * geometry must be traversed in order to find the correct cell when the
  * ray lies on a cell boundary.
  */
-ModuleTraits::InternalCellHandle RootNavigator::findCellContainingRay(
-                                            const double position[3],
-                                            const double direction[3],
-                                            CellIdSet& found_cell_cache ) const
+auto RootNavigator::findCellContainingRay(
+                      const Length position[3],
+                      const double direction[3],
+                      CellIdSet& found_cell_cache ) const -> InternalCellHandle
 {
-  ModuleTraits::InternalCellHandle found_cell =
+  InternalCellHandle found_cell =
     this->findCellContainingRay( position, direction );
 
   // Add the new cell to the cache
@@ -154,9 +153,9 @@ ModuleTraits::InternalCellHandle RootNavigator::findCellContainingRay(
 }
 
 // Find the cell that contains the ray
-ModuleTraits::InternalCellHandle RootNavigator::findCellContainingRay(
-                                              const double position[3],
-                                              const double direction[3] ) const
+auto RootNavigator::findCellContainingRay(
+                        const Length position[3],
+                        const double direction[3] ) const -> InternalCellHandle
 {
   return this->findNodeContainingRay( position, direction )->GetVolume()->GetUniqueID();
 }
@@ -167,14 +166,14 @@ ModuleTraits::InternalCellHandle RootNavigator::findCellContainingRay(
 //       will make it appear as if it hasn't been changed. That is why this
 //       this method is const.
 TGeoNode* RootNavigator::findNodeContainingRay(
-                                              const double position[3],
+                                              const Length position[3],
                                               const double direction[3] ) const
 {
   // Cache the navigator's state
   double cached_position[3];
   double cached_direction[3];
 
-  if( this->isInternalRaySet() )
+  if( this->isStateSet() )
   {
     RootNavigator::deepCopy( cached_position, d_navigator->GetCurrentPoint() );
     RootNavigator::deepCopy( cached_direction,
@@ -182,7 +181,8 @@ TGeoNode* RootNavigator::findNodeContainingRay(
   }
 
   // Set the temporary state
-  TGeoNode* current_node = d_navigator->InitTrack( position, direction );
+  TGeoNode* current_node =
+    d_navigator->InitTrack( Utility::reinterpretAsRaw(position), direction );
 
   TGeoNode* boundary_node = d_navigator->FindNextBoundary();
 
@@ -213,7 +213,7 @@ TGeoNode* RootNavigator::findNodeContainingRay(
                       << this->arrayToString( direction ) );
 
   // Reset the navigator state
-  if( this->isInternalRaySet() )
+  if( this->isStateSet() )
   {
     d_navigator->InitTrack( cached_position, cached_direction );
     d_navigator->FindNextBoundary();
@@ -223,75 +223,78 @@ TGeoNode* RootNavigator::findNodeContainingRay(
 }
 
 // Check if the internal ray is set
-bool RootNavigator::isInternalRaySet() const
+bool RootNavigator::isStateSet() const
 {
   return d_internal_ray_set;
 }
 
 // Set the internal ray set flag
-void RootNavigator::internalRaySet()
+void RootNavigator::stateSet()
 {
   d_internal_ray_set = true;
 }
 
 // Initialize (or reset) an internal Root ray
-void RootNavigator::setInternalRay( const double x_position,
-                                    const double y_position,
-                                    const double z_position,
-                                    const double x_direction,
-                                    const double y_direction,
-                                    const double z_direction )
+void RootNavigator::setState( const Length x_position,
+                              const Length y_position,
+                              const Length z_position,
+                              const double x_direction,
+                              const double y_direction,
+                              const double z_direction )
 {
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
 
   // The internal ray is set now
-  this->internalRaySet();
+  this->stateSet();
 
-  d_navigator->InitTrack( x_position, y_position, z_position,
-                          x_direction, y_direction, z_direction );
+  d_navigator->InitTrack( x_position.value(),
+                          y_position.value(),
+                          z_position.value(),
+                          x_direction,
+                          y_direction,
+                          z_direction );
 }
                       
                        
 // Initialize (or reset) an internal Root ray
 /*! \details Root will not use the cell to speed up its lookup.
  */
-void RootNavigator::setInternalRay(
-                          const double x_position,
-                          const double y_position,
-                          const double z_position,
-                          const double x_direction,
-                          const double y_direction,
-                          const double z_direction,
-                          const ModuleTraits::InternalCellHandle )
+void RootNavigator::setState( const Length x_position,
+                              const Length y_position,
+                              const Length z_position,
+                              const double x_direction,
+                              const double y_direction,
+                              const double z_direction,
+                              const InternalCellHandle )
 {
-  this->setInternalRay( x_position, y_position, z_position,
-                        x_direction, y_direction, z_direction );
+  this->setState( x_position, y_position, z_position,
+                  x_direction, y_direction, z_direction );
 }
 
 // Get the internal Root ray position
-const double* RootNavigator::getInternalRayPosition() const
+auto RootNavigator::getPosition() const -> const Length*
 {
   // Make sure that the internal ray is set
-  testPrecondition( this->isInternalRaySet() );
+  testPrecondition( this->isStateSet() );
 
-  return d_navigator->GetCurrentPoint();
+  return Utility::reinterpretAsQuantity<Length>(d_navigator->GetCurrentPoint());
 }
 
 // Get the internal Root ray direction
-const double* RootNavigator::getInternalRayDirection() const
+const double* RootNavigator::getDirection() const
 {
   // Make sure that the internal ray is set
-  testPrecondition( this->isInternalRaySet() );
+  testPrecondition( this->isStateSet() );
 
   return d_navigator->GetCurrentDirection();
 }
 
 // Get the cell containing the internal Root ray position
-ModuleTraits::InternalCellHandle RootNavigator::getCellContainingInternalRay() const
+auto RootNavigator::getCurrentCell() const -> InternalCellHandle
 {
   // Make sure that the internal ray is set
-  testPrecondition( this->isInternalRaySet() );
+  testPrecondition( this->isStateSet() );
 
   return d_navigator->GetCurrentVolume()->GetUniqueID();
 }
@@ -301,28 +304,27 @@ ModuleTraits::InternalCellHandle RootNavigator::getCellContainingInternalRay() c
  * aren't managed separately in Root (they are simply part of the cell
  * definition). Therefore the surface hit will always be invalid.
  */
-double RootNavigator::fireInternalRay(
-                             ModuleTraits::InternalSurfaceHandle* surface_hit )
+auto RootNavigator::fireRay( InternalSurfaceHandle* surface_hit ) -> Length
 {
   // Make sure that the internal ray is set
-  testPrecondition( this->isInternalRaySet() );
+  testPrecondition( this->isStateSet() );
 
   TGeoNode* boundary_node = d_navigator->FindNextBoundary();
 
   if( surface_hit != NULL )
-    *surface_hit = ModuleTraits::invalid_internal_surface_handle;
+    *surface_hit = Navigator::invalidSurfaceHandle();
 
-  return d_navigator->GetStep();
+  return Length::from_value( d_navigator->GetStep() );
 }
 
 // Advance the internal Root ray to the next boundary
 /*! \details Reflecting surfaces cannot be set in Root geometries so this
  * method will always return false.
  */
-bool RootNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
+bool RootNavigator::advanceToCellBoundary( double* surface_normal )
 {
   // Make sure that the internal ray is set
-  testPrecondition( this->isInternalRaySet() );
+  testPrecondition( this->isStateSet() );
   
   TGeoNode* next_node = d_navigator->Step();
 
@@ -334,31 +336,31 @@ bool RootNavigator::advanceInternalRayToCellBoundary( double* surface_normal )
 }
 
 // Advance the internal Root ray a substep
-void RootNavigator::advanceInternalRayBySubstep( const double substep_distance )
+void RootNavigator::advanceBySubstep( const Length substep_distance )
 {
   // Make sure that the internal ray is set
-  testPrecondition( this->isInternalRaySet() );
+  testPrecondition( this->isStateSet() );
   // Make sure that the substep distance is valid
-  testPrecondition( substep_distance > 0.0 );
-  testPrecondition( substep_distance < d_navigator->GetStep() );
+  testPrecondition( substep_distance.value() > 0.0 );
+  testPrecondition( substep_distance.value() < d_navigator->GetStep() );
 
   // Set the step size
-  d_navigator->SetStep( substep_distance );
+  d_navigator->SetStep( substep_distance.value() );
 
   // Advance the root ray
   d_navigator->Step();
 
   // Update the ray data
-  Navigator::fireInternalRay();
+  Navigator::fireRay();
 }
 
 // Change the internal ray direction (without changing its location)
-void RootNavigator::changeInternalRayDirection( const double x_direction,
-                                                const double y_direction,
-                                                const double z_direction )
+void RootNavigator::changeDirection( const double x_direction,
+                                     const double y_direction,
+                                     const double z_direction )
 {
   // Make sure that the internal ray is set
-  testPrecondition( this->isInternalRaySet() );
+  testPrecondition( this->isStateSet() );
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
 
@@ -372,10 +374,9 @@ RootNavigator* RootNavigator::clone() const
   RootNavigator* clone = new RootNavigator( d_root_model );
 
   // Copy the position, direction and cell
-  dynamic_cast<Navigator*>( clone )->setInternalRay(
-                                        this->getInternalRayPosition(),
-                                        this->getInternalRayDirection(),
-                                        this->getCellContainingInternalRay() );
+  dynamic_cast<Navigator*>( clone )->setState( this->getPosition(),
+                                               this->getDirection(),
+                                               this->getCurrentCell() );
   return clone;
 }
 
@@ -409,12 +410,11 @@ void RootNavigator::save( Archive& ar, const unsigned version ) const
 
   if( d_internal_ray_set )
   {
-    ModuleTraits::InternalCellHandle current_cell =
-      this->getCellContainingInternalRay();
+    InternalCellHandle current_cell = this->getCurrentCell();
 
     ar & BOOST_SERIALIZATION_NVP( current_cell );
-    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(this->getInternalRayPosition()), 3 ) );
-    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( const_cast<double*>(this->getInternalRayDirection()), 3 ) );
+    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(d_navigator->GetCurrentPoint()), 3 ) );
+    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( const_cast<double*>(this->getDirection()), 3 ) );
   }
 }
 
@@ -438,15 +438,15 @@ void RootNavigator::load( Archive& ar, const unsigned version )
   // Set the internal ray state (if one was archived)
   if( d_internal_ray_set )
   {
-    ModuleTraits::InternalCellHandle current_cell;
-    double current_position[3];
+    InternalCellHandle current_cell;
+    Length current_position[3];
     double current_direction[3];
     
     ar & BOOST_SERIALIZATION_NVP( current_cell );
-    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( current_position, 3 ) );
+    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( Utility::reinterpretAsRaw(current_position), 3 ) );
     ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
     
-    dynamic_cast<Navigator*>(this)->setInternalRay( current_position, current_direction, current_cell );
+    dynamic_cast<Navigator*>(this)->setState( current_position, current_direction, current_cell );
   }
 }
 

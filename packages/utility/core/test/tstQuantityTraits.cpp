@@ -8878,5 +8878,145 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( reinterpretAsRaw,
 }
 
 //---------------------------------------------------------------------------//
+// Check that raw memory can be reinterpreted
+BOOST_AUTO_TEST_CASE_TEMPLATE( reinterpretAsQuantity_basic, T, TestTypes )
+{
+  T raw_quantity[3] = {T(0), T(1), T(2)};
+
+  typename Utility::QuantityTraits<T>::QuantityType* quantity =
+    Utility::QuantityTraits<T>::reinterpretAsQuantity( raw_quantity );
+
+  BOOST_CHECK_EQUAL( quantity[0], raw_quantity[0] );
+  BOOST_CHECK_EQUAL( quantity[1], raw_quantity[1] );
+  BOOST_CHECK_EQUAL( quantity[2], raw_quantity[2] );
+
+  const T* const_raw_quantity = raw_quantity;
+
+  const typename Utility::QuantityTraits<T>::QuantityType* const_quantity =
+    Utility::QuantityTraits<T>::reinterpretAsQuantity( const_raw_quantity );
+
+  BOOST_CHECK_EQUAL( const_quantity[0], const_raw_quantity[0] );
+  BOOST_CHECK_EQUAL( const_quantity[1], const_raw_quantity[1] );
+  BOOST_CHECK_EQUAL( const_quantity[2], const_raw_quantity[2] );
+
+  std::complex<T> raw_complex_quantity[3] = {std::complex<T>(0, 0),
+                                             std::complex<T>(1, 1),
+                                             std::complex<T>(2, 2)};
+
+  typename Utility::QuantityTraits<std::complex<T> >::QuantityType* complex_quantity =
+    Utility::reinterpretAsQuantity<std::complex<T> >( raw_complex_quantity );
+
+  BOOST_CHECK_EQUAL( complex_quantity[0], raw_complex_quantity[0] );
+  BOOST_CHECK_EQUAL( complex_quantity[1], raw_complex_quantity[1] );
+  BOOST_CHECK_EQUAL( complex_quantity[2], raw_complex_quantity[2] );
+
+  const std::complex<T>* const_raw_complex_quantity = raw_complex_quantity;
+
+  const typename Utility::QuantityTraits<std::complex<T> >::RawType* const_complex_quantity =
+    Utility::reinterpretAsQuantity<std::complex<T> >( const_raw_complex_quantity );
+
+  BOOST_CHECK_EQUAL( const_complex_quantity[0], const_raw_complex_quantity[0] );
+  BOOST_CHECK_EQUAL( const_complex_quantity[1], const_raw_complex_quantity[1] );
+  BOOST_CHECK_EQUAL( const_complex_quantity[2], const_raw_complex_quantity[2] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that raw memory can be reinterpreted
+BOOST_AUTO_TEST_CASE_TEMPLATE( reinterpretAsQuantity,
+                               QuantityType,
+                               TestBasicQuantityTypes )
+{
+  typedef typename Utility::QuantityTraits<QuantityType>::RawType RawType;
+  typedef typename Utility::QuantityTraits<QuantityType>::UnitType UnitType;
+  typedef std::complex<RawType> ComplexRawType;
+  typedef typename Utility::UnitTraits<UnitType>::template GetQuantityType<std::complex<RawType> >::type ComplexQuantityType;
+
+  RawType raw_quantity[3] = {RawType(0), RawType(1), RawType(2)};
+
+  QuantityType* quantity =
+    Utility::QuantityTraits<QuantityType>::reinterpretAsQuantity( raw_quantity );
+
+  BOOST_CHECK( (void*)&quantity[0] == (void*)&raw_quantity[0] );
+  BOOST_CHECK( (void*)&quantity[0].value() == (void*)&raw_quantity[0] );
+  BOOST_CHECK_EQUAL( quantity[0].value(), raw_quantity[0] );
+
+  BOOST_CHECK( (void*)&quantity[1] == (void*)&raw_quantity[1] );
+  BOOST_CHECK( (void*)&quantity[1].value() == (void*)&raw_quantity[1] );
+  BOOST_CHECK_EQUAL( quantity[1].value(), raw_quantity[1] );
+
+  BOOST_CHECK( (void*)&quantity[2] == (void*)&raw_quantity[2] );
+  BOOST_CHECK( (void*)&quantity[2].value() == (void*)&raw_quantity[2] );
+  BOOST_CHECK_EQUAL( quantity[2].value(), raw_quantity[2] );
+
+  // Change the quantity through the raw quantity pointer
+  quantity[0] = Utility::QuantityTraits<QuantityType>::initializeQuantity( 2 );
+  quantity[2] = Utility::QuantityTraits<QuantityType>::initializeQuantity( 0 );
+
+  BOOST_CHECK( (void*)&quantity[0] == (void*)&raw_quantity[0] );
+  BOOST_CHECK( (void*)&quantity[0].value() == (void*)&raw_quantity[0] );
+  BOOST_CHECK_EQUAL( quantity[0].value(), raw_quantity[0] );
+
+  BOOST_CHECK( (void*)&quantity[1] == (void*)&raw_quantity[1] );
+  BOOST_CHECK( (void*)&quantity[1].value() == (void*)&raw_quantity[1] );
+  BOOST_CHECK_EQUAL( quantity[1].value(), raw_quantity[1] );
+
+  BOOST_CHECK( (void*)&quantity[2] == (void*)&raw_quantity[2] );
+  BOOST_CHECK( (void*)&quantity[2].value() == (void*)&raw_quantity[2] );
+  BOOST_CHECK_EQUAL( quantity[2].value(), raw_quantity[2] );
+
+  const RawType* const_raw_quantity = raw_quantity;
+
+  const QuantityType* const_quantity = 
+    Utility::QuantityTraits<QuantityType>::reinterpretAsQuantity( const_raw_quantity );
+
+  BOOST_CHECK( (void*)&const_quantity[0] == (void*)&const_raw_quantity[0] );
+  BOOST_CHECK( (void*)&const_quantity[0].value() == (void*)&const_raw_quantity[0] );
+  BOOST_CHECK_EQUAL( const_quantity[0].value(), const_raw_quantity[0] );
+
+  BOOST_CHECK( (void*)&const_quantity[1] == (void*)&const_raw_quantity[1] );
+  BOOST_CHECK( (void*)&const_quantity[1].value() == (void*)&const_raw_quantity[1] );
+  BOOST_CHECK_EQUAL( const_quantity[1].value(), const_raw_quantity[1] );
+
+  BOOST_CHECK( (void*)&const_quantity[2] == (void*)&const_raw_quantity[2] );
+  BOOST_CHECK( (void*)&const_quantity[2].value() == (void*)&const_raw_quantity[2] );
+  BOOST_CHECK_EQUAL( const_quantity[2].value(), const_raw_quantity[2] );
+
+  ComplexRawType raw_complex_quantity[3] =
+    {ComplexRawType(0,0), ComplexRawType(1,1), ComplexRawType(2,2)};
+  
+  ComplexQuantityType* complex_quantity =
+    Utility::reinterpretAsQuantity<ComplexQuantityType>( raw_complex_quantity );
+
+  BOOST_CHECK( (void*)&complex_quantity[0] == (void*)&raw_complex_quantity[0] );
+  BOOST_CHECK( (void*)&complex_quantity[0].value() == (void*)&raw_complex_quantity[0] );
+  BOOST_CHECK_EQUAL( complex_quantity[0].value(), raw_complex_quantity[0] );
+
+  BOOST_CHECK( (void*)&complex_quantity[1] == (void*)&raw_complex_quantity[1] );
+  BOOST_CHECK( (void*)&complex_quantity[1].value() == (void*)&raw_complex_quantity[1] );
+  BOOST_CHECK_EQUAL( complex_quantity[1].value(), raw_complex_quantity[1] );
+
+  BOOST_CHECK( (void*)&complex_quantity[2] == (void*)&raw_complex_quantity[2] );
+  BOOST_CHECK( (void*)&complex_quantity[2].value() == (void*)&raw_complex_quantity[2] );
+  BOOST_CHECK_EQUAL( complex_quantity[2].value(), raw_complex_quantity[2] );
+
+  const ComplexRawType* const_raw_complex_quantity = raw_complex_quantity;
+
+  const ComplexQuantityType* const_complex_quantity =
+    Utility::reinterpretAsQuantity<ComplexQuantityType>( const_raw_complex_quantity );
+
+  BOOST_CHECK( (void*)&const_complex_quantity[0] == (void*)&const_raw_complex_quantity[0] );
+  BOOST_CHECK( (void*)&const_complex_quantity[0].value() == (void*)&const_raw_complex_quantity[0] );
+  BOOST_CHECK_EQUAL( const_complex_quantity[0].value(), const_raw_complex_quantity[0] );
+
+  BOOST_CHECK( (void*)&const_complex_quantity[1] == (void*)&const_raw_complex_quantity[1] );
+  BOOST_CHECK( (void*)&const_complex_quantity[1].value() == (void*)&const_raw_complex_quantity[1] );
+  BOOST_CHECK_EQUAL( const_complex_quantity[1].value(), const_raw_complex_quantity[1] );
+
+  BOOST_CHECK( (void*)&const_complex_quantity[2] == (void*)&const_raw_complex_quantity[2] );
+  BOOST_CHECK( (void*)&const_complex_quantity[2].value() == (void*)&const_raw_complex_quantity[2] );
+  BOOST_CHECK_EQUAL( const_complex_quantity[2].value(), const_raw_complex_quantity[2] );
+}
+
+//---------------------------------------------------------------------------//
 // end tstQuantityTraits.cpp
 //---------------------------------------------------------------------------//

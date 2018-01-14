@@ -20,6 +20,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+namespace cgs = boost::units::cgs;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -139,7 +141,7 @@ FRENSIE_UNIT_TEST( RootModel, getCellMaterialNames )
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
   
-  std::map<Geometry::ModuleTraits::InternalCellHandle,std::string>
+  std::map<Geometry::Model::InternalCellHandle,std::string>
     cell_id_material_name_map;
 
   model->getCellMaterialNames( cell_id_material_name_map );
@@ -181,9 +183,10 @@ FRENSIE_UNIT_TEST( RootModel, getCellDensities )
 
   model->getCellDensities( cell_id_density_map );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.size(), 1 );
-  FRENSIE_CHECK( cell_id_density_map.count( 2 ) );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 2 )->second, 1 );
+  FRENSIE_REQUIRE_EQUAL( cell_id_density_map.size(), 1 );
+  FRENSIE_REQUIRE( cell_id_density_map.count( 2 ) );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 2 )->second,
+                       1e24/cgs::cubic_centimeter );
 }
 
 //---------------------------------------------------------------------------//
@@ -246,15 +249,15 @@ FRENSIE_UNIT_TEST( RootModel, getCellVolume )
     Geometry::RootModel::getInstance();
   
   FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 1 ),
-                                   934.550153050213,
+                                   934.550153050213*cgs::cubic_centimeter,
                                    1e-9 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 2 ),
-                                   65.4498469497874,
+                                   65.4498469497874*cgs::cubic_centimeter,
                                    1e-9 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 3 ),
-                                   1744.0,
+                                   1744.0*cgs::cubic_centimeter,
                                    1e-9 );
 }
 

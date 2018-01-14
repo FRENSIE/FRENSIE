@@ -156,77 +156,73 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, findCellContainingRay )
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be set
-FRENSIE_UNIT_TEST( InfiniteMediumNavigator, setInternalRay )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, setState )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  FRENSIE_CHECK( navigator->isInternalRaySet() );
+  FRENSIE_CHECK( navigator->isStateSet() );
 
-  navigator->setInternalRay( 0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0, 0.0, 1.0 );
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
-  FRENSIE_CHECK( navigator->isInternalRaySet() );
+  FRENSIE_CHECK( navigator->isStateSet() );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 1 );
 
-  navigator->setInternalRay(
+  navigator->setState(
                    Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
                    Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
                    Utility::QuantityTraits<Geometry::Navigator::Length>::max(),
                    1.0, 0.0, 0.0 );
 
-  FRENSIE_CHECK( navigator->isInternalRaySet() );
+  FRENSIE_CHECK( navigator->isStateSet() );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::max() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::max() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::max() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be fired through the geometry
-FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireInternalRay )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireRay )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0, 0.0, 1.0 );
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
-  Geometry::Navigator::Length distance_to_boundary =
-    navigator->fireInternalRay();
+  Geometry::Navigator::Length distance_to_boundary = navigator->fireRay();
 
   FRENSIE_CHECK_EQUAL( distance_to_boundary,
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
 
   Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-  navigator->setInternalRay( 1.0*cgs::centimeter,
-                             -1.0*cgs::centimeter,
-                             1.0*cgs::centimeter,
-                             1.0, 0.0, 0.0 );
+  navigator->setState( 1.0*cgs::centimeter,
+                       -1.0*cgs::centimeter,
+                       1.0*cgs::centimeter,
+                       1.0, 0.0, 0.0 );
   
-  distance_to_boundary = navigator->fireInternalRay( &surface_hit );
+  distance_to_boundary = navigator->fireRay( &surface_hit );
 
   FRENSIE_CHECK_EQUAL( distance_to_boundary,
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
@@ -236,53 +232,49 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, fireInternalRay )
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be advanced to the cell boundary
-FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceToCellBoundary )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0, 0.0, 1.0 );
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
-  bool reflected = navigator->advanceInternalRayToCellBoundary();
+  bool reflected = navigator->advanceToCellBoundary();
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 1 );
   FRENSIE_CHECK( !reflected );
 
-  navigator->setInternalRay( 1.0*cgs::centimeter,
-                             -1.0*cgs::centimeter,
-                             1.0*cgs::centimeter,
-                             1.0/sqrt(3), 1.0/sqrt(3), 1.0/sqrt(3) );
+  navigator->setState( 1.0*cgs::centimeter,
+                       -1.0*cgs::centimeter,
+                       1.0*cgs::centimeter,
+                       1.0/sqrt(3), 1.0/sqrt(3), 1.0/sqrt(3) );
 
   std::vector<double> surface_normal( 3 );
 
-  reflected =
-    navigator->advanceInternalRayToCellBoundary( surface_normal.data() );
+  reflected = navigator->advanceToCellBoundary( surface_normal.data() );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2],
                        Utility::QuantityTraits<Geometry::Navigator::Length>::inf() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0],
-                       1.0/sqrt(3.0) );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1],
-                       1.0/sqrt(3.0) );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2],
-                       1.0/sqrt(3.0) );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 1.0/sqrt(3.0) );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 1.0/sqrt(3.0) );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0/sqrt(3.0) );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 1 );
   FRENSIE_CHECK( !reflected );
   FRENSIE_CHECK_EQUAL( surface_normal[0], 1.0/sqrt(3.0) );
   FRENSIE_CHECK_EQUAL( surface_normal[1], 1.0/sqrt(3.0) );
@@ -291,72 +283,63 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayToCellBoundary )
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be advanced by a substep
-FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceInternalRayBySubstep )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, advanceBySubstep )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0, 0.0, 1.0 );
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
-  navigator->advanceInternalRayBySubstep( 1.0*cgs::centimeter );
+  navigator->advanceBySubstep( 1.0*cgs::centimeter );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
-                       1.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 1.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
 
-  navigator->setInternalRay( 1.0*cgs::centimeter,
-                             -1.0*cgs::centimeter,
-                             1.0*cgs::centimeter,
-                             1.0/sqrt(3), 1.0/sqrt(3), -1.0/sqrt(3) );
+  navigator->setState( 1.0*cgs::centimeter,
+                       -1.0*cgs::centimeter,
+                       1.0*cgs::centimeter,
+                       1.0/sqrt(3), 1.0/sqrt(3), -1.0/sqrt(3) );
 
-  navigator->advanceInternalRayBySubstep( 2.0*cgs::centimeter );
+  navigator->advanceBySubstep( 2.0*cgs::centimeter );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0],
                        (1.0+2.0/sqrt(3.0))*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1],
                        (-1.0+2.0/sqrt(3.0))*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2],
                        (1.0-2.0/sqrt(3.0))*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0],
-                       1.0/sqrt(3) );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1],
-                       1.0/sqrt(3) );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2],
-                       -1.0/sqrt(3) );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 1.0/sqrt(3) );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 1.0/sqrt(3) );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], -1.0/sqrt(3) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray direction can be changed
-FRENSIE_UNIT_TEST( InfiniteMediumNavigator, changeInternalRayDirection )
+FRENSIE_UNIT_TEST( InfiniteMediumNavigator, changeDirection )
 {
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0, 0.0, 1.0 );
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
-  navigator->changeInternalRayDirection( 1.0, 0.0, 0.0 );
+  navigator->changeDirection( 1.0, 0.0, 0.0 );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2],
-                       0.0*cgs::centimeter );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -366,27 +349,27 @@ FRENSIE_UNIT_TEST( InfiniteMediumNavigator, clone )
   std::unique_ptr<Geometry::Navigator>
     navigator( new Geometry::InfiniteMediumNavigator( 1 ) );
 
-  navigator->setInternalRay( 0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0*cgs::centimeter,
-                             0.0, 0.0, 1.0 );
+  navigator->setState( 0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
   std::unique_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
 
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[0],
-                       navigator->getInternalRayPosition()[0] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[1],
-                       navigator->getInternalRayPosition()[1] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[2],
-                       navigator->getInternalRayPosition()[2] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[0],
-                       navigator->getInternalRayDirection()[0] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[1],
-                       navigator->getInternalRayDirection()[1] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[2],
-                       navigator->getInternalRayDirection()[2] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getCellContainingInternalRay(),
-                       navigator->getCellContainingInternalRay() );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[0],
+                       navigator->getPosition()[0] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[1],
+                       navigator->getPosition()[1] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[2],
+                       navigator->getPosition()[2] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[0],
+                       navigator->getDirection()[0] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[1],
+                       navigator->getDirection()[1] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[2],
+                       navigator->getDirection()[2] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getCurrentCell(),
+                       navigator->getCurrentCell() );
 }
 
 //---------------------------------------------------------------------------//
@@ -432,17 +415,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InfiniteMediumNavigator,
   Geometry::InfiniteMediumNavigator navigator( 100 );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( navigator ) );
-  FRENSIE_CHECK_EQUAL( navigator.getCellContainingInternalRay(), 1 );
+  FRENSIE_CHECK_EQUAL( navigator.getCurrentCell(), 1 );
 
   std::unique_ptr<Geometry::Navigator> unique_navigator;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( unique_navigator ) );
-  FRENSIE_CHECK_EQUAL( unique_navigator->getCellContainingInternalRay(), 2 );
+  FRENSIE_CHECK_EQUAL( unique_navigator->getCurrentCell(), 2 );
   
   std::shared_ptr<Geometry::Navigator> shared_navigator;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_navigator ) );
-  FRENSIE_CHECK_EQUAL( shared_navigator->getCellContainingInternalRay(), 3 );
+  FRENSIE_CHECK_EQUAL( shared_navigator->getCurrentCell(), 3 );
 }
 
 //---------------------------------------------------------------------------//

@@ -19,6 +19,12 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+namespace cgs = boost::units::cgs;
+
+//---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
@@ -37,13 +43,13 @@ FRENSIE_UNIT_TEST( RootNavigator, iarchive )
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( navigator ) );
 
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 2 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 2 );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
 }
 
 //---------------------------------------------------------------------------//

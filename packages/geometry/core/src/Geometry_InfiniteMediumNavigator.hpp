@@ -51,47 +51,47 @@ public:
                                     const double direction[3] ) const override;
   
   //! Check if an internal ray has been set
-  bool isInternalRaySet() const override;
+  bool isStateSet() const override;
 
   //! Set the internal ray with unknown starting cell
-  void setInternalRay( const Length x_position,
-                       const Length y_position,
-                       const Length z_position,
-                       const double x_direction,
-                       const double y_direction,
-                       const double z_direction ) override;
-
+  void setState( const Length x_position,
+                 const Length y_position,
+                 const Length z_position,
+                 const double x_direction,
+                 const double y_direction,
+                 const double z_direction ) override;
+  
   //! Set the internal ray with known starting cell
-  void setInternalRay( const Length x_position,
-                       const Length y_position,
-                       const Length z_position,
-                       const double x_direction,
-                       const double y_direction,
-                       const double z_direction,
-                       const InternalCellHandle start_cell ) override;
+  void setState( const Length x_position,
+                 const Length y_position,
+                 const Length z_position,
+                 const double x_direction,
+                 const double y_direction,
+                 const double z_direction,
+                 const InternalCellHandle start_cell ) override;
 
   //! Get the internal ray position
-  const Length* getInternalRayPosition() const override;
+  const Length* getPosition() const override;
 
   //! Get the internal ray direction
-  const double* getInternalRayDirection() const override;
+  const double* getDirection() const override;
 
   //! Get the cell that contains the internal ray
-  InternalCellHandle getCellContainingInternalRay() const override;
+  InternalCellHandle getCurrentCell() const override;
 
   //! Fire the internal ray through the geometry
-  Length fireInternalRay( InternalSurfaceHandle* surface_hit ) override;
+  Length fireRay( InternalSurfaceHandle* surface_hit ) override;
 
   //! Advance the internal ray to the cell boundary
-  bool advanceInternalRayToCellBoundary( double* surface_normal ) override;
+  bool advanceToCellBoundary( double* surface_normal ) override;
 
   //! Advance the internal ray by a substep (less than distance to boundary)
-  void advanceInternalRayBySubstep( const Length step_size ) override;
+  void advanceBySubstep( const Length step_size ) override;
 
   //! Change the internal ray direction
-  void changeInternalRayDirection( const double x_direction,
-                                   const double y_direction,
-                                   const double z_direction ) override;
+  void changeDirection( const double x_direction,
+                        const double y_direction,
+                        const double z_direction ) override;
 
   //! Clone the navigator
   InfiniteMediumNavigator* clone() const override;

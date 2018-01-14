@@ -15,7 +15,6 @@
 #include <complex>
 
 // Boost Includes
-#include <boost/units/quantity.hpp>
 #include <boost/units/cmath.hpp>
 #include <boost/units/static_rational.hpp>
 #include <boost/units/limits.hpp>
@@ -24,7 +23,6 @@
 
 // FRENSIE Includes
 #include "Utility_QuantityTraitsDecl.hpp"
-#include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
@@ -928,6 +926,14 @@ public:
   //! Reinterpret quantity memory
   static inline const RawType* reinterpretAsRaw( const QuantityType* quantity )
   { return quantity; }
+
+  //! Reinterpret raw memory
+  static inline QuantityType* reinterpretAsQuantity( RawType* raw_quantity )
+  { return raw_quantity; }
+
+  //! Reinterpret raw memory
+  static inline const QuantityType* reinterpretAsQuantity( const RawType* raw_quantity )
+  { return raw_quantity; }
 };
 
 /*! The QuantityToPowerTypeHelper (default not defined)
@@ -1116,6 +1122,14 @@ public:
   //! Reinterpret const quantity type memory as raw type memory
   static inline const RawType* reinterpretAsRaw( const QuantityType* quantity )
   { return reinterpret_cast<const RawType*>( quantity ); }
+
+  //! Reinterpret raw memory
+  static inline QuantityType* reinterpretAsQuantity( RawType* raw_quantity )
+  { return reinterpret_cast<QuantityType*>( raw_quantity ); }
+
+  //! Reinterpret raw memory
+  static inline const QuantityType* reinterpretAsQuantity( const RawType* raw_quantity )
+  { return reinterpret_cast<const QuantityType*>( raw_quantity ); }
 };
 
 } // end Details namespace

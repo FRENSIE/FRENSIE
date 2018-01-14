@@ -18,7 +18,6 @@
 
 // FRENSIE Includes
 #include "Geometry_Navigator.hpp"
-#include "Geometry_ModuleTraits.hpp"
 #include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
@@ -37,10 +36,6 @@ class RootNavigator : public Navigator
 
 public:
 
-  //! The cell id to TGeoVolume* conversion function
-  typedef std::function<TGeoVolume*(const ModuleTraits::InternalCellHandle&)>
-  CellIdToTGeoVolumeFunction;
-
   //! Constructor
   RootNavigator( const std::shared_ptr<const RootModel>& root_model );
 
@@ -49,71 +44,70 @@ public:
 
   //! Get the point location w.r.t. a given cell
   PointLocation getPointLocation(
-               const double position[3],
-               const double direction[3],
-               const ModuleTraits::InternalCellHandle cell_id ) const override;
+                             const Length position[3],
+                             const double direction[3],
+                             const InternalCellHandle cell_id ) const override;
 
   //! Get the surface normal at a point on the surface
-  void getSurfaceNormal( const ModuleTraits::InternalSurfaceHandle surface_id,
-                         const double position[3],
+  void getSurfaceNormal( const InternalSurfaceHandle surface_id,
+                         const Length position[3],
                          const double direction[3],
                          double normal[3] ) const override;
 
   //! Find the cell that contains a given ray
-  ModuleTraits::InternalCellHandle findCellContainingRay(
-                                  const double position[3],
+  InternalCellHandle findCellContainingRay(
+                                  const Length position[3],
                                   const double direction[3],
                                   CellIdSet& found_cell_cache ) const override;
 
   //! Find the cell that contains the ray
-  ModuleTraits::InternalCellHandle findCellContainingRay(
-                                    const double position[3],
+  InternalCellHandle findCellContainingRay(
+                                    const Length position[3],
                                     const double direction[3] ) const override;
 
   //! Check if the internal ray is set
-  bool isInternalRaySet() const override;
+  bool isStateSet() const override;
 
   //! Initialize (or reset) an internal Root ray
-  void setInternalRay( const double x_position,
-                       const double y_position,
-                       const double z_position,
-                       const double x_direction,
-                       const double y_direction,
-                       const double z_direction ) override;
+  void setState( const Length x_position,
+                 const Length y_position,
+                 const Length z_position,
+                 const double x_direction,
+                 const double y_direction,
+                 const double z_direction ) override;
                       
                        
   //! Initialize (or reset) an internal Root ray
-  void setInternalRay(
-                const double x_position,
-                const double y_position,
-                const double z_position,
-                const double x_direction,
-                const double y_direction,
-                const double z_direction,
-                const ModuleTraits::InternalCellHandle current_cell ) override;
+  void setState( const Length x_position,
+                 const Length y_position,
+                 const Length z_position,
+                 const double x_direction,
+                 const double y_direction,
+                 const double z_direction,
+                 const InternalCellHandle current_cell ) override;
 
   //! Get the internal Root ray position
-  const double* getInternalRayPosition() const override;
+  const Length* getPosition() const override;
 
   //! Get the internal Root ray direction
-  const double* getInternalRayDirection() const override;
+  const double* getDirection() const override;
 
   //! Get the cell containing the internal Root ray position
-  ModuleTraits::InternalCellHandle getCellContainingInternalRay() const override;
+  InternalCellHandle getCurrentCell() const override;
 
   //! Get the distance from the internal Root ray pos. to the nearest boundary
-  double fireInternalRay( ModuleTraits::InternalSurfaceHandle* surface_hit ) override;
+  Length fireRay( InternalSurfaceHandle* surface_hit ) override;
 
   //! Advance the internal Root ray to the next boundary
-  bool advanceInternalRayToCellBoundary( double* surface_normal ) override;
+  bool advanceToCellBoundary( double* surface_normal ) override;
 
   //! Advance the internal Root ray a substep
-  void advanceInternalRayBySubstep( const double substep_distance ) override;
+  void advanceBySubstep( const Length substep_distance ) override;
 
   //! Change the internal ray direction (without changing its location)
-  void changeInternalRayDirection( const double x_direction,
-                                   const double y_direction,
-                                   const double z_direction ) override;
+  void changeDirection( const double x_direction,
+                        const double y_direction,
+                        const double z_direction ) override;
 
   //! Clone the navigator
   RootNavigator* clone() const override;
@@ -121,17 +115,18 @@ public:
 private:
 
   // Deep copy an array
-  static void deepCopy( double* copy_array, const double* orig_array );
+  template<typename T>
+  static void deepCopy( T* copy_array, const T* orig_array );
 
   // Default constructor
   RootNavigator();
 
   // Find the node containing the point
-  TGeoNode* findNodeContainingRay( const double position[3],
+  TGeoNode* findNodeContainingRay( const Length position[3],
                                    const double direction[3] ) const;
 
   // Set the internal ray set flag
-  void internalRaySet();
+  void stateSet();
 
   // Create internal ray
   static TGeoNavigator* createInternalRay( TGeoManager* manager );
@@ -166,8 +161,8 @@ private:
 };
 
 // Deep copy an array
-inline void RootNavigator::deepCopy( double* copy_array,
-                                     const double* orig_array )
+template<typename T>
+inline void RootNavigator::deepCopy( T* copy_array, const T* orig_array )
 {
   copy_array[0] = orig_array[0];
   copy_array[1] = orig_array[1];

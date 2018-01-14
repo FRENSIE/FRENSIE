@@ -19,6 +19,12 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+namespace cgs = boost::units::cgs;
+
+//---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
@@ -48,15 +54,15 @@ FRENSIE_UNIT_TEST( RootModel, iarchive )
   FRENSIE_REQUIRE( cells.count( 3 ) );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 1 ),
-                                   934.550153050213,
+                                   934.550153050213*cgs::cubic_centimeter,
                                    1e-9 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 2 ),
-                                   65.4498469497874,
+                                   65.4498469497874*cgs::cubic_centimeter,
                                    1e-9 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 3 ),
-                                   1744.0,
+                                   1744.0*cgs::cubic_centimeter,
                                    1e-9 );
 
   FRENSIE_CHECK( model->getModelProperties().getModelFileName().find( "basic_root_geometry.root" ) < model->getModelProperties().getModelFileName().size() );

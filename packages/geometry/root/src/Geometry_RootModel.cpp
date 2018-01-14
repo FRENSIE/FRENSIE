@@ -168,11 +168,10 @@ void RootModel::createCellIdToUniqueIdMap()
                         "Root contains a cell which has not been "
                         "assigned an id in the input file!" );
 
-    TEST_FOR_EXCEPTION( cell->GetUniqueID() ==
-                        ModuleTraits::invalid_internal_cell_handle,
+    TEST_FOR_EXCEPTION( cell->GetUniqueID() == Model::invalidCellHandle(),
                         InvalidRootGeometry,
                         "Root contains a cell that has a reserved id ("
-                        << ModuleTraits::invalid_internal_cell_handle <<
+                        << Model::invalidCellHandle() << 
                         ") in the input file!" );
     
     TEST_FOR_EXCEPTION( d_cell_id_uid_map.find( cell->GetUniqueID() ) !=
@@ -284,7 +283,7 @@ void RootModel::getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const
     d_model_properties->getMaterialPropertyName() + "_";
 
   // Get the cell material names
-  typedef std::unordered_map<ModuleTraits::InternalCellHandle,std::string>
+  typedef std::unordered_map<InternalCellHandle,std::string>
     CellIdMatNameMap;
   CellIdMatNameMap cell_id_material_name;
 
@@ -352,13 +351,20 @@ void RootModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
     if( mat_name != d_model_properties->getVoidMaterialName() &&
         mat_name != d_model_properties->getTerminalMaterialName() )
     {
-      TEST_FOR_EXCEPTION( mat->GetDensity() == 0.0,
+      double raw_density = mat->GetDensity();
+      
+      TEST_FOR_EXCEPTION( raw_density == 0.0,
                           InvalidRootGeometry,
                           "Root cell " << cell->GetUniqueID() <<
                           "has an invalid density ("
                           << mat->GetDensity() << ")!" );
 
-      cell_id_density_map[cell->GetUniqueID()] = mat->GetDensity();
+      // Convert 1/b-cm to 1/cm^3
+      if( raw_density > 0.0 )
+        raw_density *= 1e24;
+      
+      cell_id_density_map[cell->GetUniqueID()] =
+        Density::from_value( raw_density );
     }
   }
 }
@@ -370,8 +376,7 @@ void RootModel::getCellEstimatorData( CellEstimatorIdDataMap&  ) const
 { /* ... */ }
 
 // Check if a cell exists
-bool RootModel::doesCellExist(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+bool RootModel::doesCellExist( const InternalCellHandle cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -380,8 +385,7 @@ bool RootModel::doesCellExist(
 }
 
 // Check if the cell is a termination cell
-bool RootModel::isTerminationCell(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+bool RootModel::isTerminationCell( const InternalCellHandle cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -399,8 +403,7 @@ bool RootModel::isTerminationVolume( const TGeoVolume* volume ) const
 }
 
 // Check if the cell is a void cell
-bool RootModel::isVoidCell(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+bool RootModel::isVoidCell( const InternalCellHandle cell_id ) const
 {
   // Make sure that root has been initialized
   testPrecondition( RootModel::isInitialized() );
@@ -421,7 +424,7 @@ bool RootModel::isVoidVolume( const TGeoVolume* volume ) const
 /*! \details This will only return the correct cell volume when the daughters
  * are completely contained in the cell of interest (no overlaps)
  */
-double RootModel::getCellVolume( const ModuleTraits::InternalCellHandle cell_id ) const
+auto RootModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volume
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
@@ -431,7 +434,7 @@ double RootModel::getCellVolume( const ModuleTraits::InternalCellHandle cell_id 
   // Get the volume of the cell
   TGeoVolume* volume_ptr = this->getVolumePtr( cell_id );
   
-  double volume = volume_ptr->Capacity();
+  Volume volume = Volume::from_value( volume_ptr->Capacity() );
 
   // Subtract of the daughter cell volumes
   TObjArray* daughters = volume_ptr->GetNodes();
@@ -450,12 +453,12 @@ double RootModel::getCellVolume( const ModuleTraits::InternalCellHandle cell_id 
       TGeoVolume* daughter_volume = daughter_node->GetVolume();
 
       // Subtract the daughter volume
-      volume -= daughter_volume->Capacity();
+      volume -= Volume::from_value( daughter_volume->Capacity() );
     }
   }
 
   // Make sure the calculated volume is valid
-  TEST_FOR_EXCEPTION( volume <= 0.0,
+  TEST_FOR_EXCEPTION( volume <= Utility::QuantityTraits<Volume>::zero(),
                       InvalidRootGeometry,
                       "an invalid volume was calculated for cell "
                       << cell_id << " (" << volume << ")!" );
@@ -473,8 +476,7 @@ RootNavigator* RootModel::createNavigatorAdvanced() const
 }
 
 // Get the cell
-TGeoVolume* RootModel::getVolumePtr(
-                        const ModuleTraits::InternalCellHandle& cell_id ) const
+TGeoVolume* RootModel::getVolumePtr( const InternalCellHandle& cell_id ) const
 {
   // Make sure root is initialized
   testPrecondition( this->isInitialized() );

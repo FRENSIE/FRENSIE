@@ -144,33 +144,33 @@ public:
   InternalCellHandle findCellContainingRay( const Ray& ray ) const;
 
   //! Check if an internal ray has been set
-  virtual bool isInternalRaySet() const = 0;
+  virtual bool isStateSet() const = 0;
 
   /*! Set the internal ray with unknown starting cell
    *
    * A std::runtime_error (or class derived from it) must be thrown if
    * an error occurs.
    */
-  virtual void setInternalRay( const Length x_position,
-                               const Length y_position,
-                               const Length z_position,
-                               const double x_direction,
-                               const double y_direction,
-                               const double z_direction ) = 0;
+  virtual void setState( const Length x_position,
+                         const Length y_position,
+                         const Length z_position,
+                         const double x_direction,
+                         const double y_direction,
+                         const double z_direction ) = 0;
 
   /*! Set the internal ray with unknown starting cell
    *
    * A std::runtime_error (or class derived from it) must be thrown if
    * an error occurs.
    */
-  void setInternalRay( const Length position[3], const double direction[3] );
+  void setState( const Length position[3], const double direction[3] );
 
   /*! Set the internal ray with unknown starting cell
    *
    * A std::runtime_error (or class derived from it) must be thrown if
    * an error occurs.
    */
-  void setInternalRay( const Ray& ray );
+  void setState( const Ray& ray );
 
   /*! Set the internal ray with known starting cell
    *
@@ -178,13 +178,13 @@ public:
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  virtual void setInternalRay( const Length x_position,
-                               const Length y_position,
-                               const Length z_position,
-                               const double x_direction,
-                               const double y_direction,
-                               const double z_direction,
-                               const InternalCellHandle start_cell ) = 0;
+  virtual void setState( const Length x_position,
+                         const Length y_position,
+                         const Length z_position,
+                         const double x_direction,
+                         const double y_direction,
+                         const double z_direction,
+                         const InternalCellHandle start_cell ) = 0;
 
   /*! Set the internal ray with known starting cell
    *
@@ -192,9 +192,9 @@ public:
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  void setInternalRay( const Length position[3],
-                       const double direction[3],
-                       const InternalCellHandle start_cell );
+  void setState( const Length position[3],
+                 const double direction[3],
+                 const InternalCellHandle start_cell );
 
   /*! Set the internal ray with known starting cell
    *
@@ -202,60 +202,60 @@ public:
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  void setInternalRay( const Ray& ray,
-                       const InternalCellHandle start_cell );
+  void setState( const Ray& ray,
+                 const InternalCellHandle start_cell );
 
   //! Get the internal ray position
-  virtual const Length* getInternalRayPosition() const = 0;
+  virtual const Length* getPosition() const = 0;
 
   //! Get the internal ray direction
-  virtual const double* getInternalRayDirection() const = 0;
+  virtual const double* getDirection() const = 0;
 
   /*! Get the cell that contains the internal ray
    *
    * A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
-  virtual InternalCellHandle getCellContainingInternalRay() const = 0;
+  virtual InternalCellHandle getCurrentCell() const = 0;
 
   /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown if a ray 
    * tracing error occurs.
    */
-  virtual Length fireInternalRay( InternalSurfaceHandle* surface_hit ) = 0;
+  virtual Length fireRay( InternalSurfaceHandle* surface_hit ) = 0;
 
   /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown if a ray 
    * tracing error occurs.
    */
-  Length fireInternalRay();
+  Length fireRay();
 
   /*! Advance the internal ray to the cell boundary
    *
    * If a reflecting surface is hit "true" will be returned. Passing NULL
    * to this function must be allowed.
    */
-  virtual bool advanceInternalRayToCellBoundary( double* surface_normal ) = 0;
+  virtual bool advanceToCellBoundary( double* surface_normal ) = 0;
 
   /*! Advance the internal ray to the cell boundary
    *
    * If a reflecting surface is hit "true" will be returned. Passing NULL
    * to this function must be allowed.
    */
-  bool advanceInternalRayToCellBoundary();
+  bool advanceToCellBoundary();
 
   //! Advance the internal ray by a substep (less than distance to boundary)
-  virtual void advanceInternalRayBySubstep( const Length step_size ) = 0;
+  virtual void advanceBySubstep( const Length step_size ) = 0;
 
   //! Change the internal ray direction
-  virtual void changeInternalRayDirection( const double x_direction,
-                                           const double y_direction,
-                                           const double z_direction ) = 0;
+  virtual void changeDirection( const double x_direction,
+                                const double y_direction,
+                                const double z_direction ) = 0;
 
   //! Change the internal ray direction
-  void changeInternalRayDirection( const double direction[3] );
+  void changeDirection( const double direction[3] );
 
   //! The invalid cell handle
   static InternalCellHandle invalidCellHandle();
@@ -273,7 +273,7 @@ protected:
 
   // Convert an array to a string
   template<typename T>
-  static std::string arrayToString( const T data[3] );
+  static std::string arrayToString( const T* data );
 
 private:
 
@@ -330,65 +330,59 @@ inline auto Navigator::findCellContainingRay( const Ray& ray ) const -> Internal
 }
 
 // Set the internal ray with unknown starting cell
-inline void Navigator::setInternalRay( const Length position[3],
-                                       const double direction[3] )
+inline void Navigator::setState( const Length position[3],
+                                 const double direction[3] )
 {
-  this->setInternalRay( position[0],
-                        position[1],
-                        position[2],
-                        direction[0],
-                        direction[1],
-                        direction[2] );
+  this->setState( position[0], position[1], position[2],
+                  direction[0], direction[1], direction[2] );
 }
 
 // Set the internal ray with unknown starting cell
-inline void Navigator::setInternalRay( const Ray& ray )
+inline void Navigator::setState( const Ray& ray )
 {
-  this->setInternalRay( ray.getPosition(), ray.getDirection() );
+  this->setState( ray.getPosition(), ray.getDirection() );
 }
 
 // Set the internal ray with known starting cell
-inline void Navigator::setInternalRay( const Length position[3],
-                                       const double direction[3],
-                                       const InternalCellHandle start_cell )
+inline void Navigator::setState( const Length position[3],
+                                 const double direction[3],
+                                 const InternalCellHandle start_cell )
 {
-  this->setInternalRay( position[0], position[1], position[2],
-                        direction[0], direction[1], direction[2],
-                        start_cell );
+  this->setState( position[0], position[1], position[2],
+                  direction[0], direction[1], direction[2],
+                  start_cell );
 }
 
 // Set the internal ray with known starting cell
-inline void Navigator::setInternalRay( const Ray& ray,
-                                       const InternalCellHandle start_cell )
+inline void Navigator::setState( const Ray& ray,
+                                 const InternalCellHandle start_cell )
 {
-  this->setInternalRay( ray.getPosition(), ray.getDirection() );
+  this->setState( ray.getPosition(), ray.getDirection() );
 }
 
 // Fire the internal ray through the geometry
-inline auto Navigator::fireInternalRay() -> Length
+inline auto Navigator::fireRay() -> Length
 {
-  return this->fireInternalRay( NULL );
+  return this->fireRay( NULL );
 }
 
 // Advance the internal ray to the cell boundary
-inline bool Navigator::advanceInternalRayToCellBoundary()
+inline bool Navigator::advanceToCellBoundary()
 {
-  return this->advanceInternalRayToCellBoundary( NULL );
+  return this->advanceToCellBoundary( NULL );
 }
 
 // Change the internal ray direction
-inline void Navigator::changeInternalRayDirection( const double direction[3] )
+inline void Navigator::changeDirection( const double direction[3] )
 {
-  this->changeInternalRayDirection( direction[0],
-                                    direction[1],
-                                    direction[2] );
+  this->changeDirection( direction[0], direction[1], direction[2] );
 }
 
 // Convert an array to a string
 template<typename T>
-inline std::string Navigator::arrayToString( const T data[3] )
+inline std::string Navigator::arrayToString( const T* data )
 {
-  return Utility::toString( Utility::ArrayView<T>( data, 3 ) );
+  return Utility::toString( Utility::ArrayView<const T>( data, data+3 ) );
 }
   
 } // end Geometry namespace

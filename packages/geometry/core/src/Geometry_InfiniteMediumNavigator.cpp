@@ -103,18 +103,18 @@ auto InfiniteMediumNavigator::findCellContainingRay(
 }
   
 // Check if an internal ray has been set
-bool InfiniteMediumNavigator::isInternalRaySet() const
+bool InfiniteMediumNavigator::isStateSet() const
 {
   return true;
 }
 
 // Set the internal ray with unknown starting cell
-void InfiniteMediumNavigator::setInternalRay( const Length x_position,
-                                              const Length y_position,
-                                              const Length z_position,
-                                              const double x_direction,
-                                              const double y_direction,
-                                              const double z_direction )
+void InfiniteMediumNavigator::setState( const Length x_position,
+                                        const Length y_position,
+                                        const Length z_position,
+                                        const double x_direction,
+                                        const double y_direction,
+                                        const double z_direction )
 {
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
@@ -129,32 +129,32 @@ void InfiniteMediumNavigator::setInternalRay( const Length x_position,
 }
 
 // Set the internal ray with known starting cell
-void InfiniteMediumNavigator::setInternalRay( const Length x_position,
-                                              const Length y_position,
-                                              const Length z_position,
-                                              const double x_direction,
-                                              const double y_direction,
-                                              const double z_direction,
-                                              const InternalCellHandle )
+void InfiniteMediumNavigator::setState( const Length x_position,
+                                        const Length y_position,
+                                        const Length z_position,
+                                        const double x_direction,
+                                        const double y_direction,
+                                        const double z_direction,
+                                        const InternalCellHandle )
 {
-  this->setInternalRay( x_position, y_position, z_position,
+  this->setState( x_position, y_position, z_position,
                         x_direction, y_direction, z_direction );
 }
 
 // Get the internal ray position
-auto InfiniteMediumNavigator::getInternalRayPosition() const -> const Length*
+auto InfiniteMediumNavigator::getPosition() const -> const Length*
 {
   return d_position;
 }
 
 // Get the internal ray direction
-const double* InfiniteMediumNavigator::getInternalRayDirection() const
+const double* InfiniteMediumNavigator::getDirection() const
 {
   return d_direction;
 }
 
 // Get the cell that contains the internal ray
-auto InfiniteMediumNavigator::getCellContainingInternalRay() const -> InternalCellHandle
+auto InfiniteMediumNavigator::getCurrentCell() const -> InternalCellHandle
 {
   return d_cell;
 }
@@ -163,7 +163,7 @@ auto InfiniteMediumNavigator::getCellContainingInternalRay() const -> InternalCe
 /*! \details An infinite medium has no surface. The surface hit will be set
  * to the invalid surface.
  */
-auto InfiniteMediumNavigator::fireInternalRay(
+auto InfiniteMediumNavigator::fireRay(
                                  InternalSurfaceHandle* surface_hit ) -> Length
 {
   if( surface_hit != NULL )
@@ -177,8 +177,7 @@ auto InfiniteMediumNavigator::fireInternalRay(
  * (the position will be at infinity). An infinite medium has no surface so
  * the surface normal will always be set to the internal ray direction.
  */
-bool InfiniteMediumNavigator::advanceInternalRayToCellBoundary(
-                                                       double* surface_normal )
+bool InfiniteMediumNavigator::advanceToCellBoundary( double* surface_normal )
 {
   // Move the ray position to infinity
   d_position[0] = Utility::QuantityTraits<Length>::inf();
@@ -198,8 +197,7 @@ bool InfiniteMediumNavigator::advanceInternalRayToCellBoundary(
 }
 
 // Advance the internal ray by a substep (less than distance to boundary)
-void InfiniteMediumNavigator::advanceInternalRayBySubstep(
-                                                       const Length step_size )
+void InfiniteMediumNavigator::advanceBySubstep( const Length step_size )
 {
   d_position[0] += d_direction[0]*step_size;
   d_position[1] += d_direction[1]*step_size;
@@ -207,10 +205,9 @@ void InfiniteMediumNavigator::advanceInternalRayBySubstep(
 }
 
 // Change the internal ray direction
-void InfiniteMediumNavigator::changeInternalRayDirection(
-                                                     const double x_direction,
-                                                     const double y_direction,
-                                                     const double z_direction )
+void InfiniteMediumNavigator::changeDirection( const double x_direction,
+                                               const double y_direction,
+                                               const double z_direction )
 {
   // Make sure that the direction is valid
   testPrecondition( Utility::isUnitVector( x_direction, y_direction, z_direction ) );
@@ -225,9 +222,8 @@ InfiniteMediumNavigator* InfiniteMediumNavigator::clone() const
 {
   InfiniteMediumNavigator* clone = new InfiniteMediumNavigator( d_cell );
 
-  dynamic_cast<Navigator*>( clone )->setInternalRay(
-                                             this->getInternalRayPosition(),
-                                             this->getInternalRayDirection() );
+  dynamic_cast<Navigator*>( clone )->setState( this->getPosition(),
+                                               this->getDirection() );
   return clone;
 }
 

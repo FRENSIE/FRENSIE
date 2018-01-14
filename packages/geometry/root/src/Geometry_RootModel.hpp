@@ -20,7 +20,6 @@
 // FRENSIE Includes
 #include "Geometry_RootModelProperties.hpp"
 #include "Geometry_RootNavigator.hpp"
-#include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Model.hpp"
 #include "Utility_Map.hpp"
@@ -73,9 +72,8 @@ public:
 
   //! Get the cell materials
   template<template<typename,typename,typename...> class MapType>
-  void getCellMaterialNames(
-                         MapType<ModuleTraits::InternalCellHandle,std::string>&
-                         cell_id_mat_name_map ) const;
+  void getCellMaterialNames( MapType<InternalCellHandle,std::string>&
+                             cell_id_mat_name_map ) const;
 
   //! Get the cell material ids
   void getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const override;
@@ -88,16 +86,16 @@ public:
            CellEstimatorIdDataMap& cell_estimator_id_data_map ) const override;
 
   //! Check if a cell exists
-  bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  bool doesCellExist( const InternalCellHandle cell_id ) const override;
 
   //! Check if the cell is a termination cell
-  bool isTerminationCell( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  bool isTerminationCell( const InternalCellHandle cell_id ) const override;
 
   //! Check if the cell is a void cell
-  bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  bool isVoidCell( const InternalCellHandle cell_id ) const override;
 
   //! Get the cell volume
-  double getCellVolume( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  Volume getCellVolume( const InternalCellHandle cell_id ) const override;
 
   //! Create a raw, heap-allocated navigator
   RootNavigator* createNavigatorAdvanced() const override;
@@ -123,7 +121,7 @@ private:
   bool isTerminationVolume( const TGeoVolume* volume ) const;
 
   // Get the cell
-  TGeoVolume* getVolumePtr( const ModuleTraits::InternalCellHandle& cell_id ) const;
+  TGeoVolume* getVolumePtr( const InternalCellHandle& cell_id ) const;
 
   // Get the manager
   TGeoManager* getManager() const;
@@ -157,7 +155,7 @@ private:
   TGeoManager* d_manager;
 
   // Root cell id to uid map
-  typedef std::unordered_map<ModuleTraits::InternalCellHandle,Int_t>
+  typedef std::unordered_map<InternalCellHandle,Int_t>
   CellIdUidMap;
   CellIdUidMap d_cell_id_uid_map;
 

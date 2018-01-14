@@ -13,6 +13,9 @@
 #include <type_traits>
 #include <limits>
 
+// FRENSIE Includes
+#include "Utility_ContractException.hpp"
+
 /*! \defgroup quantity_traits Quantity Traits
  * \ingroup traits
  */
@@ -281,6 +284,14 @@ struct QuantityTraits
   //! Reinterpret const quantity type memory as raw type memory
   static inline const RawType* reinterpretAsRaw( const QuantityType* quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
+
+  //! Reinterpret raw type memory as quantity type memory
+  static inline QuantityType* reinterpretAsQuantity( RawType* raw_quantity )
+  { return UndefinedQuantityTraits<T>::notDefined(); }
+
+  //! Reinterpret const raw type memory as quantity type memory
+  static inline const QuantityType* reinterpretAsQuantity( const RawType* raw_quantity )
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 };
 
 /*! This function is a shortcut to the abs QuantityTraits function
@@ -406,9 +417,32 @@ inline void setQuantity( Quantity& quantity,
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline typename std::conditional<std::is_const<Quantity>::value,const typename QuantityTraits<typename std::remove_const<Quantity>::type>::RawType,typename QuantityTraits<typename std::remove_const<Quantity>::type>::RawType>::type* reinterpretAsRaw( Quantity* quantity )
+inline typename std::conditional<std::is_const<Quantity>::value,
+                                 const typename QuantityTraits<typename std::remove_const<Quantity>::type>::RawType,
+                                       typename QuantityTraits<typename std::remove_const<Quantity>::type>::RawType>::type*
+reinterpretAsRaw( Quantity* quantity )
 {
   return QuantityTraits<typename std::remove_const<Quantity>::type>::reinterpretAsRaw( quantity );
+}
+
+/*! \brief This method is a shortcut to the reinterpretAsQuantity 
+ * QuantityTraits method.
+ *
+ * This method should only be used in very rare cases when an array of 
+ * raw types needs to be passed through an interface that only excepts
+ * arrays of the quantities
+ * \ingroup quantity_traits
+ */
+template<typename Quantity, typename RawType>
+inline typename std::conditional<std::is_const<RawType>::value,
+                                 const typename std::remove_const<Quantity>::type,
+                                       typename std::remove_const<Quantity>::type>::type*
+reinterpretAsQuantity( RawType* raw_quantity )
+{
+  // The raw types must match
+  testStaticPrecondition( (std::is_same<typename std::remove_const<RawType>::type,typename QuantityTraits<typename std::remove_const<Quantity>::type>::RawType>::value) );
+  
+  return QuantityTraits<typename std::remove_const<Quantity>::type>::reinterpretAsQuantity( raw_quantity );
 }
 
 } // end Utility namespace

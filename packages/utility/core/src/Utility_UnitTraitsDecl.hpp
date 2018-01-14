@@ -66,7 +66,7 @@ struct UnitTraits
     typedef OtherUnit type;
   };
 
-  //! The wrapped quantity type associated with the unit and value type T
+  //! The wrapped quantity type associated with the unit and value type U
   template<typename U>
   struct GetQuantityType
   { typedef U type; };
