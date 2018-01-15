@@ -23,8 +23,8 @@ StandardDagMCSurfaceHandler::StandardDagMCSurfaceHandler(
 }
 
 // Get the surface id from a surface handle
-ModuleTraits::InternalSurfaceHandle StandardDagMCSurfaceHandler::getSurfaceId(
-                                const moab::EntityHandle surface_handle ) const
+auto StandardDagMCSurfaceHandler::getSurfaceId(
+       const moab::EntityHandle surface_handle ) const -> InternalSurfaceHandle
 {
   // Make sure the surface handle exists
   testPrecondition( this->doesSurfaceHandleExist( surface_handle ) );
@@ -37,7 +37,7 @@ ModuleTraits::InternalSurfaceHandle StandardDagMCSurfaceHandler::getSurfaceId(
  * performance is a concern.
  */
 moab::EntityHandle StandardDagMCSurfaceHandler::getSurfaceHandle(
-                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
+                                 const InternalSurfaceHandle surface_id ) const
 {
   // Make sure the surface exists
   testPrecondition( this->doesSurfaceExist( surface_id ) );
@@ -50,7 +50,7 @@ moab::EntityHandle StandardDagMCSurfaceHandler::getSurfaceHandle(
  * performance is a concern.
  */
 bool StandardDagMCSurfaceHandler::doesSurfaceExist(
-                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
+                                 const InternalSurfaceHandle surface_id ) const
 {
   moab::EntityHandle entity_handle =
     const_cast<moab::DagMC*>( d_dagmc_instance )->entity_by_id( 2, surface_id);

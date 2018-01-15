@@ -20,6 +20,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+namespace cgs = boost::units::cgs;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -293,67 +295,121 @@ FRENSIE_UNIT_TEST( DagMCModel, getCellDensities )
 
   FRENSIE_CHECK_EQUAL( cell_id_density_map.size(), 54 );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 9 )->second, -8.027 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 88 )->second, -8.027 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 9 )->second,
+                       -8.027/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 88 )->second,
+                       -8.027/cgs::cubic_centimeter );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 136 )->second, -7.75 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 136 )->second,
+                       -7.75/cgs::cubic_centimeter );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 19 )->second, -0.001633 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 41 )->second, -0.001633 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 63 )->second, -0.001633 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 82 )->second, -0.001633 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 152 )->second, -0.001633 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 166 )->second, -0.001633 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 184 )->second, -0.001633 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 19 )->second,
+                       -0.001633/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 41 )->second,
+                       -0.001633/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 63 )->second,
+                       -0.001633/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 82 )->second,
+                       -0.001633/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 152 )->second,
+                       -0.001633/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 166 )->second,
+                       -0.001633/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 184 )->second,
+                       -0.001633/cgs::cubic_centimeter );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 3 )->second, -0.99823 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 7 )->second, -0.99823 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 3 )->second,
+                       -0.99823/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 7 )->second,
+                       -0.99823/cgs::cubic_centimeter );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 13 )->second, -5.65 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 83 )->second, -5.65 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 154 )->second, -5.65 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 168 )->second, -5.65 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 13 )->second,
+                       -5.65/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 83 )->second,
+                       -5.65/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 154 )->second,
+                       -5.65/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 168 )->second,
+                       -5.65/cgs::cubic_centimeter );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 1 )->second, -1.8583 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 1 )->second,
+                       -1.8583/cgs::cubic_centimeter );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 26 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 27 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 28 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 29 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 30 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 31 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 32 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 33 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 34 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 35 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 36 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 37 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 48 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 49 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 50 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 51 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 52 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 53 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 54 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 55 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 56 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 57 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 58 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 59 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 70 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 71 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 72 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 73 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 74 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 75 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 76 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 77 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 78 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 79 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 80 )->second, -7.83 );
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 81 )->second, -7.83 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 26 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 27 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 28 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 29 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 30 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 31 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 32 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 33 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 34 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 35 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 36 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 37 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 48 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 49 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 50 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 51 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 52 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 53 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 54 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 55 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 56 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 57 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 58 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 59 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 70 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 71 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 72 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 73 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 74 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 75 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 76 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 77 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 78 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 79 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 80 )->second,
+                       -7.83/cgs::cubic_centimeter );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 81 )->second,
+                       -7.83/cgs::cubic_centimeter );
 
-  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 5 )->second, -13.31 );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map.find( 5 )->second,
+                       -13.31/cgs::cubic_centimeter );
 }
 
 //---------------------------------------------------------------------------//
@@ -620,9 +676,11 @@ FRENSIE_UNIT_TEST( DagMCModel, getCellVolume )
     Geometry::DagMCModel::getInstance();
   
   // Get the volume of cell 53
-  double cell_volume = model->getCellVolume( 53 );
+  Geometry::Model::Volume cell_volume = model->getCellVolume( 53 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( cell_volume, 98.322384, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cell_volume,
+                                   98.322384*cgs::cubic_centimeter,
+                                   1e-6 );
 }
 
 //---------------------------------------------------------------------------//
@@ -716,9 +774,11 @@ FRENSIE_UNIT_TEST( DagMCModel, getSurfaceArea )
     Geometry::DagMCModel::getInstance();
   
   // Get the surface area of surface 242
-  double surface_area = model->getSurfaceArea( 242 );
+  Geometry::AdvancedModel::Area surface_area = model->getSurfaceArea( 242 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( surface_area, 38.7096, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( surface_area,
+                                   38.7096*cgs::square_centimeter,
+                                   1e-6 );
 }
 
 //---------------------------------------------------------------------------//

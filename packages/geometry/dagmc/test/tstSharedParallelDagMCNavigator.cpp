@@ -20,6 +20,12 @@
 #include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+namespace cgs = boost::units::cgs;
+
+//---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 std::shared_ptr<const Geometry::DagMCModel> model;
@@ -30,15 +36,15 @@ std::shared_ptr<const Geometry::DagMCModel> model;
 // Check that a parallel internal ray trace can be done
 FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
 {
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle> >
     cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle> >
     surface_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   std::vector<std::tuple<double,double,double,double> >
@@ -52,105 +58,134 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
     
     // Initialize the ray
     if( Utility::GlobalOpenMPSession::getThreadId()%6 == 0 )
-      navigator->setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+    {
+      navigator->setState( -40.0*cgs::centimeter,
+                           -40.0*cgs::centimeter,
+                           59.0*cgs::centimeter,
+                           0.0, 0.0, 1.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 1 )
-      navigator->setInternalRay( -41.0, -41.0, 59.0, 0.0, 0.0, 1.0 );
+    {
+      navigator->setState( -41.0*cgs::centimeter,
+                           -41.0*cgs::centimeter,
+                           59.0*cgs::centimeter,
+                           0.0, 0.0, 1.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 2 )
-      navigator->setInternalRay( -39.0, -39.0, 59.0, 0.0, 0.0, 1.0 );
+    {
+      navigator->setState( -39.0*cgs::centimeter,
+                           -39.0*cgs::centimeter,
+                           59.0*cgs::centimeter,
+                           0.0, 0.0, 1.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 3 )
-      navigator->setInternalRay( -38.0, -38.0, 59.0, 0.0, 0.0, 1.0 );
+    {
+      navigator->setState( -38.0*cgs::centimeter,
+                           -38.0*cgs::centimeter,
+                           59.0*cgs::centimeter,
+                           0.0, 0.0, 1.0 );
+    }
     else if( Utility::GlobalOpenMPSession::getThreadId()%6 == 4)
-      navigator->setInternalRay( -37.0, -37.0, 59.0, 0.0, 0.0, 1.0 );
+    {
+      navigator->setState( -37.0*cgs::centimeter,
+                           -37.0*cgs::centimeter,
+                           59.0*cgs::centimeter,
+                           0.0, 0.0, 1.0 );
+    }
     else
-      navigator->setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+    {
+      navigator->setState( -40.0*cgs::centimeter,
+                           -40.0*cgs::centimeter,
+                           59.0*cgs::centimeter,
+                           0.0, 0.0, 1.0 );
+    }
 
     // Find the cell that contains the ray
-    Geometry::ModuleTraits::InternalCellHandle cell =
-      navigator->getCellContainingInternalRay();
+    Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
 
     Utility::get<0>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
     // Fire the ray
-    Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+    Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-    double distance_to_surface_hit =
-      navigator->fireInternalRay( &surface_hit );
+    Geometry::Navigator::Length distance_to_surface_hit =
+      navigator->fireRay( &surface_hit );
 
     Utility::get<0>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
 
     Utility::get<0>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_surface_hit;
+      distance_to_surface_hit.value();
 
     // Advance the ray to the boundary surface
-    navigator->advanceInternalRayToCellBoundary();
+    navigator->advanceToCellBoundary();
 
-    cell = navigator->getCellContainingInternalRay();
+    cell = navigator->getCurrentCell();
 
     Utility::get<1>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
     // Fire the ray
-    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+    distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
     Utility::get<1>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
 
     Utility::get<1>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_surface_hit;
+      distance_to_surface_hit.value();
 
     // Advance the ray to the boundary surface
-    navigator->advanceInternalRayToCellBoundary();
+    navigator->advanceToCellBoundary();
 
-    cell = navigator->getCellContainingInternalRay();
+    cell = navigator->getCurrentCell();
 
     Utility::get<2>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
     // Fire the ray
-    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+    distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
     Utility::get<2>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
 
     Utility::get<2>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_surface_hit;
+      distance_to_surface_hit.value();
 
     // Advance the ray a substep
-    navigator->advanceInternalRayBySubstep( 0.5*distance_to_surface_hit);
+    navigator->advanceBySubstep( 0.5*distance_to_surface_hit);
 
     // Change the ray direction
-    navigator->changeInternalRayDirection( 0.0, 0.0, -1.0 );
+    navigator->changeDirection( 0.0, 0.0, -1.0 );
 
     // Fire the ray
-    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+    distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
     Utility::get<3>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
 
     Utility::get<3>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_surface_hit;
+      distance_to_surface_hit.value();
   }
 
   // Check that each of the rays traces were successful
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
+  for( size_t i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i] = std::make_tuple( 53, 54, 55 );
 
   FRENSIE_CHECK_EQUAL( cell_ids, correct_cell_ids );
 
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle> >
     correct_surface_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
+  for( size_t i = 0; i < correct_cell_ids.size(); ++i )
     correct_surface_ids[i] = std::make_tuple( 242, 248, 254, 248 );
 
   FRENSIE_CHECK_EQUAL( surface_ids, correct_surface_ids );
@@ -158,7 +193,7 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
   std::vector<std::tuple<double,double,double,double> >
     correct_distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_distances.size(); ++i )
+  for( size_t i = 0; i < correct_distances.size(); ++i )
     correct_distances[i] = std::make_tuple( 1.959999084, 2.54, 2.54, 1.27 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( distances, correct_distances, 1e-6 );
@@ -168,14 +203,14 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace )
 // Check that a parallel internal ray trace can be done
 FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
 {
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle,
+                         Geometry::Navigator::InternalCellHandle> >
     cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle> >
+  
+  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle,
+                         Geometry::Navigator::InternalSurfaceHandle> >
     surface_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   std::vector<std::tuple<double,double,double> >
@@ -190,79 +225,81 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
     std::shared_ptr<Geometry::Navigator> navigator =
       model->createNavigator();
 
-    navigator->setInternalRay( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
+    navigator->setState( -40.0*cgs::centimeter,
+                         -40.0*cgs::centimeter,
+                         108.0*cgs::centimeter,
+                         0.0, 0.0, 1.0 );
 
     // Find the cell that contains the ray
-    Geometry::ModuleTraits::InternalCellHandle cell =
-      navigator->getCellContainingInternalRay();
+    Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
 
     Utility::get<0>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
     // Fire the ray
-    Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+    Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-    double distance_to_surface_hit =
-      navigator->fireInternalRay( &surface_hit );
+    Geometry::Navigator::Length distance_to_surface_hit =
+      navigator->fireRay( &surface_hit );
 
     Utility::get<0>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
 
     Utility::get<0>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_surface_hit;
+      distance_to_surface_hit.value();
 
     // Advance the ray to the boundary surface
     Utility::get<0>(reflection[Utility::GlobalOpenMPSession::getThreadId()]) =
-      navigator->advanceInternalRayToCellBoundary();
+      navigator->advanceToCellBoundary();
 
-    cell = navigator->getCellContainingInternalRay();
+    cell = navigator->getCurrentCell();
 
     Utility::get<1>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
-    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+    distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
     Utility::get<1>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
 
     Utility::get<1>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_surface_hit;
+      distance_to_surface_hit.value();
 
     // Advance the ray to the boundary surface (reflecting)
     Utility::get<1>(reflection[Utility::GlobalOpenMPSession::getThreadId()]) =
-      navigator->advanceInternalRayToCellBoundary();
+      navigator->advanceToCellBoundary();
 
-    cell = navigator->getCellContainingInternalRay();
+    cell = navigator->getCurrentCell();
 
     Utility::get<2>(cell_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       cell;
 
-    distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+    distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
     Utility::get<2>(surface_ids[Utility::GlobalOpenMPSession::getThreadId()]) =
       surface_hit;
 
     Utility::get<2>(distances[Utility::GlobalOpenMPSession::getThreadId()]) =
-      distance_to_surface_hit;
+      distance_to_surface_hit.value();
   }
 
   // Check that each of the rays traces were successful
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle,
-                               Geometry::ModuleTraits::InternalCellHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalCellHandle,
+                               Geometry::Navigator::InternalCellHandle,
+                               Geometry::Navigator::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
+  for( size_t i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i] = std::make_tuple( 82, 83, 83 );
 
   FRENSIE_CHECK_EQUAL( cell_ids, correct_cell_ids );
 
-  std::vector<std::tuple<Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle,
-                               Geometry::ModuleTraits::InternalSurfaceHandle> >
+  std::vector<std::tuple<Geometry::Navigator::InternalSurfaceHandle,
+                               Geometry::Navigator::InternalSurfaceHandle,
+                               Geometry::Navigator::InternalSurfaceHandle> >
     correct_surface_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
+  for( size_t i = 0; i < correct_cell_ids.size(); ++i )
     correct_surface_ids[i] = std::make_tuple( 394, 408, 394 );
 
   FRENSIE_CHECK_EQUAL( surface_ids, correct_surface_ids );
@@ -270,7 +307,7 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
   std::vector<std::tuple<double,double,double> >
     correct_distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_distances.size(); ++i )
+  for( size_t i = 0; i < correct_distances.size(); ++i )
     correct_distances[i] = std::make_tuple( 1.474, 17.526, 17.526 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( distances, correct_distances, 1e-6 );
@@ -278,7 +315,7 @@ FRENSIE_UNIT_TEST( DagMC, parallel_ray_trace_with_reflection )
   std::vector<std::tuple<int,int> >
     correct_reflection( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
-  for( unsigned i = 0; i < correct_reflection.size(); ++i )
+  for( size_t i = 0; i < correct_reflection.size(); ++i )
     correct_reflection[i] = std::make_tuple( false, true );
 
   FRENSIE_CHECK_EQUAL( reflection, correct_reflection );

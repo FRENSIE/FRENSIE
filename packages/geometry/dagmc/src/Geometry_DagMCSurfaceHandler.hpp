@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Geometry_DagMCEntityHandler.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Navigator.hpp"
 
 namespace Geometry{
 
@@ -23,6 +23,9 @@ class DagMCSurfaceHandler : public DagMCEntityHandler
 {
 
 public:
+
+  //! The internal surface handle type
+  typedef unsigned long long InternalSurfaceHandle;
 
   //! Constructor
   DagMCSurfaceHandler( const moab::DagMC* dagmc_instance );
@@ -36,19 +39,19 @@ public:
 
   //! Check if the surface exists
   virtual bool doesSurfaceExist(
-              const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
+                            const InternalSurfaceHandle surface_id ) const = 0;
 
   //! Check if the surface handle exists
   virtual bool doesSurfaceHandleExist(
                                const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface id from a surface handle
-  virtual ModuleTraits::InternalSurfaceHandle getSurfaceId(
+  virtual InternalSurfaceHandle getSurfaceId(
                            const moab::EntityHandle surface_handle ) const = 0;
 
   //! Get the surface handle from a surface id
   virtual moab::EntityHandle getSurfaceHandle(
-              const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
+                            const InternalSurfaceHandle surface_id ) const = 0;
 };
 
 } // end Geometry namespace

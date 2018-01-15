@@ -9,6 +9,9 @@
 #ifndef GEOMETRY_ADVANCED_MODEL_HPP
 #define GEOMETRY_ADVANCED_MODEL_HPP
 
+// Boost Includes
+#include <boost/units/systems/cgs/area.hpp>
+
 // FRENSIE Includes
 #include "Geometry_Model.hpp"
 
@@ -21,16 +24,22 @@ class AdvancedModel : public Model
 public:
 
   //! The surface id set type
-  typedef std::set<ModuleTraits::InternalSurfaceHandle> SurfaceIdSet;
+  typedef std::set<InternalSurfaceHandle> SurfaceIdSet;
 
   //! The surface id array type
-  typedef std::vector<ModuleTraits::InternalSurfaceHandle> SurfaceIdArray;
+  typedef std::vector<InternalSurfaceHandle> SurfaceIdArray;
 
   //! The surface estimator data type
   typedef std::tuple<EstimatorType,ParticleType,SurfaceIdArray> SurfaceEstimatorData;
 
   //! surface estimator id data map type
-  typedef std::map<ModuleTraits::InternalEstimatorHandle,SurfaceEstimatorData> SurfaceEstimatorIdDataMap;
+  typedef std::map<InternalEstimatorHandle,SurfaceEstimatorData> SurfaceEstimatorIdDataMap;
+
+  //! The area unit
+  typedef boost::units::cgs::area AreaUnit;
+
+  //! The area quantity
+  typedef boost::units::quantity<AreaUnit> Area;
 
   //! Constructor
   AdvancedModel()
@@ -55,15 +64,15 @@ public:
 
   //! Check if a surface exists
   virtual bool doesSurfaceExist(
-              const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
-
+                            const InternalSurfaceHandle surface_id ) const = 0;
+  
   //! Get the surface area
-  virtual double getSurfaceArea(
-              const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
+  virtual Area getSurfaceArea(
+                            const InternalSurfaceHandle surface_id ) const = 0;
 
   //! Check if the surface is a reflecting surface
   virtual bool isReflectingSurface(
-              const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
+                            const InternalSurfaceHandle surface_id ) const = 0;
 
 private:
 

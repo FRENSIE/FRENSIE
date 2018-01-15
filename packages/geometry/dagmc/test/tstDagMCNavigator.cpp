@@ -22,6 +22,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+namespace cgs = boost::units::cgs;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -47,21 +49,30 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getPointLocation )
     model->createNavigator();
   
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray( new Geometry::Ray(
-                                         -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
+  std::shared_ptr<Geometry::Navigator::Ray> ray( new Geometry::Navigator::Ray(
+                                                         -40.0*cgs::centimeter,
+                                                         -40.0*cgs::centimeter,
+                                                         59.0*cgs::centimeter,
+                                                         0.0, 0.0, 1.0 ) );
 
   Geometry::PointLocation location =
     navigator->getPointLocation( *ray, 53 );
 
   FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
-  ray.reset( new Geometry::Ray( -42.647, -40.0, 59.0, -1.0, 0.0, 0.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -42.647*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           59.0*cgs::centimeter,
+                                           -1.0, 0.0, 0.0 ) );
 
   location = navigator->getPointLocation( *ray, 53 );
 
   FRENSIE_CHECK_EQUAL( location, Geometry::POINT_INSIDE_CELL );
 
-  ray.reset( new Geometry::Ray( -42.648, -40.0, 59.0, -1.0, 0.0, 0.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -42.648*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           59.0*cgs::centimeter,
+                                           -1.0, 0.0, 0.0 ) );
 
   location = navigator->getPointLocation( *ray, 53 );
 
@@ -76,7 +87,10 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getSurfaceNormal )
     model->createNavigator();
   
   // Initialize the ray (on cell 53)
-  Geometry::Ray ray( -40.0, -40.0, 60.959999084, 0.0, 0.0, 1.0 );
+  Geometry::Navigator::Ray ray( -40.0*cgs::centimeter,
+                                -40.0*cgs::centimeter,
+                                60.959999084*cgs::centimeter,
+                                0.0, 0.0, 1.0 );
 
   // Get the surface normal
   std::array<double,3> normal;
@@ -113,17 +127,23 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay_cache )
   Geometry::Navigator::CellIdSet found_cell_cache;
   
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray(
-                      new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
+  std::shared_ptr<Geometry::Navigator::Ray> ray(
+                           new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                                         -40.0*cgs::centimeter,
+                                                         59.0*cgs::centimeter,
+                                                         0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
-  Geometry::ModuleTraits::InternalCellHandle cell =
+  Geometry::Navigator::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray, found_cell_cache );
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Initailize a new ray
-  ray.reset( new Geometry::Ray( -39.0, -39.0, 59.0, 1.0, 0.0, 0.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -39.0*cgs::centimeter,
+                                           -39.0*cgs::centimeter,
+                                           59.0*cgs::centimeter,
+                                           1.0, 0.0, 0.0 ) );
 
   // Find the cell that contains the point
   cell = navigator->findCellContainingRay( *ray, found_cell_cache );
@@ -131,7 +151,10 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay_cache )
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Initailize a new ray
-  ray.reset( new Geometry::Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           61.0*cgs::centimeter,
+                                           0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
   cell = navigator->findCellContainingRay( *ray, found_cell_cache );
@@ -139,7 +162,10 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay_cache )
   FRENSIE_CHECK_EQUAL( cell, 54 );
 
   // Initialize the new ray
-  ray.reset( new Geometry::Ray( -40.0, -40.0, 64.0, 0.0, 0.0, 1.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           64.0*cgs::centimeter,
+                                           0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
   cell = navigator->findCellContainingRay( *ray, found_cell_cache );
@@ -161,17 +187,23 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay )
     model->createNavigator();
   
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray(
-                      new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
+  std::shared_ptr<Geometry::Navigator::Ray> ray(
+                           new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                                         -40.0*cgs::centimeter,
+                                                         59.0*cgs::centimeter,
+                                                         0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
-  Geometry::ModuleTraits::InternalCellHandle cell =
+  Geometry::Navigator::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray );
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Initailize a new ray
-  ray.reset( new Geometry::Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           61.0*cgs::centimeter,
+                                           0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
   cell = navigator->findCellContainingRay( *ray );
@@ -179,7 +211,10 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay )
   FRENSIE_CHECK_EQUAL( cell, 54 );
 
   // Initialize the new ray
-  ray.reset( new Geometry::Ray( -40.0, -40.0, 64.0, 0.0, 0.0, 1.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           64.0*cgs::centimeter,
+                                           0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
   cell = navigator->findCellContainingRay( *ray );
@@ -189,167 +224,197 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay )
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be set
-FRENSIE_UNIT_TEST( DagMCNavigator, setInternalRay_unknown_cell )
+FRENSIE_UNIT_TEST( DagMCNavigator, setState_unknown_cell )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
   
-  FRENSIE_CHECK( !navigator->isInternalRaySet() );
+  FRENSIE_CHECK( !navigator->isStateSet() );
 
-  std::shared_ptr<Geometry::Ray> ray(
-                      new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
+  std::shared_ptr<Geometry::Navigator::Ray> ray(
+                           new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                                         -40.0*cgs::centimeter,
+                                                         59.0*cgs::centimeter,
+                                                         0.0, 0.0, 1.0 ) );
 
-  navigator->setInternalRay( ray->getPosition(), ray->getDirection() );
+  navigator->setState( ray->getPosition(), ray->getDirection() );
 
-  FRENSIE_CHECK( navigator->isInternalRaySet() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 59.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 53 );
+  FRENSIE_CHECK( navigator->isStateSet() );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 59.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 53 );
 
-  ray.reset( new Geometry::Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           61.0*cgs::centimeter,
+                                           0.0, 0.0, 1.0 ) );
 
-  navigator->setInternalRay( ray->getPosition(), ray->getDirection() );
+  navigator->setState( ray->getPosition(), ray->getDirection() );
 
-  FRENSIE_CHECK( navigator->isInternalRaySet() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 61.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 54 );
+  FRENSIE_CHECK( navigator->isStateSet() );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 61.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 54 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be set
-FRENSIE_UNIT_TEST( DagMCNavigator, setInternalRay_known_cell )
+FRENSIE_UNIT_TEST( DagMCNavigator, setState_known_cell )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
   
   // Set the internal ray but do not cache its starting cell
-  std::shared_ptr<Geometry::Ray> ray(
-                      new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
+  std::shared_ptr<Geometry::Navigator::Ray> ray(
+                           new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                                         -40.0*cgs::centimeter,
+                                                         59.0*cgs::centimeter,
+                                                         0.0, 0.0, 1.0 ) );
 
-  FRENSIE_CHECK( !navigator->isInternalRaySet() );
+  FRENSIE_CHECK( !navigator->isStateSet() );
   
-  navigator->setInternalRay( ray->getPosition(),
+  navigator->setState( ray->getPosition(),
                              ray->getDirection(),
                              53 );
 
-  FRENSIE_CHECK( navigator->isInternalRaySet() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 59.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 53 );
+  FRENSIE_CHECK( navigator->isStateSet() );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 59.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 53 );
 
-  ray.reset( new Geometry::Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           61.0*cgs::centimeter,
+                                           0.0, 0.0, 1.0 ) );
 
-  navigator->setInternalRay( ray->getPosition(), ray->getDirection(), 54 );
+  navigator->setState( ray->getPosition(), ray->getDirection(), 54 );
 
-  FRENSIE_CHECK( navigator->isInternalRaySet() );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[0], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[1], -40.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayPosition()[2], 61.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getCellContainingInternalRay(), 54 );
+  FRENSIE_CHECK( navigator->isStateSet() );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], -40.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getPosition()[2], 61.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 54 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray can be fired
-FRENSIE_UNIT_TEST( DagMCNavigator, fireInternalRay )
+FRENSIE_UNIT_TEST( DagMCNavigator, fireRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
   
   // Initialize the ray
-  Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+  Geometry::Navigator::Ray ray( -40.0*cgs::centimeter,
+                                -40.0*cgs::centimeter,
+                                59.0*cgs::centimeter,
+                                0.0, 0.0, 1.0 );
 
-  navigator->setInternalRay( ray.getPosition(), ray.getDirection(), 53 );
+  navigator->setState( ray.getPosition(), ray.getDirection(), 53 );
 
   // Fire an external ray through the geometry
-  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-  double distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+  Geometry::Navigator::Length distance_to_surface_hit =
+    navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   1.959999084*cgs::centimeter,
+                                   1e-9 );
   FRENSIE_CHECK_EQUAL( surface_hit, 242 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an internal ray can be advanced by a substep
-FRENSIE_UNIT_TEST( DagMCNavigator, advanceInternalRayBySubstep )
+FRENSIE_UNIT_TEST( DagMCNavigator, advanceBySubstep )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
   
   // Initialize the ray
-  navigator->setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 );
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       59.0*cgs::centimeter,
+                       0.0, 0.0, 1.0,
+                       53 );
 
-  navigator->advanceInternalRayBySubstep( 0.959999084 );
+  navigator->advanceBySubstep( 0.959999084*cgs::centimeter );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell =
-    navigator->getCellContainingInternalRay();
+  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Fire the ray
-  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-  double distance_to_surface_hit =
-    navigator->fireInternalRay( &surface_hit );
+  Geometry::Navigator::Length distance_to_surface_hit =
+    navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 1.0, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   1.0*cgs::centimeter,
+                                   1e-9 );
   FRENSIE_CHECK_EQUAL( surface_hit, 242 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an internal ray can be advanced
-FRENSIE_UNIT_TEST( DagMCNavigator, advanceInternalRayToCellBoundary_basic )
+FRENSIE_UNIT_TEST( DagMCNavigator, advanceToCellBoundary_basic )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
   
   // Initialize the ray
-  navigator->setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 );
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       59.0*cgs::centimeter,
+                       0.0, 0.0, 1.0,
+                       53 );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell =
-    navigator->getCellContainingInternalRay();
+  Geometry::Navigator::InternalCellHandle cell =
+    navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Advance the ray to the boundary surface
-  navigator->advanceInternalRayToCellBoundary();
+  navigator->advanceToCellBoundary();
 
-  cell = navigator->getCellContainingInternalRay();
+  cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 54 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an internal ray can be advanced
-FRENSIE_UNIT_TEST( DagMCNavigator, advanceInternalRayToCellBoundary_advanced )
+FRENSIE_UNIT_TEST( DagMCNavigator, advanceToCellBoundary_advanced )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
   
   // Initialize the ray
-  navigator->setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 );
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       59.0*cgs::centimeter,
+                       0.0, 0.0, 1.0,
+                       53 );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell =
-    navigator->getCellContainingInternalRay();
+  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
@@ -357,39 +422,45 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceInternalRayToCellBoundary_advanced )
   double surface_normal[3];
 
   bool reflection =
-    navigator->advanceInternalRayToCellBoundary( surface_normal );
+    navigator->advanceToCellBoundary( surface_normal );
 
   FRENSIE_CHECK( !reflection );
   FRENSIE_CHECK_EQUAL( surface_normal[0], 0.0 );
   FRENSIE_CHECK_EQUAL( surface_normal[1], 0.0 );
   FRENSIE_CHECK_EQUAL( surface_normal[2], 1.0 );
 
-  cell = navigator->getCellContainingInternalRay();
+  cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 54 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the internal ray direction can be changed
-FRENSIE_UNIT_TEST( DagMCNavigator, changeInternalRayDirection )
+FRENSIE_UNIT_TEST( DagMCNavigator, changeDirection )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
   
-  std::shared_ptr<Geometry::Ray> ray(
-                      new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
+  std::shared_ptr<Geometry::Navigator::Ray> ray(
+                           new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                                         -40.0*cgs::centimeter,
+                                                         59.0*cgs::centimeter,
+                                                         0.0, 0.0, 1.0 ) );
 
-  navigator->setInternalRay( ray->getPosition(),
-                             ray->getDirection(),
-                             53 );
+  navigator->setState( ray->getPosition(),
+                       ray->getDirection(),
+                       53 );
 
-  ray.reset( new Geometry::Ray( -40.0, -40.0, 59.0, 1.0, 0.0, 0.0 ) );
+  ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
+                                           -40.0*cgs::centimeter,
+                                           59.0*cgs::centimeter,
+                                           1.0, 0.0, 0.0 ) );
 
-  navigator->changeInternalRayDirection( ray->getDirection() );
+  navigator->changeDirection( ray->getDirection() );
 
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[0], 1.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[1], 0.0 );
-  FRENSIE_CHECK_EQUAL( navigator->getInternalRayDirection()[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[0], 1.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[1], 0.0 );
+  FRENSIE_CHECK_EQUAL( navigator->getDirection()[2], 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -400,59 +471,69 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace )
     model->createNavigator();
   
   // Initialize the ray
-  navigator->setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       59.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell =
-    navigator->getCellContainingInternalRay();
+  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
   // Fire the ray
-  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-  double distance_to_surface_hit =
-    navigator->fireInternalRay( &surface_hit );
+  Geometry::Navigator::Length distance_to_surface_hit =
+    navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   1.959999084*cgs::centimeter,
+                                   1e-9 );
   FRENSIE_CHECK_EQUAL( surface_hit, 242 );
 
   // Advance the ray to the boundary surface
-  navigator->advanceInternalRayToCellBoundary();
+  navigator->advanceToCellBoundary();
 
-  cell = navigator->getCellContainingInternalRay();
+  cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 54 );
 
   // Fire the ray
-  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+  distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 2.54, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   2.54*cgs::centimeter,
+                                   1e-6 );
   FRENSIE_CHECK_EQUAL( surface_hit, 248 );
 
   // Advance the ray to the boundary surface
-  navigator->advanceInternalRayToCellBoundary();
+  navigator->advanceToCellBoundary();
 
-  cell = navigator->getCellContainingInternalRay();
+  cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 55 );
 
   // Fire the ray
-  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+  distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 2.54, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   2.54*cgs::centimeter,
+                                   1e-6 );
   FRENSIE_CHECK_EQUAL( surface_hit, 254 );
 
   // Advance the ray a substep
-  navigator->advanceInternalRayBySubstep( 0.5*distance_to_surface_hit );
+  navigator->advanceBySubstep( 0.5*distance_to_surface_hit );
 
   // Change the ray direction
-  navigator->changeInternalRayDirection( 0.0, 0.0, -1.0 );
+  navigator->changeDirection( 0.0, 0.0, -1.0 );
 
   // Fire the ray
-  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+  distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 1.27, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   1.27*cgs::centimeter,
+                                   1e-6 );
   FRENSIE_CHECK_EQUAL( surface_hit, 248 );
 }
 
@@ -464,55 +545,62 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
     model->createNavigator();
   
   // Initialize the ray
-  navigator->setInternalRay( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       108.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell =
-    navigator->getCellContainingInternalRay();
+  Geometry::Navigator::InternalCellHandle cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 82 );
 
   // Fire the ray
-  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  Geometry::Navigator::InternalSurfaceHandle surface_hit;
 
-  double distance_to_surface_hit =
-    navigator->fireInternalRay( &surface_hit );
+  Geometry::Navigator::Length distance_to_surface_hit =
+    navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 1.474, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   1.474*cgs::centimeter,
+                                   1e-6 );
   FRENSIE_CHECK_EQUAL( surface_hit, 394 );
 
   // Advance the ray to the boundary surface
-  bool reflection = navigator->advanceInternalRayToCellBoundary();
+  bool reflection = navigator->advanceToCellBoundary();
 
   FRENSIE_CHECK( !reflection );
 
-  cell = navigator->getCellContainingInternalRay();
+  cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 83 );
 
-  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+  distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   17.526*cgs::centimeter,
+                                   1e-6 );
   FRENSIE_CHECK_EQUAL( surface_hit, 408 );
 
   // Advance the ray to the boundary surface (reflecting)
   double surface_normal[3];
 
-  reflection =
-    navigator->advanceInternalRayToCellBoundary( surface_normal );
+  reflection = navigator->advanceToCellBoundary( surface_normal );
 
   FRENSIE_CHECK( reflection );
   FRENSIE_CHECK_EQUAL( surface_normal[0], 0.0 );
   FRENSIE_CHECK_EQUAL( surface_normal[1], 0.0 );
   FRENSIE_CHECK_EQUAL( surface_normal[2], 1.0 );
 
-  cell = navigator->getCellContainingInternalRay();
+  cell = navigator->getCurrentCell();
 
   FRENSIE_CHECK_EQUAL( cell, 83 );
 
-  distance_to_surface_hit = navigator->fireInternalRay( &surface_hit );
+  distance_to_surface_hit = navigator->fireRay( &surface_hit );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_to_surface_hit,
+                                   17.526*cgs::centimeter,
+                                   1e-6 );
   FRENSIE_CHECK_EQUAL( surface_hit, 394 );
 }
 
@@ -523,25 +611,28 @@ FRENSIE_UNIT_TEST( DagMCNavigator, clone )
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
 
   // Initialize the ray
-  navigator->setInternalRay( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       108.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
   // Clone the ray
   std::shared_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
 
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[0],
-                       navigator->getInternalRayPosition()[0] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[1],
-                       navigator->getInternalRayPosition()[1] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayPosition()[2],
-                       navigator->getInternalRayPosition()[2] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[0],
-                       navigator->getInternalRayDirection()[0] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[1],
-                       navigator->getInternalRayDirection()[1] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getInternalRayDirection()[2],
-                       navigator->getInternalRayDirection()[2] );
-  FRENSIE_CHECK_EQUAL( navigator_clone->getCellContainingInternalRay(),
-                       navigator->getCellContainingInternalRay() );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[0],
+                       navigator->getPosition()[0] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[1],
+                       navigator->getPosition()[1] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[2],
+                       navigator->getPosition()[2] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[0],
+                       navigator->getDirection()[0] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[1],
+                       navigator->getDirection()[1] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[2],
+                       navigator->getDirection()[2] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getCurrentCell(),
+                       navigator->getCurrentCell() );
 }
 
 //---------------------------------------------------------------------------//
@@ -564,7 +655,10 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCNavigator, archive, TestArchives )
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
 
   // Initialize the ray
-  navigator->setInternalRay( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       108.0*cgs::centimeter,
+                       0.0, 0.0, 1.0 );
 
   FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( navigator ) );
 

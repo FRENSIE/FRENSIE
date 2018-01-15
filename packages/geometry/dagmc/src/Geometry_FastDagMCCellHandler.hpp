@@ -40,23 +40,21 @@ public:
   { /* ... */ }
 
   //! Check if the cell exists
-  bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id ) const;
+  bool doesCellExist( const InternalCellHandle cell_id ) const;
 
   // Check if the cell handle exists
   bool doesCellHandleExist( const moab::EntityHandle cell_handle ) const;
 
   //! Get the cell id from a cell handle
-  ModuleTraits::InternalCellHandle getCellId(
-                                  const moab::EntityHandle cell_handle ) const;
+  InternalCellHandle getCellId( const moab::EntityHandle cell_handle ) const;
 
   //! Get the cell handle from a cell id
-  moab::EntityHandle getCellHandle(
-                        const ModuleTraits::InternalCellHandle cell_id ) const;
+  moab::EntityHandle getCellHandle( const InternalCellHandle cell_id ) const;
 
 private:
 
   // The cell id to cell handle map
-  typedef boost::bimap<boost::bimaps::unordered_set_of<ModuleTraits::InternalCellHandle>,boost::bimaps::unordered_set_of<moab::EntityHandle> > CellIdHandleMap;
+  typedef boost::bimap<boost::bimaps::unordered_set_of<InternalCellHandle>,boost::bimaps::unordered_set_of<moab::EntityHandle> > CellIdHandleMap;
 
   CellIdHandleMap d_cell_id_handle_map;
 };

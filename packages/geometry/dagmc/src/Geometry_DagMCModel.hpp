@@ -23,7 +23,6 @@
 #include "Geometry_DagMCCellHandler.hpp"
 #include "Geometry_DagMCSurfaceHandler.hpp"
 #include "Geometry_DagMCNavigator.hpp"
-#include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_AdvancedModel.hpp"
 #include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
@@ -87,16 +86,16 @@ public:
   void getCellEstimatorData( CellEstimatorIdDataMap& estimator_id_data_map ) const override;
 
   //! Check if a cell exists
-  bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  bool doesCellExist( const InternalCellHandle cell_id ) const override;
 
   //! Check if the cell is a termination cell
-  bool isTerminationCell( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  bool isTerminationCell( const InternalCellHandle cell_id ) const override;
 
   //! Check if the cell is a void cell
-  bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  bool isVoidCell( const InternalCellHandle cell_id ) const override;
 
   //! Get the cell volume
-  double getCellVolume( const ModuleTraits::InternalCellHandle cell_id ) const override;
+  Volume getCellVolume( const InternalCellHandle cell_id ) const override;
 
   //! Get the problem surfaces
   void getSurfaces( SurfaceIdSet& surface_set ) const override;
@@ -105,13 +104,13 @@ public:
   void getSurfaceEstimatorData( SurfaceEstimatorIdDataMap& estimator_id_data_map ) const;
 
   //! Check if the surface exists
-  bool doesSurfaceExist( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
+  bool doesSurfaceExist( const InternalSurfaceHandle surface_id ) const override;
 
   //! Get the surface area
-  double getSurfaceArea( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
+  Area getSurfaceArea( const InternalSurfaceHandle surface_id ) const override;
 
   //! Check if the surface is a reflecting surface
-  bool isReflectingSurface( const ModuleTraits::InternalSurfaceHandle surface_id ) const override;
+  bool isReflectingSurface( const InternalSurfaceHandle surface_id ) const override;
 
   //! Create a raw, heap-allocated navigator
   DagMCNavigator* createNavigatorAdvanced() const override;
@@ -123,13 +122,13 @@ private:
   typedef std::vector<std::string> PropertyValuesArray;
 
   // The cell id property values array map type
-  typedef std::map<ModuleTraits::InternalCellHandle,PropertyValuesArray> CellIdPropertyValuesMap;
+  typedef std::map<InternalCellHandle,PropertyValuesArray> CellIdPropertyValuesMap;
 
   // The property value cell id array map type
   typedef std::map<std::string,CellIdArray> PropValueCellIdMap;
 
   // The surface id property values array map type
-  typedef std::map<ModuleTraits::InternalSurfaceHandle,PropertyValuesArray> SurfaceIdPropertyValuesMap;
+  typedef std::map<InternalSurfaceHandle,PropertyValuesArray> SurfaceIdPropertyValuesMap;
 
   // The property value surface id array map type
   typedef std::map<std::string,SurfaceIdArray> PropValueSurfaceIdMap;

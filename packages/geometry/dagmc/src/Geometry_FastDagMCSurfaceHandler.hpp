@@ -40,23 +40,23 @@ public:
   { /* ... */ }
 
   //! Check if the surface exists
-  bool doesSurfaceExist( const ModuleTraits::InternalSurfaceHandle surface_id ) const;
+  bool doesSurfaceExist( const InternalSurfaceHandle surface_id ) const;
 
   // Check if the surface handle exists
   bool doesSurfaceHandleExist( const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface id from a surface handle
-  ModuleTraits::InternalSurfaceHandle getSurfaceId(
+  InternalSurfaceHandle getSurfaceId(
                                const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface handle from a surface id
   moab::EntityHandle getSurfaceHandle(
-                  const ModuleTraits::InternalSurfaceHandle surface_id ) const;
+                                const InternalSurfaceHandle surface_id ) const;
 
 private:
 
   // The surface id to surface handle map
-  typedef boost::bimap<boost::bimaps::unordered_set_of<ModuleTraits::InternalSurfaceHandle>,boost::bimaps::unordered_set_of<moab::EntityHandle> > SurfaceIdHandleMap;
+  typedef boost::bimap<boost::bimaps::unordered_set_of<InternalSurfaceHandle>,boost::bimaps::unordered_set_of<moab::EntityHandle> > SurfaceIdHandleMap;
 
   SurfaceIdHandleMap d_surface_id_handle_map;
 };

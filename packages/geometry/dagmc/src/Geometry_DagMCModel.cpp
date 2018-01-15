@@ -31,6 +31,7 @@
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_MOABException.hpp"
+#include "Utility_FromStringTraits.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -330,7 +331,7 @@ void DagMCModel::extractReflectingSurfaces()
   
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
-    ModuleTraits::InternalSurfaceHandle surface_id =
+    InternalSurfaceHandle surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
     
     d_reflecting_surfaces.insert( ReflectingSurfaceIdHandleMap::value_type(
@@ -402,7 +403,7 @@ void DagMCModel::getCells( CellIdSet& cell_set,
 
   while( cell_handle_it != d_cell_handler->end() )
   {
-    ModuleTraits::InternalCellHandle cell_id =
+    InternalCellHandle cell_id =
       d_cell_handler->getCellId( *cell_handle_it );
 
     // Check if it is a termination cell
@@ -503,9 +504,14 @@ void DagMCModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
                   "Cell " << cell_it->first << " has an invalid "
                   "density (" << cell_it->second.front() << ")! " );
 
-    std::istringstream iss( cell_it->second.front() );
+    double raw_density =
+      Utility::fromString<double>( cell_it->second.front() );
+    
+    // Convert 1/b-cm top 1/cm^3
+    if( raw_density > 0.0 )
+      raw_density *= 1e24;
 
-    iss >> cell_id_density_map[cell_it->first];
+    cell_id_density_map[cell_it->first] = Density::from_value( raw_density );
 
     ++cell_it;
   }
@@ -592,7 +598,7 @@ void DagMCModel::getSurfaces( SurfaceIdSet& surface_set ) const
 
   while( surface_handle_it != d_surface_handler->end() )
   {
-    ModuleTraits::InternalSurfaceHandle surface_id =
+    InternalSurfaceHandle surface_id =
       d_surface_handler->getSurfaceId( *surface_handle_it );
 
     surface_set.insert( surface_id );
@@ -674,8 +680,7 @@ void DagMCModel::getSurfaceEstimatorData(
 }
 
 // Check if a cell exists
-bool DagMCModel::doesCellExist(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+bool DagMCModel::doesCellExist( const InternalCellHandle cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -684,8 +689,7 @@ bool DagMCModel::doesCellExist(
 }
 
 // Check if the surface exists
-bool DagMCModel::doesSurfaceExist(
-                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
+bool DagMCModel::doesSurfaceExist( const InternalSurfaceHandle surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -694,8 +698,7 @@ bool DagMCModel::doesSurfaceExist(
 }
 
 // Get the cell volume
-double DagMCModel::getCellVolume(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+auto DagMCModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volume
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -704,26 +707,25 @@ double DagMCModel::getCellVolume(
 
   moab::EntityHandle cell_handle = d_cell_handler->getCellHandle( cell_id );
 
-  double volume = 0.0;
+  double raw_volume = 0.0;
 
   moab::ErrorCode return_value =
-   d_dagmc->measure_volume( cell_handle, volume );
+   d_dagmc->measure_volume( cell_handle, raw_volume );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      InvalidDagMCGeometry,
 		      moab::ErrorCodeStr[return_value] );
 
-  TEST_FOR_EXCEPTION( volume <= 0.0,
+  TEST_FOR_EXCEPTION( raw_volume <= 0.0,
                       InvalidDagMCGeometry,
                       "an invalid volume was calculated for cell "
                       << cell_id << "!" );
 
-  return volume;
+  return Volume::from_value(raw_volume);
 }
 
 // Get the surface area
-double DagMCModel::getSurfaceArea(
-                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
+auto DagMCModel::getSurfaceArea( const InternalSurfaceHandle surface_id ) const -> Area
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -733,26 +735,25 @@ double DagMCModel::getSurfaceArea(
   moab::EntityHandle surface_handle =
     d_surface_handler->getSurfaceHandle( surface_id );
 
-  double surface_area = 0.0;
+  double raw_surface_area = 0.0;
 
   moab::ErrorCode return_value =
-    d_dagmc->measure_area( surface_handle, surface_area );
+    d_dagmc->measure_area( surface_handle, raw_surface_area );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      InvalidDagMCGeometry,
 		      moab::ErrorCodeStr[return_value] );
 
-  TEST_FOR_EXCEPTION( surface_area <= 0.0,
+  TEST_FOR_EXCEPTION( raw_surface_area <= 0.0,
                       InvalidDagMCGeometry,
                       "an invalid surface area was calculated for "
                       "surface " << surface_id << "!" );
 
-  return surface_area;
+  return Area::from_value(raw_surface_area);
 }
 
 // Check if the cell is a termination cell
-bool DagMCModel::isTerminationCell(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+bool DagMCModel::isTerminationCell( const InternalCellHandle cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -764,8 +765,7 @@ bool DagMCModel::isTerminationCell(
 }
 
 // Check if the cell is a void cell
-bool DagMCModel::isVoidCell(
-                         const ModuleTraits::InternalCellHandle cell_id ) const
+bool DagMCModel::isVoidCell( const InternalCellHandle cell_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -779,8 +779,7 @@ bool DagMCModel::isVoidCell(
 }
 
 // Check if the surface is a reflecting surface
-bool DagMCModel::isReflectingSurface(
-                   const ModuleTraits::InternalSurfaceHandle surface_id ) const
+bool DagMCModel::isReflectingSurface( const InternalSurfaceHandle surface_id ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -803,10 +802,9 @@ DagMCNavigator* DagMCModel::createNavigatorAdvanced() const
 // Get the cells associated with a property name
 // Note: If a property value is passed only the cells with both the property
 // and value will be returned.
-void DagMCModel::getCellsWithProperty(
-                                  std::vector<moab::EntityHandle>& cells,
-                                  const std::string& property,
-                                  const std::string* property_value ) const
+void DagMCModel::getCellsWithProperty( std::vector<moab::EntityHandle>& cells,
+                                       const std::string& property,
+                                       const std::string* property_value ) const
 {
   // Make sure DagMC has been initialized
   testPrecondition( this->isInitialized() );
@@ -875,7 +873,7 @@ void DagMCModel::getCellPropertyValues(
   // Get the property value for each cell
   for( size_t i = 0; i < cells_with_property.size(); ++i )
   {
-    ModuleTraits::InternalCellHandle cell_id =
+    InternalCellHandle cell_id =
       d_cell_handler->getCellId( cells_with_property[i] );
 
     moab::ErrorCode return_value =
@@ -957,7 +955,7 @@ void DagMCModel::getSurfacePropertyValues(
   // Get the property value for each surface
   for( size_t i = 0; i < surfaces_with_property.size(); ++i )
   {
-    ModuleTraits::InternalSurfaceHandle surface_id =
+    InternalSurfaceHandle surface_id =
       d_surface_handler->getSurfaceId( surfaces_with_property[i] );
 
     moab::EntityHandle return_value =
