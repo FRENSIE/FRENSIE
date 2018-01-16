@@ -11,10 +11,12 @@
 
 // Std Lib Includes
 #include <memory>
+#include <algorithm>
 
 // FRENSIE Includes
 #include "Data_StandardAtomProperties.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SearchAlgorithms.hpp"
 
 namespace Data{
 
@@ -37,7 +39,7 @@ public:
   bool isNuclide() const override;
 
   //! Get the atomic weight
-  double atomicWeight() const override;
+  AtomicWeight atomicWeight() const override;
 
   //! Get the atomic weight ratio (atomic weight/neutron weight)
   double atomicWeightRatio() const override;
@@ -45,38 +47,82 @@ public:
   //! Check if there is nuclear data
   bool nuclearDataAvailable() const override;
 
+  //! Check if there is nuclear data available at the evaluation temp
+  bool nuclearDataAvailable( const Energy evaluation_temp ) const override;
+
+  //! Check if the nuclear data is evaluated at discrete temps
+  bool nuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the nuclear data evaluation temps
+  std::vector<Energy> getNuclearDataEvaluationTempsInMeV() const override;
+
   //! Get the nuclear data properties
-  const NuclearDataProperties* getNuclearDataProperties() const override;
+  const NuclearDataProperties* getNuclearDataProperties(
+                                        const Energy evaluation_temp,
+                                        const bool find_exact ) const override;
 
   //! Set the nuclear data properties
-  void setNuclearDataProperties( const std::shared_ptr<const NuclearDataProperties>& properties );
+  void addNuclearDataProperties( const std::shared_ptr<const NuclearDataProperties>& properties );
 
   //! Check if there is any thermal nuclear data
   bool thermalNuclearDataAvailable() const override;
 
-  //! Get the thermal nuclear data properties
-  const ThermalNuclearDataProperties* getThermalNuclearDataProperties() const override;
+  //! Check if there is thermal nuclear data available at the evaluation temp
+  bool thermalNuclearDataAvailable( const Energy evaluation_temp ) const override;
 
-  //! Set the thermal nuclear data properties
-  void setThermalNuclearDataProperties( const std::shared_ptr<const ThermalNuclearDataProperties>& properties );
+  //! Check if the thermal nuclear data is evaluated at discrete temps
+  bool thermalNuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the thermal nuclear data evaluation temps
+  std::vector<Energy> getThermalNuclearDataEvaluationTempsInMeV() const override;
+
+  //! Get the thermal nuclear data properties
+  const ThermalNuclearDataProperties* getThermalNuclearDataProperties(
+                                        const Energy evaluation_temp,
+                                        const bool find_exact ) const override;
+
+  //! Add the thermal nuclear data properties
+  void addThermalNuclearDataProperties( const std::shared_ptr<const ThermalNuclearDataProperties>& properties );
 
   //! Check if there is adjoint nuclear data
   bool adjointNuclearDataAvailable() const override;
 
-  //! Get the adjoint nuclear data properties
-  const AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override;
+  //! Check if there is adjoint nuclear data available at the evaluation temp
+  bool adjointNuclearDataAvailable( const Energy evaluation_temp ) const override;
 
-  //! Set the adjoint nuclear data properties
-  void setAdjointNuclearDataProperties( const std::shared_ptr<const AdjointNuclearDataProperties>& properties );
+  //! Check if the adjoint nuclear data is evaluation at discrete temps
+  bool adjointNuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the adjoint nuclear data evaluation temps
+  std::vector<Energy> getAdjointNuclearDataEvaluationTempsInMeV() const override;
+
+  //! Get the adjoint nuclear data
+  virtual const AdjointNuclearDataProperties* getAdjointNuclearDataProperties(
+                                        const Energy evaluation_temp,
+                                        const bool find_exact ) const override;
+
+  //! Add the adjoint nuclear data properties
+  void addAdjointNuclearDataProperties( const std::shared_ptr<const AdjointNuclearDataProperties>& properties );
 
   //! Check if there is any adjoint thermal nuclear data
   bool adjointThermalNuclearDataAvailable() const override;
 
-  //! Get the adjoint thermal nuclear data
-  const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties() const override;
+  //! Check if there is adjoint thermal nuclear data available at the evaluation temp
+  bool adjointThermalNuclearDataAvailable( const Energy evaluation_temp ) const override;
 
-  //! Set the adjoint thermal nuclear data properties
-  void setAdjointThermalNuclearDataProperties( const std::shared_ptr<const AdjointThermalNuclearDataProperties>& properties );
+  //! Check if the adjoint thermal nuclear data is evaluated at discrete temps
+  bool adjointThermalNuclearDataEvaluatedAtDiscreteTemps() const override;
+
+  //! Get the adjoint thermal nuclear data evaluation temps
+  std::vector<Energy> getAdjointThermalNuclearDataEvaluationTempsInMeV() const override;
+
+  //! Get the adjoint thermal nuclear data
+  const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties(
+                                        const Energy evaluation_temp,
+                                        const bool find_exact ) const override;
+
+  //! Add the adjoint thermal nuclear data properties
+  void addAdjointThermalNuclearDataProperties( const std::shared_ptr<const AdjointThermalNuclearDataProperties>& properties );
 
   //! Check if there is photonuclear data
   bool photonuclearDataAvailable() const override;
@@ -113,6 +159,33 @@ private:
   // Assignment operator
   StandardNuclideProperties& operator=( const StandardNuclideProperties& other );
 
+  // Check if there is data available at the temp of interest
+  template<typename PropertiesType>
+  static bool dataAvailable( const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& data,
+                             const Energy evaluation_temp );
+
+  // Get the evaluation temps
+  template<typename PropertiesType>
+  static std::vector<Energy> getEvaluationTemps( const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& data );
+
+  // Get the data properties at the temp of interest
+  template<typename PropertiesType>
+  static const PropertiesType* getDataProperties( const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& data,
+                                                  const std::string& properties_type,
+                                                  const Energy evaluation_temp,
+                                                  const bool find_exact );
+
+  // Add the data properties
+  template<typename PropertiesType>
+  static void addDataProperties( std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& data,
+                                 const std::string& properties_type,
+                                 const std::shared_ptr<const PropertiesType>& properties );
+
+  // Clone the data properties
+  template<typename PropertiesType>
+  static void cloneDataProperties( const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& data,
+                                   std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& cloned_data );
+
   // Save the properties to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;
@@ -127,20 +200,20 @@ private:
   friend class boost::serialization::access;
 
   // The nuclear data properties
-  std::shared_ptr<const NuclearDataProperties>
-  d_nuclear_data_properties;
+  typedef std::vector<std::pair<Energy,std::shared_ptr<const NuclearDataProperties> > > NuclearDataPropertiesArray;
+  NuclearDataPropertiesArray d_nuclear_data_properties;
 
   // The thermal nuclear data properties
-  std::shared_ptr<const ThermalNuclearDataProperties>
-  d_thermal_nuclear_data_properties;
+  typedef std::vector<std::pair<Energy,std::shared_ptr<const ThermalNuclearDataProperties> > > ThermalNuclearDataPropertiesArray;
+  ThermalNuclearDataPropertiesArray d_thermal_nuclear_data_properties;
 
   // The adjoint nuclear data properties
-  std::shared_ptr<const AdjointNuclearDataProperties>
-  d_adjoint_nuclear_data_properties;
+  typedef std::vector<std::pair<Energy,std::shared_ptr<const AdjointNuclearDataProperties> > > AdjointNuclearDataPropertiesArray;
+  AdjointNuclearDataPropertiesArray d_adjoint_nuclear_data_properties;
 
   // The thermal adjoint nuclear data properties
-  std::shared_ptr<const AdjointThermalNuclearDataProperties>
-  d_adjoint_thermal_nuclear_data_properties;
+  typedef std::vector<std::pair<Energy,std::shared_ptr<const AdjointThermalNuclearDataProperties> > > AdjointThermalNuclearDataPropertiesArray;
+  AdjointThermalNuclearDataPropertiesArray d_adjoint_thermal_nuclear_data_properties;
 
   // The photonuclear data properties
   std::shared_ptr<const PhotonuclearDataProperties>
@@ -150,6 +223,166 @@ private:
   std::shared_ptr<const AdjointPhotonuclearDataProperties>
   d_adjoint_photonuclear_data_properties;
 };
+
+// Check if there is data available at the temp of interest
+template<typename PropertiesType>
+inline bool StandardNuclideProperties::dataAvailable(
+  const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >&
+  data,
+  const Energy evaluation_temp )
+{
+  typename std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >::const_iterator properties_it =
+    std::find_if( data.begin(),
+                  data.end(),
+                  [&evaluation_temp]( const std::pair<Energy,std::shared_ptr<const PropertiesType> >& element ) -> bool
+                  { return element.first == evaluation_temp; } );
+
+  return properties_it != data.end();
+}
+
+// Get the evaluation temps
+template<typename PropertiesType>
+inline auto StandardNuclideProperties::getEvaluationTemps(
+  const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >&
+  data ) -> std::vector<Energy>
+{
+  std::vector<Energy> evaluation_temps( data.size() );
+
+  for( size_t i = 0; i < data.size(); ++i )
+    evaluation_temps[i] = data[i].first;
+
+  return evaluation_temps;
+}
+
+// Get the data properties at the temp of interest
+template<typename PropertiesType>
+inline const PropertiesType* StandardNuclideProperties::getDataProperties(
+  const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >&
+  data,
+  const std::string& properties_type,
+  const Energy evaluation_temp,
+  const bool find_exact )
+{
+  typename std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >::const_iterator properties_it;
+  
+  if( evaluation_temp < data.front().first )
+    properties_it = data.begin();
+  else if( evaluation_temp >= data.back().first )
+  {
+    properties_it = data.end();
+    --properties_it;
+  }
+  else
+  {
+    properties_it =
+      Utility::Search::binaryLowerBound<0>( data.begin(),
+                                            data.end(),
+                                            evaluation_temp );
+  }
+
+  // Check if there are suitable properties available
+  if( properties_it->first != evaluation_temp )
+  {
+    if( find_exact )
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "There are no " << properties_type << " data "
+                       "properties evaluated at "
+                       << evaluation_temp << "!" );
+    }
+    else
+    {
+      // Check if we have the closest evaluation temp
+      typename std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >::const_iterator next_properties_it =
+        properties_it;
+      ++next_properties_it;
+
+      Energy mid_temp =
+        (properties_it->first + next_properties_it->first)/2.0;
+
+      if( evaluation_temp >= mid_temp )
+        ++properties_it;
+
+      FRENSIE_LOG_TAGGED_WARNING( "NuclideProperties",
+                                  "There are no " << properties_type <<
+                                  " data properties evaluated at "
+                                  << evaluation_temp << "! "
+                                  "Data for the closest evaluation temp ("
+                                  << properties_it->first << ") will be "
+                                  "returned!" );
+    }
+  }
+
+  return properties_it->second.get();
+}
+
+// Add the data properties
+template<typename PropertiesType>
+inline void StandardNuclideProperties::addDataProperties(
+        std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >&
+        data,
+        const std::string& properties_type,
+        const std::shared_ptr<const PropertiesType>& properties )
+{
+  Energy evaluation_temp = properties->evaluationTemperatureInMeV();
+  
+  if( data.empty() )
+    data.push_back( std::make_pair( evaluation_temp, properties ) );
+  else
+  {
+    if( evaluation_temp < data.front().first )
+    {
+      data.insert( data.begin(),
+                   std::make_pair( evaluation_temp, properties ) );
+    }
+    else if( evaluation_temp > data.back().first )
+    {
+      data.insert( data.end(),
+                   std::make_pair( evaluation_temp, properties ) );
+    }
+    else
+    {
+      typename std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >::iterator properties_it = 
+        Utility::Search::binaryLowerBound<0>( data.begin(),
+                                              data.end(),
+                                              evaluation_temp );
+
+      if( properties_it->first == evaluation_temp )
+      {
+        FRENSIE_LOG_TAGGED_WARNING( "NuclideProperties",
+                                    properties_type << " data properties "
+                                    "evaluated at " << evaluation_temp << 
+                                    "have already been added! The previous "
+                                    "properties will be removed." );
+        
+        properties_it->second = properties;
+      }
+      else
+      {
+        ++properties_it;
+        
+        data.insert( properties_it,
+                     std::make_pair( evaluation_temp, properties ) );
+      }
+    }
+  }
+}
+
+// Clone the data properties
+template<typename PropertiesType>
+void StandardNuclideProperties::cloneDataProperties( const std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& data,
+                                                     std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >& cloned_data )
+{
+  cloned_data.clear();
+  cloned_data.resize( data.size() );
+  
+  for( size_t i = 0; i < data.size(); ++i )
+  {
+    std::shared_ptr<const PropertiesType> clone( data[i].second->clone() );
+
+    cloned_data[i] = std::make_pair( data[i].first, clone );
+  }
+}
 
 } // end Data namespace
 

@@ -14,7 +14,7 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Data_ZAID.hpp"
+#include "Data_PhotonuclearDataProperties.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -26,9 +26,16 @@ class AdjointPhotonuclearDataProperties
 
 public:
 
+  //! The file types
   enum FileType{
     Native_FILE
   };
+
+  //! The atomic mass unit
+  typedef PhotonuclearDataProperties::AtomicMassUnit AtomicMassUnit;
+
+  //! The atomic mass quantity
+  typedef PhotonuclearDataProperties::AtomicWeight AtomicWeight;
 
   //! Default constructor
   AdjointPhotonuclearDataProperties();
@@ -40,11 +47,8 @@ public:
   //! Get the ZAID that the file specifies data for
   virtual Data::ZAID zaid() const = 0;
 
-  //! Get the adjoint nuclear data evaluation temperature (MeV)
-  virtual double evaluationTemperatureInMeV() const = 0;
-
-  //! Get the adjoint nuclear data evaluation temperature (Kelvin)
-  virtual double evaluationTemperatureInKelvin() const;
+  //! Get the atomic weight of the nuclide that the file specifies data for
+  virtual AtomicWeight atomicWeight() const = 0;
 
   //! Get the adjoint nuclear data file type
   virtual FileType fileType() const = 0;

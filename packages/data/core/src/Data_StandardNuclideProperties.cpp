@@ -55,93 +55,193 @@ bool StandardNuclideProperties::isNuclide() const
 }
 
 // Get the atomic weight
-double StandardNuclideProperties::atomicWeight() const
+auto StandardNuclideProperties::atomicWeight() const -> AtomicWeight
 {
-  return StandardAtomProperties::atomicWeight()*Utility::PhysicalConstants::neutron_rest_mass_amu;
+  return AtomicWeight::from_value( StandardAtomProperties::atomicWeight().value()*Utility::PhysicalConstants::neutron_rest_mass_amu );
 }
 
 // Get the atomic weight ratio (atomic weight/neutron weight)
 double StandardNuclideProperties::atomicWeightRatio() const
 {
-  return StandardAtomProperties::atomicWeight();
+  return StandardAtomProperties::atomicWeight().value();
 }
 
 // Check if there is nuclear data
 bool StandardNuclideProperties::nuclearDataAvailable() const
 {
-  return d_nuclear_data_properties.get();
+  return !d_nuclear_data_properties.empty();
+}
+
+// Check if there is nuclear data available at the evaluation temp
+bool StandardNuclideProperties::nuclearDataAvailable(
+                                           const Energy evaluation_temp ) const
+{
+  return this->dataAvailable( d_nuclear_data_properties, evaluation_temp );
+}
+
+// Check if the nuclear data is evaluated at discrete temps
+bool StandardNuclideProperties::nuclearDataEvaluatedAtDiscreteTemps() const
+{
+  return true;
+}
+
+// Get the nuclear data evaluation temps
+auto StandardNuclideProperties::getNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
+{
+  return this->getEvaluationTemps( d_nuclear_data_properties );
 }
 
 // Get the nuclear data properties
-const NuclearDataProperties* StandardNuclideProperties::getNuclearDataProperties() const
+const NuclearDataProperties* StandardNuclideProperties::getNuclearDataProperties(
+                                        const Energy evaluation_temp,
+                                        const bool find_exact ) const
 {
-  return d_nuclear_data_properties.get();
+  return this->getDataProperties( d_nuclear_data_properties,
+                                  "nuclear",
+                                  evaluation_temp,
+                                  find_exact );
 }
 
-// Set the nuclear data properties
-void StandardNuclideProperties::setNuclearDataProperties(
+// Add the nuclear data properties
+void StandardNuclideProperties::addNuclearDataProperties(
                const std::shared_ptr<const NuclearDataProperties>& properties )
 {
-  if( properties.get() )
-    d_nuclear_data_properties = properties;
+  this->addDataProperties( d_nuclear_data_properties,
+                           "nuclear",
+                           properties );
 }
 
 // Check if there is any thermal nuclear data
 bool StandardNuclideProperties::thermalNuclearDataAvailable() const
 {
-  return d_thermal_nuclear_data_properties.get();
+  return !d_thermal_nuclear_data_properties.empty();
+}
+
+// Check if there is thermal nuclear data available at the evaluation temp
+bool StandardNuclideProperties::thermalNuclearDataAvailable( const Energy evaluation_temp ) const
+{
+  return this->dataAvailable( d_thermal_nuclear_data_properties, evaluation_temp );
+}
+
+// Check if the thermal nuclear data is evaluated at discrete temps
+bool StandardNuclideProperties::thermalNuclearDataEvaluatedAtDiscreteTemps() const
+{
+  return true;
+}
+
+// Get the thermal nuclear data evaluation temps
+auto StandardNuclideProperties::getThermalNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
+{
+  return this->getEvaluationTemps( d_thermal_nuclear_data_properties );
 }
 
 // Get the thermal nuclear data properties
-const ThermalNuclearDataProperties* StandardNuclideProperties::getThermalNuclearDataProperties() const
+const ThermalNuclearDataProperties* StandardNuclideProperties::getThermalNuclearDataProperties(
+                                                  const Energy evaluation_temp,
+                                                  const bool find_exact ) const
 {
-  return d_thermal_nuclear_data_properties.get();
+  return this->getDataProperties( d_thermal_nuclear_data_properties,
+                                  "S(A,B)",
+                                  evaluation_temp,
+                                  find_exact );
 }
 
-// Set the thermal nuclear data properties
-void StandardNuclideProperties::setThermalNuclearDataProperties(
+// Add the thermal nuclear data properties
+void StandardNuclideProperties::addThermalNuclearDataProperties(
         const std::shared_ptr<const ThermalNuclearDataProperties>& properties )
 {
-  if( properties.get() )
-    d_thermal_nuclear_data_properties = properties;
+  this->addDataProperties( d_thermal_nuclear_data_properties,
+                           "S(A,B)",
+                           properties );
 }
 
 // Check if there is adjoint nuclear data
 bool StandardNuclideProperties::adjointNuclearDataAvailable() const
 {
-  return d_adjoint_nuclear_data_properties.get();
+  return !d_adjoint_nuclear_data_properties.empty();
 }
 
-// Get the adjoint nuclear data
-const AdjointNuclearDataProperties* StandardNuclideProperties::getAdjointNuclearDataProperties() const
+// Check if there is nuclear data available at the evaluation temp
+bool StandardNuclideProperties::adjointNuclearDataAvailable(
+                                           const Energy evaluation_temp ) const
 {
-  return d_adjoint_nuclear_data_properties.get();
+  return this->dataAvailable( d_adjoint_nuclear_data_properties, evaluation_temp );
 }
 
-// Set the adjoint nuclear data properties
-void StandardNuclideProperties::setAdjointNuclearDataProperties( const std::shared_ptr<const AdjointNuclearDataProperties>& properties )
+// Check if the nuclear data is evaluated at discrete temps
+bool StandardNuclideProperties::adjointNuclearDataEvaluatedAtDiscreteTemps() const
 {
-  if( properties.get() )
-    d_adjoint_nuclear_data_properties = properties;
+  return true;
+}
+
+// Get the nuclear data evaluation temps
+auto StandardNuclideProperties::getAdjointNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
+{
+  return this->getEvaluationTemps( d_adjoint_nuclear_data_properties );
+}
+
+// Get the nuclear data properties
+const AdjointNuclearDataProperties* StandardNuclideProperties::getAdjointNuclearDataProperties(
+                                        const Energy evaluation_temp,
+                                        const bool find_exact ) const
+{
+  return this->getDataProperties( d_adjoint_nuclear_data_properties,
+                                  "adjoint nuclear",
+                                  evaluation_temp,
+                                  find_exact );
+}
+
+// Add the nuclear data properties
+void StandardNuclideProperties::addAdjointNuclearDataProperties(
+        const std::shared_ptr<const AdjointNuclearDataProperties>& properties )
+{
+  this->addDataProperties( d_adjoint_nuclear_data_properties,
+                           "adjoint nuclear",
+                           properties );
 }
 
 // Check if there is any adjoint thermal nuclear data
 bool StandardNuclideProperties::adjointThermalNuclearDataAvailable() const
 {
-  return d_adjoint_thermal_nuclear_data_properties.get();
+  return !d_adjoint_thermal_nuclear_data_properties.empty();
 }
 
-// Get the adjoint thermal nuclear data
-const AdjointThermalNuclearDataProperties* StandardNuclideProperties::getAdjointThermalNuclearDataProperties() const
+// Check if there is thermal nuclear data available at the evaluation temp
+bool StandardNuclideProperties::adjointThermalNuclearDataAvailable( const Energy evaluation_temp ) const
 {
-  return d_adjoint_thermal_nuclear_data_properties.get();
+  return this->dataAvailable( d_adjoint_thermal_nuclear_data_properties, evaluation_temp );
 }
 
-// Set the adjoint thermal nuclear data properties
-void StandardNuclideProperties::setAdjointThermalNuclearDataProperties( const std::shared_ptr<const AdjointThermalNuclearDataProperties>& properties )
+// Check if the thermal nuclear data is evaluated at discrete temps
+bool StandardNuclideProperties::adjointThermalNuclearDataEvaluatedAtDiscreteTemps() const
 {
-  if( properties.get() )
-    d_adjoint_thermal_nuclear_data_properties = properties;
+  return true;
+}
+
+// Get the thermal nuclear data evaluation temps
+auto StandardNuclideProperties::getAdjointThermalNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
+{
+  return this->getEvaluationTemps( d_adjoint_thermal_nuclear_data_properties );
+}
+
+// Get the thermal nuclear data properties
+const AdjointThermalNuclearDataProperties* StandardNuclideProperties::getAdjointThermalNuclearDataProperties(
+                                                  const Energy evaluation_temp,
+                                                  const bool find_exact ) const
+{
+  return this->getDataProperties( d_adjoint_thermal_nuclear_data_properties,
+                                  "adjoint S(A,B)",
+                                  evaluation_temp,
+                                  find_exact );
+}
+
+// Add the thermal nuclear data properties
+void StandardNuclideProperties::addAdjointThermalNuclearDataProperties(
+ const std::shared_ptr<const AdjointThermalNuclearDataProperties>& properties )
+{
+  this->addDataProperties( d_adjoint_thermal_nuclear_data_properties,
+                           "adjoint S(A,B)",
+                           properties );
 }
 
 // Check if there is photonuclear data
@@ -200,40 +300,20 @@ StandardNuclideProperties* StandardNuclideProperties::deepClone() const
   StandardAtomProperties::cloneStoredAtomProperties( *this, *nuclide_properties_clone );
   
   // Clone the nuclear data properties
-  if( d_nuclear_data_properties.get() )
-  {
-    std::shared_ptr<const NuclearDataProperties>
-      properties_clone( d_nuclear_data_properties->clone() );
-
-    nuclide_properties_clone->setNuclearDataProperties( properties_clone );
-  }
+  this->cloneDataProperties( d_nuclear_data_properties,
+                             nuclide_properties_clone->d_nuclear_data_properties );
 
   // Clone the thermal nuclear data properties
-  if( d_thermal_nuclear_data_properties.get() )
-  {
-    std::shared_ptr<const ThermalNuclearDataProperties>
-      properties_clone( d_thermal_nuclear_data_properties->clone() );
-
-    nuclide_properties_clone->setThermalNuclearDataProperties( properties_clone );
-  }
+  this->cloneDataProperties( d_thermal_nuclear_data_properties,
+                             nuclide_properties_clone->d_thermal_nuclear_data_properties );
 
   // Clone the adjoint nuclear data properties
-  if( d_adjoint_nuclear_data_properties.get() )
-  {
-    std::shared_ptr<const AdjointNuclearDataProperties>
-      properties_clone( d_adjoint_nuclear_data_properties->clone() );
-
-    nuclide_properties_clone->setAdjointNuclearDataProperties( properties_clone );
-  }
+  this->cloneDataProperties( d_adjoint_nuclear_data_properties,
+                             nuclide_properties_clone->d_adjoint_nuclear_data_properties );
 
   // Clone the adjoint thermal nuclear data properties
-  if( d_adjoint_thermal_nuclear_data_properties.get() )
-  {
-    std::shared_ptr<const AdjointThermalNuclearDataProperties>
-      properties_clone( d_adjoint_thermal_nuclear_data_properties->clone() );
-
-    nuclide_properties_clone->setAdjointThermalNuclearDataProperties( properties_clone );
-  }
+  this->cloneDataProperties( d_adjoint_thermal_nuclear_data_properties,
+                             nuclide_properties_clone->d_adjoint_thermal_nuclear_data_properties );
 
   // Clone the photonuclear data properties
   if( d_photonuclear_data_properties.get() )

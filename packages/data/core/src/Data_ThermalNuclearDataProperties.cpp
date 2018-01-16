@@ -18,9 +18,9 @@ ThermalNuclearDataProperties::ThermalNuclearDataProperties()
 { /* ... */ }
 
 // Get the nuclear data evaluation temperature (Kelvin)
-double ThermalNuclearDataProperties::evaluationTemperatureInKelvin() const
+auto ThermalNuclearDataProperties::evaluationTemperature() const -> Temperature
 {
-  return this->evaluationTemperatureInMeV()/Utility::PhysicalConstants::boltzmann_constant;
+  return this->evaluationTemperatureInMeV()/Utility::PhysicalConstants::boltzmann_constant_q;
 }
 
 } // end Data namespace

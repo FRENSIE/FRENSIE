@@ -29,6 +29,7 @@ class AdjointElectroatomicDataProperties
 
 public:
 
+  //! The file types
   enum FileType{
     Native_EPR_FILE
   };

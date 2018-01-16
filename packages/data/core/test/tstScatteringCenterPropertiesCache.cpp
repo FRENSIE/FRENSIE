@@ -31,6 +31,12 @@ class TestScatteringCenterProperties : public Data::ScatteringCenterProperties
 
 public:
 
+  //! The atomic mass quantity
+  typedef Data::ScatteringCenterProperties::AtomicWeight AtomicWeight;
+
+  //! The energy quantity
+  typedef Data::ScatteringCenterProperties::Energy Energy;
+
   //! Default constructor
   TestScatteringCenterProperties( const std::string& name = "" )
     : d_name( name )
@@ -57,39 +63,91 @@ public:
   { return Data::ZAID( 1000 ); }
 
   //! Get the atomic weight
-  double atomicWeight() const override
-  { return 1.0; }
+  AtomicWeight atomicWeight() const override
+  { return 1.0*Utility::Units::amu; }
 
   //! Check if there is nuclear data
   bool nuclearDataAvailable() const override
   { return false; }
 
+  //! Check if there is nuclear data available at the evaluation temp
+  bool nuclearDataAvailable( const Energy ) const override
+  { return false; }
+
+  //! Check if the nuclear data is evaluated at discrete temps
+  bool nuclearDataEvaluatedAtDiscreteTemps() const override
+  { return false; }
+
+  //! Get the nuclear data evaluation temps
+  std::vector<Energy> getNuclearDataEvaluationTempsInMeV() const override
+  { return std::vector<Energy>(); }
+
   //! Get the nuclear data properties
-  const Data::NuclearDataProperties* getNuclearDataProperties() const override
+  const Data::NuclearDataProperties* getNuclearDataProperties(
+                                      const Energy, const bool ) const override
   { return NULL; }
 
   //! Check if there is any thermal nuclear data
   bool thermalNuclearDataAvailable() const override
   { return false; }
 
+  //! Check if there is thermal nuclear data available at the evaluation temp
+  bool thermalNuclearDataAvailable( const Energy ) const override
+  { return false; }
+
+  //! Check if the thermal nuclear data is evaluated at discrete temps
+  bool thermalNuclearDataEvaluatedAtDiscreteTemps() const override
+  { return false; }
+
+  //! Get the thermal nuclear data evaluation temps
+  std::vector<Energy> getThermalNuclearDataEvaluationTempsInMeV() const override
+  { return std::vector<Energy>(); }
+
   //! Get the thermal nuclear data properties
-  const Data::ThermalNuclearDataProperties* getThermalNuclearDataProperties() const override
+  const Data::ThermalNuclearDataProperties* getThermalNuclearDataProperties(
+                                      const Energy, const bool ) const override
   { return NULL; }
 
   //! Check if there is adjoint nuclear data
   bool adjointNuclearDataAvailable() const override
   { return false; }
 
+  //! Check if there is adjoint nuclear data available at the evaluation temp
+  bool adjointNuclearDataAvailable( const Energy ) const override
+  { return false; }
+
+  //! Check if the adjoint nuclear data is evaluation at discrete temps
+  bool adjointNuclearDataEvaluatedAtDiscreteTemps() const override
+  { return false; }
+
+  //! Get the adjoint nuclear data evaluation temps
+  std::vector<Energy> getAdjointNuclearDataEvaluationTempsInMeV() const override
+  { return std::vector<Energy>(); }
+
   //! Get the adjoint nuclear data
-  const Data::AdjointNuclearDataProperties* getAdjointNuclearDataProperties() const override
+  const Data::AdjointNuclearDataProperties* getAdjointNuclearDataProperties(
+                                      const Energy, const bool ) const override
   { return NULL; }
 
   //! Check if there is any adjoint thermal nuclear data
   bool adjointThermalNuclearDataAvailable() const override
   { return false; }
 
+  //! Check if there is adjoint thermal nuclear data available at the evaluation temp
+  bool adjointThermalNuclearDataAvailable( const Energy ) const override
+  { return false; }
+
+  //! Check if the adjoint thermal nuclear data is evaluated at discrete temps
+  bool adjointThermalNuclearDataEvaluatedAtDiscreteTemps() const override
+  { return false; }
+
+  //! Get the adjoint thermal nuclear data evaluation temps
+  std::vector<Energy> getAdjointThermalNuclearDataEvaluationTempsInMeV() const override
+  { return std::vector<Energy>(); }
+
   //! Get the adjoint thermal nuclear data
-  const Data::AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties() const override
+  const Data::AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties(
+                                               const Energy, const bool ) const
   { return NULL; }
 
   //! Check if there is photonuclear data

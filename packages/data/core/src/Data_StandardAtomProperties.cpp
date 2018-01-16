@@ -83,9 +83,9 @@ Data::ZAID StandardAtomProperties::zaid() const
 }
 
 // Get the atomic weight
-double StandardAtomProperties::atomicWeight() const
+auto StandardAtomProperties::atomicWeight() const -> AtomicWeight
 {
-  return d_atomic_weight;
+  return AtomicWeight::from_value(d_atomic_weight);
 }
 
 // Check if there is nuclear data
@@ -95,7 +95,7 @@ bool StandardAtomProperties::nuclearDataAvailable() const
 }
 
 // Check if there is nuclear data available at the evaluation temp
-bool StandardAtomProperties::nuclearDataAvailable( const double ) const
+bool StandardAtomProperties::nuclearDataAvailable( const Energy ) const
 {
   return false;
 }
@@ -107,14 +107,14 @@ bool StandardAtomProperties::nuclearDataEvaluatedAtDiscreteTemps() const
 }
 
 // Get the nuclear data evaluation temps (in MeV)
-std::vector<double> StandardAtomProperties::getNuclearDataEvaluationTemps() const
+auto StandardAtomProperties::getNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
 {
-  return std::vector<double>();
+  return std::vector<Energy>();
 }
 
 //  Get the nuclear data properties
 const NuclearDataProperties* StandardAtomProperties::getNuclearDataProperties(
-                                               const double, const bool ) const
+                                               const Energy, const bool ) const
 {
   return NULL;
 }
@@ -126,27 +126,29 @@ bool StandardAtomProperties::thermalNuclearDataAvailable() const
 }
 
 // Check if there is thermal nuclear data available at the evaluation temp
-bool thermalNuclearDataAvailable( const double ) const
+bool StandardAtomProperties::thermalNuclearDataAvailable( const Energy ) const
 {
   return false;
 }
 
 // Check if the thermal nuclear data is evaluated at discrete temps
-bool thermalNuclearDataEvaluatedAtDiscreteTemps() const
+bool StandardAtomProperties::thermalNuclearDataEvaluatedAtDiscreteTemps() const
 {
   return false;
 }
 
 // Get the thermal nuclear data evaluation temps
-std::vector<double> getThermalNuclearDataEvaluationTemps() const
+auto StandardAtomProperties::getThermalNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
 {
-  return std::vector<double>
+  return std::vector<Energy>();
 }
 
 // Get the thermal nuclear data properties
-const ThermalNuclearDataProperties* getThermalNuclearDataProperties(
-                                        const double evaluation_temp_in_mev,
-                                        const bool find_exact ) const override;
+const ThermalNuclearDataProperties* StandardAtomProperties::getThermalNuclearDataProperties(
+                                               const Energy, const bool ) const
+{
+  return NULL;
+}
 
 // Check if there is adjoint nuclear data
 bool StandardAtomProperties::adjointNuclearDataAvailable() const
@@ -154,8 +156,27 @@ bool StandardAtomProperties::adjointNuclearDataAvailable() const
   return false;
 }
 
+// Check if there is adjoint nuclear data available at the evaluation temp
+bool StandardAtomProperties::adjointNuclearDataAvailable( const Energy ) const
+{
+  return false;
+}
+
+// Check if the adjoint nuclear data is evaluation at discrete temps
+bool StandardAtomProperties::adjointNuclearDataEvaluatedAtDiscreteTemps() const
+{
+  return false;
+}
+
+// Get the adjoint nuclear data evaluation temps
+auto StandardAtomProperties::getAdjointNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
+{
+  return std::vector<Energy>();
+}
+
 // Get the adjoint nuclear data
-const AdjointNuclearDataProperties* StandardAtomProperties::getAdjointNuclearDataProperties() const
+const AdjointNuclearDataProperties* StandardAtomProperties::getAdjointNuclearDataProperties(
+                                               const Energy, const bool ) const
 {
   return NULL;
 }
@@ -166,8 +187,27 @@ bool StandardAtomProperties::adjointThermalNuclearDataAvailable() const
   return false;
 }
 
+// Check if there is adjoint thermal nuclear data available at the evaluation temp
+bool StandardAtomProperties::adjointThermalNuclearDataAvailable( const Energy ) const
+{
+  return false;
+}
+
+// Check if the adjoint thermal nuclear data is evaluated at discrete temps
+bool StandardAtomProperties::adjointThermalNuclearDataEvaluatedAtDiscreteTemps() const
+{
+  return false;
+}
+
+// Get the adjoint thermal nuclear data evaluation temps
+auto StandardAtomProperties::getAdjointThermalNuclearDataEvaluationTempsInMeV() const -> std::vector<Energy>
+{
+  return std::vector<Energy>();
+}
+
 // Get the adjoint thermal nuclear data
-const AdjointThermalNuclearDataProperties* StandardAtomProperties::getAdjointThermalNuclearDataProperties() const
+const AdjointThermalNuclearDataProperties* StandardAtomProperties::getAdjointThermalNuclearDataProperties(
+                                               const Energy, const bool ) const
 {
   return NULL;
 }

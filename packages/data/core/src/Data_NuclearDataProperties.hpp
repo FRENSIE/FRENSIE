@@ -15,9 +15,12 @@
 // Boost Includes
 #include <boost/filesystem/path.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <boost/units/systems/si.hpp>
 
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -29,9 +32,22 @@ class NuclearDataProperties
 
 public:
 
+  //! The file types
   enum FileType{
     ACE_FILE
   };
+
+  //! The energy unit
+  typedef Utility::Units::MegaElectronVolt EnergyUnit;
+
+  //! The energy quantity
+  typedef boost::units::quantity<EnergyUnit> Energy;
+
+  //! The temperature unit
+  typedef boost::units::si::temperature TemperatureUnit;
+
+  //! The temperature quantity
+  typedef boost::units::quantity<TemperatureUnit> Temperature;
 
   //! Default constructor
   NuclearDataProperties();
@@ -47,10 +63,10 @@ public:
   virtual double atomicWeightRatio() const = 0;
 
   //! Get the nuclear data evaluation temperature (MeV)
-  virtual double evaluationTemperatureInMeV() const = 0;
+  virtual Energy evaluationTemperatureInMeV() const = 0;
 
   //! Get the nuclear data evaluation temperature (Kelvin)
-  virtual double evaluationTemperatureInKelvin() const;
+  virtual Temperature evaluationTemperature() const;
 
   //! Get the nuclear data file type
   virtual FileType fileType() const = 0;

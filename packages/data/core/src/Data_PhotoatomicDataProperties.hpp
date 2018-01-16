@@ -29,6 +29,7 @@ class PhotoatomicDataProperties
 
 public:
 
+  //! The file types
   enum FileType{
     ACE_FILE,
     ACE_EPR_FILE,

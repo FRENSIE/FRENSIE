@@ -18,9 +18,9 @@ AdjointNuclearDataProperties::AdjointNuclearDataProperties()
 { /* ... */ }
 
 // Get the adjoint nuclear data evaluation temperature (Kelvin)
-double AdjointNuclearDataProperties::evaluationTemperatureInKelvin() const
+auto AdjointNuclearDataProperties::evaluationTemperature() const -> Temperature
 {
-  return this->evaluationTemperatureInMeV()/Utility::PhysicalConstants::boltzmann_constant;
+  return this->evaluationTemperatureInMeV()/Utility::PhysicalConstants::boltzmann_constant_q;
 }
   
 } // end Data namespace

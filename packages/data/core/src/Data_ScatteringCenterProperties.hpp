@@ -24,8 +24,6 @@
 #include "Data_AdjointPhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_AdjointElectroatomicDataProperties.hpp"
-#include "Utility_ElectronVoltUnit.hpp"
-#include "Utility_QuantityTraits.hpp"
 
 namespace Data{
 
@@ -34,6 +32,24 @@ class ScatteringCenterProperties
 {
 
 public:
+
+  //! The atomic mass unit
+  typedef PhotonuclearDataProperties::AtomicMassUnit AtomicMassUnit;
+
+  //! The atomic mass quantity
+  typedef PhotonuclearDataProperties::AtomicWeight AtomicWeight;
+
+  //! The energy unit
+  typedef NuclearDataProperties::EnergyUnit EnergyUnit;
+
+  //! The energy quantity
+  typedef NuclearDataProperties::Energy Energy;
+
+  //! The temperature unit
+  typedef NuclearDataProperties::TemperatureUnit TemperatureUnit;
+
+  //! The temperature quantity
+  typedef NuclearDataProperties::Temperature Temperature;
 
   //! Default constructor
   ScatteringCenterProperties();
@@ -55,7 +71,7 @@ public:
   virtual Data::ZAID zaid() const = 0;
 
   //! Get the atomic weight
-  virtual boost::units::quantity<Utility::Units::AtomicMass> atomicWeight() const = 0;
+  virtual AtomicWeight atomicWeight() const = 0;
 
   //! Get the atomic weight ratio (atomic weight/neutron weight)
   virtual double atomicWeightRatio() const;
@@ -64,89 +80,97 @@ public:
   virtual bool nuclearDataAvailable() const = 0;
 
   //! Check if there is nuclear data available at the evaluation temp
-  virtual bool nuclearDataAvailable( const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const = 0;
+  virtual bool nuclearDataAvailable( const Energy evaluation_temp ) const = 0;
 
   //! Check if the nuclear data is evaluated at discrete temps
   virtual bool nuclearDataEvaluatedAtDiscreteTemps() const = 0;
 
   //! Get the nuclear data evaluation temps
-  virtual std::vector<boost::units::quantity<Utility::MegaElectronVolt> >
-  getNuclearDataEvaluationTemps() const = 0;
+  virtual std::vector<Energy> getNuclearDataEvaluationTempsInMeV() const = 0;
+
+  //! Get the nuclear data evaluation temps
+  virtual std::vector<Temperature> getNuclearDataEvaluationTemps() const;
 
   //! Get the nuclear data properties
   virtual const NuclearDataProperties* getNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp,
-       const bool find_exact ) const = 0;
+                                             const Energy evaluation_temp,
+                                             const bool find_exact ) const = 0;
 
   //! Get the nuclear data properties (closest to evaluation temp)
   const NuclearDataProperties* getNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const;
+                                          const Energy evaluation_temp ) const;
                                    
   //! Check if there is thermal nuclear data
   virtual bool thermalNuclearDataAvailable() const = 0;
 
   //! Check if there is thermal nuclear data available at the evaluation temp
-  virtual bool thermalNuclearDataAvailable( const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const = 0;
+  virtual bool thermalNuclearDataAvailable( const Energy evaluation_temp ) const = 0;
 
   //! Check if the thermal nuclear data is evaluated at discrete temps
   virtual bool thermalNuclearDataEvaluatedAtDiscreteTemps() const = 0;
 
   //! Get the thermal nuclear data evaluation temps
-  virtual std::vector<boost::units::quantity<Utility::MegaElectronVolt> >
-  getThermalNuclearDataEvaluationTemps() const = 0;
+  virtual std::vector<Energy> getThermalNuclearDataEvaluationTempsInMeV() const = 0;
+
+  //! Get the thermal nuclear data evaluation temps
+  virtual std::vector<Temperature> getThermalNuclearDataEvaluationTemps() const;
 
   //! Get the thermal nuclear data properties
   virtual const ThermalNuclearDataProperties* getThermalNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp,
-       const bool find_exact ) const = 0;
+                                             const Energy evaluation_temp,
+                                             const bool find_exact ) const = 0;
 
   //! Get the thermal nuclear data properties
   const ThermalNuclearDataProperties* getThermalNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const;             
+                                          const Energy evaluation_temp ) const;
   
   //! Check if there is adjoint nuclear data
   virtual bool adjointNuclearDataAvailable() const = 0;
 
   //! Check if there is adjoint nuclear data available at the evaluation temp
-  virtual bool adjointNuclearDataAvailable( const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const = 0;
+  virtual bool adjointNuclearDataAvailable( const Energy evaluation_temp ) const = 0;
 
   //! Check if the adjoint nuclear data is evaluation at discrete temps
   virtual bool adjointNuclearDataEvaluatedAtDiscreteTemps() const = 0;
 
   //! Get the adjoint nuclear data evaluation temps
-  virtual std::vector<boost::units::quantity<Utility::MegaElectronVolt> >
-  getAdjointNuclearDataEvaluationTemps() const = 0;
+  virtual std::vector<Energy> getAdjointNuclearDataEvaluationTempsInMeV() const = 0;
+
+  //! Get the adjoint nuclear data evaluation temps
+  virtual std::vector<Temperature> getAdjointNuclearDataEvaluationTemps() const;
 
   //! Get the adjoint nuclear data
   virtual const AdjointNuclearDataProperties* getAdjointNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp,
-       const bool find_exact ) const = 0;
+                                             const Energy evaluation_temp,
+                                             const bool find_exact ) const = 0;
 
   //! Get the adjoint nuclear data
   const AdjointNuclearDataProperties* getAdjointNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const;
+                                          const Energy evaluation_temp ) const;
 
   //! Check if there is adjoint thermal nuclear data
   virtual bool adjointThermalNuclearDataAvailable() const = 0;
 
   //! Check if there is adjoint thermal nuclear data available at the evaluation temp
-  virtual bool adjointThermalNuclearDataAvailable( const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const = 0;
+  virtual bool adjointThermalNuclearDataAvailable( const Energy evaluation_temp ) const = 0;
 
   //! Check if the adjoint thermal nuclear data is evaluated at discrete temps
   virtual bool adjointThermalNuclearDataEvaluatedAtDiscreteTemps() const = 0;
 
   //! Get the adjoint thermal nuclear data evaluation temps
-  virtual std::vector<boost::units::quantity<Utility::MegaElectronVolt> >
-  getAdjointThermalNuclearDataEvaluationTemps() const = 0;
+  virtual std::vector<Energy> getAdjointThermalNuclearDataEvaluationTempsInMeV() const = 0;
+
+  //! Get the adjoint thermal nuclear data evaluation temps
+  virtual std::vector<Temperature> getAdjointThermalNuclearDataEvaluationTemps() const;
 
   //! Get the adjoint thermal nuclear data
   virtual const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp,
-       const bool find_exact ) const = 0;
+                                             const Energy evaluation_temp,
+                                             const bool find_exact ) const = 0;
 
   //! Get the adjoint thermal nuclear data
   const AdjointThermalNuclearDataProperties* getAdjointThermalNuclearDataProperties(
-       const boost::units::quantity<Utility::MegaElectronVolt> evaluation_temp ) const;
+                                          const Energy evaluation_temp ) const;
 
   //! Check if there is photonuclear data
   virtual bool photonuclearDataAvailable() const = 0;

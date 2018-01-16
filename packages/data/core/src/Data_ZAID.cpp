@@ -31,12 +31,12 @@ ZAID::ZAID()
 { /* ... */ }
 
 // String constructor
-ZAID( const std::string& zaid_string )
+ZAID::ZAID( const std::string& zaid_string )
   : ZAID( Utility::fromString<unsigned>( zaid_string ) )
 { /* ... */ }
 
 // C-string constructor
-ZAID( const char* zaid_string )
+ZAID::ZAID( const char* zaid_string )
   : ZAID( Utility::fromString<unsigned>( zaid_string ) )
 { /* ... */ }
 

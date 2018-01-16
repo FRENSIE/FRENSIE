@@ -14,7 +14,7 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Data_ZAID.hpp"
+#include "Data_NuclearDataProperties.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -26,9 +26,22 @@ class AdjointNuclearDataProperties
 
 public:
 
+  //! The file types
   enum FileType{
     Native_FILE
   };
+
+  //! The energy unit
+  typedef NuclearDataProperties::EnergyUnit EnergyUnit;
+
+  //! The energy quantity
+  typedef NuclearDataProperties::Energy Energy;
+
+  //! The temperature unit
+  typedef NuclearDataProperties::TemperatureUnit TemperatureUnit;
+
+  //! The temperature quantity
+  typedef NuclearDataProperties::Temperature Temperature;
 
   //! Default constructor
   AdjointNuclearDataProperties();
@@ -41,10 +54,10 @@ public:
   virtual Data::ZAID zaid() const = 0;
 
   //! Get the adjoint nuclear data evaluation temperature (MeV)
-  virtual double evaluationTemperatureInMeV() const = 0;
+  virtual Energy evaluationTemperatureInMeV() const = 0;
 
   //! Get the adjoint nuclear data evaluation temperature (Kelvin)
-  virtual double evaluationTemperatureInKelvin() const;
+  virtual Temperature evaluationTemperature() const;
 
   //! Get the adjoint nuclear data file type
   virtual FileType fileType() const = 0;

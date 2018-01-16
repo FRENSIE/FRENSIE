@@ -16,12 +16,6 @@ namespace Data{
 // Default constructor
 AdjointPhotonuclearDataProperties::AdjointPhotonuclearDataProperties()
 { /* ... */ }
-
-// Get the adjoint nuclear data evaluation temperature (Kelvin)
-double AdjointPhotonuclearDataProperties::evaluationTemperatureInKelvin() const
-{
-  return this->evaluationTemperatureInMeV()/Utility::PhysicalConstants::boltzmann_constant;
-}
   
 } // end Data namespace
 

@@ -18,6 +18,8 @@
 
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
+#include "Utility_AtomicMassUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
@@ -29,9 +31,16 @@ class PhotonuclearDataProperties
 
 public:
 
+  //! The file types
   enum FileType{
     ACE_FILE
   };
+
+  //! The atomic mass unit
+  typedef Utility::Units::AtomicMass AtomicMassUnit;
+
+  //! The atomic mass quantity
+  typedef boost::units::quantity<AtomicMassUnit> AtomicWeight;
 
   //! Default constructor
   PhotonuclearDataProperties();
@@ -44,7 +53,7 @@ public:
   virtual Data::ZAID zaid() const = 0;
 
   //! Get the atomic weight of the nuclide that the file specifies data for
-  virtual double atomicWeight() const = 0;
+  virtual AtomicWeight atomicWeight() const = 0;
 
   //! Get the nuclear data file type
   virtual FileType fileType() const = 0;
