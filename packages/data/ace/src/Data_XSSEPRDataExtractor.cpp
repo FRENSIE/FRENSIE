@@ -118,6 +118,7 @@ Utility::ArrayView<const double>
 XSSEPRDataExtractor::extractCoherentCrossSection() const
 {
   return d_eszg_block( 2*d_nxs[2], d_nxs[2] );
+
 }
 
 // Extract the photoelectric cross section
@@ -222,10 +223,11 @@ XSSEPRDataExtractor::extractSubshellOccupancies() const
 }
 
 // Extract the subshell binding energies
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractSubshellBindingEnergies() const
+auto XSSEPRDataExtractor::extractSubshellBindingEnergies() const -> Utility::ArrayView<const Energy>
 {
-  return d_subsh_block( 2*d_nxs[6], d_nxs[6] );
+  return Utility::ArrayView<const Energy>(
+     Utility::reinterpretAsQuantity<Energy>( d_subsh_block.data()+2*d_nxs[6] ),
+     Utility::ArrayView<const Energy>::size_type(d_nxs[6]) );
 }
 
 // Extract the subshell Compton interaction cdf
@@ -277,52 +279,59 @@ XSSEPRDataExtractor::extractESZEBlock() const
 }
 
 // Extract the incoming electron energy grid
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractElectronEnergyGrid() const
+auto XSSEPRDataExtractor::extractElectronEnergyGrid() const -> Utility::ArrayView<const Energy>
 {
-  return d_esze_block( 0, d_nxs[7] );
+  return Utility::ArrayView<const Energy>(
+                 Utility::reinterpretAsQuantity<Energy>( d_esze_block.data() ),
+                 Utility::ArrayView<const Energy>::size_type(d_nxs[7]) );
 }
 
 // Extract the electron total cross section
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractElectronTotalCrossSection() const
+auto XSSEPRDataExtractor::extractElectronTotalCrossSection() const -> Utility::ArrayView<const Area>
 {
-  return d_esze_block( d_nxs[7], d_nxs[7] );
+  return Utility::ArrayView<const Area>(
+          Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+d_nxs[7] ),
+          Utility::ArrayView<const Area>::size_type(d_nxs[7]) );
 }
 
 // Extract the electron elastic cross section
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractElasticCrossSection() const
+auto XSSEPRDataExtractor::extractElasticCrossSection() const -> Utility::ArrayView<const Area>
 {
-  return d_esze_block( 2*d_nxs[7], d_nxs[7] );
+  return Utility::ArrayView<const Area>(
+        Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+2*d_nxs[7] ),
+        Utility::ArrayView<const Area>::size_type(d_nxs[7]) );
 }
 
 // Extract the bremsstrahlung cross section
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractBremsstrahlungCrossSection() const
+auto XSSEPRDataExtractor::extractBremsstrahlungCrossSection() const -> Utility::ArrayView<const Area>
 {
-  return d_esze_block( 3*d_nxs[7], d_nxs[7] );
+  return Utility::ArrayView<const Area>(
+        Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+3*d_nxs[7] ),
+        Utility::ArrayView<const Area>::size_type(d_nxs[7]) );
 }
 
 // Extract the excitation cross section
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractExcitationCrossSection() const
+auto XSSEPRDataExtractor::extractExcitationCrossSection() const -> Utility::ArrayView<const Area>
 {
-  return d_esze_block( 4*d_nxs[7], d_nxs[7] );
+  return Utility::ArrayView<const Area>(
+        Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+4*d_nxs[7] ),
+        Utility::ArrayView<const Area>::size_type(d_nxs[7]) );
 }
 
 // Extract the total electroionization cross section
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractElectroionizationCrossSection() const
+auto XSSEPRDataExtractor::extractElectroionizationCrossSection() const -> Utility::ArrayView<const Area>
 {
-  return d_esze_block( 5*d_nxs[7], d_nxs[7] );
+  return Utility::ArrayView<const Area>(
+        Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+5*d_nxs[7] ),
+        Utility::ArrayView<const Area>::size_type(d_nxs[7]) );
 }
 
 // Extract the electroionization subshell cross sections
-Utility::ArrayView<const double>
-XSSEPRDataExtractor::extractElectroionizationSubshellCrossSections() const
+auto XSSEPRDataExtractor::extractElectroionizationSubshellCrossSections() const -> Utility::ArrayView<const Area>
 {
-  return d_esze_block( 6*d_nxs[7], d_nxs[7]*d_nxs[6] );
+  return Utility::ArrayView<const Area>(
+        Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+6*d_nxs[7] ),
+        Utility::ArrayView<const Area>::size_type(d_nxs[7]*d_nxs[6]) );
 }
 
 // Extract the EXCIT block

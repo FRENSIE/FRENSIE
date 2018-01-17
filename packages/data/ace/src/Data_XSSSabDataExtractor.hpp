@@ -16,6 +16,9 @@
 #include "Utility_Vector.hpp"
 #include "Utility_Array.hpp"
 #include "Utility_ArrayView.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_BarnUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 // FRENSIE Includes
 #include "Data_SabInelasticMode.hpp"
@@ -39,6 +42,18 @@ class XSSSabDataExtractor
 {
 
 public:
+
+  //! The energy unit
+  typedef Utility::Units::MegaElectronVolt EnergyUnit;
+
+  //! The energy quantity
+  typedef boost::units::quantity<EnergyUnit> Energy;
+
+  //! The area unit
+  typedef Utility::Units::Barn AreaUnit;
+
+  //! The area quantity
+  typedef boost::units::quantity<AreaUnit> Area;
 
   //! Constructor
   XSSSabDataExtractor( const Utility::ArrayView<const int>& nxs,
@@ -65,19 +80,19 @@ public:
   Utility::ArrayView<const double> extractITIEBlock() const;
 
   //! Extract the inelastic energy grid from the XSS array
-  Utility::ArrayView<const double> extractInelasticEnergyGrid() const;
+  Utility::ArrayView<const Energy> extractInelasticEnergyGrid() const;
 
   //! Extract the inelastic cross section from the XSS array
-  Utility::ArrayView<const double> extractInelasticCrossSection() const;
+  Utility::ArrayView<const Area> extractInelasticCrossSection() const;
 
   //! Extract the ITCE block from the XSS array
   Utility::ArrayView<const double> extractITCEBlock() const;
 
   //! Extract the elastic energy grid from the XSS array
-  Utility::ArrayView<const double> extractElasticEnergyGrid() const;
+  Utility::ArrayView<const Energy> extractElasticEnergyGrid() const;
 
   //! Extract the elastic cross section from the XSS array
-  Utility::ArrayView<const double> extractElasticCrossSection() const;
+  Utility::ArrayView<const Area> extractElasticCrossSection() const;
 
   //! Extract the ITXE block from the XSS array
   Utility::ArrayView<const double> extractITXEBlock() const;

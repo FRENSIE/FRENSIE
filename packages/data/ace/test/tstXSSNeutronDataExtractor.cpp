@@ -16,6 +16,14 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+using Utility::Units::MeV;
+using Utility::Units::barn;
+using Utility::Units::barns;
+
+//---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor_h1;
@@ -88,22 +96,20 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock_u238 )
 // XSS array
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_h1 )
 {
-  Utility::ArrayView<const double> energy_grid =
-    xss_data_extractor_h1->extractEnergyGrid();
+  auto energy_grid = xss_data_extractor_h1->extractEnergyGrid();
 
   FRENSIE_CHECK_EQUAL( energy_grid.size(), 590 );
-  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11 );
-  FRENSIE_CHECK_EQUAL( energy_grid.back(), 2e1 );
+  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11*MeV );
+  FRENSIE_CHECK_EQUAL( energy_grid.back(), 2e1*MeV );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_u238 )
 {
-  Utility::ArrayView<const double> energy_grid =
-    xss_data_extractor_u238->extractEnergyGrid();
+  auto energy_grid = xss_data_extractor_u238->extractEnergyGrid();
 
   FRENSIE_CHECK_EQUAL( energy_grid.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11  );
-  FRENSIE_CHECK_EQUAL( energy_grid.back(), 30 );
+  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11*MeV );
+  FRENSIE_CHECK_EQUAL( energy_grid.back(), 30*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -111,22 +117,20 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_u238 )
 // from the XSS array
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_h1 )
 {
-  Utility::ArrayView<const double> total_cross_sec =
-    xss_data_extractor_h1->extractTotalCrossSection();
+  auto total_cross_sec = xss_data_extractor_h1->extractTotalCrossSection();
 
   FRENSIE_CHECK_EQUAL( total_cross_sec.size(), 590 );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.17724711e3 );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 4.82773424e-1 );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.17724711e3*barns );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 4.82773424e-1*barns );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_u238 )
 {
-  Utility::ArrayView<const double> total_cross_sec =
-    xss_data_extractor_u238->extractTotalCrossSection();
+  auto total_cross_sec = xss_data_extractor_u238->extractTotalCrossSection();
 
   FRENSIE_CHECK_EQUAL( total_cross_sec.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.69844353e2  );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 5.71955315 );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.69844353e2*barns  );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 5.71955315*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -134,22 +138,22 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_u238 )
 // cross section from the XSS array
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAbsorptionCrossSec_h1 )
 {
-  Utility::ArrayView<const double> absorption_cross_sec =
+  auto absorption_cross_sec =
     xss_data_extractor_h1->extractTotalAbsorptionCrossSection();
 
   FRENSIE_CHECK_EQUAL( absorption_cross_sec.size(), 590 );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.670111e1 );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 2.722354e-5 );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.670111e1*barns );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 2.722354e-5*barns );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAbsorptionCrossSec_u238 )
 {
-  Utility::ArrayView<const double> absorption_cross_sec =
+  auto absorption_cross_sec =
     xss_data_extractor_u238->extractTotalAbsorptionCrossSection();
 
   FRENSIE_CHECK_EQUAL( absorption_cross_sec.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.344458e2 );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 1.0e-4 );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.344458e2*barns );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 1.0e-4*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -157,22 +161,21 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAbsorptionCrossSec_u238 )
 // from the XSS array
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_h1 )
 {
-  Utility::ArrayView<const double> elastic_cross_sec =
-    xss_data_extractor_h1->extractElasticCrossSection();
+  auto elastic_cross_sec = xss_data_extractor_h1->extractElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( elastic_cross_sec.size(), 590 );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 1.160546e3 );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 4.827462e-1 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 1.160546e3*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 4.827462e-1*barns );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_u238 )
 {
-  Utility::ArrayView<const double> elastic_cross_sec =
+  auto elastic_cross_sec =
     xss_data_extractor_u238->extractElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( elastic_cross_sec.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 3.539771e1  );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 2.78998  );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 3.539771e1*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 2.78998*barns  );
 }
 
 //---------------------------------------------------------------------------//
@@ -180,22 +183,22 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_u238 )
 // numbers from the XSS array
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAverageHeatingNumbers_h1)
 {
-  Utility::ArrayView<const double> ave_heating_nums =
+  auto ave_heating_nums =
     xss_data_extractor_h1->extractAverageHeatingNumbers();
 
   FRENSIE_CHECK_EQUAL( ave_heating_nums.size(), 590 );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 5.000028e-12 );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 1.016085e1 );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 5.000028e-12*MeV );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 1.016085e1*MeV );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAverageHeatingNumbers_u238)
 {
-  Utility::ArrayView<const double> ave_heating_nums =
+  auto ave_heating_nums =
     xss_data_extractor_u238->extractAverageHeatingNumbers();
 
   FRENSIE_CHECK_EQUAL( ave_heating_nums.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 8.59985e-4 );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 4.99417e1 );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 8.59985e-4*MeV );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 4.99417e1*MeV );
 }
 
 //---------------------------------------------------------------------------//

@@ -16,6 +16,9 @@
 #include "Utility_Vector.hpp"
 #include "Utility_Array.hpp"
 #include "Utility_ArrayView.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_BarnUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 /*! \defgroup continuous_energy_epr_table Continuous Energy Electron-Photon-Relaxation Table
  * \ingroup ace_table
@@ -36,6 +39,18 @@ class XSSEPRDataExtractor
 {
 
 public:
+
+  //! The energy unit
+  typedef Utility::Units::MegaElectronVolt EnergyUnit;
+
+  //! The energy quantity
+  typedef boost::units::quantity<EnergyUnit> Energy;
+
+  //! The area unit
+  typedef Utility::Units::Barn AreaUnit;
+
+  //! The area quantity
+  typedef boost::units::quantity<AreaUnit> Area;
 
   //! Constructor
   XSSEPRDataExtractor( const Utility::ArrayView<const int>& nxs,
@@ -58,19 +73,19 @@ public:
   //! Extract the ESZG block
   Utility::ArrayView<const double> extractESZGBlock() const;
 
-  //! Extract the incoming photon energy grid
+  //! Extract the incoming photon (log) energy grid
   Utility::ArrayView<const double> extractPhotonEnergyGrid() const;
 
-  //! Extract the incoherent cross section
+  //! Extract the incoherent cross section (log)
   Utility::ArrayView<const double> extractIncoherentCrossSection() const;
 
-  //! Extract the coherent cross section
+  //! Extract the coherent cross section (log)
   Utility::ArrayView<const double> extractCoherentCrossSection() const;
 
-  //! Extract the photoelectric cross section
+  //! Extract the photoelectric cross section (log)
   Utility::ArrayView<const double> extractPhotoelectricCrossSection() const;
 
-  //! Extract the pair production cross section
+  //! Extract the pair production cross section (log)
   Utility::ArrayView<const double> extractPairProductionCrossSection() const;
 
   //! Extract the JINCE block
@@ -110,7 +125,7 @@ public:
   Utility::ArrayView<const double> extractSubshellOccupancies() const;
 
   //! Extract the subshell binding energies
-  Utility::ArrayView<const double> extractSubshellBindingEnergies() const;
+  Utility::ArrayView<const Energy> extractSubshellBindingEnergies() const;
 
   //! Extract the subshell Compton interaction cdf
   Utility::ArrayView<const double> extractSubshellComptonInteractionCDF() const;
@@ -131,25 +146,25 @@ public:
   Utility::ArrayView<const double> extractESZEBlock() const;
 
   //! Extract the incoming electron energy grid
-  Utility::ArrayView<const double> extractElectronEnergyGrid() const;
+  Utility::ArrayView<const Energy> extractElectronEnergyGrid() const;
 
   //! Extract the electron total cross section
-  Utility::ArrayView<const double> extractElectronTotalCrossSection() const;
+  Utility::ArrayView<const Area> extractElectronTotalCrossSection() const;
 
   //! Extract the electron elastic cross section
-  Utility::ArrayView<const double> extractElasticCrossSection() const;
+  Utility::ArrayView<const Area> extractElasticCrossSection() const;
 
   //! Extract the bremsstrahlung cross section
-  Utility::ArrayView<const double> extractBremsstrahlungCrossSection() const;
+  Utility::ArrayView<const Area> extractBremsstrahlungCrossSection() const;
 
   //! Extract the excitation cross section
-  Utility::ArrayView<const double> extractExcitationCrossSection() const;
+  Utility::ArrayView<const Area> extractExcitationCrossSection() const;
 
   //! Extract the total electroionization cross section
-  Utility::ArrayView<const double> extractElectroionizationCrossSection() const;
+  Utility::ArrayView<const Area> extractElectroionizationCrossSection() const;
 
   //! Extract the electroionization subshell cross sections
-  Utility::ArrayView<const double> extractElectroionizationSubshellCrossSections() const;
+  Utility::ArrayView<const Area> extractElectroionizationSubshellCrossSections() const;
 
   //! Extract the EXCIT block
   Utility::ArrayView<const double> extractEXCITBlock() const;

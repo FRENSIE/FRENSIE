@@ -16,6 +16,9 @@
 #include "Utility_Vector.hpp"
 #include "Utility_Array.hpp"
 #include "Utility_ArrayView.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_BarnUnit.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 /*! \defgroup continuous_energy_neutron_table Continuous Energy Neutron Table
  * \ingroup ace_table
@@ -35,6 +38,18 @@ class XSSNeutronDataExtractor
 {
 
 public:
+
+  //! The energy unit
+  typedef Utility::Units::MegaElectronVolt EnergyUnit;
+
+  //! The energy quantity
+  typedef boost::units::quantity<EnergyUnit> Energy;
+
+  //! The area unit
+  typedef Utility::Units::Barn AreaUnit;
+
+  //! The area quantity
+  typedef boost::units::quantity<AreaUnit> Area;
 
   //! Constructor
   XSSNeutronDataExtractor( const Utility::ArrayView<const int>& nxs,
@@ -58,19 +73,19 @@ public:
   Utility::ArrayView<const double> extractESZBlock() const;
 
   //! Extract the energy grid from the XSS array
-  Utility::ArrayView<const double> extractEnergyGrid() const;
+  Utility::ArrayView<const Energy> extractEnergyGrid() const;
 
   //! Extract the total cross section from the XSS array
-  Utility::ArrayView<const double> extractTotalCrossSection() const;
+  Utility::ArrayView<const Area> extractTotalCrossSection() const;
 
   //! Extract the total absorption cross section from the XSS array
-  Utility::ArrayView<const double> extractTotalAbsorptionCrossSection() const;
+  Utility::ArrayView<const Area> extractTotalAbsorptionCrossSection() const;
 
   //! Extract the total elastic cross section from the XSS array
-  Utility::ArrayView<const double> extractElasticCrossSection() const;
+  Utility::ArrayView<const Area> extractElasticCrossSection() const;
 
-  //! Extract the average heating numbers from the XSS array
-  Utility::ArrayView<const double> extractAverageHeatingNumbers() const;
+  //! Extract the average heating numbers (MeV/collision) from the XSS array
+  Utility::ArrayView<const Energy> extractAverageHeatingNumbers() const;
 
   //! Extract the NU block form the XSS array
   Utility::ArrayView<const double> extractNUBlock() const;
