@@ -33,7 +33,7 @@ StandardAtomProperties::StandardAtomProperties()
 // Constructor
 StandardAtomProperties::StandardAtomProperties( const std::string& name,
                                                 const ZAID& zaid,
-                                                const double atomic_weight )
+                                                const AtomicWeight atomic_weight )
   : d_name( name ),
     d_zaid( zaid ),
     d_atomic_weight( atomic_weight )
@@ -42,7 +42,7 @@ StandardAtomProperties::StandardAtomProperties( const std::string& name,
                       std::runtime_error,
                       "The properties name cannot be empty!" );
 
-  TEST_FOR_EXCEPTION( atomic_weight <= 0.0,
+  TEST_FOR_EXCEPTION( atomic_weight <= 0.0*Utility::Units::amu,
                       std::runtime_error,
                       "The atomic weight cannot be zero or negative!" );
 }
@@ -85,7 +85,7 @@ Data::ZAID StandardAtomProperties::zaid() const
 // Get the atomic weight
 auto StandardAtomProperties::atomicWeight() const -> AtomicWeight
 {
-  return AtomicWeight::from_value(d_atomic_weight);
+  return d_atomic_weight;
 }
 
 // Check if there is nuclear data

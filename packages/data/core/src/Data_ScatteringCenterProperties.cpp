@@ -30,6 +30,8 @@ auto ScatteringCenterProperties::getNuclearDataEvaluationTemps() const -> std::v
 
   for( size_t i = 0; i < energies.size(); ++i )
     temps[i] = energies[i]/Utility::PhysicalConstants::boltzmann_constant_q;
+
+  return temps;
 }
 
 // Get the nuclear data properties (closest to evaluation temp)
@@ -47,6 +49,8 @@ auto ScatteringCenterProperties::getThermalNuclearDataEvaluationTemps() const ->
 
   for( size_t i = 0; i < energies.size(); ++i )
     temps[i] = energies[i]/Utility::PhysicalConstants::boltzmann_constant_q;
+
+  return temps;
 }
 
 // Get the thermal nuclear data properties
@@ -64,6 +68,8 @@ auto ScatteringCenterProperties::getAdjointNuclearDataEvaluationTemps() const ->
 
   for( size_t i = 0; i < energies.size(); ++i )
     temps[i] = energies[i]/Utility::PhysicalConstants::boltzmann_constant_q;
+
+  return temps;
 }
 
 // Get the adjoint nuclear data
@@ -81,6 +87,8 @@ auto ScatteringCenterProperties::getAdjointThermalNuclearDataEvaluationTemps() c
 
   for( size_t i = 0; i < energies.size(); ++i )
     temps[i] = energies[i]/Utility::PhysicalConstants::boltzmann_constant_q;
+
+  return temps;
 }
 
 // Get the adjoint thermal nuclear data

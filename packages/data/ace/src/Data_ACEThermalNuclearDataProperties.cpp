@@ -34,12 +34,12 @@ ACEThermalNuclearDataProperties::ACEThermalNuclearDataProperties()
 // Constructor
 ACEThermalNuclearDataProperties::ACEThermalNuclearDataProperties(
                                const std::set<Data::ZAID>& zaids,
-                               const double evaluation_temp_in_mev,
+                               const Energy evaluation_temp,
                                const boost::filesystem::path& file_path,
                                const size_t file_start_line,
                                const std::string& file_table_name )
   : d_zaids( zaids ),
-    d_evaluation_temp( evaluation_temp_in_mev ),
+    d_evaluation_temp( evaluation_temp ),
     d_file_path( file_path ),
     d_file_start_line( file_start_line ),
     d_file_table_name( file_table_name ),
@@ -49,7 +49,7 @@ ACEThermalNuclearDataProperties::ACEThermalNuclearDataProperties(
   // Make sure that there is at least one zaid specified
   testPrecondition( !zaids.empty() );
   // Make sure that the evaulation temp is valid
-  testPrecondition( evaluation_temp_in_mev >= 0.0 );
+  testPrecondition( evaluation_temp >= 0.0*Utility::Units::MeV );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
   
@@ -99,7 +99,7 @@ std::set<Data::ZAID> ACEThermalNuclearDataProperties::zaids() const
 }
 
 // Get the nuclear data evaluation temperature (MeV)
-double ACEThermalNuclearDataProperties::evaluationTemperatureInMeV() const
+auto ACEThermalNuclearDataProperties::evaluationTemperatureInMeV() const -> Energy
 {
   return d_evaluation_temp;
 }

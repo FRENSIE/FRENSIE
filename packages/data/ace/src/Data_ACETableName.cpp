@@ -100,7 +100,7 @@ ACETableName::ACETableName( const Data::ZAID& zaid,
 }
 
 // Component constructor
-ACETableName( const std::tuple<std::string,unsigned,char>& components )
+ACETableName::ACETableName( const std::tuple<std::string,unsigned,char>& components )
   : ACETableName( Utility::get<0>( components ),
                   Utility::get<1>( components ),
                   Utility::get<2>( components ) )

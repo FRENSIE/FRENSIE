@@ -24,14 +24,14 @@ public:
   //! Constructor
   template<template<typename...> class STLCompliantContainer>
   ACEThermalNuclearDataProperties( const STLCompliantContainer<Data::ZAID>& zaids,
-                                   const double evaluation_temp_in_mev,
+                                   const Energy evaluation_temp,
                                    const boost::filesystem::path& file_path,
                                    const size_t file_start_line,
                                    const std::string& file_table_name );
 
   //! Constructor
   ACEThermalNuclearDataProperties( const std::set<Data::ZAID>& zaids,
-                                   const double evaluation_temp_in_mev,
+                                   const Energy evaluation_temp,
                                    const boost::filesystem::path& file_path,
                                    const size_t file_start_line,
                                    const std::string& file_table_name );
@@ -50,7 +50,7 @@ public:
   std::set<Data::ZAID> zaids() const override;
 
   //! Get the nuclear data evaluation temperature (MeV)
-  double evaluationTemperatureInMeV() const override;
+  Energy evaluationTemperatureInMeV() const override;
 
   //! Get the nuclear data file type
   FileType fileType() const override;
@@ -98,7 +98,7 @@ private:
   std::set<Data::ZAID> d_zaids;
 
   // The evaluation temperature (MeV)
-  double d_evaluation_temp;
+  Energy d_evaluation_temp;
 
   // The file path (relative to the data directory)
   boost::filesystem::path d_file_path;
@@ -120,12 +120,12 @@ private:
 template<template<typename...> class STLCompliantContainer>
 ACEThermalNuclearDataProperties::ACEThermalNuclearDataProperties(
                                 const STLCompliantContainer<Data::ZAID>& zaids,
-                                const double evaluation_temp_in_mev,
+                                const Energy evaluation_temp,
                                 const boost::filesystem::path& file_path,
                                 const size_t file_start_line,
                                 const std::string& file_table_name )
   : ACEThermalNuclearDataProperties( std::set<Data::ZAID>( zaids.begin(), zaids.end() ),
-                                     evaluation_temp_in_mev,
+                                     evaluation_temp,
                                      file_path,
                                      file_start_line,
                                      file_table_name )

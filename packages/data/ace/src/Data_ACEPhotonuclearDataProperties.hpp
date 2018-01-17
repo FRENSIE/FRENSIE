@@ -23,7 +23,7 @@ class ACEPhotonuclearDataProperties : public PhotonuclearDataProperties
 public:
 
   //! Constructor
-  ACEPhotonuclearDataProperties( const double atomic_weight,
+  ACEPhotonuclearDataProperties( const AtomicWeight atomic_weight,
                                  const boost::filesystem::path& file_path,
                                  const size_t file_start_line,
                                  const ACETableName& file_table_name );
@@ -36,7 +36,7 @@ public:
   Data::ZAID zaid() const override;
 
   //! Get the atomic weight of the nuclide that the file specifies data for
-  double atomicWeight() const override;
+  AtomicWeight atomicWeight() const override;
 
   //! Get the nuclear data file type
   FileType fileType() const override;
@@ -81,7 +81,7 @@ private:
   friend class boost::serialization::access;
 
   // The atomic weight of the nuclide that the file specifies data for
-  double d_atomic_weight;
+  AtomicWeight d_atomic_weight;
 
   // The file path (relative to the data directory)
   boost::filesystem::path d_file_path;

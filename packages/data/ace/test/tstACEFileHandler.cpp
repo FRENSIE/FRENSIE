@@ -37,30 +37,29 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
 						    table_name,
 						    1u ) );
 
-  FRENSIE_CHECK_EQUAL( ace_file_handler->getLibraryName(),
-		 test_neutron_ace_file_name );
+  FRENSIE_CHECK_EQUAL( ace_file_handler->getLibraryName().string(),
+                       test_neutron_ace_file_name );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableName(), table_name );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableAtomicWeightRatio(),
 		       0.999167 );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableTemperature(),
-		       2.53010e-08 );
+		       2.53010e-08*Utility::Units::MeV );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableProcessingDate(),
 		       "03/27/08" );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableComment(),
-		       " 1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248                      " );
+		       "1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248" );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableMatId(),
-		       "   mat 125" );
+		       "mat 125" );
 
-  Utility::ArrayView<const int> zaids = ace_file_handler->getTableZAIDs();
-  std::vector<int> ref_zaids( 16, 0 );
-  
-  FRENSIE_CHECK_EQUAL( zaids, Utility::arrayViewOfConst(ref_zaids) );
+  Utility::ArrayView<const Data::ZAID> zaids =
+    ace_file_handler->getTableZAIDs();
+    
+  FRENSIE_CHECK_EQUAL( zaids.size(), 0 );
 
   Utility::ArrayView<const double> awrs =
     ace_file_handler->getTableAtomicWeightRatios();
-  std::vector<double> ref_awrs( 16, 0.0 );
   
-  FRENSIE_CHECK_EQUAL( awrs, Utility::arrayViewOfConst(ref_awrs) );
+  FRENSIE_CHECK_EQUAL( awrs.size(), 0 );
 
   Utility::ArrayView<const int> nxs = ace_file_handler->getTableNXSArray();
   std::vector<int> ref_nxs( 16 );
@@ -105,28 +104,31 @@ FRENSIE_UNIT_TEST( ACEFileHandler, constructor_get_sab )
 							table_name,
 							1u ) );
 
-  FRENSIE_CHECK_EQUAL( ace_file_handler->getLibraryName(), test_sab_ace_file_name );
+  FRENSIE_CHECK_EQUAL( ace_file_handler->getLibraryName().string(),
+                       test_sab_ace_file_name );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableName(), table_name );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableAtomicWeightRatio(),
 		       0.999167 );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableTemperature(),
-		       2.53010e-08 );
+		       2.53010e-08*Utility::Units::MeV );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableProcessingDate(),
 		       "10/22/07" );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableComment(),
-		       "H in h2o at 293.6k from ENDF/B-VII                                    " );
+		       "H in h2o at 293.6k from ENDF/B-VII" );
   FRENSIE_CHECK_EQUAL( ace_file_handler->getTableMatId(),
-		       "   mat 125" );
+		       "mat 125" );
 
-  Utility::ArrayView<const int> zaids = ace_file_handler->getTableZAIDs();
-  std::vector<int> ref_zaids( 16, 0 );
-  ref_zaids[0] = 1001;
+  Utility::ArrayView<const Data::ZAID> zaids =
+    ace_file_handler->getTableZAIDs();
+  
+  std::vector<Data::ZAID> ref_zaids( 1, Data::ZAID(1001) );
   
   FRENSIE_CHECK_EQUAL( zaids, Utility::arrayViewOfConst(ref_zaids) );
 
   Utility::ArrayView<const double> awrs =
     ace_file_handler->getTableAtomicWeightRatios();
-  std::vector<double> ref_awrs( 16, 0.0 );
+  
+  std::vector<double> ref_awrs( 1, 0.0 );
   
   FRENSIE_CHECK_EQUAL( awrs, Utility::arrayViewOfConst(ref_awrs) );
 

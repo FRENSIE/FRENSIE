@@ -55,15 +55,16 @@ FRENSIE_UNIT_TEST( ACENuclearDataProperties, atomicWeightRatio )
 // Check that the evaluation temperature can be returned
 FRENSIE_UNIT_TEST( ACENuclearDataProperties, evaluationTemperatureInMeV )
 {
-  FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(), 2.5301e-8 );
+  FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                       2.5301e-8*Utility::Units::MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the evaluation temperature can be returned
-FRENSIE_UNIT_TEST( ACENuclearDataProperties, evaluationTemperatureInKelvin )
+FRENSIE_UNIT_TEST( ACENuclearDataProperties, evaluationTemperature )
 {
-  FRENSIE_CHECK_FLOATING_EQUALITY( properties->evaluationTemperatureInKelvin(),
-                                   293.6059397103837227,
+  FRENSIE_CHECK_FLOATING_EQUALITY( properties->evaluationTemperature(),
+                                   293.6059397103837227*boost::units::si::kelvin,
                                    1e-15 );
 }
 
@@ -137,7 +138,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
     Data::ACENuclearDataProperties local_properties( 16.0,
-                                                     2.5301e-8,
+                                                     2.5301e-8*Utility::Units::MeV,
                                                      "neutron_data/o_data.txt",
                                                      0,
                                                      "8016.81c" );
@@ -158,13 +159,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
   createIArchive( archive_istream, iarchive );
 
   Data::ACENuclearDataProperties
-    local_properties( 0.1, 0.1, "dummy", 100000, "1000.00c" );
+    local_properties( 0.1, 0.1*Utility::Units::MeV, "dummy", 100000, "1000.00c" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
   FRENSIE_CHECK_EQUAL( local_properties.zaid(), Data::ZAID( 8016 ) );
   FRENSIE_CHECK_EQUAL( local_properties.atomicWeightRatio(), 16.0 );
   FRENSIE_CHECK_EQUAL( local_properties.evaluationTemperatureInMeV(),
-                       2.5301e-8 );
+                       2.5301e-8*Utility::Units::MeV );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(),
                        "neutron_data/o_data.txt" );
   FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 0 );
@@ -178,7 +179,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACENuclearDataProperties,
   FRENSIE_CHECK_EQUAL( shared_properties->zaid(), Data::ZAID( 1001 ) );
   FRENSIE_CHECK_EQUAL( shared_properties->atomicWeightRatio(), 1.0 );
   FRENSIE_CHECK_EQUAL( shared_properties->evaluationTemperatureInMeV(),
-                       2.5301e-8 );
+                       2.5301e-8*Utility::Units::MeV );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(),
                        "neutron_data/h_data.txt" );
   FRENSIE_CHECK_EQUAL( shared_properties->fileStartLine(), 10 );
@@ -194,7 +195,7 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   properties.reset( new Data::ACENuclearDataProperties( 1.0,
-                                                        2.5301e-8,
+                                                        2.5301e-8*Utility::Units::MeV,
                                                         "neutron_data/h_data.txt",
                                                         10,
                                                         "1001.70c" ) );

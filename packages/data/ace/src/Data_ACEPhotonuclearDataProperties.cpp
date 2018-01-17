@@ -33,7 +33,7 @@ ACEPhotonuclearDataProperties::ACEPhotonuclearDataProperties()
 
 // Constructor
 ACEPhotonuclearDataProperties::ACEPhotonuclearDataProperties(
-                                      const double atomic_weight,
+                                      const AtomicWeight atomic_weight,
                                       const boost::filesystem::path& file_path,
                                       const size_t file_start_line,
                                       const ACETableName& file_table_name )
@@ -43,7 +43,7 @@ ACEPhotonuclearDataProperties::ACEPhotonuclearDataProperties(
     d_file_table_name( file_table_name )
 {
   // Make sure that the atomic weight is valid
-  testPrecondition( atomic_weight > 0.0 );
+  testPrecondition( atomic_weight > 0.0*Utility::Units::amu );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
 
@@ -74,7 +74,7 @@ Data::ZAID ACEPhotonuclearDataProperties::zaid() const
 }
 
 // Get the atomic weight of the nuclide that the file specifies data for
-double ACEPhotonuclearDataProperties::atomicWeight() const 
+auto ACEPhotonuclearDataProperties::atomicWeight() const -> AtomicWeight
 {
   return d_atomic_weight;
 }

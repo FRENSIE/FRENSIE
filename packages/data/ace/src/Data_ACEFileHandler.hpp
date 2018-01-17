@@ -13,7 +13,12 @@
 #include <string>
 #include <memory>
 
+// Boost Includes
+#include <boost/filesystem/path.hpp>
+
 // FRENSIE Includes
+#include "Data_ZAID.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Array.hpp"
 #include "Utility_ArrayView.hpp"
@@ -43,8 +48,14 @@ class ACEFileHandler
 
 public:
 
+  //! The energy unit
+  typedef Utility::Units::MegaElectronVolt EnergyUnit;
+
+  //! The energy quantity
+  typedef boost::units::quantity<EnergyUnit> Energy;
+
   //! Constructor
-  ACEFileHandler( const std::string& file_name,
+  ACEFileHandler( const boost::filesystem::path& file_name_with_path,
 		  const std::string& table_name,
 		  const size_t table_start_line,
 		  const bool is_ascii = true );
@@ -53,7 +64,7 @@ public:
   ~ACEFileHandler();
 
   //! Get the library name
-  const std::string& getLibraryName() const;
+  const boost::filesystem::path& getLibraryName() const;
 
   //! Get the table name
   const std::string& getTableName() const;
@@ -62,7 +73,7 @@ public:
   double getTableAtomicWeightRatio() const;
 
   //! Get the table temperature
-  double getTableTemperature() const;
+  Energy getTableTemperature() const;
 
   //! Get the table processing date
   const std::string& getTableProcessingDate() const;
@@ -74,7 +85,7 @@ public:
   const std::string& getTableMatId() const;
 
   //! Get the table zaids
-  Utility::ArrayView<const int> getTableZAIDs() const;
+  Utility::ArrayView<const ZAID> getTableZAIDs() const;
 
   //! Get the table atomic weight ratios
   Utility::ArrayView<const double> getTableAtomicWeightRatios() const;
@@ -98,14 +109,11 @@ private:
   void readACETable( const std::string& table_name,
 		     const size_t table_start_line );
 
-  // Remove white space from string
-  void removeWhiteSpaceFromString( std::string& string ) const;
-
   // The ace file id used by the ace_helpers fortran module (always set to 1)
   int d_ace_file_id;
 
   // The name of the ace library that is currently open
-  std::string d_ace_library_name;
+  boost::filesystem::path d_ace_library_name;
 
   // The name of the ace table read from the ace library
   std::string d_ace_table_name;
@@ -123,13 +131,13 @@ private:
   double d_atomic_weight_ratio;
 
   // The ace table temperature (MeV)
-  double d_temperature;
+  Energy d_temperature;
 
   // The ace table zaids
-  std::array<int,16> d_zaids;
+  std::vector<ZAID> d_zaids;
 
   // The ace table atomic weight ratios
-  std::array<double,16> d_atomic_weight_ratios;
+  std::vector<double> d_atomic_weight_ratios;
 
   // The ace table NXS array
   std::array<int,16> d_nxs;

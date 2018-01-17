@@ -20,6 +20,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+using Utility::Units::amu;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -48,7 +50,7 @@ FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, zaid )
 // Check that the atomic weight can be returned
 FRENSIE_UNIT_TEST( ACEPhotonuclearDataProperties, atomicWeight )
 {
-  FRENSIE_CHECK_EQUAL( properties->atomicWeight(), 1.0 );
+  FRENSIE_CHECK_EQUAL( properties->atomicWeight(), 1.0*amu );
 }
 
 //---------------------------------------------------------------------------//
@@ -120,7 +122,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    Data::ACEPhotonuclearDataProperties local_properties( 4.0,
+    Data::ACEPhotonuclearDataProperties local_properties( 4.0*amu,
                                                           "photonuclear_data/he_data.txt",
                                                           2,
                                                           "2004.24u" );
@@ -141,10 +143,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
   createIArchive( archive_istream, iarchive );
 
   Data::ACEPhotonuclearDataProperties
-    local_properties( 0.1, "dummy", 100000, "1000.00u" );
+    local_properties( 0.1*amu, "dummy", 100000, "1000.00u" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
   FRENSIE_CHECK_EQUAL( local_properties.zaid(), Data::ZAID( 2004 ) );
+  FRENSIE_CHECK_EQUAL( local_properties.atomicWeight(), 4.0*amu );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(),
                        "photonuclear_data/he_data.txt" );
   FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 2 );
@@ -156,7 +159,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotonuclearDataProperties,
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
   FRENSIE_CHECK_EQUAL( shared_properties->zaid(), Data::ZAID( 1001 ) );
-  FRENSIE_CHECK_EQUAL( shared_properties->atomicWeight(), 1.0 );
+  FRENSIE_CHECK_EQUAL( shared_properties->atomicWeight(), 1.0*amu );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(),
                        "photonuclear_data/h_data.txt" );
   FRENSIE_CHECK_EQUAL( shared_properties->fileStartLine(), 10 );
@@ -171,7 +174,7 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  properties.reset( new Data::ACEPhotonuclearDataProperties( 1.0,
+  properties.reset( new Data::ACEPhotonuclearDataProperties( 1.0*amu,
                                                              "photonuclear_data/h_data.txt",
                                                              10,
                                                              "1001.70u" ) );

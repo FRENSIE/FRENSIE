@@ -33,12 +33,12 @@ ACENuclearDataProperties::ACENuclearDataProperties()
 // Default constructor
 ACENuclearDataProperties::ACENuclearDataProperties(
                                       const double atomic_weight_ratio,
-                                      const double evaluation_temp_in_mev,
+                                      const Energy evaluation_temp,
                                       const boost::filesystem::path& file_path,
                                       const size_t file_start_line,
                                       const ACETableName& file_table_name )
   : d_atomic_weight_ratio( atomic_weight_ratio ),
-    d_evaluation_temp( evaluation_temp_in_mev ),
+    d_evaluation_temp( evaluation_temp ),
     d_file_path( file_path ),
     d_file_start_line( file_start_line ),
     d_file_table_name( file_table_name )
@@ -46,7 +46,7 @@ ACENuclearDataProperties::ACENuclearDataProperties(
   // Make sure that the atomic weight ratio is valid
   testPrecondition( atomic_weight_ratio >= 0.0 );
   // Make sure that the evaulation temp is valid
-  testPrecondition( evaluation_temp_in_mev >= 0.0 );
+  testPrecondition( evaluation_temp >= 0.0*Utility::Units::MeV );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
 
@@ -84,7 +84,7 @@ double ACENuclearDataProperties::atomicWeightRatio() const
 }
 
 // Get the nuclear data evaluation temperature (MeV)
-double ACENuclearDataProperties::evaluationTemperatureInMeV() const
+auto ACENuclearDataProperties::evaluationTemperatureInMeV() const -> Energy
 {
   return d_evaluation_temp;
 }

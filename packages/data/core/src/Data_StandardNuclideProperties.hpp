@@ -293,17 +293,20 @@ inline const PropertiesType* StandardNuclideProperties::getDataProperties(
     else
     {
       // Check if we have the closest evaluation temp
-      typename std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >::const_iterator next_properties_it =
-        properties_it;
-      ++next_properties_it;
+      if( std::distance( properties_it, data.end() ) > 1 )
+      {
+        typename std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >::const_iterator next_properties_it =
+          properties_it;
+        ++next_properties_it;
 
-      Energy mid_temp =
-        (properties_it->first + next_properties_it->first)/2.0;
+        Energy mid_temp =
+          (properties_it->first + next_properties_it->first)/2.0;
 
-      if( evaluation_temp >= mid_temp )
-        ++properties_it;
+        if( evaluation_temp >= mid_temp )
+          ++properties_it;
+      }
 
-      FRENSIE_LOG_TAGGED_WARNING( "NuclideProperties",
+      FRENSIE_LOG_TAGGED_WARNING( "Nuclide Properties",
                                   "There are no " << properties_type <<
                                   " data properties evaluated at "
                                   << evaluation_temp << "! "
@@ -349,7 +352,7 @@ inline void StandardNuclideProperties::addDataProperties(
 
       if( properties_it->first == evaluation_temp )
       {
-        FRENSIE_LOG_TAGGED_WARNING( "NuclideProperties",
+        FRENSIE_LOG_TAGGED_WARNING( "Nuclide Properties",
                                     properties_type << " data properties "
                                     "evaluated at " << evaluation_temp << 
                                     "have already been added! The previous "

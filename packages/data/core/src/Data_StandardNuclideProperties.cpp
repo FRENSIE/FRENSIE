@@ -34,7 +34,7 @@ StandardNuclideProperties::StandardNuclideProperties(
                                              const std::string& name,
                                              const ZAID& zaid,
                                              const double atomic_weight_ratio )
-  : StandardAtomProperties( name, zaid, atomic_weight_ratio )
+  : StandardAtomProperties( name, zaid, AtomicWeight::from_value(atomic_weight_ratio) )
 { /* ... */ }
 
 // Copy constructor

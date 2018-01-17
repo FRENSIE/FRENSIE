@@ -24,7 +24,7 @@ public:
 
   //! Constructor
   ACENuclearDataProperties( const double atomic_weight_ratio,
-                            const double evaluation_temp_in_mev,
+                            const Energy evaluation_temp,
                             const boost::filesystem::path& file_path,
                             const size_t file_start_line,
                             const ACETableName& file_table_name );
@@ -40,7 +40,7 @@ public:
   double atomicWeightRatio() const override;
 
   //! Get the nuclear data evaluation temperature (MeV)
-  double evaluationTemperatureInMeV() const override;
+  Energy evaluationTemperatureInMeV() const override;
 
   //! Get the nuclear data file type
   FileType fileType() const override;
@@ -88,7 +88,7 @@ private:
   double d_atomic_weight_ratio;
 
   // The evaluation temperature (MeV)
-  double d_evaluation_temp;
+  Energy d_evaluation_temp;
 
   // The file path (relative to the data directory)
   boost::filesystem::path d_file_path;

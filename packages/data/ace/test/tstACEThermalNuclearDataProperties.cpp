@@ -20,6 +20,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+using Utility::Units::MeV;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -66,15 +68,16 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, hasDataForZAID )
 // Check that the evaluation temperature can be returned
 FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, evaluationTemperatureInMeV )
 {
-  FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(), 2.5301e-8 );
+  FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                       2.5301e-8*MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the evaluation temperature can be returned
-FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, evaluationTemperatureInKelvin )
+FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, evaluationTemperature )
 {
-  FRENSIE_CHECK_FLOATING_EQUALITY( properties->evaluationTemperatureInKelvin(),
-                                   293.6059397103837227,
+  FRENSIE_CHECK_FLOATING_EQUALITY( properties->evaluationTemperature(),
+                                   293.6059397103837227*boost::units::si::kelvin,
                                    1e-15 );
 }
 
@@ -87,7 +90,7 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileType )
 
   std::unique_ptr<const Data::ThermalNuclearDataProperties> local_properties(
                  new Data::ACEThermalNuclearDataProperties( {Data::ZAID(1001)},
-                                                            2.5301e-8,
+                                                            2.5301e-8*MeV,
                                                             "dummy.txt",
                                                             0,
                                                             "h2o.00t" ) );
@@ -97,7 +100,7 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileType )
 
   local_properties.reset(
                  new Data::ACEThermalNuclearDataProperties( {Data::ZAID(1001)},
-                                                            2.5301e-8,
+                                                            2.5301e-8*MeV,
                                                             "dummy.txt",
                                                             0,
                                                             "h2o.19t" ) );
@@ -107,7 +110,7 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileType )
 
   local_properties.reset(
                  new Data::ACEThermalNuclearDataProperties( {Data::ZAID(1001)},
-                                                            2.5301e-8,
+                                                            2.5301e-8*MeV,
                                                             "dummy.txt",
                                                             0,
                                                             "h2o.60t" ) );
@@ -118,7 +121,7 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileType )
 
   local_properties.reset(
                  new Data::ACEThermalNuclearDataProperties( {Data::ZAID(1001)},
-                                                            2.5301e-8,
+                                                            2.5301e-8*MeV,
                                                             "dummy.txt",
                                                             0,
                                                             "h2o.69t" ) );
@@ -129,7 +132,7 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileType )
 
   local_properties.reset(
                  new Data::ACEThermalNuclearDataProperties( {Data::ZAID(1001)},
-                                                            2.5301e-8,
+                                                            2.5301e-8*MeV,
                                                             "dummy.txt",
                                                             0,
                                                             "h2o.20t" ) );
@@ -140,7 +143,7 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileType )
 
   local_properties.reset(
                  new Data::ACEThermalNuclearDataProperties( {Data::ZAID(1001)},
-                                                            2.5301e-8,
+                                                            2.5301e-8*MeV,
                                                             "dummy.txt",
                                                             0,
                                                             "h2o.29t" ) );
@@ -212,7 +215,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEThermalNuclearDataProperties,
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
     Data::ACEThermalNuclearDataProperties local_properties( {Data::ZAID(1001)},
-                                                            2.5301e-8,
+                                                            2.5301e-8*MeV,
                                                             "h2o.txt",
                                                             5,
                                                             "h2o.22t" );
@@ -233,7 +236,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEThermalNuclearDataProperties,
   createIArchive( archive_istream, iarchive );
 
   Data::ACEThermalNuclearDataProperties local_properties( {Data::ZAID(6000)},
-                                                          0.1,
+                                                          0.1*MeV,
                                                           "dummy.txt",
                                                           0,
                                                           "dummy.00t" );
@@ -241,7 +244,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEThermalNuclearDataProperties,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
   FRENSIE_CHECK_EQUAL( local_properties.name(), "h2o" );
   FRENSIE_CHECK_EQUAL( local_properties.zaids(), std::set<Data::ZAID>( {Data::ZAID(1001)} ) );
-  FRENSIE_CHECK_EQUAL( local_properties.evaluationTemperatureInMeV(), 2.5301e-8 );
+  FRENSIE_CHECK_EQUAL( local_properties.evaluationTemperatureInMeV(),
+                       2.5301e-8*MeV );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(), "h2o.txt" );
   FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 5 );
   FRENSIE_CHECK_EQUAL( local_properties.fileVersion(), 22 );
@@ -252,7 +256,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEThermalNuclearDataProperties,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
   FRENSIE_CHECK_EQUAL( shared_properties->name(), "benz" );
   FRENSIE_CHECK_EQUAL( shared_properties->zaids(), std::set<Data::ZAID>( {Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)} ) );
-  FRENSIE_CHECK_EQUAL( shared_properties->evaluationTemperatureInMeV(), 2.5301e-8 );
+  FRENSIE_CHECK_EQUAL( shared_properties->evaluationTemperatureInMeV(),
+                       2.5301e-8*MeV );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(), "sab_data/benz.txt" );
   FRENSIE_CHECK_EQUAL( shared_properties->fileStartLine(), 10 );
   FRENSIE_CHECK_EQUAL( shared_properties->fileVersion(), 12 );
@@ -268,7 +273,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   properties.reset( new Data::ACEThermalNuclearDataProperties(
                         {Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)},
-                        2.5301e-8,
+                        2.5301e-8*MeV,
                         "sab_data/benz.txt",
                         10,
                         "benz.12t" ) );

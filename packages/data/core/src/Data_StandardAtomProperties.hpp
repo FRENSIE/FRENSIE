@@ -27,7 +27,7 @@ public:
   //! Constructor
   StandardAtomProperties( const std::string& name,
                           const ZAID& zaid,
-                          const double atomic_weight );
+                          const AtomicWeight atomic_weight );
                          
   //! Destructor
   ~StandardAtomProperties()
@@ -62,14 +62,14 @@ public:
 
   //! Get the nuclear data properties
   virtual const NuclearDataProperties* getNuclearDataProperties(
-                                        const Energy evaluation_temp_in_mev,
+                                        const Energy evaluation_temp,
                                         const bool find_exact ) const override;
 
   //! Check if there is any thermal nuclear data
   virtual bool thermalNuclearDataAvailable() const override;
 
   //! Check if there is thermal nuclear data available at the evaluation temp
-  virtual bool thermalNuclearDataAvailable( const Energy evaluation_temp_in_mev ) const override;
+  virtual bool thermalNuclearDataAvailable( const Energy evaluation_temp ) const override;
 
   //! Check if the thermal nuclear data is evaluated at discrete temps
   virtual bool thermalNuclearDataEvaluatedAtDiscreteTemps() const override;
@@ -208,7 +208,7 @@ private:
   Data::ZAID d_zaid;
   
   // The atomic weight
-  double d_atomic_weight;
+  AtomicWeight d_atomic_weight;
 
   // The photoatomic data properties
   std::shared_ptr<const PhotoatomicDataProperties>

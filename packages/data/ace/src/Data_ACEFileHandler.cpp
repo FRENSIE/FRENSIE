@@ -9,6 +9,10 @@
 // Std Lib Includes
 #include <stdexcept>
 
+// Boost Includes
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
+
 // FRENSIE Includes
 #include "Data_ACEFileHandler.hpp"
 #include "Data_ACEHelperWrappers.hpp"
@@ -18,26 +22,34 @@
 namespace Data{
 
 // Constructor
-ACEFileHandler::ACEFileHandler( const std::string& file_name,
+ACEFileHandler::ACEFileHandler( const boost::filesystem::path& file_name_with_path,
 				const std::string& table_name,
 				const size_t table_start_line,
 				const bool is_ascii )
   : d_ace_file_id( 1 ),
-    d_ace_library_name( file_name ),
+    d_ace_library_name( file_name_with_path ),
     d_ace_table_name( 10, ' ' ),
     d_ace_table_processing_date( 10, ' ' ),
     d_ace_table_comment( 70, ' ' ),
     d_ace_table_material_id( 10, ' ' ),
     d_atomic_weight_ratio( 0.0 ),
-    d_temperature( 0.0 ),
+    d_temperature( 0.0*Utility::Units::MeV ),
     d_zaids(),
     d_atomic_weight_ratios(),
     d_nxs(),
     d_jxs(),
     d_xss( new std::vector<double> )
 {
-  openACEFile( file_name, is_ascii );
-  readACETable( table_name, table_start_line );
+  // Convert to the preferred path format
+  d_ace_library_name.make_preferred();
+  
+  TEST_FOR_EXCEPTION( !boost::filesystem::exists( d_ace_library_name ),
+                      std::runtime_error,
+                      "ACE file " << d_ace_library_name.string() <<
+                      " does not exist!" );
+  
+  this->openACEFile( d_ace_library_name.string(), is_ascii );
+  this->readACETable( table_name, table_start_line );
 }
 
 // Destructor
@@ -54,15 +66,15 @@ void ACEFileHandler::openACEFile( const std::string& file_name,
   // Binary files cannot currently be handled
   TEST_FOR_EXCEPTION( !is_ascii,
 		      std::runtime_error,
-		      "Binary ACE files cannot currently be read ("+
-                      file_name + ")." );
+		      "Binary ACE files cannot currently be read ("
+                      << file_name << ")." );
 
   // Check that the file exists
   bool ace_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(),
 						       file_name.size() );
   TEST_FOR_EXCEPTION( !ace_file_exists,
 		      std::runtime_error,
-		      "ACE file " + file_name + " does not exists." );
+		      "ACE file " << file_name << " does not exists." );
 
   // Check that the file can be opened
   bool ace_file_is_readable =
@@ -94,12 +106,12 @@ void ACEFileHandler::readACETable( const std::string& table_name,
   readAceTableHeaderLine1( d_ace_file_id,
 			   &d_ace_table_name[0],
 			   &d_atomic_weight_ratio,
-			   &d_temperature,
+			   Utility::reinterpretAsRaw(&d_temperature),
 			   &d_ace_table_processing_date[0] );
 
   // Clear white space from the ace table name and processing date
-  this->removeWhiteSpaceFromString( d_ace_table_name );
-  this->removeWhiteSpaceFromString( d_ace_table_processing_date );
+  boost::algorithm::trim( d_ace_table_name );
+  boost::algorithm::trim( d_ace_table_processing_date );
 
   // Test that the table name is the same as the desired table name
   TEST_FOR_EXCEPTION( table_name != d_ace_table_name,
@@ -114,10 +126,25 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 			   &d_ace_table_comment[0],
 			   &d_ace_table_material_id[0] );
 
+  boost::algorithm::trim( d_ace_table_comment );
+  boost::algorithm::trim( d_ace_table_material_id );
+
   // Read the zaids and awrs
+  std::array<int,16> raw_zaids;
+  std::array<double,16> raw_atomic_weight_ratios;
+  
   readAceTableZaidsAndAwrs( d_ace_file_id,
-			    d_zaids.data(),
-			    d_atomic_weight_ratios.data() );
+			    raw_zaids.data(),
+			    raw_atomic_weight_ratios.data() );
+
+  for( size_t i = 0; i < 16; ++i )
+  {
+    if( raw_zaids[i] != 0 )
+    {
+      d_zaids.push_back( raw_zaids[i] );
+      d_atomic_weight_ratios.push_back( raw_atomic_weight_ratios[i] );
+    }
+  }
 
   // Read the nxs array
   readAceTableNXSArray( d_ace_file_id, d_nxs.data() );
@@ -135,21 +162,8 @@ void ACEFileHandler::readACETable( const std::string& table_name,
   closeFileUsingFortran( d_ace_file_id );
 }
 
-// Remove white space from table name
-void ACEFileHandler::removeWhiteSpaceFromString( std::string& string ) const
-{
-  unsigned white_space_loc = string.find( " " );
-
-  while( white_space_loc < string.size() )
-  {
-    string.erase( white_space_loc, 1 );
-
-    white_space_loc = string.find( " ", white_space_loc );
-  }
-}
-
 // Get the library name
-const std::string& ACEFileHandler::getLibraryName() const
+const boost::filesystem::path& ACEFileHandler::getLibraryName() const
 {
   return d_ace_library_name;
 }
@@ -167,7 +181,7 @@ double ACEFileHandler::getTableAtomicWeightRatio() const
 }
 
 // Get the table temperature
-double ACEFileHandler::getTableTemperature() const
+auto ACEFileHandler::getTableTemperature() const -> Energy
 {
   return d_temperature;
 }
@@ -191,7 +205,7 @@ const std::string& ACEFileHandler::getTableMatId() const
 }
 
 // Get the table zaids
-Utility::ArrayView<const int> ACEFileHandler::getTableZAIDs() const
+Utility::ArrayView<const ZAID> ACEFileHandler::getTableZAIDs() const
 {
   return Utility::arrayViewOfConst(d_zaids);
 }

@@ -22,6 +22,10 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+using Utility::Units::MeV;
+using Utility::Units::amu;
+using boost::units::si::kelvin;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -69,14 +73,16 @@ FRENSIE_UNIT_TEST( StandardAtomProperties, zaid )
 // Check that the atomic weight can be returned
 FRENSIE_UNIT_TEST( StandardAtomProperties, atomicWeight )
 {
-  FRENSIE_CHECK_EQUAL( atom_properties->atomicWeight(), 1.0 );
+  FRENSIE_CHECK_EQUAL( atom_properties->atomicWeight(), 1.0*amu );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atomic weight ratio can be returned
 FRENSIE_UNIT_TEST( StandardAtomProperties, atomicWeightRatio )
 {
-  FRENSIE_CHECK_FLOATING_EQUALITY( atom_properties->atomicWeightRatio(), 0.9914095197851978680, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom_properties->atomicWeightRatio(),
+                                   0.9914095197851978680,
+                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -84,13 +90,42 @@ FRENSIE_UNIT_TEST( StandardAtomProperties, atomicWeightRatio )
 FRENSIE_UNIT_TEST( StandardAtomProperties, nuclearDataAvailable )
 {
   FRENSIE_CHECK( !atom_properties->nuclearDataAvailable() );
+  FRENSIE_CHECK( !atom_properties->nuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !atom_properties->nuclearDataAvailable( 1e6*MeV ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the nuclear data has been evaluated at discrete temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, nuclearDataEvaluatedAtDiscreteTemps )
+{
+  FRENSIE_CHECK( !atom_properties->nuclearDataEvaluatedAtDiscreteTemps() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getNuclearDataEvaluationTempsInMeV )
+{
+  FRENSIE_CHECK( atom_properties->getNuclearDataEvaluationTempsInMeV().empty() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getNuclearDataEvaluationTemps )
+{
+  FRENSIE_CHECK( atom_properties->getNuclearDataEvaluationTemps().empty() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the nuclear data properties can be returned
 FRENSIE_UNIT_TEST( StandardAtomProperties, getNuclearDataProperties )
 {
-  FRENSIE_CHECK( atom_properties->getNuclearDataProperties() == NULL );
+  FRENSIE_CHECK( atom_properties->getNuclearDataProperties( 0.0*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getNuclearDataProperties( 0.0*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getNuclearDataProperties( 0.0*MeV ) == NULL );
+
+  FRENSIE_CHECK( atom_properties->getNuclearDataProperties( 1e6*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getNuclearDataProperties( 1e6*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getNuclearDataProperties( 1e6*MeV ) == NULL );
 }
 
 //---------------------------------------------------------------------------//
@@ -98,41 +133,130 @@ FRENSIE_UNIT_TEST( StandardAtomProperties, getNuclearDataProperties )
 FRENSIE_UNIT_TEST( StandardAtomProperties, thermalNuclearDataAvailable )
 {
   FRENSIE_CHECK( !atom_properties->thermalNuclearDataAvailable() );
+  FRENSIE_CHECK( !atom_properties->thermalNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !atom_properties->thermalNuclearDataAvailable( 1e6*MeV ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the thermal nuclear data has been evaluated at discrete temps
+FRENSIE_UNIT_TEST( StandardAtomProperties,
+                   thermalNuclearDataEvaluatedAtDiscreteTemps )
+{
+  FRENSIE_CHECK( !atom_properties->thermalNuclearDataEvaluatedAtDiscreteTemps() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the thermal nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getThermalNuclearDataEvaluationTempsInMeV )
+{
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataEvaluationTempsInMeV().empty() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the thermal nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getThermalNuclearDataEvaluationTemps )
+{
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataEvaluationTemps().empty() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the thermal nuclear data properties can be returned
 FRENSIE_UNIT_TEST( StandardAtomProperties, getThermalNuclearDataProperties )
 {
-  FRENSIE_CHECK( atom_properties->getThermalNuclearDataProperties() == NULL );
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataProperties( 0.0*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataProperties( 0.0*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataProperties( 0.0*MeV ) == NULL );
+
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataProperties( 1e6*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataProperties( 1e6*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getThermalNuclearDataProperties( 1e6*MeV ) == NULL );
 }
 
 //---------------------------------------------------------------------------//
 // Check if there is any adjoint nuclear data available
 FRENSIE_UNIT_TEST( StandardAtomProperties, adjointNuclearDataAvailable )
 {
-  FRENSIE_CHECK( !atom_properties->adjointNuclearDataAvailable() )
+  FRENSIE_CHECK( !atom_properties->adjointNuclearDataAvailable() );
+  FRENSIE_CHECK( !atom_properties->adjointNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !atom_properties->adjointNuclearDataAvailable( 1e6*MeV ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the adjoint nuclear data has been evaluated at discrete temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, adjointNuclearDataEvaluatedAtDiscreteTemps )
+{
+  FRENSIE_CHECK( !atom_properties->adjointNuclearDataEvaluatedAtDiscreteTemps() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the adjoint nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getAdjointNuclearDataEvaluationTempsInMeV )
+{
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataEvaluationTempsInMeV().empty() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the adjoint nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getAdjointNuclearDataEvaluationTemps )
+{
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataEvaluationTemps().empty() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the adjoint nuclear data properties can be returned
 FRENSIE_UNIT_TEST( StandardAtomProperties, getAdjointNuclearDataProperties )
 {
-  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataProperties() == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataProperties( 0.0*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataProperties( 0.0*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataProperties( 0.0*MeV ) == NULL );
+
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataProperties( 1e6*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataProperties( 1e6*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointNuclearDataProperties( 1e6*MeV ) == NULL );
 }
 
 //---------------------------------------------------------------------------//
 // Check if there is any thermal adjoint nuclear data available
 FRENSIE_UNIT_TEST( StandardAtomProperties, adjointThermalNuclearDataAvailable )
 {
-  FRENSIE_CHECK( !atom_properties->adjointThermalNuclearDataAvailable() )
+  FRENSIE_CHECK( !atom_properties->adjointThermalNuclearDataAvailable() );
+  FRENSIE_CHECK( !atom_properties->adjointThermalNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !atom_properties->adjointThermalNuclearDataAvailable( 1e6*MeV ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the adjoint thermal nuclear data has been evaluated at discrete
+// temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, adjointThermalNuclearDataEvaluatedAtDiscreteTemps )
+{
+  FRENSIE_CHECK( !atom_properties->adjointThermalNuclearDataEvaluatedAtDiscreteTemps() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the adjoint thermal nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getAdjointThermalNuclearDataEvaluationTempsInMeV )
+{
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataEvaluationTempsInMeV().empty() );
+}
+
+//---------------------------------------------------------------------------//
+// Get the adjoint thermal nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardAtomProperties, getAdjointThermalNuclearDataEvaluationTemps )
+{
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataEvaluationTemps().empty() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the adjoint thermal nuclear data properties can be returned
 FRENSIE_UNIT_TEST( StandardAtomProperties, getAdjointThermalNuclearDataProperties )
 {
-  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataProperties() == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataProperties( 0.0*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataProperties( 0.0*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataProperties( 0.0*MeV ) == NULL );
+
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataProperties( 1e6*MeV, true ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataProperties( 1e6*MeV, false ) == NULL );
+  FRENSIE_CHECK( atom_properties->getAdjointThermalNuclearDataProperties( 1e6*MeV ) == NULL );
 }
 
 //---------------------------------------------------------------------------//
@@ -312,17 +436,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAtomProperties,
 
   FRENSIE_REQUIRE( local_atom_properties.get() != NULL );
   FRENSIE_CHECK( !local_atom_properties->nuclearDataAvailable() );
-  FRENSIE_CHECK( local_atom_properties->getNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !local_atom_properties->thermalNuclearDataAvailable() );
-  FRENSIE_CHECK( local_atom_properties->getThermalNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !local_atom_properties->adjointNuclearDataAvailable() );
-  FRENSIE_CHECK( local_atom_properties->getAdjointNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !local_atom_properties->adjointThermalNuclearDataAvailable() );
-  FRENSIE_CHECK( local_atom_properties->getAdjointThermalNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !local_atom_properties->photonuclearDataAvailable() );
-  FRENSIE_CHECK( local_atom_properties->getPhotonuclearDataProperties() == NULL );
   FRENSIE_CHECK( !local_atom_properties->adjointPhotonuclearDataAvailable() );
-  FRENSIE_CHECK( local_atom_properties->getAdjointPhotonuclearDataProperties() == NULL );
   FRENSIE_CHECK( local_atom_properties->photoatomicDataAvailable() );
   FRENSIE_REQUIRE( local_atom_properties->getPhotoatomicDataProperties() != NULL );
   FRENSIE_CHECK_EQUAL( local_atom_properties->getPhotoatomicDataProperties()->atom(), Data::H_ATOM );
@@ -350,17 +468,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardAtomProperties,
 
   FRENSIE_REQUIRE( shared_atom_properties.get() != NULL );
   FRENSIE_CHECK( !shared_atom_properties->nuclearDataAvailable() );
-  FRENSIE_CHECK( shared_atom_properties->getNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !shared_atom_properties->thermalNuclearDataAvailable() );
-  FRENSIE_CHECK( shared_atom_properties->getThermalNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !shared_atom_properties->adjointNuclearDataAvailable() );
-  FRENSIE_CHECK( shared_atom_properties->getAdjointNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !shared_atom_properties->adjointThermalNuclearDataAvailable() );
-  FRENSIE_CHECK( shared_atom_properties->getAdjointThermalNuclearDataProperties() == NULL );
   FRENSIE_CHECK( !shared_atom_properties->photonuclearDataAvailable() );
-  FRENSIE_CHECK( shared_atom_properties->getPhotonuclearDataProperties() == NULL );
   FRENSIE_CHECK( !shared_atom_properties->adjointPhotonuclearDataAvailable() );
-  FRENSIE_CHECK( shared_atom_properties->getAdjointPhotonuclearDataProperties() == NULL );
   FRENSIE_CHECK( shared_atom_properties->photoatomicDataAvailable() );
   FRENSIE_REQUIRE( shared_atom_properties->getPhotoatomicDataProperties() != NULL );
   FRENSIE_CHECK_EQUAL( shared_atom_properties->getPhotoatomicDataProperties()->atom(), Data::H_ATOM );
@@ -393,7 +505,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   std::shared_ptr<Data::StandardAtomProperties> local_atom_properties(
                            new Data::StandardAtomProperties( "H",
                                                               Data::ZAID(1000),
-                                                              1.0 ) );
+                                                              1.0*amu ) );
   // Set the photoatomic data properties
   {
     std::shared_ptr<const Data::PhotoatomicDataProperties> photoatomic_properties(
