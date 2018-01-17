@@ -554,64 +554,118 @@ FRENSIE_UNIT_TEST( StandardNuclideProperties, getThermalNuclearDataProperties )
 FRENSIE_UNIT_TEST( StandardNuclideProperties, adjointNuclearDataAvailable )
 {
   FRENSIE_CHECK( !basic_nuclide_properties->adjointNuclearDataAvailable() );
+  FRENSIE_CHECK( !basic_nuclide_properties->adjointNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !basic_nuclide_properties->adjointNuclearDataAvailable( 1e6*MeV ) );
+  
   FRENSIE_CHECK( !nuclide_properties_with_photonuc_data->adjointNuclearDataAvailable() );
+  FRENSIE_CHECK( !nuclide_properties_with_photonuc_data->adjointNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !nuclide_properties_with_photonuc_data->adjointNuclearDataAvailable( 1e6*MeV ) );
+  
   FRENSIE_CHECK( !nuclide_properties_with_thermal_data->adjointNuclearDataAvailable() );
+  FRENSIE_CHECK( !nuclide_properties_with_thermal_data->adjointNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !nuclide_properties_with_thermal_data->adjointNuclearDataAvailable( 1e6*MeV ) );
+  
   FRENSIE_CHECK( !complete_nuclide_properties->adjointNuclearDataAvailable() );
+  FRENSIE_CHECK( !complete_nuclide_properties->adjointNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !complete_nuclide_properties->adjointNuclearDataAvailable( 1e6*MeV ) );
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that the adjoint nuclear data properties can be returned
-// FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointNuclearDataProperties )
-// {
-//   const Data::AdjointNuclearDataProperties* properties =
-//     basic_nuclide_properties->getAdjointNuclearDataProperties();
+//---------------------------------------------------------------------------//
+// Check if the adjoint anuclear data has been evaluated at discrete temps
+FRENSIE_UNIT_TEST( StandardNuclideProperties, adjointNuclearDataEvaluatedAtDiscreteTemps )
+{
+  FRENSIE_CHECK( basic_nuclide_properties->adjointNuclearDataEvaluatedAtDiscreteTemps() );
+  FRENSIE_CHECK( nuclide_properties_with_photonuc_data->adjointNuclearDataEvaluatedAtDiscreteTemps() );
+  FRENSIE_CHECK( nuclide_properties_with_thermal_data->adjointNuclearDataEvaluatedAtDiscreteTemps() );
+  FRENSIE_CHECK( complete_nuclide_properties->adjointNuclearDataEvaluatedAtDiscreteTemps() );
+}
 
-//   FRENSIE_CHECK( properties == NULL );
+//---------------------------------------------------------------------------//
+// Get the adjoint nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointNuclearDataEvaluationTempsInMeV )
+{
+  FRENSIE_CHECK( basic_nuclide_properties->getAdjointNuclearDataEvaluationTempsInMeV().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_photonuc_data->getAdjointNuclearDataEvaluationTempsInMeV().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_thermal_data->getAdjointNuclearDataEvaluationTempsInMeV().empty() );
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointNuclearDataEvaluationTempsInMeV().empty() );
+}
 
-//   properties = nuclide_properties_with_photonuc_data->getAdjointNuclearDataProperties();
+//---------------------------------------------------------------------------//
+// Get the adjoint nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointNuclearDataEvaluationTemps )
+{
+  FRENSIE_CHECK( basic_nuclide_properties->getAdjointNuclearDataEvaluationTemps().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_photonuc_data->getAdjointNuclearDataEvaluationTemps().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_thermal_data->getAdjointNuclearDataEvaluationTemps().empty() );
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointNuclearDataEvaluationTemps().empty() );
+}
 
-//   FRENSIE_CHECK( properties == NULL );
-
-//   properties = nuclide_properties_with_thermal_data->getAdjointNuclearDataProperties();
-
-//   FRENSIE_CHECK( properties == NULL );
-
-//   properties = complete_nuclide_properties->getAdjointNuclearDataProperties();
-
-//   FRENSIE_CHECK( properties == NULL );
-// }
+//---------------------------------------------------------------------------//
+// Check that the nuclear data properties can be returned
+FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointNuclearDataProperties )
+{
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointNuclearDataProperties( 0.0*MeV, true ) == NULL );
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointNuclearDataProperties( 1e6*MeV, true ) == NULL );
+}
 
 //---------------------------------------------------------------------------//
 // Check if there is any adjoint thermal nuclear data available
 FRENSIE_UNIT_TEST( StandardNuclideProperties, adjointThermalNuclearDataAvailable )
 {
   FRENSIE_CHECK( !basic_nuclide_properties->adjointThermalNuclearDataAvailable() );
+  FRENSIE_CHECK( !basic_nuclide_properties->adjointThermalNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !basic_nuclide_properties->adjointThermalNuclearDataAvailable( 1e6*MeV ) );
+  
   FRENSIE_CHECK( !nuclide_properties_with_photonuc_data->adjointThermalNuclearDataAvailable() );
+  FRENSIE_CHECK( !nuclide_properties_with_photonuc_data->adjointThermalNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !nuclide_properties_with_photonuc_data->adjointThermalNuclearDataAvailable( 1e6*MeV ) );
+  
   FRENSIE_CHECK( !nuclide_properties_with_thermal_data->adjointThermalNuclearDataAvailable() );
+  FRENSIE_CHECK( !nuclide_properties_with_thermal_data->adjointThermalNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !nuclide_properties_with_thermal_data->adjointThermalNuclearDataAvailable( 1e6*MeV ) );
+  
   FRENSIE_CHECK( !complete_nuclide_properties->adjointThermalNuclearDataAvailable() );
+  FRENSIE_CHECK( !complete_nuclide_properties->adjointThermalNuclearDataAvailable( 0.0*MeV ) );
+  FRENSIE_CHECK( !complete_nuclide_properties->adjointThermalNuclearDataAvailable( 1e6*MeV ) );
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that the adjoint nuclear data properties can be returned
-// FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointThermalNuclearDataProperties )
-// {
-//   const Data::AdjointThermalNuclearDataProperties* properties =
-//     basic_nuclide_properties->getAdjointThermalNuclearDataProperties();
+//---------------------------------------------------------------------------//
+// Check if the adjoint anuclear data has been evaluated at discrete temps
+FRENSIE_UNIT_TEST( StandardNuclideProperties, adjointThermalNuclearDataEvaluatedAtDiscreteTemps )
+{
+  FRENSIE_CHECK( basic_nuclide_properties->adjointThermalNuclearDataEvaluatedAtDiscreteTemps() );
+  FRENSIE_CHECK( nuclide_properties_with_photonuc_data->adjointThermalNuclearDataEvaluatedAtDiscreteTemps() );
+  FRENSIE_CHECK( nuclide_properties_with_thermal_data->adjointThermalNuclearDataEvaluatedAtDiscreteTemps() );
+  FRENSIE_CHECK( complete_nuclide_properties->adjointThermalNuclearDataEvaluatedAtDiscreteTemps() );
+}
 
-//   FRENSIE_CHECK( properties == NULL );
+//---------------------------------------------------------------------------//
+// Get the adjoint nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointThermalNuclearDataEvaluationTempsInMeV )
+{
+  FRENSIE_CHECK( basic_nuclide_properties->getAdjointThermalNuclearDataEvaluationTempsInMeV().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_photonuc_data->getAdjointThermalNuclearDataEvaluationTempsInMeV().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_thermal_data->getAdjointThermalNuclearDataEvaluationTempsInMeV().empty() );
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointThermalNuclearDataEvaluationTempsInMeV().empty() );
+}
 
-//   properties = nuclide_properties_with_photonuc_data->getAdjointThermalNuclearDataProperties();
+//---------------------------------------------------------------------------//
+// Get the adjoint nuclear data evaluation temps
+FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointThermalNuclearDataEvaluationTemps )
+{
+  FRENSIE_CHECK( basic_nuclide_properties->getAdjointThermalNuclearDataEvaluationTemps().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_photonuc_data->getAdjointThermalNuclearDataEvaluationTemps().empty() );
+  FRENSIE_CHECK( nuclide_properties_with_thermal_data->getAdjointThermalNuclearDataEvaluationTemps().empty() );
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointThermalNuclearDataEvaluationTemps().empty() );
+}
 
-//   FRENSIE_CHECK( properties == NULL );
-
-//   properties = nuclide_properties_with_thermal_data->getAdjointThermalNuclearDataProperties();
-
-//   FRENSIE_CHECK( properties == NULL );
-
-//   properties = complete_nuclide_properties->getAdjointThermalNuclearDataProperties();
-
-//   FRENSIE_CHECK( properties == NULL );
-// }
+//---------------------------------------------------------------------------//
+// Check that the nuclear data properties can be returned
+FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointThermalNuclearDataProperties )
+{
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointThermalNuclearDataProperties( 0.0*MeV, true ) == NULL );
+  FRENSIE_CHECK( complete_nuclide_properties->getAdjointThermalNuclearDataProperties( 1e6*MeV, true ) == NULL );
+}
 
 //---------------------------------------------------------------------------//
 // Check if there is any photonuclear data available
@@ -875,299 +929,401 @@ FRENSIE_UNIT_TEST( StandardNuclideProperties, getAdjointElectroatomicDataPropert
   FRENSIE_CHECK( properties == NULL );
 }
 
-// //---------------------------------------------------------------------------//
-// // Check that the nuclide properties can be cloned
-// FRENSIE_UNIT_TEST( StandardNuclideProperties, clone )
-// {
-//   std::unique_ptr<const Data::ScatteringCenterProperties>
-//     nuclide_properties_clone( basic_nuclide_properties->clone() );
+//---------------------------------------------------------------------------//
+// Check that the nuclide properties can be cloned
+FRENSIE_UNIT_TEST( StandardNuclideProperties, clone )
+{
+  std::unique_ptr<const Data::ScatteringCenterProperties>
+    nuclide_properties_clone( basic_nuclide_properties->clone() );
 
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != basic_nuclide_properties.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() ==
-//                  basic_nuclide_properties->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() ==
-//                  basic_nuclide_properties->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() ==
-//                  basic_nuclide_properties->getElectroatomicDataProperties() );
+  FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
+  FRENSIE_CHECK( nuclide_properties_clone.get() != basic_nuclide_properties.get() );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.5301e-8*MeV ) ==
+                 basic_nuclide_properties->getNuclearDataProperties( 2.5301e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 7.7556e-8*MeV ) ==
+                 basic_nuclide_properties->getNuclearDataProperties( 7.7556e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.1543e-7*MeV ) ==
+                 basic_nuclide_properties->getNuclearDataProperties( 2.1543e-7*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() ==
+                 basic_nuclide_properties->getPhotoatomicDataProperties() );
+  FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() ==
+                 basic_nuclide_properties->getElectroatomicDataProperties() );
 
-//   nuclide_properties_clone.reset( nuclide_properties_with_photonuc_data->clone() );
+  nuclide_properties_clone.reset( complete_nuclide_properties->clone() );
 
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != nuclide_properties_with_photonuc_data.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() ==
-//                  nuclide_properties_with_photonuc_data->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotonuclearDataProperties() ==
-//                  nuclide_properties_with_photonuc_data->getPhotonuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() ==
-//                  nuclide_properties_with_photonuc_data->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() ==
-//                  nuclide_properties_with_photonuc_data->getElectroatomicDataProperties() );
+  FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
+  FRENSIE_CHECK( nuclide_properties_clone.get() != complete_nuclide_properties.get() );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.5301e-8*MeV ) ==
+                 basic_nuclide_properties->getNuclearDataProperties( 2.5301e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 7.7556e-8*MeV ) ==
+                 basic_nuclide_properties->getNuclearDataProperties( 7.7556e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.1543e-7*MeV ) ==
+                 basic_nuclide_properties->getNuclearDataProperties( 2.1543e-7*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties( 2.5301e-8*MeV ) ==
+                 complete_nuclide_properties->getThermalNuclearDataProperties( 2.5301e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties( 6.8939e-8*MeV ) ==
+                 complete_nuclide_properties->getThermalNuclearDataProperties( 6.8939e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties( 8.6174e-8*MeV ) ==
+                 complete_nuclide_properties->getThermalNuclearDataProperties( 8.6174e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getPhotonuclearDataProperties() ==
+                 complete_nuclide_properties->getPhotonuclearDataProperties() );
+  FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() ==
+                 complete_nuclide_properties->getPhotoatomicDataProperties() );
+  FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() ==
+                 complete_nuclide_properties->getElectroatomicDataProperties() );
+}
 
-//   nuclide_properties_clone.reset( nuclide_properties_with_thermal_data->clone() );
+//---------------------------------------------------------------------------//
+// Check that the nuclide properties can be cloned
+FRENSIE_UNIT_TEST( StandardNuclideProperties, deepClone )
+{
+  std::unique_ptr<const Data::ScatteringCenterProperties>
+    nuclide_properties_clone( basic_nuclide_properties->deepClone() );
 
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != nuclide_properties_with_thermal_data.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() ==
-//                  nuclide_properties_with_thermal_data->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties() ==
-//                  nuclide_properties_with_thermal_data->getThermalNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() ==
-//                  nuclide_properties_with_thermal_data->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() ==
-//                  nuclide_properties_with_thermal_data->getElectroatomicDataProperties() );
+  FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
+  FRENSIE_CHECK( nuclide_properties_clone.get() != basic_nuclide_properties.get() );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.5301e-8*MeV ) !=
+                 basic_nuclide_properties->getNuclearDataProperties( 2.5301e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 7.7556e-8*MeV ) !=
+                 basic_nuclide_properties->getNuclearDataProperties( 7.7556e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.1543e-7*MeV ) !=
+                 basic_nuclide_properties->getNuclearDataProperties( 2.1543e-7*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() !=
+                 basic_nuclide_properties->getPhotoatomicDataProperties() );
+  FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() !=
+                 basic_nuclide_properties->getElectroatomicDataProperties() );
 
-//   nuclide_properties_clone.reset( complete_nuclide_properties->clone() );
-
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != complete_nuclide_properties.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() ==
-//                  complete_nuclide_properties->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties() ==
-//                  complete_nuclide_properties->getThermalNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotonuclearDataProperties() ==
-//                  complete_nuclide_properties->getPhotonuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() ==
-//                  complete_nuclide_properties->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() ==
-//                  complete_nuclide_properties->getElectroatomicDataProperties() );
-// }
-
-// //---------------------------------------------------------------------------//
-// // Check that the nuclide properties can be cloned
-// FRENSIE_UNIT_TEST( StandardNuclideProperties, deepClone )
-// {
-//   std::unique_ptr<const Data::ScatteringCenterProperties>
-//     nuclide_properties_clone( basic_nuclide_properties->deepClone() );
-
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != basic_nuclide_properties.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() !=
-//                  basic_nuclide_properties->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() !=
-//                  basic_nuclide_properties->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() !=
-//                  basic_nuclide_properties->getElectroatomicDataProperties() );
-
-//   nuclide_properties_clone.reset( nuclide_properties_with_photonuc_data->deepClone() );
-
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != nuclide_properties_with_photonuc_data.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() !=
-//                  nuclide_properties_with_photonuc_data->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotonuclearDataProperties() !=
-//                  nuclide_properties_with_photonuc_data->getPhotonuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() !=
-//                  nuclide_properties_with_photonuc_data->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() !=
-//                  nuclide_properties_with_photonuc_data->getElectroatomicDataProperties() );
-
-//   nuclide_properties_clone.reset( nuclide_properties_with_thermal_data->deepClone() );
-
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != nuclide_properties_with_thermal_data.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() !=
-//                  nuclide_properties_with_thermal_data->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties() !=
-//                  nuclide_properties_with_thermal_data->getThermalNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() !=
-//                  nuclide_properties_with_thermal_data->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() !=
-//                  nuclide_properties_with_thermal_data->getElectroatomicDataProperties() );
-
-//   nuclide_properties_clone.reset( complete_nuclide_properties->deepClone() );
-
-//   FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
-//   FRENSIE_CHECK( nuclide_properties_clone.get() != complete_nuclide_properties.get() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties() !=
-//                  complete_nuclide_properties->getNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties() !=
-//                  complete_nuclide_properties->getThermalNuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotonuclearDataProperties() !=
-//                  complete_nuclide_properties->getPhotonuclearDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() !=
-//                  complete_nuclide_properties->getPhotoatomicDataProperties() );
-//   FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() !=
-//                  complete_nuclide_properties->getElectroatomicDataProperties() );
-// }
-
-// //---------------------------------------------------------------------------//
-// // Check that the properties can be archived
-// FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardNuclideProperties,
-//                                    archive,
-//                                    TestArchives )
-// {
-//   FETCH_TEMPLATE_PARAM( 0, RawOArchive );
-//   FETCH_TEMPLATE_PARAM( 1, RawIArchive );
-
-//   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
-//   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-
-//   std::string archive_base_name( "test_ace_standard_atom_properties" );
-//   std::ostringstream archive_ostream;
-
-//   // Create and archive some properties
-//   {
-//     std::unique_ptr<OArchive> oarchive;
-
-//     createOArchive( archive_base_name, archive_ostream, oarchive );
-
-//     std::unique_ptr<const Data::StandardNuclideProperties> local_nuclide_properties(
-//                                                                                      dynamic_cast<Data::StandardNuclideProperties*>(complete_nuclide_properties->deepClone()));
-
-//     std::shared_ptr<const Data::ScatteringCenterProperties>
-//       shared_nuclide_properties( complete_nuclide_properties->deepClone() );
-
-//     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( local_nuclide_properties ) );
-//     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( shared_nuclide_properties ) );
-//   }
-
-//   // Copy the archive ostream to an istream
-//   std::istringstream archive_istream( archive_ostream.str() );
-
-//   // Load the archived distributions
-//   std::unique_ptr<IArchive> iarchive;
-
-//   createIArchive( archive_istream, iarchive );
-
-//   std::unique_ptr<const Data::StandardNuclideProperties> local_nuclide_properties;
-
-//   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_nuclide_properties ) );
-
-//   FRENSIE_REQUIRE( local_nuclide_properties.get() != NULL );
   
-//   FRENSIE_CHECK( local_nuclide_properties->nuclearDataAvailable() );
-//   FRENSIE_REQUIRE( local_nuclide_properties->getNuclearDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getNuclearDataProperties()->zaid(), Data::ZAID( 1001 ) );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getNuclearDataProperties()->atomicWeightRatio(), 1.0 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getNuclearDataProperties()->evaluationTemperatureInMeV(),
-//                        2.5301e-8 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getNuclearDataProperties()->filePath().string(),
-//                        "neutron_data/h_data.txt" );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getNuclearDataProperties()->fileStartLine(), 10 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getNuclearDataProperties()->fileVersion(), 70 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getNuclearDataProperties()->tableName(), "1001.70c" );
-  
-//   FRENSIE_CHECK( local_nuclide_properties->thermalNuclearDataAvailable() );
-//   FRENSIE_REQUIRE( local_nuclide_properties->getThermalNuclearDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getThermalNuclearDataProperties()->name(), "benz" );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getThermalNuclearDataProperties()->zaids(), std::set<Data::ZAID>( {Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)} ) );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getThermalNuclearDataProperties()->evaluationTemperatureInMeV(), 2.5301e-8 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getThermalNuclearDataProperties()->filePath().string(), "sab_data/benz.txt" );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getThermalNuclearDataProperties()->fileStartLine(), 10 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getThermalNuclearDataProperties()->fileVersion(), 12 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getThermalNuclearDataProperties()->tableName(), "benz.12t" );
-  
-//   FRENSIE_CHECK( !local_nuclide_properties->adjointNuclearDataAvailable() );
-//   FRENSIE_CHECK( local_nuclide_properties->getAdjointNuclearDataProperties() == NULL );
-//   FRENSIE_CHECK( !local_nuclide_properties->adjointThermalNuclearDataAvailable() );
-//   FRENSIE_CHECK( local_nuclide_properties->getAdjointThermalNuclearDataProperties() == NULL );
-//   FRENSIE_CHECK( local_nuclide_properties->photonuclearDataAvailable() );
-//   FRENSIE_REQUIRE( local_nuclide_properties->getPhotonuclearDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->zaid(), Data::ZAID( 1001 ) );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->atomicWeight(), 1.0 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->filePath().string(),
-//                        "photonuclear_data/h_data.txt" );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->fileStartLine(), 2 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->fileVersion(), 70 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->tableName(), "1001.70u" );
-  
-//   FRENSIE_CHECK( !local_nuclide_properties->adjointPhotonuclearDataAvailable() );
-//   FRENSIE_CHECK( local_nuclide_properties->getAdjointPhotonuclearDataProperties() == NULL );
-  
-//   FRENSIE_CHECK( local_nuclide_properties->photoatomicDataAvailable() );
-//   FRENSIE_REQUIRE( local_nuclide_properties->getPhotoatomicDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->atom(), Data::H_ATOM );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->atomicNumber(), 1 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->fileStartLine(), 5 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->fileVersion(), 12 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->tableName(), "1000.12p" );
-  
-//   FRENSIE_CHECK( !local_nuclide_properties->adjointPhotoatomicDataAvailable() );
-//   FRENSIE_CHECK( local_nuclide_properties->getAdjointPhotoatomicDataProperties() == NULL );
-  
-//   FRENSIE_CHECK( local_nuclide_properties->electroatomicDataAvailable() );
-//   FRENSIE_REQUIRE( local_nuclide_properties->getElectroatomicDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->atom(), Data::H_ATOM );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->atomicNumber(), 1 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->fileStartLine(), 5 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->fileVersion(), 12 );
-//   FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->tableName(), "1000.12p" );
-  
-//   FRENSIE_CHECK( !local_nuclide_properties->adjointElectroatomicDataAvailable() );
-//   FRENSIE_CHECK( local_nuclide_properties->getAdjointElectroatomicDataProperties() == NULL );
 
-//   std::shared_ptr<const Data::ScatteringCenterProperties> shared_nuclide_properties;
+  nuclide_properties_clone.reset( complete_nuclide_properties->deepClone() );
 
-//   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_nuclide_properties ) );
+  FRENSIE_REQUIRE( nuclide_properties_clone.get() != NULL );
+  FRENSIE_CHECK( nuclide_properties_clone.get() != complete_nuclide_properties.get() );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.5301e-8*MeV ) !=
+                 basic_nuclide_properties->getNuclearDataProperties( 2.5301e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 7.7556e-8*MeV ) !=
+                 basic_nuclide_properties->getNuclearDataProperties( 7.7556e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getNuclearDataProperties( 2.1543e-7*MeV ) !=
+                 basic_nuclide_properties->getNuclearDataProperties( 2.1543e-7*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties( 2.5301e-8*MeV ) !=
+                 complete_nuclide_properties->getThermalNuclearDataProperties( 2.5301e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties( 6.8939e-8*MeV ) !=
+                 complete_nuclide_properties->getThermalNuclearDataProperties( 6.8939e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getThermalNuclearDataProperties( 8.6174e-8*MeV ) !=
+                 complete_nuclide_properties->getThermalNuclearDataProperties( 8.6174e-8*MeV ) );
+  FRENSIE_CHECK( nuclide_properties_clone->getPhotonuclearDataProperties() !=
+                 complete_nuclide_properties->getPhotonuclearDataProperties() );
+  FRENSIE_CHECK( nuclide_properties_clone->getPhotoatomicDataProperties() !=
+                 complete_nuclide_properties->getPhotoatomicDataProperties() );
+  FRENSIE_CHECK( nuclide_properties_clone->getElectroatomicDataProperties() !=
+                 complete_nuclide_properties->getElectroatomicDataProperties() );
+}
 
-//   FRENSIE_REQUIRE( shared_nuclide_properties.get() != NULL );
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( StandardNuclideProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
-//   FRENSIE_CHECK( shared_nuclide_properties->nuclearDataAvailable() );
-//   FRENSIE_REQUIRE( shared_nuclide_properties->getNuclearDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getNuclearDataProperties()->zaid(), Data::ZAID( 1001 ) );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getNuclearDataProperties()->atomicWeightRatio(), 1.0 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getNuclearDataProperties()->evaluationTemperatureInMeV(),
-//                        2.5301e-8 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getNuclearDataProperties()->filePath().string(),
-//                        "neutron_data/h_data.txt" );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getNuclearDataProperties()->fileStartLine(), 10 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getNuclearDataProperties()->fileVersion(), 70 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getNuclearDataProperties()->tableName(), "1001.70c" );
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_ace_standard_atom_properties" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some properties
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::unique_ptr<const Data::StandardNuclideProperties> local_nuclide_properties(
+                                                                                     dynamic_cast<Data::StandardNuclideProperties*>(complete_nuclide_properties->deepClone()));
+
+    std::shared_ptr<const Data::ScatteringCenterProperties>
+      shared_nuclide_properties( complete_nuclide_properties->deepClone() );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( local_nuclide_properties ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( shared_nuclide_properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<const Data::StandardNuclideProperties> local_nuclide_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_nuclide_properties ) );
+
+  FRENSIE_REQUIRE( local_nuclide_properties.get() != NULL );
   
-//   FRENSIE_CHECK( shared_nuclide_properties->thermalNuclearDataAvailable() );
-//   FRENSIE_REQUIRE( shared_nuclide_properties->getThermalNuclearDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getThermalNuclearDataProperties()->name(), "benz" );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getThermalNuclearDataProperties()->zaids(), std::set<Data::ZAID>( {Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)} ) );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getThermalNuclearDataProperties()->evaluationTemperatureInMeV(), 2.5301e-8 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getThermalNuclearDataProperties()->filePath().string(), "sab_data/benz.txt" );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getThermalNuclearDataProperties()->fileStartLine(), 10 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getThermalNuclearDataProperties()->fileVersion(), 12 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getThermalNuclearDataProperties()->tableName(), "benz.12t" );
+  FRENSIE_REQUIRE( local_nuclide_properties->nuclearDataAvailable() );
+
+  {
+    const Data::NuclearDataProperties* properties =
+      local_nuclide_properties->getNuclearDataProperties( 2.5301e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->zaid(), Data::ZAID( 1001 ) );
+    FRENSIE_CHECK_EQUAL( properties->atomicWeightRatio(), 1.0 );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         2.5301e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "neutron_data/h_data.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 10 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 70 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.70c" );
+
+    properties = local_nuclide_properties->getNuclearDataProperties( 7.7556e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->zaid(), Data::ZAID( 1001 ) );
+    FRENSIE_CHECK_EQUAL( properties->atomicWeightRatio(), 1.0 );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         7.7556e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "neutron_data/h_data.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 1000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 72 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.72c" );
+
+    properties = local_nuclide_properties->getNuclearDataProperties( 2.1543e-7*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->zaid(), Data::ZAID( 1001 ) );
+    FRENSIE_CHECK_EQUAL( properties->atomicWeightRatio(), 1.0 );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         2.1543e-7*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "neutron_data/h_data.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 100000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 74 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.74c" );
+  }
   
-//   FRENSIE_CHECK( !shared_nuclide_properties->adjointNuclearDataAvailable() );
-//   FRENSIE_CHECK( shared_nuclide_properties->getAdjointNuclearDataProperties() == NULL );
-//   FRENSIE_CHECK( !shared_nuclide_properties->adjointThermalNuclearDataAvailable() );
-//   FRENSIE_CHECK( shared_nuclide_properties->getAdjointThermalNuclearDataProperties() == NULL );
-//   FRENSIE_CHECK( shared_nuclide_properties->photonuclearDataAvailable() );
-//   FRENSIE_REQUIRE( shared_nuclide_properties->getPhotonuclearDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->zaid(), Data::ZAID( 1001 ) );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->atomicWeight(), 1.0 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->filePath().string(),
-//                        "photonuclear_data/h_data.txt" );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->fileStartLine(), 2 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->fileVersion(), 70 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->tableName(), "1001.70u" );
+  FRENSIE_REQUIRE( local_nuclide_properties->thermalNuclearDataAvailable() );
+
+  {
+    const Data::ThermalNuclearDataProperties* properties =
+      local_nuclide_properties->getThermalNuclearDataProperties( 2.5301e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->name(), "benz" );
+    FRENSIE_CHECK_EQUAL( properties->zaids(), std::set<Data::ZAID>({Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)}), SHOW_LHS );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         2.5301e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "sab_data/benz.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 10 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 10 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "benz.10t" );
+
+    properties = local_nuclide_properties->getThermalNuclearDataProperties( 6.8939e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->name(), "benz" );
+    FRENSIE_CHECK_EQUAL( properties->zaids(), std::set<Data::ZAID>({Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)}), SHOW_LHS );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         6.8939e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "sab_data/benz.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 1000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 16 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "benz.16t" );
+
+    properties = local_nuclide_properties->getThermalNuclearDataProperties( 8.6174e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->name(), "benz" );
+    FRENSIE_CHECK_EQUAL( properties->zaids(), std::set<Data::ZAID>({Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)}), SHOW_LHS );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         8.6174e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "sab_data/benz.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 100000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 17 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "benz.17t" );
+  }
   
-//   FRENSIE_CHECK( !shared_nuclide_properties->adjointPhotonuclearDataAvailable() );
-//   FRENSIE_CHECK( shared_nuclide_properties->getAdjointPhotonuclearDataProperties() == NULL );
+  FRENSIE_CHECK( !local_nuclide_properties->adjointNuclearDataAvailable() );
+  FRENSIE_CHECK( !local_nuclide_properties->adjointThermalNuclearDataAvailable() );
+  FRENSIE_CHECK( local_nuclide_properties->photonuclearDataAvailable() );
+  FRENSIE_REQUIRE( local_nuclide_properties->getPhotonuclearDataProperties() != NULL );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->zaid(), Data::ZAID( 1001 ) );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->atomicWeight(), 1.0*amu );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->filePath().string(),
+                       "photonuclear_data/h_data.txt" );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->fileStartLine(), 2 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->fileVersion(), 70 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotonuclearDataProperties()->tableName(), "1001.70u" );
   
-//   FRENSIE_CHECK( shared_nuclide_properties->photoatomicDataAvailable() );
-//   FRENSIE_REQUIRE( shared_nuclide_properties->getPhotoatomicDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->atom(), Data::H_ATOM );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->atomicNumber(), 1 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->fileStartLine(), 5 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->fileVersion(), 12 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->tableName(), "1000.12p" );
+  FRENSIE_CHECK( !local_nuclide_properties->adjointPhotonuclearDataAvailable() );
+  FRENSIE_CHECK( local_nuclide_properties->getAdjointPhotonuclearDataProperties() == NULL );
   
-//   FRENSIE_CHECK( !shared_nuclide_properties->adjointPhotoatomicDataAvailable() );
-//   FRENSIE_CHECK( shared_nuclide_properties->getAdjointPhotoatomicDataProperties() == NULL );
+  FRENSIE_CHECK( local_nuclide_properties->photoatomicDataAvailable() );
+  FRENSIE_REQUIRE( local_nuclide_properties->getPhotoatomicDataProperties() != NULL );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->fileStartLine(), 5 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->fileVersion(), 12 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getPhotoatomicDataProperties()->tableName(), "1000.12p" );
   
-//   FRENSIE_CHECK( shared_nuclide_properties->electroatomicDataAvailable() );
-//   FRENSIE_REQUIRE( shared_nuclide_properties->getElectroatomicDataProperties() != NULL );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->atom(), Data::H_ATOM );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->atomicNumber(), 1 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->fileStartLine(), 5 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->fileVersion(), 12 );
-//   FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->tableName(), "1000.12p" );
+  FRENSIE_CHECK( !local_nuclide_properties->adjointPhotoatomicDataAvailable() );
+  FRENSIE_CHECK( local_nuclide_properties->getAdjointPhotoatomicDataProperties() == NULL );
   
-//   FRENSIE_CHECK( !shared_nuclide_properties->adjointElectroatomicDataAvailable() );
-//   FRENSIE_CHECK( shared_nuclide_properties->getAdjointElectroatomicDataProperties() == NULL );
-// }
+  FRENSIE_CHECK( local_nuclide_properties->electroatomicDataAvailable() );
+  FRENSIE_REQUIRE( local_nuclide_properties->getElectroatomicDataProperties() != NULL );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->fileStartLine(), 5 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->fileVersion(), 12 );
+  FRENSIE_CHECK_EQUAL( local_nuclide_properties->getElectroatomicDataProperties()->tableName(), "1000.12p" );
+  
+  FRENSIE_CHECK( !local_nuclide_properties->adjointElectroatomicDataAvailable() );
+  FRENSIE_CHECK( local_nuclide_properties->getAdjointElectroatomicDataProperties() == NULL );
+
+  std::shared_ptr<const Data::ScatteringCenterProperties> shared_nuclide_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_nuclide_properties ) );
+
+  FRENSIE_REQUIRE( shared_nuclide_properties.get() != NULL );
+
+  FRENSIE_REQUIRE( shared_nuclide_properties->nuclearDataAvailable() );
+
+  {
+    const Data::NuclearDataProperties* properties =
+      shared_nuclide_properties->getNuclearDataProperties( 2.5301e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->zaid(), Data::ZAID( 1001 ) );
+    FRENSIE_CHECK_EQUAL( properties->atomicWeightRatio(), 1.0 );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         2.5301e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "neutron_data/h_data.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 10 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 70 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.70c" );
+
+    properties = shared_nuclide_properties->getNuclearDataProperties( 7.7556e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->zaid(), Data::ZAID( 1001 ) );
+    FRENSIE_CHECK_EQUAL( properties->atomicWeightRatio(), 1.0 );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         7.7556e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "neutron_data/h_data.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 1000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 72 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.72c" );
+
+    properties = shared_nuclide_properties->getNuclearDataProperties( 2.1543e-7*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->zaid(), Data::ZAID( 1001 ) );
+    FRENSIE_CHECK_EQUAL( properties->atomicWeightRatio(), 1.0 );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         2.1543e-7*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "neutron_data/h_data.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 100000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 74 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "1001.74c" );
+  }
+  
+  FRENSIE_REQUIRE( shared_nuclide_properties->thermalNuclearDataAvailable() );
+
+  {
+    const Data::ThermalNuclearDataProperties* properties =
+      shared_nuclide_properties->getThermalNuclearDataProperties( 2.5301e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->name(), "benz" );
+    FRENSIE_CHECK_EQUAL( properties->zaids(), std::set<Data::ZAID>({Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)}), SHOW_LHS );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         2.5301e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "sab_data/benz.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 10 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 10 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "benz.10t" );
+
+    properties = shared_nuclide_properties->getThermalNuclearDataProperties( 6.8939e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->name(), "benz" );
+    FRENSIE_CHECK_EQUAL( properties->zaids(), std::set<Data::ZAID>({Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)}), SHOW_LHS );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         6.8939e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "sab_data/benz.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 1000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 16 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "benz.16t" );
+
+    properties = shared_nuclide_properties->getThermalNuclearDataProperties( 8.6174e-8*MeV, true );
+
+    FRENSIE_REQUIRE( properties != NULL );
+    FRENSIE_CHECK_EQUAL( properties->name(), "benz" );
+    FRENSIE_CHECK_EQUAL( properties->zaids(), std::set<Data::ZAID>({Data::ZAID(1001), Data::ZAID(6000), Data::ZAID(6012)}), SHOW_LHS );
+    FRENSIE_CHECK_EQUAL( properties->evaluationTemperatureInMeV(),
+                         8.6174e-8*MeV );
+    FRENSIE_CHECK_EQUAL( properties->filePath().string(),
+                         "sab_data/benz.txt" );
+    FRENSIE_CHECK_EQUAL( properties->fileStartLine(), 100000 );
+    FRENSIE_CHECK_EQUAL( properties->fileVersion(), 17 );
+    FRENSIE_CHECK_EQUAL( properties->tableName(), "benz.17t" );
+  }
+  
+  FRENSIE_CHECK( !shared_nuclide_properties->adjointNuclearDataAvailable() );
+  FRENSIE_CHECK( !shared_nuclide_properties->adjointThermalNuclearDataAvailable() );
+  FRENSIE_CHECK( shared_nuclide_properties->photonuclearDataAvailable() );
+  FRENSIE_REQUIRE( shared_nuclide_properties->getPhotonuclearDataProperties() != NULL );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->zaid(), Data::ZAID( 1001 ) );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->atomicWeight(), 1.0*amu );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->filePath().string(),
+                       "photonuclear_data/h_data.txt" );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->fileStartLine(), 2 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->fileVersion(), 70 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotonuclearDataProperties()->tableName(), "1001.70u" );
+  
+  FRENSIE_CHECK( !shared_nuclide_properties->adjointPhotonuclearDataAvailable() );
+  FRENSIE_CHECK( shared_nuclide_properties->getAdjointPhotonuclearDataProperties() == NULL );
+  
+  FRENSIE_CHECK( shared_nuclide_properties->photoatomicDataAvailable() );
+  FRENSIE_REQUIRE( shared_nuclide_properties->getPhotoatomicDataProperties() != NULL );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->fileStartLine(), 5 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->fileVersion(), 12 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getPhotoatomicDataProperties()->tableName(), "1000.12p" );
+  
+  FRENSIE_CHECK( !shared_nuclide_properties->adjointPhotoatomicDataAvailable() );
+  FRENSIE_CHECK( shared_nuclide_properties->getAdjointPhotoatomicDataProperties() == NULL );
+  
+  FRENSIE_CHECK( shared_nuclide_properties->electroatomicDataAvailable() );
+  FRENSIE_REQUIRE( shared_nuclide_properties->getElectroatomicDataProperties() != NULL );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->filePath().string(), "atom_data/h.txt" );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->fileStartLine(), 5 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->fileVersion(), 12 );
+  FRENSIE_CHECK_EQUAL( shared_nuclide_properties->getElectroatomicDataProperties()->tableName(), "1000.12p" );
+  
+  FRENSIE_CHECK( !shared_nuclide_properties->adjointElectroatomicDataAvailable() );
+  FRENSIE_CHECK( shared_nuclide_properties->getAdjointElectroatomicDataProperties() == NULL );
+}
 
 //---------------------------------------------------------------------------//
 // Custom setup

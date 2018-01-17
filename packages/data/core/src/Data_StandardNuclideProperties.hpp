@@ -263,6 +263,9 @@ inline const PropertiesType* StandardNuclideProperties::getDataProperties(
   const Energy evaluation_temp,
   const bool find_exact )
 {
+  if( data.empty() )
+    return NULL;
+  
   typename std::vector<std::pair<Energy,std::shared_ptr<const PropertiesType> > >::const_iterator properties_it;
   
   if( evaluation_temp < data.front().first )
