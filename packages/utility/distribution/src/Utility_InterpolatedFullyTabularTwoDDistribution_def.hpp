@@ -114,7 +114,7 @@ UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePol
 
   // Construct the 2D distribution
   DistributionType distribution( primary_indep_grid.size() );
-  
+
   for( size_t i = 0; i < primary_indep_grid.size(); ++i )
   {
     distribution[i].first = primary_indep_grid[i];
@@ -354,7 +354,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
   // Make sure the secondary limit is valid
   testPrecondition( max_secondary_indep_var_value >
                     this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
-  
+
   // Generate a random number
   double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -383,7 +383,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
   // Make sure the secondary limit is valid
   testPrecondition( max_secondary_indep_var_value >
                     this->getLowerBoundOfConditionalIndepVar( primary_indep_var_value ) );
-  
+
   // Generate a random number
   double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -531,7 +531,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 {
   // Dummy variable
   SecondaryIndepQuantity dummy_raw_sample;
-  
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseOneDDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(

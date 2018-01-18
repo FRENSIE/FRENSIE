@@ -97,17 +97,17 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, getTotalCrossSection )
 {
   double cross_section = electroatom->getTotalCrossSection( 1e-5 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.3037203891519097e+01 + 6.1243057898416743e+07,
+                          3.9800795006423726e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = electroatom->getTotalCrossSection( 1e-3 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          4.3377231534698861e+00 + 1.0551636170350602e+07,
+                          1.4246702389204639e+01 + 1.0551636170350602e+07,
                           1e-12 );
 
   cross_section = electroatom->getTotalCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.5197338425584794e-01 + 8.1829299836129925e+04,
+                          2.4971444066404619e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 
@@ -178,13 +178,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
   reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 1.3037203891519097e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 4.3377231534698861e+00, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4246702389204639e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 1.5197338425584794e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
 
 
   // Cutoff Elastic
@@ -203,17 +203,17 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.3037203891519097e+01 + 6.1243057898416743e+07,
+                          3.9800795006423726e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
   TEST_FLOATING_EQUALITY( cross_section,
-                          4.3377231534698861e+00 + 1.0551636170350602e+07,
+                          1.4246702389204639e+01 + 1.0551636170350602e+07,
                           1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.5197338425584794e-01 + 8.1829299836129925e+04,
+                          2.4971444066404619e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 

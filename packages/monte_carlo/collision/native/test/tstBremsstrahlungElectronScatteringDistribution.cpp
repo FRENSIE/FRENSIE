@@ -69,13 +69,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate_ace )
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution, evaluate_native )
 {
   double pdf = native_brem_dist->evaluate( 0.02, 1.0e-7 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.4075092621554539e+05, 1e-12 );
 
   pdf = native_brem_dist->evaluate( 9.0e-4, 9.0e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0746668573912197e+02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.6884672502034462e+01, 1e-12 );
 
   pdf = native_brem_dist->evaluate( 1.0e5, 2.0e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.50132e-06, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -99,13 +99,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
                    evaluatePDF_native )
 {
   double pdf = native_brem_dist->evaluatePDF( 0.02, 1.0e-7 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.819250066065521386e5, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 8.4075092855101428e+05, 1e-12 );
 
   pdf = native_brem_dist->evaluatePDF( 9.0e-4, 9.0e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 2.0746668573912197e+02, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 6.6884671036581750e+01, 1e-12 );
 
   pdf = native_brem_dist->evaluatePDF( 1.0e5, 2.0e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.36394013118046E-06, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( pdf, 1.5013204641704462e-06, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -136,7 +136,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 
   cdf = native_brem_dist->evaluateCDF( 1.0e5, 2.0e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.575978856479E-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.5771054298946046e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

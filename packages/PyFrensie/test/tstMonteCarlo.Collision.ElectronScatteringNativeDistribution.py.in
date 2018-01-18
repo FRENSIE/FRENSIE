@@ -712,14 +712,14 @@ class BremsstrahlungElectronScatteringDistributionTestCase_2bs(unittest.TestCase
                                 delta=tol*3.676417705505041940e-03 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.dist.evaluate(energy, 1e-5),
-                                2.4218684679953572e+03,
-                                delta=tol*2.4218684679953572e+03 )
+                                1.0164712811196823e+04,
+                                delta=tol*1.0164712811196823e+04 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 1e-4),
-                                1.5943946542883540e+02,
-                                delta=tol*1.5943946542883540e+02 )
+                                8.6304438819788481e+02,
+                                delta=tol*8.6304438819788481e+02 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 5e-4),
-                                2.0523074744567108e+01,
-                                delta=tol*2.0523074744567108e+01 )
+                                1.0932347868504206e+02,
+                                delta=tol*1.0932347868504206e+02 )
 
     def testEvaluatePDF(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungDistribution 2bs evaluatePDF method"
@@ -736,14 +736,14 @@ class BremsstrahlungElectronScatteringDistributionTestCase_2bs(unittest.TestCase
                                 delta=tol*3.676417942093345576e-03 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1e-5),
-                                2.4218682551970219e+03,
-                                delta=tol*2.4218682551970219e+03 )
+                                1.0164710320094227e+04,
+                                delta=tol*1.0164710320094227e+04 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1e-4),
-                                1.5943945039401956e+02,
-                                delta=tol*1.5943945039401956e+02 )
+                                8.6304409355468340e+02,
+                                delta=tol*8.6304409355468340e+02 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 5e-4),
-                                2.0523072129248799e+01,
-                                delta=tol*2.0523072129248799e+01 )
+                                1.0932343144386046e+02,
+                                delta=tol*1.0932343144386046e+02 )
 
     def testEvaluateCDF(self):
         "*Test MonteCarlo.Collision.createBremsstrahlungDistribution 2bs evaluateCDF method"
@@ -832,14 +832,14 @@ class ElectroionizationSubshellElectronScatteringDistributionTestCase(unittest.T
                                 delta=tol*3.1294889712290391e-08 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.dist.evaluate(energy, 1e-5),
-                                5.5809305226783199e+03,
-                                delta=tol*5.5809305226783199e+03 )
+                                2.8079054778729369e+04,
+                                delta=tol*2.8079054778729369e+04 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 1e-4),
-                                7.5823027799985269e+01,
-                                delta=tol*7.5823027799985269e+01 )
+                                4.5385015931778946e+02,
+                                delta=tol*4.5385015931778946e+02 )
         self.assertAlmostEqual( self.dist.evaluate(energy, 5e-4),
-                                1.5867926988896468,
-                                delta=tol*1.5867926988896468 )
+                                5.9887685617289996,
+                                delta=tol*5.9887685617289996 )
 
     def testEvaluatePDF(self):
         "*Test MonteCarlo.Collision.createElectroionizationSubshellDistribution evaluatePDF method"
@@ -856,14 +856,14 @@ class ElectroionizationSubshellElectronScatteringDistributionTestCase(unittest.T
                                 delta=tol*3.1294887394743582e-08 )
         energy = 1.0e-3
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1e-5),
-                                5.5809283443034992e+03,
-                                delta=tol*5.5809283443034992e+03 )
+                                2.8079043600453795e+04,
+                                delta=tol*2.8079043600453795e+04 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 1e-4),
-                                7.5822988757902849e+01,
-                                delta=tol*7.5822988757902849e+01 )
+                                4.5384991221665223e+02,
+                                delta=tol*4.5384991221665223e+02 )
         self.assertAlmostEqual( self.dist.evaluatePDF(energy, 5e-4),
-                                1.5867918163126586e+00,
-                                delta=tol*1.5867918163126586e+00 )
+                                5.9887651993510120,
+                                delta=tol*5.9887651993510120 )
 
     def testEvaluateCDF(self):
         "*Test MonteCarlo.Collision.createElectroionizationSubshellDistribution evaluateCDF method"
@@ -969,7 +969,7 @@ if __name__ == "__main__":
 
     # Exit
     sys.exit(errs_plus_fails)
-    
+
 #-----------------------------------------------------------------------------#
 # end tstMonteCarlo.Collision.ElectronScatteringNativeDistribution.py
 #-----------------------------------------------------------------------------#

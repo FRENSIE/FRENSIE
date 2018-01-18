@@ -314,7 +314,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the adjoint triplet production energy dist. nomr const
+// Check that the adjoint triplet production energy dist. norm const
 // nudge value can be set
 TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                    setAdjointTripletProductionEnergyDistNormConstNudgeValue )
@@ -437,7 +437,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   generator_h.reset(
     new TestStandardAdjointElectronPhotonRelaxationDataGenerator(
       h_epr_data_container, 0.001, 20.0, 1.0e-5, 20.0 ) );
-    
+
   generator_h->setDefaultGridConvergenceTolerance( 1e-3 );
   generator_h->setDefaultGridAbsoluteDifferenceTolerance( 1e-42 );
   generator_h->setDefaultGridDistanceTolerance( 1e-15 );
@@ -717,7 +717,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_FLOATING_EQUALITY( h_data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid().back().back(),
                           20.2,
                           1e-15 );
-  
+
   TEST_EQUALITY_CONST( h_data_container.getAdjointWallerHartreeIncoherentCrossSection().size(),
                        856 );
   TEST_EQUALITY_CONST( h_data_container.getAdjointWallerHartreeIncoherentCrossSection().front().size(),
@@ -1174,8 +1174,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   cross_section =
     h_data_container.getAdjointBremsstrahlungElectronCrossSection();
 
-  TEST_EQUALITY_CONST( cross_section.front(), 1.68381493133753359e+01 );
-  TEST_EQUALITY_CONST( cross_section.back(), 1.85626767810998572e-01 );
+  TEST_EQUALITY_CONST( cross_section.front(), 4.42736548286178930e+01 );
+  TEST_EQUALITY_CONST( cross_section.back(), 2.89178093381140533e-01 );
   TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
   TEST_ASSERT( !h_data_container.seperateAdjointBremsstrahlungEnergyGrid() );
@@ -1187,7 +1187,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           1e-5 + 1e-7 + 1e-9,
                           1e-15 );
   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.back(), 20.2 );
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 30 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 38 );
 
   electron_bremsstrahlung_energy =
     h_data_container.getAdjointElectronBremsstrahlungEnergy( 20.0 );
@@ -1196,21 +1196,21 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           20.0 + 1e-7 + 1e-9,
                           1e-15 );
   TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.back(), 20.2 );
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 22 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_energy.size(), 21 );
 
   std::vector<double> electron_bremsstrahlung_pdf =
     h_data_container.getAdjointElectronBremsstrahlungPDF( 1e-5 );
 
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 3.73597396363465907e+06 );
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 8.64501715660823705e-09 );
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 30 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 1.42794534619340929e+06 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 2.14479935631602688e-10 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 38 );
 
   electron_bremsstrahlung_pdf =
     h_data_container.getAdjointElectronBremsstrahlungPDF( 20.0 );
 
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 3.00718459963490162e+06 );
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 9.73532472891726480e-02 );
-  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 22 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.front(), 1.93992587724727904e+06 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.back(), 2.78119830725271277e-03 );
+  TEST_EQUALITY_CONST( electron_bremsstrahlung_pdf.size(), 21 );
 
   // Check the electroionization data
   threshold =
@@ -1221,8 +1221,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
    cross_section =
      h_data_container.getAdjointElectroionizationCrossSection( 1u );
 
-  TEST_EQUALITY_CONST( cross_section.front(), 9.78289119411823463e+09 );
-  TEST_EQUALITY_CONST( cross_section.back(), 1.94110790547214274e+04 );
+  TEST_EQUALITY_CONST( cross_section.front(), 4.59979189086422043e+10 );
+  TEST_EQUALITY_CONST( cross_section.back(), 6.20356430451277847e+04 );
   TEST_EQUALITY_CONST( cross_section.size(), 24-threshold );
 
   TEST_ASSERT( !h_data_container.seperateAdjointElectroionizationEnergyGrid() );
@@ -1235,7 +1235,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           1e-5 + 1.361e-5 + 1e-7 + 1e-9,
                           1e-12 );
   TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 20.0 + 2.0*1.36100e-5 );
-  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 26 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 25 );
 
   electroionization_recoil_energy =
     h_data_container.getAdjointElectroionizationRecoilEnergy( 1u, 20.0 );
@@ -1244,21 +1244,21 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
                           20.0 + 1.361e-5 + 1e-7 + 1e-9,
                           1e-15 );
   TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 20.0 + 2.0*1.36100e-5 );
-  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 5 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 3 );
 
   std::vector<double> electroionization_recoil_pdf =
     h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 1e-5 );
 
-  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.12684011467594428e+03 );
-  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.68117119153178204e-02 );
-  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 26 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 2.88337599301526836e+02 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.67633484079768083e-02 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 25 );
 
   electroionization_recoil_pdf =
     h_data_container.getAdjointElectroionizationRecoilPDF( 1u, 20.0 );
 
-  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 6.87011166919077863e+05 );
-  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 1.43873205966668556e+04 );
-  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 5 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 2.16041335995336442e+05 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 2.25102948499896193e+04 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 3 );
 
   h_data_container.exportData( "test_h_aepr.xml",
                                Utility::ArchivableObject::XML_ARCHIVE );

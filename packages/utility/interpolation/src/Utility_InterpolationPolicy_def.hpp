@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_InterpolationPolicy_def.hpp
 //! \author Alex Robinson
-//! \brief  Intrepolation policy struct definitions
+//! \brief  Interpolation policy struct definitions
 //!
 //---------------------------------------------------------------------------//
 
@@ -35,13 +35,13 @@ T InterpolationHelper<ParentInterpolationType>::interpolate(
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
@@ -63,18 +63,18 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
-  return processed_dep_var_0 + 
+
+  return processed_dep_var_0 +
     processed_slope*(processed_indep_var - processed_indep_var_0);
 }
 
@@ -171,7 +171,7 @@ InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
 }
 
 // Calculate the unit base independent variable (eta)
-/*! \details It has been found that a tolerance of 1e-3 works best for most 
+/*! \details It has been found that a tolerance of 1e-3 works best for most
  * applications.
  */
 template<typename ParentInterpolationType>
@@ -194,7 +194,7 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar
   // Make sure the intermediate grid length is valid
   testPrecondition( !QuantityTraits<T>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length > 0.0 );
-  
+
   T eta = (processed_indep_var - processed_indep_var_min)/indep_grid_length;
 
   // Check for rounding errors and correct
@@ -208,7 +208,7 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar
     if( eta > -tol )
       eta = 0.0;
   }
-  
+
   // Make sure eta is valid
   testPostcondition( eta >= 0.0 );
   testPostcondition( eta <= 1.0 );
@@ -217,8 +217,8 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar
 }
 
 // Calculate the independent variable (from eta)
-/*! \details It has been found that a tolerance of 1e-3 works best for most 
- * applications. 
+/*! \details It has been found that a tolerance of 1e-3 works best for most
+ * applications.
  */
 template<typename ParentInterpolationType>
 template<typename IndepType>
@@ -240,7 +240,7 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
   testPrecondition( indep_grid_length >= 0.0 );
 
   IndepType grid_indep_var( QuantityTraits<IndepType>::initializeQuantity(
-    ParentInterpolationType::recoverProcessedIndepVar( 
+    ParentInterpolationType::recoverProcessedIndepVar(
                     ParentInterpolationType::processIndepVar( indep_var_min ) +
                     indep_grid_length*eta ) ) );
 
@@ -256,7 +256,7 @@ InterpolationHelper<ParentInterpolationType>::calculateIndepVar(
 }
 
 // Calculate the processed independent variable (from eta)
-/*! \details A tolerance is not required with this method because no variable 
+/*! \details A tolerance is not required with this method because no variable
  * processing is done. Due to conversion of the independent values from a cosine
  * (mu) to a delta cosine ( 1 - mu ) for LogLogCos and LinLogCos, it is assumed
  * the processed grids are inverted to ensure they are in ascending order.
@@ -276,13 +276,13 @@ inline T InterpolationHelper<ParentInterpolationType>::calculateProcessedIndepVa
   // Make sure the grid length is valid
   testPrecondition( !QuantityTraits<T>::isnaninf( indep_grid_length ) );
   testPrecondition( indep_grid_length >= 0.0 );
-  
+
   return processed_indep_var_min + indep_grid_length*eta;
 }
 
 // Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
 /*! \details It has been found that a tolerance of 1e-3 works best for most
- * applications. 
+ * applications.
  */
 template<typename ParentInterpolationType>
 template<typename T>
@@ -464,7 +464,7 @@ inline bool LogLog::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-  
+
   return dep_var > QuantityTraits<T>::zero();
 }
 
@@ -612,7 +612,7 @@ inline bool LogLin::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-  
+
   return dep_var > QuantityTraits<T>::zero();
 }
 
@@ -747,7 +747,7 @@ inline bool LinLog::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-  
+
   return true;
 }
 

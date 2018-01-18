@@ -2280,12 +2280,11 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
         * ( eta_1*L_1*f_1(y_1) + ( (eta_0*L_0*f_0(y_0)) - (eta_1*L_1*f_1(y_1)) )*beta )
         */
         auto lower_product =
-          lower_eval*( lower_y_value - lower_bin_boundary->second->getLowerBoundOfIndepVar() );
+          lower_eval*log( lower_y_value/lower_bin_boundary->second->getLowerBoundOfIndepVar() );
         auto upper_product =
-          upper_eval*( upper_y_value - upper_bin_boundary->second->getLowerBoundOfIndepVar() );
-        auto product = (y_indep_value - min_y_indep_value);
+          upper_eval*log( upper_y_value/upper_bin_boundary->second->getLowerBoundOfIndepVar() );
 
-        return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/product;
+        return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/log(y_indep_value/min_y_indep_value);
       }
       else
       {

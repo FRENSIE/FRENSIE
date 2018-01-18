@@ -173,7 +173,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   energy = 10.0;
   cross_section = reaction->getCrossSection( energy );
-  TEST_FLOATING_EQUALITY( cross_section, 1.2060319989319774e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2060320040112263e+04, 1e-12 );
 
   energy = 20.0;
   cross_section = reaction->getCrossSection( energy );
@@ -285,13 +285,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test the first shell's stored cross section is correct
   double cross_section = reactions.front()->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 9.7827919403215561e+09, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.5998492533545486e+10, 1e-12 );
 
   cross_section = reactions.front()->getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 3.1642572388486927e+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.5792554094646232e+07, 1e-12 );
 
   cross_section = reactions.front()->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.9411954266669640e+04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.2035367482136615e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -315,13 +315,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   // Test that the stored cross section is correct
   double cross_section = reaction->getCrossSection( reaction->getThresholdEnergy() );
-  TEST_FLOATING_EQUALITY( cross_section, 1.3037203891519097e+01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
 
   cross_section = reaction->getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 4.3377231534698861e+00, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4246702389204639e+01, 1e-12 );
 
   cross_section = reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.5197338425584794e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

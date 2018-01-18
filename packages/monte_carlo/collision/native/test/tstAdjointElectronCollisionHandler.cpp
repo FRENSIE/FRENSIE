@@ -97,14 +97,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   double cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.8908200395739925e+08*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.3529410679672790e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.1185529218012723e+05*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1219660098557018e+06*num_density, 1e-12 );
 
   adjoint_electron.setCell( 2 );
   adjoint_electron.setEnergy( 1e-3 );
@@ -112,14 +112,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.8908200395739925e+08*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.3529410679672790e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.1185529218012723e+05*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1219660098557018e+06*num_density, 1e-12 );
 
   adjoint_electron.setCell( 3 );
   adjoint_electron.setEnergy( 1e-3 );
@@ -127,14 +127,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.8908200395739925e+08*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.3529410679672790e+08*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
 
   cross_section =
     collision_handler->getMacroscopicTotalCrossSection( adjoint_electron );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.1185529218012723e+05*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.1219660098557018e+06*num_density, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -220,14 +220,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
               adjoint_electron,
               MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.9820612307338689e+02*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3490778797425558e+03*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   cross_section = collision_handler->getMacroscopicReactionCrossSection(
               adjoint_electron,
               MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.5160362346724039*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.7921425079906502e+01*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 1e-3 );
   cross_section =
@@ -265,14 +265,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
       adjoint_electron,
       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.0490996365619276e+06*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0159402413462823e+07*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   cross_section = collision_handler->getMacroscopicReactionCrossSection(
       adjoint_electron,
       MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.7768342197055884e+02*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.4508644205786218e+03*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 1e-3 );
   cross_section =
@@ -280,14 +280,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
       adjoint_electron,
       MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.1448895633298811e+06*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.7039946234780207e+07*num_density, 1e-12 );
 
   adjoint_electron.setEnergy( 20.0 );
   cross_section = collision_handler->getMacroscopicReactionCrossSection(
       adjoint_electron,
       MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.3042142907373425e+04*num_density, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2570552717724997e+05*num_density, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -344,7 +344,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1e-3, 1e-15 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(), -1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          8.9657882377502873e-01,
+                          1.3500511028888718,
                           1e-12 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
 
@@ -393,7 +393,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
                           1e-15 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(), 1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          7.8002539212309341e-01,
+                          9.9992553370243809e-01,
                           1e-12 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
 
@@ -427,7 +427,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   collision_handler->collideWithCellMaterial( adjoint_electron, bank );
 
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          8.9657882377502873e-01,
+                          1.3500511028888718,
                           1e-12 );
 
   adjoint_electron.setEnergy( 1.55 );
@@ -438,7 +438,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronCollisionHandler,
   collision_handler->collideWithCellMaterial( adjoint_electron, bank );
 
   TEST_FLOATING_EQUALITY( adjoint_electron.getWeight(),
-                          7.8002539212309341e-01,
+                          9.9992553370243809e-01,
                           1e-12 );
 }
 

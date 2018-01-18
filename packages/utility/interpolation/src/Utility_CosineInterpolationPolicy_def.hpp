@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_CosineInterpolationPolicy_def.hpp
 //! \author Luke Kersting
-//! \brief  Intrepolation policy struct definitions
+//! \brief  Interpolation policy struct definitions
 //!
 //---------------------------------------------------------------------------//
 

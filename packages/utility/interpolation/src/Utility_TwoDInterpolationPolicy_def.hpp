@@ -73,7 +73,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::recoverProc
 
 // Test if the second independent variable is in a valid range (y - ZYX)
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<typename T> 
+template<typename T>
 inline bool TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::isSecondIndepVarInValidRange( const T second_indep_var )
 {
   return ZYInterpPolicy::isIndepVarInValidRange( second_indep_var );
@@ -259,7 +259,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
                        end_indep_y_grid_1,
                        start_dep_grid_1,
                        end_dep_grid_1 );
-  
+
   return ThisType::interpolate( indep_var_x_0,
                                 indep_var_x_1,
                                 indep_var_x,
@@ -345,7 +345,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
 
 // Conduct unit base interpolation
 /*! \details If indep_var_y is outside of the bounds of the intermediate grid
- * a value of 0.0 will be returned from this method. If 
+ * a value of 0.0 will be returned from this method. If
  * indep_var_x_0 == indep_var_x_1, the evaluate_z_with_y_0_functor will be
  * called with indep_var_y. The parameter below_lower_limit_return_value can
  * be used to set what this method returns if the secondary independent value
@@ -397,7 +397,7 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
   testPrecondition( ThisType::isSecondIndepVarInValidRange(
                                                          indep_var_y_1_min ) );
   testPrecondition( indep_var_y_1_min < indep_var_y_1_max );
-  
+
   if( indep_var_x_0 < indep_var_x_1 )
   {
     // Calculate the intermediate grid lengths
@@ -455,12 +455,15 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase(
         eta = 1.0;
 
       // Calculate the y value on the first grid
-      const SecondIndepType indep_var_y_0 = ZYInterpPolicy::calculateIndepVar(
-                                       eta, indep_var_y_0_min, L0 );
+      const SecondIndepType indep_var_y_0 = std::min(
+          ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_0_min, L0 ),
+          indep_var_y_0_max );
+
 
       // Calculate the y value on the second grid
-      const SecondIndepType indep_var_y_1 = ZYInterpPolicy::calculateIndepVar(
-                                       eta, indep_var_y_1_min, L1 );
+      const SecondIndepType indep_var_y_1 = std::min(
+          ZYInterpPolicy::calculateIndepVar( eta, indep_var_y_1_min, L1 ),
+          indep_var_y_1_max );
 
       // Evaluate the dependent value on the first y grid
       const typename ZYLowerFunctor::result_type dep_var_0 =
@@ -602,7 +605,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
                   end_indep_y_grid_1,
                   start_dep_grid_1,
                   end_dep_grid_1 );
-  
+
   return ThisType::interpolateUnitBase(
                                  indep_var_x_0,
                                  indep_var_x_1,
@@ -955,7 +958,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 
   YIterator true_end_processed_indep_y_grid_1 = end_processed_indep_y_grid_1;
   --true_end_processed_indep_y_grid_1;
-  
+
   // Calculate the length of the first y grid
   const T L0 = ZYInterpPolicy::calculateUnitBaseGridLengthProcessed(
                      get<YIndepMember>( *start_processed_indep_y_grid_0 ),
@@ -983,12 +986,12 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 
   // Calculate the unit base independent variable
   const T eta =
-    ZYInterpPolicy::calculateUnitBaseIndepVarProcessed( processed_indep_var_y, 
-                                                        processed_y_x_min, 
+    ZYInterpPolicy::calculateUnitBaseIndepVarProcessed( processed_indep_var_y,
+                                                        processed_y_x_min,
                                                         Lx );
 
   // Calculate the y value on the first grid
-  T processed_indep_var_y_0 = ZYInterpPolicy::calculateProcessedIndepVar( 
+  T processed_indep_var_y_0 = ZYInterpPolicy::calculateProcessedIndepVar(
               eta,
               get<YIndepMember>( *start_processed_indep_y_grid_0 ),
               L0 );
