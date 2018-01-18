@@ -80,19 +80,31 @@ public:
   Utility::ArrayView<const double> extractITIEBlock() const;
 
   //! Extract the inelastic energy grid from the XSS array
-  Utility::ArrayView<const Energy> extractInelasticEnergyGrid() const;
+  Utility::ArrayView<const double> extractInelasticEnergyGrid() const;
+
+  //! Extract the inelastic energy grid from the XSS array
+  Utility::ArrayView<const Energy> extractInelasticEnergyGridInMeV() const;
 
   //! Extract the inelastic cross section from the XSS array
-  Utility::ArrayView<const Area> extractInelasticCrossSection() const;
+  Utility::ArrayView<const double> extractInelasticCrossSection() const;
+
+  //! Extract the inelastic cross section from the XSS array
+  Utility::ArrayView<const Area> extractInelasticCrossSectionInBarns() const;
 
   //! Extract the ITCE block from the XSS array
   Utility::ArrayView<const double> extractITCEBlock() const;
 
   //! Extract the elastic energy grid from the XSS array
-  Utility::ArrayView<const Energy> extractElasticEnergyGrid() const;
+  Utility::ArrayView<const double> extractElasticEnergyGrid() const;
+
+  //! Extract the elastic energy grid from the XSS array
+  Utility::ArrayView<const Energy> extractElasticEnergyGridInMeV() const;
 
   //! Extract the elastic cross section from the XSS array
-  Utility::ArrayView<const Area> extractElasticCrossSection() const;
+  Utility::ArrayView<const double> extractElasticCrossSection() const;
+
+  //! Extract the elastic cross section from the XSS array
+  Utility::ArrayView<const Area> extractElasticCrossSectionInBarns() const;
 
   //! Extract the ITXE block from the XSS array
   Utility::ArrayView<const double> extractITXEBlock() const;

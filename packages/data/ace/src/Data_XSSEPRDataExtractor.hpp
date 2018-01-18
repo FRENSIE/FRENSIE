@@ -125,7 +125,10 @@ public:
   Utility::ArrayView<const double> extractSubshellOccupancies() const;
 
   //! Extract the subshell binding energies
-  Utility::ArrayView<const Energy> extractSubshellBindingEnergies() const;
+  Utility::ArrayView<const double> extractSubshellBindingEnergies() const;
+
+  //! Extract the subshell binding energies
+  Utility::ArrayView<const Energy> extractSubshellBindingEnergiesInMeV() const;
 
   //! Extract the subshell Compton interaction cdf
   Utility::ArrayView<const double> extractSubshellComptonInteractionCDF() const;
@@ -146,25 +149,46 @@ public:
   Utility::ArrayView<const double> extractESZEBlock() const;
 
   //! Extract the incoming electron energy grid
-  Utility::ArrayView<const Energy> extractElectronEnergyGrid() const;
+  Utility::ArrayView<const double> extractElectronEnergyGrid() const;
+
+  //! Extract the incoming electron energy grid
+  Utility::ArrayView<const Energy> extractElectronEnergyGridInMeV() const;
 
   //! Extract the electron total cross section
-  Utility::ArrayView<const Area> extractElectronTotalCrossSection() const;
+  Utility::ArrayView<const double> extractElectronTotalCrossSection() const;
+
+  //! Extract the electron total cross section
+  Utility::ArrayView<const Area> extractElectronTotalCrossSectionInBarns() const;
 
   //! Extract the electron elastic cross section
-  Utility::ArrayView<const Area> extractElasticCrossSection() const;
+  Utility::ArrayView<const double> extractElasticCrossSection() const;
+
+  //! Extract the electron elastic cross section
+  Utility::ArrayView<const Area> extractElasticCrossSectionInBarns() const;
 
   //! Extract the bremsstrahlung cross section
-  Utility::ArrayView<const Area> extractBremsstrahlungCrossSection() const;
+  Utility::ArrayView<const double> extractBremsstrahlungCrossSection() const;
+
+  //! Extract the bremsstrahlung cross section
+  Utility::ArrayView<const Area> extractBremsstrahlungCrossSectionInBarns() const;
 
   //! Extract the excitation cross section
-  Utility::ArrayView<const Area> extractExcitationCrossSection() const;
+  Utility::ArrayView<const double> extractExcitationCrossSection() const;
+
+  //! Extract the excitation cross section
+  Utility::ArrayView<const Area> extractExcitationCrossSectionInBarns() const;
 
   //! Extract the total electroionization cross section
-  Utility::ArrayView<const Area> extractElectroionizationCrossSection() const;
+  Utility::ArrayView<const double> extractElectroionizationCrossSection() const;
+
+  //! Extract the total electroionization cross section
+  Utility::ArrayView<const Area> extractElectroionizationCrossSectionInBarns() const;
 
   //! Extract the electroionization subshell cross sections
-  Utility::ArrayView<const Area> extractElectroionizationSubshellCrossSections() const;
+  Utility::ArrayView<const double> extractElectroionizationSubshellCrossSections() const;
+
+  //! Extract the electroionization subshell cross sections
+  Utility::ArrayView<const Area> extractElectroionizationSubshellCrossSectionsInBarns() const;
 
   //! Extract the EXCIT block
   Utility::ArrayView<const double> extractEXCITBlock() const;

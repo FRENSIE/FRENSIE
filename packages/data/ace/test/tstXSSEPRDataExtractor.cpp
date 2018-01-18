@@ -389,14 +389,28 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSubshellBindingEnergies )
   auto subshell_be = b_xss_data_extractor->extractSubshellBindingEnergies();
 
   FRENSIE_CHECK_EQUAL( subshell_be.size(), 4 );
-  FRENSIE_CHECK_EQUAL( subshell_be.front(), 1.956100000000E-04*MeV );
-  FRENSIE_CHECK_EQUAL( subshell_be.back(), 6.660000000000E-06*MeV );
+  FRENSIE_CHECK_EQUAL( subshell_be.front(), 1.956100000000E-04 );
+  FRENSIE_CHECK_EQUAL( subshell_be.back(), 6.660000000000E-06 );
 
   subshell_be = pb_xss_data_extractor->extractSubshellBindingEnergies();
 
   FRENSIE_CHECK_EQUAL( subshell_be.size(), 24 );
-  FRENSIE_CHECK_EQUAL( subshell_be.front(), 8.829000000000E-02*MeV );
-  FRENSIE_CHECK_EQUAL( subshell_be.back(), 5.290000000000E-06*MeV );
+  FRENSIE_CHECK_EQUAL( subshell_be.front(), 8.829000000000E-02 );
+  FRENSIE_CHECK_EQUAL( subshell_be.back(), 5.290000000000E-06 );
+
+  auto subshell_be_in_mev =
+    b_xss_data_extractor->extractSubshellBindingEnergiesInMeV();
+
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.size(), 4 );
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.front(), 1.956100000000E-04*MeV );
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.back(), 6.660000000000E-06*MeV );
+
+  subshell_be_in_mev =
+    pb_xss_data_extractor->extractSubshellBindingEnergiesInMeV();
+
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.front(), 8.829000000000E-02*MeV );
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.back(), 5.290000000000E-06*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -513,14 +527,28 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElectronEnergyGrid )
     b_xss_data_extractor->extractElectronEnergyGrid();
 
   FRENSIE_CHECK_EQUAL( electron_energy_grid.size(), 349 );
-  FRENSIE_CHECK_EQUAL( electron_energy_grid.front(), 1.000000000000E-05*MeV );
-  FRENSIE_CHECK_EQUAL( electron_energy_grid.back(), 1.000000000000E+05*MeV );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid.back(), 1.000000000000E+05 );
 
   electron_energy_grid = pb_xss_data_extractor->extractElectronEnergyGrid();
 
   FRENSIE_CHECK_EQUAL( electron_energy_grid.size(), 477 );
-  FRENSIE_CHECK_EQUAL( electron_energy_grid.front(), 1.000000000000E-05*MeV );
-  FRENSIE_CHECK_EQUAL( electron_energy_grid.back(), 1.000000000000E+05*MeV );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid.back(), 1.000000000000E+05 );
+
+  auto electron_energy_grid_in_mev =
+    b_xss_data_extractor->extractElectronEnergyGridInMeV();
+
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.size(), 349 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.front(), 1.000000000000E-05*MeV );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.back(), 1.000000000000E+05*MeV );
+
+  electron_energy_grid_in_mev =
+    pb_xss_data_extractor->extractElectronEnergyGridInMeV();
+
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.size(), 477 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.front(), 1.000000000000E-05*MeV );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.back(), 1.000000000000E+05*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -531,15 +559,29 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElectronTotalCrossSection )
     b_xss_data_extractor->extractElectronTotalCrossSection();
 
   FRENSIE_CHECK_EQUAL( electron_total_cs.size(), 349 );
-  FRENSIE_CHECK_EQUAL( electron_total_cs.front(), 3.605412858153E+09*barns );
-  FRENSIE_CHECK_EQUAL( electron_total_cs.back(), 5.246259578280E+05*barns );
+  FRENSIE_CHECK_EQUAL( electron_total_cs.front(), 3.605412858153E+09 );
+  FRENSIE_CHECK_EQUAL( electron_total_cs.back(), 5.246259578280E+05 );
 
   electron_total_cs =
     pb_xss_data_extractor->extractElectronTotalCrossSection();
 
   FRENSIE_CHECK_EQUAL( electron_total_cs.size(), 477 );
-  FRENSIE_CHECK_EQUAL( electron_total_cs.front(), 2.629060119800E+09*barns );
-  FRENSIE_CHECK_EQUAL( electron_total_cs.back(), 2.845403136205E+06*barns );
+  FRENSIE_CHECK_EQUAL( electron_total_cs.front(), 2.629060119800E+09 );
+  FRENSIE_CHECK_EQUAL( electron_total_cs.back(), 2.845403136205E+06 );
+
+  auto electron_total_cs_in_barns =
+    b_xss_data_extractor->extractElectronTotalCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( electron_total_cs_in_barns.size(), 349 );
+  FRENSIE_CHECK_EQUAL( electron_total_cs_in_barns.front(), 3.605412858153E+09*barns );
+  FRENSIE_CHECK_EQUAL( electron_total_cs_in_barns.back(), 5.246259578280E+05*barns );
+
+  electron_total_cs_in_barns =
+    pb_xss_data_extractor->extractElectronTotalCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( electron_total_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( electron_total_cs_in_barns.front(), 2.629060119800E+09*barns );
+  FRENSIE_CHECK_EQUAL( electron_total_cs_in_barns.back(), 2.845403136205E+06*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -549,14 +591,28 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElasticCrossSection )
   auto elastic_cs = b_xss_data_extractor->extractElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( elastic_cs.size(), 349 );
-  FRENSIE_CHECK_EQUAL( elastic_cs.front(), 3.504710000000E+09*barns );
-  FRENSIE_CHECK_EQUAL( elastic_cs.back(), 3.279820000000E-04*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cs.front(), 3.504710000000E+09 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.back(), 3.279820000000E-04 );
 
   elastic_cs = pb_xss_data_extractor->extractElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( elastic_cs.size(), 477 );
-  FRENSIE_CHECK_EQUAL( elastic_cs.front(), 2.489240000000E+09*barns );
-  FRENSIE_CHECK_EQUAL( elastic_cs.back(), 8.830510000000E-02*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cs.front(), 2.489240000000E+09 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.back(), 8.830510000000E-02 );
+
+  auto elastic_cs_in_barns =
+    b_xss_data_extractor->extractElasticCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.size(), 349 );
+  FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.front(), 3.504710000000E+09*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.back(), 3.279820000000E-04*barns );
+
+  elastic_cs_in_barns =
+    pb_xss_data_extractor->extractElasticCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.front(), 2.489240000000E+09*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.back(), 8.830510000000E-02*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -566,14 +622,28 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractBremsstrahlungCrossSection )
   auto bremss_cs = b_xss_data_extractor->extractBremsstrahlungCrossSection();
 
   FRENSIE_CHECK_EQUAL( bremss_cs.size(), 349 );
-  FRENSIE_CHECK_EQUAL( bremss_cs.front(), 4.581530000000E+02*barns );
-  FRENSIE_CHECK_EQUAL( bremss_cs.back(), 1.235750000000E+01*barns );
+  FRENSIE_CHECK_EQUAL( bremss_cs.front(), 4.581530000000E+02 );
+  FRENSIE_CHECK_EQUAL( bremss_cs.back(), 1.235750000000E+01 );
 
   bremss_cs = pb_xss_data_extractor->extractBremsstrahlungCrossSection();
 
   FRENSIE_CHECK_EQUAL( bremss_cs.size(), 477 );
-  FRENSIE_CHECK_EQUAL( bremss_cs.front(), 4.869800000000E+03*barns );
-  FRENSIE_CHECK_EQUAL( bremss_cs.back(), 1.954170000000E+03*barns );
+  FRENSIE_CHECK_EQUAL( bremss_cs.front(), 4.869800000000E+03 );
+  FRENSIE_CHECK_EQUAL( bremss_cs.back(), 1.954170000000E+03 );
+
+  auto bremss_cs_in_barns =
+    b_xss_data_extractor->extractBremsstrahlungCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.size(), 349 );
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.front(), 4.581530000000E+02*barns );
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.back(), 1.235750000000E+01*barns );
+
+  bremss_cs_in_barns =
+    pb_xss_data_extractor->extractBremsstrahlungCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.front(), 4.869800000000E+03*barns );
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.back(), 1.954170000000E+03*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -583,14 +653,28 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractExcitationCrossSection )
   auto excitation_cs = b_xss_data_extractor->extractExcitationCrossSection();
 
   FRENSIE_CHECK_EQUAL( excitation_cs.size(), 349 );
-  FRENSIE_CHECK_EQUAL( excitation_cs.front(), 1.445240000000E+07*barns );
-  FRENSIE_CHECK_EQUAL( excitation_cs.back(), 2.339010000000E+05*barns );
+  FRENSIE_CHECK_EQUAL( excitation_cs.front(), 1.445240000000E+07 );
+  FRENSIE_CHECK_EQUAL( excitation_cs.back(), 2.339010000000E+05 );
 
   excitation_cs = pb_xss_data_extractor->extractExcitationCrossSection();
 
   FRENSIE_CHECK_EQUAL( excitation_cs.size(), 477 );
-  FRENSIE_CHECK_EQUAL( excitation_cs.front(), 8.757550000000E+06*barns );
-  FRENSIE_CHECK_EQUAL( excitation_cs.back(), 1.578610000000E+06*barns );
+  FRENSIE_CHECK_EQUAL( excitation_cs.front(), 8.757550000000E+06 );
+  FRENSIE_CHECK_EQUAL( excitation_cs.back(), 1.578610000000E+06 );
+
+  auto excitation_cs_in_barns =
+    b_xss_data_extractor->extractExcitationCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.size(), 349 );
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.front(), 1.445240000000E+07*barns );
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.back(), 2.339010000000E+05*barns );
+
+  excitation_cs_in_barns =
+    pb_xss_data_extractor->extractExcitationCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.front(), 8.757550000000E+06*barns );
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.back(), 1.578610000000E+06*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -601,15 +685,29 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElectroionizationCrossSection )
     b_xss_data_extractor->extractElectroionizationCrossSection();
 
   FRENSIE_CHECK_EQUAL( electroionization_cs.size(), 349 );
-  FRENSIE_CHECK_EQUAL( electroionization_cs.front(), 8.625000000000E+07*barns );
-  FRENSIE_CHECK_EQUAL( electroionization_cs.back(), 2.907126000000E+05*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_cs.front(), 8.625000000000E+07 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs.back(), 2.907126000000E+05 );
 
   electroionization_cs =
     pb_xss_data_extractor->extractElectroionizationCrossSection();
 
   FRENSIE_CHECK_EQUAL( electroionization_cs.size(), 477 );
-  FRENSIE_CHECK_EQUAL( electroionization_cs.front(), 1.310577000000E+08*barns );
-  FRENSIE_CHECK_EQUAL( electroionization_cs.back(), 1.264838877900E+06*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_cs.front(), 1.310577000000E+08 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs.back(), 1.264838877900E+06 );
+
+  auto electroionization_cs_in_barns =
+    b_xss_data_extractor->extractElectroionizationCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.size(), 349 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.front(), 8.625000000000E+07*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.back(), 2.907126000000E+05*barns );
+
+  electroionization_cs_in_barns =
+    pb_xss_data_extractor->extractElectroionizationCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.front(), 1.310577000000E+08*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.back(), 1.264838877900E+06*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -621,16 +719,32 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor,
     b_xss_data_extractor->extractElectroionizationSubshellCrossSections();
 
   FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.size(), 1396 );
-  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.front(), 0.0*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.front(), 0.0 );
   FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.back(),
-		       1.155380000000E+05*barns );
+		       1.155380000000E+05 );
 
   electroionization_subshell_cs =
     pb_xss_data_extractor->extractElectroionizationSubshellCrossSections();
 
   FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.size(), 11448 );
-  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.front(), 0.0*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.front(), 0.0 );
   FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.back(),
+		       1.822340000000E+05 );
+
+  auto electroionization_subshell_cs_in_barns =
+    b_xss_data_extractor->extractElectroionizationSubshellCrossSectionsInBarns();
+
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.size(), 1396 );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.front(), 0.0*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.back(),
+		       1.155380000000E+05*barns );
+
+  electroionization_subshell_cs_in_barns =
+    pb_xss_data_extractor->extractElectroionizationSubshellCrossSectionsInBarns();
+
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.size(), 11448 );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.front(), 0.0*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.back(),
 		       1.822340000000E+05*barns );
 }
 

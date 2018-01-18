@@ -223,7 +223,13 @@ XSSEPRDataExtractor::extractSubshellOccupancies() const
 }
 
 // Extract the subshell binding energies
-auto XSSEPRDataExtractor::extractSubshellBindingEnergies() const -> Utility::ArrayView<const Energy>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractSubshellBindingEnergies() const
+{
+  return d_subsh_block( 2*d_nxs[6], d_nxs[6] );
+}
+
+// Extract the subshell binding energies
+auto XSSEPRDataExtractor::extractSubshellBindingEnergiesInMeV() const -> Utility::ArrayView<const Energy>
 {
   return Utility::ArrayView<const Energy>(
      Utility::reinterpretAsQuantity<Energy>( d_subsh_block.data()+2*d_nxs[6] ),
@@ -279,7 +285,13 @@ XSSEPRDataExtractor::extractESZEBlock() const
 }
 
 // Extract the incoming electron energy grid
-auto XSSEPRDataExtractor::extractElectronEnergyGrid() const -> Utility::ArrayView<const Energy>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractElectronEnergyGrid() const
+{
+  return d_esze_block( 0, d_nxs[7] );
+}
+
+// Extract the incoming electron energy grid
+auto XSSEPRDataExtractor::extractElectronEnergyGridInMeV() const -> Utility::ArrayView<const Energy>
 {
   return Utility::ArrayView<const Energy>(
                  Utility::reinterpretAsQuantity<Energy>( d_esze_block.data() ),
@@ -287,7 +299,13 @@ auto XSSEPRDataExtractor::extractElectronEnergyGrid() const -> Utility::ArrayVie
 }
 
 // Extract the electron total cross section
-auto XSSEPRDataExtractor::extractElectronTotalCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractElectronTotalCrossSection() const
+{
+  return d_esze_block( d_nxs[7], d_nxs[7] );
+}
+
+// Extract the electron total cross section
+auto XSSEPRDataExtractor::extractElectronTotalCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
           Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+d_nxs[7] ),
@@ -295,7 +313,13 @@ auto XSSEPRDataExtractor::extractElectronTotalCrossSection() const -> Utility::A
 }
 
 // Extract the electron elastic cross section
-auto XSSEPRDataExtractor::extractElasticCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractElasticCrossSection() const
+{
+  return d_esze_block( 2*d_nxs[7], d_nxs[7] );
+}
+
+// Extract the electron elastic cross section
+auto XSSEPRDataExtractor::extractElasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
         Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+2*d_nxs[7] ),
@@ -303,7 +327,13 @@ auto XSSEPRDataExtractor::extractElasticCrossSection() const -> Utility::ArrayVi
 }
 
 // Extract the bremsstrahlung cross section
-auto XSSEPRDataExtractor::extractBremsstrahlungCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractBremsstrahlungCrossSection() const
+{
+  return d_esze_block( 3*d_nxs[7], d_nxs[7] );
+}
+
+// Extract the bremsstrahlung cross section
+auto XSSEPRDataExtractor::extractBremsstrahlungCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
         Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+3*d_nxs[7] ),
@@ -311,7 +341,13 @@ auto XSSEPRDataExtractor::extractBremsstrahlungCrossSection() const -> Utility::
 }
 
 // Extract the excitation cross section
-auto XSSEPRDataExtractor::extractExcitationCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractExcitationCrossSection() const
+{
+  return d_esze_block( 4*d_nxs[7], d_nxs[7] );
+}
+
+// Extract the excitation cross section
+auto XSSEPRDataExtractor::extractExcitationCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
         Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+4*d_nxs[7] ),
@@ -319,7 +355,13 @@ auto XSSEPRDataExtractor::extractExcitationCrossSection() const -> Utility::Arra
 }
 
 // Extract the total electroionization cross section
-auto XSSEPRDataExtractor::extractElectroionizationCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractElectroionizationCrossSection() const
+{
+  return d_esze_block( 5*d_nxs[7], d_nxs[7] );
+}
+
+// Extract the total electroionization cross section
+auto XSSEPRDataExtractor::extractElectroionizationCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
         Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+5*d_nxs[7] ),
@@ -327,7 +369,13 @@ auto XSSEPRDataExtractor::extractElectroionizationCrossSection() const -> Utilit
 }
 
 // Extract the electroionization subshell cross sections
-auto XSSEPRDataExtractor::extractElectroionizationSubshellCrossSections() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSEPRDataExtractor::extractElectroionizationSubshellCrossSections() const
+{
+  return d_esze_block( 6*d_nxs[7], d_nxs[7]*d_nxs[6] );
+}
+
+// Extract the electroionization subshell cross sections
+auto XSSEPRDataExtractor::extractElectroionizationSubshellCrossSectionsInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
         Utility::reinterpretAsQuantity<Area>( d_esze_block.data()+6*d_nxs[7] ),

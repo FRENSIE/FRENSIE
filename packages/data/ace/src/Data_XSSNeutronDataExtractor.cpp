@@ -94,7 +94,21 @@ XSSNeutronDataExtractor::extractESZBlock() const
 }
 
 // Extract the energy grid from the XSS array
-auto XSSNeutronDataExtractor::extractEnergyGrid() const -> Utility::ArrayView<const Energy>
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractEnergyGrid() const
+{
+  Utility::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[2] );
+
+  // Make sure the extracted energy grid is sorted
+  TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                         energy_grid.end() ),
+                      std::runtime_error,
+                      "An unsorted energy grid was encountered!" );
+
+  return energy_grid;
+}
+
+// Extract the energy grid from the XSS array
+auto XSSNeutronDataExtractor::extractEnergyGridInMeV() const -> Utility::ArrayView<const Energy>
 {
   Utility::ArrayView<const Energy> energy_grid(
                   Utility::reinterpretAsQuantity<Energy>( d_esz_block.data() ),
@@ -110,7 +124,13 @@ auto XSSNeutronDataExtractor::extractEnergyGrid() const -> Utility::ArrayView<co
 }
 
 // Extract the total cross section from the XSS array
-auto XSSNeutronDataExtractor::extractTotalCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTotalCrossSection() const
+{
+  return d_esz_block( d_nxs[2], d_nxs[2] );
+}
+
+// Extract the total cross section from the XSS array
+auto XSSNeutronDataExtractor::extractTotalCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
            Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+d_nxs[2] ),
@@ -118,7 +138,13 @@ auto XSSNeutronDataExtractor::extractTotalCrossSection() const -> Utility::Array
 }
 
 // Extract the total absorption cross section from the XSS array
-auto XSSNeutronDataExtractor::extractTotalAbsorptionCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractTotalAbsorptionCrossSection() const
+{
+  return d_esz_block( 2*d_nxs[2], d_nxs[2] );
+}
+
+// Extract the total absorption cross section from the XSS array
+auto XSSNeutronDataExtractor::extractTotalAbsorptionCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
          Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+2*d_nxs[2] ),
@@ -126,7 +152,13 @@ auto XSSNeutronDataExtractor::extractTotalAbsorptionCrossSection() const -> Util
 }
 
 // Extract the elastic cross section from the XSS array
-auto XSSNeutronDataExtractor::extractElasticCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractElasticCrossSection() const
+{
+  return d_esz_block( 3*d_nxs[2], d_nxs[2] );
+}
+
+// Extract the elastic cross section from the XSS array
+auto XSSNeutronDataExtractor::extractElasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
          Utility::reinterpretAsQuantity<Area>( d_esz_block.data()+3*d_nxs[2] ),
@@ -134,7 +166,13 @@ auto XSSNeutronDataExtractor::extractElasticCrossSection() const -> Utility::Arr
 }
 
 // Extract the average heating numbers from the XSS array
-auto XSSNeutronDataExtractor::extractAverageHeatingNumbers() const -> Utility::ArrayView<const Energy>
+Utility::ArrayView<const double> XSSNeutronDataExtractor::extractAverageHeatingNumbers() const
+{
+  return d_esz_block( 4*d_nxs[2], d_nxs[2] );
+}
+
+// Extract the average heating numbers from the XSS array
+auto XSSNeutronDataExtractor::extractAverageHeatingNumbersInMeV() const -> Utility::ArrayView<const Energy>
 {
   return Utility::ArrayView<const Energy>(
        Utility::reinterpretAsQuantity<Energy>( d_esz_block.data()+4*d_nxs[2] ),

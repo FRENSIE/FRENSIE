@@ -105,7 +105,13 @@ Utility::ArrayView<const double> XSSSabDataExtractor::extractITIEBlock() const
 }
 
 // Extract the inelastic energy grid from the XSS array
-auto XSSSabDataExtractor::extractInelasticEnergyGrid() const -> Utility::ArrayView<const Energy>
+Utility::ArrayView<const double> XSSSabDataExtractor::extractInelasticEnergyGrid() const
+{
+  return d_itie_block( 1, (int)d_itie_block[0] );
+}
+
+// Extract the inelastic energy grid from the XSS array
+auto XSSSabDataExtractor::extractInelasticEnergyGridInMeV() const -> Utility::ArrayView<const Energy>
 {
   return Utility::ArrayView<const Energy>(
                Utility::reinterpretAsQuantity<Energy>( d_itie_block.data()+1 ),
@@ -113,7 +119,13 @@ auto XSSSabDataExtractor::extractInelasticEnergyGrid() const -> Utility::ArrayVi
 }
 
 // Extract the inelastic cross section from the XSS array
-auto XSSSabDataExtractor::extractInelasticCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSSabDataExtractor::extractInelasticCrossSection() const
+{
+  return d_itie_block( 1 + (int)d_itie_block[0], (int)d_itie_block[0] );
+}
+
+// Extract the inelastic cross section from the XSS array
+auto XSSSabDataExtractor::extractInelasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   return Utility::ArrayView<const Area>(
            Utility::reinterpretAsQuantity<Area>(d_itie_block.data()+1+(int)d_itie_block[0]),
@@ -128,7 +140,16 @@ XSSSabDataExtractor::extractITCEBlock() const
 }
 
 // Extract the elastic energy grid from the XSS array
-auto XSSSabDataExtractor::extractElasticEnergyGrid() const -> Utility::ArrayView<const Energy>
+Utility::ArrayView<const double> XSSSabDataExtractor::extractElasticEnergyGrid() const
+{
+  if( this->hasElasticScatteringCrossSectionData() )
+    return d_itce_block( 1, (int)d_itce_block[0] );
+  else
+    return Utility::ArrayView<const double>();
+}
+
+// Extract the elastic energy grid from the XSS array
+auto XSSSabDataExtractor::extractElasticEnergyGridInMeV() const -> Utility::ArrayView<const Energy>
 {
   if( this->hasElasticScatteringCrossSectionData() )
   {
@@ -141,7 +162,16 @@ auto XSSSabDataExtractor::extractElasticEnergyGrid() const -> Utility::ArrayView
 }
 
 // Extract the elastic cross section from the XSS array
-auto XSSSabDataExtractor::extractElasticCrossSection() const -> Utility::ArrayView<const Area>
+Utility::ArrayView<const double> XSSSabDataExtractor::extractElasticCrossSection() const
+{
+  if( this->hasElasticScatteringCrossSectionData() )
+    return d_itce_block( 1 + (int)d_itce_block[0], (int)d_itce_block[0] );
+  else
+    return Utility::ArrayView<const double>();
+}
+
+// Extract the elastic cross section from the XSS array
+auto XSSSabDataExtractor::extractElasticCrossSectionInBarns() const -> Utility::ArrayView<const Area>
 {
   if( this->hasElasticScatteringCrossSectionData() )
   {

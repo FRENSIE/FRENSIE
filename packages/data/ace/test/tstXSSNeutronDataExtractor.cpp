@@ -99,8 +99,14 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_h1 )
   auto energy_grid = xss_data_extractor_h1->extractEnergyGrid();
 
   FRENSIE_CHECK_EQUAL( energy_grid.size(), 590 );
-  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11*MeV );
-  FRENSIE_CHECK_EQUAL( energy_grid.back(), 2e1*MeV );
+  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11 );
+  FRENSIE_CHECK_EQUAL( energy_grid.back(), 2e1 );
+
+  auto energy_grid_in_mev = xss_data_extractor_h1->extractEnergyGridInMeV();
+
+  FRENSIE_CHECK_EQUAL( energy_grid_in_mev.size(), 590 );
+  FRENSIE_CHECK_EQUAL( energy_grid_in_mev.front(), 1e-11*MeV );
+  FRENSIE_CHECK_EQUAL( energy_grid_in_mev.back(), 2e1*MeV );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_u238 )
@@ -108,8 +114,14 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_u238 )
   auto energy_grid = xss_data_extractor_u238->extractEnergyGrid();
 
   FRENSIE_CHECK_EQUAL( energy_grid.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11*MeV );
-  FRENSIE_CHECK_EQUAL( energy_grid.back(), 30*MeV );
+  FRENSIE_CHECK_EQUAL( energy_grid.front(), 1e-11 );
+  FRENSIE_CHECK_EQUAL( energy_grid.back(), 30 );
+
+  auto energy_grid_in_mev = xss_data_extractor_u238->extractEnergyGridInMeV();
+
+  FRENSIE_CHECK_EQUAL( energy_grid_in_mev.size(), 157754 );
+  FRENSIE_CHECK_EQUAL( energy_grid_in_mev.front(), 1e-11*MeV );
+  FRENSIE_CHECK_EQUAL( energy_grid_in_mev.back(), 30*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -120,8 +132,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_h1 )
   auto total_cross_sec = xss_data_extractor_h1->extractTotalCrossSection();
 
   FRENSIE_CHECK_EQUAL( total_cross_sec.size(), 590 );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.17724711e3*barns );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 4.82773424e-1*barns );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.17724711e3 );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 4.82773424e-1 );
+
+  auto total_cross_sec_in_barns =
+    xss_data_extractor_h1->extractTotalCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( total_cross_sec_in_barns.size(), 590 );
+  FRENSIE_CHECK_EQUAL( total_cross_sec_in_barns.front(), 1.17724711e3*barns );
+  FRENSIE_CHECK_EQUAL( total_cross_sec_in_barns.back(), 4.82773424e-1*barns );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_u238 )
@@ -129,8 +148,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_u238 )
   auto total_cross_sec = xss_data_extractor_u238->extractTotalCrossSection();
 
   FRENSIE_CHECK_EQUAL( total_cross_sec.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.69844353e2*barns  );
-  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 5.71955315*barns );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.front(), 1.69844353e2  );
+  FRENSIE_CHECK_EQUAL( total_cross_sec.back(), 5.71955315 );
+
+  auto total_cross_sec_in_barns =
+    xss_data_extractor_u238->extractTotalCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( total_cross_sec_in_barns.size(), 157754 );
+  FRENSIE_CHECK_EQUAL( total_cross_sec_in_barns.front(), 1.69844353e2*barns  );
+  FRENSIE_CHECK_EQUAL( total_cross_sec_in_barns.back(), 5.71955315*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -142,8 +168,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAbsorptionCrossSec_h1 )
     xss_data_extractor_h1->extractTotalAbsorptionCrossSection();
 
   FRENSIE_CHECK_EQUAL( absorption_cross_sec.size(), 590 );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.670111e1*barns );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 2.722354e-5*barns );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.670111e1 );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 2.722354e-5 );
+
+  auto absorption_cross_sec_in_barns =
+    xss_data_extractor_h1->extractTotalAbsorptionCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec_in_barns.size(), 590 );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec_in_barns.front(), 1.670111e1*barns );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec_in_barns.back(), 2.722354e-5*barns );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAbsorptionCrossSec_u238 )
@@ -152,8 +185,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAbsorptionCrossSec_u238 )
     xss_data_extractor_u238->extractTotalAbsorptionCrossSection();
 
   FRENSIE_CHECK_EQUAL( absorption_cross_sec.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.344458e2*barns );
-  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 1.0e-4*barns );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.front(), 1.344458e2 );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec.back(), 1.0e-4 );
+
+  auto absorption_cross_sec_in_barns =
+    xss_data_extractor_u238->extractTotalAbsorptionCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec_in_barns.size(), 157754 );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec_in_barns.front(), 1.344458e2*barns );
+  FRENSIE_CHECK_EQUAL( absorption_cross_sec_in_barns.back(), 1.0e-4*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -164,8 +204,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_h1 )
   auto elastic_cross_sec = xss_data_extractor_h1->extractElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( elastic_cross_sec.size(), 590 );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 1.160546e3*barns );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 4.827462e-1*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 1.160546e3 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 4.827462e-1 );
+
+  auto elastic_cross_sec_in_barns =
+    xss_data_extractor_h1->extractElasticCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec_in_barns.size(), 590 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec_in_barns.front(), 1.160546e3*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec_in_barns.back(), 4.827462e-1*barns );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_u238 )
@@ -174,8 +221,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_u238 )
     xss_data_extractor_u238->extractElasticCrossSection();
 
   FRENSIE_CHECK_EQUAL( elastic_cross_sec.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 3.539771e1*barns );
-  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 2.78998*barns  );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.front(), 3.539771e1 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec.back(), 2.78998  );
+
+  auto elastic_cross_sec_in_barns =
+    xss_data_extractor_u238->extractElasticCrossSectionInBarns();
+
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec_in_barns.size(), 157754 );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec_in_barns.front(), 3.539771e1*barns );
+  FRENSIE_CHECK_EQUAL( elastic_cross_sec_in_barns.back(), 2.78998*barns  );
 }
 
 //---------------------------------------------------------------------------//
@@ -187,8 +241,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAverageHeatingNumbers_h1)
     xss_data_extractor_h1->extractAverageHeatingNumbers();
 
   FRENSIE_CHECK_EQUAL( ave_heating_nums.size(), 590 );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 5.000028e-12*MeV );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 1.016085e1*MeV );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 5.000028e-12 );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 1.016085e1 );
+
+  auto ave_heating_nums_in_mev =
+    xss_data_extractor_h1->extractAverageHeatingNumbersInMeV();
+
+  FRENSIE_CHECK_EQUAL( ave_heating_nums_in_mev.size(), 590 );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums_in_mev.front(), 5.000028e-12*MeV );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums_in_mev.back(), 1.016085e1*MeV );
 }
 
 FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAverageHeatingNumbers_u238)
@@ -197,8 +258,15 @@ FRENSIE_UNIT_TEST( XSSNeutronDataExtractor, extractAverageHeatingNumbers_u238)
     xss_data_extractor_u238->extractAverageHeatingNumbers();
 
   FRENSIE_CHECK_EQUAL( ave_heating_nums.size(), 157754 );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 8.59985e-4*MeV );
-  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 4.99417e1*MeV );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.front(), 8.59985e-4 );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums.back(), 4.99417e1 );
+
+  auto ave_heating_nums_in_mev =
+    xss_data_extractor_u238->extractAverageHeatingNumbersInMeV();
+
+  FRENSIE_CHECK_EQUAL( ave_heating_nums_in_mev.size(), 157754 );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums_in_mev.front(), 8.59985e-4*MeV );
+  FRENSIE_CHECK_EQUAL( ave_heating_nums_in_mev.back(), 4.99417e1*MeV );
 }
 
 //---------------------------------------------------------------------------//

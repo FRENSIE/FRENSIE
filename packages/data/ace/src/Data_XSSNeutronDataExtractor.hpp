@@ -73,19 +73,34 @@ public:
   Utility::ArrayView<const double> extractESZBlock() const;
 
   //! Extract the energy grid from the XSS array
-  Utility::ArrayView<const Energy> extractEnergyGrid() const;
+  Utility::ArrayView<const double> extractEnergyGrid() const;
+
+  //! Extract the energy grid from the XSS array
+  Utility::ArrayView<const Energy> extractEnergyGridInMeV() const;
 
   //! Extract the total cross section from the XSS array
-  Utility::ArrayView<const Area> extractTotalCrossSection() const;
+  Utility::ArrayView<const double> extractTotalCrossSection() const;
+
+  //! Extract the total cross section from the XSS array
+  Utility::ArrayView<const Area> extractTotalCrossSectionInBarns() const;
 
   //! Extract the total absorption cross section from the XSS array
-  Utility::ArrayView<const Area> extractTotalAbsorptionCrossSection() const;
+  Utility::ArrayView<const double> extractTotalAbsorptionCrossSection() const;
+
+  //! Extract the total absorption cross section from the XSS array
+  Utility::ArrayView<const Area> extractTotalAbsorptionCrossSectionInBarns() const;
 
   //! Extract the total elastic cross section from the XSS array
-  Utility::ArrayView<const Area> extractElasticCrossSection() const;
+  Utility::ArrayView<const double> extractElasticCrossSection() const;
+
+  //! Extract the total elastic cross section from the XSS array
+  Utility::ArrayView<const Area> extractElasticCrossSectionInBarns() const;
 
   //! Extract the average heating numbers (MeV/collision) from the XSS array
-  Utility::ArrayView<const Energy> extractAverageHeatingNumbers() const;
+  Utility::ArrayView<const double> extractAverageHeatingNumbers() const;
+
+  //! Extract the average heating numbers (MeV/collision) from the XSS array
+  Utility::ArrayView<const Energy> extractAverageHeatingNumbersInMeV() const;
 
   //! Extract the NU block form the XSS array
   Utility::ArrayView<const double> extractNUBlock() const;
