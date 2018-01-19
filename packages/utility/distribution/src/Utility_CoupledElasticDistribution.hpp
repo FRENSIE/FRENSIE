@@ -184,7 +184,7 @@ protected:
   //! Test if the independent variable is compatible with Lin processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LinIndepVarProcessingTag ) const;
-  
+
   //! Test if the independent variable is compatible with Log processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;
@@ -224,7 +224,7 @@ private:
   template<typename Quantity>
   static void convertUnitlessValues(
                                  const Teuchos::Array<double>& unitless_values,
-                                 Teuchos::Array<Quantity>& quantitites );
+                                 Teuchos::Array<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
@@ -356,7 +356,7 @@ class TypeNameTraits<Utility::UnitAwareCoupledElasticDistribution<InterpolationP
 } // end Teuchos namespace
 
 //---------------------------------------------------------------------------//
-// Template inludes.
+// Template includes.
 //---------------------------------------------------------------------------//
 
 #include "Utility_CoupledElasticDistribution_def.hpp"

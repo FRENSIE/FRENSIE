@@ -16,10 +16,10 @@
 
 namespace MonteCarlo{
 
-//! Typedef for a 2-D distribution 
-typedef std::vector<Utility::Pair<double, 
-                       std::shared_ptr<const Utility::TabularOneDDistribution> > > 
-TwoDDistribution; 
+//! Typedef for a 2-D distribution
+typedef std::vector<Utility::Pair<double,
+                       std::shared_ptr<const Utility::TabularOneDDistribution> > >
+TwoDDistribution;
 
 //! Return the primary grid values of the 2-D distribution
 template<typename DependentTwoDDistribution>
@@ -187,7 +187,7 @@ double evaluateTwoDDistributionCorrelatedCDF(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// Template inludes.
+// Template includes.
 //---------------------------------------------------------------------------//
 
 #include "MonteCarlo_TwoDDistributionHelpers_def.hpp"

@@ -16,7 +16,7 @@
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
-// HDF5 Inludes
+// HDF5 Includes
 #include <H5Cpp.h>
 
 namespace Utility{

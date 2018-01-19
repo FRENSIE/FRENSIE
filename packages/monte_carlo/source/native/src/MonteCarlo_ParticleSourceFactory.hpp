@@ -109,7 +109,7 @@ public:
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// Template inludes.
+// Template includes.
 //---------------------------------------------------------------------------//
 
 #include "MonteCarlo_ParticleSourceFactory_def.hpp"

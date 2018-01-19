@@ -185,7 +185,7 @@ protected:
   //! Test if the independent variable is compatible with Lin processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LinIndepVarProcessingTag ) const;
-  
+
   //! Test if the independent variable is compatible with Log processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;
@@ -237,7 +237,7 @@ private:
   template<typename Quantity>
   static void convertUnitlessValues(
                                  const Teuchos::Array<double>& unitless_values,
-                                 Teuchos::Array<Quantity>& quantitites );
+                                 Teuchos::Array<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
@@ -275,7 +275,7 @@ private:
   // The cutoff normalization constant
   DistNormQuantity d_cutoff_norm_constant;
 
-  // The unormalized CDF value a the cutoff angle cosine
+  // The unnormalized CDF value a the cutoff angle cosine
   UnnormCDFQuantity d_max_cutoff_cdf;
 
   // The cutoff angle cosine between the tabular and discrete distributions
@@ -352,7 +352,7 @@ class TypeNameTraits<Utility::UnitAwareHybridElasticDistribution<InterpolationPo
 } // end Teuchos namespace
 
 //---------------------------------------------------------------------------//
-// Template inludes.
+// Template includes.
 //---------------------------------------------------------------------------//
 
 #include "Utility_HybridElasticDistribution_def.hpp"
