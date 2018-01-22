@@ -18,6 +18,7 @@ bool isValidParticleTypeName( const std::string& particle_type_name )
   return particle_type_name.compare( "Photon" ) == 0 ||
     particle_type_name.compare( "Neutron" ) == 0 ||
     particle_type_name.compare( "Electron" ) == 0 ||
+    particle_type_name.compare( "Positron" ) == 0 ||
     particle_type_name.compare( "Adjoint Photon" ) == 0 ||
     particle_type_name.compare( "Adjoint Neutron" ) == 0 ||
     particle_type_name.compare( "Adjoint Electron" ) == 0;
@@ -36,6 +37,8 @@ std::string convertShortParticleTypeNameToVerboseParticleTypeName(
     return "Photon";
   else if( short_particle_type_name == "e" )
     return "Electron";
+  else if( short_particle_type_name == "e+" )
+    return "Positron";
   else if( short_particle_type_name == "an" )
     return "Adjoint Neutron";
   else if( short_particle_type_name == "ap" )
@@ -60,6 +63,8 @@ ParticleType convertParticleTypeNameToParticleTypeEnum(
     return NEUTRON;
   else if( particle_type_name.compare( "Electron" ) == 0 )
     return ELECTRON;
+  else if( particle_type_name.compare( "Positron" ) == 0 )
+    return POSITRON;
   else if( particle_type_name.compare( "Adjoint Photon" ) == 0 )
     return ADJOINT_PHOTON;
   else if( particle_type_name.compare( "Adjoint Neutron" ) == 0 )
@@ -78,6 +83,7 @@ std::string convertParticleTypeEnumToString( const ParticleType particle_type )
   case PHOTON: return "Photon";
   case NEUTRON: return "Neutron";
   case ELECTRON: return "Electron";
+  case POSITRON: return "Positron";
   case ADJOINT_PHOTON: return "Adjoint Photon";
   case ADJOINT_NEUTRON: return "Adjoint Neutron";
   case ADJOINT_ELECTRON: return "Adjoint Electron";

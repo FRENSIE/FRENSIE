@@ -34,7 +34,7 @@ public:
   //! The internal material handle class (used within FRENSIE)
   typedef ModuleTraits::InternalMaterialHandle InternalMaterialHandle;
 
-  //! The value of an invalie external material handle
+  //! The value of an invalid external material handle
   static const ExternalMaterialHandle invalid_external_material_handle;
 
   //! Set the collision handler instance
@@ -76,7 +76,7 @@ CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
 {
   // Make sure the collision handler is valid
   testPrecondition( collision_handler.get() );
-  
+
   s_collision_handler = collision_handler;
 }
 

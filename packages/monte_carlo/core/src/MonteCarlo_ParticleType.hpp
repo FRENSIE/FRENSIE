@@ -22,6 +22,7 @@ enum ParticleType{
   PHOTON = 0,
   NEUTRON,
   ELECTRON,
+  POSITRON,
   ADJOINT_PHOTON,
   ADJOINT_PHOTON_PROBE,
   ADJOINT_NEUTRON,
@@ -111,6 +112,12 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
   static inline MonteCarlo::ParticleType one()
   {
     return MonteCarlo::NEUTRON;
+  }
+
+  //! Returns the unity value for this type
+  static inline MonteCarlo::ParticleType two()
+  {
+    return MonteCarlo::ELECTRON;
   }
 };
 

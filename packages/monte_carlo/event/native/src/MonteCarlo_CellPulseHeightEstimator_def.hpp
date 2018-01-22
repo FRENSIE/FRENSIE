@@ -114,7 +114,7 @@ inline void CellPulseHeightEstimator<
 }
 
 // Add current history estimator contribution
-/*! \details It is unsafe to call this functio directly! This function will
+/*! \details It is unsafe to call this function directly! This function will
  * be called by the appropriate dispatcher when an event of interest occurs.
  * If calling this function directly, make sure that the cell of interest is
  * actually assigned to this estimator (otherwise segfaults are likely! ).
