@@ -105,7 +105,7 @@ public:
   virtual IndepQuantity getLowerBoundOfIndepVar() const = 0;
 
   //! Return the distribution type
-  virtual OneDDistributionType getDistributionType() const = 0;  
+  virtual OneDDistributionType getDistributionType() const = 0;
 
   //! Test if the distribution is tabular
   virtual bool isTabular() const;
@@ -125,13 +125,13 @@ protected:
   //! Test if the dependent variable can be zero within the indep bounds
   virtual bool canDepVarBeZeroInIndepBounds() const = 0;
 
-  //! Test if interpolation can ever be used 
+  //! Test if interpolation can ever be used
   virtual bool canInterpolationBeUsed() const;
 
   //! Test if the independent variable is compatible with Lin processing
   virtual bool isIndepVarCompatibleWithProcessingType(
                                         const LinIndepVarProcessingTag ) const;
-  
+
   //! Test if the independent variable is compatible with Log processing
   virtual bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;
@@ -163,7 +163,7 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isTabular(
 // Test if the distribution is compatible with the interpolation type
 /*! \details Some higher-level classes use the output of the OneDDistribution
  * methods to do interpolations. This method can be used to check that the
- * requested interpolation policy can be safetly used with the distribution's
+ * requested interpolation policy can be safely used with the distribution's
  * output.
  */
 template<typename IndependentUnit, typename DependentUnit>
@@ -185,7 +185,7 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isCompatib
 }
 
 // Test if interpolation can ever be used
-/*! \details This can be used as an override if intepolation should never
+/*! \details This can be used as an override if interpolation should never
  * be used with a particular distribution (e.g. Utility::DeltaDistribution).
  * In general, only continuous distributions should be used with an
  * interpolation scheme.
@@ -209,7 +209,7 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVar
 {
   return true;
 }
-  
+
 // Test if the independent variable is compatible with Log processing
 /*! \details It may be necessary to override this default behavior
  * (e.g. Utility::TabularDistribution).

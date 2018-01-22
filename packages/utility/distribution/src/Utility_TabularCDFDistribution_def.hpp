@@ -638,7 +638,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
                               "constructed because the representation is not "
                               "valid (see details below)!\n" );
 
-  // Set the interpret dependent values as cdf falg
+  // Set the interpret dependent values as cdf flag
   d_interpret_dependent_values_as_cdf = interpret_dependent_values_as_cdf;
 
   this->initializeDistributionFromRawData( independent_values,

@@ -91,10 +91,10 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
 
   // Calculate the occupation number arguments
   ComptonProfile::MomentumQuantity pz_min, pz_max;
-  
+
   {
     double raw_pz_min, raw_pz_max;
-  
+
     this->calculateOccupationNumberArguments( incoming_energy,
                                               this->getMaxEnergy(),
                                               scattering_angle_cosine,
@@ -108,11 +108,11 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
   // Sample the electron momentum projection
   ComptonProfile::MomentumQuantity pz =
     d_compton_profile->sampleInSubrange( pz_max, pz_min );
-  
+
   // Calculate the doppler broadened adjoint photon energy
   bool energetically_possible;
 
-  outgoing_energy = 
+  outgoing_energy =
     calculateDopplerBroadenedEnergyAdjoint( pz.value(),
                                             incoming_energy,
                                             scattering_angle_cosine,
@@ -139,7 +139,7 @@ bool DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::isEn
 
 // Create a probe particle
 void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
-                                      const double energy_of_interest, 
+                                      const double energy_of_interest,
                                       const AdjointPhotonState& adjoint_photon,
                                       ParticleBank& bank ) const
 {
@@ -150,7 +150,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
   testPrecondition( adjoint_photon.getEnergy() <=
                     this->getMaxEnergy() - this->getSubshellBindingEnergy() );
   // Make sure the energy of interest is in the scattering window
-  testPrecondition( this->isEnergyInScatteringWindow( 
+  testPrecondition( this->isEnergyInScatteringWindow(
 						energy_of_interest,
 						adjoint_photon.getEnergy() ) );
 
@@ -160,7 +160,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
   {
     // Sample the scattering angle
     double adjoint_compton_line_energy, scattering_angle_cosine;
-    
+
     SubshellIncoherentAdjointPhotonScatteringDistribution::sample(
                                                    adjoint_photon.getEnergy(),
                                                    adjoint_compton_line_energy,
@@ -171,7 +171,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
       this->evaluateAdjointOccupationNumber( adjoint_photon.getEnergy(),
                                              energy_of_interest,
                                              scattering_angle_cosine );
-    
+
     // Calculate pz corresponding to the energy of interest
     ComptonProfile::MomentumQuantity pz;
     Utility::setQuantity( pz, calculateElectronMomentumProjectionAdjoint(
@@ -188,7 +188,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
              adjoint_photon.getEnergy()*adjoint_photon.getEnergy() -
              2*energy_of_interest*adjoint_photon.getEnergy()*
              scattering_angle_cosine ));
-    
+
     // Calculate the probe weight multiplier
     const double weight_mult = pdf_conversion*
       (d_compton_profile->evaluate( pz ).value()/adjoint_occupation_number);
