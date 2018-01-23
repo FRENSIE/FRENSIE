@@ -13,6 +13,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -21,7 +22,8 @@ namespace MonteCarlo{
  *  \details currently the binding energy is not taken into account when
  *  calculating the outgoing energy and direction of the original electron
  */
-class ElectroionizationSubshellElectronScatteringDistribution : public ElectronScatteringDistribution
+class ElectroionizationSubshellElectronScatteringDistribution : public ElectronScatteringDistribution,
+      public PositronScatteringDistribution
 {
 
 public:
@@ -88,6 +90,11 @@ public:
                         MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
 protected:
 
   // Calculate the outgoing angle cosine
@@ -95,6 +102,11 @@ protected:
                         const double outgoing_energy ) const;
 
 private:
+
+  //! Sample a knock-on energy and direction from the distribution
+  void samplePositron( const double incoming_positron_energy,
+                       double& knock_on_energy,
+                       double& knock_on_angle_cosine ) const;
 
   // electroionization subshell scattering cross sections
   std::shared_ptr<TwoDDist> d_electroionization_shell_distribution;

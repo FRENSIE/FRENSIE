@@ -496,11 +496,10 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   double knock_on_energy, scattering_angle_cosine, knock_on_angle_cosine;
 
   // sample the electron
-  ace_ionization_dist->sampleAndRecordTrials(
-                                                        incoming_energy,
-                                                        knock_on_energy,
-                                                        knock_on_angle_cosine,
-                                                        trials );
+  ace_ionization_dist->sampleAndRecordTrials( incoming_energy,
+                                              knock_on_energy,
+                                              knock_on_angle_cosine,
+                                              trials );
 
   // Test trials
   TEST_EQUALITY_CONST( trials, 1.0 );
@@ -531,8 +530,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
   // Analytically scatter electron
   ace_ionization_dist->scatterElectron( electron,
-                                                       bank,
-                                                       shell_of_interaction );
+                                        bank,
+                                        shell_of_interaction );
 
   // Test original electron
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.964446703542646, 1e-12 );
@@ -541,7 +540,40 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   // Test knock-on electron
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.279436961765390, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.105262105768E-02, 1e-12 );
+}
 
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
+                   scatterPositron_ace )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.0 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter positron
+  ace_ionization_dist->scatterPositron( positron,
+                                        bank,
+                                        shell_of_interaction );
+
+  // Test original positron
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 7.8974722856283108e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 4.5585500000302387e-01, 1e-12 );
+  std::cout << std::setprecision(16) << std::scientific << "positron.getZDirection() = \t" << positron.getZDirection() << std::endl;
+  std::cout << std::setprecision(16) << std::scientific << "positron.getEnergy() = \t" << positron.getEnergy() << std::endl;
+
+  // Test knock-on positron
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 07.8974722855920831e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.5585499999697615e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

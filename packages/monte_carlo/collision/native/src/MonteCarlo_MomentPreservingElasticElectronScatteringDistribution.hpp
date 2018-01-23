@@ -16,6 +16,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
@@ -26,6 +27,7 @@ namespace MonteCarlo{
 
 //! The moment preserving scattering distribution base class
 class MomentPreservingElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+        public PositronScatteringDistribution,
         public AdjointElectronScatteringDistribution
 {
 
@@ -67,6 +69,11 @@ public:
 
   //! Randomly scatter the electron
   void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
                         MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 

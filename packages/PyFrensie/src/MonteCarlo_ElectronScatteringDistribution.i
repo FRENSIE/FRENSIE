@@ -58,6 +58,8 @@
 
 // Ignore scatter electron
 %ignore *::scatterElectron( ElectronState&, ParticleBank&, Data::SubshellType& ) const;
+// Ignore scatter positron
+%ignore *::scatterPositron( PositronState&, ParticleBank&, Data::SubshellType& ) const;
 // Ignore scatter adjoint electron
 %ignore *::scatterAdjointElectron( AdjointElectronState&, ParticleBank&, Data::SubshellType& ) const;
 

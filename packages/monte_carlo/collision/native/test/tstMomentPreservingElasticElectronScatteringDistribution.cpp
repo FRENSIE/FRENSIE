@@ -496,6 +496,35 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the angle can be evaluated
+TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+                   ScatterPositron )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 1.41615401623161025e-01; // sample mu = 9.23783127169921725e-01
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.0e-3 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter positron
+  discrete_elastic_distribution->scatterPositron( positron,
+                                             bank,
+                                             shell_of_interaction );
+
+  // Test
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.23783127169921725e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
 // Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    ScatterAdjointElectron )

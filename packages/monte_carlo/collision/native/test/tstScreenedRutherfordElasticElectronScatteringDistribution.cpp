@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   // Test 2 energy 2
   TEST_FLOATING_EQUALITY( cdf_value, 5.00000003054950E-01, 1e-12 );
 
-  scattering_angle_cosine = 1.0; 
+  scattering_angle_cosine = 1.0;
   cdf_value =
     native_pb_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
@@ -306,6 +306,35 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   // Test
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.99999500000093E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.0e-3, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the angle can be evaluated
+TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+                   ScatterPositron )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5; // sample mu = 9.99999500000093E-01,
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.0e-3 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter positron
+  native_pb_elastic_distribution->scatterPositron( positron,
+                                                   bank,
+                                                   shell_of_interaction );
+
+  // Test
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.99999500000093E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 

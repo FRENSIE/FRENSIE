@@ -379,6 +379,89 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNative
 }
 
 //---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionNativeFactory,
+                   scatterPositron )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.25;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.0 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter positron
+  native_distribution->scatterPositron( positron,
+                                        bank,
+                                        shell_of_interaction );
+
+  // Test original positron
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 0.9645918284466900, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 0.8711427865388850, 1e-12 );
+
+  // Test knock-on positron
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.7784345450149228e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0567213460968893e-02, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellPositronScatteringDistributionNativeFactory,
+                   scatterPositron_direct )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 1e-10;
+  fake_stream[1] = 1.0-1e-10;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  {
+    MonteCarlo::PositronState positron( 0 );
+    positron.setEnergy( 8.829E-02 + 1e-15 );
+    positron.setDirection( 0.0, 0.0, 1.0 );
+
+    // Analytically scatter positron
+    direct_native_distribution->scatterPositron( positron,
+                                                 bank,
+                                                 shell_of_interaction );
+
+    // Test original positron
+    TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+    TEST_FLOATING_EQUALITY( positron.getEnergy(), 1e-15, 1e-12 );
+
+    // Test knock-on positron
+    TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.1088260343863984e-07, 1e-12 );
+    TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 9.9920072216264089e-16, 1e-12 );
+  }
+  {
+    MonteCarlo::PositronState positron( 0 );
+    positron.setEnergy( 8.829E-02 + 1e-15 );
+    positron.setDirection( 0.0, 0.0, 1.0 );
+
+    // Analytically scatter positron
+    direct_native_distribution->scatterPositron( positron,
+                                                 bank,
+                                                 shell_of_interaction );
+
+    // Test original positron
+    TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+    TEST_FLOATING_EQUALITY( positron.getEnergy(), 1e-15, 1e-12 );
+
+    // Test knock-on positron
+    TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.1088260343863984e-07, 1e-12 );
+    TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 9.9920072216264089e-16, 1e-12 );
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();

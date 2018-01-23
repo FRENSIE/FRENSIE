@@ -156,6 +156,28 @@ void MomentPreservingElasticElectronScatteringDistribution::scatterElectron(
                             this->sampleAzimuthalAngle() );
 }
 
+// Randomly scatter the positron
+void MomentPreservingElasticElectronScatteringDistribution::scatterPositron(
+         PositronState& positron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( positron.getEnergy(),
+                                   scattering_angle_cosine,
+                                   trial_dummy );
+
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  positron.rotateDirection( scattering_angle_cosine,
+                            this->sampleAzimuthalAngle() );
+}
+
 // Randomly scatter the adjoint electron
 void MomentPreservingElasticElectronScatteringDistribution::scatterAdjointElectron(
                 AdjointElectronState& adjoint_electron,

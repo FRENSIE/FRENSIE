@@ -327,6 +327,28 @@ void CoupledElasticElectronScatteringDistribution::scatterElectron(
                             this->sampleAzimuthalAngle() );
 }
 
+// Randomly scatter the positron
+void CoupledElasticElectronScatteringDistribution::scatterPositron(
+         PositronState& positron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( positron.getEnergy(),
+                                   scattering_angle_cosine,
+                                   trial_dummy );
+
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  positron.rotateDirection( scattering_angle_cosine,
+                            this->sampleAzimuthalAngle() );
+}
+
 // Randomly scatter the adjoint electron
 void CoupledElasticElectronScatteringDistribution::scatterAdjointElectron(
          AdjointElectronState& adjoint_electron,
@@ -383,7 +405,7 @@ double CoupledElasticElectronScatteringDistribution::sampleScreenedRutherfordPea
   // evaluate the moliere screening constant
   double eta = d_elastic_traits->evaluateMoliereScreeningConstant( incoming_energy );
 
-  // Scale the random number 
+  // Scale the random number
   double scaled_random_number = ElasticTraits::delta_mu_peak/eta*
     ( random_number - cutoff_ratio )/( 1.0L - cutoff_ratio );
 

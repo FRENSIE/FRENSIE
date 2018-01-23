@@ -340,6 +340,72 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
     electron.setAsGone();
 }
 
+// Randomly scatter the positron
+void ElectroionizationSubshellElectronScatteringDistribution::scatterPositron(
+         PositronState& positron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
+{
+  testPrecondition( positron.getEnergy() > d_binding_energy );
+
+  // The energy of the outgoing and knock-on electron
+  double outgoing_energy, knock_on_energy;
+
+  // The angle cosine of the outgoing and knock-on electron
+  double scattering_angle_cosine, knock_on_angle_cosine;
+
+  // Sample energy and angle cosine for the knock on electron
+  this->samplePositron( positron.getEnergy(),
+                        knock_on_energy,
+                        knock_on_angle_cosine );
+  std::cout << std::setprecision(16) << std::scientific << "knock_on_energy = \t" << knock_on_energy << std::endl;
+  std::cout << std::setprecision(16) << std::scientific << "knock_on_angle_cosine = \t" << knock_on_angle_cosine << std::endl;
+
+
+
+  if( d_bank_secondary_particles )
+  {
+    // Create new electron
+    Teuchos::RCP<ParticleState> knock_on_electron(
+                            new ElectronState( positron, true, true ) );
+
+    // Set knock-on electron energy
+    knock_on_electron->setEnergy( knock_on_energy );
+
+
+    // Set the direction of the knock-on electron
+    knock_on_electron->rotateDirection( knock_on_angle_cosine,
+                                        this->sampleAzimuthalAngle() );
+
+    // Bank the knock-on electron
+    bank.push( knock_on_electron );
+  }
+
+  // Increment the positron generation number
+  positron.incrementGenerationNumber();
+
+  // Calculate the outgoing positron energy
+  outgoing_energy = (positron.getEnergy() - d_binding_energy) - knock_on_energy;
+
+  // Check if the positron energy goes to zero
+  if( outgoing_energy > 0.0 )
+  {
+    // Calculate the outgoing angle cosine for the primary electron
+    scattering_angle_cosine = outgoingAngle( positron.getEnergy(),
+                                             outgoing_energy );
+
+    // Set the outgoing positron energy
+    positron.setEnergy( outgoing_energy );
+
+    // Set the new direction of the primary positron
+    positron.rotateDirection( scattering_angle_cosine,
+                              this->sampleAzimuthalAngle() );
+  }
+  // Set the positron energy to just above zero ( for annihilation )
+  else
+    positron.setEnergy( 1e-15 );
+}
+
 // Calculate the outgoing angle cosine
 double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
                                             const double incoming_energy,
@@ -367,6 +433,80 @@ double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
   testPostcondition( angle_cosine <= 1.0 );
 
   return angle_cosine;
+}
+
+// Sample an knock on energy and direction from the distribution
+/*! \details For electro-ionization the knock-on electron is indistinguishable
+ *  from the incident electron and the electron with the lower energy is assumed
+ *  to be the knock-on electron. The sampled knock-on energy is limited to half
+ *  the maximum energy loss. For positro-ionization the knock-on electron is
+ *  distinguishable from the positron and must be sampled from the full energy
+ *  loss range, which is symmetrical. If the random number used for sampling is
+ *  greater than half then the knock- on energy is greater than half the maximum
+ *  energy loss and the sampled value must be added to the half the maximum
+ *  energy loss to obtain the knock-on energy.
+ */
+void ElectroionizationSubshellElectronScatteringDistribution::samplePositron(
+               const double incoming_energy,
+               double& knock_on_energy,
+               double& knock_on_angle_cosine ) const
+{
+  testPrecondition( incoming_energy > d_binding_energy );
+
+  double scaled_random_number =
+            2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();
+  std::cout << std::setprecision(16) << std::scientific << "scaled_random_number = \t" << scaled_random_number << std::endl;
+
+  // The knock-on energy is less than half the maximum energy loss
+  if ( scaled_random_number <= 1.0 )
+  {
+    if( scaled_random_number <= 1.0 )
+      scaled_random_number -= 1e-12;
+
+    // Sample knock-on electron energy
+    knock_on_energy =
+    d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      scaled_random_number,
+      [this]( const double& energy ){return this->getMinSecondaryEnergyAtIncomingEnergy( energy );},
+      [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} );
+    std::cout << std::setprecision(16) << std::scientific << "knock_on_energy = \t" << knock_on_energy << std::endl;
+
+  }
+  // The knock-on energy is greater than half the maximum energy loss
+  else
+  {
+    // Rescale the random number
+    scaled_random_number = 2.0 - scaled_random_number;
+
+    // Sample knock-on energy above half the maximum energy loss
+    double energy_above_half =
+    d_electroionization_shell_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy,
+      scaled_random_number,
+      [this]( const double& energy ){return this->getMinSecondaryEnergyAtIncomingEnergy( energy );},
+      [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} );
+
+    knock_on_energy = energy_above_half +
+                this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
+    std::cout << std::setprecision(16) << std::scientific << "energy_above_half = \t" << energy_above_half << std::endl;
+    std::cout << std::setprecision(16) << std::scientific << "this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) = \t" << this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) << std::endl;
+
+
+  }
+
+
+  if( d_limit_knock_on_energy_range )
+  {
+    knock_on_energy =
+      std::min( incoming_energy - d_binding_energy, knock_on_energy );
+  }
+
+  // Calculate the outgoing angle cosine for the knock on electron
+  knock_on_angle_cosine = outgoingAngle( incoming_energy,
+                                         knock_on_energy );
+
+  testPostcondition( knock_on_energy > 0.0 );
 }
 
 } // end MonteCarlo namespace

@@ -347,7 +347,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   electron.setEnergy( 1.5 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
-  // Sscatter electron
+  // Scatter electron
   epr14_electroionization_distribution->scatterElectron( electron,
                                                          bank,
                                                          shell_of_interaction );
@@ -359,6 +359,60 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
   // Test knock-on electron
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130300528e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147173835e-02, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+                   scatterPositron )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.25;
+  fake_stream[1] = 0.25;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.5 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Scatter positron
+  ace_electroionization_distribution->scatterPositron( positron,
+                                                       bank,
+                                                       shell_of_interaction );
+
+  // Test original positron
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.3707352378289799, 1e-12 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5457978376122531e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0974762170867221e-02, 1e-12 );
+
+  bank.pop();
+
+  // Scatter positron using the eprdata14 file
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  positron.setEnergy( 1.5 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Scatter positron
+  epr14_electroionization_distribution->scatterPositron( positron,
+                                                         bank,
+                                                         shell_of_interaction );
+
+  // Test original positron
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.3715157338528261, 1e-12 );
+
+  // Test knock-on electron
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130255830e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147025766e-02, 1e-12 );
 
 }
 

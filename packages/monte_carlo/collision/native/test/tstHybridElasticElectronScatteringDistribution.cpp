@@ -597,6 +597,35 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the angle can be evaluated
+TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
+                   ScatterPositron_logloglog )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.0e-3 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter positron
+  hybrid_distribution->scatterPositron( positron,
+                                                bank,
+                                                shell_of_interaction );
+
+  // Test
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 0.9, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
 // Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                    ScatterAdjointElectron_logloglog )
@@ -1058,6 +1087,34 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the angle can be evaluated
+TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
+                   ScatterPositron_linlinlin )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.0e-3 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter positron
+  lin_hybrid_distribution->scatterPositron( positron,
+                                            bank,
+                                            shell_of_interaction );
+
+  // Test
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 0.9, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                    ScatterAdjointElectron_linlinlin )
@@ -1193,7 +1250,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 
   TEST_THROW( linlog_hybrid_distribution->evaluatePDF( 1e-4, angle_cosine_cutoff ),
               std::runtime_error );
-              
+
   // double energy, scattering_angle_cosine, pdf_value;
 
   // // Test: below lowest bin
@@ -1518,6 +1575,34 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the angle can be evaluated
+TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
+                   ScatterPositron_linlinlog )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 2.4463192152870505e-01; // sample mu = 0.9
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1.0e-3 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter positron
+  linlog_hybrid_distribution->scatterPositron( positron,
+                                            bank,
+                                            shell_of_interaction );
+
+  // Test
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 0.9, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                    ScatterAdjointElectron_linlinlog )
@@ -1571,7 +1656,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     data_container.getElectronEnergyGrid().end() );
 
   // Construct the grid searcher
-  Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false> 
+  Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>
     grid_searcher(
        raw_energy_grid,
        raw_energy_grid[0],
