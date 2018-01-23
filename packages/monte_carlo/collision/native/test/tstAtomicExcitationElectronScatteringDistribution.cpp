@@ -111,6 +111,31 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
+                   scatterPositron )
+{
+  MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1e-03 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  Data::SubshellType shell_of_interaction;
+  double final_energy = (positron.getEnergy() - 9.32298E-06);
+
+  // Scatter the positron
+  ace_atomic_excitation_distribution->scatterPositron( positron,
+                                                       bank,
+                                                       shell_of_interaction );
+
+  // Test
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), final_energy, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
@@ -173,7 +198,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicExcitationElectronScatteringDistribution.cpp

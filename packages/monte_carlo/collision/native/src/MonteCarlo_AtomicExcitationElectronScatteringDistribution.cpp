@@ -74,6 +74,24 @@ void AtomicExcitationElectronScatteringDistribution::scatterElectron(
   electron.setEnergy( outgoing_energy );
 }
 
+// Randomly scatter the positron
+void AtomicExcitationElectronScatteringDistribution::scatterPositron(
+                    MonteCarlo::PositronState& positron,
+                    MonteCarlo::ParticleBank& bank,
+                    Data::SubshellType& shell_of_interaction ) const
+{
+  double outgoing_energy;
+  double scattering_angle_cosine;
+
+  // Sample an outgoing energy
+  this->sample( positron.getEnergy(),
+                outgoing_energy,
+                scattering_angle_cosine );
+
+  // Set the new energy
+  positron.setEnergy( outgoing_energy );
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

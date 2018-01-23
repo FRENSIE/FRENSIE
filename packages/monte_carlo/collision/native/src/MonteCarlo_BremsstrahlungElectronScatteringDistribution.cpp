@@ -151,6 +151,7 @@ void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials(
   this->sample( incoming_energy, photon_energy, photon_angle_cosine );
 
 }
+
 // Randomly scatter the electron
 void BremsstrahlungElectronScatteringDistribution::scatterElectron(
                           ElectronState& electron,
@@ -188,6 +189,49 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
+
+  testPostcondition( photon_energy > 0.0 );
+  testPostcondition( photon_angle_cosine <= 1.0 );
+  testPostcondition( photon_angle_cosine >= -1.0 );
+}
+
+// Randomly scatter the positron
+void BremsstrahlungElectronScatteringDistribution::scatterPositron(
+                          PositronState& positron,
+                          ParticleBank& bank,
+                          Data::SubshellType& shell_of_interaction ) const
+{
+  // Sample the energy and angle of the bremsstrahlung photon
+  double photon_energy, photon_angle_cosine;
+  this->sample( positron.getEnergy(), photon_energy, photon_angle_cosine );
+
+  // Check if bremsstrahlung photon will be banked
+  if ( d_bank_secondary_particles )
+  {
+    // Create new photon
+    Teuchos::RCP<PhotonState> bremsstrahlung_photon(
+                            new PhotonState( positron, true, true ) );
+
+    // Set photon energy
+    bremsstrahlung_photon->setEnergy( photon_energy );
+
+    // Set the photon outgoing angle cosine
+    bremsstrahlung_photon->rotateDirection( photon_angle_cosine,
+                                            sampleAzimuthalAngle() );
+
+    // Bank the photon
+    bank.push( bremsstrahlung_photon );
+  }
+
+  // Set the new electron energy (if zero then set to negligible amount)
+  double outgoing_energy = positron.getEnergy() - photon_energy;
+  if( outgoing_energy > 0.0 )
+    positron.setEnergy( outgoing_energy );
+  else
+    positron.setEnergy( 1e-15 );
+
+  // Increment the positron generation number
+  positron.incrementGenerationNumber();
 
   testPostcondition( photon_energy > 0.0 );
   testPostcondition( photon_angle_cosine <= 1.0 );

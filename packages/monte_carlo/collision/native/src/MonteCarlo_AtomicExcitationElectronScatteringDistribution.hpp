@@ -11,12 +11,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The atomic excitation scattering distribution base class
-class AtomicExcitationElectronScatteringDistribution : public ElectronScatteringDistribution
+class AtomicExcitationElectronScatteringDistribution : public ElectronScatteringDistribution,
+                                                       public PositronScatteringDistribution
 {
 
 public:
@@ -60,6 +62,11 @@ public:
 
   //! Randomly scatter the electron
   void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
                         MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 

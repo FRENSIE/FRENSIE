@@ -341,6 +341,85 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+/* Check that an positron can be bremsstrahlung scattered and a simple
+ * (dipole distribution) photon is generated
+ */
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+                   scatterPositron_DipoleBremsstrahlung )
+{
+  MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::PositronState positron( 1 );
+  positron.setEnergy( 0.0009 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  Data::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
+  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  ace_dipole_brem_dist->scatterPositron( positron, bank, shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 8.84838703016428E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 1.51612969835718E-05 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0592724905908 , 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+/* Check that an positron can be bremsstrahlung scattered and a detailed 2BS
+ * photon is generated
+ */
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+                   scatterPositron_2BS_bremsstrahlung )
+{
+  MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::PositronState positron( 1 );
+  positron.setEnergy( 1.0 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
+
+  Data::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 5 );
+  fake_stream[0] = 0.5; // Correlated sample the 3.1622800E-01 MeV and 2.0 MeV distributions
+  fake_stream[1] = 0.5; // Sample a photon angle of 0.9118675275
+  fake_stream[2] = 0.49; // Reject the angle
+  fake_stream[3] = 0.5; // Sample a photon angle of 0.9118675275
+  fake_stream[4] = 0.48; // Accept the angle
+
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  twobs_brem_dist->scatterPositron( positron,
+                                    bank,
+                                    shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), 9.99834616322782E-01 , 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 1.65383677217787E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.612270260118, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1 );
+
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
