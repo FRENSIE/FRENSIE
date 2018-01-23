@@ -33,7 +33,7 @@ public:
   { /* ... */ }
 
   TestParticleState( const unsigned long long history_number )
-  : MonteCarlo::ParticleState( history_number, MonteCarlo::PHOTON )
+  : MonteCarlo::ParticleState( history_number, MonteCarlo::PHOTON, 1 )
   { /* ... */ }
 
   TestParticleState( const MonteCarlo::ParticleState& existing_base_state,
@@ -41,6 +41,7 @@ public:
                      const bool reset_collision_number = false )
     : MonteCarlo::ParticleState( existing_base_state,
                                  MonteCarlo::PHOTON,
+                                 1,
                                  increment_generation_number,
                                  reset_collision_number )
   { /* ... */ }
@@ -346,7 +347,7 @@ TEUCHOS_UNIT_TEST( ParticleState, setgetSourceEnergy )
 }
 
 //---------------------------------------------------------------------------//
-// Set/get the enegy of a particle
+// Set/get the energy of a particle
 TEUCHOS_UNIT_TEST( ParticleState, setgetEnergy )
 {
   TestParticleState particle( 1ull );
@@ -354,6 +355,15 @@ TEUCHOS_UNIT_TEST( ParticleState, setgetEnergy )
   particle.setEnergy( 1.0 );
 
   TEST_EQUALITY_CONST( particle.getEnergy(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Get the charge of a particle
+TEUCHOS_UNIT_TEST( ParticleState, getCharge )
+{
+  TestParticleState particle( 1ull );
+
+  TEST_EQUALITY_CONST( particle.getCharge(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -514,6 +524,7 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
   TEST_EQUALITY_CONST( loaded_particle.getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getSourceEnergy(), 2.0 );
   TEST_EQUALITY_CONST( loaded_particle.getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getCharge(), 1 );
   TEST_EQUALITY_CONST( loaded_particle.getSourceTime(), 0.0 );
   TEST_EQUALITY_CONST( loaded_particle.getTime(), 0.5 );
   TEST_EQUALITY_CONST( loaded_particle.getCollisionNumber(), 1.0 );
@@ -560,6 +571,8 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
                  particle_gen_a.getSourceEnergy() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
                  particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_b.getCharge(),
+                 particle_gen_a.getCharge() );
   TEST_EQUALITY( particle_gen_b.getSourceTime(),
                  particle_gen_a.getSourceTime() );
   TEST_EQUALITY( particle_gen_b.getTime(),
@@ -596,6 +609,8 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
                  particle_gen_b.getSourceEnergy() );
   TEST_EQUALITY( particle_gen_c.getEnergy(),
                  particle_gen_b.getEnergy() );
+  TEST_EQUALITY( particle_gen_c.getCharge(),
+                 particle_gen_b.getCharge() );
   TEST_EQUALITY( particle_gen_c.getSourceTime(),
                  particle_gen_b.getSourceTime() );
   TEST_EQUALITY( particle_gen_c.getTime(),

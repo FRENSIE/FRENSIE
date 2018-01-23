@@ -21,8 +21,8 @@ ElectronState::ElectronState()
 
 // Constructor
 ElectronState::ElectronState(
-		        const ParticleState::historyNumberType history_number )
-  : MassiveParticleState( history_number, ELECTRON )
+                        const ParticleState::historyNumberType history_number )
+  : MassiveParticleState( history_number, ELECTRON, -1 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -30,10 +30,11 @@ ElectronState::ElectronState( const ElectronState& existing_electron_state,
                               const bool increment_generation_number,
                               const bool reset_collision_number )
   : MassiveParticleState(existing_electron_state,
-			 ELECTRON,
-			 Utility::PhysicalConstants::electron_rest_mass_energy,
-			 increment_generation_number,
-			 reset_collision_number )
+                         ELECTRON,
+                         -1,
+                         Utility::PhysicalConstants::electron_rest_mass_energy,
+                         increment_generation_number,
+                         reset_collision_number )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -41,10 +42,11 @@ ElectronState::ElectronState( const ParticleState& existing_base_state,
                               const bool increment_generation_number,
                               const bool reset_collision_number )
   : MassiveParticleState(existing_base_state,
-			 ELECTRON,
-			 Utility::PhysicalConstants::electron_rest_mass_energy,
-			 increment_generation_number,
-			 reset_collision_number )
+                         ELECTRON,
+                         -1,
+                         Utility::PhysicalConstants::electron_rest_mass_energy,
+                         increment_generation_number,
+                         reset_collision_number )
 { /* ... */ }
 
 // Return the rest mass energy of the electron (MeV)

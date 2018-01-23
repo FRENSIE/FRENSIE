@@ -274,7 +274,7 @@ TEUCHOS_UNIT_TEST( ParticleBank, sort )
   }
 
   {
-    MonteCarlo::PositronState positron( 4ull );
+    MonteCarlo::PositronState positron( 0ull );
 
     bank.push( positron );
   }
@@ -282,6 +282,11 @@ TEUCHOS_UNIT_TEST( ParticleBank, sort )
   TEST_ASSERT( !bank.isSorted( compareHistoryNumbers ) );
 
   bank.sort( compareHistoryNumbers );
+
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::POSITRON );
+
+  bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
@@ -295,11 +300,6 @@ TEUCHOS_UNIT_TEST( ParticleBank, sort )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 3ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-
-  bank.pop();
-
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 4ull );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::POSITRON );
 }
 
 //---------------------------------------------------------------------------//
@@ -362,7 +362,7 @@ TEUCHOS_UNIT_TEST( ParticleBank, merge )
   bank_a.merge( bank_b, compareHistoryNumbers );
 
   TEST_ASSERT( bank_a.isSorted( compareHistoryNumbers ) );
-  TEST_EQUALITY_CONST( bank_a.size(), 6 );
+  TEST_EQUALITY_CONST( bank_a.size(), 8 );
   TEST_EQUALITY_CONST( bank_b.size(), 0 );
 
   TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 0ull );
@@ -420,55 +420,47 @@ TEUCHOS_UNIT_TEST( ParticleBank, splice )
 
   {
     MonteCarlo::PhotonState photon( 2ull );
-
     bank_a.push( photon );
   }
 
   {
     MonteCarlo::NeutronState neutron( 4ull );
-
     bank_a.push( neutron );
   }
 
   {
     MonteCarlo::ElectronState electron( 0ull );
-
     bank_a.push( electron );
   }
 
   {
     MonteCarlo::PositronState positron( 6ull );
-
     bank_a.push( positron );
   }
 
   {
     MonteCarlo::PhotonState photon( 3ull );
-
     bank_b.push( photon );
   }
 
   {
     MonteCarlo::NeutronState neutron( 1ull );
-
     bank_b.push( neutron );
   }
 
   {
     MonteCarlo::ElectronState electron( 5ull );
-
     bank_b.push( electron );
   }
 
   {
     MonteCarlo::PositronState positron( 7ull );
-
-    bank_a.push( positron );
+    bank_b.push( positron );
   }
 
   bank_a.splice( bank_b );
 
-  TEST_EQUALITY_CONST( bank_a.size(), 6 );
+  TEST_EQUALITY_CONST( bank_a.size(), 8 );
   TEST_EQUALITY_CONST( bank_b.size(), 0 );
 
   TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 2ull );
@@ -489,6 +481,12 @@ TEUCHOS_UNIT_TEST( ParticleBank, splice )
 
   bank_a.pop();
 
+  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 6ull );
+  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
+		       MonteCarlo::POSITRON );
+
+  bank_a.pop();
+
   TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 3ull );
   TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
 		       MonteCarlo::PHOTON );
@@ -504,12 +502,6 @@ TEUCHOS_UNIT_TEST( ParticleBank, splice )
   TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 5ull );
   TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
 		       MonteCarlo::ELECTRON );
-
-  bank_a.pop();
-
-  TEST_EQUALITY_CONST( bank_a.top().getHistoryNumber(), 6ull );
-  TEST_EQUALITY_CONST( bank_a.top().getParticleType(),
-		       MonteCarlo::POSITRON );
 
   bank_a.pop();
 
@@ -535,10 +527,8 @@ TEUCHOS_UNIT_TEST( ParticleBank, archive )
     MonteCarlo::ElectronState electron( 2ull );
     bank.push( electron );
 
-  {
     MonteCarlo::PositronState positron( 3ull );
     bank.push( positron );
-  }
 
     std::ofstream ofs( "test_particle_bank_archive.xml" );
 
@@ -554,7 +544,7 @@ TEUCHOS_UNIT_TEST( ParticleBank, archive )
   boost::archive::xml_iarchive ar(ifs);
   ar >> boost::serialization::make_nvp( "bank", loaded_bank );
 
-  TEST_EQUALITY_CONST( loaded_bank.size(), 3 );
+  TEST_EQUALITY_CONST( loaded_bank.size(), 4 );
   TEST_EQUALITY_CONST( loaded_bank.top().getParticleType(),
                        MonteCarlo::PHOTON );
 

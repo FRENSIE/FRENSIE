@@ -21,7 +21,7 @@ AdjointElectronState::AdjointElectronState()
 // Constructor
 AdjointElectronState::AdjointElectronState(
                          const ParticleState::historyNumberType history_number )
-  : MassiveParticleState( history_number, ADJOINT_ELECTRON )
+  : MassiveParticleState( history_number, ADJOINT_ELECTRON, -1 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -31,6 +31,7 @@ AdjointElectronState::AdjointElectronState(
 				      const bool reset_collision_number )
   : MassiveParticleState( existing_base_state,
                           ADJOINT_ELECTRON,
+                          -1,
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           increment_generation_number,
                           reset_collision_number )
@@ -43,6 +44,7 @@ AdjointElectronState::AdjointElectronState(
 				 const bool reset_collision_number )
   : MassiveParticleState( existing_base_state,
                           ADJOINT_ELECTRON,
+                          -1,
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           increment_generation_number,
                           reset_collision_number )
@@ -52,18 +54,21 @@ AdjointElectronState::AdjointElectronState(
 // Probe constructor
 AdjointElectronState::AdjointElectronState(
 			 const ParticleState::historyNumberType history_number,
-			 const ParticleType probe_type )
-  : MassiveParticleState( history_number, probe_type )
+			 const ParticleType probe_type,
+			 const chargeType probe_charge )
+  : MassiveParticleState( history_number, probe_type, probe_charge )
 { /* ... */ }
 
 // Probe copy constructor
 AdjointElectronState::AdjointElectronState(
 				     const ParticleState& existing_base_state,
 				     const ParticleType probe_type,
+				     const chargeType probe_charge,
 				     const bool increment_generation_number,
 				     const bool reset_collision_number )
   : MassiveParticleState( existing_base_state,
                           probe_type,
+                          probe_charge,
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           increment_generation_number,
                           reset_collision_number )

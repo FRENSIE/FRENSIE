@@ -21,32 +21,34 @@ AdjointElectronProbeState::AdjointElectronProbeState()
 
 // Constructor
 AdjointElectronProbeState::AdjointElectronProbeState(
-		       const ParticleState::historyNumberType history_number )
-  : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE ),
+                       const ParticleState::historyNumberType history_number )
+  : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE, -1 ),
     d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 AdjointElectronProbeState::AdjointElectronProbeState(
-			              const ParticleState& existing_base_state,
-				      const bool increment_generation_number,
-				      const bool reset_collision_number )
+                                      const ParticleState& existing_base_state,
+                                      const bool increment_generation_number,
+                                      const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-			ADJOINT_ELECTRON_PROBE,
-			increment_generation_number,
-			reset_collision_number ),
+                          ADJOINT_ELECTRON_PROBE,
+                          -1,
+                          increment_generation_number,
+                          reset_collision_number ),
     d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 AdjointElectronProbeState::AdjointElectronProbeState(
-			    const AdjointElectronProbeState& existing_base_state,
-			    const bool increment_generation_number,
-			    const bool reset_collision_number )
+                            const AdjointElectronProbeState& existing_base_state,
+                            const bool increment_generation_number,
+                            const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-			ADJOINT_ELECTRON_PROBE,
-			increment_generation_number,
-			reset_collision_number ),
+                          ADJOINT_ELECTRON_PROBE,
+                          -1,
+                          increment_generation_number,
+                          reset_collision_number ),
     d_active( false )
 { /* ... */ }
 

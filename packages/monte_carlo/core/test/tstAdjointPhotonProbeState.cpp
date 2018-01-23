@@ -34,6 +34,15 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, getParticleType )
 }
 
 //---------------------------------------------------------------------------//
+// Get the particle charge
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, getCharge )
+{
+  MonteCarlo::AdjointPhotonProbeState particle( 1ull );
+
+  TEST_EQUALITY_CONST( particle.getCharge(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Get the particle speed
 TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, getSpeed )
 {
@@ -150,6 +159,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, clone )
   TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
   TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getCharge(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
   TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 1 );
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
@@ -182,6 +192,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, clone_new_hist )
   TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
   TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getCharge(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
   TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 1 );
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
@@ -227,6 +238,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, archive )
   TEST_EQUALITY_CONST( loaded_particle.getYDirection(), 0.0 );
   TEST_EQUALITY_CONST( loaded_particle.getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getCharge(), 0 );
   TEST_EQUALITY_CONST( loaded_particle.getTime(), 0.5 );
   TEST_EQUALITY_CONST( loaded_particle.getCollisionNumber(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getGenerationNumber(), 0.0 );
@@ -266,6 +278,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
 		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() );
   TEST_EQUALITY( particle_gen_a_copy.getSpeed(),
 		 particle_gen_a.getSpeed() );
   TEST_EQUALITY( particle_gen_a_copy.getTime(),
@@ -296,6 +310,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
 		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() );
   TEST_EQUALITY( particle_gen_b.getTime(),
 		 particle_gen_a.getTime() );
   TEST_EQUALITY( particle_gen_b.getCollisionNumber(),
@@ -324,6 +340,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 		 particle_gen_b.getZDirection() );
   TEST_EQUALITY( particle_gen_c.getEnergy(),
 		 particle_gen_b.getEnergy() );
+  TEST_EQUALITY( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() );
   TEST_EQUALITY( particle_gen_c.getTime(),
 		 particle_gen_b.getTime() );
   TEST_EQUALITY_CONST( particle_gen_c.getCollisionNumber(), 0u );
@@ -363,6 +381,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, probe_nonprobe_copy_constructor )
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( probe_gen_a.getEnergy(),
 		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( probe_gen_a.getCharge(),
+		 particle_gen_a.getCharge() );
   TEST_EQUALITY( probe_gen_a.getSpeed(),
 		 particle_gen_a.getSpeed() );
   TEST_EQUALITY( probe_gen_a.getTime(),
@@ -392,6 +412,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, probe_nonprobe_copy_constructor )
 		 probe_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
 		 probe_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_b.getCharge(),
+		 probe_gen_a.getCharge() );
   TEST_EQUALITY( particle_gen_b.getTime(),
 		 probe_gen_a.getTime() );
   TEST_EQUALITY( particle_gen_b.getCollisionNumber(),

@@ -24,6 +24,7 @@ ParticleState::ParticleState()
     d_direction{0.0,0.0,1.0},
     d_source_energy( 0.0 ),
     d_energy( 0.0 ),
+    d_charge( 0 ),
     d_source_time( 0.0 ),
     d_time( 0.0 ),
     d_collision_number( 0 ),
@@ -40,13 +41,15 @@ ParticleState::ParticleState()
 // Constructor
 ParticleState::ParticleState(
 			 const ParticleState::historyNumberType history_number,
-			 const ParticleType type )
+			 const ParticleType type,
+			 const chargeType charge )
   : d_history_number( history_number ),
     d_particle_type( type ),
     d_position(),
     d_direction(),
     d_source_energy( 0.0 ),
     d_energy( 0.0 ),
+    d_charge( charge ),
     d_source_time( 0.0 ),
     d_time( 0.0 ),
     d_collision_number( 0 ),
@@ -66,6 +69,7 @@ ParticleState::ParticleState(
  */
 ParticleState::ParticleState( const ParticleState& existing_base_state,
 			      const ParticleType new_type,
+			      const chargeType new_charge,
 			      const bool increment_generation_number,
 			      const bool reset_collision_number )
   : d_history_number( existing_base_state.d_history_number ),
@@ -78,6 +82,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
 	        existing_base_state.d_direction[2]},
     d_source_energy( existing_base_state.d_source_energy ),
     d_energy( existing_base_state.d_energy ),
+    d_charge( new_charge ),
     d_source_time( existing_base_state.d_source_time ),
     d_time( existing_base_state.d_time ),
     d_collision_number( existing_base_state.d_collision_number ),
@@ -303,7 +308,7 @@ void ParticleState::setSourceEnergy( const energyType energy )
   d_source_energy = energy;
 }
 
-// Set the energy of the particle
+// Set the energy of the particle (MeV)
 /*! The default implementation is only valid for massless particles (It is
  * assumed that the speed of the particle does not change with the energy).
  */
@@ -314,6 +319,12 @@ void ParticleState::setEnergy( const ParticleState::energyType energy )
   testPrecondition( energy > 0.0 );
 
   d_energy = energy;
+}
+
+// Return the charge of the particle
+ParticleState::chargeType ParticleState::getCharge() const
+{
+  return d_charge;
 }
 
 // Return the source (starting) time of the particle (history) (s)
@@ -405,7 +416,7 @@ void ParticleState::setWeight( const double weight )
 {
   // Make sure that the current weight is valid
   testPrecondition( weight > 0.0 );
-  
+
   d_weight = weight;
 }
 

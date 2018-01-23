@@ -23,8 +23,9 @@ MassiveParticleState::MassiveParticleState()
 // Constructor
 MassiveParticleState::MassiveParticleState(
 					const historyNumberType history_number,
-					const ParticleType type )
-  : ParticleState( history_number, type ),
+					const ParticleType type,
+					const chargeType charge )
+  : ParticleState( history_number, type, charge ),
     d_speed( 0.0 )
 { /* ... */ }
 
@@ -32,11 +33,13 @@ MassiveParticleState::MassiveParticleState(
 MassiveParticleState::MassiveParticleState(
 				      const ParticleState& existing_base_state,
 				      const ParticleType new_type,
+				      const chargeType new_charge,
 				      const double new_rest_mass_energy,
 				      const bool increment_generation_number,
 				      const bool reset_collision_number )
   : ParticleState( existing_base_state,
 		   new_type,
+		   new_charge,
 		   increment_generation_number,
 		   reset_collision_number ),
     d_speed( Utility::calculateRelativisticSpeed(
@@ -51,11 +54,13 @@ MassiveParticleState::MassiveParticleState(
 MassiveParticleState::MassiveParticleState(
 			      const MassiveParticleState& existing_state,
 			      const ParticleType new_type,
+			      const chargeType new_charge,
 			      const double new_rest_mass_energy,
 			      const bool increment_generation_number,
 			      const bool reset_collision_number )
   : ParticleState( existing_state,
 		   new_type,
+		   new_charge,
 		   increment_generation_number,
 		   reset_collision_number ),
     d_speed()
