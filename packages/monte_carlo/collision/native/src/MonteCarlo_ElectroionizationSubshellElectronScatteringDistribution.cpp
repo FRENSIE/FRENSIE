@@ -358,10 +358,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterPositron(
   this->samplePositron( positron.getEnergy(),
                         knock_on_energy,
                         knock_on_angle_cosine );
-  std::cout << std::setprecision(16) << std::scientific << "knock_on_energy = \t" << knock_on_energy << std::endl;
-  std::cout << std::setprecision(16) << std::scientific << "knock_on_angle_cosine = \t" << knock_on_angle_cosine << std::endl;
-
-
 
   if( d_bank_secondary_particles )
   {
@@ -403,7 +399,12 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterPositron(
   }
   // Set the positron energy to just above zero ( for annihilation )
   else
+  {
     positron.setEnergy( 1e-15 );
+
+    // Rotate the positron assuming it is scattered to an angle cosine of zero
+    positron.rotateDirection( 0.0, this->sampleAzimuthalAngle() );
+  }
 }
 
 // Calculate the outgoing angle cosine
@@ -455,7 +456,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePositron(
 
   double scaled_random_number =
             2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();
-  std::cout << std::setprecision(16) << std::scientific << "scaled_random_number = \t" << scaled_random_number << std::endl;
 
   // The knock-on energy is less than half the maximum energy loss
   if ( scaled_random_number <= 1.0 )
@@ -470,8 +470,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePositron(
       scaled_random_number,
       [this]( const double& energy ){return this->getMinSecondaryEnergyAtIncomingEnergy( energy );},
       [this]( const double& energy ){return this->getMaxSecondaryEnergyAtIncomingEnergy( energy );} );
-    std::cout << std::setprecision(16) << std::scientific << "knock_on_energy = \t" << knock_on_energy << std::endl;
-
   }
   // The knock-on energy is greater than half the maximum energy loss
   else
@@ -489,10 +487,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::samplePositron(
 
     knock_on_energy = energy_above_half +
                 this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy );
-    std::cout << std::setprecision(16) << std::scientific << "energy_above_half = \t" << energy_above_half << std::endl;
-    std::cout << std::setprecision(16) << std::scientific << "this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) = \t" << this->getMaxSecondaryEnergyAtIncomingEnergy( incoming_energy ) << std::endl;
-
-
   }
 
 
