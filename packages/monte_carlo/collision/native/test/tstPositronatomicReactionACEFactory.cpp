@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElectroatomicReactionACEFactory.cpp
+//! \file   tstPositronatomicReactionACEFactory.cpp
 //! \author Luke Kersting
-//! \brief  Electroatomic reaction factory using ACE data unit tests
+//! \brief  Positronatomic reaction factory using ACE data unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_PositronatomicReactionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -30,16 +30,17 @@ MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
-std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
+std::shared_ptr<MonteCarlo::PositronatomicReaction> reaction;
+double min_electron_energy = 1e-5;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an elastic reaction can be created
-TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
+TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                    createCutoffElasticReaction )
 {
-  MonteCarlo::ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+  MonteCarlo::PositronatomicReactionACEFactory::createCutoffElasticReaction(
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
@@ -47,7 +48,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+                       MonteCarlo::CUTOFF_ELASTIC_POSITRONATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
 
   // Test that the stored cross section is correct
@@ -73,18 +74,19 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that an atomic excitation reaction can be created
-TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
+TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                    createAtomicExcitationReaction )
 {
-  MonteCarlo::ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
+  MonteCarlo::PositronatomicReactionACEFactory::createAtomicExcitationReaction(
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
-                reaction );
+                reaction,
+                min_electron_energy );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+                       MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
 
   // Test that the stored cross section is correct
@@ -107,23 +109,24 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the electroionization subshell reactions can be created
-TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
+TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                    createSubshellElectroionizationReactions )
 {
-  std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
+  std::vector<std::shared_ptr<MonteCarlo::PositronatomicReaction> > reactions;
 
-  MonteCarlo::ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
+  MonteCarlo::PositronatomicReactionACEFactory::createSubshellPositronionizationReactions(
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
-                reactions );
+                reactions,
+                min_electron_energy );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
   // Test the first shell's reaction properties
   TEST_EQUALITY_CONST(
             reactions.front()->getReactionType(),
-            MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+            MonteCarlo::K_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(), 8.9754e-2 );
 
   // Test the first shell's stored cross section is correct
@@ -150,7 +153,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   // Check the last shell's reaction properties
   TEST_EQUALITY_CONST(
                   reactions.back()->getReactionType(),
-                  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+                  MonteCarlo::P3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.back()->getThresholdEnergy(), 1e-5 );
 
   cross_section =
@@ -176,21 +179,22 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a basic (dipole distribution) bremsstrahlung reaction can be created
-TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
+TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                    createBremsstrahlungReaction_dipole )
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
+  MonteCarlo::PositronatomicReactionACEFactory::createBremsstrahlungReaction(
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
                 reaction,
-                photon_distribution_function );
+                photon_distribution_function,
+                min_electron_energy );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+                       MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
 
   // Test that the stored cross section is correct
@@ -219,21 +223,22 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 /* Check that a electroatom with detailed 2BS photon angular distribution
  * data can be created
  */
-TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
+TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                    createBremsstrahlungReaction_2bs )
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
+  MonteCarlo::PositronatomicReactionACEFactory::createBremsstrahlungReaction(
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
                 reaction,
-                photon_distribution_function );
+                photon_distribution_function,
+                min_electron_energy );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+                       MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
 
   // Test that the stored cross section is correct
@@ -262,15 +267,15 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a void absorption reaction can be created
-TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
+TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                    createVoidAbsorptionReaction )
 {
-  MonteCarlo::ElectroatomicReactionACEFactory::createVoidAbsorptionReaction(
+  MonteCarlo::PositronatomicReactionACEFactory::createVoidAbsorptionReaction(
                                                 reaction );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-                       MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
+                       MonteCarlo::TOTAL_ABSORPTION_POSITRONATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
 
   // Test that the stored cross section is correct
@@ -338,6 +343,5 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstElectroatomicReactionACEFactory.cpp
+// end tstPositronatomicReactionACEFactory.cpp
 //---------------------------------------------------------------------------//
-

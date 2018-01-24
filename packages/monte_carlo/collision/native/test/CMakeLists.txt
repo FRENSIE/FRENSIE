@@ -1008,6 +1008,13 @@ TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_n
 ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST ElectroatomicReactionACEFactory_test PROPERTY LABELS electron ace)
 
+ADD_EXECUTABLE(tstPositronatomicReactionACEFactory
+  tstPositronatomicReactionACEFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPositronatomicReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(PositronatomicReactionACEFactory_test tstPositronatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+SET_PROPERTY(TEST PositronatomicReactionACEFactory_test PROPERTY LABELS Positron ace)
+
 ADD_EXECUTABLE(tstElectroatomicReactionEPR14Factory
   tstElectroatomicReactionEPR14Factory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -1021,6 +1028,13 @@ ADD_EXECUTABLE(tstElectroatomicReactionNativeFactory
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomicReactionNativeFactory_test tstElectroatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
 SET_PROPERTY(TEST ElectroatomicReactionNativeFactory_test PROPERTY LABELS electron native)
+
+ADD_EXECUTABLE(tstPositronatomicReactionNativeFactory
+  tstPositronatomicReactionNativeFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPositronatomicReactionNativeFactory monte_carlo_collision_native)
+ADD_TEST(PositronatomicReactionNativeFactory_test tstPositronatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
+SET_PROPERTY(TEST PositronatomicReactionNativeFactory_test PROPERTY LABELS positron native)
 
 ADD_EXECUTABLE(tstAdjointElectroatomicReactionNativeFactory
   tstAdjointElectroatomicReactionNativeFactory.cpp

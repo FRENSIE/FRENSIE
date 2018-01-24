@@ -1,24 +1,24 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroatomicReactionNativeFactory_def.hpp
+//! \file   MonteCarlo_PositronatomicReactionNativeFactory_def.hpp
 //! \author Luke Kersting
-//! \brief  The electroatomic reaction Native data factory template definition
+//! \brief  The positron-atomic reaction Native data factory template definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTROATOMIC_REACTION_NATIVE_FACTORY_DEF_HPP
-#define MONTE_CARLO_ELECTROATOMIC_REACTION_NATIVE_FACTORY_DEF_HPP
+#ifndef MONTE_CARLO_POSITRONATOMIC_REACTION_NATIVE_FACTORY_DEF_HPP
+#define MONTE_CARLO_POSITRONATOMIC_REACTION_NATIVE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
-#include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
+#include "MonteCarlo_CoupledElasticPositronatomicReaction.hpp"
+#include "MonteCarlo_HybridElasticPositronatomicReaction.hpp"
+#include "MonteCarlo_DecoupledElasticPositronatomicReaction.hpp"
+#include "MonteCarlo_CutoffElasticPositronatomicReaction.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticPositronatomicReaction.hpp"
+#include "MonteCarlo_MomentPreservingElasticPositronatomicReaction.hpp"
+#include "MonteCarlo_AtomicExcitationPositronatomicReaction.hpp"
+#include "MonteCarlo_BremsstrahlungPositronatomicReaction.hpp"
+#include "MonteCarlo_PositronionizationSubshellPositronatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -26,18 +26,18 @@
 
 namespace MonteCarlo{
 
-// Create the coupled elastic scattering electroatomic reactions
+// Create the coupled elastic scattering positron-atomic reactions
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
-            const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createCoupledElasticReaction(
+            const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<PositronatomicReaction>& elastic_reaction,
             const CoupledElasticSamplingMethod& sampling_method,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+  testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
@@ -45,14 +45,14 @@ void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
-    raw_electroatom_data.getCutoffElasticCrossSection().begin(),
-    raw_electroatom_data.getCutoffElasticCrossSection().end() );
+    raw_positronatom_data.getCutoffElasticCrossSection().begin(),
+    raw_positronatom_data.getCutoffElasticCrossSection().end() );
 
   // Total elastic cross section
   Teuchos::ArrayRCP<double> total_cross_section;
   total_cross_section.assign(
-    raw_electroatom_data.getTotalElasticCrossSection().begin(),
-    raw_electroatom_data.getTotalElasticCrossSection().end() );
+    raw_positronatom_data.getTotalElasticCrossSection().begin(),
+    raw_positronatom_data.getTotalElasticCrossSection().end() );
 
   // Create the coupled elastic scattering distribution
   std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
@@ -61,30 +61,30 @@ void ElectroatomicReactionNativeFactory::createCoupledElasticReaction(
     energy_grid,
     cutoff_cross_section,
     total_cross_section,
-    raw_electroatom_data,
+    raw_positronatom_data,
     sampling_method,
     evaluation_tol );
 
   elastic_reaction.reset(
-    new CoupledElasticElectroatomicReaction<Utility::LogLog>(
+    new CoupledElasticPositronatomicReaction<Utility::LogLog>(
       energy_grid,
       total_cross_section,
-      raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex(),
+      raw_positronatom_data.getTotalElasticCrossSectionThresholdEnergyIndex(),
       grid_searcher,
       distribution ) );
 }
 
-// Create the decoupled elastic scattering electroatomic reactions
+// Create the decoupled elastic scattering positron-atomic reactions
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
-            const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createDecoupledElasticReaction(
+            const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<PositronatomicReaction>& elastic_reaction,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+  testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
@@ -92,18 +92,18 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
-    raw_electroatom_data.getCutoffElasticCrossSection().begin(),
-    raw_electroatom_data.getCutoffElasticCrossSection().end() );
+    raw_positronatom_data.getCutoffElasticCrossSection().begin(),
+    raw_positronatom_data.getCutoffElasticCrossSection().end() );
 
   // Total elastic cross section
   Teuchos::ArrayRCP<double> total_cross_section;
   total_cross_section.assign(
-    raw_electroatom_data.getTotalElasticCrossSection().begin(),
-    raw_electroatom_data.getTotalElasticCrossSection().end() );
+    raw_positronatom_data.getTotalElasticCrossSection().begin(),
+    raw_positronatom_data.getTotalElasticCrossSection().end() );
 
   // Total elastic cross section threshold energy bin index
   unsigned threshold_energy_index =
-    raw_electroatom_data.getTotalElasticCrossSectionThresholdEnergyIndex();
+    raw_positronatom_data.getTotalElasticCrossSectionThresholdEnergyIndex();
 
   // Calculate sampling ratios
   Teuchos::ArrayRCP<double> sampling_ratios( total_cross_section.size() );
@@ -116,7 +116,7 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
   ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     tabular_distribution,
-    raw_electroatom_data,
+    raw_positronatom_data,
     Utility::ElasticElectronTraits::mu_peak,
     evaluation_tol );
 
@@ -124,10 +124,10 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
   std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution> analytical_distribution;
   ElasticFactory::createScreenedRutherfordElasticDistribution(
     analytical_distribution,
-    raw_electroatom_data.getAtomicNumber() );
+    raw_positronatom_data.getAtomicNumber() );
 
   elastic_reaction.reset(
-    new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
+    new DecoupledElasticPositronatomicReaction<Utility::LogLog>(
                                         energy_grid,
                                         total_cross_section,
                                         sampling_ratios,
@@ -137,18 +137,18 @@ void ElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
                                         analytical_distribution ) );
 }
 
-// Create a hybrid elastic scattering electroatomic reaction
+// Create a hybrid elastic scattering positron-atomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createHybridElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    std::shared_ptr<PositronatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+  testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
@@ -156,12 +156,12 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
-    raw_electroatom_data.getCutoffElasticCrossSection().begin(),
-    raw_electroatom_data.getCutoffElasticCrossSection().end() );
+    raw_positronatom_data.getCutoffElasticCrossSection().begin(),
+    raw_positronatom_data.getCutoffElasticCrossSection().end() );
 
   // Cutoff elastic cross section threshold energy bin index
   unsigned cutoff_threshold_energy_index =
-    raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
+    raw_positronatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
@@ -169,7 +169,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
   ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
                                 moment_preserving_cross_sections,
                                 mp_threshold_energy_index,
-                                raw_electroatom_data,
+                                raw_positronatom_data,
                                 energy_grid,
                                 evaluation_tol );
 
@@ -188,14 +188,14 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
             energy_grid,
             cutoff_cross_section,
             mp_cross_section,
-            raw_electroatom_data,
+            raw_positronatom_data,
             cutoff_angle_cosine,
             evaluation_tol );
 
   // Create the cutoff elastic scattering distribution
   ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
             cutoff_distribution,
-            raw_electroatom_data,
+            raw_positronatom_data,
             cutoff_angle_cosine,
             evaluation_tol );
 
@@ -240,7 +240,7 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the hybrid elastic reaction
   elastic_reaction.reset(
-    new HybridElasticElectroatomicReaction<Utility::LogLog>(
+    new HybridElasticPositronatomicReaction<Utility::LogLog>(
             energy_grid,
             hybrid_cross_section,
             hybrid_threshold_energy_index,
@@ -249,18 +249,18 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
             distribution ) );
 }
 
-// Create the cutoff elastic scattering electroatomic reactions
+// Create the cutoff elastic scattering positron-atomic reactions
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
-            const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createCutoffElasticReaction(
+            const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<PositronatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+  testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
@@ -268,23 +268,23 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> elastic_cross_section;
   elastic_cross_section.assign(
-    raw_electroatom_data.getCutoffElasticCrossSection().begin(),
-    raw_electroatom_data.getCutoffElasticCrossSection().end() );
+    raw_positronatom_data.getCutoffElasticCrossSection().begin(),
+    raw_positronatom_data.getCutoffElasticCrossSection().end() );
 
   // Cutoff elastic cross section threshold energy bin index
   unsigned threshold_energy_index =
-    raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
+    raw_positronatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Create the cutoff elastic scattering distribution using the cutoff angle cosine
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
   ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     distribution,
-    raw_electroatom_data,
+    raw_positronatom_data,
     cutoff_angle_cosine,
     evaluation_tol );
 
   elastic_reaction.reset(
-    new CutoffElasticElectroatomicReaction<Utility::LogLog>(
+    new CutoffElasticPositronatomicReaction<Utility::LogLog>(
                           energy_grid,
                           elastic_cross_section,
                           threshold_energy_index,
@@ -292,18 +292,18 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
                           distribution ) );
 }
 
-// Create the moment preserving elastic scattering electroatomic reaction
+// Create the moment preserving elastic scattering positron-atomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
-            const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createMomentPreservingElasticReaction(
+            const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+            std::shared_ptr<PositronatomicReaction>& elastic_reaction,
             const double cutoff_angle_cosine,
             const double evaluation_tol )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+  testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
@@ -314,7 +314,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 
   ElasticFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
     distribution,
-    raw_electroatom_data,
+    raw_positronatom_data,
     cutoff_angle_cosine,
     evaluation_tol );
 
@@ -324,7 +324,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
   ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
                                 moment_preserving_cross_sections,
                                 mp_threshold_energy_index,
-                                raw_electroatom_data,
+                                raw_positronatom_data,
                                 energy_grid,
                                 evaluation_tol );
 
@@ -334,7 +334,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
     moment_preserving_cross_sections.end() );
 
   elastic_reaction.reset(
-    new MomentPreservingElasticElectroatomicReaction<Utility::LogLog>(
+    new MomentPreservingElasticPositronatomicReaction<Utility::LogLog>(
                           energy_grid,
                           mp_cross_section,
                           mp_threshold_energy_index,
@@ -342,16 +342,17 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
                           distribution ) );
 }
 
-// Create the subshell electroionization electroatomic reactions
+// Create the subshell electroionization positron-atomic reactions
 template<typename ReactionType,
          typename TwoDInterpPolicy,
          typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createSubshellPositronionizationReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
+    const double min_electron_energy,
     const double evaluation_tol )
 {
   // Convert subshell number to enum
@@ -361,12 +362,12 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
   // Electroionization cross section
   Teuchos::ArrayRCP<double> subshell_cross_section;
   subshell_cross_section.assign(
-      raw_electroatom_data.getElectroionizationCrossSection( subshell ).begin(),
-      raw_electroatom_data.getElectroionizationCrossSection( subshell ).end() );
+      raw_positronatom_data.getElectroionizationCrossSection( subshell ).begin(),
+      raw_positronatom_data.getElectroionizationCrossSection( subshell ).end() );
 
   // Electroionization cross section threshold energy bin index
   unsigned threshold_energy_index =
-      raw_electroatom_data.getElectroionizationCrossSectionThresholdEnergyIndex(
+      raw_positronatom_data.getElectroionizationCrossSectionThresholdEnergyIndex(
       subshell );
 
   // The electroionization subshell distribution
@@ -375,53 +376,56 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 
   // Create the electroionization subshell distribution
   ElectroionizationFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-      raw_electroatom_data,
+      raw_positronatom_data,
       subshell,
-      raw_electroatom_data.getSubshellBindingEnergy( subshell ),
+      raw_positronatom_data.getSubshellBindingEnergy( subshell ),
       electroionization_subshell_distribution,
       evaluation_tol );
 
 
   // Create the subshell electroelectric reaction
   electroionization_subshell_reaction.reset(
-      new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
+      new PositronionizationSubshellPositronatomicReaction<Utility::LogLog>(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
               grid_searcher,
               subshell_type,
-              electroionization_subshell_distribution ) );
+              electroionization_subshell_distribution,
+              min_electron_energy ) );
 }
 
-// Create the subshell electroionization electroatomic reactions
+// Create the subshell electroionization positron-atomic reactions
 template<typename ReactionType,
          typename TwoDInterpPolicy,
          typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
     electroionization_subshell_reactions,
+    const double min_electron_energy,
     const double evaluation_tol )
 {
   electroionization_subshell_reactions.clear();
 
   // Extract the subshell information
-  std::set<unsigned> subshells = raw_electroatom_data.getSubshells();
+  std::set<unsigned> subshells = raw_positronatom_data.getSubshells();
 
-  std::shared_ptr<ElectroatomicReaction> electroionization_subshell_reaction;
+  std::shared_ptr<PositronatomicReaction> electroionization_subshell_reaction;
 
   std::set<unsigned>::iterator shell = subshells.begin();
 
   for( shell; shell != subshells.end(); ++shell )
   {
-    ThisType::createSubshellElectroionizationReaction<ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
-      raw_electroatom_data,
+    ThisType::createSubshellPositronionizationReaction<PositronatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
+      raw_positronatom_data,
       energy_grid,
       grid_searcher,
       *shell,
       electroionization_subshell_reaction,
+      min_electron_energy,
       evaluation_tol );
 
     electroionization_subshell_reactions.push_back(
@@ -432,20 +436,21 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
   testPostcondition( electroionization_subshell_reactions.size() > 0 );
 }
 
-// Create a bremsstrahlung electroatomic reactions
+// Create a bremsstrahlung positron-atomic reactions
 template<typename ReactionType,
          typename TwoDInterpPolicy,
          typename TwoDSamplePolicy>
-void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+void PositronatomicReactionNativeFactory::createBremsstrahlungReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
+    const double min_electron_energy,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+  testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
@@ -453,12 +458,12 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   // Bremsstrahlung cross section
   Teuchos::ArrayRCP<double> bremsstrahlung_cross_section;
   bremsstrahlung_cross_section.assign(
-       raw_electroatom_data.getBremsstrahlungCrossSection().begin(),
-       raw_electroatom_data.getBremsstrahlungCrossSection().end() );
+       raw_positronatom_data.getBremsstrahlungCrossSection().begin(),
+       raw_positronatom_data.getBremsstrahlungCrossSection().end() );
 
   // Index of first non zero cross section in the energy grid
   unsigned threshold_energy_index =
-    raw_electroatom_data.getBremsstrahlungCrossSectionThresholdEnergyIndex();
+    raw_positronatom_data.getBremsstrahlungCrossSectionThresholdEnergyIndex();
 
   // Create bremsstrahlung scattering distribution
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
@@ -467,7 +472,7 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   if( photon_distribution_function = DIPOLE_DISTRIBUTION )
   {
     BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-      raw_electroatom_data,
+      raw_positronatom_data,
       bremsstrahlung_distribution,
       evaluation_tol );
 
@@ -480,26 +485,27 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   else if( photon_distribution_function = TWOBS_DISTRIBUTION )
   {
     BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-      raw_electroatom_data,
-      raw_electroatom_data.getAtomicNumber(),
+      raw_positronatom_data,
+      raw_positronatom_data.getAtomicNumber(),
       bremsstrahlung_distribution,
       evaluation_tol );
   }
 
   // Create the bremsstrahlung reaction
   bremsstrahlung_reaction.reset(
-        new BremsstrahlungElectroatomicReaction<Utility::LogLog>(
+        new BremsstrahlungPositronatomicReaction<Utility::LogLog>(
                         energy_grid,
                         bremsstrahlung_cross_section,
                         threshold_energy_index,
                         grid_searcher,
-                        bremsstrahlung_distribution ) );
+                        bremsstrahlung_distribution,
+                        min_electron_energy ) );
 }
 
 } // end MontCarlo namespace
 
-#endif // end MONTE_CARLO_ELECTROATOMIC_REACTION_NATIVE_FACTORY_DEF_HPP
+#endif // end MONTE_CARLO_POSITRONATOMIC_REACTION_NATIVE_FACTORY_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroatomicReactionNativeFactory_def.hpp
+// end MonteCarlo_PositronatomicReactionNativeFactory_def.hpp
 //---------------------------------------------------------------------------//

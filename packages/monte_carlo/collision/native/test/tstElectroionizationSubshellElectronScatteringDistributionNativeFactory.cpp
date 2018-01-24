@@ -434,7 +434,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellPositronScatteringDistributionNative
                                                  shell_of_interaction );
 
     // Test original positron
-    TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+    TEST_FLOATING_EQUALITY( positron.getZDirection(), 0.0, 1e-12 );
     TEST_FLOATING_EQUALITY( positron.getEnergy(), 1e-15, 1e-12 );
 
     // Test knock-on positron
@@ -452,7 +452,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellPositronScatteringDistributionNative
                                                  shell_of_interaction );
 
     // Test original positron
-    TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+    TEST_FLOATING_EQUALITY( positron.getZDirection(), 0.0, 1e-12 );
     TEST_FLOATING_EQUALITY( positron.getEnergy(), 1e-15, 1e-12 );
 
     // Test knock-on positron
