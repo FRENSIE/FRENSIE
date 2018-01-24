@@ -21,7 +21,7 @@ namespace MonteCarlo{
  * cross sections
  * \details This helper class should only be used by the
  * MonteCarlo::StandardGenericAtomicReaction class.
- */ 
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 struct StandardGenericAtomicReactionHelper
 {
@@ -50,11 +50,11 @@ struct StandardGenericAtomicReactionHelper
   }
 };
 
-/*! \brief The standard generic atomic reaction helper class for raw cross 
+/*! \brief The standard generic atomic reaction helper class for raw cross
  * sections
- * \details This helper class should only be used by the 
+ * \details This helper class should only be used by the
  * MonteCarlo::StandardGenericAtomicReaction class.
- */ 
+ */
 template<typename InterpPolicy>
 struct StandardGenericAtomicReactionHelper<InterpPolicy,false>
 {
@@ -262,7 +262,7 @@ const double* StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,proc
 {
   return d_incoming_energy_grid.getRawPtr();
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_GENERIC_ATOMIC_REACTION_DEF_HPP

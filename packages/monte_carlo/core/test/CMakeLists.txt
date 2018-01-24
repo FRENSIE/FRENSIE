@@ -102,6 +102,13 @@ TARGET_LINK_LIBRARIES(tstAdjointElectroatomicReactionTypeHelpers monte_carlo_cor
 ADD_TEST(AdjointElectroatomicReactionTypeHelpers_test tstAdjointElectroatomicReactionTypeHelpers)
 SET_PROPERTY(TEST AdjointElectroatomicReactionTypeHelpers_test PROPERTY LABELS electron adjoint)
 
+ADD_EXECUTABLE(tstPositronatomicReactionTypeHelpers
+  tstPositronatomicReactionTypeHelpers.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPositronatomicReactionTypeHelpers monte_carlo_core)
+ADD_TEST(PositronatomicReactionTypeHelpers_test tstPositronatomicReactionTypeHelpers)
+SET_PROPERTY(TEST PositronatomicReactionTypeHelpers_test PROPERTY LABELS positron)
+
 ADD_EXECUTABLE(tstParticleModeType
   tstParticleModeType.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

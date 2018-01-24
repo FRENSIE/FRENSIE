@@ -18,7 +18,7 @@
 
 namespace MonteCarlo{
 
-//! The electron/positron reaction base class
+//! The electron reaction base class
 class ElectroatomicReaction : public AtomicReaction
 {
 

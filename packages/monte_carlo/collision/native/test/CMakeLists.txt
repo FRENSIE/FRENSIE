@@ -896,6 +896,13 @@ TARGET_LINK_LIBRARIES(tstAtomicExcitationElectroatomicReaction monte_carlo_colli
 ADD_TEST(AtomicExcitationElectroatomicReaction_test tstAtomicExcitationElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST AtomicExcitationElectroatomicReaction_test PROPERTY LABELS electron)
 
+ADD_EXECUTABLE(tstAtomicExcitationPositronatomicReaction
+  tstAtomicExcitationPositronatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAtomicExcitationPositronatomicReaction monte_carlo_collision_native)
+ADD_TEST(AtomicExcitationPositronatomicReaction_test tstAtomicExcitationPositronatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+SET_PROPERTY(TEST AtomicExcitationPositronatomicReaction_test PROPERTY LABELS positron)
+
 ADD_EXECUTABLE(tstAtomicExcitationAdjointElectroatomicReaction
   tstAtomicExcitationAdjointElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -909,6 +916,13 @@ ADD_EXECUTABLE(tstBremsstrahlungElectroatomicReaction
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(BremsstrahlungElectroatomicReaction_test tstBremsstrahlungElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST BremsstrahlungElectroatomicReaction_test PROPERTY LABELS electron)
+
+ADD_EXECUTABLE(tstBremsstrahlungPositronatomicReaction
+  tstBremsstrahlungPositronatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstBremsstrahlungPositronatomicReaction monte_carlo_collision_native)
+ADD_TEST(BremsstrahlungPositronatomicReaction_test tstBremsstrahlungPositronatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+SET_PROPERTY(TEST BremsstrahlungPositronatomicReaction_test PROPERTY LABELS positron)
 
 ADD_EXECUTABLE(tstBremsstrahlungAdjointElectroatomicReaction
   tstBremsstrahlungAdjointElectroatomicReaction.cpp

@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PositronState.hpp"
-#include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -62,43 +61,7 @@ public:
   virtual void scatterPositron( PositronState& positron,
                                 ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const = 0;
-
-protected:
-
-  //! Annihilate the positron
-  void annihilatePositron( PositronState& positron,
-                          ParticleBank& bank ) const;
 };
-
-// Annihilate the positron
-/*! \details The positron is assumed to be at rest when it annihilates, emitting
- *  two photons at the electron rest mass energy. These photons are emitted
- *  isotropically in opposite directions in the azimuthal direction to conserve
- *  momentum and at 90 degrees to positron polar angle.
- */
-inline void
-PositronScatteringDistribution::annihilatePositron( PositronState& positron,
-                                                    ParticleBank& bank ) const
-{
-  // Create the first annihilation photon
-  Teuchos::RCP<PhotonState> first_photon( new PhotonState( positron, true, true ) );
-  Teuchos::RCP<PhotonState> second_photon( new PhotonState( positron, true, true ) );
-
-  // Sample the isotropic azimuthal angle for the first photon
-  double azimuthal_angle = sampleAzimuthalAngle();
-
-  // Rotate the photons in opposite azimuthal directions
-  first_photon->rotateDirection( 0.0, azimuthal_angle );
-  second_photon->rotateDirection( 0.0, azimuthal_angle +
-                                       Utility::PhysicalConstants::pi );
-
-  // Bank the photons
-  bank.push( first_photon );
-  bank.push( second_photon );
-
-  // Set the positron as gone
-  positron.setAsGone();
-}
 
 } // end MonteCarlo namespace
 

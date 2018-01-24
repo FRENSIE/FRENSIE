@@ -27,8 +27,8 @@ namespace MonteCarlo{
  * template parameter to customize the behavior of this class. Raw cross
  * section data from the EPDL library would use the Utility::LogLog policy with
  * processed_cross_section = false. Processed cross section data from an
- * ACE library would use the Utility::LogLog policy with 
- * processed_cross_section = true. Cross section data from a native library 
+ * ACE library would use the Utility::LogLog policy with
+ * processed_cross_section = true. Cross section data from a native library
  * would use Utility::LinLin with processed_cross_section = false.
  */
 template<typename AtomicReactionBase,
@@ -91,7 +91,7 @@ private:
   // The hash-based grid searcher
   Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

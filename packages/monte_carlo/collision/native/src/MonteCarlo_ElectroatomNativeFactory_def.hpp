@@ -27,7 +27,7 @@ namespace MonteCarlo{
  * core. Special care must be taken to assure that the model corresponds to
  * the atom of interest. If the use of atomic relaxation data has been
  * requested, a electroionization reaction for each subshell will be created.
- * Otherwize a single total electroionization reaction will be created.
+ * Otherwise a single total electroionization reaction will be created.
  */
 template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomNativeFactory::createElectroatomCore(
