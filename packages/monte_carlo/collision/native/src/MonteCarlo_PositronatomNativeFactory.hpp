@@ -1,21 +1,21 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroatomNativeFactory.hpp
+//! \file   MonteCarlo_PositronatomNativeFactory.hpp
 //! \author Luke Kersting
-//! \brief  The electroatom native factory class declaration.
+//! \brief  The positron-atom native factory class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_HPP
-#define MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_HPP
+#ifndef MONTE_CARLO_POSITRONATOM_NATIVE_FACTORY_HPP
+#define MONTE_CARLO_POSITRONATOM_NATIVE_FACTORY_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_Electroatom.hpp"
-#include "MonteCarlo_ElectroatomCore.hpp"
-#include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
+#include "MonteCarlo_Positronatom.hpp"
+#include "MonteCarlo_PositronatomCore.hpp"
+#include "MonteCarlo_PositronatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -23,46 +23,46 @@
 
 namespace MonteCarlo{
 
-//! The Electroatomic factory class that uses Native data
-class ElectroatomNativeFactory
+//! The Positronatomic factory class that uses Native data
+class PositronatomNativeFactory
 {
 
 public:
 
-  using ThisType = ElectroatomNativeFactory;
+  using ThisType = PositronatomNativeFactory;
 
-  //! Create a electroatom core (using the provided atomic relaxation model)
+  //! Create a positron-atom core (using the provided atomic relaxation model)
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
-  static void createElectroatomCore(
-       const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+  static void createPositronatomCore(
+       const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
        const SimulationElectronProperties& properties,
-       Teuchos::RCP<ElectroatomCore>& electroatom_core );
+       Teuchos::RCP<PositronatomCore>& positronatom_core );
 
-  //! Create a electroatom (using the provided atomic relaxation model)
-  static void createElectroatom(
-       const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-       const std::string& electroatom_name,
+  //! Create a positron-atom (using the provided atomic relaxation model)
+  static void createPositronatom(
+       const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+       const std::string& positronatom_name,
        const double atomic_weight,
        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
        const SimulationElectronProperties& properties,
-       Teuchos::RCP<Electroatom>& electroatom );
+       Teuchos::RCP<Positronatom>& positronatom );
 
 private:
 
-  //! Create the elastic reaction for a electroatom core
+  //! Create the elastic reaction for a positron-atom core
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             typename TwoDSamplePolicy = Utility::Correlated>
-  static void createElasticElectroatomCore(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+  static void createElasticPositronatomCore(
+        const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         const SimulationElectronProperties& properties,
-        Electroatom::ReactionMap& scattering_reactions );
+        Positronatom::ReactionMap& scattering_reactions );
 
   // Constructor
-  ElectroatomNativeFactory();
+  PositronatomNativeFactory();
 };
 
 } // end MonteCarlo
@@ -71,12 +71,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_ElectroatomNativeFactory_def.hpp"
+#include "MonteCarlo_PositronatomNativeFactory_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_HPP
+#endif // end MONTE_CARLO_POSITRONATOM_NATIVE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroatomNativeFactory.hpp
+// end MonteCarlo_PositronatomNativeFactory.hpp
 //---------------------------------------------------------------------------//

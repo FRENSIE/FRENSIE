@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroatomACEFactory.hpp
+//! \file   MonteCarlo_PositronatomACEFactory.hpp
 //! \author Luke Kersting
-//! \brief  The electroatom ace factory class definition.
+//! \brief  The positron-atom ace factory class definition.
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,36 +11,36 @@
 #include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomACEFactory.hpp"
-#include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_PositronatomACEFactory.hpp"
+#include "MonteCarlo_PositronatomicReactionACEFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Create a electroatom core (using the provided atomic relaxation model)
+// Create a positron-atom core (using the provided atomic relaxation model)
 /*! \details The provided atomic relaxation model will be used with this
  * core. Special care must be taken to assure that the model corresponds to
  * the atom of interest. If the use of atomic relaxation data has been
  * requested, a electroionization reaction for each subshell will be created.
  * Otherwise a single total electroionization reaction will be created.
  */
-void ElectroatomACEFactory::createElectroatomCore(
-    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+void PositronatomACEFactory::createPositronatomCore(
+    const Data::XSSEPRDataExtractor& raw_positronatom_data,
     const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
     const SimulationElectronProperties& properties,
-    Teuchos::RCP<ElectroatomCore>& electroatom_core )
+    Teuchos::RCP<PositronatomCore>& positronatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
-  electroatom_core.reset( new ElectroatomCore() );
+  positronatom_core.reset( new PositronatomCore() );
 
-  Electroatom::ReactionMap scattering_reactions, absorption_reactions;
+  Positronatom::ReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( raw_electroatom_data.extractElectronEnergyGrid() );
+  energy_grid.deepCopy( raw_positronatom_data.extractElectronEnergyGrid() );
 
   // Create a hash based energy grid searcher
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
@@ -52,24 +52,24 @@ void ElectroatomACEFactory::createElectroatomCore(
   if ( properties.isElasticModeOn() ) // Create the decoupled elastic scattering reaction
   {
     // Check the ACE file version
-    if( raw_electroatom_data.isEPRVersion14() )
+    if( raw_positronatom_data.isEPRVersion14() )
     {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
+      Positronatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION];
 
-      ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
-        raw_electroatom_data,
+      PositronatomicReactionACEFactory::createDecoupledElasticReaction(
+        raw_positronatom_data,
         energy_grid,
         grid_searcher,
         reaction_pointer );
     }
     else // Create the cutoff elastic scattering reaction
     {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+      Positronatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[CUTOFF_ELASTIC_POSITRONATOMIC_REACTION];
 
-      ElectroatomicReactionACEFactory::createCutoffElasticReaction(
-        raw_electroatom_data,
+      PositronatomicReactionACEFactory::createCutoffElasticReaction(
+        raw_positronatom_data,
         energy_grid,
         grid_searcher,
         reaction_pointer );
@@ -79,40 +79,43 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the bremsstrahlung scattering reaction
   if ( properties.isBremsstrahlungModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
+    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[BREMSSTRAHLUNG_POSITRONATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
-        raw_electroatom_data,
+    PositronatomicReactionACEFactory::createBremsstrahlungReaction(
+        raw_positronatom_data,
         energy_grid,
         grid_searcher,
         reaction_pointer,
-        properties.getBremsstrahlungAngularDistributionFunction() );
+        properties.getBremsstrahlungAngularDistributionFunction(),
+        properties.getMinElectronEnergy() );
   }
 
   // Create the atomic excitation scattering reaction
   if ( properties.isAtomicExcitationModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
+    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[ATOMIC_EXCITATION_POSITRONATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
-        raw_electroatom_data,
+    PositronatomicReactionACEFactory::createAtomicExcitationReaction(
+        raw_positronatom_data,
         energy_grid,
         grid_searcher,
-        reaction_pointer );
+        reaction_pointer,
+        properties.getMinElectronEnergy() );
   }
 
   // Create the subshell electroionization reaction(s)
   if ( properties.isElectroionizationModeOn() )
   {
-    std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<PositronatomicReaction> > reaction_pointers;
 
-    ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
-        raw_electroatom_data,
+    PositronatomicReactionACEFactory::createSubshellPositronionizationReactions(
+        raw_positronatom_data,
         energy_grid,
         grid_searcher,
-        reaction_pointers );
+        reaction_pointers,
+        properties.getMinElectronEnergy() );
 
     for( unsigned i = 0u; i < reaction_pointers.size(); ++i )
     {
@@ -121,10 +124,10 @@ void ElectroatomACEFactory::createElectroatomCore(
     }
   }
 
-  // Create the electroatom core
-  if( raw_electroatom_data.isEPRVersion14() )
+  // Create the positron-atom core
+  if( raw_positronatom_data.isEPRVersion14() )
   {
-    electroatom_core.reset( new ElectroatomCore( energy_grid,
+    positronatom_core.reset( new PositronatomCore( energy_grid,
                                                  grid_searcher,
                                                  scattering_reactions,
                                                  absorption_reactions,
@@ -134,7 +137,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
   else
   {
-    electroatom_core.reset( new ElectroatomCore( energy_grid,
+    positronatom_core.reset( new PositronatomCore( energy_grid,
                                                  grid_searcher,
                                                  scattering_reactions,
                                                  absorption_reactions,
@@ -144,37 +147,37 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 }
 
-// Create a electroatom (using the provided atomic relaxation model)
+// Create a positron-atom (using the provided atomic relaxation model)
 /*! \details The provided atomic relaxation model will be used with this
  * atom. Special care must be taken to assure that the model corresponds to
  * the atom of interest. If the use of atomic relaxation data has been
  * requested, a electroionization reaction for each subshell will be created.
  * Otherwise a single total electroionization reaction will be created.
  */
-void ElectroatomACEFactory::createElectroatom(
-            const Data::XSSEPRDataExtractor& raw_electroatom_data,
-            const std::string& electroatom_name,
+void PositronatomACEFactory::createPositronatom(
+            const Data::XSSEPRDataExtractor& raw_positronatom_data,
+            const std::string& positronatom_name,
             const double atomic_weight,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-            Teuchos::RCP<Electroatom>& electroatom )
+            Teuchos::RCP<Positronatom>& positronatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
-  Teuchos::RCP<ElectroatomCore> core;
+  Teuchos::RCP<PositronatomCore> core;
 
-  ElectroatomACEFactory::createElectroatomCore( raw_electroatom_data,
+  PositronatomACEFactory::createPositronatomCore( raw_positronatom_data,
                                                 atomic_relaxation_model,
                                                 properties,
                                                 core );
 
-  // Create the electroatom
-  electroatom.reset(
-    new Electroatom( electroatom_name,
-                     raw_electroatom_data.extractAtomicNumber(),
+  // Create the positron-atom
+  positronatom.reset(
+    new Positronatom( positronatom_name,
+                     raw_positronatom_data.extractAtomicNumber(),
                      atomic_weight,
                      *core ) );
 }
@@ -182,5 +185,5 @@ void ElectroatomACEFactory::createElectroatom(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroatomACEFactory.cpp
+// end MonteCarlo_PositronatomACEFactory.cpp
 //---------------------------------------------------------------------------//
