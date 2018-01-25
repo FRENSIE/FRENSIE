@@ -154,6 +154,9 @@ private:
 
   // The adjoint electron simulation function
   boost::function<void (AdjointElectronState&, ParticleBank&)> d_simulate_adjoint_electron;
+
+  // The positron simulation function
+  boost::function<void (PositronState&, ParticleBank&)> d_simulate_positron;
 };
 
 //! Macro for catching a lost particle and breaking a loop

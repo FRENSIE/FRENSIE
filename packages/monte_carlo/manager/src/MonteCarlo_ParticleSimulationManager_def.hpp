@@ -34,7 +34,7 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
-
+#include "MonteCarlo_PositronState.hpp"
 
 namespace MonteCarlo{
 
@@ -88,6 +88,10 @@ ParticleSimulationManager<GeometryHandler,
                                             boost::cref( *this ),
                                             _1,
                                             _2 );
+    d_simulate_positron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PositronState>,
+                                            boost::cref( *this ),
+                                            _1,
+                                            _2 );
     break;
   }
   case NEUTRON_PHOTON_MODE:
@@ -104,6 +108,10 @@ ParticleSimulationManager<GeometryHandler,
                                              boost::cref( *this ),
                                              _1,
                                              _2 );
+    d_simulate_positron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PositronState>,
+                                            boost::cref( *this ),
+                                            _1,
+                                            _2 );
     break;
   }
   case PHOTON_MODE:
@@ -120,6 +128,10 @@ ParticleSimulationManager<GeometryHandler,
                                              boost::cref( *this ),
                                              _1,
                                              _2 );
+    d_simulate_positron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PositronState>,
+                                            boost::cref( *this ),
+                                            _1,
+                                            _2 );
     break;
   }
   case ELECTRON_MODE:
@@ -136,6 +148,10 @@ ParticleSimulationManager<GeometryHandler,
                                              boost::cref( *this ),
                                              _1,
                                              _2 );
+    d_simulate_positron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PositronState>,
+                                            boost::cref( *this ),
+                                            _1,
+                                            _2 );
     break;
   }
   case ADJOINT_ELECTRON_MODE:
@@ -148,6 +164,10 @@ ParticleSimulationManager<GeometryHandler,
                                              boost::cref( *this ),
                                              _1,
                                              _2 );
+    d_simulate_positron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PositronState>,
+                                            boost::cref( *this ),
+                                            _1,
+                                            _2 );
     d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
                                              boost::cref( *this ),
                                               _1,
@@ -156,6 +176,26 @@ ParticleSimulationManager<GeometryHandler,
                                              boost::cref( *this ),
                                              _1,
                                              _2 );
+    break;
+  }
+  case PHOTON_ELECTRON_MODE:
+  {
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PhotonState>,
+                                             boost::cref( *this ),
+                                             _1,
+                                             _2 );
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
+                                             boost::cref( *this ),
+                                             _1,
+                                             _2 );
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<ElectronState>,
+                                             boost::cref( *this ),
+                                             _1,
+                                             _2 );
+    d_simulate_positron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PositronState>,
+                                            boost::cref( *this ),
+                                            _1,
+                                            _2 );
     break;
   }
   default:
@@ -280,6 +320,10 @@ void ParticleSimulationManager<GeometryHandler,
           case ADJOINT_ELECTRON:
             d_simulate_adjoint_electron( dynamic_cast<AdjointElectronState&>( bank.top() ),
                                          bank );
+            break;
+          case POSITRON:
+            d_simulate_positron( dynamic_cast<PositronState&>( bank.top() ),
+                                     bank );
             break;
           default:
             THROW_EXCEPTION( std::logic_error,

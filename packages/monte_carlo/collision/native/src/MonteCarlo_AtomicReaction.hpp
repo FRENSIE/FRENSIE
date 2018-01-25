@@ -14,6 +14,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
+#include "MonteCarlo_PositronatomicReactionType.hpp"
 
 namespace MonteCarlo{
 

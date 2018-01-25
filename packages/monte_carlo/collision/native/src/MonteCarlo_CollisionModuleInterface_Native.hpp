@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_COLLISION_MODULE_INTERFACE_NATIVE_HPP
-#define MONTE_CARLO_COLLISION_MUDULE_INTERFACE_NATIVE_HPP
+#define MONTE_CARLO_COLLISION_MODULE_INTERFACE_NATIVE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionModuleInterfaceDecl.hpp"
@@ -16,6 +16,7 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PositronState.hpp"
 
 namespace MonteCarlo{
 
