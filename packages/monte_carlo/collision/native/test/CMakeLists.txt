@@ -1157,6 +1157,13 @@ TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectroatomFactory_test PROPERTY LABELS electron)
 
+ADD_EXECUTABLE(tstPositronatomFactory
+  tstPositronatomFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPositronatomFactory monte_carlo_collision_native)
+ADD_TEST(PositronatomFactory_test tstPositronatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+SET_PROPERTY(TEST PositronatomFactory_test PROPERTY LABELS positron)
+
 ADD_EXECUTABLE(tstAdjointElectroatomFactory
   tstAdjointElectroatomFactory.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
@@ -1171,7 +1178,12 @@ TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
 ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS electron)
 
-## electron materials tests
+ADD_EXECUTABLE(tstPositronMaterial tstPositronMaterial.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPositronMaterial monte_carlo_collision_native)
+ADD_TEST(PositronMaterial_test tstPositronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+SET_PROPERTY(TEST PositronMaterial_test PROPERTY LABELS positron)
+
 ADD_EXECUTABLE(tstAdjointElectronMaterial tstAdjointElectronMaterial.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointElectronMaterial monte_carlo_collision_native)
@@ -1184,6 +1196,13 @@ ADD_EXECUTABLE(tstElectronCollisionHandler
 TARGET_LINK_LIBRARIES(tstElectronCollisionHandler monte_carlo_collision_native)
 ADD_TEST(ElectronCollisionHandler_test tstElectronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST ElectronCollisionHandler_test PROPERTY LABELS electron)
+
+ADD_EXECUTABLE(tstPositronCollisionHandler
+  tstPositronCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPositronCollisionHandler monte_carlo_collision_native)
+ADD_TEST(PositronCollisionHandler_test tstPositronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+SET_PROPERTY(TEST PositronCollisionHandler_test PROPERTY LABELS positron)
 
 ADD_EXECUTABLE(tstAdjointElectronCollisionHandler
   tstAdjointElectronCollisionHandler.cpp

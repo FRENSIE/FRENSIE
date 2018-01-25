@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_VOID_ABSORPTION_POSITRONATOMIC_REACTION_HPP
+#define MONTE_CARLO_VOID_ABSORPTION_POSITRONATOMIC_REACTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReaction.hpp"
@@ -139,7 +139,7 @@ inline const double* VoidAbsorptionPositronatomicReaction::getEnergyGridHead() c
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_VOID_ABSORPTION_POSITRONATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_VoidAbsorptionPositronatomicReaction.hpp
