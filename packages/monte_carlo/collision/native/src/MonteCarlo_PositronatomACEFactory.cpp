@@ -87,8 +87,7 @@ void PositronatomACEFactory::createPositronatomCore(
         energy_grid,
         grid_searcher,
         reaction_pointer,
-        properties.getBremsstrahlungAngularDistributionFunction(),
-        properties.getMinElectronEnergy() );
+        properties.getBremsstrahlungAngularDistributionFunction() );
   }
 
   // Create the atomic excitation scattering reaction
@@ -101,8 +100,7 @@ void PositronatomACEFactory::createPositronatomCore(
         raw_positronatom_data,
         energy_grid,
         grid_searcher,
-        reaction_pointer,
-        properties.getMinElectronEnergy() );
+        reaction_pointer );
   }
 
   // Create the subshell electroionization reaction(s)
@@ -114,8 +112,7 @@ void PositronatomACEFactory::createPositronatomCore(
         raw_positronatom_data,
         energy_grid,
         grid_searcher,
-        reaction_pointers,
-        properties.getMinElectronEnergy() );
+        reaction_pointers );
 
     for( unsigned i = 0u; i < reaction_pointers.size(); ++i )
     {

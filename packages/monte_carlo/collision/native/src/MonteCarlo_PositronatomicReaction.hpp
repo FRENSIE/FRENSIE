@@ -52,24 +52,9 @@ public:
                       Data::SubshellType& shell_of_interaction,
                       unsigned& trials ) const;
 
-protected:
-
   //! Annihilate the positron
-  void annihilatePositron( PositronState& positron,
-                           ParticleBank& bank ) const;
-
-  //! Return the min electron energy
-  double getMinElectronEnergy() const;
-
-  //! Set the min electron energy
-  void setMinElectronEnergy( const double min_electron_energy );
-
-private:
-
-  //! Min electron energy
-  double d_min_electron_energy;
-
-
+  static void producesAnnihilationPhotons( const PositronState& positron,
+                                           ParticleBank& bank );
 };
 
 // Simulate the reaction and track the number of sampling trials
@@ -91,8 +76,9 @@ inline void PositronatomicReaction::react(
  *  momentum and at 90 degrees to positron polar angle.
  */
 inline void
-PositronatomicReaction::annihilatePositron( PositronState& positron,
-                                            ParticleBank& bank ) const
+PositronatomicReaction::producesAnnihilationPhotons(
+                            const PositronState& positron,
+                            ParticleBank& bank )
 {
   // Create the first annihilation photon
   Teuchos::RCP<PhotonState> first_photon( new PhotonState( positron, true, true ) );
@@ -103,36 +89,27 @@ PositronatomicReaction::annihilatePositron( PositronState& positron,
   second_photon->setEnergy( positron.getRestMassEnergy() );
 
   // Sample the isotropic azimuthal angle for the first photon
-  double azimuthal_angle = Utility::PhysicalConstants::pi*
+  double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  // Rotate the photons in opposite azimuthal directions
+  // Rotate the first photon
   first_photon->rotateDirection( 0.0, azimuthal_angle );
-  second_photon->rotateDirection( 0.0, azimuthal_angle +
-                                       Utility::PhysicalConstants::pi );
+
+  // Change the second photon's direction based on the initial direction of the
+  // emitted positron (to conserve momentum we must rotate the
+  // azimuthal angle by pi)
+  azimuthal_angle = fmod( azimuthal_angle + Utility::PhysicalConstants::pi,
+                          2*Utility::PhysicalConstants::pi );
+
+  // Rotate the second photon
+  second_photon->rotateDirection( 0.0, azimuthal_angle );
 
   // Bank the photons
   bank.push( first_photon );
   bank.push( second_photon );
 
-  // Set the positron as gone
-  positron.setAsGone();
-}
-
-// Return the min electron energy
-inline double PositronatomicReaction::getMinElectronEnergy() const
-{
-  return d_min_electron_energy;
-}
-
-// Set the min electron energy
-inline void
-PositronatomicReaction::setMinElectronEnergy( const double min_electron_energy )
-{
-  // Make sure the min electron value is valid
-  testPrecondition( min_electron_energy > 0.0 );
-
-  d_min_electron_energy = min_electron_energy;
+  // // Set the positron as gone
+  // positron.setAsGone();
 }
 
 } // end MonteCarlo namespace

@@ -171,42 +171,6 @@ TEUCHOS_UNIT_TEST( PositronionizationSubshellPositronatomicReaction, react_ace )
 
   bank.pop();
   TEST_ASSERT( bank.isEmpty() );
-
-  // Set energy to get an annihilation
-  positron.setEnergy( ace_first_binding_energy + 1e-10 );
-  positron.setDirection( 0.0, 0.0, 1.0 );
-
-  ace_first_subshell_reaction->react( positron, bank, shell_of_interaction );
-
-  TEST_ASSERT( positron.getEnergy() < 1e-10 );
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 0.0, 1e-12 );
-  TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
-
-  // Test the knock-on electron
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_ASSERT( bank.top().getEnergy() < 1e-5 );
-  TEST_ASSERT( bank.top().getZDirection() < 1.0 );
-
-  bank.pop();
-
-  // Test the first annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  double x_direction = bank.top().getXDirection();
-  double y_direction = bank.top().getYDirection();
-  double z_direction = bank.top().getZDirection();
-
-  bank.pop();
-
-  // Test the second annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0*x_direction, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0*y_direction, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), -1.0*z_direction, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -350,8 +314,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  double min_electron_energy = 1e-5;
-
   // Create ACE distribution
   {
   // Create a file handler and data extractor
@@ -477,8 +439,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                       first_subshell_cross_section,
                       first_subshell_threshold_index,
                       interaction_first_subshell,
-                      first_subshell_distribution,
-                      min_electron_energy ) );
+                      first_subshell_distribution ) );
 
 //---------------------------------------------------------------------------//
   // Use the last subshell for test
@@ -554,8 +515,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                       last_subshell_cross_section,
                       last_subshell_threshold_index,
                       interaction_last_subshell,
-                      last_subshell_distribution,
-                      min_electron_energy ) );
+                      last_subshell_distribution ) );
 
 
   // Clear setup data
@@ -628,8 +588,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                 threshold_energy_index,
                 grid_searcher,
                 subshell_type,
-                electroionization_subshell_distribution,
-                min_electron_energy ) );
+                electroionization_subshell_distribution ) );
 
     // For the last subshell
     shell = data_container->getSubshells().end();
@@ -669,8 +628,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
                 threshold_energy_index,
                 grid_searcher,
                 subshell_type,
-                electroionization_subshell_distribution,
-                min_electron_energy ) );
+                electroionization_subshell_distribution ) );
 
   }
   // Initialize the random number generator

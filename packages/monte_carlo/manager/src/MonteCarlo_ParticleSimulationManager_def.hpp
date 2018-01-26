@@ -384,7 +384,17 @@ void ParticleSimulationManager<GeometryHandler,
   // Check if the particle energy is below the cutoff (forward transport)
   if( particle.getEnergy() <
       d_properties->getMinParticleEnergy<ParticleStateType>() )
-    particle.setAsGone();
+    {
+      // Check if the particle is a positron
+      if( particle.getParticleType() == POSITRON )
+      {
+        // Annihilate the positron with the assumption that it is at rest
+        PositronatomicReaction::producesAnnihilationPhotons( particle, bank );
+      }
+
+      // Set the particle as gone (below cutoff energy)
+      particle.setAsGone();
+    }
 
   // Check if the particle energy is above the cutoff (adjoint transport)
   if( particle.getEnergy() >
@@ -562,12 +572,22 @@ void ParticleSimulationManager<GeometryHandler,
           ray_start_point[2] = particle.getZPosition();
         }
 
-        // Make sure the energy is above the cutoff (forward transport)
+        // Check if the particle energy is below the cutoff (forward transport)
         if( particle.getEnergy() <
             d_properties->getMinParticleEnergy<ParticleStateType>() )
-          particle.setAsGone();
+          {
+            // Check if the particle is a positron
+            if( particle.getParticleType() == POSITRON )
+            {
+              // Annihilate the positron with the assumption that it is at rest
+              PositronatomicReaction::producesAnnihilationPhotons( particle, bank );
+            }
 
-        // Make sure the energy is below the cutoff (adjoint transport)
+            // Set the particle as gone (below cutoff energy)
+            particle.setAsGone();
+          }
+
+        // Check if the particle energy is above the cutoff (adjoint transport)
         if( particle.getEnergy() >
             d_properties->getMaxParticleEnergy<ParticleStateType>() )
           particle.setAsGone();

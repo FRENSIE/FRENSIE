@@ -38,8 +38,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
-            energy_loss_distribution,
-    const double min_electron_energy );
+            energy_loss_distribution );
 
   //! Constructor
   AtomicExcitationPositronatomicReaction(
@@ -48,8 +47,7 @@ public:
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
-            energy_loss_distribution,
-    const double min_electron_energy );
+            energy_loss_distribution );
 
   //! Destructor
   ~AtomicExcitationPositronatomicReaction()

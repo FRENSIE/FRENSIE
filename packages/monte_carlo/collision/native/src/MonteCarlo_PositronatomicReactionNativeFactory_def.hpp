@@ -352,7 +352,6 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
-    const double min_electron_energy,
     const double evaluation_tol )
 {
   // Convert subshell number to enum
@@ -391,8 +390,7 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
               threshold_energy_index,
               grid_searcher,
               subshell_type,
-              electroionization_subshell_distribution,
-              min_electron_energy ) );
+              electroionization_subshell_distribution ) );
 }
 
 // Create the subshell electroionization positron-atomic reactions
@@ -405,7 +403,6 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
     electroionization_subshell_reactions,
-    const double min_electron_energy,
     const double evaluation_tol )
 {
   electroionization_subshell_reactions.clear();
@@ -425,7 +422,6 @@ void PositronatomicReactionNativeFactory::createSubshellPositronionizationReacti
       grid_searcher,
       *shell,
       electroionization_subshell_reaction,
-      min_electron_energy,
       evaluation_tol );
 
     electroionization_subshell_reactions.push_back(
@@ -446,7 +442,6 @@ void PositronatomicReactionNativeFactory::createBremsstrahlungReaction(
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
-    const double min_electron_energy,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -498,8 +493,7 @@ void PositronatomicReactionNativeFactory::createBremsstrahlungReaction(
                         bremsstrahlung_cross_section,
                         threshold_energy_index,
                         grid_searcher,
-                        bremsstrahlung_distribution,
-                        min_electron_energy ) );
+                        bremsstrahlung_distribution ) );
 }
 
 } // end MontCarlo namespace

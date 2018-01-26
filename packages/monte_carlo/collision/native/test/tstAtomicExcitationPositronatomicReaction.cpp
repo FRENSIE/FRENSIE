@@ -116,35 +116,6 @@ TEUCHOS_UNIT_TEST( AtomicExcitationPositronatomicReaction, react_ace )
   TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
   TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
-
-  // Set energy to get an annihilation
-  positron.setEnergy( 1e-5 );
-  final_energy = positron.getEnergy() - 6.29685e-06;
-
-  ace_excitation_reaction->react( positron, bank, shell_of_interaction );
-
-  TEST_FLOATING_EQUALITY( positron.getEnergy(), final_energy, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
-  TEST_ASSERT( !bank.isEmpty() );
-
-  // Test the first annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
-  double x_direction = bank.top().getXDirection();
-  double y_direction = bank.top().getYDirection();
-
-  bank.pop();
-
-  // Test the second annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0*x_direction, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0*y_direction, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -221,17 +192,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
                       energy_loss_function ) );
 
-  // Min electron energy
-  double min_electron_energy = 1e-5;
-
   // Create the reaction
   ace_excitation_reaction.reset(
     new MonteCarlo::AtomicExcitationPositronatomicReaction<Utility::LinLin>(
           energy_grid,
           excitation_cross_section,
           excitation_threshold_index,
-          excitation_energy_loss_distribution,
-          min_electron_energy ) );
+          excitation_energy_loss_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

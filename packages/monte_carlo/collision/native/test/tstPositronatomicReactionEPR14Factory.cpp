@@ -31,7 +31,6 @@ Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 std::shared_ptr<MonteCarlo::PositronatomicReaction> reaction;
-double min_electron_energy = 1e-5;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -151,8 +150,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
-                reaction,
-                min_electron_energy );
+                reaction );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -188,8 +186,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
-                reactions,
-                min_electron_energy );
+                reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
@@ -259,8 +256,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                 energy_grid,
                 grid_searcher,
                 reaction,
-                photon_distribution_function,
-                min_electron_energy );
+                photon_distribution_function );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -303,8 +299,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionACEFactory,
                 energy_grid,
                 grid_searcher,
                 reaction,
-                photon_distribution_function,
-                min_electron_energy );
+                photon_distribution_function );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

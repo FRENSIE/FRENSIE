@@ -856,8 +856,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
-  double min_electron_energy = 1e-5;
-
   {
     // Create a file handler and data extractor
     Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
@@ -929,8 +927,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 energy_grid,
                 ae_cross_section,
                 ae_threshold_index,
-                ae_energy_loss_distribution,
-                min_electron_energy ) );
+                ae_energy_loss_distribution ) );
 
     Teuchos::ArrayView<const double> raw_b_cross_section =
       xss_data_extractor->extractBremsstrahlungCrossSection();
@@ -959,8 +956,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                 energy_grid,
                 b_cross_section,
                 b_threshold_index,
-                b_scattering_distribution,
-                min_electron_energy ) );
+                b_scattering_distribution ) );
 
     // Create the reaction maps
     MonteCarlo::PositronatomCore::ReactionMap scattering_reactions,
@@ -1038,8 +1034,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             ae_cross_section,
             ae_threshold_index,
             grid_searcher,
-            ae_energy_loss_distribution,
-            min_electron_energy ) );
+            ae_energy_loss_distribution ) );
 
 
     // Bremsstrahlung cross section
@@ -1094,8 +1089,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
             energy_grid,
             b_cross_section,
             b_threshold_index,
-            b_scattering_distribution,
-            min_electron_energy ) );
+            b_scattering_distribution ) );
 
     // Create the reaction maps
     MonteCarlo::PositronatomCore::ReactionMap scattering_reactions,

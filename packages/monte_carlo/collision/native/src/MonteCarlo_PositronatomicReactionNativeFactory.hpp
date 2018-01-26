@@ -117,8 +117,7 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction,
-    const double min_electron_energy );
+    std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization positron-atomic reaction
   template< typename ReactionType = PositronatomicReaction,
@@ -130,7 +129,6 @@ public:
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
-    const double min_electron_energy,
     const double evaluation_tol );
 
   //! Create the subshell electroionization positron-atomic reactions
@@ -143,7 +141,6 @@ public:
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::vector<std::shared_ptr<ReactionType> >&
         electroionization_subshell_reactions,
-    const double min_electron_energy,
     const double evaluation_tol );
 
   //! Create the bremsstrahlung positron-atomic reaction
@@ -156,7 +153,6 @@ public:
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
-    const double min_electron_energy,
     const double evaluation_tol );
 
   //! Create a void absorption positron-atomic reaction

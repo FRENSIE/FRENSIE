@@ -791,6 +791,13 @@ SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistribution
 
 ##      electroatomic reaction tests
 
+ADD_EXECUTABLE(tstPositronatomicReaction
+  tstPositronatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN} )
+TARGET_LINK_LIBRARIES(tstPositronatomicReaction monte_carlo_collision_native)
+ADD_TEST(PositronatomicReaction_test tstPositronatomicReaction )
+SET_PROPERTY(TEST PositronatomicReaction_test PROPERTY LABELS positron)
+
 ADD_EXECUTABLE(tstAbsorptionElectroatomicReaction
   tstAbsorptionElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

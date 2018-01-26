@@ -32,7 +32,6 @@ Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 std::shared_ptr<MonteCarlo::PositronatomicReaction> reaction;
 
 double eval_tol;
-double min_electron_energy;
 
 //---------------------------------------------------------------------------//
 // LinLinLog Tests.
@@ -403,8 +402,7 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                                *data_container,
                                energy_grid,
                                grid_searcher,
-                               reaction,
-                               min_electron_energy );
+                               reaction );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -437,7 +435,6 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                                energy_grid,
                                grid_searcher,
                                reactions,
-                               min_electron_energy,
                                eval_tol );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
@@ -494,7 +491,6 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               min_electron_energy,
                                eval_tol );
 
   // Test reaction properties
@@ -535,7 +531,6 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               min_electron_energy,
                                eval_tol );
 
   // Test reaction properties
@@ -684,7 +679,6 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                                energy_grid,
                                grid_searcher,
                                reactions,
-                               min_electron_energy,
                                eval_tol );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
@@ -741,7 +735,6 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               min_electron_energy,
                                eval_tol );
 
   // Test reaction properties
@@ -782,7 +775,6 @@ TEUCHOS_UNIT_TEST( PositronatomicReactionNativeFactory,
                                grid_searcher,
                                reaction,
                                photon_distribution_function,
-                               min_electron_energy,
                                eval_tol );
 
   // Test reaction properties
@@ -856,7 +848,6 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 {
   eval_tol = 1e-7;
-  min_electron_energy = 1e-5;
 
   // Create the native data file container
   data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(

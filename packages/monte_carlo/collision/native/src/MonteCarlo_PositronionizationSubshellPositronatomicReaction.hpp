@@ -38,8 +38,7 @@ public:
     const unsigned threshold_energy_index,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-            electroionization_subshell_distribution,
-    const double min_electron_energy );
+            electroionization_subshell_distribution );
 
   //! Constructor
   PositronionizationSubshellPositronatomicReaction(
@@ -49,8 +48,7 @@ public:
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-            electroionization_subshell_distribution,
-    const double min_electron_energy );
+            electroionization_subshell_distribution );
 
 
   //! Destructor

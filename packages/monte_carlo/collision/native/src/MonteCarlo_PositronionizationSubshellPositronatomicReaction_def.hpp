@@ -28,8 +28,7 @@ PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_se
     const unsigned threshold_energy_index,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-            electroionization_subshell_distribution,
-    const double min_electron_energy )
+            electroionization_subshell_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index ),
@@ -48,14 +47,6 @@ PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_se
   // Make sure the threshold energy isn't less than the binding energy
   testPrecondition( incoming_energy_grid[threshold_energy_index] >=
                     d_electroionization_subshell_distribution->getBindingEnergy() );
-
-  // Make sure the min electron energy is valid
-  testPrecondition( min_electron_energy > 0.0 );
-  testPrecondition( min_electron_energy <
-                    incoming_energy_grid[incoming_energy_grid.size()-1] );
-
-  // Set the min electron energy
-  this->setMinElectronEnergy( min_electron_energy );
 }
 
 
@@ -68,8 +59,7 @@ PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_se
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
-            electroionization_subshell_distribution,
-    const double min_electron_energy )
+            electroionization_subshell_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
@@ -90,14 +80,6 @@ PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_se
   // Make sure the threshold energy isn't less than the binding energy
   testPrecondition( incoming_energy_grid[threshold_energy_index] >=
                     d_electroionization_subshell_distribution->getBindingEnergy() );
-
-  // Make sure the min electron energy is valid
-  testPrecondition( min_electron_energy > 0.0 );
-  testPrecondition( min_electron_energy <
-                    incoming_energy_grid[incoming_energy_grid.size()-1] );
-
-  // Set the min electron energy
-  this->setMinElectronEnergy( min_electron_energy );
 }
 
 // Return the differential cross section
@@ -144,12 +126,6 @@ void PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cro
   positron.incrementCollisionNumber();
 
   shell_of_interaction = d_interaction_subshell;
-
-  // Annihilate the positron if it is below cutoff
-  if ( positron.getEnergy() < this->getMinElectronEnergy() )
-  {
-    this->annihilatePositron( positron, bank );
-  }
 }
 
 // Return the reaction type

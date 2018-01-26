@@ -39,8 +39,7 @@ public:
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-              bremsstrahlung_distribution,
-      const double min_electron_energy );
+              bremsstrahlung_distribution );
 
   //! Constructor
   BremsstrahlungPositronatomicReaction(
@@ -49,8 +48,7 @@ public:
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
-              bremsstrahlung_distribution,
-      const double min_electron_energy );
+              bremsstrahlung_distribution );
 
   //! Destructor
   virtual ~BremsstrahlungPositronatomicReaction()

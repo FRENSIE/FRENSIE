@@ -229,8 +229,7 @@ void PositronatomicReactionACEFactory::createAtomicExcitationReaction(
     const Data::XSSEPRDataExtractor& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction,
-    const double min_electron_energy )
+    std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
@@ -267,8 +266,7 @@ void PositronatomicReactionACEFactory::createAtomicExcitationReaction(
                     energy_grid,
                     atomic_excitation_cross_section,
                     threshold_energy_index,
-                    energy_loss_distribution,
-                    min_electron_energy ) );
+                    energy_loss_distribution ) );
   }
   else
   {
@@ -277,8 +275,7 @@ void PositronatomicReactionACEFactory::createAtomicExcitationReaction(
                     energy_grid,
                     atomic_excitation_cross_section,
                     threshold_energy_index,
-                    energy_loss_distribution,
-                    min_electron_energy ) );
+                    energy_loss_distribution ) );
   }
 }
 
@@ -332,8 +329,7 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReaction(
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<PositronatomicReaction>& electroionization_subshell_reaction,
-    const unsigned subshell,
-    const double min_electron_energy )
+    const unsigned subshell )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
@@ -399,8 +395,7 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReaction(
               subshell_cross_section,
               threshold_energy_index,
               subshell_order[shell_index],
-              electroionization_subshell_distribution,
-              min_electron_energy ) );
+              electroionization_subshell_distribution ) );
   }
   else
   {
@@ -410,8 +405,7 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReaction(
               subshell_cross_section,
               threshold_energy_index,
               subshell_order[shell_index],
-              electroionization_subshell_distribution,
-              min_electron_energy ) );
+              electroionization_subshell_distribution ) );
   }
 }
 
@@ -421,8 +415,7 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReactions
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         std::vector<std::shared_ptr<PositronatomicReaction> >&
-        electroionization_subshell_reactions,
-        const double min_electron_energy )
+        electroionization_subshell_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
@@ -532,8 +525,7 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReactions
                 subshell_cross_section,
                 threshold_energy_index,
                 subshell_order[shell_index],
-                electroionization_subshell_distribution,
-                min_electron_energy ) );
+                electroionization_subshell_distribution ) );
     }
     else
     {
@@ -543,8 +535,7 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReactions
                 subshell_cross_section,
                 threshold_energy_index,
                 subshell_order[shell_index],
-                electroionization_subshell_distribution,
-                min_electron_energy ) );
+                electroionization_subshell_distribution ) );
     }
 
     electroionization_subshell_reactions.push_back(
@@ -561,8 +552,7 @@ void PositronatomicReactionACEFactory::createBremsstrahlungReaction(
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
         std::shared_ptr<PositronatomicReaction>& bremsstrahlung_reaction,
-        BremsstrahlungAngularDistributionType photon_distribution_function,
-        const double min_electron_energy )
+        BremsstrahlungAngularDistributionType photon_distribution_function )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
@@ -621,8 +611,7 @@ void PositronatomicReactionACEFactory::createBremsstrahlungReaction(
                  energy_grid,
                  bremsstrahlung_cross_section,
                  threshold_energy_index,
-                 bremsstrahlung_distribution,
-                 min_electron_energy ) );
+                 bremsstrahlung_distribution ) );
   }
   else
   {
@@ -631,8 +620,7 @@ void PositronatomicReactionACEFactory::createBremsstrahlungReaction(
                  energy_grid,
                  bremsstrahlung_cross_section,
                  threshold_energy_index,
-                 bremsstrahlung_distribution,
-                 min_electron_energy ) );
+                 bremsstrahlung_distribution ) );
   }
 }
 

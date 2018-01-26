@@ -49,8 +49,7 @@ public:
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction,
-      const double min_electron_energy );
+      std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction );
 
   //! Create the total electroionization positron-atomic reaction
   static void createTotalPositronionizationReaction(
@@ -65,8 +64,7 @@ public:
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<PositronatomicReaction>& electroionization_subshell_reaction,
-      const unsigned endf_subshell_designator,
-      const double min_electron_energy );
+      const unsigned endf_subshell_designator );
 
   //! Create the subshell electroionization positron-atomic reactions
   static void createSubshellPositronionizationReactions(
@@ -74,8 +72,7 @@ public:
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::vector<std::shared_ptr<PositronatomicReaction> >&
-        electroionization_subshell_reactions,
-      const double min_electron_energy );
+        electroionization_subshell_reactions );
 
   //! Create the bremsstrahlung positron-atomic reaction
   static void createBremsstrahlungReaction(
@@ -83,8 +80,7 @@ public:
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<PositronatomicReaction>& bremsstrahlung_reaction,
-      BremsstrahlungAngularDistributionType photon_distribution_function,
-      const double min_electron_energy );
+      BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption positron-atomic reaction
   static void createVoidAbsorptionReaction(

@@ -22,8 +22,7 @@ AtomicExcitationPositronatomicReaction<InterpPolicy,processed_cross_section>::At
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
-            energy_loss_distribution,
-       const double min_electron_energy )
+            energy_loss_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index ),
@@ -42,13 +41,6 @@ AtomicExcitationPositronatomicReaction<InterpPolicy,processed_cross_section>::At
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the energy loss distribution data is valid
   testPrecondition( energy_loss_distribution.use_count() > 0 );
-  // Make sure the min electron energy is valid
-  testPrecondition( min_electron_energy > 0.0 );
-  testPrecondition( min_electron_energy <
-                    incoming_energy_grid[incoming_energy_grid.size()-1] );
-
-  // Set the min electron energy
-  this->setMinElectronEnergy( min_electron_energy );
 }
 
 // Constructor
@@ -59,8 +51,7 @@ AtomicExcitationPositronatomicReaction<InterpPolicy,processed_cross_section>::At
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
-            energy_loss_distribution,
-       const double min_electron_energy )
+            energy_loss_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
@@ -80,13 +71,6 @@ AtomicExcitationPositronatomicReaction<InterpPolicy,processed_cross_section>::At
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the energy loss distribution data is valid
   testPrecondition( energy_loss_distribution.use_count() > 0 );
-  // Make sure the min electron energy is valid
-  testPrecondition( min_electron_energy > 0.0 );
-  testPrecondition( min_electron_energy <
-                    incoming_energy_grid[incoming_energy_grid.size()-1] );
-
-  // Set the min electron energy
-  this->setMinElectronEnergy( min_electron_energy );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -136,12 +120,6 @@ void AtomicExcitationPositronatomicReaction<InterpPolicy,processed_cross_section
 
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
-
-  // Annihilate the positron if it is below cutoff
-  if ( positron.getEnergy() < this->getMinElectronEnergy() )
-  {
-    this->annihilatePositron( positron, bank );
-  }
 }
 
 } // end MonteCarlo namespace

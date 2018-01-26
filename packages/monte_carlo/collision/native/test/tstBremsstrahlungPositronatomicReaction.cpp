@@ -231,42 +231,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungPositronatomicReaction, react_detailed_2BS_ace 
   // Remove the banked photon
   bank.pop();
   TEST_ASSERT( bank.isEmpty() );
-
-  // Set energy to get an annihilation
-  positron.setEnergy( 1e-5 );
-
-  ace_twobs_bremsstrahlung_reaction->react( positron, bank, shell_of_interaction );
-
-  TEST_ASSERT( positron.getEnergy() < 1e-5 );
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
-  TEST_ASSERT( !bank.isEmpty() );
-
-  // Test the Bremsstrahlung photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          1e-5 - positron.getEnergy(), 1e-12 );
-  TEST_ASSERT( bank.top().getZDirection() < 1.0 );
-
-  bank.pop();
-
-  // Test the first annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
-  double x_direction = bank.top().getXDirection();
-  double y_direction = bank.top().getYDirection();
-
-  bank.pop();
-
-  // Test the second annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0*x_direction, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0*y_direction, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -297,42 +261,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungPositronatomicReaction, react_basic_ace )
   // Remove the banked photon
   bank.pop();
   TEST_ASSERT( bank.isEmpty() );
-
-  // Set energy to get an annihilation
-  positron.setEnergy( 1e-5 );
-
-  ace_dipole_bremsstrahlung_reaction->react( positron, bank, shell_of_interaction );
-
-  TEST_ASSERT( positron.getEnergy() < 1e-5 );
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
-  TEST_ASSERT( !bank.isEmpty() );
-
-  // Test the Bremsstrahlung photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          1e-5 - positron.getEnergy(), 1e-12 );
-  TEST_ASSERT( bank.top().getZDirection() < 1.0 );
-
-  bank.pop();
-
-  // Test the first annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
-  double x_direction = bank.top().getXDirection();
-  double y_direction = bank.top().getYDirection();
-
-  bank.pop();
-
-  // Test the second annihilation photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
-                          positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), -1.0*x_direction, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0*y_direction, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -435,24 +363,20 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         xss_data_extractor->extractAtomicNumber(),
         scattering_function ) );
 
-  double min_electron_energy = 1e-5;
-
   // Create the reactions
   ace_dipole_bremsstrahlung_reaction.reset(
     new MonteCarlo::BremsstrahlungPositronatomicReaction<Utility::LinLin>(
                               energy_grid,
                               bremsstrahlung_cross_section,
                               bremsstrahlung_threshold_index,
-                              dipole_scattering_distribution,
-                              min_electron_energy ) );
+                              dipole_scattering_distribution ) );
 
   ace_twobs_bremsstrahlung_reaction.reset(
         new MonteCarlo::BremsstrahlungPositronatomicReaction<Utility::LinLin>(
                               energy_grid,
                               bremsstrahlung_cross_section,
                               bremsstrahlung_threshold_index,
-                              twobs_scattering_distribution,
-                              min_electron_energy ) );
+                              twobs_scattering_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

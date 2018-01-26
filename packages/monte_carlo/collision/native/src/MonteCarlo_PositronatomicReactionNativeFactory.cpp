@@ -60,8 +60,7 @@ void PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
             const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction,
-            const double min_electron_energy )
+            std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
@@ -93,8 +92,7 @@ void PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
                                                 atomic_excitation_cross_section,
                                                 threshold_energy_index,
                                                 grid_searcher,
-                                                energy_loss_distribution,
-                                                min_electron_energy ) );
+                                                energy_loss_distribution ) );
 }
 
 // Create a void absorption positron-atomic reaction
