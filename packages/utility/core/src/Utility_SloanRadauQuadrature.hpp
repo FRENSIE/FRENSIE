@@ -57,7 +57,7 @@ public:
   // Return the Radau moments of the legendre expansion of a function, f(x)
   void getLongRadauMoments( std::vector<long_float>& radau_moments ) const;
 
-  // Evaulate the normalization ratio for the orthogonal polynomials, Q and x*Q
+  // Evaluate the normalization ratio for the orthogonal polynomials, Q and x*Q
   void evaluateOrthogonalNormalizationRatio(
         std::vector<long_float>& normalization_ratios,
         const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
@@ -65,38 +65,38 @@ public:
         const std::vector<long_float>& radau_moments,
         const int i ) const;
 
-  // Evaulate the ith mean coefficients for orthogonal polynomial recursion relation
+  // Evaluate the ith mean coefficients for orthogonal polynomial recursion relation
   long_float evaluateMeanCoefficient(
                      const std::vector<long_float>& normalization_ratios,
                      const int i ) const;
 
-  // Evaulate the ith row of coefficients of the orthogonal polynomial Q
+  // Evaluate the ith row of coefficients of the orthogonal polynomial Q
   void evaluateOrthogonalCoefficients(
         Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
         const int i ) const;
 
-  // Evaulate the normalization factors, N_i for the orthogonal polynomial, Q
+  // Evaluate the normalization factors, N_i for the orthogonal polynomial, Q
   void evaluateOrthogonalNormalizationFactor(
         std::vector<long_float>& normalization_factors_N,
         const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
         const std::vector<long_float>& radau_moments,
         const int i ) const;
 
-  // Evaulate the variance of the moments of the orthogonal polynomial, Q_i
+  // Evaluate the variance of the moments of the orthogonal polynomial, Q_i
   long_float evaluateVariance(
         const std::vector<long_float>& normalization_factors_N,
         const int i ) const;
 
-  // Evaulate the nth orthogonal polynomial at x, Q_n(x)
+  // Evaluate the nth orthogonal polynomial at x, Q_n(x)
   long_float evaluateOrthogonalPolynomial(
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
         const long_float x,
         const int i ) const;
 
-  // Evaulate the roots of the nth orthogonal polynomial using the roots of the (n-1)th
+  // Evaluate the roots of the nth orthogonal polynomial using the roots of the (n-1)th
   bool evaluateOrthogonalRoots(
         Teuchos::TwoDArray<long_float>& roots,
         const std::vector<long_float>& variances,
@@ -120,7 +120,7 @@ std::vector<long_float> d_legendre_expansion_moments;
 
 } // end Utility namespace
 
-#endif // end UTILITY_GUASS_RADAU_QUADRATURE_KERNEL_HPP
+#endif // end UTILITY_GAUSS_RADAU_QUADRATURE_KERNEL_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_SloanRadauQuadrature.hpp

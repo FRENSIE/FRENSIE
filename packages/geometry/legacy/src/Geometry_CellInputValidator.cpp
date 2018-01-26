@@ -148,7 +148,7 @@ void CellInputValidator::validateCell(
     error_message +=  cell_exception.what();
   }
 
-  // If any errors have occured, throw
+  // If any errors have occurred, throw
   if( error_message.size() > 0 )
   {
     throw std::invalid_argument( error_message );

@@ -27,6 +27,10 @@ double calculateKineticEnergy( const double rest_mass_energy,
                                const double speed );
 
 //! Calculate the dimensionless speed of a relativistic particle: velocity / speed of light
+double calculateDimensionlessRelativisticSpeed( const double rest_mass_energy,
+                                                const double kinetic_energy );
+
+//! Calculate the squared dimensionless speed of a relativistic particle: velocity / speed of light
 double calculateDimensionlessRelativisticSpeedSquared(
                                                   const double rest_mass_energy,
                                                   const double kinetic_energy );
@@ -69,7 +73,7 @@ double calculateAlphaMax( const double kinetic_energy,
 			  const double kT );
 
 
-// Calculate the kinetic enery of a relativistic particle (MeV)
+// Calculate the kinetic energy of a relativistic particle (MeV)
 inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
                                                  const double speed )
 {
@@ -88,7 +92,7 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
 }
 
 
-// Calculate the kinetic enery of a massive particle (MeV)
+// Calculate the kinetic energy of a massive particle (MeV)
 inline double calculateKineticEnergy( const double rest_mass_energy,
 				      const double speed )
 {
@@ -103,6 +107,15 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
   return 0.5 * rest_mass_energy * speed * speed /
         ( Utility::PhysicalConstants::speed_of_light *
           Utility::PhysicalConstants::speed_of_light );
+}
+
+//! Calculate the dimensionless speed of a relativistic particle: velocity / speed of light
+inline double calculateDimensionlessRelativisticSpeed(
+                                                const double rest_mass_energy,
+                                                const double kinetic_energy )
+{
+  return sqrt( calculateDimensionlessRelativisticSpeedSquared( rest_mass_energy,
+                                                               kinetic_energy ) );
 }
 
 //! Calculate the dimensionless speed**2 of a massive particle (beta = v/c)**2
@@ -129,8 +142,8 @@ inline double calculateRelativisticSpeed( const double rest_mass_energy,
   double energy = kinetic_energy + rest_mass_energy;
 
   return Utility::PhysicalConstants::speed_of_light*
-    sqrt( calculateDimensionlessRelativisticSpeedSquared( rest_mass_energy,
-                                                          kinetic_energy ) );
+                  calculateDimensionlessRelativisticSpeed( rest_mass_energy,
+                                                           kinetic_energy );
 }
 
 // Calculate the speed of a massive particle

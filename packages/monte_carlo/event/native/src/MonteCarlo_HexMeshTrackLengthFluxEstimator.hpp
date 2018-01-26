@@ -17,7 +17,7 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/unordered_map.hpp>
 
-// Trillinos includes
+// Trilinos includes
 #include <Teuchos_Array.hpp>
 
 // Moab Includes
@@ -37,17 +37,17 @@ namespace MonteCarlo{
  * \Utilizes a structured hex mesh geometry to calculate
  * \flux.
  */
-template<typename ContributionMutliplierPolicy = WeightMultiplier>
+template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>,
                                         public ParticleSubtrackEndingGlobalEventObserver
 {
 
 public:
-  
+
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>
   EventTags;
-  
+
   //! Typedef for iterator over hex element IDs
   typedef Utility::StructuredHexMesh::HexIDIterator HexIDIterator;
 
@@ -63,10 +63,10 @@ public:
   //! Destructor
   ~HexMeshTrackLengthFluxEstimator()
   { /* ... */ }
-  
+
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
-  
+
   //! Set the response functions
   void setResponseFunctions(
   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
@@ -86,7 +86,7 @@ public:
 
   //! Get start iterator over list of hex element IDs
   HexIDIterator getStartHex() const;
-  
+
   //! Get end iterator over list of hex element IDs
   HexIDIterator getEndHex() const;
 
@@ -101,15 +101,15 @@ private:
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
-  
+
   // The output mesh file name
   std::string d_output_mesh_file_name;
-  
+
   // hex mesh object
   std::shared_ptr<Utility::StructuredHexMesh> d_hex_mesh;
-  
+
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

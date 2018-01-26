@@ -85,7 +85,7 @@ public:
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
-  //! Evaulate the CDF
+  //! Evaluate the CDF
   double evaluateCDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the corresponding CDF

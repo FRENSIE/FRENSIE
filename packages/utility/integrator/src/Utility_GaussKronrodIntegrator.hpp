@@ -12,7 +12,7 @@
 // std Includes
 #include <queue>
 
-// Trillinos Includes
+// Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 // Boost Includes
@@ -35,7 +35,7 @@ struct BinTraits
 };
 
 template<typename T>
-struct ExtrpolatedBinTraits
+struct ExtrapolatedBinTraits
 {
   T lower_limit;
   T upper_limit;
@@ -43,7 +43,7 @@ struct ExtrpolatedBinTraits
   T error;
   int level;
 
-  bool operator <( const ExtrpolatedBinTraits<T>& bins ) const
+  bool operator <( const ExtrapolatedBinTraits<T>& bins ) const
   {
     return error < bins.error;
   }
@@ -57,7 +57,7 @@ class GaussKronrodIntegrator
 public:
 
 typedef std::priority_queue<BinTraits<T>> BinQueue;
-typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
+typedef std::vector<ExtrapolatedBinTraits<T>> BinArray;
 
   //! Constructor
   GaussKronrodIntegrator( const T relative_error_tol,
@@ -77,10 +77,10 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
   //! Warn on dirty integration (default)
   void warnOnDirtyIntegration( std::ostream* os_warn = &std::cerr );
 
-  //! Use heuristic roundoff errror estimator (default)
+  //! Use heuristic roundoff error estimator (default)
   void estimateRoundoff();
 
-  //! Don't use heuristic roundoff errror estimator
+  //! Don't use heuristic roundoff error estimator
   void dontEstimateRoundoff();
 
   //! Set the realtive error tolerance
@@ -261,9 +261,9 @@ protected:
 
   // check the roundoff error
   void checkRoundoffError(
-                       const ExtrpolatedBinTraits<T>& bin,
-                       const ExtrpolatedBinTraits<T>& bin_1,
-                       const ExtrpolatedBinTraits<T>& bin_2,
+                       const ExtrapolatedBinTraits<T>& bin,
+                       const ExtrapolatedBinTraits<T>& bin_1,
+                       const ExtrapolatedBinTraits<T>& bin_2,
                        const T& bin_1_asc,
                        const T& bin_2_asc,
                        int& round_off_1,
@@ -276,12 +276,12 @@ protected:
   void sortBins(
         Teuchos::Array<int>& bin_order,
         BinArray& bin_array,
-        const ExtrpolatedBinTraits<T>& bin_1,
-        const ExtrpolatedBinTraits<T>& bin_2,
+        const ExtrapolatedBinTraits<T>& bin_1,
+        const ExtrapolatedBinTraits<T>& bin_2,
         const int& number_of_intervals,
         int& nr_max ) const;
 
-  // get the Wynn Epsilon-Algoirithm extrapolated value
+  // get the Wynn Epsilon-Algorithm extrapolated value
   void getWynnEpsilonAlgorithmExtrapolation(
         std::vector<T>& bin_extrapolated_result,
         std::vector<T>& last_three_results,

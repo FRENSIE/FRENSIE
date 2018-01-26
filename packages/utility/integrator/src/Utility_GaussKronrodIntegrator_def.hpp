@@ -45,14 +45,14 @@ GaussKronrodIntegrator<T>::GaussKronrodIntegrator(
       (d_relative_error_tol < 50 * std::numeric_limits<T>::epsilon() ||
       d_relative_error_tol < 0.5e-28L),
       Utility::IntegratorException,
-      "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
+      "tolerance cannot be achieved with given relative_error_tol and absolute_error_tol" );
 }
 
 // Throw exception on dirty integration
-/*! \details "Dirty Integration" has occured if the absolute or relative error
+/*! \details "Dirty Integration" has occurred if the absolute or relative error
  * tolerance was not been reached, the subinterval limit was reached before the
  * given tolerance, or the roundoff error was too high for the given tolerance
- * to be reached. This type of integration should be avoided because the 
+ * to be reached. This type of integration should be avoided because the
  * tolerance ask for was not reached.
  */
 template<typename T>
@@ -69,10 +69,10 @@ bool GaussKronrodIntegrator<T>::isExceptionThrownOnDirtyIntegration() const
 }
 
 // Warn on dirty integration (default)
-/*! \details "Dirty Integration" has occured if the absolute or relative error
+/*! \details "Dirty Integration" has occurred if the absolute or relative error
  * tolerance was not been reached, the subinterval limit was reached before the
  * given tolerance, or the roundoff error was too high for the given tolerance
- * to be reached. This type of integration should be avoided because the 
+ * to be reached. This type of integration should be avoided because the
  * tolerance ask for was not reached.
  */
 template<typename T>
@@ -80,20 +80,20 @@ void GaussKronrodIntegrator<T>::warnOnDirtyIntegration( std::ostream* os_warn )
 {
   // Make sure the warning stream is valid
   testPrecondition( os_warn != NULL );
-  
+
   d_throw_exceptions = false;
 
   d_os_warn = os_warn;
 }
 
-// Use heuristic roundoff errror estimator (default)
+// Use heuristic roundoff error estimator (default)
 template<typename T>
 void GaussKronrodIntegrator<T>::estimateRoundoff()
 {
   d_estimate_roundoff = true;
 }
 
-// Don't use heuristic roundoff errror estimator
+// Don't use heuristic roundoff error estimator
 template<typename T>
 void GaussKronrodIntegrator<T>::dontEstimateRoundoff()
 {
@@ -177,8 +177,8 @@ template<typename T>
 void GaussKronrodIntegrator<T>::sortBins(
         Teuchos::Array<int>& bin_order,
         BinArray& bin_array,
-        const ExtrpolatedBinTraits<T>& bin_1,
-        const ExtrpolatedBinTraits<T>& bin_2,
+        const ExtrapolatedBinTraits<T>& bin_1,
+        const ExtrapolatedBinTraits<T>& bin_2,
         const int& number_of_intervals,
         int& nr_max ) const
 {
@@ -274,7 +274,7 @@ void GaussKronrodIntegrator<T>::sortBins(
 };
 
 
-// get the Wynn Epsilon-Algoirithm extrapolated value
+// get the Wynn Epsilon-Algorithm extrapolated value
 template<typename T>
 void GaussKronrodIntegrator<T>::getWynnEpsilonAlgorithmExtrapolation(
         std::vector<T>& bin_extrapolated_result,
@@ -455,10 +455,10 @@ void GaussKronrodIntegrator<T>::getWynnEpsilonAlgorithmExtrapolation(
  * integral estimate is small (<= 1e-5) and the change in error estimate is
  * small ( >= 99% the original error ) after a bin division, then round_off_1
  * is incremented by 1. When round_off_1 > 10 it is assumed that roundoff error
- * has prevented the tolerence from being reached. If it is after the 10th
+ * has prevented the tolerance from being reached. If it is after the 10th
  * iteration and the error increases after a bin division, then round_off_2 is
  * incremented by 1. When round_off_2 > 20 it is assumed that roundoff error
- * has prevented the tolerence from being reached.
+ * has prevented the tolerance from being reached.
  */
 template<typename T>
 void GaussKronrodIntegrator<T>::checkRoundoffError(
@@ -536,19 +536,19 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
 /*! \details A heuristic check for roundoff error is done. If the change in the
  * integral estimate is small (<= 1e-5) and the change in error estimate is
  * small ( >= 99% the original error ) after a bin division, then round_off_1
- * is incremented by 1 unless it is an extrapolated bin, then 
+ * is incremented by 1 unless it is an extrapolated bin, then
  * extrapolated_round_off_1 is incremented by 1. When round_off_1 +
  * extrapolated_round_off_1 > 10 it is assumed that roundoff error
- * has prevented the tolerence from being reached. If it is after the 10th
+ * has prevented the tolerance from being reached. If it is after the 10th
  * iteration and the error increases after a bin division, then round_off_2 is
  * incremented by 1. When round_off_2 > 20 it is assumed that roundoff error
- * has prevented the tolerence from being reached.
+ * has prevented the tolerance from being reached.
  */
 template<typename T>
 void GaussKronrodIntegrator<T>::checkRoundoffError(
-                       const ExtrpolatedBinTraits<T>& bin,
-                       const ExtrpolatedBinTraits<T>& bin_1,
-                       const ExtrpolatedBinTraits<T>& bin_2,
+                       const ExtrapolatedBinTraits<T>& bin,
+                       const ExtrapolatedBinTraits<T>& bin_1,
+                       const ExtrapolatedBinTraits<T>& bin_2,
                        const T& bin_1_asc,
                        const T& bin_2_asc,
                        int& round_off_1,
@@ -1044,12 +1044,12 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   testPrecondition( Sort::isSortedAscending( points_of_interest.begin(),
                                              points_of_interest.end(),
                                              true ) );*/
-  // check that the number of points don't excees the subinterval limit
+  // check that the number of points don't exceed the subinterval limit
   testPrecondition( points_of_interest.size() < d_subinterval_limit );
   // check that there are at least two points
   testPrecondition( points_of_interest.size() > 1 );
 
-  ExtrpolatedBinTraits<T> bin;
+  ExtrapolatedBinTraits<T> bin;
   BinArray bin_array( d_subinterval_limit );
 
   std::vector<T> bin_extrapolated_result( 52 );
@@ -1184,7 +1184,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   {
     T result_asc_1 = 0.0, result_asc_2 = 0.0;
 
-    ExtrpolatedBinTraits<T> bin_1, bin_2;
+    ExtrapolatedBinTraits<T> bin_1, bin_2;
 
     // Set bin to interval with largest error
     bin = bin_array[bin_order[nr_max]];
@@ -1363,7 +1363,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
       oss.precision( 18 );
       oss << " The integral is probably divergent, or slowly convergent - "
           << "ktmin (" << ktmin << ") > 5 && absolute_error ("
-          << absolute_error <<") < 1e-4 * total_error (" 
+          << absolute_error <<") < 1e-4 * total_error ("
           << (1/1000.0) * total_error << ")";
 
       if ( d_throw_exceptions )
@@ -1489,12 +1489,12 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   testPrecondition( Sort::isSortedAscending( points_of_interest.begin(),
                                              points_of_interest.end(),
                                              true ) );
-  // check that the number of points don't excees the subinterval limit
+  // check that the number of points don't exceed the subinterval limit
   testPrecondition( points_of_interest.size() < d_subinterval_limit );
   // check that there are at least two points
   testPrecondition( points_of_interest.size() > 1 );
 
-  ExtrpolatedBinTraits<T> bin;
+  ExtrapolatedBinTraits<T> bin;
   BinArray bin_array( d_subinterval_limit );
 
   std::vector<T> bin_extrapolated_result( 52 );
@@ -1631,7 +1631,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   {
     T result_asc_1 = 0.0, result_asc_2 = 0.0;
 
-    ExtrpolatedBinTraits<T> bin_1, bin_2;
+    ExtrapolatedBinTraits<T> bin_1, bin_2;
 
     // Set bin to interval with largest error
     bin = bin_array[bin_order[nr_max]];
@@ -1810,7 +1810,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
       oss.precision( 18 );
       oss << " The integral is probably divergent, or slowly convergent - "
           << "ktmin (" << ktmin << ") > 5 && absolute_error ("
-          << absolute_error <<") < 1e-4 * total_error (" 
+          << absolute_error <<") < 1e-4 * total_error ("
           << (1/1000.0) * total_error << ")";
 
       if ( d_throw_exceptions )

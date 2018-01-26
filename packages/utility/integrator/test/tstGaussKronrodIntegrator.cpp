@@ -390,7 +390,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateWithPointRule );
 
 //---------------------------------------------------------------------------//
-// Check that quadrature integrand values can be evaulated at abscissa
+// Check that quadrature integrand values can be evaluated at abscissa
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				                   calculateQuadratureIntegrandValuesAtAbscissa,
                                    Functor )
@@ -717,7 +717,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
 
-  Utility::ExtrpolatedBinTraits<double> bin, bin_1, bin_2;
+  Utility::ExtrapolatedBinTraits<double> bin, bin_1, bin_2;
   int round_off_1 = 0;
   int round_off_2 = 0;
   int round_off_3 = 0;
@@ -838,7 +838,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
 
-  Utility::ExtrpolatedBinTraits<double> bin, bin_1, bin_2;
+  Utility::ExtrapolatedBinTraits<double> bin, bin_1, bin_2;
 
   int nr_max = 0;
   int number_of_intervals = 1;

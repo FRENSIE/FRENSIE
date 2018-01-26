@@ -35,7 +35,7 @@ void AtomicExcitationAdjointElectronScatteringDistribution::sample(
   // Theree is no angle scattering
   scattering_angle_cosine = 1.0;
 
-  // Get enery gain
+  // Get energy gain
   double energy_gain = d_energy_gain_distribution->evaluate( incoming_energy );
 
   // Calculate outgoing energy

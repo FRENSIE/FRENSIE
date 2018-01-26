@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_ExceptionTestMacros.hpp
 //! \author Alex Robinson
-//! \brief  Macros that test if an exception has occured and throw if so
+//! \brief  Macros that test if an exception has occurred and throw if so
 //!
 //---------------------------------------------------------------------------//
 
@@ -19,7 +19,7 @@
  * This macro is based off of the Teuchos_TestForException macro. This macro
  * should be used anywhere that the failure of a specified conditions
  * warrants the throwing of an exception.
- * \ingroup execption_macros
+ * \ingroup exception_macros
  */
 #define TEST_FOR_EXCEPTION(throw_exception_test, Exception, msg)	\
 {									\

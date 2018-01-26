@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, getAlphaMin_Max )
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, evaulatePDF )
+TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, evaluatePDF )
 {
   alpha_function->setIndependentVariables( -9.9e-7/2.53010e-8, 1e-6 );
 

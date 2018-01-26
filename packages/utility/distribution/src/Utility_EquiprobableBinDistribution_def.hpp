@@ -100,7 +100,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::operator=(
 }
 
 
-// Evaulate the distribution
+// Evaluate the distribution
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::DepQuantity
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::evaluate(

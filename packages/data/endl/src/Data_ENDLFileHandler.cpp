@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Data_ENDLFileHandler.cpp
-//! \author Luke Kerstinf
+//! \author Luke Kersting
 //! \brief  ENDL electron data extractor class definition.
 //!
 //---------------------------------------------------------------------------//
@@ -148,7 +148,7 @@ void ENDLFileHandler::readFirstTableHeader(
     d_end_of_file = true;
   }
 
-  // Caluclate atomic number from zaids
+  // Calculate atomic number from zaids
   atomic_number = zaids/1000;
 
   testPostcondition( validFile() );
@@ -159,7 +159,7 @@ void ENDLFileHandler::readSecondTableHeader(
         int& reaction_type,
         int& electron_shell )
 {
-  int reaction_descriptor, reaction_property, reaction_modifiern;
+  int reaction_descriptor, reaction_property, reaction_modifier;
   int io_flag;
   double subshell_designator;
 
@@ -167,7 +167,7 @@ void ENDLFileHandler::readSecondTableHeader(
         d_endl_file_id,
         &reaction_descriptor,
         &reaction_property,
-        &reaction_modifiern,
+        &reaction_modifier,
         &subshell_designator,
         &io_flag );
 
@@ -183,7 +183,7 @@ void ENDLFileHandler::readSecondTableHeader(
     d_end_of_file = true;
   }
 
-  // Caluclate reaction type from the reaction designator and property
+  // Calculate reaction type from the reaction designator and property
   reaction_type = reaction_descriptor*1000 + reaction_property;
 
   // Calculate the electron shell from the subshell designator

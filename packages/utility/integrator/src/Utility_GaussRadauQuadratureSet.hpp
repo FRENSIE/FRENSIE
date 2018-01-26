@@ -38,13 +38,13 @@ public:
                   double upper_limit,
                   double& result ) const;
 
-  //! Caluclate the Jacobi Polynomial at x
+  //! Calculate the Jacobi Polynomial at x
   double getJacobiPolynomial( double x,
                               int n = 1,
                               int alpha = 0,
                               int beta = 1 ) const;
 
-  //! Caluclate the Legendre Polynomial at x
+  //! Calculate the Legendre Polynomial at x
   double getLegendrePolynomial( double x,
                               int n = 1) const;
 
@@ -54,18 +54,18 @@ public:
                                         int alpha = 0,
                                         int beta = 1 ) const;
 
-  //! Caluclate the roots of the Jacobi Polynomial
+  //! Calculate the roots of the Jacobi Polynomial
   void getJacobiPolynomialRoots( std::vector<double>& roots,
                                  const int n = 1,
                                  int alpha = 0,
                                  int beta = 1 ) const;
 
-  //! Find the Radau nodes and wieghts including at end point -1 or 1
+  //! Find the Radau nodes and weights including at end point -1 or 1
   void findNodesAndWeights( double end_point,
                             std::vector<double>& nodes,
                             std::vector<double>& weights ) const;
 
-  //! Find the Radau nodes and wieghts including at end point -1 or 1
+  //! Find the Radau nodes and weights including at end point -1 or 1
   void findNodesAndPositiveWeights( double end_point,
                                     std::vector<double>& nodes,
                                     std::vector<double>& weights ) const;
@@ -82,10 +82,10 @@ private:
   double getFixedWeightIntegrand( double x, int n ) const;
 
 
-  // Find the Radau wieght for the function at the given node with end point -1 or 1
+  // Find the Radau weight for the function at the given node with end point -1 or 1
   double findWeightAtNode( double node, double end_point, int n ) const;
 
-  // Find the Radau wieght for the function at the end point -1 or 1
+  // Find the Radau weight for the function at the end point -1 or 1
   double findWeightAtEndPoint( double end_point, int n ) const;
 
   // Polynomial expansion function
@@ -94,7 +94,7 @@ private:
   // Polynomial order
   int d_polynomial_order;
 
-  // Error Tolerence
+  // Error Tolerance
   double d_error_tol;
 
   // Function wrapper for evaluating the functor
@@ -112,7 +112,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_GUASS_RADAU_QUADRATURE_SET_HPP
+#endif // end UTILITY_GAUSS_RADAU_QUADRATURE_SET_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_GaussRadauQuadratureSet.hpp

@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( KiloElectronVolt, initialize_from_cgs_si )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the keV unit can bin intialized from eV and MeV units
+// Check that the keV unit can bin initialized from eV and MeV units
 TEUCHOS_UNIT_TEST( KiloElectronVolt, initialize_from_ev_mev )
 {
   quantity<KiloElectronVolt> kev_energy_ev( 1.0*eV );
@@ -161,7 +161,7 @@ TEUCHOS_UNIT_TEST( MegaElectronVolt, initialize_from_cgs_si )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the MeV unit can bin intialized from eV and keV units
+// Check that the MeV unit can bin initialized from eV and keV units
 TEUCHOS_UNIT_TEST( MegaElectronVolt, initialize_from_ev_kev )
 {
   quantity<MegaElectronVolt> mev_energy_ev( 1.0*eV );
