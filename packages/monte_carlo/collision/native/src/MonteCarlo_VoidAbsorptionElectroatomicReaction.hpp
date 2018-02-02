@@ -129,7 +129,9 @@ inline void VoidAbsorptionElectroatomicReaction::react(
        ElectronState& electron,
        ParticleBank& bank,
        Data::SubshellType& shell_of_interaction ) const
-{ /* ... */ }
+{
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
+}
 
 // Return the head of the energy grid
 inline const double* VoidAbsorptionElectroatomicReaction::getEnergyGridHead() const

@@ -75,7 +75,7 @@ protected:
   //! The detailed triplet production model
   static void detailedInteraction( PhotonState& photon,
                                    ParticleBank& bank );
-  
+
   //! The number of photons emitted from triplet prod. using simple model
   static unsigned basicInteractionPhotonEmission();
 
@@ -94,7 +94,7 @@ private:
   // The number of photons emitted from the interaction (model dependent)
   boost::function<unsigned (void)> d_interaction_model_emission;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

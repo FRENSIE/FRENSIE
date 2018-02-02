@@ -399,10 +399,11 @@ ADD_TEST(StandardPhotoatomicReaction_test tstStandardPhotoatomicReaction --test_
 SET_PROPERTY(TEST StandardPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstPairProductionPhotoatomicReaction
-  tstPairProductionPhotoatomicReaction.cpp)
+  tstPairProductionPhotoatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPairProductionPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(PairProductionPhotoatomicReaction_test tstPairProductionPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
-SET_PROPERTY(TEST PairProductionPhotoatomicReaction_test  PROPERTY LABELS photon)
+SET_PROPERTY(TEST PairProductionPhotoatomicReaction_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstTripletProductionPhotoatomicReaction
   tstTripletProductionPhotoatomicReaction.cpp)
@@ -1007,6 +1008,13 @@ ADD_EXECUTABLE(tstVoidElectroatomicReaction
 TARGET_LINK_LIBRARIES(tstVoidElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(VoidElectroatomicReaction_test tstVoidElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST VoidElectroatomicReaction_test PROPERTY LABELS electron)
+
+ADD_EXECUTABLE(tstVoidAbsorptionElectroatomicReaction
+  tstVoidAbsorptionElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstVoidAbsorptionElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(VoidAbsorptionElectroatomicReaction_test tstVoidAbsorptionElectroatomicReaction )
+SET_PROPERTY(TEST VoidAbsorptionElectroatomicReaction_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp

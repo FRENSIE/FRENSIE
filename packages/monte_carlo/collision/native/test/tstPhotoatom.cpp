@@ -752,7 +752,8 @@ int main( int argc, char** argv )
 	    new MonteCarlo::PairProductionPhotoatomicReaction<Utility::LogLog>(
 							energy_grid,
 							pp_cross_section,
-							pp_threshold_index ) );
+							pp_threshold_index,
+							false ) );
 
     // Create the reaction maps
     MonteCarlo::Photoatom::ReactionMap scattering_reactions,

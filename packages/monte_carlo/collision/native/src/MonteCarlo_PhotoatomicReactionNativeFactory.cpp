@@ -222,11 +222,11 @@ void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
 
   triplet_production_reaction.reset(
                new TripletProductionPhotoatomicReaction<Utility::LinLin,false>(
-				      energy_grid,
+                                      energy_grid,
                                       triplet_production_cross_section,
                                       threshold_index,
                                       grid_searcher,
-				      use_detailed_triplet_production_data ) );
+                                      use_detailed_triplet_production_data ) );
 }
 
 // Create the total photoelectric photoatomic reaction

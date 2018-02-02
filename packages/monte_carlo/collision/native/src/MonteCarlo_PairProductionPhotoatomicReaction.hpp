@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -70,11 +71,11 @@ protected:
 
   //! The basic pair production model
   static void basicInteraction( PhotonState& photon,
-				ParticleBank& bank );
+                                ParticleBank& bank );
 
   //! The detailed pair production model
-  static void detailedInteraction( PhotonState& photon,
-				   ParticleBank& bank );
+  void detailedInteraction( PhotonState& photon,
+                            ParticleBank& bank ) const;
 
   //! The number of photons emitted from pair production using simple model
   static unsigned basicInteractionPhotonEmission();
@@ -84,15 +85,30 @@ protected:
 
 private:
 
+  // Sample the polar angle of the emitted electron/positron
+  static double sampleEmittedPolarAngle( const double energy );
+
   // Initialize interaction models
   void initializeInteractionModels(
                            const bool use_detailed_electron_emission_physics );
+
+  // Create the secondary energy distribution
+  void initializeSecondaryEnergyDistribution();
 
   // The pair production model
   boost::function<void (PhotonState&,ParticleBank&)> d_interaction_model;
 
   // The number of photons emitted from the interaction (model dependent)
   boost::function<unsigned (void)> d_interaction_model_emission;
+
+  // pair production secondary energy distribution (in a ratio form)
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> d_secondary_energy_distribution;
+
+  // The photon energy grid
+  static std::vector<double> s_photon_energy_grid;
+
+  // The ratios of the available kinetic energy given to the positron/electron
+  static std::vector< std::vector<double> > s_outgoing_energy_ratio;
 };
 
 } // end MonteCarlo namespace

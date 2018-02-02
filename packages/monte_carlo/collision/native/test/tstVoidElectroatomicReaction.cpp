@@ -2,7 +2,7 @@
 //!
 //! \file   tstVoidElectroatomicReaction.cpp
 //! \author Luke Kersting
-//! \brief  Bremsstrahlung electroatomic reaction unit tests
+//! \brief  Void electroatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------//
 
 std::shared_ptr<MonteCarlo::VoidElectroatomicReaction<Utility::LinLin> >
-  ace_dipole_bremsstrahlung_reaction;
+  void_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -44,7 +44,7 @@ bool notEqualZero( double value )
 // Check that the reaction type can be returned
 TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getReactionType(),
+  TEST_EQUALITY_CONST( void_reaction->getReactionType(),
 		       MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
 }
 
@@ -52,30 +52,24 @@ TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getReactionType )
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getThresholdEnergy(),
-                       1.000000000000E-05 );
+  TEST_EQUALITY_CONST( void_reaction->getThresholdEnergy(),
+                       1E-05 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
 TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getNumberOfEmittedElectrons )
 {
-  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-5),
-                       0u );
-
-  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
-                       0u );
+  TEST_EQUALITY_CONST( void_reaction->getNumberOfEmittedElectrons(1e-5), 0u );
+  TEST_EQUALITY_CONST( void_reaction->getNumberOfEmittedElectrons(20.0), 0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
 TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getNumberOfEmittedPhotons )
 {
-  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-5),
-                       0u );
-
-  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
-                       0u );
+  TEST_EQUALITY_CONST( void_reaction->getNumberOfEmittedPhotons(1e-5), 0u );
+  TEST_EQUALITY_CONST( void_reaction->getNumberOfEmittedPhotons(20.0), 0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -83,17 +77,17 @@ TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getNumberOfEmittedPhotons )
 TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, getCrossSection )
 {
   double cross_section =
-    ace_dipole_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
+    void_reaction->getCrossSection( 9E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
   cross_section =
-    ace_dipole_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
+    void_reaction->getCrossSection( 4E-04 );
 
   TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03, 1e-12 );
 
   cross_section =
-    ace_dipole_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
+    void_reaction->getCrossSection( 2E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
 }
@@ -110,7 +104,7 @@ TEUCHOS_UNIT_TEST( VoidElectroatomicReaction, react )
 
   Data::SubshellType shell_of_interaction;
 
-  ace_dipole_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
+  void_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() == 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
@@ -166,7 +160,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     energy_grid.size() - bremsstrahlung_cross_section.size();
 
   // Create the reactions
-  ace_dipole_bremsstrahlung_reaction.reset(
+  void_reaction.reset(
     new MonteCarlo::VoidElectroatomicReaction<Utility::LinLin>(
           energy_grid,
           bremsstrahlung_cross_section,
@@ -180,7 +174,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstVoidElectroatomicReaction.cpp
