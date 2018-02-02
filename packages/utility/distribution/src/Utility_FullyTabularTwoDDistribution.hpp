@@ -42,7 +42,7 @@ protected:
   //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::PrimaryIndepQuantity> PIQT;
 
-  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::SecondaryIndepQuantity> SIQT;
 
   //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -342,7 +342,7 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
  * \ingroup two_d_distributions
  */
 typedef UnitAwareFullyTabularTwoDDistribution<void,void,void> FullyTabularTwoDDistribution;
-  
+
 } // end utility namespace
 
 #endif // end UTILITY_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP

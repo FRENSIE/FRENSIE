@@ -378,7 +378,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatKeyword )
     formatter.formatKeyword<Utility::UnderlinedTextFormat,Utility::GreenTextColor,Utility::MagentaTextBackgroundColor>( "test" );
 
     formatter.formatKeyword<Utility::BoldTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "This" );
-    
+
     // Make sure repeats are ignored
     formatter.formatKeyword<Utility::BoldTextFormat,Utility::BlueTextColor,Utility::DefaultTextBackgroundColor>( "This" );
 
@@ -397,7 +397,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatKeyword )
 
     formatter.formatKeyword<Utility::UnderlinedTextFormat,Utility::GreenTextColor,Utility::MagentaTextBackgroundColor>( "test" );
 
-    formatter.formatKeyword<Utility::BoldTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "\\w*is\\b" ); 
+    formatter.formatKeyword<Utility::BoldTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "\\w*is\\b" );
 
     // Make sure repeats are ignored
     formatter.formatKeyword<Utility::BoldTextFormat,Utility::BlueTextColor,Utility::DefaultTextBackgroundColor>( "This" );
@@ -542,7 +542,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
     Utility::DynamicOutputFormatter formatter( "Error: this is a test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;31;49mError:\E[0m this is a test!" );
@@ -564,7 +564,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
 #else
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          " error: this is a test!" );
-#endif    
+#endif
   }
 
   // Check that the "Error" keyword will not be formatted
@@ -572,7 +572,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
     Utility::DynamicOutputFormatter formatter( "This is an Error test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is an Error test!" );
   }
@@ -582,17 +582,17 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
     Utility::DynamicOutputFormatter formatter( "This is an error test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is an error test!" );
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "Error: this is an error test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;31;49mError:\E[0m this is an error test!" );
@@ -601,7 +601,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardErrorKeywords )
                          "Error: this is an error test!" );
 #endif
   }
-}  
+}
 
 //---------------------------------------------------------------------------//
 // Check that the standard warning message keywords can be formatted
@@ -612,7 +612,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
     Utility::DynamicOutputFormatter formatter( "Warning: this is a test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;35;49mWarning:\E[0m this is a test!" );
@@ -627,7 +627,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
     Utility::DynamicOutputFormatter formatter( " warning: this is a test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;35;49m warning:\E[0m this is a test!" );
@@ -642,7 +642,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
     Utility::DynamicOutputFormatter formatter( "This is a Warning test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a Warning test!" );
   }
@@ -652,17 +652,17 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardWarningKeywords )
     Utility::DynamicOutputFormatter formatter( "This is a warning test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a warning test!" );
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "Warning: This is a warning test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;35;49mWarning:\E[0m This is a warning test!" );
@@ -682,7 +682,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardNoteKeywords )
     Utility::DynamicOutputFormatter formatter( "Note: this is a test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;36;49mNote:\E[0m this is a test!" );
@@ -697,7 +697,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardNoteKeywords )
     Utility::DynamicOutputFormatter formatter( " note: this is a test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;36;49m note:\E[0m this is a test!" );
@@ -712,7 +712,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardNoteKeywords )
     Utility::DynamicOutputFormatter formatter( "This is a Note test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a Note test!" );
   }
@@ -722,17 +722,17 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardNoteKeywords )
     Utility::DynamicOutputFormatter formatter( "This is a note test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "This is a note test!" );
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "Note: This is a note test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     TEST_EQUALITY_CONST( formatter.getFormattedOutput(),
                          "\E[1;36;49mNote:\E[0m This is a note test!" );
@@ -839,7 +839,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFilenameKeywords )
 #endif
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "These are test files: include/test.hpp, /home/src/test.cpp:1111" );
 
@@ -856,7 +856,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFilenameKeywords )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the standard pass keywords can be formatted 
+// Check that the standard pass keywords can be formatted
 TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardPassKeywords )
 {
   // Check that Pass can be formatted
@@ -919,7 +919,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardPassKeywords )
 #endif
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is a passed test: [Pass]" );
 
@@ -999,7 +999,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, formatStandardFailKeywords )
 #endif
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is a failed test: [Fail]" );
 
@@ -1291,7 +1291,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the green text color only
@@ -1312,7 +1312,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the yellow text color only
@@ -1333,7 +1333,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the blue text color only
@@ -1354,7 +1354,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the magenta text color only
@@ -1375,7 +1375,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the cyan text color only
@@ -1396,7 +1396,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the white text color only
@@ -1417,7 +1417,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the black text background color only
@@ -1438,7 +1438,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the red text background color
@@ -1459,7 +1459,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the green text background color
@@ -1480,7 +1480,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the yellow text background color
@@ -1596,7 +1596,7 @@ TEUCHOS_UNIT_TEST( DynamicOutputFormatter, print )
     formatter.boldRedKeyword( "is" );
     formatter.boldCyanKeyword( "a" );
     formatter.boldMagentaKeyword( "test" );
-    
+
     formatter.print( oss_raw, false );
     formatter.print( oss, true );
 

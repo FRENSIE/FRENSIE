@@ -48,7 +48,7 @@ public:
 
   //! Create the atomic relaxation model (using Native data)
   static void createAtomicRelaxationModel(
-	const Data::ElectronPhotonRelaxationDataContainer& raw_photoatomc_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_photoatomic_data,
 	Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
         const double min_photon_energy,
         const double min_electron_energy,
@@ -56,7 +56,7 @@ public:
 
   //! Create the atomic relaxation model (using Native eedl data)
   static void createAtomicRelaxationModel(
-	const Data::ENDLDataContainer& raw_photoatomc_data,
+	const Data::ENDLDataContainer& raw_photoatomic_data,
 	Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
         const double min_photon_energy,
         const double min_electron_energy,

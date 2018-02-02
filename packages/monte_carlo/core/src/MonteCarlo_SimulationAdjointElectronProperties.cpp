@@ -15,7 +15,7 @@ namespace MonteCarlo{
 // The absolute mimimum adjoint electron energy (MeV)
 const double SimulationAdjointElectronProperties::s_absolute_min_adjoint_electron_energy = 1e-5;
 
-// The absolume maximum adjoint electron energy (MeV)
+// The absolute maximum adjoint electron energy (MeV)
 const double SimulationAdjointElectronProperties::s_absolute_max_adjoint_electron_energy = 20.0;
 
 // Constructor
@@ -33,7 +33,7 @@ SimulationAdjointElectronProperties::SimulationAdjointElectronProperties()
     d_adjoint_elastic_cutoff_angle_cosine( 1.0 ),
     d_num_adjoint_electron_hash_grid_bins( 500 )
 { /* ... */ }
-  
+
 // Set the minimum adjoint electron energy (MeV)
 void SimulationAdjointElectronProperties::setMinAdjointElectronEnergy( const double energy )
 {

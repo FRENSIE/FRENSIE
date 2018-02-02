@@ -34,7 +34,7 @@ FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDist
 
   TEST_FOR_EXCEPTION( location_of_total_data > 0,
 		      std::runtime_error,
-		      "Error: Only propmt or total nu-bar data is present in "
+		      "Error: Only prompt or total nu-bar data is present in "
 		      "ace table " << table_name << ", which is currently not "
 		      "supported!" );
 

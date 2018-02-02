@@ -12,13 +12,13 @@
 // Std Lib Includes
 #include <memory>
 
-// FRENSE Includes
+// FRENSIE Includes
 #include "MonteCarlo_StandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 
 namespace MonteCarlo{
 
-//! The coupled complete Doppler broadenening photon energy dist. class
+//! The coupled complete Doppler broadening photon energy dist. class
 template<typename ComptonProfilePolicy>
 class CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution : public StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>
 {

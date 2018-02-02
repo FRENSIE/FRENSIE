@@ -34,11 +34,11 @@ namespace MonteCarlo{
  * relaxation model associated with a adjoint electroatom. Exposing this object (e.g.
  * get method or export method) is safe since it only allows access to
  * the underlying member data in a way that prohibits modification of that
- * data. This class was created to address the issue that arrises when dealing
- * with electronuclear data - electronuclide's that share the same atomic number
- * need the same adjoint electroatomic data. This class allows each electronuclide to
+ * data. This class was created to address the issue that arises when dealing
+ * with electro-nuclear data - electro-nuclide's that share the same atomic number
+ * need the same adjoint electroatomic data. This class allows each electro-nuclide to
  * share the adjoint electroatomic data without copying that data (even if each
- * electronuclide has its own copy of the adjoint electroatom core object).
+ * electro-nuclide has its own copy of the adjoint electroatom core object).
  */
 class AdjointElectroatomCore
 {

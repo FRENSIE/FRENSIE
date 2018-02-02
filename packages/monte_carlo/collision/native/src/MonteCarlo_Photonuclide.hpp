@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_Photonuclide.hpp
 //! \author Alex Robinson
-//! \brief  The photonuclide base class declaration
+//! \brief  The photo-nuclide base class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -130,7 +130,7 @@ private:
   // The isomer number
   unsigned d_isomer_number;
 
-  // The temperature (in MeV) of the photonuclide
+  // The temperature (in MeV) of the photo-nuclide
   double d_temperature;
 
   // The total nuclear reaction

@@ -164,7 +164,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
       }
     }
 
-    // Create the equiprobable bin scattering energy distriubtion (law 1)
+    // Create the equiprobable bin scattering energy distribution (law 1)
     distribution.reset(
 	       new AceLaw1NuclearScatteringEnergyDistribution( energy_grid ) );
 }

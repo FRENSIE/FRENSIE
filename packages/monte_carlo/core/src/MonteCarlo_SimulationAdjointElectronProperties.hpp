@@ -127,7 +127,7 @@ private:
   // The absolute mimimum adjoint electron energy (MeV)
   static const double s_absolute_min_adjoint_electron_energy;
 
-  // The absolume maximum adjoint electron energy (MeV)
+  // The absolute maximum adjoint electron energy (MeV)
   static const double s_absolute_max_adjoint_electron_energy;
 
   // The minimum adjoint electron energy (MeV)
@@ -136,7 +136,7 @@ private:
   // The maximum adjoint electron energy (MeV)
   double d_max_adjoint_electron_energy;
 
-  // The adjoint elasic electron scattering mode (true = on - default, false = off)
+  // The adjoint elastic electron scattering mode (true = on - default, false = off)
   bool d_adjoint_elastic_mode_on;
 
   // The adjoint electroionization electron scattering mode (true = on - default, false = off)
@@ -158,16 +158,16 @@ private:
   // The adjoint elastic cutoff angle cosine (mu = 1.0 by default)
   double d_adjoint_elastic_cutoff_angle_cosine;
 
-  // The adjoint elasic electron distribution mode ( Decoupled - default )
+  // The adjoint elastic electron distribution mode ( Decoupled - default )
   ElasticElectronDistributionType d_adjoint_elastic_distribution_mode;
 
-  // The coupled elasic electron sampling method ( Simplified Union - default )
+  // The coupled elastic electron sampling method ( Simplified Union - default )
   CoupledElasticSamplingMethod d_coupled_elastic_sampling_method;
 
   // The number of adjoint electron hash grid bins
   unsigned d_num_adjoint_electron_hash_grid_bins;
 };
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_SIMULATION_ADJOINT_ELECTRON_PROPERTIES_HPP

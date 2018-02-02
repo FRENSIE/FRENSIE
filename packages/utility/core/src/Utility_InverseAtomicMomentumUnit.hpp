@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_INVERSE_ATOMIC_MOMENTUN_UNIT_HPP
-#define UTILITY_INVERSE_ATOMIC_MOMENTUN_UNIT_HPP
+#ifndef UTILITY_INVERSE_ATOMIC_MOMENTUM_UNIT_HPP
+#define UTILITY_INVERSE_ATOMIC_MOMENTUM_UNIT_HPP
 
 // FRENSIE Includes
 #include "Utility_AtomicMomentumUnit.hpp"
@@ -26,7 +26,7 @@ BOOST_UNITS_STATIC_CONSTANT( inverse_atomic_momentum, InverseAtomicMomentum );
 
 } // end Utility namespace
 
-#endif // end UTILITY_INVERSE_ATOMIC_MOMENTUN_UNIT_HPP
+#endif // end UTILITY_INVERSE_ATOMIC_MOMENTUM_UNIT_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_InverseAtomicMomentumUnit.hpp

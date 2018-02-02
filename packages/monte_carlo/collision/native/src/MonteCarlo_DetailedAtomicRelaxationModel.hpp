@@ -38,7 +38,7 @@ public:
   //! Constructor
   DetailedAtomicRelaxationModel(
 	    const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
-	    subshell_relaxtion_models,
+	    subshell_relaxation_models,
             const double min_photon_energy,
             const double min_electron_energy );
 

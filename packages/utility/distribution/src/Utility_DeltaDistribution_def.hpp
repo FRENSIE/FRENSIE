@@ -367,5 +367,5 @@ bool UnitAwareDeltaDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroI
 #endif // end UTILITY_DELTA_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utiliyt_DeltaDistribution_def.hpp
+// end Utility_DeltaDistribution_def.hpp
 //---------------------------------------------------------------------------//

@@ -82,7 +82,7 @@ private:
   // A parameter for moliere's screening factor ( 3.76 * (fsc * Z )**2 )
   double d_screening_param2;
 
-  // Seltzer modification of the moliere scareening constant on/off (on by default)
+  // Seltzer modification of the moliere screening constant on/off (on by default)
   bool d_seltzer_modification_on;
 };
 

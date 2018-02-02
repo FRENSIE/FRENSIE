@@ -131,7 +131,7 @@ protected:
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename ParentType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename ParentType::SIQT SIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -142,9 +142,9 @@ protected:
 
   // The CDF interpolation policy
   typedef typename CDFInterpolationHelper<TwoDSamplePolicy,typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
-  
+
 public:
-  
+
   //! The primary independent quantity type
   typedef typename ParentType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
@@ -296,7 +296,7 @@ public:
  */
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy> using InterpolatedFullyTabularTwoDDistribution =
   UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

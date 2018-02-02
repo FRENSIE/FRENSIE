@@ -19,7 +19,7 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename OutgoingParticleType>
-YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::YieldBasedPhotonuclearProductionReaction(
+YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhotonuclearProductionReaction(
                    const PhotonuclearReactionType reaction_type,
       		   const double q_value,
 		   const unsigned threshold_energy_index,
@@ -54,7 +54,7 @@ YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::YieldBasedPhotonu
 
 // Return the number of particle emitted from the rxn at the given energy
 template<typename OutgoingParticleType>
-unsigned YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getNumberOfEmittedParticles(
+unsigned YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles(
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -68,7 +68,7 @@ unsigned YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getNumbe
 
 // Return the average number of particles emitted from the rxn
 template<typename OutgoingParticleType>
-double YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getAverageNumberOfEmittedParticles(
+double YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getAverageNumberOfEmittedParticles(
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -99,7 +99,7 @@ double YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::getAverage
 
 // Simulate the reaction
 template<typename OutgoingParticleType>
-void YieldBasedPhotonuclearProductionReaction<OutoingParticleType>::react(
+void YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::react(
 						     PhotonState& photon,
 						     ParticleBank& bank ) const
 {

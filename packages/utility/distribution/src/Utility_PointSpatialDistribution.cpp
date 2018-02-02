@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_PointSpatialDistribution.cpp
 //! \author Alex Robinson
-//! \brief  Point spatial distribution declatation.
+//! \brief  Point spatial distribution declaration.
 //!
 //---------------------------------------------------------------------------//
 

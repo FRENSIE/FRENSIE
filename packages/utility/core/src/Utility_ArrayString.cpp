@@ -24,7 +24,7 @@ namespace Utility{
 const bool ArrayString::s_initialized =
   ArrayString::initialize();
 
-// Replace all occurances of pi with the number
+// Replace all occurrences of pi with the number
 void ArrayString::locateAndReplacePi( std::string& array_string )
 {
   // Loop through all element tokens of the array string
@@ -117,7 +117,7 @@ void ArrayString::replacePiInSubstring( const std::string::size_type start,
   }
 }
 
-// Replace all occurances of i with an appropriate subarray
+// Replace all occurrences of i with an appropriate subarray
 void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
 {
   // Loop through all array elements
@@ -171,7 +171,7 @@ void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
   array_string += "}";
 }
 
-// replace occurances of interval operator within a substring
+// replace occurrences of interval operator within a substring
 void ArrayString::replaceIntervalOperatorInSubstring(
 					    const std::string& left_element,
 					    std::string& middle_element,
@@ -296,10 +296,10 @@ ArrayString::ArrayString( const std::string& array_string )
   // Make sure the array rep is valid
   testPrecondition( array_string.size() >= 2 );
 
-  // Replace all occurances of pi with the number
+  // Replace all occurrences of pi with the number
   locateAndReplacePi( d_array_string );
 
-  // Replace all occurances of i with an appropriate subarray
+  // Replace all occurrences of i with an appropriate subarray
   locateAndReplaceIntervalOperator( d_array_string );
 }
 
@@ -345,8 +345,8 @@ bool ArrayString::isFloatingPointDataPresent() const
   return d_array_string.find_first_of( ".eE" ) < d_array_string.size();
 }
 
-// Test if the string represents a multidimentional array
-bool ArrayString::isMultidimentionalDataPresent() const
+// Test if the string represents a multidimensional array
+bool ArrayString::isMultidimensionalDataPresent() const
 {
   unsigned first_array_bound_pos =
     d_array_string.find( "{" );
@@ -369,10 +369,10 @@ void ArrayString::fromStream( std::istream& is )
   if( d_array_string[d_array_string.size()-1] != '}' )
     d_array_string.push_back( '}' );
 
-  // Replace all occurances of pi with the number
+  // Replace all occurrences of pi with the number
   locateAndReplacePi( d_array_string );
 
-  // Replace all occurances of i with an appropriate subarray
+  // Replace all occurrences of i with an appropriate subarray
   locateAndReplaceIntervalOperator( d_array_string );
 }
 

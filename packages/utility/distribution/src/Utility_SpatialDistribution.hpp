@@ -55,5 +55,5 @@ public:
 #endif // end UTILITY_SPATIAL_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utiliy_SpatialDistribution.hpp
+// end Utility_SpatialDistribution.hpp
 //---------------------------------------------------------------------------//

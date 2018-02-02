@@ -63,7 +63,7 @@ StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
 }
 
 // Evaluate the distribution with the electron momentum projection
-/*! \details The electron momentum projection must be in me*c units 
+/*! \details The electron momentum projection must be in me*c units
  * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distribution
  * will have units of barns since the unitless momentum is being used.
  */
@@ -109,7 +109,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 /*! \details The distribution has units of barns/MeV.
  */
 template<typename ComptonProfilePolicy>
-double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateExact( 
+double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateExact(
 				   const double incoming_energy,
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine ) const
@@ -147,7 +147,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
 
 // Evaluate the subshell distribution with the electron momentum projection
-/*! \details The electron momentum projection must be in me*c units 
+/*! \details The electron momentum projection must be in me*c units
  * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The distribution
  * will have units of barns since the unitless momentum is being used.
  */
@@ -182,18 +182,18 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Get the subshell occupancy
   const double subshell_occupancy =
     this->getSubshellOccupancy( subshell );
-      
+
   // Get the Compton profile for the subshell
   const ComptonProfile& compton_profile =
     this->getComptonProfile( subshell );
-      
+
   // Evaluate the Compton profile
-  ComptonProfile::ProfileQuantity compton_profile_quantity = 
+  ComptonProfile::ProfileQuantity compton_profile_quantity =
     ComptonProfilePolicy::evaluateWithPossibleLimit(
-                   compton_profile, 
+                   compton_profile,
                    electron_momentum_projection*ComptonProfile::MomentumUnit(),
                    max_electron_momentum_projection );
-        
+
   // Evaluate the cross section
   const double multiplier = this->evaluateMultiplier(incoming_energy,
                                                      scattering_angle_cosine );
@@ -210,12 +210,12 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
   return cross_section;
 }
-    
+
 // Evaluate the exact subshell distribution
   /*! \details The distribution has units of barns/MeV.
  */
 template<typename ComptonProfilePolicy>
-double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellExact( 
+double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellExact(
 				      const double incoming_energy,
                                       const double outgoing_energy,
                                       const double scattering_angle_cosine,
@@ -249,7 +249,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
     const double subshell_occupancy = this->getSubshellOccupancy( subshell );
 
     // Calculate the electron momentum projection
-    const ComptonProfile::MomentumQuantity electron_momentum_projection = 
+    const ComptonProfile::MomentumQuantity electron_momentum_projection =
       ComptonProfile::MomentumUnit()*
       calculateElectronMomentumProjection( incoming_energy,
                                            outgoing_energy,
@@ -284,7 +284,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
 
 // Evaluate the PDF with the electron momentum projection
-/*! \details The electron momentum projection must be in me*c units 
+/*! \details The electron momentum projection must be in me*c units
  * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The PDF
  * will be unitless since the unitless momentum is being used.
  */
@@ -298,7 +298,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Make sure the precision is valid
   testPrecondition( precision > 0.0 );
   testPrecondition( precision < 1.0 );
-  
+
   const double diff_cross_section =
     this->evaluateWithElectronMomentumProjection( incoming_energy,
                                                   electron_momentum_projection,
@@ -318,7 +318,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 /*! \details The PDF has units of inverse MeV.
  */
 template<typename ComptonProfilePolicy>
-double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluatePDFExact( 
+double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluatePDFExact(
 				   const double incoming_energy,
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine,
@@ -327,12 +327,12 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Make sure the precision is valid
   testPrecondition( precision > 0.0 );
   testPrecondition( precision < 1.0 );
-  
+
   const double diff_cross_section = this->evaluateExact(
-                                                     incoming_energy, 
+                                                     incoming_energy,
                                                      outgoing_energy,
                                                      scattering_angle_cosine );
-  
+
   const double integrated_cross_section =
     this->evaluateIntegratedCrossSectionExact( incoming_energy,
                                                scattering_angle_cosine,
@@ -345,7 +345,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
 
 // Evaluate the subshell PDF with the electron momentum projection
-/*! \details The electron momentum projection must be in me*c units 
+/*! \details The electron momentum projection must be in me*c units
  * (a momentum value of me*c kg*m/s is 1.0 in me*c units). The PDF
  * will be unitless since the unitless momentum is being used.
  */
@@ -360,7 +360,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Make sure the precision is valid
   testPrecondition( precision > 0.0 );
   testPrecondition( precision < 1.0 );
-  
+
   const double diff_cross_section =
     this->evaluateSubshellWithElectronMomentumProjection(
                                                   incoming_energy,
@@ -384,7 +384,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 /*! \details The PDF has units of inverse MeV.
  */
 template<typename ComptonProfilePolicy>
-double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellPDFExact( 
+double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellPDFExact(
 					  const double incoming_energy,
 					  const double outgoing_energy,
 				          const double scattering_angle_cosine,
@@ -394,14 +394,14 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Make sure the precision is valid
   testPrecondition( precision > 0.0 );
   testPrecondition( precision < 1.0 );
-  
-  const double diff_cross_section = 
+
+  const double diff_cross_section =
     this->evaluateSubshellExact( incoming_energy,
                                  outgoing_energy,
                                  scattering_angle_cosine,
                                  subshell );
 
-  const double integrated_cross_section = 
+  const double integrated_cross_section =
     this->evaluateSubshellIntegratedCrossSectionExact( incoming_energy,
                                                        scattering_angle_cosine,
                                                        subshell,
@@ -414,7 +414,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
 
 // Evaluate the integrated cross section (b/mu)
-/*! \details This will integrate the approximate double differential cross 
+/*! \details This will integrate the approximate double differential cross
  * section as function of unitless momentum from pz=-1.0 to pz=pz_max.
  */
 template<typename ComptonProfilePolicy>
@@ -453,11 +453,11 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
 
 // Evaluate the exact integrated cross section (b/mu)
-/*! \details This will integrate the exact double differential cross 
+/*! \details This will integrate the exact double differential cross
  * section as function of outgoing energy from E=0.0 MeV to E=E_in-E_b^max.
  */
 template<typename ComptonProfilePolicy>
-double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateIntegratedCrossSectionExact( 
+double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateIntegratedCrossSectionExact(
 					  const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const double precision ) const
@@ -471,7 +471,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   double cross_section = 0.0;
 
   // Evaluate the integrated cross section for each subshell
-  SubshellOrderMapType::const_iterator subshell_it = 
+  SubshellOrderMapType::const_iterator subshell_it =
     d_endf_subshell_order.begin();
 
   while( subshell_it != d_endf_subshell_order.end() )
@@ -484,15 +484,15 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
     ++subshell_it;
   }
-  
+
   // Make sure the integrated cross section is valid
   testPrecondition( cross_section >= 0.0 );
-  
+
   return cross_section;
 }
 
 // Evaluate the integrated cross section (b/mu)
-/*! \details This will integrate the approximate double differential cross 
+/*! \details This will integrate the approximate double differential cross
  * section as a function of unitless momentum. If full profiles are being
  * used the limits of integration are pz=-1.0 and pz=pz_max. If half profiles
  * are being used the limits of integration are pz=-pz_max and pz=pz_max
@@ -515,7 +515,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   testPrecondition( this->isValidSubshell( subshell ) );
 
   // Create the evaluation function wrapper
-  boost::function<double (double x)> double_diff_cs_wrapper = 
+  boost::function<double (double x)> double_diff_cs_wrapper =
     boost::bind<double>( &StandardCompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellWithElectronMomentumProjection,
                          boost::cref( *this ),
                          incoming_energy,
@@ -568,12 +568,12 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 }
 
 // Evaluate the integrated cross section (b/mu)
-/*! \details This will integrate the exact double differential cross 
- * section as a function of outgoing energy. The limits of integration are 
- * E=0.0 and E=E_in-E_b,i (for both half profiles and full profiles). 
+/*! \details This will integrate the exact double differential cross
+ * section as a function of outgoing energy. The limits of integration are
+ * E=0.0 and E=E_in-E_b,i (for both half profiles and full profiles).
  */
 template<typename ComptonProfilePolicy>
-double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellIntegratedCrossSectionExact( 
+double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellIntegratedCrossSectionExact(
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,
@@ -588,7 +588,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   testPrecondition( this->isValidSubshell( subshell ) );
 
   // Create the evaluation function wrapper
-  boost::function<double (double x)> double_diff_cs_wrapper = 
+  boost::function<double (double x)> double_diff_cs_wrapper =
     boost::bind<double>( &StandardCompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellExact,
                          boost::cref( *this ),
                          incoming_energy,
@@ -617,7 +617,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   if( pz_max > pz_table_max )
   {
     bool energetically_possible;
-    
+
     energy_max = calculateDopplerBroadenedEnergy( pz_table_max,
                                                   incoming_energy,
                                                   scattering_angle_cosine,
@@ -643,7 +643,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
 // Sample an outgoing energy from the distribution
 template<typename ComptonProfilePolicy>
-void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sample( 
+void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sample(
 			       const double incoming_energy,
                                const double scattering_angle_cosine,
                                double& outgoing_energy,
@@ -676,7 +676,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // The electron momenutm projection
+  // The electron momentum projection
   double pz;
 
   // Sample the electron momentum projection
@@ -759,7 +759,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   }
 
   // Get the Compton profile for the sampled subshell
-  const ComptonProfile& compton_profile = 
+  const ComptonProfile& compton_profile =
     *d_compton_profile_array[compton_subshell_index];
 
   electron_momentum = this->sampleSubshellMomentum( incoming_energy,
@@ -836,7 +836,7 @@ bool StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
     d_endf_subshell_order.right.end();
 }
 
-// Return the occupancy of a subshell (default is the ENDF occupacy)
+// Return the occupancy of a subshell (default is the ENDF occupancy)
 template<typename ComptonProfilePolicy>
 inline double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( const Data::SubshellType subshell ) const
 {
@@ -902,7 +902,7 @@ const ComptonProfile& StandardCompleteDopplerBroadenedPhotonEnergyDistribution<C
                                      const unsigned& old_subshell_index ) const
 {
   // Make sure the old subshell index is valid
-  testPrecondition( old_subshell_index < 
+  testPrecondition( old_subshell_index <
                     d_compton_profile_array.size() );
 
   return *d_compton_profile_array[old_subshell_index];

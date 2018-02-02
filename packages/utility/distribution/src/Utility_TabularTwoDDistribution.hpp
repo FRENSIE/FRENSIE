@@ -44,7 +44,7 @@ protected:
   //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::PrimaryIndepQuantity> PIQT;
 
-  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::SecondaryIndepQuantity> SIQT;
 
   //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -139,7 +139,7 @@ private:
   // Extend beyond primary limits
   bool d_extend_beyond_primary_limits;
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

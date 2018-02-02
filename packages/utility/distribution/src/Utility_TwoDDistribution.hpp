@@ -14,7 +14,7 @@
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ComparePolicy.hpp"
 
-/*! \defgroup two_d_distributions Two-Dimensinal Distributions
+/*! \defgroup two_d_distributions Two-Dimensional Distributions
  */
 
 namespace Utility{
@@ -137,15 +137,15 @@ inline bool UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependen
               getRawQuantity( this->getLowerBoundOfPrimaryIndepVar() ),
               getRawQuantity( distribution.getLowerBoundOfPrimaryIndepVar() ) )
     < 1e-9;
-                                                                        
-                                                                        
+
+
 }
 
 /*! The two-dimensional distribution (unit-agnostic)
  * \ingroup two_d_distributions
  */
 typedef UnitAwareTwoDDistribution<void,void,void> TwoDDistribution;
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_TWO_D_DISTRIBUTION_HPP

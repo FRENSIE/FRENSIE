@@ -102,7 +102,7 @@ void SimulationPhotonPropertiesFactory::initializeProperties(
     {
       model = photon_properties.getIncoherentModelType();
 
-      *os_warn << "Warning: incohernt photon scattering model "
+      *os_warn << "Warning: incoherent photon scattering model "
 		<< model_name << " is unknown. The default model "
 		<< model << " will be used instead." << std::endl;
     }

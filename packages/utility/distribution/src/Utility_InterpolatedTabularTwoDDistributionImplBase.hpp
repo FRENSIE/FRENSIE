@@ -38,13 +38,13 @@ protected:
   // The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
 
-  // Typedef for QuantityTrais<double>
+  // Typedef for QuantityTraits<double>
   typedef typename ParentType::QT QT;
 
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename ParentType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename ParentType::SIQT SIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -77,7 +77,7 @@ public:
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                                       const DistributionType& distribution,
                                       const double fuzzy_boundary_tol = 1e-3 );
-  
+
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>

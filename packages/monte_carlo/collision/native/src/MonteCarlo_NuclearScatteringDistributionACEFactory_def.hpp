@@ -123,7 +123,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 		   const Teuchos::ArrayView<const double> ldlw_block,
 		   const Teuchos::ArrayView<const double> dlw_block )
 {
-  // Create a ficticious TYR block (all multiplicity 1 in lab system)
+  // Create a fictitious TYR block (all multiplicity 1 in lab system)
   Teuchos::Array<double> dummy_tyr_block( mtr_block.size(), 1.0 );
 
   initializeReactionOrderingMap( mtr_block, dummy_tyr_block );
@@ -268,13 +268,13 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   // Create a coupled angular-energy distribution (law 44)
   else
   {
-    unsigned acelaw = 
+    unsigned acelaw =
       NuclearScatteringEnergyDistributionACEFactory::determineCoupledDistribution(
               d_atomic_weight_ratio,
      	        d_reaction_energy_dist.find( reaction_type )->second,
      	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
 	            d_table_name );
-  
+
     if( acelaw == 44 )
     {
       NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(

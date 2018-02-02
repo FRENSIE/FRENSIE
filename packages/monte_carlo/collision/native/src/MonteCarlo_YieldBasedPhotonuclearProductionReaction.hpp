@@ -10,7 +10,7 @@
 #define MONTE_CARLO_YIELD_BASED_PHOTONUCLEAR_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonuclearProductionReaction.hpp"
+#include "MonteCarlo_PhotonuclearReaction.hpp"
 
 namespace MonteCarlo{
 

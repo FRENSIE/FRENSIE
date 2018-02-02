@@ -59,7 +59,7 @@ void findLowerAndUpperBinIndex(
 							upper_bin_boundary,
 							independent_variable );
     upper_bin_index = lower_bin_index;
-    
+
     if ( dependent_distribution[lower_bin_index].first != independent_variable )
       ++upper_bin_index;
   }
@@ -133,7 +133,7 @@ void findLowerAndUpperBinBoundary(
   }
 }
 
-// Sample a two dimensional ditribution with a random number
+// Sample a two dimensional distribution with a random number
 template<typename DependentTwoDDistribution, typename InterpolationPolicy>
 double sampleTwoDDistributionCorrelatedWithRandomNumber(
    const double independent_variable,
@@ -196,7 +196,7 @@ double sampleTwoDDistributionCorrelatedInSubrange(
 }
 
 
-// Sample a two dimensional ditribution
+// Sample a two dimensional distribution
 template<typename DependentTwoDDistribution, typename InterpolationPolicy>
 double sampleTwoDDistributionCorrelated(
    const double independent_variable,

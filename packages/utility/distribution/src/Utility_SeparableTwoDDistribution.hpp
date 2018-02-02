@@ -28,7 +28,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryDependentUnit>
 class UnitAwareSeparableTwoDDistribution : public UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type>
 {
-  
+
 private:
 
   // The parent type
@@ -40,7 +40,7 @@ private:
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::PrimaryIndepQuantity> PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::SecondaryIndepQuantity> SIQT;
 
   // Typedef for QuantityTraits<InversePrimaryIndepQuantity>
@@ -113,7 +113,7 @@ public:
                                                       unsigned& trials ) const;
 
   //! Return a random sample from the secondary marginal PDF
-  SecondarIndepQuantity sampleSecondaryMarginal() const;
+  SecondaryIndepQuantity sampleSecondaryMarginal() const;
 
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryMarginalAndRecordTrials(
@@ -160,7 +160,7 @@ public:
   //! Test if the distribution is tabular in the primary dimension
   bool isPrimaryDimensionTabular() const;
 
-  //! Test if the distribution is condinuous in the primary dimension
+  //! Test if the distribution is continuous in the primary dimension
   bool isPrimaryDimensionContinuous() const;
 
 private:
@@ -176,7 +176,7 @@ private:
  * \ingroup two_d_distributions
  */
 typedef UnitAwareSeparableTwoDDistribution<void,void,void,void> SeparableTwoDDistribution;
-  
+
 } // end Utility namespace
 
 #endif // UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_HPP

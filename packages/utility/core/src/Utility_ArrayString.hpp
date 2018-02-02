@@ -27,10 +27,10 @@ class ArrayString : public ParameterListCompatibleObject<ArrayString>
 
 public:
 
-  //! Replace all occurances of pi with the number
+  //! Replace all occurrences of pi with the number
   static void locateAndReplacePi( std::string& array_string );
 
-  //! Replace all occurances of i or l with an appropriate subarray
+  //! Replace all occurrences of i or l with an appropriate subarray
   static void locateAndReplaceIntervalOperator( std::string& array_string );
 
   //! Default constructor
@@ -62,8 +62,8 @@ public:
   //! Test if floating point data is present
   bool isFloatingPointDataPresent() const;
 
-  //! Test if the string represents a multidimentional array
-  bool isMultidimentionalDataPresent() const;
+  //! Test if the string represents a multidimensional array
+  bool isMultidimensionalDataPresent() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -79,12 +79,12 @@ private:
   // Initialize the array string class
   static bool initialize();
 
-  // replace occurances of pi within a substring
+  // replace occurrences of pi within a substring
   static void replacePiInSubstring( const std::string::size_type start,
 				    const std::string::size_type true_end,
 				    std::string& array_string );
 
-  // replace occurances of interval operator within a substring
+  // replace occurrences of interval operator within a substring
   static void replaceIntervalOperatorInSubstring(
 					    const std::string& left_element,
 					    std::string& middle_element,

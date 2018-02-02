@@ -116,7 +116,7 @@ public:
  * implementing DBC are to be checked for DBC violations. It must be paired
  * with the testNestedConditionsBlockBegin macro. This macro in combination
  * with the testNestedConditionsBlockBegin macro can be used to create
- * what is essentiall a stacktrace.
+ * what is essentially a stacktrace.
  * \ingroup contract_exceptions_macros
  */
 #define testNestedConditionsEnd(depth)				\

@@ -3,7 +3,7 @@
 //! \file   Utility_MaxwellFissionDistribution.hpp
 //! \author Aaron Tumulak
 //! \brief  Maxwell Fission distribution class declaration. Modified by Alex
-//!         Robison to accommodate units.
+//!         Robinson to accommodate units.
 //!
 //---------------------------------------------------------------------------//
 

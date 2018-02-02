@@ -55,7 +55,7 @@ public:
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
-  //! Constructor ( a*exp(-[x-meam]^2/[2*sigma]^2), x E (b,c) )
+  //! Constructor ( a*exp(-[x-mean]^2/[2*sigma]^2), x E (b,c) )
   template<typename InputDepQuantity = DepQuantity,
 	   typename InputIndepQuantityA = IndepQuantity,
 	   typename InputIndepQuantityB = IndepQuantity,

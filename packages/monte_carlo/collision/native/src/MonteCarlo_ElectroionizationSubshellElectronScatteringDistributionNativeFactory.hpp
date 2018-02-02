@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
-#define MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
+#ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
+#define MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
@@ -58,7 +58,7 @@ public:
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
+#endif // end MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp

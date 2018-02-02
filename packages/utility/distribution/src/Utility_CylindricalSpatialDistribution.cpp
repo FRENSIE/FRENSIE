@@ -110,7 +110,7 @@ double CylindricalSpatialDistribution::evaluatePDF(
   pdf_value *= d_theta_distribution->evaluatePDF( cylindrical_point[1] );
   pdf_value *= d_axis_distribution->evaluatePDF( cylindrical_point[2] );
 
-  // Make sure that the pdf valud is valid
+  // Make sure that the pdf value is valid
   testPostcondition( !ST::isnaninf( pdf_value ) );
 
   return pdf_value;

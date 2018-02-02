@@ -29,7 +29,7 @@ BaseScalarType recursive( const BaseScalarType x,
 {
   // Make sure that the ExponentOrdinalType is not a scalar type
   testStaticPrecondition((boost::is_integral<ExponentOrdinalType>::value));
-  // Make sure thta the exponent is positive
+  // Make sure that the exponent is positive
   testPrecondition( y >= 0 );
 
   // The output integer

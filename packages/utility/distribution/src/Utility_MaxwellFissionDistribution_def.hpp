@@ -284,7 +284,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::calculateNor
 {
   double argument = (d_incident_energy - d_restriction_energy) / d_nuclear_temperature;
 
-  d_norm_constant =  rpow<3,-2>(d_nuclear_temperature)/
+  d_norm_constant = rpow<3,-2>(d_nuclear_temperature)/
     (d_multiplier*(sqrt( PhysicalConstants::pi ) * 0.5 * erf( sqrt(argument) )-
 		   sqrt(argument) * exp(-argument) ) );
 }
@@ -364,7 +364,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
                      "not valid"
                      "(only 4 values or fewer  may be specified)!" );
 
-  // Set the incient neutron energy
+  // Set the incident neutron energy
   if( distribution.size() > 0 )
   {
     TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " 0123456789.e" ) <
@@ -433,7 +433,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
 			distribution[2].size(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
-			"construcqted because of an invalid restriction energy "
+			"constructed because of an invalid restriction energy "
 			<< distribution[2] );
     {
       double restriction_energy;
@@ -458,7 +458,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
 			distribution[3].size(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
-			"construcqted because of an invalid multiplier "
+			"constructed because of an invalid multiplier "
 			<< distribution[3] );
 
     {

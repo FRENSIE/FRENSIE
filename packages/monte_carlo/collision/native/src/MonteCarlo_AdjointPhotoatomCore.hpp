@@ -35,11 +35,11 @@ namespace MonteCarlo{
  * photoatom. Exposing this object (e.g. get method or export method) is safe
  * since it only allows access to the underlying member data in a way that
  * prohibits modification of that data. This class was created to address the
- * issue that arrises when dealing with adjoint photonuclear data - 
- * photonuclides that share the same atomic number need the same adjoint
- * photoatomic data. This class allows each photonuclide to share the same
- * adjoint photoatomic data without copying that data (even if each 
- * photonuclide has its own copy of the photoatom core object).
+ * issue that arises when dealing with adjoint photonuclear data -
+ * photo-nuclides that share the same atomic number need the same adjoint
+ * photoatomic data. This class allows each photo-nuclide to share the same
+ * adjoint photoatomic data without copying that data (even if each
+ * photo-nuclide has its own copy of the photoatom core object).
  */
 class AdjointPhotoatomCore
 {
@@ -142,7 +142,7 @@ inline auto AdjointPhotoatomCore::getTotalForwardReaction() const -> const Photo
 }
 
 // Return the scattering reactions
-inline auto AdjointPhotoatomCore::getScatteringReactions() const -> const ConstReactionMap& 
+inline auto AdjointPhotoatomCore::getScatteringReactions() const -> const ConstReactionMap&
 {
   return d_scattering_reactions;
 }
@@ -196,7 +196,7 @@ bool AdjointPhotoatomCore::areLineEnergyReactionsValid(
 
   return true;
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTOATOM_CORE_HPP

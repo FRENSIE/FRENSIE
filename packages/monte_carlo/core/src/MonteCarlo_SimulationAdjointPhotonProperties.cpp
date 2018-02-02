@@ -16,7 +16,7 @@ namespace MonteCarlo{
 // The absolute mimimum adjoint photon energy (MeV)
 const double SimulationAdjointPhotonProperties::s_absolute_min_adjoint_photon_energy = 1e-3;
 
-// The absolume maximum adjoint photon energy (MeV)
+// The absolute maximum adjoint photon energy (MeV)
 const double SimulationAdjointPhotonProperties::s_absolute_max_adjoint_photon_energy = 20.0;
 
 // Constructor
@@ -27,7 +27,7 @@ SimulationAdjointPhotonProperties::SimulationAdjointPhotonProperties()
     d_incoherent_adjoint_model_type( DB_IMPULSE_INCOHERENT_ADJOINT_MODEL ),
     d_critical_line_energies()
 { /* ... */ }
-  
+
 // Set the minimum adjoint photon energy (MeV)
 void SimulationAdjointPhotonProperties::setMinAdjointPhotonEnergy( const double energy )
 {
@@ -129,7 +129,7 @@ SimulationAdjointPhotonProperties::getCriticalAdjointPhotonLineEnergies() const
 {
   return d_critical_line_energies;
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

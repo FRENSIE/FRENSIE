@@ -47,7 +47,7 @@ Measurement<T>::Measurement( const Measurement<T>& other_measurement )
 template<typename T>
 inline void Measurement<T>::print( std::ostream& os ) const
 {
-  boost::io::ios_precision_saver preision_saver(os);
+  boost::io::ios_precision_saver precision_saver(os);
   boost::io::ios_flags_saver flags_saver(os);
 
   os << d_value << "(+/-" << d_uncertainty << ")";

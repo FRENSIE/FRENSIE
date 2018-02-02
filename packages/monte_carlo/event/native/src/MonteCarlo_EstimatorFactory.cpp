@@ -321,11 +321,11 @@ bool EstimatorFactory::isTetMeshTrackLengthFluxEstimator(
 }
 
 // Check if an estimator type is a hex mesh track length flux estimator
-bool EstimatorFactory::isHexMeshTrackLengthFluxEstimator( 
+bool EstimatorFactory::isHexMeshTrackLengthFluxEstimator(
                                            const std::string& estimator_name )
 {
   return estimator_name == s_hex_mesh_track_length_flux_name;
-} 
+}
 
 // Check if an estimator type is a mesh estimator
 bool EstimatorFactory::isMeshEstimator( const std::string& estimator_name )
@@ -445,7 +445,7 @@ void EstimatorFactory::getEstimatorCells(
                     const unsigned estimator_id,
                     const Teuchos::ParameterList& estimator_rep ) const
 {
-  // Filter out multiple occurances of the same cell
+  // Filter out multiple occurrences of the same cell
   boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>
     unique_cells;
 
@@ -492,7 +492,7 @@ void EstimatorFactory::getEstimatorSurfaces(
                  const unsigned estimator_id,
                  const Teuchos::ParameterList& estimator_rep ) const
 {
-  // Filter out multiple occurances of the same surface
+  // Filter out multiple occurrences of the same surface
   boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>
     unique_surfaces;
 
@@ -1219,7 +1219,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                       "Error: mesh estimator " << id <<
                       " does not have the x planes specified! " );
 
-  Utility::ArrayString array_string = 
+  Utility::ArrayString array_string =
     estimator_rep.get<Utility::ArrayString>( "X Planes" );
 
   Teuchos::Array<double> x_planes;
@@ -1230,7 +1230,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
                               "Error: the x planes requested for"
-                              " estimator " << id << 
+                              " estimator " << id <<
                               " are not valid!" );
 
   // Get the Y planes
@@ -1239,7 +1239,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                       "Error: mesh estimator " << id <<
                       " does not have the y planes specified! " );
 
-    array_string = 
+    array_string =
     estimator_rep.get<Utility::ArrayString>( "Y Planes" );
 
   Teuchos::Array<double> y_planes;
@@ -1250,7 +1250,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
                               "Error: the y planes requested for"
-                              " estimator " << id << 
+                              " estimator " << id <<
                               " are not valid!" );
 
   // Get the Z planes
@@ -1259,7 +1259,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                       "Error: mesh estimator " << id <<
                       " does not have the Z planes specified! " );
 
-  array_string = 
+  array_string =
     estimator_rep.get<Utility::ArrayString>( "Z Planes" );
 
   Teuchos::Array<double> z_planes;
@@ -1270,7 +1270,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
                               "Error: the Z planes requested for"
-                              " estimator " << id << 
+                              " estimator " << id <<
                               " are not valid!" );
 
   if( energy_multiplication )
@@ -1362,7 +1362,7 @@ void EstimatorFactory::assignBinsToEstimator(
 
       estimator->setBinBoundaries<SOURCE_ENERGY_DIMENSION>( source_energy_bins );
     }
-    
+
     else if( bins.name( it ) == "Energy Bins" )
     {
       const Utility::ArrayString& array_string =
@@ -1414,7 +1414,7 @@ void EstimatorFactory::assignBinsToEstimator(
 
       estimator->setBinBoundaries<SOURCE_TIME_DIMENSION>( source_time_bins );
     }
-    
+
     else if( bins.name( it ) == "Time Bins" )
     {
       const Utility::ArrayString& array_string =

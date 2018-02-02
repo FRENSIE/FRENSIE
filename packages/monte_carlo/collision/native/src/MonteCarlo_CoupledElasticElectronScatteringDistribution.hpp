@@ -54,7 +54,7 @@ public:
   virtual ~CoupledElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Set the sampling method ( Simplified Unoin - Default )
+  //! Set the sampling method ( Simplified Union - Default )
   void setSamplingMethod( const MonteCarlo::CoupledElasticSamplingMethod& method );
 
   //! Evaluate the distribution

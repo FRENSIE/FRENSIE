@@ -37,7 +37,7 @@ private:
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename ParentType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename ParentType::SIQT SIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -114,7 +114,7 @@ public:
  * \ingroup two_d_distributions
  */
 typedef UnitAwareHistogramFullyTabularTwoDDistribution<void,void,void> HistogramFullyTabularTwoDDistribution;
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

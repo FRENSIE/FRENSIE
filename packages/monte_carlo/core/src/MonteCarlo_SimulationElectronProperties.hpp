@@ -162,7 +162,7 @@ private:
 
   // The absolute maximum electron energy (MeV)
   static const double s_absolute_max_electron_energy;
-  
+
   // The minimum electron energy (MeV)
   double d_min_electron_energy;
 
@@ -184,16 +184,16 @@ private:
   // The atomic relaxation mode (true = on - default, false = off)
   bool d_atomic_relaxation_mode_on;
 
-  // The elasic electron scattering mode (true = on - default, false = off)
+  // The elastic electron scattering mode (true = on - default, false = off)
   bool d_elastic_mode_on;
 
-  // The elasic electron 2D interpolation type ( LogLogLog - default )
+  // The elastic electron 2D interpolation type ( LogLogLog - default )
   TwoDInterpolationType d_elastic_interpolation_type;
 
-  // The elasic electron distribution mode ( Decoupled - default )
+  // The elastic electron distribution mode ( Decoupled - default )
   ElasticElectronDistributionType d_elastic_distribution_mode;
 
-  // The coupled elasic electron sampling method ( Simplified Union - default )
+  // The coupled elastic electron sampling method ( Simplified Union - default )
   CoupledElasticSamplingMethod d_coupled_elastic_sampling_method;
 
   // The elastic cutoff angle cosine (mu = 1.0 by default)

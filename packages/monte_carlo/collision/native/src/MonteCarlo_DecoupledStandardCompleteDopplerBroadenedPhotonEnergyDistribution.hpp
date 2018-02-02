@@ -16,14 +16,14 @@
 // Boost Includes
 #include <boost/scoped_ptr.hpp>
 
-// FRENSE Includes
+// FRENSIE Includes
 #include "MonteCarlo_StandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
-//! The decoupled complete Doppler broadenening photon energy dist. class
+//! The decoupled complete Doppler broadening photon energy dist. class
 template<typename ComptonProfilePolicy>
 class DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution : public StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>
 {
@@ -48,7 +48,7 @@ public:
   //! Return the binding energy of a subshell
   double getSubshellBindingEnergy( const Data::SubshellType subshell ) const;
 
-  //! Return the occupancy of a subshell (default is the ENDF occupacy)
+  //! Return the occupancy of a subshell (default is the ENDF occupancy)
   double getSubshellOccupancy( const Data::SubshellType subshell ) const;
 
   //! Evaluate the distribution with electron momentum projection
@@ -56,7 +56,7 @@ public:
                               const double incoming_energy,
                               const double electron_momentum_projection,
                               const double scattering_angle_cosine ) const;
-  
+
   //! Evaluate the exact distribution
   double evaluateExact( const double incoming_energy,
                         const double outgoing_energy,
@@ -92,7 +92,7 @@ private:
   // The old subshell binding energies
   Teuchos::Array<double> d_old_subshell_binding_energy;
 
-  // The old subshell occupandies
+  // The old subshell occupancies
   Teuchos::Array<double> d_old_subshell_occupancies;
 
   // The index of the minimum binding energy

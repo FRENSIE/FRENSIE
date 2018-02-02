@@ -32,7 +32,7 @@ template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution()
 { /* ... */ }
 
-// Basic Constructor (potentiall dangerous)
+// Basic Constructor (potentially dangerous)
 /*! \details A precalculated CDF can be passed as the dependent values as
  * long as the interpret_dependent_values_as_cdf argument is true.
  */
@@ -180,7 +180,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluate( const ty
 
 // Evaluate the PDF
 /*! \details It is acceptable for the same independent variable to appear
- * multiple times. When multiple occurances are found, the sum will be
+ * multiple times. When multiple occurrences are found, the sum will be
  * returned.
  */
 template<typename IndependentUnit,typename DependentUnit>
@@ -412,7 +412,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
   std::getline( is, independent_values_rep, '}' );
   independent_values_rep += "}";
 
-  // Parse special charaters
+  // Parse special characters
   try{
     ArrayString::locateAndReplacePi( independent_values_rep );
     ArrayString::locateAndReplaceIntervalOperator( independent_values_rep );
@@ -449,7 +449,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::fromStream( s
   std::getline( is, dependent_values_rep, '}' );
   dependent_values_rep += "}";
 
-  // Parse special charaters
+  // Parse special characters
   try{
     ArrayString::locateAndReplacePi( dependent_values_rep );
     ArrayString::locateAndReplaceIntervalOperator( dependent_values_rep );

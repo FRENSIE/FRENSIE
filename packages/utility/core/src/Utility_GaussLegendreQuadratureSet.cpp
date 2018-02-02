@@ -22,7 +22,7 @@ void getLegendrePowerExpansionCoefficients(
     coefficients[1][0] = long_float(0);
     coefficients[1][1] = long_float(1);
 
-    /* use recusion relationship to calculate the coefficients:
+    /* use recursion relationship to calculate the coefficients:
      * c_(n,l) = l/(2l-1) * c_(n-1,l-1) + (l+1)/(2l+3) * c_(n-1,l+1) */
     for ( int n = 2; n <= power; ++n )
     {
@@ -68,7 +68,7 @@ void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
   coef_n_minus_one[0] = long_float(0);
   coef_n_minus_one[1] = long_float(1);
 
-  /* use recusion relationship to calculate the coefficients:
+  /* use recursion relationship to calculate the coefficients:
    * c_(n,l) = l/(2l-1) * c_(n-1,l-1) + (l+1)/(2l+3) * c_(n-1,l+1) */
   for ( int n = 2; n < number_of_moments; ++n )
   {

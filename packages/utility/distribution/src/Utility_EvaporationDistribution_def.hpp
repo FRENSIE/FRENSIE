@@ -355,7 +355,7 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
                      "not valid"
                      "(only 4 values or fewer  may be specified)!" );
 
-  // Set the incient neutron energy
+  // Set the incident neutron energy
   if( distribution.size() > 0 )
   {
     TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " 0123456789.e" ) <

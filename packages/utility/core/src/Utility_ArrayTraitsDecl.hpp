@@ -155,7 +155,7 @@ getArraySize( const Array &array )
  *
  * This function is simply a more concise way to access the resize static
  * member function associated with the ArrayTraits class. It simply forwards
- * calls to resize an array to the assocaited Utility::ArrayTraits
+ * calls to resize an array to the associated Utility::ArrayTraits
  * class. It is important to note that the array type will be deduced by the
  * function.
  * \ingroup array_traits

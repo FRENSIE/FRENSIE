@@ -136,7 +136,7 @@ public:
   //! Get a const iterator to end of the surface-sense pairs container
   inline SurfaceSensePairsIterator endSurfaceSensePairs() const;
 
-  //! Get a const iterator to first occurance of specific surface-sense pair
+  //! Get a const iterator to first occurrence of specific surface-sense pair
   SurfaceSensePairsIterator getSurfaceSensePair(
 				   const SurfaceOrdinalType surface_id ) const;
   //@}

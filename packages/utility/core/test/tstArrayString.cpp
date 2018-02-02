@@ -175,16 +175,16 @@ TEUCHOS_UNIT_TEST( ArrayString, isFloatingPointDataPresent )
 }
 
 //---------------------------------------------------------------------------//
-// Check that multidimentional data can be tested for
+// Check that multidimensional data can be tested for
 TEUCHOS_UNIT_TEST( ArrayString, isMultidimensionalDataPresent )
 {
   Utility::ArrayString array_string( "{0.0, 1.0, 2.0}" );
 
-  TEST_ASSERT( !array_string.isMultidimentionalDataPresent() );
+  TEST_ASSERT( !array_string.isMultidimensionalDataPresent() );
 
   Utility::ArrayString multi_array_string( "{{0.0, 1.0, 2.0},{0.0,1.0,2.0}}" );
 
-  TEST_ASSERT( multi_array_string.isMultidimentionalDataPresent() );
+  TEST_ASSERT( multi_array_string.isMultidimensionalDataPresent() );
 }
 
 //---------------------------------------------------------------------------//
@@ -270,7 +270,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   test_arrays_list = Teuchos::getParametersFromXmlFile( test_array_xml_file );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstArrayString.cpp

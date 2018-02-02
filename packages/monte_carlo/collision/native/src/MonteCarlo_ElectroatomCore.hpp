@@ -32,7 +32,7 @@ namespace MonteCarlo{
  * get method or export method) is safe since it only allows access to
  * the underlying member data in a way that prohibits modification of that
  * data. This class was created to address the issue that arises when dealing
- * with electronuclear data - electro-nuclide's that share the same atomic number
+ * with electro-nuclear data - electro-nuclide's that share the same atomic number
  * need the same electroatomic data. This class allows each electro-nuclide to
  * share the electroatomic data without copying that data (even if each
  * electro-nuclide has its own copy of the electroatom core object).

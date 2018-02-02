@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_RawPhyscialConstants.hpp
+//! \file   Utility_RawPhysicalConstants.hpp
 //! \author Alex Robinson
 //! \brief  Decl. of class that stores a variety of physical constants
 //!

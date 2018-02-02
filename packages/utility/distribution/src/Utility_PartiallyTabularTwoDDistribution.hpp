@@ -38,7 +38,7 @@ protected:
   //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::PrimaryIndepQuantity> PIQT;
 
-  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef QuantityTraits<typename ParentType::SecondaryIndepQuantity> SIQT;
 
   //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -89,7 +89,7 @@ public:
  * \ingroup two_d_distributions
  */
 typedef UnitAwarePartiallyTabularTwoDDistribution<void,void,void> PartiallyTabularTwoDDistribution;
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP

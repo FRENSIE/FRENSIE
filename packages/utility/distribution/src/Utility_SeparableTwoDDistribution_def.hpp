@@ -103,7 +103,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal() const
+SecondaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal() const
 {
   return d_secondary_distribution->sample();
 }
@@ -113,7 +113,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal( unsigned& trials ) const
+SecondaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal( unsigned& trials ) const
 {
   return d_secondary_distribution->sampleAndRecordTrails( trials );
 }
@@ -279,12 +279,12 @@ bool UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentU
   return d_primary_distribution.isTabular();
 }
 
-// Test if the distribution is condinuous in the primary dimension
+// Test if the distribution is continuous in the primary dimension
 bool UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::isPrimaryDimensionContinuous() const
 {
   return d_primary_distribution.isContinuous();
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_DEF_HPP

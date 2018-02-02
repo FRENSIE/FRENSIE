@@ -24,7 +24,7 @@ namespace Utility{
 
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareWattDistribution<void,void> );
-  
+
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -387,7 +387,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
                      "not valid"
                      "(only 5 values or fewer  may be specified)!" );
 
-  // Set the incient neutron energy
+  // Set the incident neutron energy
   if( distribution.size() > 0 )
   {
     TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " 0123456789.e" ) <

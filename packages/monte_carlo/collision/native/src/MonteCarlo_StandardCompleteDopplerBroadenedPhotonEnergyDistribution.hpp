@@ -50,7 +50,7 @@ public:
   //! Check if the subshell is valid
   bool isValidSubshell( const Data::SubshellType subshell ) const;
 
-  //! Return the occupancy of a subshell (default is the ENDF occupacy)
+  //! Return the occupancy of a subshell (default is the ENDF occupancy)
   virtual double getSubshellOccupancy( const Data::SubshellType subshell ) const;
 
   //! Evaluate the distribution with electron momentum projection
@@ -58,7 +58,7 @@ public:
                               const double incoming_energy,
                               const double electron_momentum_projection,
                               const double scattering_angle_cosine ) const;
-  
+
   //! Evaluate the exact distribution
   virtual double evaluateExact( const double incoming_energy,
                                 const double outgoing_energy,
@@ -70,7 +70,7 @@ public:
                                      const double electron_momentum_projection,
                                      const double scattering_angle_cosine,
                                      const Data::SubshellType subshell ) const;
-  
+
   //! Evaluate the exact subshell distribution
   double evaluateSubshellExact( const double incoming_energy,
                                 const double outgoing_energy,
@@ -83,7 +83,7 @@ public:
                                    const double electron_momentum_projection,
                                    const double scattering_angle_cosine,
                                    const double precision ) const;
-  
+
   //! Evaluate the exact PDF
   double evaluatePDFExact( const double incoming_energy,
                            const double outgoing_energy,
@@ -97,7 +97,7 @@ public:
                                      const double scattering_angle_cosine,
                                      const Data::SubshellType subshell,
                                      const double precision ) const;
-  
+
   //! Evaluate the exact subshell PDF
   double evaluateSubshellPDFExact( const double incoming_energy,
                                    const double outgoing_energy,
@@ -118,7 +118,7 @@ public:
                                           const double precision ) const;
 
   //! Evaluate the subshell integrated cross section (b/mu)
-  double evaluateSubshellIntegratedCrossSection( 
+  double evaluateSubshellIntegratedCrossSection(
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,

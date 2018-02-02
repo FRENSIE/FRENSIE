@@ -42,7 +42,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProdu
        raw_adjoint_photoatom_data.getAdjointPairProductionEnergyDistributionGrid(),
        raw_adjoint_photoatom_data.getAdjointPairProductionEnergyDistribution(),
        max_energy );
-  
+
   // Evaluate the cross section
   ThisType::calculateCrossSectionValue(
        raw_adjoint_photoatom_data.getAdjointPairProductionEnergyDistributionNormConstantGrid(),
@@ -50,7 +50,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProdu
        max_energy,
        cross_section_value );
 
-  // Multiply the cross section by 2 to account for the two annihiliation
+  // Multiply the cross section by 2 to account for the two annihilation
   // photons
   cross_section_value *= 2.0;
 
@@ -88,7 +88,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletPr
        raw_adjoint_photoatom_data.getAdjointTripletProductionEnergyDistributionGrid(),
        raw_adjoint_photoatom_data.getAdjointTripletProductionEnergyDistribution(),
        max_energy );
-  
+
   // Evaluate the cross section
   ThisType::calculateCrossSectionValue(
        raw_adjoint_photoatom_data.getAdjointTripletProductionEnergyDistributionNormConstantGrid(),
@@ -96,7 +96,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletPr
        max_energy,
        cross_section_value );
 
-  // Multiply the cross section by 2 to account for the two annihiliation
+  // Multiply the cross section by 2 to account for the two annihilation
   // photons
   cross_section_value *= 2.0;
 
@@ -171,7 +171,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::calculateCrossS
 
   cross_section_value = norm_constant_dist.evaluate( max_energy );
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

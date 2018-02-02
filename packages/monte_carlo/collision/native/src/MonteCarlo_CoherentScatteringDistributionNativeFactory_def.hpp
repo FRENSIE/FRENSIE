@@ -41,7 +41,7 @@ void CoherentScatteringDistributionNativeFactory::createBasicCoherentDistributio
 	      new BasicCoherentScatteringDistribution( form_factor_squared ) );
 }
 
-// Create an efficient coherent distributio
+// Create an efficient coherent distribution
 template<typename NativeContainer, template<typename> class SmartPtr>
 void CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution(
                                 const NativeContainer& raw_photoatom_data,

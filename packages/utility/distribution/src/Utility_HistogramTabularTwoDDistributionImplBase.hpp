@@ -19,7 +19,7 @@ namespace Utility{
 template<typename Distribution>
 class UnitAwareHistogramTabularTwoDDistributionImplBase : public Distribution
 {
-  
+
 protected:
 
   // The parent distribution type
@@ -34,7 +34,7 @@ protected:
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename ParentType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename ParentType::SIQT SIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -140,7 +140,7 @@ protected:
   template<typename SampleFunctor>
   SecondaryIndepQuantity sampleImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            SampleFunctor sample_functor ) const;  
+                            SampleFunctor sample_functor ) const;
 };
 
 } // end Utility namespace
