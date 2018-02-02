@@ -701,6 +701,13 @@ void ParticleSimulationManager<GeometryHandler,
                                                    ParticleStateType& particle,
                                                    ParticleBank& bank ) const
 {
+  // Check if the particle is a positron
+  if( particle.getParticleType() == POSITRON )
+  {
+    // Annihilate the positron with the assumption that it is at rest
+    PositronatomicReaction::producesAnnihilationPhotons( particle, bank );
+  }
+
   particle.setAsGone();
 }
 
