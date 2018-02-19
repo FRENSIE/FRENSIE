@@ -80,6 +80,9 @@ public:
   //! Get the nuclear data file version
   virtual unsigned fileVersion() const = 0;
 
+  //! Get the nuclear data file major version
+  virtual unsigned fileMajorVersion() const;
+
   //! Get the nuclear data file table name
   virtual std::string tableName() const = 0;
 

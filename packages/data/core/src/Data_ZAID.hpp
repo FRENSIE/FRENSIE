@@ -81,6 +81,9 @@ public:
   //! Implicit conversion to raw zaid
   operator unsigned() const;
 
+  //! Convert to a name (e.g. 1000 -> H, 1001 -> H1)
+  std::string toName() const;
+
 private:
 
   // Save the model to an archive

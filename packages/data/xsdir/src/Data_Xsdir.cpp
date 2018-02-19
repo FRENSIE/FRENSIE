@@ -416,13 +416,13 @@ void Xsdir::createContinuousEnergyNeutronTableProperties(
                       "(" << complete_table_file_path.string() << ")!" );
   
   std::shared_ptr<const NuclearDataProperties> properties(
-                          new ACENuclearDataProperties( atomic_weight_ratio,
-                                                        evaluation_temp_in_mev,
-                                                        table_file_path,
-                                                        file_start_line,
-                                                        table_name ) );
+      new ACENuclearDataProperties( atomic_weight_ratio*Utility::Units::amu,
+                                    evaluation_temp_in_mev*Utility::Units::MeV,
+                                    table_file_path,
+                                    file_start_line,
+                                    table_name ) );
   
-  d_ce_neutron_data_properties[table_major_version][evaluation_temp_in_mev][table_name.zaid()] = properties;
+  d_ce_neutron_data_properties[table_major_version][table_name.zaid()].push_back( properties );
 }
 
 // Create the S(A,B) table properties
@@ -442,17 +442,20 @@ void Xsdir::createSABTableProperties(
                               file_start_line,
                               zaids );
 
+  using Utility::Units::MeV;
+
   std::shared_ptr<const ACEThermalNuclearDataProperties> properties(
-                   new ACEThermalNuclearDataProperties( zaids,
-                                                        evaluation_temp_in_mev,
-                                                        table_file_path,
-                                                        file_start_line,
-                                                        table_name ) );
+               new ACEThermalNuclearDataProperties( zaids,
+                                                    evaluation_temp_in_mev*MeV,
+                                                    table_file_path,
+                                                    file_start_line,
+                                                    table_name ) );
+  
   for( std::set<ZAID>::const_iterator zaid_it = zaids.begin();
        zaid_it != zaids.end();
        ++zaid_it )
   {
-    d_sab_data_properties_map[table_major_version][evaluation_temp_in_mev][*zaid_it] = properties;
+    d_sab_data_properties_map[table_major_version][*zaid_it].push_back( properties );
   }
 }
 
@@ -475,8 +478,8 @@ void Xsdir::createPhotonuclearTableProperties(
                       "(" << complete_table_file_path.string() << ")!" );
 
   // Convert the atomic weight ratio to the atomic weight
-  const double atomic_weight =
-    atomic_weight_ratio*Utility::PhysicalConstants::neutron_rest_mass_amu;
+  const auto atomic_weight =
+    atomic_weight_ratio*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
   
   std::shared_ptr<const PhotonuclearDataProperties> properties(
                      new ACEPhotonuclearDataProperties( atomic_weight,
@@ -890,17 +893,63 @@ bool Xsdir::filterEntryLineByZAIDAndTableTypeKey(
   return true;
 }
 
-// Export the xsdir file to a parameter list
-void Xsdir::exportData( Teuchos::ParameterList& parameter_list ) const
+// Export the xsdir file to a properties cache
+void Xsdir::exportData( ScatteringCenterPropertiesCache& cache,
+                        const std::map<std::string,std::string>& sab_table_aliases =
+                        std::map<std::string,std::string>() ) const;
 {
-  this->exportCENeutronEntries( parameter_list );
-  this->exportSAlphaBetaEntries( parameter_list );
-  this->exportEPREntries( parameter_list );
+  this->exportSAlphaBetaProperties( cache, sab_table_aliases );
+  this->exportCENeutronProperties( cache );
+  this->exportEPRProperties( cache );
+}
 
-  Teuchos::ParameterList& misc_list =
-    parameter_list.sublist( "Miscellaneous" );
+// Export the S(alpha,beta) entries
+void Xsdir::exportSAlphaBetaProperties(
+                   ScatteringCenterPropertiesCache& cache,
+                   const std::map<std::string,std::string>& sab_table_aliases )
+{
+  ZaidThermalNuclearDataPropertiesMap::const_iterator version_sab_it = 
+    d_sab_data_properties_map.begin();
 
-  exportPhotonuclearEntries( misc_list );
+  ZaidThermalNuclearDataPropertiesMap::const_iterator version_sab_end = 
+    d_sab_data_properties_map.end();
+
+  while( version_sab_it != version_sab_end )
+  {
+    unsigned sab_version = version_sab_it->first;
+
+    ZaidThermalNuclearDataPropertiesMap::const_iterator zaid_sab_it =
+      version_sab_it->second.begin();
+
+    ZaidThermalNuclearDataPropertiesMap::const_iterator zaid_sab_end =
+      version_sab_it->second.end();
+
+    while( zaid_sab_it != zaid_sab_end )
+    {
+      this->createSAlphaBetaProperties( cache,
+                                        sab_version,
+                                        zaid_sab_it->first,
+                                        zaid_sab_it->second,
+                                        sab_table_aliases );
+      
+      ++zaid_sab_it;
+    }
+    
+    ++version_sab_it;
+  }
+}
+
+// Export the S(alpha,beta) properties
+void Xsdir::exportSAlphaBetaProperties(
+       ScatteringCenterPropertiesCache& cache,
+       unsigned sab_table_version,
+       const ZAID& zaid,
+       const std::vector<std::shared_ptr<const ThermalNuclearDataProperties> >&
+       sab_properties,
+       const std::map<std::string,std::string>& sab_table_aliases ) const
+{
+  // Retrieve the core properties associated with the sab properties
+  
 }
 
 // Export the continuous energy neutron properties
@@ -932,19 +981,6 @@ void Xsdir::exportCENeutronProperties(
 
     if( z_entries_pair != d_epr_xsdir_entries_map.end() )
       z_entries_pair->second->addInfoToParameterList( sublist );
-  }
-}
-
-// Export the S(alpha,beta) entries
-void Xsdir::exportSAlphaBetaEntries(
-				 Teuchos::ParameterList& parameter_list ) const
-{
-  for( unsigned i = 0; i < d_sab_xsdir_entries.size(); ++i )
-  {
-    Teuchos::ParameterList& sab_list =
-      parameter_list.sublist( d_sab_xsdir_entries[i]->getTableAlias() );
-
-    d_sab_xsdir_entries[i]->addInfoToParameterList( sab_list );
   }
 }
 

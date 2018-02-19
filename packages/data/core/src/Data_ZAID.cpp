@@ -170,6 +170,17 @@ ZAID::operator unsigned() const
 {
   return this->toRaw();
 }
+
+// Convert to a name (e.g. 1000 -> H, 1001 -> H1)
+std::string ZAID::toName() const
+{
+  std::string name = Utility::toString( d_atom_type );
+
+  if( atomic_mass_number > 0u )
+    name += Utility::toString( d_atomic_mass_number );
+
+  return name;
+}
   
 // Save the model to an archive
 template<typename Archive>

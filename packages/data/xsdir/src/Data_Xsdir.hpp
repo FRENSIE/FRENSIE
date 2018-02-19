@@ -247,12 +247,22 @@ private:
   static boost::filesystem::path constructCompleteTableFilePath(
                      const boost::filesystem::path& xsdir_path,
                      const boost::filesystem::path& relative_table_file_path );
-  
-  // Export the continuous energy neutron properties
-  void exportCENeutronProperties( ScatteringCenterPropertiesCache& cache ) const;
 
   // Export the S(alpha,beta) properties
-  void exportSAlphaBetaProperties( ScatteringCenterPropertiesCache& cache ) const;
+  void exportSAlphaBetaProperties( ScatteringCenterPropertiesCache& cache,
+                                   const std::map<std::string,std::string>& sab_table_aliases ) const;
+
+  // Export the S(alpha,beta) properties
+  void exportSAlphaBetaProperties(
+       ScatteringCenterPropertiesCache& cache,
+       unsigned sab_table_version,
+       const ZAID& zaid,
+       const std::vector<std::shared_ptr<const ThermalNuclearDataProperties> >&
+       sab_properties,
+       const std::map<std::string,std::string>& sab_table_aliases ) const;
+
+  // Export the continuous energy neutron properties
+  void exportCENeutronProperties( ScatteringCenterPropertiesCache& cache ) const;
 
   // Export the photonuclear properties
   void exportPhotonuclearProperties(
@@ -268,33 +278,32 @@ private:
   bool d_verbose;
 
   // The continuous energy neutron data properties
-  typedef std::map<ZAID,std::shared_ptr<const NuclearDataProperties> >
+  // Note: for each ZAID there can be multiple temperature evaluations
+  typedef std::map<ZAID,std::vector<std::shared_ptr<const NuclearDataProperties> > >
   ZaidNuclearDataPropertiesMap;
   
-  typedef std::map<double,ZaidNuclearDataPropertiesMap>
-  TempZaidNuclearDataPropertiesMap;
+  // The key is the table major version number (e.g. 1001.70c -> 7 )
+  typedef std::map<unsigned,ZaidNuclearDataPropertiesMap>
+  VersionZaidNuclearDataPropetiesMap;
 
-  typedef std::map<unsigned,TempZaidNuclearDataPropertiesMap>
-  VersionTempZaidNuclearDataPropetiesMap;
-
-  VersionTempZaidNuclearDataPropetiesMap d_ce_neutron_data_properties_map;
+  VersionZaidNuclearDataPropetiesMap d_ce_neutron_data_properties_map;
 
   // The S(alpha,beta) properties
-  typedef std::map<ZAID,std::shared_ptr<const ThermalNuclearDataProperties> >
+  // Note: or each ZAID there can be multiple temperature evaluations
+  typedef std::map<ZAID,std::vector<std::shared_ptr<const ThermalNuclearDataProperties> > >
   ZaidThermalNuclearDataPropertiesMap;
 
-  typedef std::map<double,ZaidThermalNuclearDataPropertiesMap>
-  TempZaidThermalNuclearDataPropertiesMap;
-
-  typedef std::map<unsigned,TempZaidThermalNuclearDataPropertiesMap>
-  VersionTempZaidThermalNuclearDataPropertiesMap;
+  // The key is the table major version number (e.g. benz.10t -> 1 )
+  typedef std::map<unsigned,ZaidThermalNuclearDataPropertiesMap>
+  VersionZaidThermalNuclearDataPropertiesMap;
   
-  VersionTempZaidThermalNuclearDataPropertiesMap d_sab_data_properties_map;
+  VersionZaidThermalNuclearDataPropertiesMap d_sab_data_properties_map;
 
-  // The photonuclear xsdir properties map - for quick lookup
+  // The photonuclear xsdir properties map 
   typedef std::map<ZAID,std::shared_ptr<const PhotonuclearDataProperties> >
   ZaidPhotonuclearDataPropertiesMap;
-  
+
+  // The key is the table major version number (e.g. 1002.24u -> 2 )
   typedef std::map<unsigned,ZaidPhotonuclearDataPropertiesMap>
   VersionZaidPhotonuclearDataPropertiesMap;
 
