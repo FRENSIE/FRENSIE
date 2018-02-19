@@ -44,6 +44,9 @@ public:
         const unsigned atomic_mass_number,
         const unsigned isomer_number );
 
+  //! Elemental constructor
+  ZAID( const AtomType atom_type );
+
   //! Copy constructor
   ZAID( const ZAID& that );
 

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_ScatteringCenterPropertiesCache.cpp
+//! \file   Data_ScatteringCenterPropertiesDatabase.cpp
 //! \author Alex Robinson
-//! \brief  The scattering center properties cache definition
+//! \brief  The scattering center properties database definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -26,7 +26,7 @@
 #include <boost/filesystem.hpp>
 
 // FRENSIE Includes
-#include "Data_ScatteringCenterPropertiesCache.hpp"
+#include "Data_ScatteringCenterPropertiesDatabase.hpp"
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_PolymorphicHDF5OArchive.hpp"
@@ -37,32 +37,32 @@
 namespace Data{
 
 // Initialize static member data
-const std::string ScatteringCenterPropertiesCache::s_archive_name( "cache" );
+const std::string ScatteringCenterPropertiesDatabase::s_archive_name( "database" );
 
 // Default constructor
-ScatteringCenterPropertiesCache::ScatteringCenterPropertiesCache()
+ScatteringCenterPropertiesDatabase::ScatteringCenterPropertiesDatabase()
 { /* ... */ }
 
-// Load existing cache constructor
-ScatteringCenterPropertiesCache::ScatteringCenterPropertiesCache(
-                          const boost::filesystem::path& cache_name_with_path )
+// Load existing database constructor
+ScatteringCenterPropertiesDatabase::ScatteringCenterPropertiesDatabase(
+                       const boost::filesystem::path& database_name_with_path )
 {
-  this->loadFromFile( cache_name_with_path );
+  this->loadFromFile( database_name_with_path );
 }
 
-// The cache name used in an archive
-const char* ScatteringCenterPropertiesCache::getArchiveName() const
+// The database name used in an archive
+const char* ScatteringCenterPropertiesDatabase::getArchiveName() const
 {
   return s_archive_name.c_str();
 }
 
-// Add scattering center properties to the cache
-void ScatteringCenterPropertiesCache::addProperties(
-                                 const ScatteringCenterProperties& properties )
+// Add scattering center properties to the database
+void ScatteringCenterPropertiesDatabase::addProperties(
+                                             const AtomProperties& properties )
 {
   if( d_properties.find( properties.name() ) != d_properties.end() )
   {
-    FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesCache",
+    FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesDatabase",
                                 "Properties with name \""
                                 << properties.name() << "\" already exist! "
                                 "The existing properties will be "
@@ -71,7 +71,7 @@ void ScatteringCenterPropertiesCache::addProperties(
 
   if( d_aliases.find( properties.name() ) != d_aliases.end() )
   {
-    FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesCache",
+    FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesDatabase",
                                 "An alias with the name of the new properties "
                                 "(" << properties.name() << ") already exists!"
                                 " The alias will be removed." );
@@ -82,8 +82,8 @@ void ScatteringCenterPropertiesCache::addProperties(
   d_properties[properties.name()].reset( properties.clone() );
 }
 
-// Remove scattering center properties from the cache
-void ScatteringCenterPropertiesCache::removeProperties( const std::string& name )
+// Remove scattering center properties from the database
+void ScatteringCenterPropertiesDatabase::removeProperties( const std::string& name )
 {
   if( d_properties.find( name ) != d_properties.end() )
   {
@@ -103,7 +103,7 @@ void ScatteringCenterPropertiesCache::removeProperties( const std::string& name 
 }
 
 // Check if properties with the name of interest exist
-bool ScatteringCenterPropertiesCache::doPropertiesExist( const std::string& name_or_alias ) const
+bool ScatteringCenterPropertiesDatabase::doPropertiesExist( const std::string& name_or_alias ) const
 {
   if( d_properties.find( name_or_alias ) != d_properties.end() )
     return true;
@@ -121,7 +121,7 @@ bool ScatteringCenterPropertiesCache::doPropertiesExist( const std::string& name
 
 // Return the desired properties
 const ScatteringCenterProperties&
-ScatteringCenterPropertiesCache::getProperties(
+ScatteringCenterPropertiesDatabase::getProperties(
                                        const std::string& name_or_alias ) const
 {
   ScatteringCenterNamePropertiesMap::const_iterator properties_it = 
@@ -140,19 +140,19 @@ ScatteringCenterPropertiesCache::getProperties(
     {
       THROW_EXCEPTION( std::runtime_error,
                        "There are no scattering center properties associated "
-                       "with \"" << name_or_alias << "\" in the cache!" );
+                       "with \"" << name_or_alias << "\" in the database!" );
     }
   }
 }
 
 // Return the number of stored properties
-size_t ScatteringCenterPropertiesCache::getNumberOfProperties() const
+size_t ScatteringCenterPropertiesDatabase::getNumberOfProperties() const
 {
   return d_properties.size();
 }
 
 // List the properties names
-void ScatteringCenterPropertiesCache::listPropertiesNames(
+void ScatteringCenterPropertiesDatabase::listPropertiesNames(
                                                        std::ostream& os ) const
 {
   os << "Scattering Centers: \n";
@@ -171,13 +171,13 @@ void ScatteringCenterPropertiesCache::listPropertiesNames(
 }
 
 // Add a scattering center properties alias
-void ScatteringCenterPropertiesCache::addPropertiesAlias(
+void ScatteringCenterPropertiesDatabase::addPropertiesAlias(
                                            const std::string& alias,
                                            const std::string& properties_name )
 {
   TEST_FOR_EXCEPTION( d_properties.find( alias ) != d_properties.end(),
                       std::runtime_error,
-                      "Cannot add alias " << alias << " to the cache because "
+                      "Cannot add alias " << alias << " to the database because "
                       "a scattering center with that name already exists!" );
 
   TEST_FOR_EXCEPTION( alias == properties_name,
@@ -187,7 +187,7 @@ void ScatteringCenterPropertiesCache::addPropertiesAlias(
 
   TEST_FOR_EXCEPTION( d_properties.find( properties_name ) == d_properties.end(),
                       std::runtime_error,
-                      "Cannot add alias " << alias << " to the cache because "
+                      "Cannot add alias " << alias << " to the database because "
                       "the scattering center name " << properties_name <<
                       " does not exist!" );
 
@@ -195,25 +195,25 @@ void ScatteringCenterPropertiesCache::addPropertiesAlias(
 }
 
 // Remove a scattering center properties alias
-void ScatteringCenterPropertiesCache::removePropertiesAlias( const std::string& alias )
+void ScatteringCenterPropertiesDatabase::removePropertiesAlias( const std::string& alias )
 {
   d_aliases.erase( alias );
 }
 
 // Check if an alias exists
-bool ScatteringCenterPropertiesCache::doesAliasExist( const std::string& alias ) const
+bool ScatteringCenterPropertiesDatabase::doesAliasExist( const std::string& alias ) const
 {
   return d_aliases.find( alias ) != d_aliases.end();
 }
 
 // Return the number of aliases
-size_t ScatteringCenterPropertiesCache::getNumberOfAliases() const
+size_t ScatteringCenterPropertiesDatabase::getNumberOfAliases() const
 {
   return d_aliases.size();
 }
 
 // List the aliases
-void ScatteringCenterPropertiesCache::listAliases( std::ostream& os ) const
+void ScatteringCenterPropertiesDatabase::listAliases( std::ostream& os ) const
 {
   os << "Scattering Center Aliases: \n";
 
@@ -230,8 +230,8 @@ void ScatteringCenterPropertiesCache::listAliases( std::ostream& os ) const
   os.flush();
 }
 
-// Clear the cache
-void ScatteringCenterPropertiesCache::clear()
+// Clear the database
+void ScatteringCenterPropertiesDatabase::clear()
 {
   d_properties.clear();
   d_aliases.clear();
@@ -239,7 +239,7 @@ void ScatteringCenterPropertiesCache::clear()
 
 // Save the model to an archive
 template<typename Archive>
-void ScatteringCenterPropertiesCache::save( Archive& ar, const unsigned version ) const
+void ScatteringCenterPropertiesDatabase::save( Archive& ar, const unsigned version ) const
 {
   ar & BOOST_SERIALIZATION_NVP( d_properties );
   ar & BOOST_SERIALIZATION_NVP( d_aliases );
@@ -247,18 +247,18 @@ void ScatteringCenterPropertiesCache::save( Archive& ar, const unsigned version 
 
 // Load the model from an archive
 template<typename Archive>
-void ScatteringCenterPropertiesCache::load( Archive& ar, const unsigned version )
+void ScatteringCenterPropertiesDatabase::load( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_properties );
   ar & BOOST_SERIALIZATION_NVP( d_aliases );
 }
 
-EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesCache );
+EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabase );
   
 } // end Data namespace
 
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ScatteringCenterPropertiesCache, Data );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ScatteringCenterPropertiesDatabase, Data );
 
 //---------------------------------------------------------------------------//
-// end Data_ScatteringCenterPropertiesCache.cpp
+// end Data_ScatteringCenterPropertiesDatabase.cpp
 //---------------------------------------------------------------------------//

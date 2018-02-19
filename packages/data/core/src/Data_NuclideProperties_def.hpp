@@ -31,22 +31,21 @@ inline bool NuclideProperties::dataAvailable(
                                                file_type,
                                                table_version,
                                                [&evaluation_temp]( const typename PropertiesMap::mapped_type::mapped_type::value_type& element ) -> bool
-                                               { return Utility::get<1>(element) == evaluation_temp; }
+                                               { return Utility::get<0>(element) == evaluation_temp; }
 }
 
-// Check if there is data available with the desired format, table version, and evaluation temp key
+// Check if there is data available with the desired format, table version, and evaluation temp
 template<typename PropertiesMap>
 inline bool NuclideProperties::dataAvailable(
                               const PropertiesMap& properties,
                               const typename PropertiesMap::key_type file_type,
                               const unsigned table_version,
-                              const unsigned evaluation_temp_key )
+                              const Temperature evaluation_temp )
 {
-  return NuclideProperties::dataAvailableImpl( properties,
-                                               file_type,
-                                               table_version,
-                                               [&evaluation_temp_key]( const typename PropertiesMap::mapped_type::mapped_type::value_type& element ) -> bool
-                                               { return Utility::get<0>(element) == evaluation_temp_key; }
+  return NuclideProperties::dataAvailable( properties,
+                                           file_type,
+                                           table_version,
+                                           evaluation_temp*Utility::PhysicalConstants::boltzmann_constant_q );
 }
 
 // Check if there is data available with the desired format, table version, and evaluation temp comparison function
@@ -157,20 +156,13 @@ bool NuclideProperties::dataAvailable(
                  const std::string& name,
                  const typename PropertiesMap::mapped_type::key_type file_type,
                  const unsigned table_version,
-                 const unsigned evaluation_temp_key )
+                 const Temperature evaluation_temp )
 {
-  typename PropertiesMap::const_iterator properties_it =
-    properties.find( name );
-
-  if( properties_it != properties.end() )
-  {
-    return NuclideProperties::dataAvailable( properties_it->second,
-                                             file_type,
-                                             table_version,
-                                             evaluation_temp_key );
-  }
-  else
-    return false;
+  return NuclideProperties::dataAvailable( properties,
+                                           name,
+                                           file_type,
+                                           table_version,
+                                           evaluation_temp*Utility::PhysicalConstants::boltzmann_constant_q );
 }
 
 // Get the max data file version
@@ -276,7 +268,7 @@ std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
       evaluation_temps.resize( temp_grid.size() );
       
       for( size_t i = 0; i < temp_grid.size(); ++i )
-        evaluation_temps[i] = Utility::get<1>( temp_grid[i] );
+        evaluation_temps[i] = Utility::get<0>( temp_grid[i] );
     }
   }
 
@@ -348,62 +340,6 @@ std::vector<Temperature> NuclideProperties::getDataEvaluationTemps(
     return std::vector<Temperature>();
 }
 
-// Get the data evaluation temp keys
-template<typename PropertiesMap>
-std::map<unsigned,Energy> NuclideProperties::getDataEvaluationTempKeys(
-                                       const PropertiesMap& properties,
-                                       const PropertiesMap::key_type file_type,
-                                       const unsigned table_version )
-{
-  std::map<unsigned,Energy> evaluation_temp_keys;
-
-  typename PropertiesMap::const_iterator file_type_it =
-    properties.find( file_type );
-
-  if( file_type_it != properties.end() )
-  {
-    typename PropertiesMap::mapped_type::const_iterator version_it =
-      file_type_it->find( table_version );
-
-    if( version_it != file_type_it->end() )
-    {
-      const typename PropertiesMap::mapped_type::mapped_type& temp_grid =
-        version_it->second;
-
-      evaluation_temps.resize( temp_grid.size() );
-      
-      for( size_t i = 0; i < temp_grid.size(); ++i )
-      {
-        evaluation_temp_keys[Utility::get<0>(temp_grid[i])] =
-          Utility::get<1>( temp_grid[i] );
-      }
-    }
-  }
-
-  return evaluation_temp_keys;
-}
-
-// Get the data evaluation temp keys
-template<typename PropertiesMap>
-std::map<unsigned,Energy> NuclideProperties::getDataEvaluationTempKeys(
-                          const PropertiesMap& properties,
-                          const std::string& name,
-                          const PropertiesMap::mapped_type::key_type file_type,
-                          const unsigned table_version )
-{
-  typename PropertiesMap::const_iterator properties_it =
-    properties.find( name );
-
-  if( properties_it != properties.end() )
-  {
-    return NuclideProperties::getDataEvaluationTempKeys( properties_it->second,
-                                                         file_type,
-                                                         table_version );
-  }
-  else
-    return std::map<unsigned,Energy>();
-}
-
 // Get the data properties
 template<typename Properties, typename PropertiesMap>
 const Properties& NuclideProperties::getProperties(
@@ -430,9 +366,9 @@ const Properties& NuclideProperties::getProperties(
       typename PropertiesMap::mapped_type::mapped_type::const_iterator
         temp_grid_it;
 
-      if( evaluation_temp < Utility::get<1>(temp_grid.front()) )
+      if( evaluation_temp < Utility::get<0>(temp_grid.front()) )
         temp_grid_it = temp_grid.begin();
-      else if( evaluation_temp >= Utility::get<1>(temp_grid.back()) )
+      else if( evaluation_temp >= Utility::get<0>(temp_grid.back()) )
       {
         temp_grid_it = temp_grid.end();
         --temp_grid_it;
@@ -440,13 +376,13 @@ const Properties& NuclideProperties::getProperties(
       else
       {
         temp_grid_it =
-          Utility::Search::binaryLowerBound<1>( temp_grid.begin(),
+          Utility::Search::binaryLowerBound<0>( temp_grid.begin(),
                                                 temp_grid.end(),
                                                 evaluation_temp );
       }
 
       // Check if there are suitable properties available
-      if( Utility::get<1>(*properties_it) != evaluation_temp )
+      if( Utility::get<0>(*properties_it) != evaluation_temp )
       {
         if( find_exact )
         {
@@ -465,7 +401,7 @@ const Properties& NuclideProperties::getProperties(
             ++next_properties_it;
 
             Energy mid_temp =
-              (Utility::get<1>(*properties_it) + Utility::get<1>(*next_properties_it))/2.0;
+              (Utility::get<0>(*properties_it) + Utility::get<0>(*next_properties_it))/2.0;
 
             if( evaluation_temp >= mid_temp )
               ++properties_it;
@@ -478,7 +414,7 @@ const Properties& NuclideProperties::getProperties(
                                       " and evaluation temp "
                                       << evaluation_temp << " do not exist! "
                                       "Data for the closes evaluation temp ("
-                                      << Utility::get<1>(*properties_it) <<
+                                      << Utility::get<0>(*properties_it) <<
                                       ") will be returned!" );
         }
       }
@@ -507,53 +443,21 @@ const Properties& NuclideProperties::getProperties(
                               const PropertiesMap& properties,
                               const typename PropertiesMap::key_type file_type,
                               const unsigned table_version,
-                              const unsigned evaluation_temp_key,
+                              const Temperature evaluation_temp,
+                              const bool find_exact,
                               const std::string& type_name )
 {
-  typename PropertiesMap::const_iterator properties_it =
-    properties.find( file_type );
-
-  if( properties_it != properties.end() )
-  {
-    typename PropertiesMap::mapped_type::const_iterator version_it =
-      properties_it->find( table_version );
-
-    if( version_it != properties_it->end() )
-    {
-      typename PropertiesMap::mapped_type::mapped_type& temp_grid =
-        version_it->second;
-
-      for( size_t i = 0; i < temp_grid.size(); ++i )
-      {
-        if( Utility::get<0>( temp_grid[i] ) == evaluation_temp_key )
-          return *Utility::get<2>( temp_grid[i] );
-      }
-
-      THROW_EXCEPTION( std::runtime_error,
-                       type_name << " data properties with file type "
-                       << file_type << ", version " << table_version <<
-                       " and evaluation temp key " << evaluation_temp_key <<
-                       " do not exist!" );
-    }
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       type_name << " data properties with file type "
-                       << file_type << " and version " << table_version <<
-                       " do not exist!" );
-    }
-  }
-  else
-  {
-    THROW_EXCEPTION( std::runtime_error,
-                     type_name << " data properties with file type "
-                     << file_type << " do not exist!" );
-  }
+  return NuclideProperties::getProperties( properties,
+                                           file_type,
+                                           table_version,
+                                           evaluation_temp*Utility::PhysicalConstants::boltzmann_constant_q,
+                                           find_exact,
+                                           type_name );
 }
 
 // Get the data properties
 template<typename Properties, typename PropertiesMap>
-const Properties& NuclideProperties::getProperties(
+inline const Properties& NuclideProperties::getProperties(
                  const PropertiesMap& properties,
                  const std::string& name,
                  const typename PropertiesMap::mapped_type::key_type file_type,
@@ -584,30 +488,99 @@ const Properties& NuclideProperties::getProperties(
 
 // Get the data properties
 template<typename Properties, typename PropertiesMap>
-const Properties& NuclideProperties::getProperties(
+inline const Properties& NuclideProperties::getProperties(
                  const PropertiesMap& properties,
                  const std::string& name,
                  const typename PropertiesMap::mapped_type::key_type file_type,
                  const unsigned table_version,
-                 const unsigned evaluation_temp_key,
+                 const Temperature evaluation_temp,
+                 const bool find_exact,
                  const std::string& type_name )
 {
-  typename PropertiesMap::const_iterator name_it =
-    properties.find( name );
+  return NuclideProperties::getProperties( properties,
+                                           name,
+                                           file_type,
+                                           table_version,
+                                           evaluation_temp*Utility::PhysicalConstants::boltzmann_constant_q,
+                                           find_exact,
+                                           type_name );
+}
 
-  if( name_it != properties.end() )
+// Set the nuclear properties
+template<typename Properties, typename PropertiesMap>
+void NuclideProperties::setNuclearProperties(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const std::string& type_name )
+{
+  if( new_properties.get() )
   {
-    return PropertiesMap::getProperties( name_it->second,
-                                         file_type,
-                                         table_version,
-                                         evaluation_temp_key,
-                                         name + " " + type_name );
+    Energy evaluation_temp = new_properties->evaluationTemperatureInMeV();
+    
+    PropertiesMap::mapped_type::mapped_type& temp_grid = 
+      properties[new_properties->fileType()][new_properties->fileVersion()];
+
+    if( temp_grid.empty() )
+      temp_grid.push_back( std::make_pair( evaluation_temp, new_properties ) );
+    else
+    {
+      PropertiesMap::mapped_type::mapped_type::iterator temp_grid_it;
+    
+      if( evaluation_temp > Utility::get<0>(temp_grid.back()) )
+        temp_grid_it = temp_grid.end();
+      else
+      {
+        temp_grid_it =
+          Utility::Search::binaryUpperBound<0>( temp_grid.begin(),
+                                                temp_grid.end(),
+                                                evaluation_temp );
+      }
+      
+      if( temp_grid_it != temp_grid.end() )
+      {
+        if( Utility::get<0>( *temp_grid_it ) == evaluation_temp )
+        {
+          FRENSIE_LOG_TAGGED_WARNING( "NuclideProperties",
+                                      type_name << " data properties with "
+                                      "file type "
+                                      << new_properties->fileType() <<
+                                      ", version "
+                                      << new_properties->fileVersion() <<
+                                      " and evaluation temperature "
+                                      << evaluation_temp << 
+                                      " are already present! The old "
+                                      "properties will be overwritten." );
+
+          Utility::get<1>( *temp_grid_it ) = new_properties;
+        }
+        else
+        {
+          temp_grid.insert( temp_grid_it,
+                            std::make_pair(evaluation_temp, new_properties) );
+        }
+      }
+      else
+      {
+        temp_grid.insert( temp_grid_it,
+                          std::make_pair(evaluation_temp, new_properties) );
+      }
+    }
   }
-  else
+}
+
+// Set the thermal nuclear properties
+template<typename Properties, typename PropertiesMap>
+void NuclideProperties::setThermalNuclearProperties(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const std::string& type_name )
+{
+  if( new_properties.get() )
   {
-    THROW_EXCEPTION( std::runtime_error,
-                     type_name << " data properties with name " << name <<
-                     " do not exist!" );
+    NuclideProperties::setNuclearProperties(
+                                      properties[new_properties->name()],
+                                      new_properties,
+                                      new_properties->name() + " " type_name );
   }
 }
 
@@ -642,11 +615,11 @@ void NuclideProperties::cloneNuclearProperties(
         Utility::get<0>( new_temp_grid[i] ) =
           Utility::get<0>( version_it->second[i] );
 
-        Utility::get<1>( new_temp_grid[i] ) =
-          Utility::get<1>( version_it->second[i] );
+        Utility::get<0>( new_temp_grid[i] ) =
+          Utility::get<0>( version_it->second[i] );
 
-        Utility::get<2>( new_temp_grid[i] ).reset(
-                            Utility::get<2>( version_it->second[i] ).clone() );
+        Utility::get<1>( new_temp_grid[i] ).reset(
+                            Utility::get<1>( version_it->second[i] ).clone() );
       }
 
       ++version_it;

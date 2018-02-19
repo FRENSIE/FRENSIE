@@ -93,6 +93,11 @@ ZAID::ZAID( const unsigned atomic_number,
   }
 }
 
+// Elemental constructor
+ZAID::ZAID( const AtomType atom_type )
+  : ZAID( atom_type, 0, 0 )
+{ /* ... */ }
+
 // Copy constructor
 ZAID::ZAID( const ZAID& that )
   : d_atom_type( that.d_atom_type ),

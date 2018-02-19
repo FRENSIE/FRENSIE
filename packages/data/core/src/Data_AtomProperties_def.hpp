@@ -165,9 +165,9 @@ inline void AtomProperties::setProperties(
 {
   if( new_properties.get() )
   {
-    if( AtomProperties::dataAvailable(properties,
-                                              new_properties->fileType(),
-                                              new_properties->fileVersion()) )
+    if( this->dataAvailable( properties,
+                             new_properties->fileType(),
+                             new_properties->fileVersion()) )
     {
       FRENSIE_LOG_TAGGED_WARNING( "AtomProperties",
                                   type_name << " data properties with file "
