@@ -67,64 +67,6 @@ bool Xsdir::isTableHumanReadableQuick( const std::vector<std::string>& entry_tok
     return false;
 }
 
-// Check if the table type is supported
-/*! \details Currently supported tables:
- * <ul>
- *  <li> All c type tables
- *  <li> t type tables with version numbers < 20 or >= 30
- *  <li> only p type tables with version number 12
- *  <li> all u type tables
- * </ul>
- */
-bool Xsdir::isTableTypeSupported( const std::vector<std::string>& entry_tokens )
-{
-  std::tuple<std::string,unsigned,char> table_name_components = 
-    Xsdir::extractTableNameComponentsFromEntryTokens();
-
-  return Xsdir::isTableTypeSupportedImpl( table_name_components );
-}
-
-// Check if the table type is supported
-bool Xsdir::isTableTypeSupportedQuick( const std::vector<std::string>& entry_tokens )
-{
-  // Make sure the line is a table entry
-  testPrecondition( Xsdir::isLineTableEntry( entry_tokens ) );
-  
-  std::tuple<std::string,unsigned,char> table_name_components =
-    Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
-
-  return Xsdir::isTableTypeSupportedImpl( table_name_components );
-}
-
-// Check if the table type is supported 
-bool Xsdir::isTableTypeSupportedImpl(
-          const std::tuple<std::string,unsigned,char>& table_name_components );
-{
-  // All continuous energy neutron tables are supported
-  if( Utility::get<2>(table_name_components) == 'c' )
-    return true;
-
-  // All sab tables are supported except for the MCNP6 tables
-  // (version in 20s)
-  else if( Utility::get<2>(table_name_components) == 't' &&
-           (Utility::get<1>(table_name_components) < 20 ||
-            Utility::get<1>(table_name_components) >= 30) )
-    return true;
-
-  // All photonuclear data tables are supported
-  else if( Utility::get<2>(table_name_components) == 'u' )
-    return true;
-
-  // Only the new EPR data tables are supported
-  else if( Utility::get<2>(table_name_components) == 'p' &&
-           Utility::get<1>(table_name_components) == 12 )
-    return true;
-  
-  // Unsupported table type
-  else
-    return false;
-}
-
 // Extract the table type key from the entry tokens
 const std::string& Xsdir::extractTableNameComponentsFromEntryTokens(
                                  const std::vector<std::string>& entry_tokens )
@@ -152,6 +94,20 @@ std::tuple<std::string,unsigned,char> Xsdir::extractTableNameComponentsFromEntry
                       "The line does not have table data!" );
 
   return Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
+}
+
+// Check if the table type is supported
+bool Xsdir::isTableTypeSupported( const std::tuple<std::string,unsigned,char>& table_name_components )
+{
+  switch( Utility::get<2>( table_name_components ) )
+  {
+    case 'c': return true;
+    case 't': return true;
+    case 'u': return true;
+    case 'p': return true;
+    case 'e': return true;
+    default: return false;
+  }
 }
 
 // Extract the table type key from the entry tokens
@@ -242,8 +198,8 @@ size_t Xsdir::quickExtractFileStartLineFromEntryTokens(
 }
 
 // Extract the table evaluation temperature from the entry tokens
-double Xsdir::extractEvaluationTemperatureFromEntryTokens(
-                                 const std::vector<std::string>& entry_tokens )
+auto Xsdir::extractEvaluationTemperatureFromEntryTokens(
+                       const std::vector<std::string>& entry_tokens ) -> Energy
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
                       std::runtime_error,
@@ -253,13 +209,13 @@ double Xsdir::extractEvaluationTemperatureFromEntryTokens(
 }
 
 // Extract the table evaluation temperature from the entry tokens
-double Xsdir::quickExtractEvaluationTemperatureFromEntryTokens(
-                                 const std::vector<std::string>& entry_tokens )
+auto Xsdir::quickExtractEvaluationTemperatureFromEntryTokens(
+                       const std::vector<std::string>& entry_tokens ) -> Energy
 {
   if( entry_tokens.size() >= 10 )
     return Utility::fromString<double>( entry_tokens[9] );
   else
-    return 0.0;
+    return 0.0*Utility::Units::MeV;
 }
 
 // Constructor
@@ -275,14 +231,6 @@ Xsdir::Xsdir( const boost::filesystem::path& xsdir_file_name,
   TEST_FOR_EXCEPTION( !boost::filesystem::exists( d_xsdir_path ),
                       std::runtime_error,
                       "The xsdir file does not exist!" );
-
-  LineProcessorFunction line_processor_function =
-    std::bind<void>( std::ref(*this),
-                     &Xsdir::parseEntryTokensAndCreateDataPropertiesObject );
-  
-  this->processXsdirFile( d_xsdir_file,
-                          &Xsdir::isLineTableEntry,
-                          line_processor_function );
 }
 
 // Process the xsdir file
@@ -318,38 +266,36 @@ void Xsdir::processXsdirFile( const boost::filesystem::path& xsdir_file,
 
 // Parse the entry tokens and create the data properties object
 void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
+                                  ScatteringCenterPropertiesDatabase& database,
                                   const std::vector<std::string>& entry_tokens,
                                   const std::string& )
 {
   const std::tuple<std::string,unsigned,char> table_name_components = 
     this->quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
 
-  // Only parse supported tables that are human readable
-  if( this->isTableTypeSupportedImpl( table_name_components ) &&
-      this->isTableHumanReadableQuick( entry_tokens ) )
+  const double atomic_weight_ratio =
+    this->quickExtractAtomicWeightRatioFromEntryTokens( entry_tokens );
+
+  const Energy evaluation_temp =
+    this->quickExtractEvaluationTemperatureFromEntryTokens( entry_tokens );
+    
+  const boost::filesystem::path table_file_path =
+    this->quickExtractPathFromEntryTokens( entry_tokens );
+
+  const size_t file_start_line =
+    this->quickExtractFileStartLineFromEntryTokens( entry_tokens );
+
+  const unsigned table_major_version =
+    Utility::get<1>( table_name_components )/10;
+
+  switch( Utility::get<2>( table_name_components ) )
   {
-    const double atomic_weight_ratio =
-      this->quickExtractAtomicWeightRatioFromEntryTokens( entry_tokens );
-
-    const double evaluation_temp_in_mev =
-      this->quickExtractEvaluationTemperatureFromEntryTokens( entry_tokens );
-    
-    const boost::filesystem::path table_file_path =
-      this->quickExtractPathFromEntryTokens( entry_tokens );
-
-    const size_t file_start_line =
-      this->quickExtractFileStartLineFromEntryTokens( entry_tokens );
-
-    const unsigned table_major_version =
-      Utility::get<1>( table_name_components )/10;
-    
-    switch( Utility::get<2>( table_name_components ) )
+    case 'c':
     {
-      case 'c':
-      {
-        this->createContinuousEnergyNeutronTableProperties(
+      this->createContinuousEnergyNeutronTableProperties(
+                                                       database,
                                                        atomic_weight_ratio,
-                                                       evaluation_temp_in_mev,
+                                                       evaluation_temp,
                                                        table_file_path,
                                                        file_start_line,
                                                        table_major_version,
@@ -358,7 +304,8 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
       case 't':
       {
         this->createSABTableProperties(
-                  evaluation_temp_in_mev,
+                  database,
+                  evaluation_temp,
                   table_file_path,
                   table_start_line,
                   table_major_version,
@@ -366,7 +313,8 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
       }
       case 'u':
       {
-        this->createPhotonuclearTableProperties( atomic_weight_ratio,
+        this->createPhotonuclearTableProperties( database,
+                                                 atomic_weight_ratio,
                                                  table_file_path,
                                                  file_start_line,
                                                  table_major_version,
@@ -374,7 +322,16 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
       }
       case 'p':
       {
-        this->createAtomicTableProperties( table_file_path,
+        this->createAtomicTableProperties( database,
+                                           atomic_weight_ratio,
+                                           table_file_path,
+                                           file_start_line,
+                                           table_name_components );
+      }
+      case 'e':
+      {
+        this->createAtomicTableProperties( database,
+                                           table_file_path,
                                            file_start_line,
                                            table_name_components );
       }
@@ -389,6 +346,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
 
     FRENSIE_LOG_TAGGED_NOTIFICATION( "Xsdir", "Parsed table " << this->quickExtractTableNameFromEntryTokens( entry_tokens ) << " data." );
   }
+  
   // Log skipped table entry
   else if( d_verbose )
   {
@@ -398,8 +356,9 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
 
 // Create the continuous energy neutron table properties
 void Xsdir::createContinuousEnergyNeutronTableProperties(
+                                ScatteringCenterPropertiesDatabase& database,
                                 const double atomic_weight_ratio,
-                                const double evaluation_temp_in_mev,
+                                const Energy evaluation_temp,
                                 const boost::filesystem::path& table_file_path,
                                 const size_t file_start_line,
                                 const unsigned table_major_version,
@@ -416,22 +375,56 @@ void Xsdir::createContinuousEnergyNeutronTableProperties(
                       "(" << complete_table_file_path.string() << ")!" );
   
   std::shared_ptr<const NuclearDataProperties> properties(
-      new ACENuclearDataProperties( atomic_weight_ratio*Utility::Units::amu,
-                                    evaluation_temp_in_mev*Utility::Units::MeV,
+      new ACENuclearDataProperties( atomic_weight_ratio,
+                                    evaluation_temp,
                                     table_file_path,
                                     file_start_line,
                                     table_name ) );
+
+  NuclideProperties* nuclide_properties = NULL;
   
-  d_ce_neutron_data_properties[table_major_version][table_name.zaid()].push_back( properties );
+  if( database.doPropertiesExist( table_name.zaid() ) )
+  {
+    try{
+      nuclide_properties = &database.getNuclideProperties( table_name.zaid() );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Could not retrieve the nuclide properties from "
+                             "the data base for "
+                             << table_name.zaid() << "!" );
+    
+    // Make sure that the reported atomic weight ratios match
+    TEST_FOR_EXCEPTION( atomic_weight_ratio !=
+                        nuclide_properties->atomicWeightRatio(),
+                        std::runtime_error,
+                        "The stored atomic weight ratio for nuclide "
+                        << table_name.zaid() << " does not match the ratio "
+                        "in the current xsdir file entry ("
+                        << table_name << ")!" );
+  }
+  else
+  {
+    try{
+      nuclide_properties =
+        &database.initializeNuclideProperties( table_name.zaid(),
+                                               atomic_weight_ratio );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Could not initialize the nuclide properties in "
+                             "the database for "
+                             << table_name.zaid() << "!" );
+  }
+
+  nuclide_properties->setNuclearDataProperties( properties );
 }
 
 // Create the S(A,B) table properties
 void Xsdir::createSABTableProperties(
-                                const double evaluation_temp_in_mev,
-                                const boost::filesystem::path& table_file_path,
-                                const size_t file_start_line,
-                                const unsigned table_major_version,
-                                const std::string& table_name )
+                               const Energy evaluation_temp,
+                               const boost::filesystem::path& table_file_path,
+                               const size_t file_start_line,
+                               const unsigned table_major_version,
+                               const std::string& table_name )
 {
   // Extract the S(A,B) table zaids
   std::set<ZAID> zaids;
@@ -442,11 +435,9 @@ void Xsdir::createSABTableProperties(
                               file_start_line,
                               zaids );
 
-  using Utility::Units::MeV;
-
   std::shared_ptr<const ACEThermalNuclearDataProperties> properties(
                new ACEThermalNuclearDataProperties( zaids,
-                                                    evaluation_temp_in_mev*MeV,
+                                                    evaluation_temp,
                                                     table_file_path,
                                                     file_start_line,
                                                     table_name ) );
@@ -455,12 +446,32 @@ void Xsdir::createSABTableProperties(
        zaid_it != zaids.end();
        ++zaid_it )
   {
-    d_sab_data_properties_map[table_major_version][*zaid_it].push_back( properties );
+    NuclideProperties* nuclide_properties = NULL;
+
+    if( database.doPropertiesExist( *zaid_it ) )
+    {
+      try{
+        nuclide_properties = &database.getNuclideProperties( *zaid_it );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Could not retrieve the nuclide properties "
+                               "from the database for " << *zaid_it << "!" );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Nuclide properties cannot be initialized when "
+                       "creating S(A,B) table properties because the "
+                       "atomic weight ratio is not available!" );
+    }
+
+    nuclide_properties->setThermalNuclearDataProperties( properties );
   }
 }
 
 // Create the photonuclear table properties
 void Xsdir::createPhotonuclearTableProperties(
+                                ScatteringCenterPropertiesDatabase& database,
                                 const double atomic_weight_ratio,
                                 const boost::filesystem::path& table_file_path,
                                 const size_t file_start_line,
@@ -487,14 +498,51 @@ void Xsdir::createPhotonuclearTableProperties(
                                                         file_start_line,
                                                         table_name ) );
 
-  d_photonuclear_data_properties_map[table_major_version][table_name.zaid()] = properties;
+  // Add the photonuclear properties to the corresponding nuclide properties
+  // in the database
+  NuclideProperties* nuclide_properties = NULL;
+
+  if( database.doPropertiesExist( table_name.zaid() ) )
+  {
+    try{
+      nuclide_properties = &database.getNuclideProperties( table_name.zaid() );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Could not retrieve the nuclide properties from "
+                             "the data base for "
+                             << table_name.zaid() << "!" );
+
+    // Make sure that the reported atomic weight ratios match
+    TEST_FOR_EXCEPTION( atomic_weight_ratio !=
+                        nuclide_properties->atomicWeightRatio(),
+                        std::runtime_error,
+                        "The stored atomic weight ratio for nuclide "
+                        << table_name.zaid() << " does not match the ratio "
+                        "in the current xsdir file entry ("
+                        << table_name << ")!" );
+  }
+  else
+  {
+    try{
+      nuclide_properties =
+        &database.initializeNuclideProperties( table_name.zaid(),
+                                               atomic_weight_ratio );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Could not initialize the nuclide properties in "
+                             "the database for "
+                             << table_name.zaid() << "!" );
+  }
+
+  nuclide_properties->setPhotonuclearDataProperties( properties );
 }
 
 // Create the photoatomic and electroatomic table properties
 void Xsdir::createAtomicTableProperties(
-                                const boost::filesystem::path& table_file_path,
-                                const size_t file_start_line,
-                                const ACETableName& table_name )
+            ScatteringCenterPropertiesDatabase& database,
+            const boost::filesystem::path& table_file_path,
+            const size_t file_start_line,
+            const std::tuple<std::string,unsigned,char> table_name_components )
 {
   // Verify that the table file exists
   boost::filesystem::path complete_table_file_path =
@@ -506,18 +554,135 @@ void Xsdir::createAtomicTableProperties(
                       << table_name << " does not exist at the specified path "
                       "(" << complete_table_file_path.string() << ")!" );
 
-  std::shared_ptr<const PhotoatomicDataPropeties> photoatomic_properties(
-                             new ACEPhotoatomicDataProperties( table_file_path,
-                                                               file_start_line,
-                                                               table_name ) );
-  
-  std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
-                           new ACEElectroatomicDataProperties( table_file_path,
-                                                               file_start_line,
-                                                               table_name ) );
+  if( Utility::get<2>( table_name_components ) == 'p' )
+  {
+    std::shared_ptr<const PhotoatomicDataPropeties> photoatomic_properties(
+                   new ACEPhotoatomicDataProperties( table_file_path,
+                                                     file_start_line,
+                                                     table_name_components ) );
 
-  d_epr_data_properties[table_name.zaid().atom()] =
-    std::make_pair( photoatomic_properties, electroatomic_properties );
+    this->addPhotoatomicPropertiesToDatabase( database,
+                                              photoatomic_properties );
+
+    if( Utility::get<1>( table_name_components ) == 12 )
+    {
+      std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
+                 new ACEElectroatomicDataProperties( table_file_path,
+                                                     file_start_line,
+                                                     table_name_components ) );
+
+      this->addElectroatomicPropertiesToDatabase( database,
+                                                  electroatomic_properties );
+    }
+  }
+  else if( Utility::get<2>( table_name_components ) == 'e' )
+  {
+    std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
+                 new ACEElectroatomicDataProperties( table_file_path,
+                                                     file_start_line,
+                                                     table_name_components ) );
+
+      this->addElectroatomicPropertiesToDatabase( database,
+                                                  electroatomic_properties );
+  }
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Only tables with type keys of 'p' or 'e' are treated "
+                     "as photoatomic data table entries!" );
+  }
+}
+
+// Add photoatomic properties to the database
+void Xsdir::addPhotoatomicPropertiesToDatabase(
+                         ScatteringCenterPropertiesDatabase& database,
+                         const double atomic_weight_ratio,
+                         const std::shared_ptr<const PhotoatomicDataPropeties>&
+                         photoatomic_properties )
+{
+  AtomProperties* atom_properties = NULL;
+
+  if( database.doPropertiesExist( photoatomic_properties->atom() ) )
+  {
+    try{
+      atom_properties =
+        &database.getAtomProperties( photoatomic_properties->atom() );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Could not retrieve the atom properties from "
+                             "the database for "
+                             << photoatomic_properties->atom() << "!" );
+
+    // Make sure that the reported atomic weight ratios match
+    TEST_FOR_EXCEPTION( atomic_weight_ratio !=
+                        atom_properties->atomicWeightRatio(),
+                        std::runtime_error,
+                        "The stored atomic weight ratio for atom "
+                        << photoatomic_properties->atom() <<
+                        " does not match the ratio in the current xsdir file "
+                        "entry (" << photoatomic_properties->tableName() <<
+                        "!" );
+  }
+  else
+  {
+    try{
+      atom_properties =
+        &database.initializeAtomProperties( photoatomic_properties->atom(),
+                                            atomic_weight_ratio );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                "Could not initialize the atom properties in "
+                                "the database for "
+                                << photoatomic_properties->atom() << "!" );
+  }
+
+  atom_properties->setPhotoatomicDataProperties( properties );
+}
+
+// Add electroatomic properties to the database
+void Xsdir::addElectroatomicPropertiesToDatabase(
+                       ScatteringCenterPropertiesDatabase& database,
+                       const double atomic_weight_ratio,
+                       const std::shared_ptr<const ElectroatomicDataPropeties>&
+                       electroatomic_properties )
+{
+  AtomProperties* atom_properties = NULL;
+
+  if( database.doPropertiesExist( electroatomic_properties->atom() ) )
+  {
+    try{
+      atom_properties =
+        &database.getAtomProperties( electroatomic_properties->atom() );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Could not retrieve the atom properties from "
+                             "the database for "
+                             << electroatomic_properties->atom() << "!" );
+
+    // Make sure that the reported atomic weight ratios match
+    TEST_FOR_EXCEPTION( atomic_weight_ratio !=
+                        atom_properties->atomicWeightRatio(),
+                        std::runtime_error,
+                        "The stored atomic weight ratio for atom "
+                        << electroatomic_properties->atom() <<
+                        " does not match the ratio in the current xsdir file "
+                        "entry (" << electroatomic_properties->tableName() <<
+                        "!" );
+  }
+  else
+  {
+    try{
+      atom_properties =
+        &database.initializeAtomProperties( electroatomic_properties->atom(),
+                                            atomic_weight_ratio );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+                                "Could not initialize the atom properties in "
+                                "the database for "
+                                << electroatomic_properties->atom() << "!" );
+  }
+
+  atom_properties->setElectroatomicDataProperties( properties );
 }
 
 // Construct the complete path to a table file
@@ -796,7 +961,7 @@ void Xsdir::showEntriesWithZAIDAndTableTypeKey(
 void Xsdir::showEntriesWithZAIDAndTableEvaluationTemp(
                                          std::ostream& os,
                                          const Data::ZAID& zaid,
-                                         const double evalution_temp_in_mev,
+                                         const Energy evalution_temp,
                                          const bool human_readable_only ) const
 {
   std::vector<LineFilterFunction> partial_filters( 1 );
@@ -823,7 +988,7 @@ void Xsdir::showEntriesWithZAIDAndTableEvaluationTemp(
 bool Xsdir::filterEntryLineByZAIDAndTableTypeKey(
                                  const Data::ZAID& zaid,
                                  const char key,
-                                 const double evaluation_temp_in_mev,
+                                 const Energy evaluation_temp,
                                  const boost::filesystem::path& xsdir_path,
                                  const std::vector<std::string>& entry_tokens )
 {
@@ -841,15 +1006,15 @@ bool Xsdir::filterEntryLineByZAIDAndTableTypeKey(
   // Check if the evaluation temps match - this line will not pass through the
   // filter if they do not have a relative error < 1e-9 (NOTE: any filter
   // temp < 0.0 will be ignored)
-  if( evalution_temp_in_mev >= 0.0 )
+  if( evalution_temp >= 0.0*Utility::Units::MeV )
   {
-    const double table_evaluation_temp_in_mev =
+    const Energy table_evaluation_temp =
       this->quickExtractEvaluationTemperatureFromEntryTokens( entry_tokens );
 
     const bool equal_evaluation_temps = 
       Utility::RelativeErrorComparisonPolicy::compare(
-                                                  table_evaluation_temp_in_mev,
-                                                  evaluation_temp_in_mev,
+                                                  table_evaluation_temp,
+                                                  evaluation_temp,
                                                   1e-9 );
     if( !equal_evaluation_temps )
       return false;
@@ -893,119 +1058,81 @@ bool Xsdir::filterEntryLineByZAIDAndTableTypeKey(
   return true;
 }
 
-// Export the xsdir file to a properties cache
-void Xsdir::exportData( ScatteringCenterPropertiesCache& cache,
-                        const std::map<std::string,std::string>& sab_table_aliases =
-                        std::map<std::string,std::string>() ) const;
+// Filter line entries by table type keys
+bool Xsdir::filterEntryLineByTableTypeKeys( const std::set<char>& keys,
+                                            const std::vector<std::string>& entry_tokens )
 {
-  this->exportSAlphaBetaProperties( cache, sab_table_aliases );
-  this->exportCENeutronProperties( cache );
-  this->exportEPRProperties( cache );
-}
-
-// Export the S(alpha,beta) entries
-void Xsdir::exportSAlphaBetaProperties(
-                   ScatteringCenterPropertiesCache& cache,
-                   const std::map<std::string,std::string>& sab_table_aliases )
-{
-  ZaidThermalNuclearDataPropertiesMap::const_iterator version_sab_it = 
-    d_sab_data_properties_map.begin();
-
-  ZaidThermalNuclearDataPropertiesMap::const_iterator version_sab_end = 
-    d_sab_data_properties_map.end();
-
-  while( version_sab_it != version_sab_end )
-  {
-    unsigned sab_version = version_sab_it->first;
-
-    ZaidThermalNuclearDataPropertiesMap::const_iterator zaid_sab_it =
-      version_sab_it->second.begin();
-
-    ZaidThermalNuclearDataPropertiesMap::const_iterator zaid_sab_end =
-      version_sab_it->second.end();
-
-    while( zaid_sab_it != zaid_sab_end )
-    {
-      this->createSAlphaBetaProperties( cache,
-                                        sab_version,
-                                        zaid_sab_it->first,
-                                        zaid_sab_it->second,
-                                        sab_table_aliases );
-      
-      ++zaid_sab_it;
-    }
-    
-    ++version_sab_it;
-  }
-}
-
-// Export the S(alpha,beta) properties
-void Xsdir::exportSAlphaBetaProperties(
-       ScatteringCenterPropertiesCache& cache,
-       unsigned sab_table_version,
-       const ZAID& zaid,
-       const std::vector<std::shared_ptr<const ThermalNuclearDataProperties> >&
-       sab_properties,
-       const std::map<std::string,std::string>& sab_table_aliases ) const
-{
-  // Retrieve the core properties associated with the sab properties
+  std::tuple<std::string,unsigned,char> table_name_components =
+    Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
   
+  if( keys.find( Utility::get<2>(table_name_components) ) != keys.end() )
+    return true;
+  else
+    return false;
 }
 
-// Export the continuous energy neutron properties
-void Xsdir::exportCENeutronProperties(
-                                 ScatteringCenterPropertiesCache& cache ) const
+
+// Export the xsdir file to a properties cache
+void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
 {
-  for( unsigned i = 0; i < d_ce_neutron_xsdir_entries.size(); ++i )
+  LineProcessorFunction line_processor_function =
+    std::bind<void>( &Xsdir::parseEntryTokensAndCreateDataPropertiesObject,
+                     std::cref( *this ),
+                     std::ref( database ),
+                     std::placeholders::_1,
+                     std::placeholders::_2 );
+
+  // Process atomic data - this data will be used to initialize the
+  // nuclide properties
   {
-    Teuchos::ParameterList& sublist = parameter_list.sublist(
-			      d_ce_neutron_xsdir_entries[i]->getTableAlias() );
-
-    d_ce_neutron_xsdir_entries[i]->addInfoToParameterList( sublist );
-
-    // Add the photonuclear data if there is any (use most recent - sorted)
-    unsigned zaid = XsdirEntry::extractZaidFromTableName(
-			       d_ce_neutron_xsdir_entries[i]->getTableName() );
-
-    IdEntriesMap::const_iterator zaid_entries_pair =
-      d_photonuclear_xsdir_entries_map.find( zaid );
-
-    if( zaid_entries_pair != d_photonuclear_xsdir_entries_map.end() )
-      zaid_entries_pair->second.front()->addInfoToParameterList( sublist );
-
-    // Add the photoatomic and electroatomic data
-    unsigned atomic_number = XsdirEntry::extractAtomicNumberFromZaid( zaid );
-
-    IdEntryMap::const_iterator z_entries_pair =
-      d_epr_xsdir_entries_map.find( atomic_number );
-
-    if( z_entries_pair != d_epr_xsdir_entries_map.end() )
-      z_entries_pair->second->addInfoToParameterList( sublist );
+    std::set<char> atomic_data_table_keys( {'p', 'e'} );
+    
+    LineFilterFunction table_type_key_partial_line_filter_function =
+      std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeys,
+                       atomic_data_table_keys,
+                       std::placeholders::_1 );
+    
+    LineFilterFunction line_filter_function =
+      this->getLineFilterFunction( true, {table_type_key_partial_line_filter_function} );
+  
+    this->processXsdirFile( d_xsdir_file,
+                            line_filter_function,
+                            line_processor_function );
   }
-}
 
-// Export the photonuclear entries
-void Xsdir::exportPhotonuclearEntries(
-				  Teuchos::ParameterList& parameter_list) const
-{
-  for( unsigned i = 0; i < d_photonuclear_xsdir_entries.size(); ++i )
+  // Process nuclear data
   {
-    Teuchos::ParameterList& sublist = parameter_list.sublist(
-			    d_photonuclear_xsdir_entries[i]->getTableAlias() );
+    std::set<char> nuclear_data_table_keys( {'c', 'u'} );
 
-    d_photonuclear_xsdir_entries[i]->addInfoToParameterList( sublist );
+    LineFilterFunction table_type_key_partial_line_filter_function =
+      std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeys,
+                       nuclear_data_table_keys,
+                       std::placeholders::_1 );
+    
+    LineFilterFunction line_filter_function =
+      this->getLineFilterFunction( true, {table_type_key_partial_line_filter_function} );
+  
+    this->processXsdirFile( d_xsdir_file,
+                            line_filter_function,
+                            line_processor_function );
   }
-}
 
-// Export the epr entries
-void Xsdir::exportEPREntries( Teuchos::ParameterList& parameter_list ) const
-{
-  for( unsigned i = 0; i < d_epr_xsdir_entries.size(); ++i )
+  // Process the thermal nuclear data - the corresponding nuclide must
+  // already exist in the database
   {
-    Teuchos::ParameterList& sublist = parameter_list.sublist(
-				     d_epr_xsdir_entries[i]->getTableAlias() );
+    std::set<char> thermal_nuclear_data_table_keys( {'t'} );
 
-    d_epr_xsdir_entries[i]->addInfoToParameterList( sublist );
+    LineFilterFunction table_type_key_partial_line_filter_function =
+      std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeys,
+                       thermal_nuclear_data_table_keys,
+                       std::placeholders::_1 );
+    
+    LineFilterFunction line_filter_function =
+      this->getLineFilterFunction( true, {table_type_key_partial_line_filter_function} );
+  
+    this->processXsdirFile( d_xsdir_file,
+                            line_filter_function,
+                            line_processor_function );
   }
 }
 

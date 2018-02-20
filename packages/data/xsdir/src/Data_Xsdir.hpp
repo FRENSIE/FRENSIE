@@ -22,7 +22,7 @@
 #include "Data_PhotonuclearDataProperties.hpp"
 #include "Data_PhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
-#include "Data_ScatteringCenterPropertiesCache.hpp"
+#include "Data_ScatteringCenterPropertiesDatabase.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace Data{
@@ -32,6 +32,12 @@ class Xsdir
 {
 
 public:
+
+  //! The energy unit
+  typedef NuclearDataProperties::EnergyUnit EnergyUnit;
+
+  //! The energy quantity
+  typedef NuclearDataProperties::Energy Energy;
 
   //! Constructor
   Xsdir( const boost::filesystem::path& xsdir_file_name,
@@ -51,10 +57,6 @@ public:
   //! Check if the table is stored in text format
   static bool isTableHumanReadable( const std::vector<std::string>& entry_tokens );
 
-  //! Check if the table type is supported
-  static bool isTableTypeSupported(
-                                const std::vector<std::string>& entry_tokens );
-
   //! Extract the table name from the entry tokens
   static const std::string& extractTableNameFromEntryTokens(
                                 const std::vector<std::string>& entry_tokens );
@@ -63,6 +65,9 @@ public:
   static std::tuple<std::string,unsigned,char>
   extractTableNameComponentsFromEntryTokens(
                                 const std::vector<std::string>& entry_tokens );
+
+  //! Check if the table type is supported
+  static bool isTableTypeSupported( const std::tuple<std::string,unsigned,char>& table_name_components );
 
   //! Extract the atomic weight ratio from the entry tokens
   static double extractAtomicWeightRatioFromEntryTokens(
@@ -77,7 +82,7 @@ public:
                                 const std::vector<std::string>& entry_tokens );
 
   //! Extract the table evaluation temperature from the entry tokens
-  static double extractEvaluationTemperatureFromEntryTokens(
+  static Energy extractEvaluationTemperatureFromEntryTokens(
                                 const std::vector<std::string>& entry_tokens );
 
   //! Show all entries with table data
@@ -120,26 +125,22 @@ public:
   void showEntriesWithZAIDAndTableEvaluationTemp(
                                 std::ostream& os,
                                 const Data::ZAID& zaid,
-                                const double evalution_temp_in_mev,
+                                const Energy evalution_temp,
                                 const bool human_readable_only = false ) const;
 
   //! Export the xsdir data to a properties cache
-  void exportData( ScatteringCenterPropertiesCache& cache,
-                   const std::map<std::string,std::string>& sab_table_aliases =
-                   std::map<std::string,std::string>() ) const;
+  void exportData( ScatteringCenterPropertiesCache& database ) const;
 
 private:
 
-  //! Check (quickly) if the table is stored in text format
+  // The line filter function type
+  typedef std::function<bool(const std::vector<std::string>&)> LineFilterFunction;
+
+  // The line processor function type
+  typedef std::function<void(const std::vector<std::string>&, const std::string& ) LineProcessorFunction;
+
+  // Check (quickly) if the table is stored in text format
   static bool isTableHumanReadableQuick( const std::vector<std::string>& entry_tokens );
-
-  // Check (quickly) if the table type is supported 
-  static bool isTableTypeSupportedQuick(
-                                const std::vector<std::string>& entry_tokens );
-
-  // Check if the table type is supported 
-  static bool isTableTypeSupportedImpl(
-               const std::tuple<std::string,unsigned,char>& version_type_key );
 
   // Extract (quickly) the table name from the entry tokens
   static const std::string& quickExtractTableNameFromEntryTokens(
@@ -163,7 +164,7 @@ private:
                                 const std::vector<std::string>& entry_tokens );
 
   // Extract the table evaluation temperature from the entry tokens
-  static double quickExtractEvaluationTemperatureFromEntryTokens(
+  static Energy quickExtractEvaluationTemperatureFromEntryTokens(
                                 const std::vector<std::string>& entry_tokens );
 
   // Extract the zaids associated with an S(A,B) table
@@ -173,10 +174,7 @@ private:
                                     const size_t file_start_line,
                                     std::set<ZAID>& table_zaids );
 
-  // Process the xsdir file
-  typedef std::function<bool(const std::vector<std::string>&)> LineFilterFunction;
-  typedef std::function<void(const std::vector<std::string>&, const std::string& ) LineProcessorFunction;
-  
+  // Process the xsdir file  
   static void processXsdirFile( const boost::filesystem::path& xsdir_file,
                                 const LineFilterFunction& line_filter,
                                 const LineProcessorFunction& line_processor );
@@ -191,6 +189,7 @@ private:
 
   // Parse the entry tokens and create the data properties object
   void parseEntryTokensAndCreateDataPropertiesObject(
+                                  ScatteringCenterPropertiesDatabase& database,
                                   const std::vector<std::string>& entry_tokens,
                                   const std::string& );
 
@@ -207,23 +206,29 @@ private:
 
   // Filter line entries by zaid, table type key, table version and eval. temp
   static bool filterEntryLineByZAIDAndTableTypeKey(
-                                const Data::ZAID& zaid,
-                                const char key,
-                                const double evaluation_temp_in_mev,
-                                const boost::filesystem::path& xsdir_path,
-                                const std::vector<std::string>& entry_tokens );
+                               const Data::ZAID& zaid,
+                               const char key,
+                               const Energy evaluation_temp,
+                               const boost::filesystem::path& xsdir_path,
+                               const std::vector<std::string>& entry_tokens );
+
+  // Filter line entries by table type keys
+  static bool filterEntryLineByTableTypeKeys( const std::set<char>& keys,
+                                              const std::vector<std::string>& entry_tokens );
 
   // Create the continuous energy neutron table properties
   void createContinuousEnergyNeutronTableProperties(
-                                const double atomic_weight_ratio,
-                                const double evaluation_temp_in_mev,
-                                const boost::filesystem::path& table_file_path,
-                                const size_t file_start_line,
-                                const unsigned table_major_version,
-                                const ACETableName& table_name );
+                               ScatteringCenterPropertiesDatabase& database,
+                               const double atomic_weight_ratio,
+                               const Energy evaluation_temp,
+                               const boost::filesystem::path& table_file_path,
+                               const size_t file_start_line,
+                               const unsigned table_major_version,
+                               const ACETableName& table_name );
 
   // Create the S(A,B) table properties
-  void createSABTableProperties( const double evaluation_temp_in_mev,
+  void createSABTableProperties( ScatteringCenterPropertiesDatabase& database,
+                                 const Energy evaluation_temp,
                                  const boost::filesystem::path& table_file_path,
                                  const size_t file_start_line,
                                  const unsigned table_major_version,
@@ -231,6 +236,7 @@ private:
 
   // Create the photonuclear table properties
   void createPhotonuclearTableProperties(
+                                ScatteringCenterPropertiesDatabase& database,
                                 const double atomic_weight_ratio,
                                 const boost::filesystem::path& table_file_path,
                                 const size_t file_start_line,
@@ -239,82 +245,36 @@ private:
 
   // Create the photoatomic and electroatomic table properties
   void createAtomicTableProperties(
-                                const boost::filesystem::path& table_file_path,
-                                const size_t file_start_line,
-                                const ACETableName& table_name );
+           ScatteringCenterPropertiesDatabase& database,
+           const double atomic_weight_ratio,
+           const boost::filesystem::path& table_file_path,
+           const size_t file_start_line,
+           const std::tuple<std::string,unsigned,char> table_name_components );
+
+  // Add photoatomic properties to the database
+  static void addPhotoatomicPropertiesToDatabase(
+                         ScatteringCenterPropertiesDatabase& database,
+                         const double atomic_weight_ratio,
+                         const std::shared_ptr<const PhotoatomicDataPropeties>&
+                         photoatomic_properties );
+
+  // Add electroatomic properties to the database
+  static void addElectroatomicPropertiesToDatabase(
+                       ScatteringCenterPropertiesDatabase& database,
+                       const double atomic_weight_ratio,
+                       const std::shared_ptr<const ElectroatomicDataPropeties>&
+                       electroatomic_properties );
 
   // Construct the complete path to a table file
   static boost::filesystem::path constructCompleteTableFilePath(
                      const boost::filesystem::path& xsdir_path,
                      const boost::filesystem::path& relative_table_file_path );
 
-  // Export the S(alpha,beta) properties
-  void exportSAlphaBetaProperties( ScatteringCenterPropertiesCache& cache,
-                                   const std::map<std::string,std::string>& sab_table_aliases ) const;
-
-  // Export the S(alpha,beta) properties
-  void exportSAlphaBetaProperties(
-       ScatteringCenterPropertiesCache& cache,
-       unsigned sab_table_version,
-       const ZAID& zaid,
-       const std::vector<std::shared_ptr<const ThermalNuclearDataProperties> >&
-       sab_properties,
-       const std::map<std::string,std::string>& sab_table_aliases ) const;
-
-  // Export the continuous energy neutron properties
-  void exportCENeutronProperties( ScatteringCenterPropertiesCache& cache ) const;
-
-  // Export the photonuclear properties
-  void exportPhotonuclearProperties(
-				ScatteringCenterPropertiesCache& cache ) const;
-
-  //! Export the epr properties
-  void exportEPRProperties( ScatteringCenterPropertiesCache& cache ) const;
-
   // The xsdir file name with path
   boost::filesystem::path d_xsdir_path;
 
   // Verbose output (through logging)
   bool d_verbose;
-
-  // The continuous energy neutron data properties
-  // Note: for each ZAID there can be multiple temperature evaluations
-  typedef std::map<ZAID,std::vector<std::shared_ptr<const NuclearDataProperties> > >
-  ZaidNuclearDataPropertiesMap;
-  
-  // The key is the table major version number (e.g. 1001.70c -> 7 )
-  typedef std::map<unsigned,ZaidNuclearDataPropertiesMap>
-  VersionZaidNuclearDataPropetiesMap;
-
-  VersionZaidNuclearDataPropetiesMap d_ce_neutron_data_properties_map;
-
-  // The S(alpha,beta) properties
-  // Note: or each ZAID there can be multiple temperature evaluations
-  typedef std::map<ZAID,std::vector<std::shared_ptr<const ThermalNuclearDataProperties> > >
-  ZaidThermalNuclearDataPropertiesMap;
-
-  // The key is the table major version number (e.g. benz.10t -> 1 )
-  typedef std::map<unsigned,ZaidThermalNuclearDataPropertiesMap>
-  VersionZaidThermalNuclearDataPropertiesMap;
-  
-  VersionZaidThermalNuclearDataPropertiesMap d_sab_data_properties_map;
-
-  // The photonuclear xsdir properties map 
-  typedef std::map<ZAID,std::shared_ptr<const PhotonuclearDataProperties> >
-  ZaidPhotonuclearDataPropertiesMap;
-
-  // The key is the table major version number (e.g. 1002.24u -> 2 )
-  typedef std::map<unsigned,ZaidPhotonuclearDataPropertiesMap>
-  VersionZaidPhotonuclearDataPropertiesMap;
-
-  VersionZaidPhotonuclearDataPropertiesMap d_photonuclear_data_properties_map;
-
-  // The electron-photon-relaxation xsdir properties map - for quick lookup
-  typedef std::pair<std::shared_ptr<const PhotoatomicDataProperties>,std::shared_ptr<const ElectroatomicDataProperties> > EPRDataPropertiesPair;
-  
-  typedef std::map<AtomType,EPRDataPropertiesPair> AtomEPRDataPropertiesMap;
-
-  AtomEPRDataPropertiesMap d_epr_data_properties_map;
 };
 
 } // end Data namespace
