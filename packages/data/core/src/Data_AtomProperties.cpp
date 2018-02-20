@@ -55,6 +55,12 @@ Data::ZAID AtomProperties::zaid() const
   return d_zaid;
 }
 
+// Set the zaid
+void AtomProperties::setZAID( const Data::ZAID zaid )
+{
+  d_zaid = zaid;
+}
+
 // Get the atomic weight
 auto AtomProperties::atomicWeight() const -> AtomicWeight
 {
@@ -65,6 +71,16 @@ auto AtomProperties::atomicWeight() const -> AtomicWeight
 double AtomProperties::atomicWeightRatio() const
 {
   return d_atomic_weight_ratio;
+}
+
+// Set the atomic weight ratio
+void AtomProperties::setAtomicWeightRatio( const double atomic_weight_ratio )
+{
+  TEST_FOR_EXCEPTION( atomic_weight_ratio <= 0.0,
+                      std::runtime_error,
+                      "The atomic weight ratio cannot be zero or negative!" );
+  
+  d_atomic_weight_ratio = atomic_weight_ratio;
 }
 
 // Check if there is photoatomic data with the desired format
@@ -360,6 +376,35 @@ void AtomProperties::cloneStoredAtomProperties(
   AtomProperties::cloneProperties(
                    original_properties.d_adjoint_electroatomic_data_properties,
                    new_properties.d_adjoint_electroatomic_data_properties );
+}
+
+// Place the object in an output stream
+void AtomProperties::toStream( std::ostream& os ) const
+{
+  os << d_zaid << " Properties:\n"
+     << "  Atomic Weight: " << this->atomicWeight() << "\n";
+
+  // Print the photoatomic properties
+  this->printProperties( d_photoatomic_data_properties,
+                         "Photoatomic Data",
+                         os );
+
+  // Print the adjoint photoatomic properties
+  this->printProperties( d_adjoint_photoatomic_data_properties,
+                         "Adjoint Photoatomic Data",
+                         os );
+
+  // Print the electroatomic properties
+  this->printProperties( d_electroatomic_data_properties,
+                         "Electroatomic Data",
+                         os );
+
+  // Print the adjoint electroatomic properties
+  this->printProperties( d_adjoint_electroatomic_data_properties,
+                         "Adjoint Electroatomic Data",
+                         os );
+
+  os.flush();
 }
 
 // Save the properties to an archive

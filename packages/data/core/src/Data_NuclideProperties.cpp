@@ -23,9 +23,14 @@ NuclideProperties::NuclideProperties( const Data::ZAID zaid,
 { /* ... */ }
 
 // Partial copy constructor
-NuclideProperties::NuclideProperties( const AtomProperties& atom_properties )
+NuclideProperties::NuclideProperties( const AtomProperties& atom_properties,
+                                      const Data::ZAID zaid,
+                                      const double atomic_weight_ratio )
   : AtomProperties( atom_properties )
-{ /* ... */ }
+{
+  this->setZAID( zaid );
+  this->setAtomicWeightRatio( atomic_weight_ratio );
+}
 
 // Copy constructor
 NuclideProperties::NuclideProperties( const NuclideProperties& other )
@@ -804,6 +809,47 @@ void NuclideProperties::cloneStoredNuclideProperties(
   AtomProperties::cloneProperties(
                     original_properties.d_adjoint_photonuclear_data_properties,
                     new_properties.d_adjoint_photonuclear_data_properties );
+}
+
+// Place the object in an output stream
+void NuclideProperties::toStream( std::ostream& os ) const
+{
+  // Print the atom properties
+  AtomProperties::toStream( os );
+
+  // Print the nuclear properties
+  this->printNuclearProperties( d_nuclear_data_properties,
+                                "Nuclear Data",
+                                false,
+                                os );
+
+  // Print the thermal nuclear properties
+  this->printThermalNuclearProperties( d_thermal_nuclear_data_properties,
+                                       "Thermal Nuclear Data",
+                                       os );
+
+  // Print the adjoint nuclear properties
+  this->printNuclearProperties( d_adjoint_nuclear_data_properties,
+                                "Adjoint Nuclear Data",
+                                false,
+                                os );
+
+  // Print the adjoint thermal nuclear properties
+  this->printThermalNuclearProperties( d_thermal_nuclear_data_properties,
+                                       "Adjoint Thermal Nuclear Data",
+                                       os );
+
+  // Print the photonuclear properties
+  this->printProperties( d_photonuclear_data_properties,
+                         "Photonuclear Data",
+                         os );
+
+  // Print the adjoint photonuclear properties
+  this->printProperties( d_adjoint_photonuclear_data_properties,
+                         "Adjoint Photonuclear Data",
+                         os );
+
+  os.flush();
 }
 
 // Save the properties to an archive

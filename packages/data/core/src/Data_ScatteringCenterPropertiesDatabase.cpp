@@ -56,93 +56,232 @@ const char* ScatteringCenterPropertiesDatabase::getArchiveName() const
   return s_archive_name.c_str();
 }
 
+// Check if properties with the name of interest exist
+bool ScatteringCenterPropertiesDatabase::doPropertiesExist( const AtomType atom );
+{
+  return this->doPropertiesExist( Data::ZAID(atom) );
+}
+
+// Check if properties with zaid exist
+bool ScatteringCenterPropertiesDatabase::doPropertiesExist(
+                                                        const Data::ZAID zaid )
+{
+  if( d_properties.find( zaid ) != d_properties.end() )
+    return true;
+  else
+    return false;
+}
+
 // Add scattering center properties to the database
 void ScatteringCenterPropertiesDatabase::addProperties(
                                              const AtomProperties& properties )
 {
-  if( d_properties.find( properties.name() ) != d_properties.end() )
+  if( d_properties.find( properties.zaid() ) != d_properties.end() )
   {
     FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesDatabase",
-                                "Properties with name \""
-                                << properties.name() << "\" already exist! "
+                                "Properties with zaid "
+                                << properties.zaid() << " already exist! "
                                 "The existing properties will be "
-                                "overwritten." )
+                                "overwritten." );
   }
 
-  if( d_aliases.find( properties.name() ) != d_aliases.end() )
-  {
-    FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesDatabase",
-                                "An alias with the name of the new properties "
-                                "(" << properties.name() << ") already exists!"
-                                " The alias will be removed." );
-    
-    d_aliases.erase( properties.name() );
-  }
-  
   d_properties[properties.name()].reset( properties.clone() );
 }
 
-// Remove scattering center properties from the database
-void ScatteringCenterPropertiesDatabase::removeProperties( const std::string& name )
+// Return the desired properties
+/*! \details If the atom properties do not exist an exception will be
+ * thrown.
+ */
+const AtomProperties& ScatteringCenterPropertiesDatabase::getAtomProperties(
+                                                    const AtomType atom ) const
 {
-  if( d_properties.find( name ) != d_properties.end() )
-  {
-    d_properties.erase( name );
-
-    // Check if any aliases were made for these properties and remove them
-    ScatteringCenterAliasNameMap::iterator alias_it = d_aliases.begin();
-
-    while( alias_it != d_aliases.end() )
-    {
-      if( alias_it->second == name )
-        alias_it = d_aliases.erase( alias_it );
-      else
-        ++alias_it;
-    }
-  }
-}
-
-// Check if properties with the name of interest exist
-bool ScatteringCenterPropertiesDatabase::doPropertiesExist( const std::string& name_or_alias ) const
-{
-  if( d_properties.find( name_or_alias ) != d_properties.end() )
-    return true;
-  else
-  {
-    ScatteringCenterAliasNameMap::const_iterator alias_it =
-      d_aliases.find( name_or_alias );
-    
-    if( alias_it != d_aliases.end() )
-      return this->doPropertiesExist( alias_it->second );
-    else
-      return false;
-  }
+  return this->getAtomProperties( Data::ZAID(atom) );
 }
 
 // Return the desired properties
-const ScatteringCenterProperties&
-ScatteringCenterPropertiesDatabase::getProperties(
-                                       const std::string& name_or_alias ) const
+/*! If the atom properties do not exist an exception will be
+ * thrown.
+ */
+AtomProperties& ScatteringCenterPropertiesDatabase::getAtomProperties(
+                                                          const AtomType atom )
 {
-  ScatteringCenterNamePropertiesMap::const_iterator properties_it = 
-    d_properties.find( name_or_alias );
+  return this->getAtomProperties( Data::ZAID(atom) );
+}
+
+// Return the desired properties
+/*! If the atom properties do not exist an exception will be
+ * thrown.
+ */
+const AtomProperties& ScatteringCenterPropertiesDatabase::getAtomProperties(
+                                                  const Data::ZAID zaid ) const
+{
+  ScatteringCenterZaidPropertiesMap::const_iterator properties_it = 
+    d_properties.find( zaid );
   
   if( properties_it != d_properties.end() )
     return *properties_it->second;
   else
   {
-    ScatteringCenterAliasNameMap::const_iterator alias_it =
-      d_aliases.find( name_or_alias );
-    
-    if( alias_it != d_aliases.end() )
-      return this->getProperties( alias_it->second );
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "There are no scattering center properties associated "
-                       "with \"" << name_or_alias << "\" in the database!" );
+    THROW_EXCEPTION( std::runtime_error,
+                     "There are no atom properties associated "
+                     "with zaid " << zaid << " in the database!" );
     }
   }
+}
+
+// Return the desired properties
+/*! If the atom properties do not exist an exception will be
+ * thrown.
+ */
+AtomProperties& ScatteringCenterPropertiesDatabase::getAtomProperties(
+                                                        const Data::ZAID zaid )
+{
+  ScatteringCenterZaidPropertiesMap::iterator properties_it = 
+    d_properties.find( Data::ZAID(atom) );
+
+  if( properties_it != d_properties.end() )
+    return *properties_it->second;
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "There are no atom properties associated "
+                     "with zaid " << zaid << " in the database!" );
+  }
+}
+
+// Initialize the atom properties
+/*! \details If the atom properties already exist, the existing properties
+ * will be returned.
+ */
+AtomProperties& ScatteringCenterPropertiesDatabase::initializeAtomProperties(
+                                             const AtomType atom,
+                                             const double atomic_weight_ratio )
+{
+  return this->initializeAtomProperties( Data::ZAID(atom),
+                                         atomic_weight_ratio );
+}
+
+// Initialize the atom properties
+/*! \details If the atom properties already exist, the existing properties
+ * will be returned.
+ */
+AtomProperties& ScatteringCenterPropertiesDatabase::initializeAtomProperties(
+                             const AtomType atom,
+                             const AtomProperties::AtomicWeight atomic_weight )
+{
+  return this->initializeAtomProperties( Data::ZAID(atom),
+                                         atomic_weight );
+}
+
+// Initialize the atom properties
+/*! \details If the atom properties already exist, the existing properties
+ * will be returned.
+ */
+AtomProperties& ScatteringCenterPropertiesDatabase::initializeAtomProperties(
+                                             const Data::ZAID zaid,
+                                             const double atomic_weight_ratio )
+{
+  return this->initializeAtomPropertiesImpl( zaid, atomic_weight_ratio );
+}
+
+// Initialize the atom properties
+/*! \details If the atom properties already exist, the existing properties
+ * will be returned.
+ */
+AtomProperties& ScatteringCenterPropertiesDatabase::initializeAtomProperties(
+                             const Data::ZAID zaid,
+                             const AtomProperties::AtomicWeight atomic_weight )
+{
+  return this->initializeAtomPropertiesImpl( zaid, atomic_weight );
+}
+
+// Return the desired properties
+/*! If the nuclide properties do not exist or the zaid corresponds to 
+ * atom properties and not nuclide properties an exception will be
+ * thrown.
+ */
+const NuclideProperties& ScatteringCenterPropertiesDatabase::getNuclideProperties(
+                                                  const Data::ZAID zaid ) const
+{
+  const AtomProperties& properties = this->getAtomProperties( zaid );
+
+  if( properties.isNuclide() )
+    return dynamic_cast<const NuclideProperties&>( properties );
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "There properties associated with zaid " << zaid <<
+                     " are not nuclide properties!" );
+  }
+}
+
+// Return the desired properties
+/*! If the nuclide properties do not exist or the zaid corresponds to 
+ * atom properties and not nuclide properties an exception will be
+ * thrown.
+ */
+NuclideProperties& ScatteringCenterPropertiesDatabase::getNuclideProperties(
+                                                        const Data::ZAID zaid )
+{
+  AtomProperties& properties = this->getAtomProperties( zaid );
+
+  if( properties.isNuclide() )
+    return dynamic_cast<NuclideProperties&>( properties );
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "There properties associated with zaid " << zaid <<
+                     " are not nuclide properties!" );
+  }
+}
+
+// Initialize the nuclide properties
+/*! \details If the nuclide properties already exist, the existing properties
+ * will be returned. When initializing new nuclide properties atom properties
+ * associated with the nuclide will be copied. To take advantage of this 
+ * feature, atom properties should be set before setting any nuclide
+ * properties.
+ */
+NuclideProperties& ScatteringCenterPropertiesDatabase::initializeNuclideProperties(
+                                             const Data::ZAID zaid,
+                                             const double atomic_weight_ratio )
+{
+  if( d_properties.find( zaid ) != d_properties.end() )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesDatabase",
+                                "Properties with zaid "
+                                << zaid << " already exist! "
+                                "The existing properties will be "
+                                "returned." );
+
+    return this->getNuclideProperties( zaid );
+  }
+  else
+  {
+    std::unique_ptr<AtomProperties>& properties = d_properties[zaid];
+
+    // Check if the atom properties have been set
+    ScatteringCenterPropertiesMap::iterator properties_it =
+      d_properties.find( Data::ZAID(zaid.atom()) );
+    
+    if( properties_it != d_properties.end() )
+    {
+      properties.reset( new NuclideProperties( *properties_it->second,
+                                               zaid,
+                                               atomic_weight_ratio ) );
+    }
+    else
+    {
+      properties.reset( new NuclideProperties( zaid, atomic_weight_ratio ) );
+  }
+}
+
+// Remove scattering center properties from the database
+void ScatteringCenterPropertiesDatabase::removeProperties(
+                                                        const Data::ZAID zaid )
+{
+  if( d_properties.find( zaid ) != d_properties.end() )
+    d_properties.erase( zaid );
 }
 
 // Return the number of stored properties
@@ -152,12 +291,12 @@ size_t ScatteringCenterPropertiesDatabase::getNumberOfProperties() const
 }
 
 // List the properties names
-void ScatteringCenterPropertiesDatabase::listPropertiesNames(
+void ScatteringCenterPropertiesDatabase::listPropertiesZaids(
                                                        std::ostream& os ) const
 {
-  os << "Scattering Centers: \n";
+  os << "Scattering Centers:\n";
   
-  ScatteringCenterNamePropertiesMap::const_iterator properties_it =
+  ScatteringCenterZaidPropertiesMap::const_iterator properties_it =
     d_properties.begin();
 
   while( properties_it != d_properties.end() )
@@ -170,71 +309,50 @@ void ScatteringCenterPropertiesDatabase::listPropertiesNames(
   os.flush();
 }
 
-// Add a scattering center properties alias
-void ScatteringCenterPropertiesDatabase::addPropertiesAlias(
-                                           const std::string& alias,
-                                           const std::string& properties_name )
+// Log the properties zaids
+void ScatteringCenterPropertiesDatabase::logPropertiesZaids() const
 {
-  TEST_FOR_EXCEPTION( d_properties.find( alias ) != d_properties.end(),
-                      std::runtime_error,
-                      "Cannot add alias " << alias << " to the database because "
-                      "a scattering center with that name already exists!" );
+  std::ostringstream oss;
+  oss << "\n";
 
-  TEST_FOR_EXCEPTION( alias == properties_name,
-                      std::runtime_error,
-                      "The alias must be different from the properties "
-                      "name!" );
+  this->listPropertiesZaids( oss );
 
-  TEST_FOR_EXCEPTION( d_properties.find( properties_name ) == d_properties.end(),
-                      std::runtime_error,
-                      "Cannot add alias " << alias << " to the database because "
-                      "the scattering center name " << properties_name <<
-                      " does not exist!" );
-
-  d_aliases[alias] = properties_name;
+  FRENSIE_LOG_TAGGED_NOTIFICATION( "ScatteringCenterPropertiesDatabase",
+                                   oss.str() );
 }
 
-// Remove a scattering center properties alias
-void ScatteringCenterPropertiesDatabase::removePropertiesAlias( const std::string& alias )
+// List the properties zaids associated with the atom type
+void ScatteringCenterPropertiesDatabase::listPropertiesZaids(
+                                                       const AtomType atom,
+                                                       std::ostream& os ) const
 {
-  d_aliases.erase( alias );
-}
+  ScatteringCenterZaidPropertiesMap::const_iterator properties_it =
+    d_properties.begin();
 
-// Check if an alias exists
-bool ScatteringCenterPropertiesDatabase::doesAliasExist( const std::string& alias ) const
-{
-  return d_aliases.find( alias ) != d_aliases.end();
-}
+  os << atom << " Scattering Centers:\n";
 
-// Return the number of aliases
-size_t ScatteringCenterPropertiesDatabase::getNumberOfAliases() const
-{
-  return d_aliases.size();
-}
-
-// List the aliases
-void ScatteringCenterPropertiesDatabase::listAliases( std::ostream& os ) const
-{
-  os << "Scattering Center Aliases: \n";
-
-  ScatteringCenterAliasNameMap::const_iterator alias_it =
-    d_aliases.begin();
-
-  while( alias_it != d_aliases.end() )
+  while( properties_it != d_properties.end() )
   {
-    os << "  " << alias_it->first << " -> " << alias_it->second << "\n";
-
-    ++alias_it;
+    if( properties_it->first.atom() == atom )
+      os << "  " << properties_it->first << "\n"; 
+    
+    ++properties_it;
   }
 
   os.flush();
 }
 
-// Clear the database
-void ScatteringCenterPropertiesDatabase::clear()
+// Log the properties zaids associated with the atom type
+void ScatteringCenterPropertiesDatabase::logPropertiesZaids(
+                                                    const AtomType atom ) const
 {
-  d_properties.clear();
-  d_aliases.clear();
+  std::ostringstream oss;
+  oss << "\n";
+
+  this->listPropertiesZaids( atom, oss );
+
+  FRENSIE_LOG_TAGGED_NOTIFICATION( "ScatteringCenterPropertiesDatabase",
+                                   oss.str() );
 }
 
 // Save the model to an archive

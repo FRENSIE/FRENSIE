@@ -16,11 +16,12 @@
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_AdjointElectroatomicDataProperties.hpp"
 #include "Utility_Set.hpp"
+#include "Utility_OStreamableObject.hpp"
 
 namespace Data{
 
 //! The atom propreties base class
-class AtomProperties
+class AtomProperties : public OStreamableObject
 {
 
 public:
@@ -176,6 +177,9 @@ public:
   //! Deep clone the properties
   virtual AtomProperties* deepClone() const;
 
+  //! Place the object in an output stream
+  virtual void toStream( std::ostream& os ) const override;
+
 protected:
 
   //! The properties map type helper class
@@ -194,6 +198,12 @@ protected:
 
   //! Copy constructor
   AtomProperties( const AtomProperties& other );
+
+  //! Set the zaid
+  void setZAID( const Data::ZAID zaid );
+
+  //! Set the atomic weight ratio
+  void setAtomicWeightRatio( const double atomic_weight_ratio );
 
   //! Check if there is data available with the desired format
   template<typename PropertiesMap>
@@ -243,10 +253,16 @@ protected:
                                      const AtomProperties& original_properties,
                                      AtomProperties& new_properties );
 
-  // Clone properties
+  //! Clone properties
   template<typename PropertiesMap>
   static void cloneProperties( const PropertiesMap& original_properties,
                                PropertiesMap& new_properties );
+
+  //! Print properties
+  template<typename PropertiesMap>
+  static void printProperties( const PropertiesMap& properties,
+                               const std::string& type_name,
+                               std::ostream& os );
 
 private:
 

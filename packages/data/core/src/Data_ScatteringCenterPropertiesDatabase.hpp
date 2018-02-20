@@ -58,8 +58,8 @@ public:
   //! Add atom properties to the database
   void addProperties( const AtomProperties& properties );
 
-  //! Add nuclide properties to the database
-  void addProperties( const NuclideProperties& properties );
+  //! Remove properties from the database
+  void removeProperties( const Data::ZAID zaid );
 
   //! Return the desired properties
   const AtomProperties& getAtomProperties( const AtomType atom ) const;
@@ -73,11 +73,31 @@ public:
   //! Return the desired properties
   AtomProperties& getAtomProperties( const Data::ZAID zaid );
 
-  //! Return the desired properties
+  //! Initialize the atom properties
+  AtomProperties& initializeAtomProperties( const AtomType atom,
+                                            const double atomic_weight_ratio );
+
+  //! Initialize the atom properties
+  AtomProperties& initializeAtomProperties( const AtomType atom,
+                                            const AtomProperties::AtomicWeight atomic_weight );
+
+  //! Initialize the atom properties
+  AtomProperties& initializeAtomProperties( const Data::ZAID zaid,
+                                            const double atomic_weight_ratio );
+
+  //! Initialize the atom properties
+  AtomProperties& initializeAtomProperties( const Data::ZAID zaid,
+                                            const AtomProperties::AtomicWeight atomic_weight );
+
+  //! Return the nuclide properties
   const NuclideProperties& getNuclideProperties( const Data::ZAID zaid ) const;
 
-  //! Return the desired properties
+  //! Return the nuclide properties
   NuclideProperties& getNuclideProperties( const Data::ZAID zaid );
+
+  //! Initialize the nuclide properties
+  NuclideProperties& initializeNuclideProperties( const Data::ZAID zaid,
+                                                  const double atomic_weight_ratio );
 
   //! Return the number of stored properties
   size_t getNumberOfProperties() const;
@@ -88,6 +108,13 @@ public:
   //! Log the properties zaids
   void logPropertiesZaids() const;
 
+  //! List the properties zaids associated with the atom type
+  void listPropertiesZaids( const AtomType atom,
+                            std::ostream& os = std::cout ) const;
+
+  //! Log the properties zaids associated with the atom type
+  void logPropertiesZaids( const AtomType atom ) const;
+
 private:
 
   // Create an input archive
@@ -95,6 +122,11 @@ private:
              const boost::filesystem::path& archive_name_with_path,
              std::unique_ptr<std::istream>& iarchive_stream,
              std::unique_ptr<boost::archive::polymorphic_iarchive>& iarchive );
+
+  // Initialize the atom properties
+  template<typename WeightDataType>
+  AtomProperties& initializeAtomPropertiesImpl( const Data::ZAID zaid,
+                                                const WeightDataType weight_data );
 
   // Save the model to an archive
   template<typename Archive>
@@ -113,15 +145,39 @@ private:
   static const std::string s_archive_name;
 
   // The scattering center properties
-  typedef std::map<std::string,std::unique_ptr<ScatteringCenterProperties> > ScatteringCenterNamePropertiesMap;
+  typedef std::map<Data::ZAID,std::unique_ptr<AtomProperties> > ScatteringCenterZaidPropertiesMap;
   
-   ScatteringCenterNamePropertiesMap d_properties;
-
-  // The scattering center properties aliases
-  typedef std::map<std::string,std::string> ScatteringCenterAliasNameMap;
-
-  ScatteringCenterAliasNameMap d_aliases;
+   ScatteringCenterZaidPropertiesMap d_properties;
 };
+
+// Initialize the atom properties
+template<typename WeightDataType>
+inline AtomProperties& ScatteringCenterProperties::initializeAtomPropertiesImpl(
+                                             const Data::ZAID zaid,
+                                             const WeightDataType weight_data )
+{
+  ScatteringCenterNamePropertiesMap::iterator properties_it = 
+    d_properties.find( zaid );
+  
+  if( properties_it != d_properties.end() )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "ScatteringCenterPropertiesDatabase",
+                                "Properties with zaid "
+                                << zaid << " already exist! "
+                                "The existing properties will be "
+                                "returned." );
+    
+    return *properties_it->second;
+  }
+  else
+  {
+    std::unique_ptr<AtomProperties>& properties = d_properties[zaid];
+    
+    properties.reset( new AtomProperties( zaid, weight_data ) );
+
+    return *properties;
+  }
+}
   
 } // end Data namespace
 

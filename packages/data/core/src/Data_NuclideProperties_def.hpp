@@ -648,6 +648,74 @@ void NuclideProperties::cloneThermalNuclearProperties(
   }
 }
 
+// Print nuclear properties
+template<typename PropertiesMap>
+void NuclideProperties::printNuclearProperties(
+                                               const PropertiesMap& properties,
+                                               const std::string& type_name,
+                                               const bool extra_indent,
+                                               std::ostream& os )
+{
+  std::string indent( "  " );
+
+  if( extra_indent )
+    indent += "  ";
+
+  os << indent << type_name << ":\n";
+
+  indent += "  ";
+
+  typename PropertiesMap::const_iterator file_type_it = properties.begin();
+
+  while( file_type_it != properties.end() )
+  {
+    typename PropertiesMap::mapped_type::const_iterator version_it =
+      file_type_it->second.begin();
+    
+    while( version_it != file_type_it->second.end() )
+    {
+      typename PropertiesMap::mapped_type::mapped_type::const_iterator
+        temp_grid_it = version_it->second.begin();
+
+      while( temp_grid_it != version_it->second.end() )
+      {
+        os << indent << file_type_it->first << " version " << version_it->first
+           << " @ " << Utility::get<0>( *temp_grid_it )
+           << " (" << Utility::get<1>( *temp_grid_it )->tableName() << "): "
+           << Utility::get<1>( *temp_grid_it )->filePath().string() << "\n";
+        
+        ++temp_grid_it;
+      }
+      
+      ++version_it;
+    }
+    
+    ++file_type_it;
+  }
+}
+
+// Print thermal nuclear properties
+template<typename PropertiesMap>
+void NuclideProperties::printThermalNuclearProperties(
+                                               const PropertiesMap& properties,
+                                               const std::string& type_name,
+                                               std::ostream& os )
+{
+  os << "  " << type_name << ":\n";
+
+  typename PropertiesMap::const_iterator name_it = properties.begin();
+
+  while( name_it != properties.end() )
+  {
+    NuclideProperties::printNuclearProperties( name_it->second,
+                                               name_it->first,
+                                               true,
+                                               os );
+    
+    ++name_it;
+  }
+}
+
 } // end Data namespace
 
 #endif // end DATA_NUCLIDE_PROPERTIES_DEF_HPP 

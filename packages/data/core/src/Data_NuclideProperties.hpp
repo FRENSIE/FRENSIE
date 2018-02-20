@@ -45,7 +45,9 @@ public:
                      const double atomic_weight_ratio );
 
   //! Partial copy constructor
-  NuclideProperties( const AtomProperties& atom_properties );
+  NuclideProperties( const AtomProperties& atom_properties,
+                     const Data::ZAID zaid = atom_properties.zaid(),
+                     const double atomic_weight_ratio = atom_properties.atomicWeightRatio() );
 
   //! Destructor
   ~NuclideProperties()
@@ -384,6 +386,9 @@ public:
   //! Deep clone the nuclide properties only
   NuclideProperties* partialDeepClone() const;
 
+  //! Place the object in an output stream
+  void toStream( std::ostream& os ) const override;
+
 private:
 
   // Default constructor
@@ -575,6 +580,19 @@ private:
   static void cloneThermalNuclearProperties(
                                       const PropertiesMap& original_properties,
                                       PropertiesMap& new_properties );
+
+  // Print nuclear properties
+  template<typename PropertiesMap>
+  static void printNuclearProperties( const PropertiesMap& properties,
+                                      const std::string& type_name,
+                                      const bool extra_indent,
+                                      std::ostream& os );
+
+  // Print thermal nuclear properties
+  template<typename PropertiesMap>
+  static void printThermalNuclearProperties( const PropertiesMap& properties,
+                                             const std::string& type_name,
+                                             std::ostream& os );
 
   // Save the properties to an archive
   template<typename Archive>

@@ -213,6 +213,38 @@ void AtomProperties::cloneProperties( const PropertiesMap& original_properties,
     ++properties_it;
   }
 }
+
+// print properties
+template<typename PropertiesMap>
+void AtomProperties::printProperties( const PropertiesMap& properties,
+                                      const std::string& type_name,
+                                      std::ostream& os )
+{
+  std::string indent( "  " );
+  
+  os << indent << type_name << ":\n";
+
+  indent += "  ";
+
+  typename PropertiesMap::const_iterator file_type_it = properties.begin();
+
+  while( file_type_it != properties.end() )
+  {
+    typename PropertiesMap::mapped_type::const_iterator version_it =
+      file_type_it->second.begin();
+
+    while( version_it != file_type_it->second.end() )
+    {
+      os << indent << file_type_it->first << " version " << version_it->first
+         << " (" << version_it->second->tableName() << "): "
+         << version_it->second->filePath().string() << "\n";
+      
+      ++version_it;
+    }
+    
+    ++file_type_it;
+  }
+}
   
 } // end Data namespace
 
