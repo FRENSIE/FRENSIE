@@ -49,7 +49,7 @@ public:
   virtual bool isNuclide() const;
 
   //! Get the zaid
-  Data::ZAID zaid() const;
+  const Data::ZAID& zaid() const;
 
   //! Get the atomic weight
   AtomicWeight atomicWeight() const;

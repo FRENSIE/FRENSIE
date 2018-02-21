@@ -66,7 +66,7 @@ bool AtomProperties::isNuclide() const
 }
 
 // Get the zaid
-Data::ZAID AtomProperties::zaid() const
+const Data::ZAID& AtomProperties::zaid() const
 {
   return d_zaid;
 }
