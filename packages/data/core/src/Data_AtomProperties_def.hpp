@@ -32,7 +32,7 @@ inline bool AtomProperties::dataAvailable(
 
   if( properties_it != properties.end() )
   {
-    if( properties_it->find( table_version ) != properties_it->end() )
+    if( properties_it->second.find( table_version ) != properties_it->second.end() )
       return true;
     else
       return false;
@@ -74,9 +74,9 @@ inline std::set<unsigned> AtomProperties::getDataFileVersions(
   if( properties_it != properties.end() )
   {
     typename PropertiesMap::mapped_type::const_iterator version_it =
-      properties_it->begin();
+      properties_it->second.begin();
 
-    while( version_it != properties_it->end() )
+    while( version_it != properties_it->second.end() )
     {
       file_versions.insert( version_it->first );
 
@@ -97,9 +97,9 @@ unsigned AtomProperties::getMaxDataFileVersion(
   typename PropertiesMap::const_iterator properties_it =
     properties.find( file_type );
 
-  if( properies_it != properties.end() )
+  if( properties_it != properties.end() )
   {
-    const typename PropertiesMap::mapped_type::const_iterator version_it =
+    typename PropertiesMap::mapped_type::const_iterator version_it =
       properties_it->second.begin();
 
     unsigned version = 0u;
@@ -136,9 +136,9 @@ inline const Properties& AtomProperties::getProperties(
   if( properties_it != properties.end() )
   {
     typename PropertiesMap::mapped_type::const_iterator version_it =
-      properties_it->find( table_version );
+      properties_it->second.find( table_version );
 
-    if( version_it != properties_it->end() )
+    if( version_it != properties_it->second.end() )
       return *version_it->second;
     else
     {
@@ -165,9 +165,9 @@ inline void AtomProperties::setProperties(
 {
   if( new_properties.get() )
   {
-    if( this->dataAvailable( properties,
-                             new_properties->fileType(),
-                             new_properties->fileVersion()) )
+    if( AtomProperties::dataAvailable( properties,
+                                       new_properties->fileType(),
+                                       new_properties->fileVersion()) )
     {
       FRENSIE_LOG_TAGGED_WARNING( "AtomProperties",
                                   type_name << " data properties with file "
@@ -199,9 +199,9 @@ void AtomProperties::cloneProperties( const PropertiesMap& original_properties,
       new_properties[properties_it->first];
     
     typename PropertiesMap::mapped_type::const_iterator version_it =
-      properties_it->begin();
+      properties_it->second.begin();
 
-    while( version_it != properties_it->end() )
+    while( version_it != properties_it->second.end() )
     {
       new_properties_map[version_it->first] =
         typename PropertiesMap::mapped_type::mapped_type(
@@ -244,6 +244,32 @@ void AtomProperties::printProperties( const PropertiesMap& properties,
     
     ++file_type_it;
   }
+}
+
+// Save the properties to an archive
+template<typename Archive>
+void AtomProperties::save( Archive& ar, const unsigned version ) const
+{
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_zaid );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
+}
+
+// Load the properties from an archive
+template<typename Archive>
+void AtomProperties::load( Archive& ar, const unsigned version )
+{
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_zaid );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
 }
   
 } // end Data namespace

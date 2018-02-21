@@ -6,7 +6,23 @@
 //!
 //---------------------------------------------------------------------------//
 
+
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
+#include "Data_AtomProperties.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -125,7 +141,7 @@ unsigned AtomProperties::getRecommendedDataFileVersion(
       return 4;
     case PhotoatomicDataProperties::ACE_EPR_FILE:
       return 12;
-    case PhotoatomicDataProperties::Native_EPR_File:
+    case PhotoatomicDataProperties::Native_EPR_FILE:
       return 0;
     default:
       return 0;
@@ -190,7 +206,8 @@ unsigned AtomProperties::getRecommendedDataFileVersion(
              const AdjointPhotoatomicDataProperties::FileType file_type ) const
 {
   return this->getMaxDataFileVersion( d_adjoint_photoatomic_data_properties,
-                                      file_type );
+                                      file_type,
+                                      "Adjoint photoatomic" );
 }
 
 // Get the adjoint photoatomic data properties
@@ -255,7 +272,7 @@ unsigned AtomProperties::getRecommendedDataFileVersion(
       return 3;
     case PhotoatomicDataProperties::ACE_EPR_FILE:
       return 12;
-    case PhotoatomicDataProperties::Native_EPR_File:
+    case PhotoatomicDataProperties::Native_EPR_FILE:
       return 0;
     default:
       return 0;
@@ -309,7 +326,7 @@ AtomProperties::getAdjointElectroatomicDataFileTypes() const
 
 // Get the adjoint electroatomic data file versions
 std::set<unsigned> AtomProperties::getDataFileVersions(
-                  const ElectroatomicDataProperties::FileType file_type ) const
+           const AdjointElectroatomicDataProperties::FileType file_type ) const
 {
   return this->getDataFileVersions( d_adjoint_electroatomic_data_properties,
                                     file_type );
@@ -319,8 +336,9 @@ std::set<unsigned> AtomProperties::getDataFileVersions(
 unsigned AtomProperties::getRecommendedDataFileVersion(
            const AdjointElectroatomicDataProperties::FileType file_type ) const
 {
-  return this->getMaxDataFileVersion( d_adjoint_photoatomic_data_properties,
-                                      file_type );
+  return this->getMaxDataFileVersion( d_adjoint_electroatomic_data_properties,
+                                      file_type,
+                                      "Adjoint electroatomic" );
 }
 
 // Get the adjoint electroatomic data properties
@@ -407,31 +425,7 @@ void AtomProperties::toStream( std::ostream& os ) const
   os.flush();
 }
 
-// Save the properties to an archive
-template<typename Archive>
-void AtomProperties::save( Archive& ar, const unsigned version ) const
-{
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaid );
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
-  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
-}
-
-// Load the properties from an archive
-template<typename Archive>
-void AtomProperties::load( Archive& ar, const unsigned version )
-{
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaid );
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
-  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
-}
+EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( AtomProperties );
   
 } // end Data namespace
 

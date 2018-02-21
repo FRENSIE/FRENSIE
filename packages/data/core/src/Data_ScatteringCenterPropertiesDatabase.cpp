@@ -57,7 +57,7 @@ const char* ScatteringCenterPropertiesDatabase::getArchiveName() const
 }
 
 // Check if properties with the name of interest exist
-bool ScatteringCenterPropertiesDatabase::doPropertiesExist( const AtomType atom );
+bool ScatteringCenterPropertiesDatabase::doPropertiesExist( const AtomType atom )
 {
   return this->doPropertiesExist( Data::ZAID(atom) );
 }
@@ -85,7 +85,7 @@ void ScatteringCenterPropertiesDatabase::addProperties(
                                 "overwritten." );
   }
 
-  d_properties[properties.name()].reset( properties.clone() );
+  d_properties[properties.zaid()].reset( properties.clone() );
 }
 
 // Return the desired properties
@@ -125,7 +125,6 @@ const AtomProperties& ScatteringCenterPropertiesDatabase::getAtomProperties(
     THROW_EXCEPTION( std::runtime_error,
                      "There are no atom properties associated "
                      "with zaid " << zaid << " in the database!" );
-    }
   }
 }
 
@@ -137,7 +136,7 @@ AtomProperties& ScatteringCenterPropertiesDatabase::getAtomProperties(
                                                         const Data::ZAID zaid )
 {
   ScatteringCenterZaidPropertiesMap::iterator properties_it = 
-    d_properties.find( Data::ZAID(atom) );
+    d_properties.find( zaid );
 
   if( properties_it != d_properties.end() )
     return *properties_it->second;
@@ -261,7 +260,7 @@ NuclideProperties& ScatteringCenterPropertiesDatabase::initializeNuclideProperti
     std::unique_ptr<AtomProperties>& properties = d_properties[zaid];
 
     // Check if the atom properties have been set
-    ScatteringCenterPropertiesMap::iterator properties_it =
+    ScatteringCenterZaidPropertiesMap::iterator properties_it =
       d_properties.find( Data::ZAID(zaid.atom()) );
     
     if( properties_it != d_properties.end() )
@@ -273,6 +272,7 @@ NuclideProperties& ScatteringCenterPropertiesDatabase::initializeNuclideProperti
     else
     {
       properties.reset( new NuclideProperties( zaid, atomic_weight_ratio ) );
+    }
   }
 }
 
@@ -360,7 +360,6 @@ template<typename Archive>
 void ScatteringCenterPropertiesDatabase::save( Archive& ar, const unsigned version ) const
 {
   ar & BOOST_SERIALIZATION_NVP( d_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_aliases );
 }
 
 // Load the model from an archive
@@ -368,7 +367,6 @@ template<typename Archive>
 void ScatteringCenterPropertiesDatabase::load( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_aliases );
 }
 
 EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ScatteringCenterPropertiesDatabase );

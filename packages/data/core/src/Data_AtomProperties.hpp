@@ -15,13 +15,14 @@
 #include "Data_AdjointPhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_AdjointElectroatomicDataProperties.hpp"
+#include "Data_PhotonuclearDataProperties.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_OStreamableObject.hpp"
 
 namespace Data{
 
 //! The atom propreties base class
-class AtomProperties : public OStreamableObject
+class AtomProperties : public Utility::OStreamableObject
 {
 
 public:
@@ -157,7 +158,7 @@ public:
 
   //! Get the adjoint electroatomic data file versions
   std::set<unsigned> getDataFileVersions(
-                 const ElectroatomicDataProperties::FileType file_type ) const;
+          const AdjointElectroatomicDataProperties::FileType file_type ) const;
 
   //! Get the recommended adjoint electroatomic data file version
   unsigned getRecommendedDataFileVersion(
@@ -300,8 +301,8 @@ private:
   
 } // end Data namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AtomProperties, Data );
 BOOST_SERIALIZATION_CLASS_VERSION( AtomProperties, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AtomProperties, Data );
 
 EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( AtomProperties );
 

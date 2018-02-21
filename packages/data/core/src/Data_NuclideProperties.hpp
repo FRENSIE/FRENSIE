@@ -19,6 +19,7 @@
 #include "Data_AdjointPhotonuclearDataProperties.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Map.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace Data{
 
@@ -46,8 +47,8 @@ public:
 
   //! Partial copy constructor
   NuclideProperties( const AtomProperties& atom_properties,
-                     const Data::ZAID zaid = atom_properties.zaid(),
-                     const double atomic_weight_ratio = atom_properties.atomicWeightRatio() );
+                     const Data::ZAID zaid,
+                     const double atomic_weight_ratio );
 
   //! Destructor
   ~NuclideProperties()
@@ -363,7 +364,7 @@ public:
 
   //! Get the adjoint photonuclear data file versions
   std::set<unsigned> getDataFileVersions(
-                  const PhotonuclearDataProperties::FileType file_type ) const;
+           const AdjointPhotonuclearDataProperties::FileType file_type ) const;
 
   //! Get the recommended adjoint photonuclear data file version
   unsigned getRecommendedDataFileVersion(
@@ -396,6 +397,9 @@ private:
 
   // Copy constructor
   NuclideProperties( const NuclideProperties& other );
+
+  // Partial copy constructor
+  NuclideProperties( const AtomProperties& atom_properties );
 
   // Check if there is data available with the desired format, table version, and evaluation temp
   template<typename PropertiesMap>
@@ -456,10 +460,10 @@ private:
   // Get the max data file version
   template<typename PropertiesMap>
   static unsigned getMaxDataFileVersion(
-                            const PropertiesMap& properties,
-                            const std::string& name,
-                            const typename PropertiesMap::key_type file_type,
-                            const std::string& type_name );
+                 const PropertiesMap& properties,
+                 const std::string& name,
+                 const typename PropertiesMap::mapped_type::key_type file_type,
+                 const std::string& type_name );
 
   // Get the data file types
   template<typename PropertiesMap>
@@ -482,32 +486,32 @@ private:
   // Get the data evaluation temps
   template<typename PropertiesMap>
   static std::vector<Energy> getDataEvaluationTempsInMeV(
-                                       const PropertiesMap& properties,
-                                       const PropertiesMap::key_type file_type,
-                                       const unsigned table_version );
+                              const PropertiesMap& properties,
+                              const typename PropertiesMap::key_type file_type,
+                              const unsigned table_version );
 
   // Get the data evaluation temps
   template<typename PropertiesMap>
   static std::vector<Energy> getDataEvaluationTempsInMeV(
-                          const PropertiesMap& properties,
-                          const std::string& name,
-                          const PropertiesMap::mapped_type::key_type file_type,
-                          const unsigned table_version );
+                 const PropertiesMap& properties,
+                 const std::string& name,
+                 const typename PropertiesMap::mapped_type::key_type file_type,
+                 const unsigned table_version );
 
   // Get the data evaluation temps
   template<typename PropertiesMap>
   static std::vector<Temperature> getDataEvaluationTemps(
-                                       const PropertiesMap& properties,
-                                       const PropertiesMap::key_type file_type,
-                                       const unsigned table_version );
+                              const PropertiesMap& properties,
+                              const typename PropertiesMap::key_type file_type,
+                              const unsigned table_version );
 
   // Get the data evaluation temps
   template<typename PropertiesMap>
   static std::vector<Temperature> getDataEvaluationTemps(
-                          const PropertiesMap& properties,
-                          const std::string& name,
-                          const PropertiesMap::mapped_type::key_type file_type,
-                          const unsigned table_version );
+                 const PropertiesMap& properties,
+                 const std::string& name,
+                 const typename PropertiesMap::mapped_type::key_type file_type,
+                 const unsigned table_version );
 
   // Get the data properties
   template<typename Properties, typename PropertiesMap>
@@ -625,11 +629,11 @@ private:
   template<typename Properties>
   struct NamedNuclearPropertiesMapTypeHelper : public NuclearPropertiesMapTypeHelper<Properties>
   {
-    typedef std::map<std::string, typename PropertiesMapTypeHelper<Properties>::FileTypeVersionPropertiesGridMap NameFileTypeVersionPropertiesGridMap;
+    typedef std::map<std::string, typename NuclearPropertiesMapTypeHelper<Properties>::FileTypeVersionPropertiesGridMap> NameFileTypeVersionPropertiesGridMap;
   };
 
   // The nuclear data properties
-  typename NuclearPropertiesMapTypeHelper<NuclearDateaProperties>::FileTypeVersionPropertiesGridMap d_nuclear_data_properties;
+  typename NuclearPropertiesMapTypeHelper<NuclearDataProperties>::FileTypeVersionPropertiesGridMap d_nuclear_data_properties;
 
   // The thermal nuclear data properties
   typename NamedNuclearPropertiesMapTypeHelper<ThermalNuclearDataProperties>::NameFileTypeVersionPropertiesGridMap d_thermal_nuclear_data_properties;
@@ -638,7 +642,7 @@ private:
   typename NuclearPropertiesMapTypeHelper<AdjointNuclearDataProperties>::FileTypeVersionPropertiesGridMap d_adjoint_nuclear_data_properties;
 
   // The adjoint thermal nuclear data properties
-  typename NuclearPropertiesMapTypeHelper<AdjointThermalNuclearDataProperties>::NameFileTypeVersionPropertiesGridMap d_adjoint_thermal_nuclear_data_properties;
+  typename NamedNuclearPropertiesMapTypeHelper<AdjointThermalNuclearDataProperties>::NameFileTypeVersionPropertiesGridMap d_adjoint_thermal_nuclear_data_properties;
   
   // The photonuclear data properties
   typename PropertiesMapTypeHelper<PhotonuclearDataProperties>::FileTypeVersionPropertiesMap d_photonuclear_data_properties;
@@ -649,10 +653,10 @@ private:
   
 } // end Data namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AtomProperties, Data );
-BOOST_SERIALIZATION_CLASS_VERSION( AtomProperties, Data, 0 );
+BOOST_SERIALIZATION_CLASS_VERSION( NuclideProperties, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( NuclideProperties, Data );
 
-EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( AtomProperties );
+EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( NuclideProperties );
 
 //---------------------------------------------------------------------------//
 // Template Includes

@@ -20,6 +20,7 @@
 #include "Data_AtomType.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Data{
 
@@ -29,9 +30,13 @@ class PhotoatomicDataProperties
 
 public:
 
-  //! The file types
+  /*! The file types
+   *
+   * When adding a new file type the toString and serialize method must be 
+   * updated.
+   */
   enum FileType{
-    ACE_FILE,
+    ACE_FILE = 0,
     ACE_EPR_FILE,
     Native_EPR_FILE
   };
@@ -108,7 +113,7 @@ struct ToStringTraits<Data::PhotoatomicDataProperties::FileType>
 
 namespace std{
 
-//! Stream operator for printing Datea::PhotoatomicDataProperties::FileType enums
+//! Stream operator for printing Data::PhotoatomicDataProperties::FileType enums
 inline std::ostream& operator<<( std::ostream& os,
                                  const Data::PhotoatomicDataProperties::FileType type )
 {
@@ -118,6 +123,55 @@ inline std::ostream& operator<<( std::ostream& os,
 }
   
 } // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the file type enum
+template<typename Archive>
+void serialize( Archive& archive,
+                Data::PhotoatomicDataProperties::FileType& file_type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (int)file_type;
+  else
+  {
+    int raw_file_type;
+
+    archive & raw_file_type;
+
+    switch( raw_file_type )
+    {
+      case (int)Data::PhotoatomicDataProperties::ACE_FILE:
+      {
+        file_type = Data::PhotoatomicDataProperties::ACE_FILE;
+        break;
+      }
+      case (int)Data::PhotoatomicDataProperties::ACE_EPR_FILE:
+      {
+        file_type = Data::PhotoatomicDataProperties::ACE_EPR_FILE;
+        break;
+      }
+      case (int)Data::PhotoatomicDataProperties::Native_EPR_FILE:
+      {
+        file_type = Data::PhotoatomicDataProperties::Native_EPR_FILE;
+        break;
+      }
+      default:
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Unable to deserialize file type "
+                         << raw_file_type << "!" );
+      }
+    }
+  }
+}
+  
+} // end serialization namespace
+  
+} // end boost namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( PhotoatomicDataProperties, Data );
 BOOST_SERIALIZATION_CLASS_VERSION( PhotoatomicDataProperties, Data, 0 );

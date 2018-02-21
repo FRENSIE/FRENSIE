@@ -152,11 +152,11 @@ private:
 
 // Initialize the atom properties
 template<typename WeightDataType>
-inline AtomProperties& ScatteringCenterProperties::initializeAtomPropertiesImpl(
+inline AtomProperties& ScatteringCenterPropertiesDatabase::initializeAtomPropertiesImpl(
                                              const Data::ZAID zaid,
                                              const WeightDataType weight_data )
 {
-  ScatteringCenterNamePropertiesMap::iterator properties_it = 
+  ScatteringCenterZaidPropertiesMap::iterator properties_it = 
     d_properties.find( zaid );
   
   if( properties_it != d_properties.end() )

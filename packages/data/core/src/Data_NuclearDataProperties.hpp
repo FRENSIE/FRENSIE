@@ -23,6 +23,7 @@
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Data{
 
@@ -32,9 +33,13 @@ class NuclearDataProperties
 
 public:
 
-  //! The file types
+  /*! The file types
+   *
+   * When adding a new file type the toString and serialize method must be
+   * updated.
+   */
   enum FileType{
-    ACE_FILE
+    ACE_FILE = 0
   };
 
   //! The energy unit
@@ -139,6 +144,45 @@ inline std::ostream& operator<<( std::ostream& os,
 }
   
 } // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the file type enum
+template<typename Archive>
+void serialize( Archive& archive,
+                Data::NuclearDataProperties::FileType& file_type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (int)file_type;
+  else
+  {
+    int raw_file_type;
+
+    archive & raw_file_type;
+
+    switch( raw_file_type )
+    {
+      case (int)Data::NuclearDataProperties::ACE_FILE:
+      {
+        file_type = Data::NuclearDataProperties::ACE_FILE;
+        break;
+      }
+      default:
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Unable to deserialize file type "
+                         << raw_file_type << "!" );
+      }
+    }
+  }
+}
+  
+} // end serialization namespace
+  
+} // end boost namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( NuclearDataProperties, Data );
 BOOST_SERIALIZATION_CLASS_VERSION( NuclearDataProperties, Data, 0 );

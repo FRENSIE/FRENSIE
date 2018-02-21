@@ -6,7 +6,23 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
+#include "Data_NuclideProperties.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -32,11 +48,16 @@ NuclideProperties::NuclideProperties( const AtomProperties& atom_properties,
   this->setAtomicWeightRatio( atomic_weight_ratio );
 }
 
+// Partial copy constructor
+NuclideProperties::NuclideProperties( const AtomProperties& atom_properties )
+  : AtomProperties( atom_properties )
+{ /* ... */ }
+
 // Copy constructor
 NuclideProperties::NuclideProperties( const NuclideProperties& other )
   : AtomProperties( other ),
     d_nuclear_data_properties( other.d_nuclear_data_properties ),
-    d_thermal_nuclear_data_properties( other.d_nuclear_data_properties ),
+    d_thermal_nuclear_data_properties( other.d_thermal_nuclear_data_properties ),
     d_adjoint_nuclear_data_properties( other.d_adjoint_nuclear_data_properties ),
     d_adjoint_thermal_nuclear_data_properties( other.d_adjoint_thermal_nuclear_data_properties ),
     d_photonuclear_data_properties( other.d_photonuclear_data_properties ),
@@ -53,7 +74,7 @@ bool NuclideProperties::isNuclide() const
 bool NuclideProperties::nuclearDataAvailable(
                         const NuclearDataProperties::FileType file_type ) const
 {
-  return this->dataAvailable( d_nuclear_data_properties, file_type );
+  return AtomProperties::dataAvailable( d_nuclear_data_properties, file_type );
 }
 
 // Check if there is nuclear data with the desired format and version
@@ -61,9 +82,9 @@ bool NuclideProperties::nuclearDataAvailable(
                                const NuclearDataProperties::FileType file_type,
                                const unsigned table_major_version ) const
 {
-  return this->dataAvailable( d_nuclear_data_properties,
-                              file_type,
-                              table_major_version );
+  return AtomProperties::dataAvailable( d_nuclear_data_properties,
+                                        file_type,
+                                        table_major_version );
 }
   
 // Check if there is nuclear data at the evaluation temp
@@ -93,29 +114,30 @@ bool NuclideProperties::nuclearDataAvailable(
 // Get the nuclear data file types
 std::set<NuclearDataProperties::FileType> NuclideProperties::getNuclearDataFileTypes() const
 {
-  return this->getDataFileTypes( d_nuclear_data_properties );
+  return AtomProperties::getDataFileTypes( d_nuclear_data_properties );
 }
 
 // Get the nuclear data file versions
 std::set<unsigned> NuclideProperties::getDataFileVersions(
                         const NuclearDataProperties::FileType file_type ) const
 {
-  return this->getDataFileVersions( d_nuclear_data_properties, file_type );
+  return AtomProperties::getDataFileVersions( d_nuclear_data_properties,
+                                              file_type );
 }
 
 // Get the recommended nuclear data file major version (generally the newest version)
 unsigned NuclideProperties::getRecommendedDataFileVersion(
                         const NuclearDataProperties::FileType file_type ) const
 {
-  return this->getMaxDataFileVersion( d_nuclear_data_properties,
-                                      file_type,
-                                      type_name );
+  return AtomProperties::getMaxDataFileVersion( d_nuclear_data_properties,
+                                                file_type,
+                                                "Nuclear" );
 }
 
 // Get the nuclear data evaluation temps
-std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
-                               const NuclearDataProperties::FileType file_type,
-                               const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTempsInMeV(
+              const NuclearDataProperties::FileType file_type,
+              const unsigned table_major_version ) const -> std::vector<Energy>
 {
   return this->getDataEvaluationTempsInMeV( d_nuclear_data_properties,
                                             file_type,
@@ -123,9 +145,9 @@ std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
 }
 
 // Get the nuclear data evaluation temps
-std::vector<Temperature> NuclideProperties::getDataEvaluationTemps(
-                               const NuclearDataProperties::FileType file_type,
-                               const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTemps(
+         const NuclearDataProperties::FileType file_type,
+         const unsigned table_major_version ) const -> std::vector<Temperature>
 {
   return this->getDataEvaluationTemps( d_nuclear_data_properties,
                                        file_type,
@@ -174,7 +196,7 @@ void NuclideProperties::setNuclearDataProperties( const std::shared_ptr<const Nu
 bool NuclideProperties::thermalNuclearDataAvailable(
                                                 const std::string& name ) const
 {
-  return this->dataAvailable( d_thermal_nuclear_data_properties, name )
+  return this->dataAvailable( d_thermal_nuclear_data_properties, name );
 }
 
 // Check if there is thermal nuclear data with the desired format
@@ -223,8 +245,8 @@ bool NuclideProperties::thermalNuclearDataAvailable(
   return this->dataAvailable( d_thermal_nuclear_data_properties,
                               name,
                               file_type,
-                              table_major_versoin,
-                              evaulation_temp );
+                              table_major_version,
+                              evaluation_temp );
 }
 
 // Get the thermal nuclear data names
@@ -269,10 +291,10 @@ unsigned NuclideProperties::getRecommendedDataFileVersion(
 }
 
 // Get the thermal nuclear data evaluation temps
-std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
-                        const std::string& name,
-                        const ThermalNuclearDataProperties::FileType file_type,
-                        const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTempsInMeV(
+              const std::string& name,
+              const ThermalNuclearDataProperties::FileType file_type,
+              const unsigned table_major_version ) const -> std::vector<Energy>
 {
   return this->getDataEvaluationTempsInMeV( d_thermal_nuclear_data_properties,
                                             name,
@@ -281,10 +303,10 @@ std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
 }
 
 // Get the thermal nuclear data evaluation temps
-std::vector<Temperature> NuclideProperties::getDataEvaluationTemps(
-                        const std::string& name,
-                        const ThermalNuclearDataProperties::FileType file_type,
-                        const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTemps(
+         const std::string& name,
+         const ThermalNuclearDataProperties::FileType file_type,
+         const unsigned table_major_version ) const -> std::vector<Temperature>
 {
   return this->getDataEvaluationTemps( d_thermal_nuclear_data_properties,
                                        name,
@@ -340,7 +362,8 @@ void NuclideProperties::setThermalNuclearDataProperties( const std::shared_ptr<c
 bool NuclideProperties::adjointNuclearDataAvailable(
                  const AdjointNuclearDataProperties::FileType file_type ) const
 {
-  return this->dataAvailable( d_adjoint_nuclear_data_properties, file_type );
+  return AtomProperties::dataAvailable( d_adjoint_nuclear_data_properties,
+                                        file_type );
 }
 
 // Check if there is adjoint nuclear data with the desired format and version
@@ -348,9 +371,9 @@ bool NuclideProperties::adjointNuclearDataAvailable(
                         const AdjointNuclearDataProperties::FileType file_type,
                         const unsigned table_major_version ) const
 {
-  return this->dataAvailable( d_adjoint_nuclear_data_properties,
-                              file_type,
-                              table_major_version );
+  return AtomProperties::dataAvailable( d_adjoint_nuclear_data_properties,
+                                        file_type,
+                                        table_major_version );
 }
   
 // Check if there is adjoint nuclear data at the evaluation temp
@@ -378,32 +401,33 @@ bool NuclideProperties::adjointNuclearDataAvailable(
 }
 
 // Get the adjoint nuclear data file types
-std::set<AdjointNuclearDataProperties::FileType> getAdjointNuclearDataFileTypes() const
+std::set<AdjointNuclearDataProperties::FileType> NuclideProperties::getAdjointNuclearDataFileTypes() const
 {
-  return this->getDataFileTypes( d_adjoint_nuclear_data_properties );
+  return AtomProperties::getDataFileTypes( d_adjoint_nuclear_data_properties );
 }
 
 // Get the adjoint nuclear data file versions
 std::set<unsigned> NuclideProperties::getDataFileVersions(
                  const AdjointNuclearDataProperties::FileType file_type ) const
 {
-  return this->getDataFileVersions( d_adjoint_nuclear_data_properties,
-                                    file_type );
+  return AtomProperties::getDataFileVersions( d_adjoint_nuclear_data_properties,
+                                              file_type );
 }
 
 // Get the recommended adjoint nuclear data file major version (generally the newest version)
 unsigned NuclideProperties::getRecommendedDataFileVersion(
                  const AdjointNuclearDataProperties::FileType file_type ) const
 {
-  return this->getMaxDataFileVersion( d_adjoint_nuclear_data_properties,
-                                      file_type,
-                                      "Adjoint nuclear" );
+  return AtomProperties::getMaxDataFileVersion(
+                                             d_adjoint_nuclear_data_properties,
+                                             file_type,
+                                             "Adjoint nuclear" );
 }
 
 // Get the adjoint nuclear data evaluation temps
-std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
-                        const AdjointNuclearDataProperties::FileType file_type,
-                        const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTempsInMeV(
+              const AdjointNuclearDataProperties::FileType file_type,
+              const unsigned table_major_version ) const -> std::vector<Energy>
 {
   return this->getDataEvaluationTempsInMeV( d_adjoint_nuclear_data_properties,
                                             file_type,
@@ -411,9 +435,9 @@ std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
 }
 
 // Get the adjoint nuclear data evaluation temps
-std::vector<Temperature> NuclideProperties::getDataEvaluationTemps(
-                        const AdjointNuclearDataProperties::FileType file_type,
-                        const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTemps(
+         const AdjointNuclearDataProperties::FileType file_type,
+         const unsigned table_major_version ) const -> std::vector<Temperature>
 {
   return this->getDataEvaluationTemps( d_adjoint_nuclear_data_properties,
                                        file_type,
@@ -501,7 +525,7 @@ bool NuclideProperties::adjointThermalNuclearDataAvailable(
   return this->dataAvailable( d_adjoint_thermal_nuclear_data_properties,
                               name,
                               file_type,
-                              table_major_versio,
+                              table_major_version,
                               evaluation_temp );
 }
 
@@ -555,10 +579,10 @@ unsigned NuclideProperties::getRecommendedDataFileVersion(
 }
 
 // Get the adjoint thermal nuclear data evaluation temps
-std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
-                 const std::string& name,
-                 const AdjointThermalNuclearDataProperties::FileType file_type,
-                 const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTempsInMeV(
+              const std::string& name,
+              const AdjointThermalNuclearDataProperties::FileType file_type,
+              const unsigned table_major_version ) const -> std::vector<Energy>
 {
   return this->getDataEvaluationTempsInMeV( d_adjoint_thermal_nuclear_data_properties,
                                             name,
@@ -567,10 +591,10 @@ std::vector<Energy> NuclideProperties::getDataEvaluationTempsInMeV(
 }
 
 // Get the adjoint thermal nuclear data evaluation temps
-std::vector<Temperature> NuclideProperties::getDataEvaluationTemps(
-                 const std::string& name,
-                 const AdjointThermalNuclearDataProperties::FileType file_type,
-                 const unsigned table_major_version ) const
+auto NuclideProperties::getDataEvaluationTemps(
+         const std::string& name,
+         const AdjointThermalNuclearDataProperties::FileType file_type,
+         const unsigned table_major_version ) const -> std::vector<Temperature>
 {
   return this->getDataEvaluationTemps( d_adjoint_thermal_nuclear_data_properties,
                                        name,
@@ -590,7 +614,7 @@ const AdjointThermalNuclearDataProperties& NuclideProperties::getAdjointThermalN
                                      d_adjoint_thermal_nuclear_data_properties,
                                      name,
                                      file_type,
-                                     table_version,
+                                     table_major_version,
                                      evaluation_temp,
                                      find_exact,
                                      "Adjoint thermal nuclear" );
@@ -608,7 +632,7 @@ const AdjointThermalNuclearDataProperties& NuclideProperties::getAdjointThermalN
                                      d_adjoint_thermal_nuclear_data_properties,
                                      name,
                                      file_type,
-                                     table_version,
+                                     table_major_version,
                                      evaluation_temp,
                                      find_exact,
                                      "Adjoint thermal nuclear" );
@@ -626,7 +650,8 @@ void NuclideProperties::setAdjointThermalNuclearDataProperties( const std::share
 bool NuclideProperties::photonuclearDataAvailable(
                    const PhotonuclearDataProperties::FileType file_type ) const
 {
-  return this->dataAvailable( d_photonuclear_data_properties, file_type );
+  return AtomProperties::dataAvailable( d_photonuclear_data_properties,
+                                        file_type );
 }
 
 // Check if there is photonuclear data with the desired format and version
@@ -634,32 +659,32 @@ bool NuclideProperties::photonuclearDataAvailable(
                           const PhotonuclearDataProperties::FileType file_type,
                           const unsigned table_version ) const
 {
-  return this->dataAvailable( d_photonuclear_data_properties,
-                              file_type,
-                              table_version );
+  return AtomProperties::dataAvailable( d_photonuclear_data_properties,
+                                        file_type,
+                                        table_version );
 }
 
 // Get the photonuclear data file types
 std::set<PhotonuclearDataProperties::FileType> NuclideProperties::getPhotonuclearDataFileTypes() const
 {
-  return this->getDataFileTypes( d_photonuclear_data_properties );
+  return AtomProperties::getDataFileTypes( d_photonuclear_data_properties );
 }
 
 // Get the photonuclear data file versions
 std::set<unsigned> NuclideProperties::getDataFileVersions(
                    const PhotonuclearDataProperties::FileType file_type ) const
 {
-  return this->getDataFileVersions( d_photonuclear_data_properties,
-                                    file_type );
+  return AtomProperties::getDataFileVersions( d_photonuclear_data_properties,
+                                              file_type );
 }
 
 // Get the recommended photonuclear data file version
 unsigned NuclideProperties::getRecommendedDataFileVersion(
                    const PhotonuclearDataProperties::FileType file_type ) const
 {
-  return this->getMaxDataFileVersion( d_photonuclear_data_properties,
-                                      file_type,
-                                      "Photonuclear" );
+  return AtomProperties::getMaxDataFileVersion( d_photonuclear_data_properties,
+                                                file_type,
+                                                "Photonuclear" );
 }
 
 // Get the photonuclear data properties
@@ -667,7 +692,7 @@ const PhotonuclearDataProperties& NuclideProperties::getPhotonuclearDataProperti
                           const PhotonuclearDataProperties::FileType file_type,
                           const unsigned table_version ) const
 {
-  return this->getProperties<PhotonuclearDataProperties>(
+  return AtomProperties::getProperties<PhotonuclearDataProperties>(
                                                 d_photonuclear_data_properties,
                                                 file_type,
                                                 table_version,
@@ -677,17 +702,17 @@ const PhotonuclearDataProperties& NuclideProperties::getPhotonuclearDataProperti
 // Set the photonuclear data properties
 void NuclideProperties::setPhotonuclearDataProperties( const std::shared_ptr<const PhotonuclearDataProperties>& properties )
 {
-  this->setProperties( d_photonuclear_data_properties,
-                       properties,
-                       "Photonuclear" );
+  AtomProperties::setProperties( d_photonuclear_data_properties,
+                                 properties,
+                                 "Photonuclear" );
 }
 
 // Check if there is adjoint photonuclear data with the desired format
 bool NuclideProperties::adjointPhotonuclearDataAvailable(
             const AdjointPhotonuclearDataProperties::FileType file_type ) const
 {
-  return this->dataAvailable( d_adjoint_photonuclear_data_properties,
-                              file_type );
+  return AtomProperties::dataAvailable( d_adjoint_photonuclear_data_properties,
+                                        file_type );
 }
 
 // Check if there is adjoint photonuclear data with the desired format and version
@@ -695,32 +720,34 @@ bool NuclideProperties::adjointPhotonuclearDataAvailable(
                    const AdjointPhotonuclearDataProperties::FileType file_type,
                    const unsigned table_version ) const
 {
-  return this->dataAvailable( d_adjoint_photonuclear_data_properties,
-                              file_type,
-                              table_version );
+  return AtomProperties::dataAvailable( d_adjoint_photonuclear_data_properties,
+                                        file_type,
+                                        table_version );
 }
 
 // Get the adjoint photonuclear data file types
 std::set<AdjointPhotonuclearDataProperties::FileType> NuclideProperties::getAdjointPhotonuclearDataFileTypes() const
 {
-  return this->getDataFileTypes( d_adjoint_photonuclear_data_properties );
+  return AtomProperties::getDataFileTypes( d_adjoint_photonuclear_data_properties );
 }
 
 // Get the adjoint photonuclear data file versions
 std::set<unsigned> NuclideProperties::getDataFileVersions(
-                   const PhotonuclearDataProperties::FileType file_type ) const
+            const AdjointPhotonuclearDataProperties::FileType file_type ) const
 {
-  return this->getDataFileTypes( d_adjoint_photonuclear_data_properties,
-                                 file_type );
+  return AtomProperties::getDataFileVersions(
+                                        d_adjoint_photonuclear_data_properties,
+                                        file_type );
 }
 
 // Get the recommended adjoint photonuclear data file version
 unsigned NuclideProperties::getRecommendedDataFileVersion(
             const AdjointPhotonuclearDataProperties::FileType file_type ) const
 {
-  return this->getMaxDataFileVersion( d_photonuclear_data_properties,
-                                      file_type,
-                                      "Adjoint photonuclear" );
+  return AtomProperties::getMaxDataFileVersion(
+                                        d_adjoint_photonuclear_data_properties,
+                                        file_type,
+                                        "Adjoint photonuclear" );
 }
 
 // Get the adjoint photonuclear data properties
@@ -728,7 +755,7 @@ const AdjointPhotonuclearDataProperties& NuclideProperties::getAdjointPhotonucle
                    const AdjointPhotonuclearDataProperties::FileType file_type,
                    const unsigned table_version ) const
 {
-  return this->getProperties<AdjointPhotonuclearDataProperties>(
+  return AtomProperties::getProperties<AdjointPhotonuclearDataProperties>(
                                         d_adjoint_photonuclear_data_properties,
                                         file_type,
                                         table_version,
@@ -738,9 +765,9 @@ const AdjointPhotonuclearDataProperties& NuclideProperties::getAdjointPhotonucle
 // Set the photonuclear data properties
 void NuclideProperties::setAdjointPhotonuclearDataProperties( const std::shared_ptr<const AdjointPhotonuclearDataProperties>& properties )
 {
-  this->setProperties( d_photonuclear_data_properties,
-                       properties,
-                       "Adjoint photonuclear" );
+  AtomProperties::setProperties( d_adjoint_photonuclear_data_properties,
+                                 properties,
+                                 "Adjoint photonuclear" );
 }
 
 // Clone the properties
@@ -753,7 +780,7 @@ NuclideProperties* NuclideProperties::clone() const
 NuclideProperties* NuclideProperties::deepClone() const
 {
   NuclideProperties* nuclide_properties_clone =
-    new NuclideProperties( this->zaid(), this->atomicWeight() );
+    new NuclideProperties( this->zaid(), this->atomicWeightRatio() );
 
   this->cloneStoredAtomProperties( *this, *nuclide_properties_clone );
   this->cloneStoredNuclideProperties( *this, *nuclide_properties_clone );
@@ -765,7 +792,7 @@ NuclideProperties* NuclideProperties::deepClone() const
 /*! \details Only the nuclide properties will be cloned (the atom properties
  * will use the same pointers)
  */
-void NuclideProperties::partialDeepClone() const
+NuclideProperties* NuclideProperties::partialDeepClone() const
 {
   NuclideProperties* nuclide_properties_clone =
     new NuclideProperties( dynamic_cast<const AtomProperties&>( *this ) );
@@ -778,7 +805,7 @@ void NuclideProperties::partialDeepClone() const
 // Clone the stored properties
 void NuclideProperties::cloneStoredNuclideProperties(
                                   const NuclideProperties& original_properties,
-                                  NuclideProperties& new_properties );
+                                  NuclideProperties& new_properties )
 {
   // Clone the nuclear data properties
   NuclideProperties::cloneNuclearProperties(
@@ -796,7 +823,7 @@ void NuclideProperties::cloneStoredNuclideProperties(
                          new_properties.d_adjoint_nuclear_data_properties );
 
   // Clone the adjoint thermal nuclear data properties
-  NuclideProperties::cloneThermalNuclearDataProperties(
+  NuclideProperties::cloneThermalNuclearProperties(
                  original_properties.d_adjoint_thermal_nuclear_data_properties,
                  new_properties.d_adjoint_thermal_nuclear_data_properties );
 
@@ -852,37 +879,7 @@ void NuclideProperties::toStream( std::ostream& os ) const
   os.flush();
 }
 
-// Save the properties to an archive
-template<typename Archive>
-void NuclideProperties::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AtomProperties );
-
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_thermal_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_thermal_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_photonuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photonuclear_data_properties );
-}
-
-// Load the properties from an archive
-template<typename Archive>
-void NuclideProperties::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AtomProperties );
-
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_thermal_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_thermal_nuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_photonuclear_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photonuclear_data_properties );
-}
+EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( NuclideProperties );
   
 } // end Data namespace
 

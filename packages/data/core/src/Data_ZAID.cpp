@@ -181,7 +181,7 @@ std::string ZAID::toName() const
 {
   std::string name = Utility::toString( d_atom_type );
 
-  if( atomic_mass_number > 0u )
+  if( d_atomic_mass_number > 0u )
     name += Utility::toString( d_atomic_mass_number );
 
   return name;
@@ -191,9 +191,9 @@ std::string ZAID::toName() const
 template<typename Archive>
 void ZAID::save( Archive& ar, const unsigned version ) const
 {
-  const unsigned raw_zaid = this->toRaw();
+  unsigned raw_zaid = this->toRaw();
   
-  ar & boost::serialization::make_nvp( "zaid", raw_zaid );
+  ar & BOOST_SERIALIZATION_NVP( raw_zaid );
 }
 
 // Load the model from an archive
@@ -202,7 +202,7 @@ void ZAID::load( Archive& ar, const unsigned version )
 {
   unsigned raw_zaid;
 
-  ar & boost::serialization::make_nvp( "zaid", raw_zaid );
+  ar & BOOST_SERIALIZATION_NVP( raw_zaid );
 
   *this = ZAID( raw_zaid );
 }
