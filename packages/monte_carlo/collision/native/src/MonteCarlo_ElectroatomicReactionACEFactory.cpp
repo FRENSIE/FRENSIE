@@ -144,6 +144,7 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
                             energy_grid,
                             elastic_cross_section,
                             threshold_energy_index,
+                            grid_searcher,
                             distribution ) );
   }
   else
@@ -153,6 +154,7 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
                             energy_grid,
                             elastic_cross_section,
                             threshold_energy_index,
+                            grid_searcher,
                             distribution ) );
   }
 }
@@ -266,6 +268,7 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
                     energy_grid,
                     atomic_excitation_cross_section,
                     threshold_energy_index,
+                    grid_searcher,
                     energy_loss_distribution ) );
   }
   else
@@ -275,6 +278,7 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
                     energy_grid,
                     atomic_excitation_cross_section,
                     threshold_energy_index,
+                    grid_searcher,
                     energy_loss_distribution ) );
   }
 }
@@ -305,13 +309,25 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
                            total_electroionization_cross_section,
                            threshold_energy_index );
 
+  // Create the subshell reactions
+  std::vector<std::shared_ptr<ElectroatomicReaction> >
+        subshell_reactions;
+
+  ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        subshell_reactions );
+
   if( raw_electroatom_data.isEPRVersion14() )
   {
     total_electroionization_reaction.reset(
       new ElectroionizationElectroatomicReaction<Utility::LogLog>(
                       energy_grid,
                       total_electroionization_cross_section,
-                      threshold_energy_index ) );
+                      threshold_energy_index,
+                      grid_searcher,
+                      subshell_reactions ) );
   }
   else
   {
@@ -319,7 +335,9 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
       new ElectroionizationElectroatomicReaction<Utility::LinLin>(
                       energy_grid,
                       total_electroionization_cross_section,
-                      threshold_energy_index ) );
+                      threshold_energy_index,
+                      grid_searcher,
+                      subshell_reactions ) );
   }
 }
 
@@ -394,6 +412,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
+              grid_searcher,
               subshell_order[shell_index],
               electroionization_subshell_distribution ) );
   }
@@ -401,11 +420,12 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
   {
     electroionization_subshell_reaction.reset(
       new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
-            energy_grid,
-            subshell_cross_section,
-            threshold_energy_index,
-            subshell_order[shell_index],
-            electroionization_subshell_distribution ) );
+              energy_grid,
+              subshell_cross_section,
+              threshold_energy_index,
+              grid_searcher,
+              subshell_order[shell_index],
+              electroionization_subshell_distribution ) );
   }
 }
 
@@ -521,11 +541,12 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
     {
       electroionization_subshell_reaction.reset(
         new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
-                energy_grid,
-                subshell_cross_section,
-                threshold_energy_index,
-                subshell_order[shell_index],
-                electroionization_subshell_distribution ) );
+              energy_grid,
+              subshell_cross_section,
+              threshold_energy_index,
+              grid_searcher,
+              subshell_order[shell_index],
+              electroionization_subshell_distribution ) );
     }
     else
     {
@@ -534,6 +555,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
+              grid_searcher,
               subshell_order[shell_index],
               electroionization_subshell_distribution ) );
     }
@@ -608,19 +630,21 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   {
     bremsstrahlung_reaction.reset(
       new BremsstrahlungElectroatomicReaction<Utility::LogLog>(
-                 energy_grid,
-                 bremsstrahlung_cross_section,
-                 threshold_energy_index,
-                 bremsstrahlung_distribution ) );
+                energy_grid,
+                bremsstrahlung_cross_section,
+                threshold_energy_index,
+                grid_searcher,
+                bremsstrahlung_distribution ) );
   }
   else
   {
     bremsstrahlung_reaction.reset(
       new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-                 energy_grid,
-                 bremsstrahlung_cross_section,
-                 threshold_energy_index,
-                 bremsstrahlung_distribution ) );
+                energy_grid,
+                bremsstrahlung_cross_section,
+                threshold_energy_index,
+                grid_searcher,
+                bremsstrahlung_distribution ) );
   }
 }
 

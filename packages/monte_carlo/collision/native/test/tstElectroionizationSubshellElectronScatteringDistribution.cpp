@@ -568,8 +568,6 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   // Test original positron
   TEST_FLOATING_EQUALITY( positron.getZDirection(), 7.8974722856283108e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( positron.getEnergy(), 4.5585500000302387e-01, 1e-12 );
-  std::cout << std::setprecision(16) << std::scientific << "positron.getZDirection() = \t" << positron.getZDirection() << std::endl;
-  std::cout << std::setprecision(16) << std::scientific << "positron.getEnergy() = \t" << positron.getEnergy() << std::endl;
 
   // Test knock-on positron
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 07.8974722855920831e-01, 1e-12 );

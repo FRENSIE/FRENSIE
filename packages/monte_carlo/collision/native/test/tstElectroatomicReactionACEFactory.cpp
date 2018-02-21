@@ -106,6 +106,42 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the total electroionization reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
+                   createElectroionizationReaction )
+{
+  std::shared_ptr<MonteCarlo::ElectroatomicReaction> reaction;
+
+  MonteCarlo::ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
+                *xss_data_extractor,
+                energy_grid,
+                grid_searcher,
+                reaction );
+
+  // Test the first shell's reaction properties
+  TEST_EQUALITY_CONST(
+            reaction->getReactionType(),
+            MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1e-5 );
+
+  // Test the total cross section is correct
+  double cross_section = reaction->getCrossSection( 1e-5 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.310577E+08, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 8.9754e-2 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.59749583408E+06, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1e-1 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.345696097519E+06, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.58489e-1 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.510192579238E+06, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1e+5 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.2648388779E+06, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the electroionization subshell reactions can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
                    createSubshellElectroionizationReactions )

@@ -321,6 +321,18 @@
     <Parameter docString="" id="248" isDefault="false" isUsed="true" name="atomic_number" type="int" value="82"/>
     <Parameter docString="" id="249" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.05419999999999987e+02"/>
   </ParameterList>
+  <ParameterList id="261" name="Au_v14">
+    <Parameter docString="" id="251" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="ace/test_au_epr14_ace_file.txt"/>
+    <Parameter docString="" id="252" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter docString="" id="253" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value="79000.14p"/>
+    <Parameter docString="" id="254" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter docString="" id="255" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="ace/test_au_epr14_ace_file.txt"/>
+    <Parameter docString="" id="256" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter docString="" id="257" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value="79000.14p"/>
+    <Parameter docString="" id="258" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter docString="" id="259" isDefault="false" isUsed="true" name="atomic_number" type="int" value="79"/>
+    <Parameter docString="" id="260" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="0.0"/>
+  </ParameterList>
   <Validators/>
 </ParameterList>
 

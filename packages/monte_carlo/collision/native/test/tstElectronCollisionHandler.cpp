@@ -221,25 +221,25 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 				 MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.545329003693E+04, 1e-12 );
-  
+
   electron.setEnergy( 1e5 );
-  
+
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
 				 electron,
 				 MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.588134602166E+03, 1e-12 );
-  
+
   electron.setEnergy( 1e-5 );
-  
+
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
 				   electron,
 				   MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.415377951846E+01, 1e-12 );
-  
+
   electron.setEnergy( 1e5 );
 
   cross_section =
@@ -248,25 +248,43 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 				   MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 5.679677054824E+00, 1e-12 );
-  
+
   electron.setEnergy( 1e-5 );
-  
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+		   electron,
+		   MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 3.8091128793704789e+05, 1e-12 );
+
+  electron.setEnergy( 1e5 );
+
+  cross_section =
+    collision_handler->getMacroscopicReactionCrossSection(
+		   electron,
+		   MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 3.6761777904979213e+03, 1e-12 );
+
+  electron.setEnergy( 1e-5 );
+
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
 		   electron,
 		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
-  
+
   electron.setEnergy( 1e5 );
-  
+
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
 		   electron,
 		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.060615028974E-01, 1e-12 );
-  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
   electron.setEnergy( 1e-5 );
 
   cross_section =
@@ -274,8 +292,8 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 		  electron,
 		  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.096230095899E+05, 1e-12 );
-  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
   electron.setEnergy( 1e5 );
 
   cross_section =
@@ -283,8 +301,8 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
 		  electron,
 		  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
-  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
   electron.setEnergy( 1e-5 );
 
   cross_section =
@@ -295,9 +313,9 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
   TEST_FLOATING_EQUALITY( cross_section,
                           7.234825686582E+06,
                           1e-12 );
-  
+
   electron.setEnergy( 1e5 );
-  
+
   cross_section =
     collision_handler->getMacroscopicReactionCrossSection(
 		  electron,
@@ -358,7 +376,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
   cells_containing_material[0] = 1;
   cells_containing_material[1] = 2;
   cells_containing_material[2] = 3;
-  
+
   collision_handler->addMaterial( lead, cells_containing_material );
 
   MonteCarlo::ElectronState electron( 0 );
@@ -370,7 +388,7 @@ TEUCHOS_UNIT_TEST( ElectronCollisionHandler,
   MonteCarlo::ParticleBank bank;
 
   collision_handler->collideWithCellMaterial( electron, bank );
-  
+
   TEST_FLOATING_EQUALITY( electron.getWeight(), 1.0, 1e-12 );
 }
 
@@ -395,7 +413,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   cross_section_xml_file += "/cross_sections.xml";
 
   Teuchos::ParameterList cross_section_table_info;
-  
+
   // Read in the xml file storing the cross section table information
   Teuchos::updateParametersFromXmlFile(
                      cross_section_xml_file,
@@ -404,10 +422,10 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Assign the atom fractions and names
   std::unordered_set<std::string> atom_aliases;
   atom_aliases.insert( "Pb" );
-  
+
   Teuchos::Array<double> atom_fractions( 1 );
   Teuchos::Array<std::string> atom_names( 1 );
-  
+
   atom_fractions[0] = -1.0; // weight fraction
   atom_names[0] = "Pb";
 
@@ -422,7 +440,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   properties.setElasticCutoffAngleCosine( 1.0 );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 1000 );
-  
+
   MonteCarlo::ElectroatomFactory electroatom_factory(
                                              test_cross_sections_xml_directory,
                                              cross_section_table_info,
@@ -434,7 +452,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     electroatom_map;
 
   electroatom_factory.createElectroatomMap( electroatom_map );
-  
+
   // Create lead for electrons
   lead.reset( new MonteCarlo::ElectronMaterial( 0,
                                                 -1.0,

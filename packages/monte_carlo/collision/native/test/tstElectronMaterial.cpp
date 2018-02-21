@@ -117,33 +117,46 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
   TEST_FLOATING_EQUALITY( cross_section, 5.679677054824E+00, 1e-12 );
 
 
+
+  // Test that the total electroionization cross section can be returned
+  cross_section = material->getMacroscopicReactionCrossSection(
+        1.0e-5,
+        MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( cross_section, 3.8091128793704789e+05, 1e-12 );
+
+  cross_section = material->getMacroscopicReactionCrossSection(
+        8.97540E-02,
+        MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0455904319300407e+04, 1e-12 );
+
+  cross_section = material->getMacroscopicReactionCrossSection(
+        1.0e5,
+        MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+  TEST_FLOATING_EQUALITY( cross_section, 3.6761777904979213e+03, 1e-12 );
+
+
   // Test that the K subshell electroionization cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
         1.0e-5,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  cross_section = material->getMacroscopicReactionCrossSection(
-        8.97540E-02,
-        MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 3.6350071826026E-04, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         1.0e5,
         MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 1.060615028974E-01, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that the P3 subshell electroionization cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
         1.0e-5,
         MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 3.096230095899E+05, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
         1.0e5,
         MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
   // Test that the cutoff elastic cross section can be returned
