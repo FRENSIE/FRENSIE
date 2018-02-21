@@ -31,6 +31,160 @@ typedef std::tuple<
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that a ZAID can be constructed from a zaid string
+FRENSIE_UNIT_TEST( ZAID, zaid_string_constructor_stable )
+{
+  Data::ZAID h1_zaid( "1001" );
+
+  FRENSIE_CHECK_EQUAL( h1_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h1_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_zaid.atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( h1_zaid.toRaw(), 1001 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h1_zaid, 1001 );
+
+  h1_zaid = Data::ZAID( std::string("1001") );
+
+  FRENSIE_CHECK_EQUAL( h1_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h1_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_zaid.atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( h1_zaid.toRaw(), 1001 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h1_zaid, 1001 );
+
+  Data::ZAID h2_zaid( "1002" );
+
+  FRENSIE_CHECK_EQUAL( h2_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h2_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_zaid.atomicMassNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( h2_zaid.toRaw(), 1002 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h2_zaid, 1002 );
+
+  h2_zaid = Data::ZAID( std::string("1002") );
+
+  FRENSIE_CHECK_EQUAL( h2_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h2_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_zaid.atomicMassNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( h2_zaid.toRaw(), 1002 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h2_zaid, 1002 );
+
+  Data::ZAID u238_zaid( "92238" );
+
+  FRENSIE_CHECK_EQUAL( u238_zaid.atom(), Data::U_ATOM );
+  FRENSIE_CHECK_EQUAL( u238_zaid.atomicNumber(), 92 );
+  FRENSIE_CHECK_EQUAL( u238_zaid.atomicMassNumber(), 238 );
+  FRENSIE_CHECK_EQUAL( u238_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( u238_zaid.toRaw(), 92238 );
+  FRENSIE_CHECK_EQUAL( (unsigned)u238_zaid, 92238 );
+
+  u238_zaid = Data::ZAID( std::string("92238") );
+
+  FRENSIE_CHECK_EQUAL( u238_zaid.atom(), Data::U_ATOM );
+  FRENSIE_CHECK_EQUAL( u238_zaid.atomicNumber(), 92 );
+  FRENSIE_CHECK_EQUAL( u238_zaid.atomicMassNumber(), 238 );
+  FRENSIE_CHECK_EQUAL( u238_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( u238_zaid.toRaw(), 92238 );
+  FRENSIE_CHECK_EQUAL( (unsigned)u238_zaid, 92238 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a ZAID can be constructed from a raw zaid
+FRENSIE_UNIT_TEST( ZAID, zaid_string_constructor_metastable )
+{
+  Data::ZAID h1_meta1_zaid( "1401" );
+
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.toRaw(), 1401 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h1_meta1_zaid, 1401 );
+
+  h1_meta1_zaid = Data::ZAID( std::string("1401") );
+
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta1_zaid.toRaw(), 1401 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h1_meta1_zaid, 1401 );
+
+  Data::ZAID h1_meta2_zaid( "1801" );
+
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.isomerNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.toRaw(), 1801 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h1_meta2_zaid, 1801 );
+
+  h1_meta2_zaid = Data::ZAID( std::string("1801") );
+
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.atomicMassNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.isomerNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h1_meta2_zaid.toRaw(), 1801 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h1_meta2_zaid, 1801 );
+
+  Data::ZAID h2_meta1_zaid( "1402" );
+
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.atomicMassNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.toRaw(), 1402 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h2_meta1_zaid, 1402 );
+
+  h2_meta1_zaid = Data::ZAID( std::string("1402") );
+
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.atomicMassNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_meta1_zaid.toRaw(), 1402 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h2_meta1_zaid, 1402 );
+
+  Data::ZAID h2_meta2_zaid( "1802" );
+
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.atomicMassNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.isomerNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.toRaw(), 1802 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h2_meta2_zaid, 1802 );
+
+  h2_meta2_zaid = Data::ZAID( std::string("1802") );
+
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.atomicMassNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.isomerNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( h2_meta2_zaid.toRaw(), 1802 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h2_meta2_zaid, 1802 );
+
+  Data::ZAID u238_meta_zaid( "92638" );
+
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.atom(), Data::U_ATOM );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.atomicNumber(), 92 );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.atomicMassNumber(), 238 );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.toRaw(), 92638 );
+  FRENSIE_CHECK_EQUAL( (unsigned)u238_meta_zaid, 92638 );
+
+  u238_meta_zaid = Data::ZAID( std::string("92638") );
+
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.atom(), Data::U_ATOM );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.atomicNumber(), 92 );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.atomicMassNumber(), 238 );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.isomerNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( u238_meta_zaid.toRaw(), 92638 );
+  FRENSIE_CHECK_EQUAL( (unsigned)u238_meta_zaid, 92638 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a ZAID can be constructed from a raw zaid
 FRENSIE_UNIT_TEST( ZAID, raw_zaid_constructor_stable )
 {
@@ -187,6 +341,29 @@ FRENSIE_UNIT_TEST( ZAID, component_constructor )
   FRENSIE_CHECK_EQUAL( u238_meta_zaid.isomerNumber(), 1 );
   FRENSIE_CHECK_EQUAL( u238_meta_zaid.toRaw(), 92638 );
   FRENSIE_CHECK_EQUAL( (unsigned)u238_meta_zaid, 92638 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a zaid can be constructed from an atom type
+FRENSIE_UNIT_TEST( ZAID, atom_type_constructor )
+{
+  Data::ZAID h_zaid( Data::H_ATOM );
+
+  FRENSIE_CHECK_EQUAL( h_zaid.atom(), Data::H_ATOM );
+  FRENSIE_CHECK_EQUAL( h_zaid.atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( h_zaid.atomicMassNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( h_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( h_zaid.toRaw(), 1000 );
+  FRENSIE_CHECK_EQUAL( (unsigned)h_zaid, 1000 );
+
+  Data::ZAID u_zaid( Data::U_ATOM );
+
+  FRENSIE_CHECK_EQUAL( u_zaid.atom(), Data::U_ATOM );
+  FRENSIE_CHECK_EQUAL( u_zaid.atomicNumber(), 92 );
+  FRENSIE_CHECK_EQUAL( u_zaid.atomicMassNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( u_zaid.isomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( u_zaid.toRaw(), 92000 );
+  FRENSIE_CHECK_EQUAL( (unsigned)u_zaid, 92000 );
 }
 
 //---------------------------------------------------------------------------//
