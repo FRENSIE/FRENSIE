@@ -14,7 +14,6 @@
 
 // Boost Includes
 #include <boost/filesystem.hpp>
-#include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
 #include "Data_PhotoatomicDataProperties.hpp"
@@ -30,11 +29,14 @@ class TestAtomicDataProperties : public BaseProperties
 {
 
 public:
+
+  //! Default constructor
+  TestAtomicDataProperties()
+  { /* ... */ }
   
   //! Constructor
   TestAtomicDataProperties( const AtomType atom,
-                            const typename BaseProperties::FileType file_type =
-                            BaseProperties::ACE_FILE,
+                            const typename BaseProperties::FileType file_type,
                             const unsigned version = 0 )
     : d_atom( atom ),
       d_file_type( file_type ),
@@ -82,6 +84,7 @@ private:
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseProperties );
     ar & BOOST_SERIALIZATION_NVP( d_atom );
     ar & BOOST_SERIALIZATION_NVP( d_file_type );
+    ar & BOOST_SERIALIZATION_NVP( d_version );
   }
 
   // Declare the boost serialization access object as a friend
@@ -98,6 +101,22 @@ private:
 };
 
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( TestAtomicDataProperties<Data::PhotoatomicDataProperties>, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TestAtomicDataProperties<Data::PhotoatomicDataProperties>, Data );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( TestAtomicDataProperties<Data::PhotoatomicDataProperties>, Data );
+
+BOOST_SERIALIZATION_CLASS_VERSION( TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>, Data );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>, Data );
+
+BOOST_SERIALIZATION_CLASS_VERSION( TestAtomicDataProperties<Data::ElectroatomicDataProperties>, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TestAtomicDataProperties<Data::ElectroatomicDataProperties>, Data );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( TestAtomicDataProperties<Data::ElectroatomicDataProperties>, Data );
+
+BOOST_SERIALIZATION_CLASS_VERSION( TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>, Data );
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>, Data );
 
 #endif // end TEST_ATOMIC_DATA_PROPERTIES_HPP
 

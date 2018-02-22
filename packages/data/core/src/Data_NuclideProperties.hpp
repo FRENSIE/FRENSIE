@@ -557,9 +557,17 @@ private:
 
   // Set the nuclear properties
   template<typename Properties, typename PropertiesMap>
+  static void setNuclearPropertiesImpl(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const std::string& type_name );
+
+  // Set the nuclear properties
+  template<typename Properties, typename PropertiesMap>
   static void setNuclearProperties(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
+                       const Data::ZAID& expected_zaid,
                        const std::string& type_name );
 
   // Set the thermal nuclear properties
@@ -567,6 +575,16 @@ private:
   static void setThermalNuclearProperties(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
+                       const Data::ZAID& expected_zaid,
+                       const std::string& type_name );
+
+  // Set the photonuclear properties
+  template<typename Properties, typename PropertiesMap>
+  static void setPhotonuclearProperties(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const ZAID& expected_zaid,
+                       const std::string& warning_tag,
                        const std::string& type_name );
 
   // Clone the stored properties

@@ -9,6 +9,9 @@
 #ifndef DATA_ATOM_PROPRETIES_HPP
 #define DATA_ATOM_PROPRETIES_HPP
 
+// Std Lib Includes
+#include <stdexcept>
+
 // FRENSIE Includes
 #include "Data_ZAID.hpp"
 #include "Data_PhotoatomicDataProperties.hpp"
@@ -91,7 +94,7 @@ public:
             const AdjointPhotoatomicDataProperties::FileType file_type ) const;
 
   //! Check if there is adjoint photoatomic data with the desired format and version
-  bool adjointPhotoatomicataAvailable(
+  bool adjointPhotoatomicDataAvailable(
                     const AdjointPhotoatomicDataProperties::FileType file_type,
                     const unsigned table_version ) const;
 
@@ -149,7 +152,7 @@ public:
           const AdjointElectroatomicDataProperties::FileType file_type ) const;
 
   //! Check if there is adjoint electroatomic data with the desired format and version
-  bool adjointElectroatomicataAvailable(
+  bool adjointElectroatomicDataAvailable(
                   const AdjointElectroatomicDataProperties::FileType file_type,
                   const unsigned table_version ) const;
 
@@ -245,9 +248,11 @@ protected:
 
   //! Set the properties
   template<typename Properties, typename PropertiesMap>
-  static void setProperties( PropertiesMap& properties,
-                             const std::shared_ptr<const Properties>& new_properties,
-                             const std::string& type_name );
+  static void setPropertiesImpl(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const std::string& warning_tag,
+                       const std::string& type_name );
 
   //! Clone the stored properties
   static void cloneStoredAtomProperties(
@@ -266,6 +271,15 @@ protected:
                                std::ostream& os );
 
 private:
+
+  // Set the properties
+  template<typename Properties, typename PropertiesMap>
+  static void setProperties(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const AtomType expected_atom,
+                       const std::string& warning_tag,
+                       const std::string& type_name );
 
   // Save the properties to an archive
   template<typename Archive>
@@ -297,6 +311,30 @@ private:
 
   // The adjoint electroatomic data properties
   typename PropertiesMapTypeHelper<AdjointElectroatomicDataProperties>::FileTypeVersionPropertiesMap d_adjoint_electroatomic_data_properties;
+};
+
+//! The invalid data error
+class InvalidScatteringCenterPropertiesData : public std::runtime_error
+{
+
+public:
+
+  //! Constructor
+  InvalidScatteringCenterPropertiesData( const std::string& what )
+    : std::runtime_error( what )
+  { /* ... */ }
+};
+
+//! The invalid request error
+class InvalidScatteringCenterPropertiesRequest : public std::runtime_error
+{
+
+public:
+
+  //! Constructor
+  InvalidScatteringCenterPropertiesRequest( const std::string& what )
+    : std::runtime_error( what )
+  { /* ... */ }
 };
   
 } // end Data namespace

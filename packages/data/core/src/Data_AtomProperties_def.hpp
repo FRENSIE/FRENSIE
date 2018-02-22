@@ -9,6 +9,9 @@
 #ifndef DATA_ATOM_PROPERTIES_DEF_HPP
 #define DATA_ATOM_PROPERTIES_DEF_HPP
 
+// FRENSIE Includes
+#include "Utility_StaticOutputFormatter.hpp"
+
 namespace Data{
 
 // Check if there is data available with the desired format
@@ -116,7 +119,7 @@ unsigned AtomProperties::getMaxDataFileVersion(
   }
   else
   {
-    THROW_EXCEPTION( std::runtime_error,
+    THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                      type_name << " data properties with file type "
                      << file_type << " does not have a recommended version!" );
   }
@@ -142,7 +145,7 @@ inline const Properties& AtomProperties::getProperties(
       return *version_it->second;
     else
     {
-      THROW_EXCEPTION( std::runtime_error,
+      THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                        type_name << " data properties with file type "
                        << file_type << " and version " << table_version <<
                        " do not exist!" );
@@ -150,7 +153,7 @@ inline const Properties& AtomProperties::getProperties(
   }
   else
   {
-    THROW_EXCEPTION( std::runtime_error,
+    THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                      type_name << " data properties with file type "
                      << file_type << " do not exist!" );
   }
@@ -159,28 +162,50 @@ inline const Properties& AtomProperties::getProperties(
 // Set the properties
 template<typename Properties, typename PropertiesMap>
 inline void AtomProperties::setProperties(
-                      PropertiesMap& properties,
-                      const std::shared_ptr<const Properties>& new_properties,
-                      const std::string& type_name )
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const AtomType expected_atom,
+                       const std::string& warning_tag,
+                       const std::string& type_name )
 {
   if( new_properties.get() )
   {
-    if( AtomProperties::dataAvailable( properties,
-                                       new_properties->fileType(),
-                                       new_properties->fileVersion()) )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "AtomProperties",
-                                  type_name << " data properties with file "
-                                  "type " << new_properties->fileType() <<
-                                  " and version "
-                                  << new_properties->fileVersion() <<
-                                  " are already present! The old properties "
-                                  "will be overwritten." );
-    }
-
-    properties[new_properties->fileType()][new_properties->fileVersion()] =
-      new_properties;
+    TEST_FOR_EXCEPTION( new_properties->atom() != expected_atom,
+                        InvalidScatteringCenterPropertiesData,
+                        type_name << " data properties do not correspond to "
+                        "this atom (" << new_properties->atom() << " != "
+                        << expected_atom << ")!" );
+    
+    AtomProperties::setPropertiesImpl( properties,
+                                       new_properties,
+                                       warning_tag,
+                                       type_name );
   }
+}
+
+// Set the properties
+template<typename Properties, typename PropertiesMap>
+inline void AtomProperties::setPropertiesImpl(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const std::string& warning_tag,
+                       const std::string& type_name )
+{
+  if( AtomProperties::dataAvailable( properties,
+                                     new_properties->fileType(),
+                                     new_properties->fileVersion()) )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( warning_tag,
+                                type_name << " data properties with file "
+                                "type " << new_properties->fileType() <<
+                                " and version "
+                                << new_properties->fileVersion() <<
+                                " are already present! The old properties "
+                                "will be overwritten." );
+  }
+  
+  properties[new_properties->fileType()][new_properties->fileVersion()] =
+    new_properties;
 }
 
 // Clone properties
@@ -222,7 +247,7 @@ void AtomProperties::printProperties( const PropertiesMap& properties,
 {
   std::string indent( "  " );
   
-  os << indent << type_name << ":\n";
+  os << indent << Utility::Underlined(type_name) << ":\n";
 
   indent += "  ";
 
@@ -236,7 +261,7 @@ void AtomProperties::printProperties( const PropertiesMap& properties,
     while( version_it != file_type_it->second.end() )
     {
       os << indent << file_type_it->first << " version " << version_it->first
-         << " (" << version_it->second->tableName() << "): "
+         << " (" << Utility::Italicized(version_it->second->tableName()) << "): "
          << version_it->second->filePath().string() << "\n";
       
       ++version_it;

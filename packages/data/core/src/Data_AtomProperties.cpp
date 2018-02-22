@@ -39,7 +39,7 @@ AtomProperties::AtomProperties( const Data::ZAID zaid,
     d_atomic_weight_ratio( atomic_weight_ratio )
 {
   TEST_FOR_EXCEPTION( atomic_weight_ratio <= 0.0,
-                      std::runtime_error,
+                      InvalidScatteringCenterPropertiesData,
                       "The atomic weight ratio cannot be zero or negative!" );
 }
 
@@ -93,7 +93,7 @@ double AtomProperties::atomicWeightRatio() const
 void AtomProperties::setAtomicWeightRatio( const double atomic_weight_ratio )
 {
   TEST_FOR_EXCEPTION( atomic_weight_ratio <= 0.0,
-                      std::runtime_error,
+                      InvalidScatteringCenterPropertiesData,
                       "The atomic weight ratio cannot be zero or negative!" );
   
   d_atomic_weight_ratio = atomic_weight_ratio;
@@ -135,17 +135,9 @@ std::set<unsigned> AtomProperties::getDataFileVersions(
 unsigned AtomProperties::getRecommendedDataFileVersion(
                     const PhotoatomicDataProperties::FileType file_type ) const
 {
-  switch( file_type )
-  {
-    case PhotoatomicDataProperties::ACE_FILE:
-      return 4;
-    case PhotoatomicDataProperties::ACE_EPR_FILE:
-      return 12;
-    case PhotoatomicDataProperties::Native_EPR_FILE:
-      return 0;
-    default:
-      return 0;
-  }
+  return this->getMaxDataFileVersion( d_photoatomic_data_properties,
+                                      file_type,
+                                      "Photoatomic" );
 }
 
 // Get the photoatomic data properties
@@ -165,6 +157,8 @@ void AtomProperties::setPhotoatomicDataProperties( const std::shared_ptr<const P
 {
   this->setProperties( d_photoatomic_data_properties,
                        properties,
+                       d_zaid.atom(),
+                       "AtomProperties",
                        "Photoatomic" );
 }
 
@@ -177,7 +171,7 @@ bool AtomProperties::adjointPhotoatomicDataAvailable(
 }
 
 // Check if there is adjoint photoatomic data with the desired format and version
-bool AtomProperties::adjointPhotoatomicataAvailable(
+bool AtomProperties::adjointPhotoatomicDataAvailable(
                     const AdjointPhotoatomicDataProperties::FileType file_type,
                     const unsigned table_version ) const
 {
@@ -227,6 +221,8 @@ void AtomProperties::setAdjointPhotoatomicDataProperties( const std::shared_ptr<
 {
   this->setProperties( d_adjoint_photoatomic_data_properties,
                        properties,
+                       d_zaid.atom(),
+                       "AtomProperties",
                        "Adjoint photoatomic" );
 }
 
@@ -266,17 +262,9 @@ std::set<unsigned> AtomProperties::getDataFileVersions(
 unsigned AtomProperties::getRecommendedDataFileVersion(
                   const ElectroatomicDataProperties::FileType file_type ) const
 {
-  switch( file_type )
-  {
-    case PhotoatomicDataProperties::ACE_FILE:
-      return 3;
-    case PhotoatomicDataProperties::ACE_EPR_FILE:
-      return 12;
-    case PhotoatomicDataProperties::Native_EPR_FILE:
-      return 0;
-    default:
-      return 0;
-  }
+  return this->getMaxDataFileVersion( d_electroatomic_data_properties,
+                                      file_type,
+                                      "Electroatomic" );
 }
 
 // Get the electroatomic data properties
@@ -296,6 +284,8 @@ void AtomProperties::setElectroatomicDataProperties( const std::shared_ptr<const
 {
   this->setProperties( d_electroatomic_data_properties,
                        properties,
+                       d_zaid.atom(),
+                       "AtomProperties",
                        "Electroatomic" );
 }
 
@@ -308,7 +298,7 @@ bool AtomProperties::adjointElectroatomicDataAvailable(
 }
 
 // Check if there is adjoint electroatomic data with the desired format and version
-bool AtomProperties::adjointElectroatomicataAvailable(
+bool AtomProperties::adjointElectroatomicDataAvailable(
                   const AdjointElectroatomicDataProperties::FileType file_type,
                   const unsigned table_version ) const
 {
@@ -351,6 +341,16 @@ const AdjointElectroatomicDataProperties& AtomProperties::getAdjointElectroatomi
                                        file_type,
                                        table_version,
                                        "Adjoint electroatomic" );
+}
+
+// Set the adjoint electroatomic data properties
+void AtomProperties::setAdjointElectroatomicDataProperties( const std::shared_ptr<const AdjointElectroatomicDataProperties>& properties )
+{
+  this->setProperties( d_adjoint_electroatomic_data_properties,
+                       properties,
+                       d_zaid.atom(),
+                       "AtomProperties",
+                       "Adjoint electroatomic" );
 }
 
 // Clone the properties
@@ -399,8 +399,9 @@ void AtomProperties::cloneStoredAtomProperties(
 // Place the object in an output stream
 void AtomProperties::toStream( std::ostream& os ) const
 {
-  os << d_zaid << " Properties:\n"
-     << "  Atomic Weight: " << this->atomicWeight() << "\n";
+  os << Utility::Bold( d_zaid.toName() + " Properties:" ) << "\n"
+     << "  " << Utility::Underlined("Atomic Weight:") << " "
+     << this->atomicWeight() << "\n";
 
   // Print the photoatomic properties
   this->printProperties( d_photoatomic_data_properties,
@@ -428,6 +429,8 @@ void AtomProperties::toStream( std::ostream& os ) const
 EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( AtomProperties );
   
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( AtomProperties, Data );
 
 //---------------------------------------------------------------------------//
 // end Data_AtomProperties.cpp

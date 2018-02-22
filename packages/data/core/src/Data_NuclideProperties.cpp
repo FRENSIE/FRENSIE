@@ -189,6 +189,7 @@ void NuclideProperties::setNuclearDataProperties( const std::shared_ptr<const Nu
 {
   this->setNuclearProperties( d_nuclear_data_properties,
                               properties,
+                              this->zaid(),
                               "Nuclear" );
 }
 
@@ -276,18 +277,10 @@ unsigned NuclideProperties::getRecommendedDataFileVersion(
                  const std::string& name,
                  const ThermalNuclearDataProperties::FileType file_type ) const
 {
-  switch( file_type )
-  {
-    case ThermalNuclearDataProperties::MCNP6_ACE_FILE:
-      return 2;
-    default:
-    {
-      return this->getMaxDataFileVersion( d_thermal_nuclear_data_properties,
-                                          name,
-                                          file_type,
-                                          "Thermal nuclear" );
-    }
-  }
+  return this->getMaxDataFileVersion( d_thermal_nuclear_data_properties,
+                                      name,
+                                      file_type,
+                                      "Thermal nuclear" );
 }
 
 // Get the thermal nuclear data evaluation temps
@@ -355,6 +348,7 @@ void NuclideProperties::setThermalNuclearDataProperties( const std::shared_ptr<c
 {
   this->setThermalNuclearProperties( d_thermal_nuclear_data_properties,
                                      properties,
+                                     this->zaid(),
                                      "Thermal nuclear" );
 }
 
@@ -481,6 +475,7 @@ void NuclideProperties::setAdjointNuclearDataProperties( const std::shared_ptr<c
 {
   this->setNuclearProperties( d_adjoint_nuclear_data_properties,
                               properties,
+                              this->zaid(),
                               "Adjoint nuclear" );
 }
 
@@ -643,6 +638,7 @@ void NuclideProperties::setAdjointThermalNuclearDataProperties( const std::share
 {
   this->setThermalNuclearProperties( d_adjoint_thermal_nuclear_data_properties,
                                      properties,
+                                     this->zaid(),
                                      "Adjoint thermal nuclear" );
 }
 
@@ -702,9 +698,11 @@ const PhotonuclearDataProperties& NuclideProperties::getPhotonuclearDataProperti
 // Set the photonuclear data properties
 void NuclideProperties::setPhotonuclearDataProperties( const std::shared_ptr<const PhotonuclearDataProperties>& properties )
 {
-  AtomProperties::setProperties( d_photonuclear_data_properties,
-                                 properties,
-                                 "Photonuclear" );
+  this->setPhotonuclearProperties( d_photonuclear_data_properties,
+                                   properties,
+                                   this->zaid(),
+                                   "NuclideProperties",
+                                   "Photonuclear" );
 }
 
 // Check if there is adjoint photonuclear data with the desired format
@@ -765,9 +763,11 @@ const AdjointPhotonuclearDataProperties& NuclideProperties::getAdjointPhotonucle
 // Set the photonuclear data properties
 void NuclideProperties::setAdjointPhotonuclearDataProperties( const std::shared_ptr<const AdjointPhotonuclearDataProperties>& properties )
 {
-  AtomProperties::setProperties( d_adjoint_photonuclear_data_properties,
-                                 properties,
-                                 "Adjoint photonuclear" );
+  this->setPhotonuclearProperties( d_adjoint_photonuclear_data_properties,
+                                   properties,
+                                   this->zaid(),
+                                   "NuclideProperties",
+                                   "Adjoint photonuclear" );
 }
 
 // Clone the properties

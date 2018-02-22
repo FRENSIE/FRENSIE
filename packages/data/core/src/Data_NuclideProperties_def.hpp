@@ -184,7 +184,7 @@ unsigned NuclideProperties::getMaxDataFileVersion(
   }
   else
   {
-    THROW_EXCEPTION( std::runtime_error,
+    THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                      type_name << " data properties for " << name <<
                      " with file type " << file_type << " do not have a "
                      "recommended version!" );
@@ -394,7 +394,7 @@ const Properties& NuclideProperties::getProperties(
       {
         if( find_exact )
         {
-          THROW_EXCEPTION( std::runtime_error,
+          THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                            type_name << " data properties with file type "
                            << file_type << ", version " << table_version <<
                            " and evaluation temp " << evaluation_temp <<
@@ -431,7 +431,7 @@ const Properties& NuclideProperties::getProperties(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error,
+      THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                        type_name << " data properties with file type "
                        << file_type << " and version " << table_version <<
                        " do not exist!" );
@@ -439,7 +439,7 @@ const Properties& NuclideProperties::getProperties(
   }
   else
   {
-    THROW_EXCEPTION( std::runtime_error,
+    THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                      type_name << " data properties with file type "
                      << file_type << " do not exist!" );
   }
@@ -489,7 +489,7 @@ inline const Properties& NuclideProperties::getProperties(
   }
   else
   {
-    THROW_EXCEPTION( std::runtime_error,
+    THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
                      type_name << " data properties with name " << name << 
                      " do not exist!" );
   }
@@ -518,56 +518,48 @@ inline const Properties& NuclideProperties::getProperties(
 
 // Set the nuclear properties
 template<typename Properties, typename PropertiesMap>
-void NuclideProperties::setNuclearProperties(
+void NuclideProperties::setNuclearPropertiesImpl(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
                        const std::string& type_name )
 {
-  if( new_properties.get() )
-  {
-    Energy evaluation_temp = new_properties->evaluationTemperatureInMeV();
+  Energy evaluation_temp = new_properties->evaluationTemperatureInMeV();
     
-    typename PropertiesMap::mapped_type::mapped_type& temp_grid = 
-      properties[new_properties->fileType()][new_properties->fileVersion()];
+  typename PropertiesMap::mapped_type::mapped_type& temp_grid = 
+    properties[new_properties->fileType()][new_properties->fileVersion()];
 
-    if( temp_grid.empty() )
-      temp_grid.push_back( std::make_pair( evaluation_temp, new_properties ) );
+  if( temp_grid.empty() )
+    temp_grid.push_back( std::make_pair( evaluation_temp, new_properties ) );
+  else
+  {
+    typename PropertiesMap::mapped_type::mapped_type::iterator temp_grid_it;
+    
+    if( evaluation_temp > Utility::get<0>(temp_grid.back()) )
+      temp_grid_it = temp_grid.end();
     else
     {
-      typename PropertiesMap::mapped_type::mapped_type::iterator temp_grid_it;
+      temp_grid_it =
+        Utility::Search::binaryUpperBound<0>( temp_grid.begin(),
+                                              temp_grid.end(),
+                                              evaluation_temp );
+    }
     
-      if( evaluation_temp > Utility::get<0>(temp_grid.back()) )
-        temp_grid_it = temp_grid.end();
-      else
+    if( temp_grid_it != temp_grid.end() )
+    {
+      if( Utility::get<0>( *temp_grid_it ) == evaluation_temp )
       {
-        temp_grid_it =
-          Utility::Search::binaryUpperBound<0>( temp_grid.begin(),
-                                                temp_grid.end(),
-                                                evaluation_temp );
-      }
-      
-      if( temp_grid_it != temp_grid.end() )
-      {
-        if( Utility::get<0>( *temp_grid_it ) == evaluation_temp )
-        {
-          FRENSIE_LOG_TAGGED_WARNING( "NuclideProperties",
-                                      type_name << " data properties with "
-                                      "file type "
-                                      << new_properties->fileType() <<
-                                      ", version "
-                                      << new_properties->fileVersion() <<
-                                      " and evaluation temperature "
-                                      << evaluation_temp << 
-                                      " are already present! The old "
-                                      "properties will be overwritten." );
-
-          Utility::get<1>( *temp_grid_it ) = new_properties;
-        }
-        else
-        {
-          temp_grid.insert( temp_grid_it,
-                            std::make_pair(evaluation_temp, new_properties) );
-        }
+        FRENSIE_LOG_TAGGED_WARNING( "NuclideProperties",
+                                    type_name << " data properties with "
+                                    "file type "
+                                    << new_properties->fileType() <<
+                                    ", version "
+                                    << new_properties->fileVersion() <<
+                                    " and evaluation temperature "
+                                    << evaluation_temp << 
+                                    " are already present! The old "
+                                    "properties will be overwritten." );
+        
+        Utility::get<1>( *temp_grid_it ) = new_properties;
       }
       else
       {
@@ -575,6 +567,33 @@ void NuclideProperties::setNuclearProperties(
                           std::make_pair(evaluation_temp, new_properties) );
       }
     }
+    else
+    {
+      temp_grid.insert( temp_grid_it,
+                        std::make_pair(evaluation_temp, new_properties) );
+    }
+  }
+}
+
+// Set the nuclear properties
+template<typename Properties, typename PropertiesMap>
+void NuclideProperties::setNuclearProperties(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const Data::ZAID& expected_zaid,
+                       const std::string& type_name )
+{
+  if( new_properties.get() )
+  {
+    TEST_FOR_EXCEPTION( new_properties->zaid() != expected_zaid,
+                        InvalidScatteringCenterPropertiesData,
+                        type_name << " data properties do not correspond to "
+                        "this nuclide (" << new_properties->zaid() << " != "
+                        << expected_zaid << ")!" );
+
+    NuclideProperties::setNuclearPropertiesImpl( properties,
+                                                 new_properties,
+                                                 type_name );
   }
 }
 
@@ -583,14 +602,45 @@ template<typename Properties, typename PropertiesMap>
 void NuclideProperties::setThermalNuclearProperties(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
+                       const Data::ZAID& expected_zaid,
                        const std::string& type_name )
 {
   if( new_properties.get() )
   {
-    NuclideProperties::setNuclearProperties(
+    TEST_FOR_EXCEPTION( !new_properties->hasDataForZAID( expected_zaid ),
+                        InvalidScatteringCenterPropertiesData,
+                        type_name << " data properties do not correspond to "
+                        "this nuclide (" << expected_zaid << " not in "
+                        << new_properties->zaids() << ")!" );
+    
+    NuclideProperties::setNuclearPropertiesImpl(
                                     properties[new_properties->name()],
                                     new_properties,
                                     new_properties->name() + " " + type_name );
+  }
+}
+
+// Set the photonuclear properties
+template<typename Properties, typename PropertiesMap>
+void NuclideProperties::setPhotonuclearProperties(
+                       PropertiesMap& properties,
+                       const std::shared_ptr<const Properties>& new_properties,
+                       const ZAID& expected_zaid,
+                       const std::string& warning_tag,
+                       const std::string& type_name )
+{
+  if( new_properties.get() )
+  {
+    TEST_FOR_EXCEPTION( new_properties->zaid() != expected_zaid,
+                        InvalidScatteringCenterPropertiesData,
+                        type_name << " data properties do not correspond to "
+                        "this nuclide (" << new_properties->zaid() << " != "
+                        << expected_zaid << ")!" );
+
+    AtomProperties::setPropertiesImpl( properties,
+                                       new_properties,
+                                       warning_tag,
+                                       type_name );
   }
 }
 
