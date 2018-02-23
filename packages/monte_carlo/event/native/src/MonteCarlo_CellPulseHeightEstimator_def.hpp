@@ -64,13 +64,13 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
 
   for( unsigned i = 0; i < particle_types.size(); ++i )
   {
-    if( particle_types[i] != PHOTON )
+    if( particle_types[i] != PHOTON && particle_types[i] != ELECTRON && particle_types[i] != POSITRON )
     {
       if( !warning_issued )
       {
 	std::cerr << "Warning: Only photons and charged particles can "
 		  << "contribute to pulse height estimators. The other "
-		  << "particle types requested for pulse height estimator "
+		  << "particle types requested (" << particle_types[i] << ") for pulse height estimator "
 		  << this->getId() << " will be ignored."
 		  << std::endl;
 
