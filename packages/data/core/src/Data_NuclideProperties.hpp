@@ -650,6 +650,9 @@ private:
     typedef std::map<std::string, typename NuclearPropertiesMapTypeHelper<Properties>::FileTypeVersionPropertiesGridMap> NameFileTypeVersionPropertiesGridMap;
   };
 
+  // The energy comparison tolerance
+  static double s_energy_comp_tol;
+
   // The nuclear data properties
   typename NuclearPropertiesMapTypeHelper<NuclearDataProperties>::FileTypeVersionPropertiesGridMap d_nuclear_data_properties;
 

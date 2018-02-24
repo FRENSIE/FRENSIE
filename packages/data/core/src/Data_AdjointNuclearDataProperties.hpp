@@ -58,6 +58,9 @@ public:
   //! Get the ZAID that the file specifies data for
   virtual Data::ZAID zaid() const = 0;
 
+  //! Get the atomic weight ratio of the nuclide that the file specifies data for
+  virtual double atomicWeightRatio() const = 0;
+
   //! Get the adjoint nuclear data evaluation temperature (MeV)
   virtual Energy evaluationTemperatureInMeV() const = 0;
 

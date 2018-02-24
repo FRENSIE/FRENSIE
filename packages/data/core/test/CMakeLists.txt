@@ -41,6 +41,9 @@ FRENSIE_ADD_TEST(AdjointThermalNuclearDataProperties)
 FRENSIE_ADD_TEST_EXECUTABLE(AtomProperties DEPENDS tstAtomProperties.cpp)
 FRENSIE_ADD_TEST(AtomProperties)
 
+FRENSIE_ADD_TEST_EXECUTABLE(NuclideProperties DEPENDS tstNuclideProperties.cpp)
+FRENSIE_ADD_TEST(NuclideProperties)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ScatteringCenterPropertiesDatabase DEPENDS tstScatteringCenterPropertiesDatabase.cpp)
 FRENSIE_ADD_TEST(ScatteringCenterPropertiesDatabase)
 

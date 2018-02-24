@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_SearchAlgorithms.hpp"
+#include "Utility_ComparisonPolicy.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -31,7 +32,7 @@ inline bool NuclideProperties::dataAvailable(
                                                file_type,
                                                table_version,
                                                [&evaluation_temp]( const typename PropertiesMap::mapped_type::mapped_type::value_type& element ) -> bool
-                                               { return Utility::get<0>(element) == evaluation_temp; } );
+                                               { return Utility::RelativeErrorComparisonPolicy::compare( Utility::get<0>(element), evaluation_temp, s_energy_comp_tol ); } );
 }
 
 // Check if there is data available with the desired format, table version, and evaluation temp
@@ -387,10 +388,27 @@ const Properties& NuclideProperties::getProperties(
           Utility::Search::binaryLowerBound<0>( temp_grid.begin(),
                                                 temp_grid.end(),
                                                 evaluation_temp );
+
+        // Check if the evaluation temperature is within the tolerance of
+        // the upper bound of the grid bin
+        decltype(temp_grid_it) next_temp_grid_it = temp_grid_it;
+        ++next_temp_grid_it;
+
+        if( Utility::RelativeErrorComparisonPolicy::compare(
+                                           Utility::get<0>(*next_temp_grid_it),
+                                           evaluation_temp,
+                                           s_energy_comp_tol ) )
+        {
+          ++temp_grid_it;
+        }
       }
+      
 
       // Check if there are suitable properties available
-      if( Utility::get<0>(*temp_grid_it) != evaluation_temp )
+      if( !Utility::RelativeErrorComparisonPolicy::compare(
+                                                Utility::get<0>(*temp_grid_it),
+                                                evaluation_temp,
+                                                s_energy_comp_tol ) )
       {
         if( find_exact )
         {

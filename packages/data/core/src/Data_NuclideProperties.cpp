@@ -28,6 +28,9 @@
 
 namespace Data{
 
+// Initialize static member data
+double NuclideProperties::s_energy_comp_tol = 1e-9;
+
 // Default constructor
 NuclideProperties::NuclideProperties()
 { /* ... */ }

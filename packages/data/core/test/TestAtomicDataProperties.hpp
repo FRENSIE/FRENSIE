@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   TestAtomicDataPropertiesProperties.hpp
+//! \file   TestAtomicDataProperties.hpp
 //! \author Alex Robinson
 //! \brief  The data properties class implementations for testing
 //!
