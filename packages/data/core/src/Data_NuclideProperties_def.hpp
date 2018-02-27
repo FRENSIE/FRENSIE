@@ -542,7 +542,7 @@ void NuclideProperties::setNuclearPropertiesImpl(
                        const std::string& type_name )
 {
   Energy evaluation_temp = new_properties->evaluationTemperatureInMeV();
-    
+  
   typename PropertiesMap::mapped_type::mapped_type& temp_grid = 
     properties[new_properties->fileType()][new_properties->fileVersion()];
 
@@ -685,7 +685,7 @@ void NuclideProperties::cloneNuclearProperties(
     {
       typename PropertiesMap::mapped_type::mapped_type& new_temp_grid =
         new_properties_map[version_it->first];
-
+      
       typename PropertiesMap::mapped_type::mapped_type::const_iterator
         temp_grid_it = version_it->second.begin();
 
@@ -697,7 +697,7 @@ void NuclideProperties::cloneNuclearProperties(
 
         Utility::get<1>( new_temp_grid.back() ).reset(
                                    Utility::get<1>( *temp_grid_it )->clone() );
-
+        
         ++temp_grid_it;
       }
 

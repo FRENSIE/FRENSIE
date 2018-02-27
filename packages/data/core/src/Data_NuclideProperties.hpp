@@ -18,6 +18,7 @@
 #include "Data_PhotonuclearDataProperties.hpp"
 #include "Data_AdjointPhotonuclearDataProperties.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_List.hpp"
 #include "Utility_Map.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -40,6 +41,9 @@ public:
 
   //! The temperature quantity
   typedef NuclearDataProperties::Temperature Temperature;
+
+  //! Default constructor
+  NuclideProperties();
 
   //! Constructor
   NuclideProperties( const Data::ZAID zaid,
@@ -279,7 +283,7 @@ public:
   std::set<std::string> getAdjointThermalNuclearDataNames() const;
 
   //! Get the adjoint thermal nuclear data file types
-  std::set<AdjointThermalNuclearDataProperties::FileType> getAdjointThermalDataFileTypes( const std::string& name ) const;
+  std::set<AdjointThermalNuclearDataProperties::FileType> getAdjointThermalNuclearDataFileTypes( const std::string& name ) const;
 
   //! Get the adjoint thermal nuclear data file versions
   std::set<unsigned> getDataFileVersions(
@@ -391,9 +395,6 @@ public:
   void toStream( std::ostream& os ) const override;
 
 private:
-
-  // Default constructor
-  NuclideProperties();
 
   // Copy constructor
   NuclideProperties( const NuclideProperties& other );

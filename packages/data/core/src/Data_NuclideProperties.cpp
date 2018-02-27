@@ -549,7 +549,7 @@ std::set<std::string> NuclideProperties::getAdjointThermalNuclearDataNames() con
 }
 
 // Get the adjoint thermal nuclear data file types
-std::set<AdjointThermalNuclearDataProperties::FileType> NuclideProperties::getAdjointThermalDataFileTypes( const std::string& name ) const
+std::set<AdjointThermalNuclearDataProperties::FileType> NuclideProperties::getAdjointThermalNuclearDataFileTypes( const std::string& name ) const
 {
   return this->getDataFileTypes( d_adjoint_thermal_nuclear_data_properties,
                                   name );
