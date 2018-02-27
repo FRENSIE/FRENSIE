@@ -886,6 +886,8 @@ EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( NuclideProperties );
   
 } // end Data namespace
 
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( NuclideProperties, Data );
+
 //---------------------------------------------------------------------------//
 // end Data_NuclideProperties.cpp
 //---------------------------------------------------------------------------//
