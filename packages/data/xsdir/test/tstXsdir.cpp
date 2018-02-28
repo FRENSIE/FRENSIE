@@ -9,229 +9,159 @@
 // Std Lib Includes
 #include <iostream>
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Data_Xsdir.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::string xsdir_file_name;
+
+boost::filesystem::path xsdir_file_name;
+
+//---------------------------------------------------------------------------//
+// Testing Classes
+//---------------------------------------------------------------------------//
+
+struct TestXsdir : public Data::Xsdir
+{
+  TestXsdir() { /* ... */ }
+  ~TestXsdir() { /* ... */ }
+  
+  using Xsdir::splitLineIntoEntryTokens;
+  using Xsdir::isLineTableEntry;
+  using Xsdir::extractTableNameFromEntryTokens;
+  using Xsdir::extractTableNameComponentsFromEntryTokens;
+  using Xsdir::isTableTypeSupported;
+  using Xsdir::extractAtomicWeightRatioFromEntryTokens;
+  using Xsdir::extractPathFromEntryTokens;
+  using Xsdir::extractFileStartLineFromEntryTokens;
+  using Xsdir::extractEvaluationTemperatureFromEntryTokens;
+};
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that the xsdir file can be exported
-TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
+// Check that a line can be split into entry tokens
+FRENSIE_UNIT_TEST( Xsdir, splitLineIntoEntryTokens )
 {
-  // Construct the xsdir object from the xsdir file
-  Data::Xsdir xsdir( xsdir_file_name );
+  std::vector<std::string> entry_tokens;
 
-  Teuchos::ParameterList cross_sections( "Cross Sections Directory" );
+  TestXsdir::splitLineIntoEntryTokens( "atomic weight ratios",
+                                       entry_tokens );
 
-  xsdir.exportInfo( cross_sections );
+  FRENSIE_REQUIRE_EQUAL( entry_tokens.size(), 3 );
 
-  TEST_EQUALITY_CONST( cross_sections.numParams(), 29 );
-  TEST_ASSERT( cross_sections.isSublist( "H-1_900.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-1_600.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-1_293.6K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-1_900.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-1_600.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-1_293.6K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-2_900.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-2_600.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-2_293.6K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-2_900.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-2_600.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H-2_293.6K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-3_900.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-3_600.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-3_293.6K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-3_900.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-3_600.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-3_293.6K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-4_900.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-4_600.0K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-4_293.6K_v8" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-4_900.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-4_600.0K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He-4_293.6K_v7" ) );
-  TEST_ASSERT( cross_sections.isSublist( "be_293.6K_v2" ) );
-  TEST_ASSERT( cross_sections.isSublist( "be_400.0K_v2" ) );
-  TEST_ASSERT( cross_sections.isSublist( "H" ) );
-  TEST_ASSERT( cross_sections.isSublist( "He" ) );
-  TEST_ASSERT( cross_sections.isSublist( "Miscellaneous" ) );
+  TestXsdir::splitLineIntoEntryTokens( "1000  0.99931697 1001   0.99916733   1002   1.99679968   1003   2.99013997",
+                                       entry_tokens );
 
-  Teuchos::ParameterList& misc_list =
-    cross_sections.sublist( "Miscellaneous" );
+  FRENSIE_REQUIRE_EQUAL( entry_tokens.size(), 8 );
+  
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08",
+                                       entry_tokens );
 
-  TEST_EQUALITY_CONST( misc_list.numParams(), 4 );
-  TEST_ASSERT( misc_list.isSublist( "H-2_v7" ) );
-  TEST_ASSERT( misc_list.isSublist( "H-2_v2" ) );
-  TEST_ASSERT( misc_list.isSublist( "C-12_v7" ) );
-  TEST_ASSERT( misc_list.isSublist( "C-12_v2" ) );
-
-  Teuchos::ParameterList& h2_list =
-    cross_sections.sublist( "H-2_900.0K_v8" );
-
-  TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
-
-  h2_list = cross_sections.sublist( "H-2_600.0K_v8" );
-
-  TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
-
-  h2_list = cross_sections.sublist( "H-2_293.6K_v8" );
-
-  TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
-
-  h2_list = cross_sections.sublist( "H-2_900.0K_v7" );
-
-  TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
-
-  h2_list = cross_sections.sublist( "H-2_600.0K_v7" );
-
-  TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
-
-  h2_list = cross_sections.sublist( "H-2_293.6K_v7" );
-
-  TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
-
-  Teuchos::ParameterList& other_list =
-    cross_sections.sublist( "H-1_900.0K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "H-1_600.0K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "H-1_293.6K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "H-1_900.0K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "H-1_600.0K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "H-1_293.6K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-3_900.0K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-3_600.0K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-3_293.6K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-3_900.0K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-3_600.0K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-3_293.6K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-4_900.0K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-4_600.0K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-4_293.6K_v8" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-4_900.0K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-4_600.0K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "He-4_293.6K_v7" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-
-  other_list = cross_sections.sublist( "be_293.6K_v2" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 5 );
-
-  other_list = cross_sections.sublist( "be_400.0K_v2" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 5 );
-
-  other_list = cross_sections.sublist( "H" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 10 );
-
-  other_list = cross_sections.sublist( "He" );
-
-  TEST_EQUALITY_CONST( other_list.numParams(), 10 );
+  FRENSIE_REQUIRE_EQUAL( entry_tokens.size(), 10 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+// Check if a xsdir line is a table entry
+FRENSIE_UNIT_TEST( Xsdir, isLineTableEntry )
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_xsdir_file",
-		 &xsdir_file_name,
-		 "Test xsdir file" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+//---------------------------------------------------------------------------//
+// Check if a table is human readable
+FRENSIE_UNIT_TEST( Xsdir, isTableHumanReadable )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the table name can be extracted from the entry tokens
+FRENSIE_UNIT_TEST( Xsdir, extractTableNameFromEntryTokens )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the table name components can be extracted from the entry tokens
+FRENSIE_UNIT_TEST( Xsdir, extractTableNameComponentsFromEntryTokens )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check if the table type is supported
+FRENSIE_UNIT_TEST( Xsdir, isTableTypeSupported )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic weight ratio can be extracted from the entry tokens
+FRENSIE_UNIT_TEST( Xsdir, extractAtomicWeightRatioFromEntryTokens )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the file name with path can be extracted from the entry tokens
+FRENSIE_UNIT_TEST( Xsdir, extractPathFromEntryTokens )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the file start line of the table can be extracted from the
+// entry tokens
+FRENSIE_UNIT_TEST( Xsdir, extractFileStartLineFromEntryTokens )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the table evaluation temperature can be extracted from the entry
+// tokens
+FRENSIE_UNIT_TEST( Xsdir, extractEvaluationTemperatureFromEntryTokens )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that an Xsdir object can be constructed
+FRENSIE_UNIT_TEST( Xsdir, constructor )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that table entries with the desired properties can shown
+FRENSIE_UNIT_TEST( Xsdir, show_entries )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the xsdir data can be exported to a database
+FRENSIE_UNIT_TEST( Xsdir, exportData )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_xsdir_file",
+                                        xsdir_file_name, "",
+                                        "Test xsdir file name with path" );
+}
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstXsdir.cpp

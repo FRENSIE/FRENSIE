@@ -17,12 +17,14 @@
 #include <boost/filesystem/path.hpp>
 
 // FRENSIE Includes
+#include "Data_ACETableName.hpp"
 #include "Data_NuclearDataProperties.hpp"
 #include "Data_ThermalNuclearDataProperties.hpp"
 #include "Data_PhotonuclearDataProperties.hpp"
 #include "Data_PhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_ScatteringCenterPropertiesDatabase.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace Data{
@@ -44,46 +46,8 @@ public:
          const bool verbose = false );
 
   //! Destructor
-  ~Xsdir()
+  virtual ~Xsdir()
   { /* ... */ }
-
-  //! Split a line of the xsdir file into entry tokens
-  static void splitLineIntoEntryTokens( const std::string& xsdir_line,
-                                        const std::vector<std::string>& entry_tokens );
-
-  //! Check if the line is a table entry
-  static bool isLineTableEntry( const std::vector<std::string>& entry_tokens );
-
-  //! Check if the table is stored in text format
-  static bool isTableHumanReadable( const std::vector<std::string>& entry_tokens );
-
-  //! Extract the table name from the entry tokens
-  static const std::string& extractTableNameFromEntryTokens(
-                                const std::vector<std::string>& entry_tokens );
-  
-  //! Extract the table type key from the entry tokens
-  static std::tuple<std::string,unsigned,char>
-  extractTableNameComponentsFromEntryTokens(
-                                const std::vector<std::string>& entry_tokens );
-
-  //! Check if the table type is supported
-  static bool isTableTypeSupported( const std::tuple<std::string,unsigned,char>& table_name_components );
-
-  //! Extract the atomic weight ratio from the entry tokens
-  static double extractAtomicWeightRatioFromEntryTokens(
-                                const std::vector<std::string>& entry_tokens );
-
-  //! Extract the file name with path where the table is stored
-  static boost::filesystem::path extractPathFromEntryTokens(
-                                const std::vector<std::string>& entry_tokens );
-
-  //! Extract the file start line of the table
-  static size_t extractFileStartLineFromEntryTokens(
-                                const std::vector<std::string>& entry_tokens );
-
-  //! Extract the table evaluation temperature from the entry tokens
-  static Energy extractEvaluationTemperatureFromEntryTokens(
-                                const std::vector<std::string>& entry_tokens );
 
   //! Show all entries with table data
   void showEntriesWithTableData(
@@ -125,19 +89,79 @@ public:
   void showEntriesWithZAIDAndTableEvaluationTemp(
                                 std::ostream& os,
                                 const Data::ZAID& zaid,
-                                const Energy evalution_temp,
+                                const Energy evaluation_temp,
                                 const bool human_readable_only = false ) const;
 
-  //! Export the xsdir data to a properties cache
-  void exportData( ScatteringCenterPropertiesCache& database ) const;
+  //! Export the xsdir data to a properties database
+  void exportData( ScatteringCenterPropertiesDatabase& database ) const;
+
+protected:
+
+  //! Default constructor
+  Xsdir();
+
+  //! Split a line of the xsdir file into entry tokens
+  static void splitLineIntoEntryTokens( const std::string& xsdir_line,
+                                        std::vector<std::string>& entry_tokens );
+
+  //! Check if the line is an atomic weight ratio entry
+  static bool isLineAtomicWeightRatioEntry(
+                                const std::vector<std::string>& entry_tokens );
+
+  //! Extract the zaids and atomic weight ratios from the entry tokens
+  static void extractZaidsAndAtomicWeightRatiosFromEntryTokens(
+                                  const std::vector<std::string>& entry_tokens,
+                                  std::vector<std::pair<Data::ZAID,double> >&
+                                  zaids_and_atomic_weight_ratios );
+  
+  //! Check if the line is a table entry
+  static bool isLineTableEntry( const std::vector<std::string>& entry_tokens );
+
+  //! Check if the table is stored in text format
+  static bool isTableHumanReadable( const std::vector<std::string>& entry_tokens );
+
+  //! Extract the table name from the entry tokens
+  static const std::string& extractTableNameFromEntryTokens(
+                                const std::vector<std::string>& entry_tokens );
+  
+  //! Extract the table name components from the entry tokens
+  static std::tuple<std::string,unsigned,char>
+  extractTableNameComponentsFromEntryTokens(
+                                const std::vector<std::string>& entry_tokens );
+
+  //! Check if the table type is supported
+  static bool isTableTypeSupported( const std::tuple<std::string,unsigned,char>& table_name_components );
+
+  //! Extract the atomic weight ratio from the entry tokens
+  static double extractAtomicWeightRatioFromEntryTokens(
+                                const std::vector<std::string>& entry_tokens );
+
+  //! Extract the file name with path where the table is stored
+  static boost::filesystem::path extractPathFromEntryTokens(
+                                const std::vector<std::string>& entry_tokens );
+
+  //! Extract the file start line of the table
+  static size_t extractFileStartLineFromEntryTokens(
+                                const std::vector<std::string>& entry_tokens );
+
+  //! Extract the table evaluation temperature from the entry tokens
+  static Energy extractEvaluationTemperatureFromEntryTokens(
+                                const std::vector<std::string>& entry_tokens );
 
 private:
 
-  // The line filter function type
+  // The line filter function type (return true if the input should pass
+  // through the filter)
   typedef std::function<bool(const std::vector<std::string>&)> LineFilterFunction;
 
   // The line processor function type
-  typedef std::function<void(const std::vector<std::string>&, const std::string& ) LineProcessorFunction;
+  typedef std::function<void(const std::vector<std::string>&, const std::string& )> LineProcessorFunction;
+
+  //! Extract (quickly) the zaids and atomic weight ratios from the entry tokens
+  static void quickExtractZaidsAndAtomicWeightRatiosFromEntryTokens(
+                                  const std::vector<std::string>& entry_tokens,
+                                  std::vector<std::pair<Data::ZAID,double> >&
+                                  zaids_and_atomic_weight_ratios );
 
   // Check (quickly) if the table is stored in text format
   static bool isTableHumanReadableQuick( const std::vector<std::string>& entry_tokens );
@@ -187,22 +211,46 @@ private:
   // Get the printEntryLine LineProcessorFunction
   static LineProcessorFunction getPrintEntryLineFunction( std::ostream& os );
 
+  // Parse the entry tokens and initialize the data properties object
+  void parseEntryTokensAndInitializeDataPropertiesObject(
+                                  ScatteringCenterPropertiesDatabase& database,
+                                  const std::vector<std::string>& entry_tokens,
+                                  const std::string& ) const;
+
   // Parse the entry tokens and create the data properties object
   void parseEntryTokensAndCreateDataPropertiesObject(
                                   ScatteringCenterPropertiesDatabase& database,
                                   const std::vector<std::string>& entry_tokens,
-                                  const std::string& );
+                                  const std::string& ) const;
 
-  // Filter the entry line
-  static bool filterEntryLine(
+  // Filter all but zaid and atomic weight ratio lines
+  static bool filterAllButZaidAtomicWeightRatioEntryLines(
+                        const std::vector<std::string>& entry_tokens,
+                        const std::vector<LineFilterFunction>& partial_filters,
+                        const bool log_filtered_zaid_awr_entries  = false );
+                                                          
+  
+  // Filter all but table entry lines
+  static bool filterAllButTableEntryLines(
                       const bool human_readable_only,
                       const std::vector<std::string>& entry_tokens,
-                      const std::vector<LineFilterFunction>& partial_filters );
+                      const std::vector<LineFilterFunction>& partial_filters,
+                      const bool log_filtered_table_entries = false );
+
+  // Log a filtered table entry line
+  static bool logFilteredEntryLine( const std::vector<std::string>& entry_tokens,
+                                    const bool logging_requested );
+
+  // Get the standard line filter function for zaid atomic weight ratio entries
+  static LineFilterFunction getStandardZaidAtomicWeightRatioLineFilterFunction(
+                        const std::vector<LineFilterFunction>& partial_filters,
+                        const bool log_filtered_zaid_awr_entries = false );
   
-  // Get the LineFilterFunction
-  static LineFilterFunction getLineFilterFunction(
+  // Get the standard line filter function for table entries
+  static LineFilterFunction getStandardTableEntryLineFilterFunction(
                       const bool human_readable_only,
-                      const std::vector<LineFilterFunction>& partial_filters );
+                      const std::vector<LineFilterFunction>& partial_filters,
+                      const bool log_filtered_table_entries = false );
 
   // Filter line entries by zaid, table type key, table version and eval. temp
   static bool filterEntryLineByZAIDAndTableTypeKey(
@@ -216,6 +264,10 @@ private:
   static bool filterEntryLineByTableTypeKeys( const std::set<char>& keys,
                                               const std::vector<std::string>& entry_tokens );
 
+  // Filter line entries by keys not in set
+  static bool filterEntryLineByTableTypeKeysNotInSet( const std::set<char>& keys,
+                                                      const std::vector<std::string>& entry_tokens );
+
   // Create the continuous energy neutron table properties
   void createContinuousEnergyNeutronTableProperties(
                                ScatteringCenterPropertiesDatabase& database,
@@ -224,7 +276,7 @@ private:
                                const boost::filesystem::path& table_file_path,
                                const size_t file_start_line,
                                const unsigned table_major_version,
-                               const ACETableName& table_name );
+                               const ACETableName& table_name ) const;
 
   // Create the S(A,B) table properties
   void createSABTableProperties( ScatteringCenterPropertiesDatabase& database,
@@ -232,7 +284,7 @@ private:
                                  const boost::filesystem::path& table_file_path,
                                  const size_t file_start_line,
                                  const unsigned table_major_version,
-                                 const std::string& table_name );
+                                 const std::string& table_name ) const;
 
   // Create the photonuclear table properties
   void createPhotonuclearTableProperties(
@@ -241,29 +293,26 @@ private:
                                 const boost::filesystem::path& table_file_path,
                                 const size_t file_start_line,
                                 const unsigned table_major_version,
-                                const ACETableName& table_name );
+                                const ACETableName& table_name ) const;
 
   // Create the photoatomic and electroatomic table properties
   void createAtomicTableProperties(
            ScatteringCenterPropertiesDatabase& database,
-           const double atomic_weight_ratio,
            const boost::filesystem::path& table_file_path,
            const size_t file_start_line,
-           const std::tuple<std::string,unsigned,char> table_name_components );
+           const std::tuple<std::string,unsigned,char> table_name_components ) const ;
 
   // Add photoatomic properties to the database
   static void addPhotoatomicPropertiesToDatabase(
-                         ScatteringCenterPropertiesDatabase& database,
-                         const double atomic_weight_ratio,
-                         const std::shared_ptr<const PhotoatomicDataPropeties>&
-                         photoatomic_properties );
+                        ScatteringCenterPropertiesDatabase& database,
+                        const std::shared_ptr<const PhotoatomicDataProperties>&
+                        photoatomic_properties );
 
   // Add electroatomic properties to the database
   static void addElectroatomicPropertiesToDatabase(
-                       ScatteringCenterPropertiesDatabase& database,
-                       const double atomic_weight_ratio,
-                       const std::shared_ptr<const ElectroatomicDataPropeties>&
-                       electroatomic_properties );
+                      ScatteringCenterPropertiesDatabase& database,
+                      const std::shared_ptr<const ElectroatomicDataProperties>&
+                      electroatomic_properties );
 
   // Construct the complete path to a table file
   static boost::filesystem::path constructCompleteTableFilePath(
