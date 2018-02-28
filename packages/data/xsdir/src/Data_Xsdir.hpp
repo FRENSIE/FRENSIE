@@ -104,8 +104,8 @@ protected:
   static void splitLineIntoEntryTokens( const std::string& xsdir_line,
                                         std::vector<std::string>& entry_tokens );
 
-  //! Check if the line is an atomic weight ratio entry
-  static bool isLineAtomicWeightRatioEntry(
+  //! Check if the line is a zaid, atomic weight ratio entry
+  static bool isLineZaidAtomicWeightRatioEntry(
                                 const std::vector<std::string>& entry_tokens );
 
   //! Extract the zaids and atomic weight ratios from the entry tokens
@@ -228,7 +228,16 @@ private:
                         const std::vector<std::string>& entry_tokens,
                         const std::vector<LineFilterFunction>& partial_filters,
                         const bool log_filtered_zaid_awr_entries  = false );
-                                                          
+
+  // Log a filtered zaid and atomic weight ratio line
+  static bool logFilteredZaidAtomicWeightRatioEntryLine(
+                                  const std::vector<std::string>& entry_tokens,
+                                  const bool logging_requested );
+
+  // Get the standard line filter function for zaid atomic weight ratio entries
+  static LineFilterFunction getStandardZaidAtomicWeightRatioLineFilterFunction(
+                        const std::vector<LineFilterFunction>& partial_filters,
+                        const bool log_filtered_zaid_awr_entries = false );
   
   // Filter all but table entry lines
   static bool filterAllButTableEntryLines(
@@ -238,13 +247,9 @@ private:
                       const bool log_filtered_table_entries = false );
 
   // Log a filtered table entry line
-  static bool logFilteredEntryLine( const std::vector<std::string>& entry_tokens,
-                                    const bool logging_requested );
-
-  // Get the standard line filter function for zaid atomic weight ratio entries
-  static LineFilterFunction getStandardZaidAtomicWeightRatioLineFilterFunction(
-                        const std::vector<LineFilterFunction>& partial_filters,
-                        const bool log_filtered_zaid_awr_entries = false );
+  static bool logFilteredTableEntryLine(
+                                  const std::vector<std::string>& entry_tokens,
+                                  const bool logging_requested );
   
   // Get the standard line filter function for table entries
   static LineFilterFunction getStandardTableEntryLineFilterFunction(

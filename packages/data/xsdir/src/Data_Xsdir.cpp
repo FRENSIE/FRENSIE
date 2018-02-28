@@ -34,14 +34,26 @@ namespace Data{
 void Xsdir::splitLineIntoEntryTokens( const std::string& xsdir_line,
                                       std::vector<std::string>& entry_tokens )
 {
-  boost::split( entry_tokens,
-                xsdir_line,
-                boost::is_any_of( " " ),
-                boost::token_compress_on );
+  // Trim the line before splitting it to avoid an empty first string
+  if( xsdir_line[0] == ' ' )
+  {
+    std::string trimmed_xsdir_line = boost::algorithm::trim_copy( xsdir_line );
+
+    Xsdir::splitLineIntoEntryTokens( trimmed_xsdir_line, entry_tokens );
+  }
+  else if( xsdir_line.size() == 0 )
+    entry_tokens.clear();
+  else
+  {
+    boost::split( entry_tokens,
+                  xsdir_line,
+                  boost::is_any_of( " " ),
+                  boost::token_compress_on );
+  }
 }
 
 // Check if the line is an atomic weight ratio entry
-bool Xsdir::isLineAtomicWeightRatioEntry(
+bool Xsdir::isLineZaidAtomicWeightRatioEntry(
                                  const std::vector<std::string>& entry_tokens )
 {
   if( entry_tokens.size() > 0 )
@@ -49,7 +61,10 @@ bool Xsdir::isLineAtomicWeightRatioEntry(
     if( entry_tokens.front().find_first_not_of( "0123456789" ) >=
         entry_tokens.front().size() )
     {
-      if( entry_tokens.front() != "0001" )
+      unsigned raw_zaid =
+        Utility::fromString<unsigned>( entry_tokens.front() );
+
+      if( raw_zaid > 1 && raw_zaid < 101000 )
         return true;
       else
         return false;
@@ -67,8 +82,8 @@ void Xsdir::extractZaidsAndAtomicWeightRatiosFromEntryTokens(
                                   std::vector<std::pair<Data::ZAID,double> >&
                                   zaids_and_atomic_weight_ratios )
 {
-  TEST_FOR_EXCEPTION( !Xsdir::isLineAtomicWeightRatioEntry( entry_tokens ),
-                      std::runtime_error,
+  TEST_FOR_EXCEPTION( !Xsdir::isLineZaidAtomicWeightRatioEntry( entry_tokens ),
+                      std::logic_error,
                       "The line does not have paired zaid and atomic weight "
                       "ratio data!" );
 
@@ -90,7 +105,7 @@ bool Xsdir::isLineTableEntry( const std::vector<std::string>& entry_tokens )
 bool Xsdir::isTableHumanReadable( const std::vector<std::string>& entry_tokens )
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not have table data!" );
   
   return Xsdir::isTableHumanReadableQuick( entry_tokens );
@@ -99,10 +114,7 @@ bool Xsdir::isTableHumanReadable( const std::vector<std::string>& entry_tokens )
 // Check if the table is stored in text format
 bool Xsdir::isTableHumanReadableQuick( const std::vector<std::string>& entry_tokens )
 {
-  if( entry_tokens[4] == "1" )
-    return true;
-  else
-    return false;
+  return entry_tokens[4] == "1";
 }
 
 // Extract the table name from the entry tokens
@@ -110,7 +122,7 @@ const std::string& Xsdir::extractTableNameFromEntryTokens(
                                  const std::vector<std::string>& entry_tokens )
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not have table data!" );
 
   return Xsdir::quickExtractTableNameFromEntryTokens( entry_tokens );
@@ -121,7 +133,7 @@ std::tuple<std::string,unsigned,char> Xsdir::extractTableNameComponentsFromEntry
                                  const std::vector<std::string>& entry_tokens )
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not have table data!" );
 
   return Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
@@ -189,7 +201,7 @@ double Xsdir::extractAtomicWeightRatioFromEntryTokens(
                                  const std::vector<std::string>& entry_tokens )
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not have table data!" );
   
   return Xsdir::quickExtractAtomicWeightRatioFromEntryTokens( entry_tokens );
@@ -207,7 +219,7 @@ boost::filesystem::path Xsdir::extractPathFromEntryTokens(
                                  const std::vector<std::string>& entry_tokens )
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not have table data!" );
 
   return Xsdir::quickExtractPathFromEntryTokens( entry_tokens );
@@ -238,11 +250,11 @@ size_t Xsdir::extractFileStartLineFromEntryTokens(
                                  const std::vector<std::string>& entry_tokens )
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not have table data!" );
 
   TEST_FOR_EXCEPTION( !Xsdir::isTableHumanReadable( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not specify data for a human readable "
                       "table!" );
 
@@ -261,7 +273,7 @@ auto Xsdir::extractEvaluationTemperatureFromEntryTokens(
                        const std::vector<std::string>& entry_tokens ) -> Energy
 {
   TEST_FOR_EXCEPTION( !Xsdir::isLineTableEntry( entry_tokens ),
-                      std::runtime_error,
+                      std::logic_error,
                       "The line does not have table data!" );
 
   return Xsdir::quickExtractEvaluationTemperatureFromEntryTokens( entry_tokens );
@@ -795,19 +807,55 @@ bool Xsdir::filterAllButZaidAtomicWeightRatioEntryLines(
                         const std::vector<LineFilterFunction>& partial_filters,
                         const bool log_filtered_zaid_awr_entries )
 {
-  
+  // Filter all non-zaid/awr entry lines
+  if( !Xsdir::isLineZaidAtomicWeightRatioEntry( entry_tokens ) )
+    return false;
+
+  // Use partial filters
+  for( size_t i = 0; i < partial_filters.size(); ++i )
+  {
+    if( !partial_filters[i]( entry_tokens ) )
+      return Xsdir::logFilteredZaidAtomicWeightRatioEntryLine( entry_tokens, log_filtered_zaid_awr_entries );
+  }
+
+  // This entry passed through all filters
+  return true;
+}
+
+// Log a filtered table entry line
+bool Xsdir::logFilteredZaidAtomicWeightRatioEntryLine(
+                                  const std::vector<std::string>& entry_tokens,
+                                  const bool logging_requested )
+{
+  if( logging_requested )
+  {
+    std::vector<std::pair<Data::ZAID,double> > zaids_and_atomic_weight_ratios;
+    
+    Xsdir::quickExtractZaidsAndAtomicWeightRatiosFromEntryTokens(
+                                              entry_tokens,
+                                              zaids_and_atomic_weight_ratios );
+    
+    FRENSIE_LOG_TAGGED_NOTIFICATION( "Xsdir",
+                                     "Ignoring zaid/awr entries "
+                                     << zaids_and_atomic_weight_ratios );
+  }
+
+  return false;
 }
 
 // Get the standard line filter function for zaid atomic weight ratio entries
 auto Xsdir::getStandardZaidAtomicWeightRatioLineFilterFunction(
-       const std::vector<LineFilterFunction>& partial_filters,
-       const bool log_filtered_zaid_awr_entries = false ) -> LineFilterFunction
+               const std::vector<LineFilterFunction>& partial_filters,
+               const bool log_filtered_zaid_awr_entries ) -> LineFilterFunction
 {
-
+  return std::bind<bool>( &Xsdir::filterAllButZaidAtomicWeightRatioEntryLines,
+                          std::placeholders::_1,
+                          partial_filters,
+                          log_filtered_zaid_awr_entries );
 }
 
-// Filter the entry line
-bool Xsdir::filterEntryLine(
+// Filter all but the table entry lines
+bool Xsdir::filterAllButTableEntryLines(
                        const bool human_readable_only,
                        const std::vector<std::string>& entry_tokens,
                        const std::vector<LineFilterFunction>& partial_filters,
@@ -819,13 +867,13 @@ bool Xsdir::filterEntryLine(
 
   // Filter all binary table entries if requested
   if( human_readable_only && !Xsdir::isTableHumanReadable( entry_tokens ) )
-    return Xsdir::logFilteredEntryLine( entry_tokens, log_filtered_table_entries );
+    return Xsdir::logFilteredTableEntryLine( entry_tokens, log_filtered_table_entries );
 
   // Use partial filters
   for( size_t i = 0; i < partial_filters.size(); ++i )
   {
     if( !partial_filters[i]( entry_tokens ) )
-      return Xsdir::logFilteredEntryLine( entry_tokens, log_filtered_table_entries );
+      return Xsdir::logFilteredTableEntryLine( entry_tokens, log_filtered_table_entries );
   }
 
   // This entry passed through all filters
@@ -833,7 +881,8 @@ bool Xsdir::filterEntryLine(
 }
 
 // Log a filtered table entry line
-bool Xsdir::logFilteredEntryLine( const std::vector<std::string>& entry_tokens,
+bool Xsdir::logFilteredTableEntryLine(
+                                  const std::vector<std::string>& entry_tokens,
                                   const bool logging_requested )
 {
   if( logging_requested )
@@ -851,7 +900,7 @@ auto Xsdir::getStandardTableEntryLineFilterFunction(
                       const bool log_filtered_table_entries )
   -> LineFilterFunction
 {
-  return std::bind<bool>( &Xsdir::filterEntryLine,
+  return std::bind<bool>( &Xsdir::filterAllButTableEntryLines,
                           human_readable_only,
                           std::placeholders::_1,
                           partial_filters,
@@ -918,9 +967,25 @@ void Xsdir::showEntriesWithTableTypeKeyAndVersion(
       const std::tuple<std::string,unsigned,char> table_name_components = 
         Xsdir::quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
 
-      if( Utility::get<1>( table_name_components ) == version &&
-          Utility::get<2>( table_name_components ) == key )
-        return true;
+      if( Utility::get<2>( table_name_components ) == key )
+      {
+        // Check the major version
+        if( (key == 'c' || key == 't') && version < 10 )
+        {
+          if( Utility::get<1>( table_name_components )/10 == version )
+            return true;
+          else
+            return false;
+        }
+        // Check the exact version
+        else
+        {
+          if( Utility::get<1>( table_name_components ) == version )
+            return true;
+          else
+            return false;
+        }
+      }
       else
         return false;
     };
@@ -1157,7 +1222,7 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
 
   {
     LineFilterFunction line_filter_function =
-      this->getStandardAtomicWeightRatioLineFilterFunction( {} );
+      this->getStandardZaidAtomicWeightRatioLineFilterFunction( {} );
 
     this->processXsdirFile( d_xsdir_path,
                             line_filter_function,
