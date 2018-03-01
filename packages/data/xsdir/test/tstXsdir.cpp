@@ -77,13 +77,13 @@ FRENSIE_UNIT_TEST( Xsdir, splitLineIntoEntryTokens )
   FRENSIE_CHECK_EQUAL( entry_tokens[6], "1003" );
   FRENSIE_CHECK_EQUAL( entry_tokens[7], "2.99013997" );
   
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08",
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08",
                                        entry_tokens );
 
   FRENSIE_REQUIRE_EQUAL( entry_tokens.size(), 10 );
   FRENSIE_CHECK_EQUAL( entry_tokens[0], "1001.80c" );
   FRENSIE_CHECK_EQUAL( entry_tokens[1], "0.999167" );
-  FRENSIE_CHECK_EQUAL( entry_tokens[2], "H/1001.710nc" );
+  FRENSIE_CHECK_EQUAL( entry_tokens[2], "h1.710nc" );
   FRENSIE_CHECK_EQUAL( entry_tokens[3], "0" );
   FRENSIE_CHECK_EQUAL( entry_tokens[4], "1" );
   FRENSIE_CHECK_EQUAL( entry_tokens[5], "4" );
@@ -147,7 +147,7 @@ FRENSIE_UNIT_TEST( Xsdir, isLineZaidAtomicWeightRatioEntry )
   
   FRENSIE_CHECK( !TestXsdir::isLineZaidAtomicWeightRatioEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
   
   FRENSIE_CHECK( !TestXsdir::isLineZaidAtomicWeightRatioEntry( entry_tokens ) );
 }
@@ -242,39 +242,39 @@ FRENSIE_UNIT_TEST( Xsdir, isLineTableEntry )
   
   FRENSIE_CHECK( !TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 xdata/531dos 0 1 1 1165", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 531dos 0 1 1 1165", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 endf70prot 0 1 1 15895", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 xdata/be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isLineTableEntry( entry_tokens ) );
 }
@@ -291,19 +291,19 @@ FRENSIE_UNIT_TEST( Xsdir, isTableHumanReadable )
   FRENSIE_CHECK_THROW( TestXsdir::isTableHumanReadable( entry_tokens ),
                        std::logic_error );
   
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isTableHumanReadable( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 0 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 0 4 17969 0 0 2.5301E-08", entry_tokens );
 
   FRENSIE_CHECK( !TestXsdir::isTableHumanReadable( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isTableHumanReadable( entry_tokens ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 0        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 0        1    12025 0 0 0.00000E+00", entry_tokens );
   
   FRENSIE_CHECK( !TestXsdir::isTableHumanReadable( entry_tokens ) );
 }
@@ -320,56 +320,56 @@ FRENSIE_UNIT_TEST( Xsdir, extractTableNameFromEntryTokens )
   FRENSIE_CHECK_THROW( TestXsdir::extractTableNameFromEntryTokens( entry_tokens ),
                        std::logic_error );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
 
   std::string table_name =
     TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "1001.80c" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 xdata/531dos 0 1 1 1165", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 531dos 0 1 1 1165", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "13027.24y" );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "1000.12p" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 endf70prot 0 1 1 15895", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "1001.70h" );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "1002.24u" );
 
-  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 xdata/be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "be.20t" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "94242.50d" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name, "61000.01e" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
 
   table_name = TestXsdir::extractTableNameFromEntryTokens( entry_tokens );
   
@@ -388,7 +388,7 @@ FRENSIE_UNIT_TEST( Xsdir, extractTableNameComponentsFromEntryTokens )
   FRENSIE_CHECK_THROW( TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens ),
                        std::logic_error );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
 
   std::tuple<std::string,unsigned,char> table_name_components =
     TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
@@ -396,7 +396,7 @@ FRENSIE_UNIT_TEST( Xsdir, extractTableNameComponentsFromEntryTokens )
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("1001"), 80u, 'c') );
 
-  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 xdata/531dos 0 1 1 1165", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 531dos 0 1 1 1165", entry_tokens );
 
   table_name_components =
     TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
@@ -404,49 +404,49 @@ FRENSIE_UNIT_TEST( Xsdir, extractTableNameComponentsFromEntryTokens )
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("13027"), 24u, 'y') );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("1000"), 12u, 'p') );
 
-  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 endf70prot 0 1 1 15895", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("1001"), 70u, 'h') );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("1002"), 24u, 'u') );
 
-  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 xdata/be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("be"), 20u, 't') );
 
-  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("94242"), 50u, 'd') );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( table_name_components,
                        std::make_tuple(std::string("61000"), 1u, 'e') );
 
-  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
@@ -460,57 +460,57 @@ FRENSIE_UNIT_TEST( Xsdir, isTableTypeSupported )
 {
   std::vector<std::string> entry_tokens;
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
 
   std::tuple<std::string,unsigned,char> table_name_components =
     TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 xdata/531dos 0 1 1 1165", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 531dos 0 1 1 1165", entry_tokens );
 
   table_name_components =
     TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( !TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 endf70prot 0 1 1 15895", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( !TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 xdata/be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( !TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK( TestXsdir::isTableTypeSupported( table_name_components ) );
 
-  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
 
   table_name_components = TestXsdir::extractTableNameComponentsFromEntryTokens( entry_tokens );
   
@@ -529,63 +529,63 @@ FRENSIE_UNIT_TEST( Xsdir, extractAtomicWeightRatioFromEntryTokens )
   FRENSIE_CHECK_THROW( TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens ),
                        std::logic_error );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
 
   double atomic_weight_ratio = 
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 0.999167 );
 
-  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 xdata/531dos 0 1 1 1165", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 531dos 0 1 1 1165", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 26.750000 );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 0.999242 );
 
-  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 endf70prot 0 1 1 15895", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 0.999170 );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 1.996300 );
 
-  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 xdata/be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 8.934780 );
 
-  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 239.979000 );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 143.667877 );
 
-  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
 
   atomic_weight_ratio =
     TestXsdir::extractAtomicWeightRatioFromEntryTokens( entry_tokens );
@@ -605,60 +605,60 @@ FRENSIE_UNIT_TEST( Xsdir, extractPathFromEntryTokens )
   FRENSIE_CHECK_THROW( TestXsdir::extractPathFromEntryTokens( entry_tokens ),
                        std::logic_error );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
 
   boost::filesystem::path path =
     TestXsdir::extractPathFromEntryTokens( entry_tokens );
   
-  FRENSIE_CHECK_EQUAL( path.string(), "H/1001.710nc" );
+  FRENSIE_CHECK_EQUAL( path.string(), "h1.710nc" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 xdata/531dos 0 1 1 1165", entry_tokens );
-
-  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
-  
-  FRENSIE_CHECK_EQUAL( path.string(), "xdata/531dos" );
-
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 531dos 0 1 1 1165", entry_tokens );
 
   path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
   
-  FRENSIE_CHECK_EQUAL( path.string(), "xmc/eprdata12" );
+  FRENSIE_CHECK_EQUAL( path.string(), "531dos" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895", entry_tokens );
-
-  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
-  
-  FRENSIE_CHECK_EQUAL( path.string(), "xdata/endf70prot" );
-
-  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
 
   path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
   
-  FRENSIE_CHECK_EQUAL( path.string(), "xdata/la150u" );
+  FRENSIE_CHECK_EQUAL( path.string(), "eprdata12" );
 
-  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 xdata/be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
-
-  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
-  
-  FRENSIE_CHECK_EQUAL( path.string(), "xdata/be.20t" );
-
-  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 endf70prot 0 1 1 15895", entry_tokens );
 
   path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
   
-  FRENSIE_CHECK_EQUAL( path.string(), "xdata/dre5" );
+  FRENSIE_CHECK_EQUAL( path.string(), "endf70prot" );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
-
-  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
-  
-  FRENSIE_CHECK_EQUAL( path.string(), "xdata/el" );
-
-  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
 
   path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
   
-  FRENSIE_CHECK_EQUAL( path.string(), "xdata/mcplib04" );
+  FRENSIE_CHECK_EQUAL( path.string(), "la150u" );
+
+  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
+
+  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
+  
+  FRENSIE_CHECK_EQUAL( path.string(), "be.20t" );
+
+  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+
+  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
+  
+  FRENSIE_CHECK_EQUAL( path.string(), "dre5" );
+
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
+
+  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
+  
+  FRENSIE_CHECK_EQUAL( path.string(), "el" );
+
+  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+
+  path = TestXsdir::extractPathFromEntryTokens( entry_tokens );
+  
+  FRENSIE_CHECK_EQUAL( path.string(), "mcplib04" );
 }
 
 //---------------------------------------------------------------------------//
@@ -674,26 +674,26 @@ FRENSIE_UNIT_TEST( Xsdir, extractFileStartLineFromEntryTokens )
   FRENSIE_CHECK_THROW( TestXsdir::extractFileStartLineFromEntryTokens( entry_tokens ),
                        std::logic_error );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 0 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 0 4 17969 0 0 2.5301E-08", entry_tokens );
 
   FRENSIE_CHECK_THROW( TestXsdir::extractFileStartLineFromEntryTokens( entry_tokens ),
                        std::logic_error );
   
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
 
   size_t file_start_line =
     TestXsdir::extractFileStartLineFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( file_start_line, 4 );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
 
   file_start_line =
     TestXsdir::extractFileStartLineFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( file_start_line, 1 );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
 
   file_start_line =
     TestXsdir::extractFileStartLineFromEntryTokens( entry_tokens );
@@ -713,63 +713,63 @@ FRENSIE_UNIT_TEST( Xsdir, extractEvaluationTemperatureFromEntryTokens )
   FRENSIE_CHECK_THROW( TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens ),
                        std::logic_error );
 
-  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08", entry_tokens );
 
   Data::Xsdir::Energy evaluation_temp = 
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 2.5301e-08*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 xdata/531dos 0 1 1 1165", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 13027.24y 26.750000 531dos 0 1 1 1165", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 0.0*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 0.0*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 1001.70h 0.999170 endf70prot 0 1 1 15895", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 0.0*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 0.0*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 xdata/be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " be.20t 8.934780 be.20t 0 1 1 1384889 0 0 2.530E-08", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 2.530e-08*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 2.53e-8*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 xdata/el 0 1 7921 478", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 61000.01e 143.667877 el 0 1 7921 478", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
   
   FRENSIE_CHECK_EQUAL( evaluation_temp, 0.0*MeV );
 
-  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
+  TestXsdir::splitLineIntoEntryTokens( " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00", entry_tokens );
 
   evaluation_temp =
     TestXsdir::extractEvaluationTemperatureFromEntryTokens( entry_tokens );
@@ -795,7 +795,7 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableData )
 
   Data::Xsdir test_xsdir( xsdir_file_name );
 
-  test_xsdir.showEntriesWithTableData( oss );
+  test_xsdir.showEntriesWithTableData( oss, true );
 
   std::vector<std::string> output_lines;
   std::string output = oss.str();
@@ -806,8 +806,27 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableData )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 54 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[52], " 90000.04p    230.045000  xdata/mcplib04 0 1   163774    10565 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[24], " 13027.24y 26.750000 531dos 0 1 1 1165" );
+  FRENSIE_CHECK_EQUAL( output_lines[52], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" );
+
+  oss.str( "" );
+  oss.clear();
+
+  test_xsdir.showEntriesWithTableData( oss );
+
+  output = oss.str();
+
+  boost::split( output_lines,
+                output,
+                boost::is_any_of( "\n" ),
+                boost::token_compress_on );
+
+  FRENSIE_REQUIRE_EQUAL( output_lines.size(), 55 );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[24], " 3006.70c 5.963400 endf70a 0 0 57247 35859 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[25], " 13027.24y 26.750000 531dos 0 1 1 1165" );
+  FRENSIE_CHECK_EQUAL( output_lines[53], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" );
 }
 
 //---------------------------------------------------------------------------//
@@ -818,7 +837,7 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
 
   Data::Xsdir test_xsdir( xsdir_file_name );
 
-  test_xsdir.showEntriesWithTableTypeKey( oss, 'c' );
+  test_xsdir.showEntriesWithTableTypeKey( oss, 'c', true );
 
   std::vector<std::string> output_lines;
   std::string output = oss.str();
@@ -829,8 +848,24 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 25 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
   FRENSIE_CHECK_EQUAL( output_lines[23], " 2004.72c 3.968219 endf70a 0 1 52917 5669 0 0 7.7556E-08" );
+
+  oss.str( "" );
+  oss.clear();
+
+  test_xsdir.showEntriesWithTableTypeKey( oss, 'c' );
+
+  output = oss.str();
+
+  boost::split( output_lines,
+                output,
+                boost::is_any_of( "\n" ),
+                boost::token_compress_on );
+
+  FRENSIE_REQUIRE_EQUAL( output_lines.size(), 26 );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[24], " 3006.70c 5.963400 endf70a 0 0 57247 35859 0 0 2.5301E-08" );
 
   oss.str( "" );
   oss.clear();
@@ -845,8 +880,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 5 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), " 13027.24y 26.750000 xdata/531dos 0 1 1 1165" );
-  FRENSIE_CHECK_EQUAL( output_lines[3], " 5010.24y 9.926900 xdata/531dos 0 1 543 769" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), " 13027.24y 26.750000 531dos 0 1 1 1165" );
+  FRENSIE_CHECK_EQUAL( output_lines[3], " 5010.24y 9.926900 531dos 0 1 543 769" );
 
   oss.str( "" );
   oss.clear();
@@ -861,11 +896,11 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 6 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[1], "  2000.12p      3.968220 xmc/eprdata12 0 1     3020    11828 0 0 0.00000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[2], " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[3], " 89000.04p    225.050000  xdata/mcplib04 0 1   161228    10133 0 0 0.00000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[4], " 90000.04p    230.045000  xdata/mcplib04 0 1   163774    10565 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[1], "  2000.12p      3.968220 eprdata12 0 1     3020    11828 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[2], " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[3], " 89000.04p    225.050000  mcplib04 0 1   161228    10133 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[4], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" );
 
   oss.str( "" );
   oss.clear();
@@ -880,8 +915,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 6 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895" );
-  FRENSIE_CHECK_EQUAL( output_lines[4], " 3006.70h 5.961817 xdata/endf70prot 0 1 12568 22458" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), " 1001.70h 0.999170 endf70prot 0 1 1 15895" );
+  FRENSIE_CHECK_EQUAL( output_lines[4], " 3006.70h 5.961817 endf70prot 0 1 12568 22458" );
   
   oss.str( "" );
   oss.clear();
@@ -896,8 +931,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 5 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), "  1002.24u     1.996300 xdata/la150u 0 1 216233   3686  0 0 0.000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[3], "  6012.70u 11.896910 xmc/endf7u 0 1 9396 50395" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), "  1002.24u     1.996300 la150u 0 1 216233   3686  0 0 0.000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[3], "  6012.70u 11.896910 endf7u 0 1 9396 50395" );
 
   oss.str( "" );
   oss.clear();
@@ -928,8 +963,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 7 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), " 94242.50d 239.979000 xdata/dre5 0 1 142492 12463 0 0 2.53E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[5], " 96244.50d 241.966000 xdata/dre5 0 1 155585 9509 0 0 2.53E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), " 94242.50d 239.979000 dre5 0 1 142492 12463 0 0 2.53E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[5], " 96244.50d 241.966000 dre5 0 1 155585 9509 0 0 2.53E-08" );
 
   oss.str( "" );
   oss.clear();
@@ -944,8 +979,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 4 );
-  FRENSIE_CHECK_EQUAL( output_lines.front(), " 61000.01e 143.667877 xdata/el 0 1 7921 478" );
-  FRENSIE_CHECK_EQUAL( output_lines[2], " 63000.01e 150.657141 xdata/el 0 1 8185 478" );
+  FRENSIE_CHECK_EQUAL( output_lines.front(), " 61000.01e 143.667877 el 0 1 7921 478" );
+  FRENSIE_CHECK_EQUAL( output_lines[2], " 63000.01e 150.657141 el 0 1 8185 478" );
 }
 
 //---------------------------------------------------------------------------//
@@ -967,10 +1002,26 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKeyAndVersion )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 5 );
-  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[1], "1002.80c 1.9968 H/1002.710nc 0 1 4 10452 0 0 2.5301E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[2], "2003.80c 2.989032 He/2003.710nc 0 1 4 10004 0 0 2.5301E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[3], "2004.80c 3.968219 He/2004.710nc 0 1 4 10421 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[1], "1002.80c 1.9968 h2.710nc 0 1 4 10452 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[2], "2003.80c 2.989032 He/He3.710nc 0 1 4 10004 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[3], "2004.80c 3.968219 He/He4.710nc 0 1 4 10421 0 0 2.5301E-08" );
+
+  oss.str( "" );
+  oss.clear();
+
+  test_xsdir.showEntriesWithTableTypeKeyAndVersion( oss, 7, 'c', true );
+
+  output = oss.str();
+
+  boost::split( output_lines,
+                output,
+                boost::is_any_of( "\n" ),
+                boost::token_compress_on );
+
+  FRENSIE_REQUIRE_EQUAL( output_lines.size(), 13 );
+  FRENSIE_CHECK_EQUAL( output_lines[0], " 1001.70c 0.999167 endf70a 0 1 1 8177 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[11], " 2004.72c 3.968219 endf70a 0 1 52917 5669 0 0 7.7556E-08" );
 
   oss.str( "" );
   oss.clear();
@@ -984,9 +1035,9 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKeyAndVersion )
                 boost::is_any_of( "\n" ),
                 boost::token_compress_on );
 
-  FRENSIE_REQUIRE_EQUAL( output_lines.size(), 13 );
+  FRENSIE_REQUIRE_EQUAL( output_lines.size(), 14 );
   FRENSIE_CHECK_EQUAL( output_lines[0], " 1001.70c 0.999167 endf70a 0 1 1 8177 0 0 2.5301E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[11], " 2004.72c 3.968219 endf70a 0 1 52917 5669 0 0 7.7556E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[12], " 3006.70c 5.963400 endf70a 0 0 57247 35859 0 0 2.5301E-08" );
 
   oss.str( "" );
   oss.clear();
@@ -1032,8 +1083,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKeyAndVersion )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 3 );
-  FRENSIE_CHECK_EQUAL( output_lines[0], "  1000.12p      0.999242 xmc/eprdata12 0 1        1    12025 0 0 0.00000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[1], "  2000.12p      3.968220 xmc/eprdata12 0 1     3020    11828 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[0], "  1000.12p      0.999242 eprdata12 0 1        1    12025 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[1], "  2000.12p      3.968220 eprdata12 0 1     3020    11828 0 0 0.00000E+00" );
 
   oss.str( "" );
   oss.clear();
@@ -1048,9 +1099,9 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithTableTypeKeyAndVersion )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 4 );
-  FRENSIE_CHECK_EQUAL( output_lines[0], " 88000.04p    224.084000  xdata/mcplib04 0 1   158629    10346 0 0 0.00000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[1], " 89000.04p    225.050000  xdata/mcplib04 0 1   161228    10133 0 0 0.00000E+00" );
-  FRENSIE_CHECK_EQUAL( output_lines[2], " 90000.04p    230.045000  xdata/mcplib04 0 1   163774    10565 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[0], " 88000.04p    224.084000  mcplib04 0 1   158629    10346 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[1], " 89000.04p    225.050000  mcplib04 0 1   161228    10133 0 0 0.00000E+00" );
+  FRENSIE_CHECK_EQUAL( output_lines[2], " 90000.04p    230.045000  mcplib04 0 1   163774    10565 0 0 0.00000E+00" );
 
   oss.str( "" );
   oss.clear();
@@ -1075,8 +1126,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithZAID )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 8 );
-  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[6], " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895" );
+  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[6], " 1001.70h 0.999170 endf70prot 0 1 1 15895" );
 
   oss.str( "" );
   oss.clear();
@@ -1117,8 +1168,8 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithBasicTableName )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 8 );
-  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08" );
-  FRENSIE_CHECK_EQUAL( output_lines[6], " 1001.70h 0.999170 xdata/endf70prot 0 1 1 15895" );
+  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[6], " 1001.70h 0.999170 endf70prot 0 1 1 15895" );
 
   oss.str( "" );
   oss.clear();
@@ -1156,7 +1207,7 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithZAIDAndTableTypeKey )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 7 );
-  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
   FRENSIE_CHECK_EQUAL( output_lines[5], " 1001.72c 0.999167 endf70a 0 1 4115 8177 0 0 7.7556E-08" );
 
   oss.str( "" );
@@ -1195,7 +1246,7 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithZAIDAndTableEvaluationTemp )
                 boost::token_compress_on );
 
   FRENSIE_REQUIRE_EQUAL( output_lines.size(), 3 );
-  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 H/1001.710nc 0 1 4 17969 0 0 2.5301E-08" );
+  FRENSIE_CHECK_EQUAL( output_lines[0], "1001.80c 0.999167 h1.710nc 0 1 4 17969 0 0 2.5301E-08" );
   FRENSIE_CHECK_EQUAL( output_lines[1], " 1001.70c 0.999167 endf70a 0 1 1 8177 0 0 2.5301E-08" );
 
   oss.str( "" );
@@ -1218,7 +1269,1090 @@ FRENSIE_UNIT_TEST( Xsdir, showEntriesWithZAIDAndTableEvaluationTemp )
 // Check that the xsdir data can be exported to a database
 FRENSIE_UNIT_TEST( Xsdir, exportData )
 {
+  Data::Xsdir test_xsdir( xsdir_file_name, true );
+    
+  Data::ScatteringCenterPropertiesDatabase database;
+
+  FRENSIE_CHECK_NO_THROW( test_xsdir.exportData( database ) );
+
+  // Check the H atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 1000 ) );
   
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::H_ATOM );
+    
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    const Data::PhotoatomicDataProperties& photoatomic_properties =
+      atom_properties.getPhotoatomicDataProperties(
+                           Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 );
+
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
+                         "eprdata12" );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 1 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileVersion(), 12 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "1000.12p" );
+
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    const Data::ElectroatomicDataProperties& electroatomic_properties =
+      atom_properties.getElectroatomicDataProperties(
+                         Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 );
+
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
+                         Data::ElectroatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(),
+                         "eprdata12" );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 1 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 12 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "1000.12p" );
+  }
+
+  // Check the H1 nuclide properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 1001 ) );
+
+  {
+    const Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 1001 );
+    
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 2.5301E-08*MeV ) );
+
+    const Data::NuclearDataProperties* nuclear_properties =
+      &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 0.999167 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "h1.710nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 80 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1001.80c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 0.999167 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "h1.711nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 81 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1001.81c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 0.999167 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "h1.712nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 82 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1001.82c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 2.5301E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 0.999167 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 1 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 70 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1001.70c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 0.999167 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 2058 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 71 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1001.71c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 0.999167 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4115 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 72 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1001.72c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+    
+    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::H_ATOM ).getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
+                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::H_ATOM ).getElectroatomicDataProperties(
+                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+  }
+
+  // Check the H2 nuclide properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 1002 ) );
+
+  {
+    const Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 1002 );
+    
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 2.5301E-08*MeV ) );
+
+    const Data::NuclearDataProperties* nuclear_properties =
+      &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 1.9968 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "h2.710nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 80 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1002.80c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 1.9968 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "h2.711nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 81 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1002.81c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 1.9968 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "h2.712nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 82 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1002.82c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 2.5301E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 1.9968 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 10286 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 70 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1002.70c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 1.9968 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 12911 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 71 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1002.71c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 1.9968 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 15578 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 72 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1002.72c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.photonuclearDataAvailable( Data::PhotonuclearDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.photonuclearDataAvailable( Data::PhotonuclearDataProperties::ACE_FILE, 24 ) );
+    FRENSIE_REQUIRE( nuclide_properties.photonuclearDataAvailable( Data::PhotonuclearDataProperties::ACE_FILE, 70 ) );
+
+    const Data::PhotonuclearDataProperties* photonuclear_properties =
+      &nuclide_properties.getPhotonuclearDataProperties(
+                              Data::PhotonuclearDataProperties::ACE_FILE, 24 );
+
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->atomicWeight(),
+                         1.996300*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileType(),
+                         Data::PhotonuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->filePath().string(),
+                         "la150u" );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileStartLine(),
+                         216233 );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileVersion(), 24u );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->tableName(), "1002.24u" );
+
+    photonuclear_properties =
+      &nuclide_properties.getPhotonuclearDataProperties(
+                              Data::PhotonuclearDataProperties::ACE_FILE, 70 );
+
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->atomicWeight(),
+                         1.996300*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileType(),
+                         Data::PhotonuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->filePath().string(),
+                         "endf7u" );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileStartLine(), 1 );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileVersion(), 70u );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->tableName(), "1002.70u" );
+
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+    
+    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::H_ATOM ).getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
+                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::H_ATOM ).getElectroatomicDataProperties(
+                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 1003 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1004 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1005 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1006 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1007 ) );
+
+  // Check the He atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 2000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::He_ATOM );
+    
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    const Data::PhotoatomicDataProperties& photoatomic_properties =
+      atom_properties.getPhotoatomicDataProperties(
+                           Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 );
+
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
+                         "eprdata12" );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 3020 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileVersion(), 12 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "2000.12p" );
+
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    const Data::ElectroatomicDataProperties& electroatomic_properties =
+      atom_properties.getElectroatomicDataProperties(
+                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 );
+
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
+                         Data::ElectroatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(),
+                         "eprdata12" );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 3020 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 12 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "2000.12p" );
+  }
+
+  // Check the He3 nuclide properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 2003 ) );
+
+  {
+    const Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 2003 );
+    
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 2.5301E-08*MeV ) );
+
+    const Data::NuclearDataProperties* nuclear_properties =
+      &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 2.989032 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(),
+                         "He/He3.710nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 80 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2003.80c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 2.989032 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(),
+                         "He/He3.711nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 81 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2003.81c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 2.989032 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(),
+                         "He/He3.712nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 82 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2003.82c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 2.5301E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 2.989032 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 37946 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 70 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2003.70c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 2.989032 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 40378 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 71 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2003.71c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 2.989032 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 42810 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 72 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2003.72c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+    
+    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::He_ATOM ).getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
+                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::He_ATOM ).getElectroatomicDataProperties(
+                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+  }
+
+  // Check he He4 nuclide properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 2004 ) );
+
+  {
+    const Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 2004 );
+    
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 2.5301E-08*MeV ) );
+
+    const Data::NuclearDataProperties* nuclear_properties =
+      &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 3.968219 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(),
+                         "He/He4.710nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 80 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2004.80c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 3.968219 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(),
+                         "He/He4.711nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 81 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2004.81c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 8, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         8,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 3.968219 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(),
+                         "He/He4.712nc" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 4 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 8 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 82 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2004.82c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 2.5301E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         2.5301E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 3.968219 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         2.5301E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 50106 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 70 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2004.70c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 5.1704E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         5.1704E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 3.968219 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         5.1704E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 51499 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 71 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2004.71c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.nuclearDataAvailable( Data::NuclearDataProperties::ACE_FILE, 7, 7.7556E-08*MeV ) );
+
+    nuclear_properties = &nuclide_properties.getNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         7.7556E-08*MeV,
+                                         true );
+
+    FRENSIE_CHECK_EQUAL( nuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->atomicWeightRatio(), 3.968219 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->evaluationTemperatureInMeV(),
+                         7.7556E-08*MeV );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileType(),
+                         Data::NuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->filePath().string(), "endf70a" );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileStartLine(), 52917 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 72 );
+    FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2004.72c" );
+
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+    
+    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::He_ATOM ).getPhotoatomicDataProperties(
+                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+
+    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
+                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
+                   &database.getAtomProperties( Data::He_ATOM ).getElectroatomicDataProperties(
+                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 2005 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 2006 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 2007 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 2008 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 2009 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 2010 ) );
+
+  // There is an entry in the test xsdir file for Li6 - it should be ignored
+  // since the entry states that the table is binary, which is not currently
+  // supported
+  FRENSIE_CHECK( !database.doPropertiesExist( 3006 ) );
+
+  // Check the Be atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 4000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Be_ATOM );
+
+    FRENSIE_CHECK( atom_properties.empty() );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 4005 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4006 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4007 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4008 ) );
+
+  // Check the Be9 nuclide properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 4009 ) );
+  
+  {
+    const Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 4009 );
+    
+    FRENSIE_REQUIRE( nuclide_properties.thermalNuclearDataAvailable( "be" ) );
+    FRENSIE_REQUIRE( nuclide_properties.thermalNuclearDataAvailable( "be", Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.thermalNuclearDataAvailable( "be", Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE, 2 ) );
+    
+    const Data::ThermalNuclearDataProperties* thermal_nuclear_properties =
+      &nuclide_properties.getThermalNuclearDataProperties(
+                            "be",
+                            Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE,
+                            2,
+                            2.530E-08*MeV,
+                            true );
+
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->name(), "be" );
+    FRENSIE_CHECK( thermal_nuclear_properties->hasDataForZAID( 4009 ) );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->evaluationTemperatureInMeV(),
+                         2.530E-08*MeV );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileType(),
+                         Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->filePath().string(),
+                         "be.20t" );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileStartLine(), 1 );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileMajorVersion(), 2 );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileVersion(), 20 );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->tableName(), "be.20t" );
+
+    thermal_nuclear_properties =
+      &nuclide_properties.getThermalNuclearDataProperties(
+                            "be",
+                            Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE,
+                            2,
+                            3.447E-08*MeV,
+                            true );
+
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->name(), "be" );
+    FRENSIE_CHECK( thermal_nuclear_properties->hasDataForZAID( 4009 ) );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->evaluationTemperatureInMeV(),
+                         3.447E-08*MeV );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileType(),
+                         Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->filePath().string(),
+                         "be.21t" );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileStartLine(), 1 );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileMajorVersion(), 2 );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->fileVersion(), 21 );
+    FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->tableName(), "be.21t" );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 4010 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4011 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4012 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4013 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4014 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4015 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 4016 ) );
+
+  // Check the C atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 6000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::C_ATOM );
+
+    FRENSIE_CHECK( atom_properties.empty() );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 6008 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6009 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6010 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6011 ) );
+
+  // Check the C12 nuclide properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 6012 ) );
+
+  {
+    const Data::NuclideProperties& nuclide_properties =
+      database.getNuclideProperties( 6012 );
+    
+    FRENSIE_REQUIRE( nuclide_properties.photonuclearDataAvailable( Data::PhotonuclearDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( nuclide_properties.photonuclearDataAvailable( Data::PhotonuclearDataProperties::ACE_FILE, 24 ) );
+    FRENSIE_REQUIRE( nuclide_properties.photonuclearDataAvailable( Data::PhotonuclearDataProperties::ACE_FILE, 70 ) );
+    
+    const Data::PhotonuclearDataProperties* photonuclear_properties =
+      &nuclide_properties.getPhotonuclearDataProperties(
+                              Data::PhotonuclearDataProperties::ACE_FILE, 24 );
+
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->atomicWeight(),
+                         11.896910*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileType(),
+                         Data::PhotonuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->filePath().string(),
+                         "la150u" );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileStartLine(), 1 );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileVersion(), 24u );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->tableName(), "6012.24u" );
+
+    photonuclear_properties =
+      &nuclide_properties.getPhotonuclearDataProperties(
+                              Data::PhotonuclearDataProperties::ACE_FILE, 70 );
+
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->zaid(),
+                         nuclide_properties.zaid() );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->atomicWeight(),
+                         11.896910*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileType(),
+                         Data::PhotonuclearDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->filePath().string(),
+                         "endf7u" );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileStartLine(), 9396 );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->fileVersion(), 70u );
+    FRENSIE_CHECK_EQUAL( photonuclear_properties->tableName(), "6012.70u" );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 6013 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6014 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6015 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6016 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6017 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6018 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6019 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6020 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6021 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 6022 ) );
+
+  // Check the Pm atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 61000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Pm_ATOM );
+
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE, 1 ) );
+
+    const Data::ElectroatomicDataProperties& electroatomic_properties =
+      atom_properties.getElectroatomicDataProperties(
+                              Data::ElectroatomicDataProperties::ACE_FILE, 1 );
+
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
+                         Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 7921 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "61000.01e" );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 61126 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 61127 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 61128 ) );
+
+  // Check the Sm atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 62000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Sm_ATOM );
+
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE, 1 ) );
+
+    const Data::ElectroatomicDataProperties& electroatomic_properties =
+      atom_properties.getElectroatomicDataProperties(
+                              Data::ElectroatomicDataProperties::ACE_FILE, 1 );
+
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
+                         Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 8053 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "62000.01e" );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 62128 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 62129 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 62130 ) );
+
+  // Check the Eu atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 63000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Eu_ATOM );
+
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE, 1 ) );
+
+    const Data::ElectroatomicDataProperties& electroatomic_properties =
+      atom_properties.getElectroatomicDataProperties(
+                              Data::ElectroatomicDataProperties::ACE_FILE, 1 );
+
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
+                         Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 8185 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "63000.01e" );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 63138 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 63139 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 63140 ) );
+
+  // Check the Ra atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 88000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Ra_ATOM );
+    
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE, 4 ) );
+
+    const Data::PhotoatomicDataProperties& photoatomic_properties =
+      atom_properties.getPhotoatomicDataProperties(
+                                Data::PhotoatomicDataProperties::ACE_FILE, 4 );
+
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
+                         Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
+                         "mcplib04" );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 158629 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileVersion(), 4 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "88000.04p" );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 88202 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 88203 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 88204 ) );
+
+  // Check the Ac atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 89000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Ac_ATOM );
+    
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE, 4 ) );
+
+    const Data::PhotoatomicDataProperties& photoatomic_properties =
+      atom_properties.getPhotoatomicDataProperties(
+                                Data::PhotoatomicDataProperties::ACE_FILE, 4 );
+
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
+                         Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
+                         "mcplib04" );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 161228 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileVersion(), 4 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "89000.04p" );
+  }
+
+  FRENSIE_CHECK( !database.doPropertiesExist( 89206 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 89207 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 89208 ) );
+
+  // Check the Th atom properties
+  FRENSIE_REQUIRE( database.doPropertiesExist( 90000 ) );
+
+  {
+    const Data::AtomProperties& atom_properties =
+      database.getAtomProperties( Data::Th_ATOM );
+    
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE ) );
+    FRENSIE_REQUIRE( atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE, 4 ) );
+
+    const Data::PhotoatomicDataProperties& photoatomic_properties =
+      atom_properties.getPhotoatomicDataProperties(
+                                Data::PhotoatomicDataProperties::ACE_FILE, 4 );
+
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
+                         atom_properties.zaid().atom() );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
+                         Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
+                         "mcplib04" );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 163774 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.fileVersion(), 4 );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "90000.04p" );
+  }
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 90209 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 90210 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 90211 ) );
 }
 
 //---------------------------------------------------------------------------//

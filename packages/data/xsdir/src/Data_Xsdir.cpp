@@ -396,7 +396,8 @@ void Xsdir::parseEntryTokensAndInitializeDataPropertiesObject(
 void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
                                   ScatteringCenterPropertiesDatabase& database,
                                   const std::vector<std::string>& entry_tokens,
-                                  const std::string& ) const
+                                  const std::string&,
+                                  const bool log_parsed_entries ) const
 {
   const std::tuple<std::string,unsigned,char> table_name_components = 
     this->quickExtractTableNameComponentsFromEntryTokens( entry_tokens );
@@ -428,6 +429,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
                                                        file_start_line,
                                                        table_major_version,
                                                        table_name_components );
+      break;
     }
     case 't':
     {
@@ -438,6 +440,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
                   file_start_line,
                   table_major_version,
                   this->quickExtractTableNameFromEntryTokens( entry_tokens ) );
+      break;
     }
     case 'u':
     {
@@ -447,6 +450,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
                                                file_start_line,
                                                table_major_version,
                                                table_name_components );
+      break;
     }
     case 'p':
     {
@@ -454,6 +458,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
                                          table_file_path,
                                          file_start_line,
                                          table_name_components );
+      break;
     }
     case 'e':
     {
@@ -461,17 +466,18 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
                                          table_file_path,
                                          file_start_line,
                                          table_name_components );
+      break;
     }
     default:
     {
       THROW_EXCEPTION( std::logic_error,
                        "An unexpected '"
                        << Utility::get<2>( table_name_components ) <<
-                       "' type table has been encountered!" );
+                       "' table type has been encountered!" );
     }
   }
 
-  if( d_verbose )
+  if( log_parsed_entries )
   {
     FRENSIE_LOG_TAGGED_NOTIFICATION( "Xsdir", "Parsed table " << this->quickExtractTableNameFromEntryTokens( entry_tokens ) << " data." );
   }
@@ -1236,78 +1242,27 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
                      std::cref( *this ),
                      std::ref( database ),
                      std::placeholders::_1,
-                     std::placeholders::_2 );
+                     std::placeholders::_2,
+                     d_verbose );
 
-  // Process atomic data - this data will be used to initialize the
-  // nuclide properties
   {
-    std::set<char> atomic_data_table_keys( {'p', 'e'} );
-    
+    std::set<char> data_table_keys( {'p', 'e', 'c', 't', 'u'} );
+
     LineFilterFunction table_type_key_partial_line_filter_function =
       std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeys,
-                       atomic_data_table_keys,
+                       data_table_keys,
                        std::placeholders::_1 );
     
     LineFilterFunction line_filter_function =
-      this->getStandardTableEntryLineFilterFunction( true, {table_type_key_partial_line_filter_function} );
+      this->getStandardTableEntryLineFilterFunction( true, {table_type_key_partial_line_filter_function}, d_verbose );
   
     this->processXsdirFile( d_xsdir_path,
                             line_filter_function,
                             line_processor_function );
   }
 
-  // Process nuclear data
-  {
-    std::set<char> nuclear_data_table_keys( {'c', 'u'} );
-
-    LineFilterFunction table_type_key_partial_line_filter_function =
-      std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeys,
-                       nuclear_data_table_keys,
-                       std::placeholders::_1 );
-    
-    LineFilterFunction line_filter_function =
-      this->getStandardTableEntryLineFilterFunction( true, {table_type_key_partial_line_filter_function} );
-  
-    this->processXsdirFile( d_xsdir_path,
-                            line_filter_function,
-                            line_processor_function );
-  }
-
-  // Process the thermal nuclear data - the corresponding nuclide must
-  // already exist in the database
-  {
-    std::set<char> thermal_nuclear_data_table_keys( {'t'} );
-
-    LineFilterFunction table_type_key_partial_line_filter_function =
-      std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeys,
-                       thermal_nuclear_data_table_keys,
-                       std::placeholders::_1 );
-    
-    LineFilterFunction line_filter_function =
-      this->getStandardTableEntryLineFilterFunction( true, {table_type_key_partial_line_filter_function} );
-  
-    this->processXsdirFile( d_xsdir_path,
-                            line_filter_function,
-                            line_processor_function );
-  }
-
-  // Log the entries that were ignored
-  if( d_verbose )
-  {
-    std::set<char> supported_keys( {'p', 'e', 'c', 'u', 't'} );
-
-    LineFilterFunction table_type_key_partial_line_filter_function =
-      std::bind<bool>( &Xsdir::filterEntryLineByTableTypeKeysNotInSet,
-                       supported_keys,
-                       std::placeholders::_1 );
-
-    LineFilterFunction line_filter_function =
-      this->getStandardTableEntryLineFilterFunction( true, {table_type_key_partial_line_filter_function}, true );
-
-    this->processXsdirFile( d_xsdir_path,
-                            line_filter_function,
-                            line_processor_function );
-  }
+  // Clean up the database
+  database.removeEmptyProperties( false );
 }
 
 } // end Data namespace

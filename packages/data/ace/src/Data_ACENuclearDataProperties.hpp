@@ -51,6 +51,9 @@ public:
   //! Get the nuclear data file start line
   size_t fileStartLine() const override;
 
+  //! Get the nuclear data file major version
+  unsigned fileMajorVersion() const override;
+
   //! Get the nuclear data file version
   unsigned fileVersion() const override;
 

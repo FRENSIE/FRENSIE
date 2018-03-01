@@ -49,7 +49,7 @@ public:
   NuclideProperties( const Data::ZAID zaid,
                      const double atomic_weight_ratio );
 
-  //! Partial copy constructor
+  //! Tie constructor
   NuclideProperties( const AtomProperties& atom_properties,
                      const Data::ZAID zaid,
                      const double atomic_weight_ratio );
@@ -60,6 +60,9 @@ public:
 
   //! Check if the scattering center is a nuclide
   bool isNuclide() const override;
+
+  //! Check if there are no properties
+  bool empty() const override;
 
   //! Check if there is nuclear data with the desired format
   bool nuclearDataAvailable(

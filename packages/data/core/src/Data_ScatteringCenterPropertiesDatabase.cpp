@@ -236,10 +236,11 @@ NuclideProperties& ScatteringCenterPropertiesDatabase::getNuclideProperties(
 
 // Initialize the nuclide properties
 /*! \details If the nuclide properties already exist, the existing properties
- * will be returned. When initializing new nuclide properties atom properties
- * associated with the nuclide will be copied. To take advantage of this 
- * feature, atom properties should be set before setting any nuclide
- * properties.
+ * will be returned. When initializing new nuclide properties, atom properties
+ * associated with the nuclide will be tied to the new nuclide properties. To 
+ * take advantage of this feature, atom properties (or nuclide properties with
+ * an associated zaid that has no atomic mass number) should be set before 
+ * setting any nuclide properties.
  */
 NuclideProperties& ScatteringCenterPropertiesDatabase::initializeNuclideProperties(
                                              const Data::ZAID zaid,
@@ -252,28 +253,35 @@ NuclideProperties& ScatteringCenterPropertiesDatabase::initializeNuclideProperti
                                 << zaid << " already exist! "
                                 "The existing properties will be "
                                 "returned." );
-
-    return this->getNuclideProperties( zaid );
   }
   else
   {
     std::unique_ptr<AtomProperties>& properties = d_properties[zaid];
 
     // Check if the atom properties have been set
-    ScatteringCenterZaidPropertiesMap::iterator properties_it =
-      d_properties.find( Data::ZAID(zaid.atom()) );
-    
-    if( properties_it != d_properties.end() )
+    if( zaid.atomicMassNumber() != 0u )
     {
-      properties.reset( new NuclideProperties( *properties_it->second,
-                                               zaid,
-                                               atomic_weight_ratio ) );
+      ScatteringCenterZaidPropertiesMap::iterator properties_it =
+        d_properties.find( Data::ZAID(zaid.atom()) );
+    
+      if( properties_it != d_properties.end() )
+      {
+        properties.reset( new NuclideProperties( *properties_it->second,
+                                                 zaid,
+                                                 atomic_weight_ratio ) );
+      }
+      else
+      {
+        properties.reset( new NuclideProperties( zaid, atomic_weight_ratio ) );
+      }
     }
     else
     {
       properties.reset( new NuclideProperties( zaid, atomic_weight_ratio ) );
     }
   }
+
+  return this->getNuclideProperties( zaid );
 }
 
 // Remove scattering center properties from the database
@@ -282,6 +290,34 @@ void ScatteringCenterPropertiesDatabase::removeProperties(
 {
   if( d_properties.find( zaid ) != d_properties.end() )
     d_properties.erase( zaid );
+}
+
+// Remove empty properties from the database
+/*! \details For this method atom properties are assumed to be any properties
+ * with an atomic mass number of zero (the isNuclide method is not used).
+ */
+void ScatteringCenterPropertiesDatabase::removeEmptyProperties(
+                                           const bool include_atom_properties )
+{
+  ScatteringCenterZaidPropertiesMap::iterator properties_it =
+    d_properties.begin();
+
+  while( properties_it != d_properties.end() )
+  {
+    if( properties_it->first.atomicMassNumber() == 0 &&
+        !include_atom_properties )
+    {
+      ++properties_it;
+      continue;
+    }
+    else
+    {
+      if( properties_it->second->empty() )
+        properties_it = d_properties.erase( properties_it );
+      else
+        ++properties_it;
+    }
+  }
 }
 
 // Return the number of stored properties

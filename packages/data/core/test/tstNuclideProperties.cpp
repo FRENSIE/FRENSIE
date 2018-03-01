@@ -5241,6 +5241,111 @@ FRENSIE_UNIT_TEST( NuclideProperties, getAdjointPhotonuclearDataProperties )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the nuclide properties behave correctly after a copy construction
+FRENSIE_UNIT_TEST( NuclideProperties, copy_constructor )
+{
+  Data::AtomProperties h_atom_properties( Data::H_ATOM, 1.0 );
+
+  // This constructor should tie the atom properties of the nuclide to the
+  // atom properties of interest
+  Data::NuclideProperties h1_nuclide_properties( h_atom_properties,
+                                                 1001,
+                                                 0.9992 );
+
+  // Updating the h atom properties should also modify the h1 nuclide
+  // properties
+  FRENSIE_CHECK( !h_atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE ) );
+  FRENSIE_CHECK( !h1_nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE ) );
+
+  {
+    std::shared_ptr<const Data::PhotoatomicDataProperties> test_data(
+           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
+                                 Data::H_ATOM,
+                                 Data::PhotoatomicDataProperties::ACE_FILE,
+                                 0 ) );
+    
+    h_atom_properties.setPhotoatomicDataProperties( test_data );
+  }
+
+  FRENSIE_CHECK( h_atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE ) );
+  FRENSIE_CHECK( h_atom_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) );
+
+  FRENSIE_CHECK( h1_nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE ) );
+  FRENSIE_CHECK( h1_nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) );
+
+  FRENSIE_CHECK( &h_atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) ==
+                 &h1_nuclide_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) );
+
+  FRENSIE_CHECK( !h_atom_properties.adjointPhotoatomicDataAvailable( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE ) );
+  FRENSIE_CHECK( !h1_nuclide_properties.adjointPhotoatomicDataAvailable( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE ) );
+
+  {
+    std::shared_ptr<const Data::AdjointPhotoatomicDataProperties> test_data(
+           new Data::TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>(
+                       Data::H_ATOM,
+                       Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE,
+                       0 ) );
+    
+    h_atom_properties.setAdjointPhotoatomicDataProperties( test_data );
+  }
+
+  FRENSIE_CHECK( h_atom_properties.adjointPhotoatomicDataAvailable( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE ) );
+  FRENSIE_CHECK( h_atom_properties.adjointPhotoatomicDataAvailable( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
+
+  FRENSIE_CHECK( h1_nuclide_properties.adjointPhotoatomicDataAvailable( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE ) );
+  FRENSIE_CHECK( h1_nuclide_properties.adjointPhotoatomicDataAvailable( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
+
+  FRENSIE_CHECK( &h_atom_properties.getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) ==
+                 &h1_nuclide_properties.getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
+
+  // Updating the h1 nuclide properties should also update the h atom
+  // properties
+  FRENSIE_CHECK( !h_atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE ) );
+  FRENSIE_CHECK( !h1_nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE ) );
+
+  {
+    std::shared_ptr<const Data::ElectroatomicDataProperties> test_data(
+           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
+                                 Data::H_ATOM,
+                                 Data::ElectroatomicDataProperties::ACE_FILE,
+                                 0 ) );
+    
+    h1_nuclide_properties.setElectroatomicDataProperties( test_data );
+  }
+
+  FRENSIE_CHECK( h_atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE ) );
+  FRENSIE_CHECK( h_atom_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) );
+
+  FRENSIE_CHECK( h1_nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE ) );
+  FRENSIE_CHECK( h1_nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) );
+
+  FRENSIE_CHECK( &h_atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) ==
+                 &h1_nuclide_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) );
+
+  FRENSIE_CHECK( !h_atom_properties.adjointElectroatomicDataAvailable( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE ) );
+  FRENSIE_CHECK( !h1_nuclide_properties.adjointElectroatomicDataAvailable( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE ) );
+
+  {
+    std::shared_ptr<const Data::AdjointElectroatomicDataProperties> test_data(
+           new Data::TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>(
+                       Data::H_ATOM,
+                       Data::AdjointElectroatomicDataProperties::Native_EPR_FILE,
+                       0 ) );
+    
+    h1_nuclide_properties.setAdjointElectroatomicDataProperties( test_data );
+  }
+
+  FRENSIE_CHECK( h_atom_properties.adjointElectroatomicDataAvailable( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE ) );
+  FRENSIE_CHECK( h_atom_properties.adjointElectroatomicDataAvailable( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
+
+  FRENSIE_CHECK( h1_nuclide_properties.adjointElectroatomicDataAvailable( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE ) );
+  FRENSIE_CHECK( h1_nuclide_properties.adjointElectroatomicDataAvailable( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
+
+  FRENSIE_CHECK( &h_atom_properties.getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) ==
+                 &h1_nuclide_properties.getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that nuclide properties can be cloned
 FRENSIE_UNIT_TEST( NuclideProperties, clone )
 {

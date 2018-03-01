@@ -51,6 +51,9 @@ public:
   //! Check if the scattering center is a nuclide
   virtual bool isNuclide() const;
 
+  //! Check if there are no properties
+  virtual bool empty() const;
+
   //! Get the zaid
   const Data::ZAID& zaid() const;
 
@@ -301,16 +304,16 @@ private:
   double d_atomic_weight_ratio;
 
   // The photoatomic data properties
-  typename PropertiesMapTypeHelper<PhotoatomicDataProperties>::FileTypeVersionPropertiesMap d_photoatomic_data_properties;
+  std::shared_ptr<typename PropertiesMapTypeHelper<PhotoatomicDataProperties>::FileTypeVersionPropertiesMap> d_photoatomic_data_properties;
 
   // The adjoint photoatomic data properties
-  typename PropertiesMapTypeHelper<AdjointPhotoatomicDataProperties>::FileTypeVersionPropertiesMap d_adjoint_photoatomic_data_properties;
+  std::shared_ptr<typename PropertiesMapTypeHelper<AdjointPhotoatomicDataProperties>::FileTypeVersionPropertiesMap> d_adjoint_photoatomic_data_properties;
 
   // The electroatomic data properties
-  typename PropertiesMapTypeHelper<ElectroatomicDataProperties>::FileTypeVersionPropertiesMap d_electroatomic_data_properties;
+  std::shared_ptr<typename PropertiesMapTypeHelper<ElectroatomicDataProperties>::FileTypeVersionPropertiesMap> d_electroatomic_data_properties;
 
   // The adjoint electroatomic data properties
-  typename PropertiesMapTypeHelper<AdjointElectroatomicDataProperties>::FileTypeVersionPropertiesMap d_adjoint_electroatomic_data_properties;
+  std::shared_ptr<typename PropertiesMapTypeHelper<AdjointElectroatomicDataProperties>::FileTypeVersionPropertiesMap> d_adjoint_electroatomic_data_properties;
 };
 
 //! The invalid data error

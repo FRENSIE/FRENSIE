@@ -26,7 +26,7 @@ auto NuclearDataProperties::evaluationTemperature() const -> Temperature
 // Get the nuclear data file major version
 unsigned NuclearDataProperties::fileMajorVersion() const
 {
-  return this->fileVersion()/10;
+  return this->fileVersion();
 }
 
 } // end Data namespace

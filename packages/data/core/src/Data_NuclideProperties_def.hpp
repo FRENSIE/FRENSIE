@@ -544,7 +544,7 @@ void NuclideProperties::setNuclearPropertiesImpl(
   Energy evaluation_temp = new_properties->evaluationTemperatureInMeV();
   
   typename PropertiesMap::mapped_type::mapped_type& temp_grid = 
-    properties[new_properties->fileType()][new_properties->fileVersion()];
+    properties[new_properties->fileType()][new_properties->fileMajorVersion()];
 
   if( temp_grid.empty() )
     temp_grid.push_back( std::make_pair( evaluation_temp, new_properties ) );
@@ -571,7 +571,7 @@ void NuclideProperties::setNuclearPropertiesImpl(
                                     "file type "
                                     << new_properties->fileType() <<
                                     ", version "
-                                    << new_properties->fileVersion() <<
+                                    << new_properties->fileMajorVersion() <<
                                     " and evaluation temperature "
                                     << evaluation_temp << 
                                     " are already present! The old "

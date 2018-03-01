@@ -76,6 +76,9 @@ public:
   //! Get the adjoint nuclear data file start line
   virtual size_t fileStartLine() const = 0;
 
+  //! Get the nuclear data file major version
+  virtual unsigned fileMajorVersion() const;
+
   //! Get the nuclear data file version
   virtual unsigned fileVersion() const = 0;
 

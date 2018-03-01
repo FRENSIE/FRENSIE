@@ -169,6 +169,13 @@ FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileStartLine )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the file major version can be returned
+FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileMajorVersion )
+{
+  FRENSIE_CHECK_EQUAL( properties->fileMajorVersion(), 1 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the file version can be returned
 FRENSIE_UNIT_TEST( ACEThermalNuclearDataProperties, fileVersion )
 {

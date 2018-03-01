@@ -107,7 +107,13 @@ size_t ACENuclearDataProperties::fileStartLine() const
   return d_file_start_line;
 }
 
-//! Get the nuclear data file version
+// Get the nuclear data file major version
+unsigned ACENuclearDataProperties::fileMajorVersion() const
+{
+  return this->fileVersion()/10;
+}
+
+// Get the nuclear data file version
 unsigned ACENuclearDataProperties::fileVersion() const
 {
   return d_file_table_name.version();

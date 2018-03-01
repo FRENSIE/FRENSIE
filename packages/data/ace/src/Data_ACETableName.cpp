@@ -88,8 +88,7 @@ ACETableName::ACETableName( const std::string& raw_ace_table_name )
 ACETableName::ACETableName( const Data::ZAID& zaid,
                             const unsigned table_version,
                             const char table_type_key )
-  : d_raw_table_name( Utility::toString( zaid ) + "." +
-                      Utility::toString( table_version ) + table_type_key ),
+  : d_raw_table_name( Utility::toString( zaid ) + "." ),
     d_table_name_zaid( zaid ),
     d_table_name_version( table_version ),
     d_table_name_type_key( table_type_key )
@@ -97,6 +96,11 @@ ACETableName::ACETableName( const Data::ZAID& zaid,
   TEST_FOR_EXCEPTION( table_version > 99,
                       std::runtime_error,
                       "The table version must currently be <= 99!" );
+
+  if( table_version < 10 )
+    d_raw_table_name += "0";
+  
+  d_raw_table_name += Utility::toString( table_version ) + table_type_key;
 }
 
 // Component constructor

@@ -219,9 +219,10 @@ private:
 
   // Parse the entry tokens and create the data properties object
   void parseEntryTokensAndCreateDataPropertiesObject(
-                                  ScatteringCenterPropertiesDatabase& database,
-                                  const std::vector<std::string>& entry_tokens,
-                                  const std::string& ) const;
+                                 ScatteringCenterPropertiesDatabase& database,
+                                 const std::vector<std::string>& entry_tokens,
+                                 const std::string&,
+                                 const bool log_parsed_entries = false ) const;
 
   // Filter all but zaid and atomic weight ratio lines
   static bool filterAllButZaidAtomicWeightRatioEntryLines(

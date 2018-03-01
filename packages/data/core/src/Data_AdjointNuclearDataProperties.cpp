@@ -22,6 +22,12 @@ auto AdjointNuclearDataProperties::evaluationTemperature() const -> Temperature
 {
   return this->evaluationTemperatureInMeV()/Utility::PhysicalConstants::boltzmann_constant_q;
 }
+
+// Get the nuclear data file major version
+unsigned AdjointNuclearDataProperties::fileMajorVersion() const
+{
+  return this->fileVersion();
+}
   
 } // end Data namespace
 

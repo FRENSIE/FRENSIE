@@ -41,7 +41,11 @@ NuclideProperties::NuclideProperties( const Data::ZAID zaid,
   : AtomProperties( zaid, atomic_weight_ratio )
 { /* ... */ }
 
-// Partial copy constructor
+// Tie constructor
+/*! \details The atom properties corresponding to this NuclideProperties
+ * instance will be tied to the atom properties passed to this constructor.
+ * Tied properties will behave as if they are the same instance.
+ */
 NuclideProperties::NuclideProperties( const AtomProperties& atom_properties,
                                       const Data::ZAID zaid,
                                       const double atomic_weight_ratio )
@@ -71,6 +75,21 @@ NuclideProperties::NuclideProperties( const NuclideProperties& other )
 bool NuclideProperties::isNuclide() const
 {
   return true;
+}
+
+// Check if there are no properties
+/*! \details Nuclide properties are considered empty if there are no properties
+ * stored for nuclear and photonuclear interaction types (there may be stored
+ * atomic data).
+ */
+bool NuclideProperties::empty() const
+{
+  return d_nuclear_data_properties.empty() &&
+    d_thermal_nuclear_data_properties.empty() &&
+    d_adjoint_nuclear_data_properties.empty() &&
+    d_adjoint_thermal_nuclear_data_properties.empty() &&
+    d_photonuclear_data_properties.empty() &&
+    d_adjoint_photonuclear_data_properties.empty();
 }
 
 // Check if there is nuclear data with the desired format

@@ -61,6 +61,9 @@ public:
   //! Remove properties from the database
   void removeProperties( const Data::ZAID zaid );
 
+  //! Remove empty properties from the database
+  void removeEmptyProperties( const bool include_atom_properties = false );
+
   //! Return the desired properties
   const AtomProperties& getAtomProperties( const AtomType atom ) const;
 

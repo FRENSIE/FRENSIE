@@ -92,6 +92,13 @@ FRENSIE_UNIT_TEST( ACENuclearDataProperties, fileStartLine )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the data file major version can be returned
+FRENSIE_UNIT_TEST( ACENuclearDataProperties, fileMajorVersion )
+{
+  FRENSIE_CHECK_EQUAL( properties->fileMajorVersion(), 7 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the data file version can be returned
 FRENSIE_UNIT_TEST( ACENuclearDataProperties, fileVersion )
 {

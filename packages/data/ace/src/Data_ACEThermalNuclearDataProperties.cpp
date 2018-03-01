@@ -125,6 +125,13 @@ size_t ACEThermalNuclearDataProperties::fileStartLine() const
   return d_file_start_line;
 }
 
+// Get the nuclear data file major version
+unsigned ACEThermalNuclearDataProperties::fileMajorVersion() const
+{
+  return this->fileVersion()/10;
+}
+
+
 // Get the nuclear data file version
 unsigned ACEThermalNuclearDataProperties::fileVersion() const
 {

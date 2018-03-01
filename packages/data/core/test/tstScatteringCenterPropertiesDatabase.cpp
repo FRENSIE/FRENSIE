@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Data_ScatteringCenterPropertiesDatabase.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "TestNuclearDataProperties.hpp"
 #include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
@@ -19,6 +20,7 @@
 //---------------------------------------------------------------------------//
 
 using Utility::Units::amu;
+using Utility::Units::MeV;
 
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
@@ -136,6 +138,58 @@ FRENSIE_UNIT_TEST( ScatteringCenterPropertiesDatabase, removeProperties )
   database.removeProperties( 1001 );
 
   FRENSIE_CHECK( !database.doPropertiesExist( 1001 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that empty properties can be removed
+FRENSIE_UNIT_TEST( ScatteringCenterPropertiesDatabase, removeEmptyProperties )
+{
+  Data::ScatteringCenterPropertiesDatabase database;
+
+  FRENSIE_CHECK( !database.doPropertiesExist( Data::H_ATOM ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1000 ) );
+
+  database.initializeAtomProperties( Data::H_ATOM, 1.0 );
+
+  FRENSIE_CHECK( database.doPropertiesExist( Data::H_ATOM ) );
+  FRENSIE_CHECK( database.doPropertiesExist( 1000 ) );
+  
+  FRENSIE_CHECK( !database.doPropertiesExist( 1001 ) );
+
+  database.initializeNuclideProperties( 1001, 1.0 );
+
+  FRENSIE_CHECK( database.doPropertiesExist( 1001 ) );
+
+  FRENSIE_CHECK( !database.doPropertiesExist( 1002 ) );
+
+  {
+    Data::NuclideProperties& h2_properties =
+      database.initializeNuclideProperties( 1002, 2.0 );
+
+    std::shared_ptr<const Data::NuclearDataProperties> test_data(
+              new Data::TestNuclearDataProperties<Data::NuclearDataProperties>(
+                                     1002,
+                                     2.0,
+                                     0.0*MeV,
+                                     Data::NuclearDataProperties::ACE_FILE,
+                                     0 ) );
+
+    h2_properties.setNuclearDataProperties( test_data );
+  }
+
+  database.removeEmptyProperties();
+
+  FRENSIE_CHECK( database.doPropertiesExist( Data::H_ATOM ) );
+  FRENSIE_CHECK( database.doPropertiesExist( 1000 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1001 ) );
+  FRENSIE_CHECK( database.doPropertiesExist( 1002 ) );
+
+  database.removeEmptyProperties( true );
+
+  FRENSIE_CHECK( !database.doPropertiesExist( Data::H_ATOM ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1000 ) );
+  FRENSIE_CHECK( !database.doPropertiesExist( 1001 ) );
+  FRENSIE_CHECK( database.doPropertiesExist( 1002 ) );
 }
 
 //---------------------------------------------------------------------------//
