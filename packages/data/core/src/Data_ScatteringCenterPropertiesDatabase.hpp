@@ -40,7 +40,7 @@ public:
 
   //! Load existing database constructor
   ScatteringCenterPropertiesDatabase(
-                         const boost::filesystem::path& database_name_with_path );
+                      const boost::filesystem::path& database_name_with_path );
 
   //! Destructor
   ~ScatteringCenterPropertiesDatabase()
