@@ -70,34 +70,16 @@ void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
                       total_elastic_cross_section,
                       threshold_energy_index );
 
-  Teuchos::ArrayView<const double> cutoff_elastic_cross_section =
-                    raw_electroatom_data.extractElasticCutoffCrossSection();
-
-  // Calculate sampling ratios
-  Teuchos::ArrayRCP<double> sampling_ratios( total_elastic_cross_section.size() );
-  for( unsigned i = 0; i < sampling_ratios.size(); ++i )
-  {
-    double relative_diff =
-      (total_elastic_cross_section[i] - cutoff_elastic_cross_section[i+threshold_energy_index])/
-                        cutoff_elastic_cross_section[i+threshold_energy_index];
-
-    // Check for cross sections below roundoff error
-    if( relative_diff < 1e-8 )
-      sampling_ratios[i] = 1.0;
-    else
-    {
-      sampling_ratios[i] = cutoff_elastic_cross_section[i+threshold_energy_index]/
-                            total_elastic_cross_section[i];
-    }
-
-    testPostcondition( sampling_ratios[i] <= 1.0 );
-  }
+  Teuchos::ArrayRCP<double> cutoff_elastic_cross_sections;
+  cutoff_elastic_cross_sections.assign(
+      raw_electroatom_data.extractElasticTotalCrossSection().begin(),
+      raw_electroatom_data.extractElasticTotalCrossSection().end() );
 
   elastic_reaction.reset(
     new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
                 energy_grid,
                 total_elastic_cross_section,
-                sampling_ratios,
+                cutoff_elastic_cross_sections,
                 threshold_energy_index,
                 grid_searcher,
                 tabular_distribution,

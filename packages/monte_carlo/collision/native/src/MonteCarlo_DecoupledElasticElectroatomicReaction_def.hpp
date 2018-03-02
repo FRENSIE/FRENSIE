@@ -19,7 +19,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
       const unsigned threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
@@ -30,7 +30,7 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
               threshold_energy_index ),
     d_incoming_energy_grid( incoming_energy_grid ),
     d_threshold_energy_index( threshold_energy_index ),
-    d_sampling_ratios( sampling_ratios ),
+    d_cutoff_cross_section( cutoff_cross_section ),
     d_tabular_distribution( tabular_distribution ),
     d_analytical_distribution( analytical_distribution )
 {
@@ -40,7 +40,7 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
                                                 incoming_energy_grid.begin(),
                                                 incoming_energy_grid.end() ) );
   // Make sure the sampling ratio is valid
-  testPrecondition( sampling_ratios.size() > 0 );
+  testPrecondition( cutoff_cross_section.size() > 0 );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distributions are valid
@@ -60,7 +60,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
@@ -73,7 +73,7 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
     d_incoming_energy_grid( incoming_energy_grid ),
     d_grid_searcher( grid_searcher ),
     d_threshold_energy_index( threshold_energy_index ),
-    d_sampling_ratios( sampling_ratios ),
+    d_cutoff_cross_section( cutoff_cross_section ),
     d_tabular_distribution( tabular_distribution ),
     d_analytical_distribution( analytical_distribution )
 {
@@ -83,7 +83,7 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
                                                 incoming_energy_grid.begin(),
                                                 incoming_energy_grid.end() ) );
   // Make sure the sampling ratio is valid
-  testPrecondition( sampling_ratios.size() > 0 );
+  testPrecondition( cutoff_cross_section.size() > 0 );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distributions are valid
@@ -130,12 +130,21 @@ double DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_sectio
 
     unsigned r_index = energy_index - d_threshold_energy_index;
 
-    sampling_ratio = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
+    double cutoff_cross_section = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
                                         d_incoming_energy_grid[energy_index],
                                         d_incoming_energy_grid[energy_index+1],
                                         energy,
-                                        d_sampling_ratios[r_index],
-                                        d_sampling_ratios[r_index+1] );
+                                        d_cutoff_cross_section[r_index],
+                                        d_cutoff_cross_section[r_index+1] );
+
+    double total_cross_section = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
+                                        d_incoming_energy_grid[energy_index],
+                                        d_incoming_energy_grid[energy_index+1],
+                                        energy,
+                                        d_total_cross_section[r_index],
+                                        d_total_cross_section[r_index+1] );
+
+    sampling_ratio = std::min( 1.0, cutoff_cross_section/total_cross_section );
   }
   else
     sampling_ratio = 0.0;
