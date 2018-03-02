@@ -19,10 +19,18 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_text_oarchive.hpp>
+#include <boost/archive/polymorphic_text_iarchive.hpp>
+#include <boost/archive/polymorphic_xml_oarchive.hpp>
+#include <boost/archive/polymorphic_xml_iarchive.hpp>
+#include <boost/archive/polymorphic_binary_oarchive.hpp>
+#include <boost/archive/polymorphic_binary_iarchive.hpp>
 
 // FRENSIE Includes
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_DataContainerHelpers.hpp"
+#include "Utility_HDF5OArchive.hpp"
+#include "Utility_HDF5IArchive.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -30,13 +38,21 @@
 
 namespace Data{
 
+// Initialize static member data
+const std::string AdjointElectronPhotonRelaxationDataContainer::s_archive_name( "container" );
+
 // Constructor (from saved archive)
 AdjointElectronPhotonRelaxationDataContainer::AdjointElectronPhotonRelaxationDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
+                           const boost::filesystem::path& file_name_with_path )
 {
-  // Import the data in the archive - no way to use initializer list :(
-  this->importData( archive_name, archive_type );
+  // Import the data in the archive
+  this->loadFromFile( file_name_with_path );
+}
+
+// The database name used in an archive
+const char* AdjointElectronPhotonRelaxationDataContainer::getArchiveName() const
+{
+  return s_archive_name.c_str();
 }
 
 //---------------------------------------------------------------------------//
@@ -2136,8 +2152,11 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointAtomicExcitationCro
  d_adjoint_atomic_excitation_cross_section_threshold_index = index;
 }
 
+EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( AdjointElectronPhotonRelaxationDataContainer );
 
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( AdjointElectronPhotonRelaxationDataContainer, Data );
 
 //---------------------------------------------------------------------------//
 // end Data_AdjointElectronPhotonRelaxationDataContainer.cpp

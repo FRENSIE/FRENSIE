@@ -18,9 +18,8 @@ AdjointElectronPhotonRelaxationVolatileDataContainer::AdjointElectronPhotonRelax
 
 // Constructor (from saved archive)
 AdjointElectronPhotonRelaxationVolatileDataContainer::AdjointElectronPhotonRelaxationVolatileDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
-  : AdjointElectronPhotonRelaxationDataContainer( archive_name, archive_type )
+                           const boost::filesystem::path& file_name_with_path )
+  : AdjointElectronPhotonRelaxationDataContainer( file_name_with_path )
 { /* ... */ }
 
 } // end Data namespace

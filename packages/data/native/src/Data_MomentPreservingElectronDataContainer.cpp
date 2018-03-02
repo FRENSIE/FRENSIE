@@ -19,21 +19,37 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_text_oarchive.hpp>
+#include <boost/archive/polymorphic_text_iarchive.hpp>
+#include <boost/archive/polymorphic_xml_oarchive.hpp>
+#include <boost/archive/polymorphic_xml_iarchive.hpp>
+#include <boost/archive/polymorphic_binary_oarchive.hpp>
+#include <boost/archive/polymorphic_binary_iarchive.hpp>
 
 // FRENSIE Includes
 #include "Data_MomentPreservingElectronDataContainer.hpp"
+#include "Utility_HDF5OArchive.hpp"
+#include "Utility_HDF5IArchive.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Data{
 
+// Initialize static member data
+const std::string MomentPreservingElectronDataContainer::s_archive_name( "container" );
+
 // Constructor (from saved archive)
 MomentPreservingElectronDataContainer::MomentPreservingElectronDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
+                           const boost::filesystem::path& file_name_with_path )
 {
-  // Import the data in the archive - no way to use initializer list :(
-  this->importData( archive_name, archive_type );
+  // Import the data in the archive
+  this->loadFromFile( file_name_with_path );
+}
+
+// The database name used in an archive
+const char* MomentPreservingElectronDataContainer::getArchiveName() const
+{
+  return s_archive_name.c_str();
 }
 
 // Return the atomic number
@@ -292,8 +308,11 @@ bool MomentPreservingElectronDataContainer::isValueLessThanMinusOne(
   return value < -1.0;
 }
 
+EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( MomentPreservingElectronDataContainer );
 
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( MomentPreservingElectronDataContainer, Data );
 
 //---------------------------------------------------------------------------//
 // end Data_MomentPreservingElectronDataContainer.cpp

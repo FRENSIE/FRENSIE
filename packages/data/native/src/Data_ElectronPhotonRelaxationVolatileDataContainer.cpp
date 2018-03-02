@@ -18,9 +18,8 @@ ElectronPhotonRelaxationVolatileDataContainer::ElectronPhotonRelaxationVolatileD
 
 // Constructor (from saved archive)
 ElectronPhotonRelaxationVolatileDataContainer::ElectronPhotonRelaxationVolatileDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
-  : ElectronPhotonRelaxationDataContainer( archive_name, archive_type )
+                           const boost::filesystem::path& file_name_with_path )
+  : ElectronPhotonRelaxationDataContainer( file_name_with_path )
 { /* ... */ }
 
 } // end Data namespace

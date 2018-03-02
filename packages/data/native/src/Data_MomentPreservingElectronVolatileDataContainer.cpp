@@ -18,9 +18,8 @@ MomentPreservingElectronVolatileDataContainer::MomentPreservingElectronVolatileD
 
 // Constructor (from saved archive)
 MomentPreservingElectronVolatileDataContainer::MomentPreservingElectronVolatileDataContainer(
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
-  : MomentPreservingElectronDataContainer( archive_name, archive_type )
+		           const boost::filesystem::path& file_name_with_path )
+  : MomentPreservingElectronDataContainer( file_name_with_path )
 { /* ... */ }
 
 } // end Data namespace

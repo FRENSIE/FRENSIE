@@ -46,7 +46,7 @@ public:
   ~ScatteringCenterPropertiesDatabase()
   { /* ... */ }
 
-  // The database name used in an archive
+  //! The database name used in an archive
   virtual const char* getArchiveName() const override;
 
   //! Check if the atom properties exist
