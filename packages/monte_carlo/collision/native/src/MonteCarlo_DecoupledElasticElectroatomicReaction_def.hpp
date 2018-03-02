@@ -137,12 +137,7 @@ double DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_sectio
                                         d_cutoff_cross_section[r_index],
                                         d_cutoff_cross_section[r_index+1] );
 
-    double total_cross_section = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
-                                        d_incoming_energy_grid[energy_index],
-                                        d_incoming_energy_grid[energy_index+1],
-                                        energy,
-                                        d_total_cross_section[r_index],
-                                        d_total_cross_section[r_index+1] );
+    double total_cross_section = this->getCrossSection( energy, energy_index );
 
     sampling_ratio = std::min( 1.0, cutoff_cross_section/total_cross_section );
   }
