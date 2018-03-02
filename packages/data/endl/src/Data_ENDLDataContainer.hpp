@@ -10,36 +10,40 @@
 #define DATA_ENDL_DATA_CONTAINER_HPP
 
 // Std Lib Includes
-#include <vector>
-#include <set>
-#include <map>
-#include <utility>
 #include <string>
 
 // Boost Includes
+#include <boost/filesystem/path.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Utility_StandardArchivableObject.hpp"
-#include "Utility_StandardSerializableObject.hpp"
+#include "Data_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ArchivableObject.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Tuple.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace Data{
 
 //! The eadl container
-class ENDLDataContainer : public Utility::StandardArchivableObject<ENDLDataContainer,false>, public Utility::StandardSerializableObject<ENDLDataContainer,false>
+class ENDLDataContainer : public Utility::ArchivableObject<ENDLDataContainer>
 {
 
 public:
 
   //! Constructor (from saved archive)
-  ENDLDataContainer(
-    const std::string& archive_name,
-    const Utility::ArchivableObject::ArchiveType archive_type =
-        Utility::ArchivableObject::XML_ARCHIVE );
+  ENDLDataContainer( const boost::filesystem::path& file_name_with_path );
 
   //! Destructor
   virtual ~ENDLDataContainer()
   { /* ... */ }
+
+  //! The database name used in an archive
+  const char* getArchiveName() const override;
 
   //! Return the atomic number
   unsigned getAtomicNumber() const;
@@ -953,6 +957,9 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
+  // The name used in archive name-value pairs
+  static const std::string s_archive_name;
+
   // The atomic number
   unsigned d_atomic_number;
 
@@ -1315,6 +1322,11 @@ private:
 };
 
 } // end Data namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( ENDLDataContainer, Data, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( ENDLDataContainer, Data );
+
+EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ENDLDataContainer );
 
 //---------------------------------------------------------------------------//
 // Template Includes

@@ -11,12 +11,12 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Tuple.hpp>
+// FRENSIE Includes
+#include "Utility_Vector.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace Data{
 
