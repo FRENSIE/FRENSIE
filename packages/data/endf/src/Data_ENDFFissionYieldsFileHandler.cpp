@@ -123,10 +123,10 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
         // Read the data.
         readEndfFissionYieldsData( d_file_id,
                                   &d_number_data_sets_independent[i],
-                                  d_yield_zaid_independent[i].getRawPtr(),
-                                  d_yield_meta_state_independent[i].getRawPtr(),
-                                  d_yield_independent[i].getRawPtr(),
-                                  d_yield_std_independent[i].getRawPtr() );
+                                  d_yield_zaid_independent[i].data(),
+                                  d_yield_meta_state_independent[i].data(),
+                                  d_yield_independent[i].data(),
+                                  d_yield_std_independent[i].data() );
 
         // Converts ZAID into SZAIDS
         for(int j = 0; j < d_yield_zaid_independent[i].size(); j++)
@@ -167,10 +167,10 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
         // Read the data.
         readEndfFissionYieldsData( d_file_id,
                                   &d_number_data_sets_cumulative[i],
-                                  d_yield_zaid_cumulative[i].getRawPtr(),
-                                  d_yield_meta_state_cumulative[i].getRawPtr(),
-                                  d_yield_cumulative[i].getRawPtr(),
-                                  d_yield_std_cumulative[i].getRawPtr() );
+                                  d_yield_zaid_cumulative[i].data(),
+                                  d_yield_meta_state_cumulative[i].data(),
+                                  d_yield_cumulative[i].data(),
+                                  d_yield_std_cumulative[i].data() );
 
         // Converts ZAID into SZAIDS
         for(int j = 0; j < d_yield_zaid_cumulative[i].size(); j++)
@@ -199,86 +199,86 @@ int ENDFFissionYieldsFileHandler::getZaid() const
 }
 
 // Get the energies for the independent yields
-Teuchos::ArrayView<const double> ENDFFissionYieldsFileHandler::getEnergyIndependentYields() const
+Utility::ArrayView<const double> ENDFFissionYieldsFileHandler::getEnergyIndependentYields() const
 {
-   return d_energies_independent;
+  return Utility::arrayViewOfConst(d_energies_independent);
 }
 
 // Get the ZAID of the fission products for the independent yields
-Teuchos::ArrayView<const Teuchos::Array<int> >
+Utility::ArrayView<const std::vector<int> >
 ENDFFissionYieldsFileHandler::getZaidFissionProductsIndependentYields() const
 {
-   return d_yield_zaid_independent();
+  return Utility::arrayViewOfConst(d_yield_zaid_independent);
 }
 
 // Get the Meta State of the fission products for the independent yields
-Teuchos::ArrayView<const Teuchos::Array<int> >
+Utility::ArrayView<const std::vector<int> >
 ENDFFissionYieldsFileHandler::getMetaStateFissionProductsIndependentYields() const
 {
-   return d_yield_meta_state_independent();
+  return Utility::arrayViewOfConst(d_yield_meta_state_independent);
 }
 
 // Get the yields of the fission products for the independent yields
-Teuchos::ArrayView<const Teuchos::Array<double> >
+Utility::ArrayView<const std::vector<double> >
 ENDFFissionYieldsFileHandler::getYieldFissionProductsIndependentYields() const
 {
-   return d_yield_independent();
+  return Utility::arrayViewOfConst(d_yield_independent);
 }
 
 // Get the standard deviation for the yields of the fission products for the indepedent yields
-Teuchos::ArrayView<const Teuchos::Array<double> >
+Utility::ArrayView<const std::vector<double> >
 ENDFFissionYieldsFileHandler::getStdYieldFissionProductsIndependentYields() const
 {
-   return d_yield_std_independent();
+  return Utility::arrayViewOfConst(d_yield_std_independent);
 }
 
 // Get the energies for the cumulative yields
-Teuchos::ArrayView<const double> ENDFFissionYieldsFileHandler::getEnergyCumulativeYields() const
+Utility::ArrayView<const double> ENDFFissionYieldsFileHandler::getEnergyCumulativeYields() const
 {
-   return d_energies_cumulative;
+  return Utility::arrayViewOfConst(d_energies_cumulative);
 }
 
 // Get the ZAID of the fission products for the cumulative yields
-Teuchos::ArrayView<const Teuchos::Array<int> >
+Utility::ArrayView<const std::vector<int> >
 ENDFFissionYieldsFileHandler::getZaidFissionProductsCumulativeYields() const
 {
-    return d_yield_zaid_cumulative();
+  return Utility::arrayViewOfConst(d_yield_zaid_cumulative);
 }
 
 // Get the Meta State of the fission products for the cumulative yields
-Teuchos::ArrayView<const Teuchos::Array<int> >
+Utility::ArrayView<const std::vector<int> >
 ENDFFissionYieldsFileHandler::getMetaStateFissionProductsCumulativeYields() const
 {
-    return d_yield_meta_state_cumulative();
+  return Utility::arrayViewOfConst(d_yield_meta_state_cumulative);
 }
 
 // Get the yields of the fission products for the cumulative yields
-Teuchos::ArrayView<const Teuchos::Array<double> >
+Utility::ArrayView<const std::vector<double> >
 ENDFFissionYieldsFileHandler::getYieldFissionProductsCumulativeYields() const
 {
-     return d_yield_cumulative();
+  return Utility::arrayViewOfConst(d_yield_cumulative);
 }
 
 // Get the standard deviation for the yields of the fission products for the cumulative yields
-Teuchos::ArrayView<const Teuchos::Array<double> >
+Utility::ArrayView<const std::vector<double> >
 ENDFFissionYieldsFileHandler::getStdYieldFissionProductsCumulativeYields() const
 {
-     return d_yield_std_cumulative();
+  return Utility::arrayViewOfConst(d_yield_std_cumulative);
 }
 
 // Filter out the zero yield entries
-void ENDFFissionYieldsFileHandler::filterZeroYields( Teuchos::Array<int>& zaid,
-                                                     Teuchos::Array<int>& meta_state,
-                                                     Teuchos::Array<double>& yield,
-                                                     Teuchos::Array<double>& yield_std )
+void ENDFFissionYieldsFileHandler::filterZeroYields( std::vector<int>& zaid,
+                                                     std::vector<int>& meta_state,
+                                                     std::vector<double>& yield,
+                                                     std::vector<double>& yield_std )
 {
      // Test Precondition
      testPrecondition(zaid.size() == meta_state.size());
      testPrecondition(zaid.size() == yield.size());
      testPrecondition(zaid.size() == yield_std.size());
 
-     Teuchos::Array<int>::iterator zaid_it, meta_state_it;
-     Teuchos::Array<double>::iterator yield_it, yield_std_it;
+     std::vector<int>::iterator zaid_it, meta_state_it;
+     std::vector<double>::iterator yield_it, yield_std_it;
 
      zaid_it = zaid.begin();
      meta_state_it = meta_state.begin();

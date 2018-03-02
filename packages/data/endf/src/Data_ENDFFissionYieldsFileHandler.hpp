@@ -11,9 +11,10 @@
 
 // Std Lib Includes
 #include <string>
+#include <vector>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// FRENSIE Includes
+#include "Utility_ArrayView.hpp"
 
 namespace Data{
 
@@ -56,34 +57,34 @@ public:
   int getZaid() const;
 
   //! Get the energies for the independent yields
-  Teuchos::ArrayView<const double> getEnergyIndependentYields() const;
+  Utility::ArrayView<const double> getEnergyIndependentYields() const;
 
   //! Get the ZAID of the fission products for the independent yields
-  Teuchos::ArrayView<const Teuchos::Array<int> > getZaidFissionProductsIndependentYields() const;
+  Utility::ArrayView<const std::vector<int> > getZaidFissionProductsIndependentYields() const;
 
   //! Get the meta state of the fission products for the independent yields
-  Teuchos::ArrayView<const Teuchos::Array<int> > getMetaStateFissionProductsIndependentYields() const;
+  Utility::ArrayView<const std::vector<int> > getMetaStateFissionProductsIndependentYields() const;
 
   //! Get the yields of the fission products for the independent yields
-  Teuchos::ArrayView<const Teuchos::Array<double> > getYieldFissionProductsIndependentYields() const;
+  Utility::ArrayView<const std::vector<double> > getYieldFissionProductsIndependentYields() const;
 
   //! Get the standard deviation for the yields of the fission products for the indepedent yields
-  Teuchos::ArrayView<const Teuchos::Array<double> > getStdYieldFissionProductsIndependentYields() const;
+  Utility::ArrayView<const std::vector<double> > getStdYieldFissionProductsIndependentYields() const;
 
   //! Get the energies for the cumulative yields
-  Teuchos::ArrayView<const double> getEnergyCumulativeYields() const;
+  Utility::ArrayView<const double> getEnergyCumulativeYields() const;
 
   //! Get the ZAID of the fission products for the cumulative yields
-  Teuchos::ArrayView<const Teuchos::Array<int> > getZaidFissionProductsCumulativeYields() const;
+  Utility::ArrayView<const std::vector<int> > getZaidFissionProductsCumulativeYields() const;
 
   //! Get the meta state of the fission products for the cumulative yields
-  Teuchos::ArrayView<const Teuchos::Array<int> > getMetaStateFissionProductsCumulativeYields() const;
+  Utility::ArrayView<const std::vector<int> > getMetaStateFissionProductsCumulativeYields() const;
 
   //! Get the yields of the fission products for the cumulative yields
-  Teuchos::ArrayView<const Teuchos::Array<double> > getYieldFissionProductsCumulativeYields() const;
+  Utility::ArrayView<const std::vector<double> > getYieldFissionProductsCumulativeYields() const;
 
   //! Get the standard deviation for the yields of the fission products for the cumulative yields
-  Teuchos::ArrayView<const Teuchos::Array<double> > getStdYieldFissionProductsCumulativeYields() const;
+  Utility::ArrayView<const std::vector<double> > getStdYieldFissionProductsCumulativeYields() const;
 
 private:
 
@@ -103,50 +104,50 @@ private:
   int d_number_energies_independent;
 
   // The energies of each of the data sets of the independent yields
-  Teuchos::Array<double> d_energies_independent;
+  std::vector<double> d_energies_independent;
 
   // The number of data sets for each energy for the independent yields
-  Teuchos::Array<int> d_number_data_sets_independent;
+  std::vector<int> d_number_data_sets_independent;
 
   // The ZAID of the fission products for the indpendent yields
-  Teuchos::Array<Teuchos::Array<int> > d_yield_zaid_independent;
+  std::vector<std::vector<int> > d_yield_zaid_independent;
 
   // The meta state of the ZAID of the fission products for the independent yields
-  Teuchos::Array<Teuchos::Array<int> > d_yield_meta_state_independent;
+  std::vector<std::vector<int> > d_yield_meta_state_independent;
 
   // The yields of the fission products for the independent yields
-  Teuchos::Array<Teuchos::Array<double> > d_yield_independent;
+  std::vector<std::vector<double> > d_yield_independent;
 
   // The standard deviation for the yields of the fission products for the independent yields
-  Teuchos::Array<Teuchos::Array<double> > d_yield_std_independent;
+  std::vector<std::vector<double> > d_yield_std_independent;
 
   // The number of energies of each of the data sets of the cumulative yields
   int d_number_energies_cumulative;
 
   // The energies of each of the data sets of the cumulative yields
-  Teuchos::Array<double> d_energies_cumulative;
+  std::vector<double> d_energies_cumulative;
 
   // The number of data sets for each energy for the cumulative yields
-  Teuchos::Array<int> d_number_data_sets_cumulative;
+  std::vector<int> d_number_data_sets_cumulative;
 
   // The ZAID of the fission products for the cumulative yields
-  Teuchos::Array<Teuchos::Array<int> > d_yield_zaid_cumulative;
+  std::vector<std::vector<int> > d_yield_zaid_cumulative;
 
   // The meta state of the ZAID of the fission products for the cumulative yields
-  Teuchos::Array<Teuchos::Array<int> > d_yield_meta_state_cumulative;
+  std::vector<std::vector<int> > d_yield_meta_state_cumulative;
 
   // The yields of the fission products for the cumulative yields
-  Teuchos::Array<Teuchos::Array<double> > d_yield_cumulative;
+  std::vector<std::vector<double> > d_yield_cumulative;
 
   // The standard deviation for the yields of the fission products for the cumulative yields
-  Teuchos::Array<Teuchos::Array<double> > d_yield_std_cumulative;
+  std::vector<std::vector<double> > d_yield_std_cumulative;
 
 
   // Remove all the zero yield entries
-  void filterZeroYields( Teuchos::Array<int>& zaid,
-                         Teuchos::Array<int>& meta_state,
-                         Teuchos::Array<double>& yield,
-                         Teuchos::Array<double>& yield_std );
+  void filterZeroYields( std::vector<int>& zaid,
+                         std::vector<int>& meta_state,
+                         std::vector<double>& yield,
+                         std::vector<double>& yield_std );
 };
 
 } // end Data namespace
