@@ -15,7 +15,7 @@ namespace Utility{
 namespace Details{
 
 // 9 = tab (\t), 10 = new line (\n), 32 = white space
-const char white_space_delims[3] = {(char)9, (char)10, (char)32};
+const std::string white_space_delims( "\t\n " );
 
 } // end Details namespace
 
@@ -112,7 +112,7 @@ std::string FromStringTraits<std::string>::extractElementString(
     {
       bool white_space_element = false;
       
-      for( size_t i = 0; i < std::strlen( Details::white_space_delims ); ++i )
+      for( size_t i = 0; i < Details::white_space_delims.size(); ++i )
       {
         if( string_element == Details::white_space_delims[i] )
         {

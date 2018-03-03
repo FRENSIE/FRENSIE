@@ -401,7 +401,7 @@ public:
 
     oss << "distance(" << Utility::toString( left_value )
         << "," << Utility::toString( right_value ) << ") = "
-        << Utility::toString(ThisType::calculateDistance( left_value, right_value ))
+        << Utility::toString(Utility::QuantityTraits<T>::initializeQuantity(ThisType::calculateDistance( left_value, right_value )))
         << " <= " << Utility::toString( Utility::QuantityTraits<T>::initializeQuantity( distance_tolerance ) );
     
     return oss.str();

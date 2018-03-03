@@ -139,7 +139,7 @@ FRENSIE_UNIT_TEST( Communicator, getDefault )
 
   FRENSIE_REQUIRE( comm.get() != NULL );
   FRENSIE_REQUIRE( comm->isValid() );
-  FRENSIE_REQUIRE( *comm );
+  FRENSIE_REQUIRE( (bool)*comm );
   FRENSIE_CHECK_EQUAL( comm->rank(), Utility::GlobalMPISession::rank() );
   FRENSIE_CHECK_EQUAL( comm->size(), Utility::GlobalMPISession::size() );
   FRENSIE_CHECK_EQUAL( comm->isMPIUsed(), Utility::GlobalMPISession::isMPIUsed() );

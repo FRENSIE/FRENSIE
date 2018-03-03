@@ -34,7 +34,7 @@ namespace Utility{
 namespace Details{
 
 // 9 = tab (\t), 10 = new line (\n), 32 = white space
-extern const char white_space_delims[3];
+extern const std::string white_space_delims;
   
 } // end Details namespace
 
@@ -707,7 +707,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
         // The element has been successfully extracted
         (obj.*insert_element)( element );
         ++element_index;
-      
+
         // Position the stream at the start of the next element (or end)
         try{
           done = Utility::moveInputStreamToNextElement( is, next_container_element_char, container_end_char );
@@ -753,17 +753,17 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
                                      ElementInsertionMemberFunction insert_element )
   {
     obj.clear();
-
+    
     // Extract the entire string
     std::string obj_rep;
-
+    
     try{
       Utility::fromStream( is, obj_rep, container_element_delims );
     }
     EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                              "Could not extract the object string from the "
                              "stream!" );
-
+    
     // Expand repeat keywords
     try{
       Utility::expandRepeatKeywords<ContainerValueType>( obj_rep );
@@ -783,7 +783,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
     // Create a new stream from the extracted and potentially modified
     // object representation
     std::istringstream iss( obj_rep );
-
+    
     try{
       // Initialize the input stream
       Utility::initializeInputStream( iss, container_start_char );
@@ -1408,22 +1408,19 @@ private:
       
     while( !done )
     {
-      is.get( stream_char );
+      stream_char = is.peek();
       
       done = true;
-      
-      for( size_t i = 0; i < std::strlen(Details::white_space_delims); ++i )
+            
+      for( size_t i = 0; i < Details::white_space_delims.size(); ++i )
       {
         if( stream_char == Details::white_space_delims[i] )
         {
+          is.get();
           done = false;
           break;
         }
       }
-
-      // Place the non-white space character back in the stream
-      if( done )
-        is.putback( stream_char );
     }
   }
 

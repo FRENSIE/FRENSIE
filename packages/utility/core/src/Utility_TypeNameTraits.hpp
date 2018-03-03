@@ -106,7 +106,7 @@ struct TypeNameTraits<boost::units::quantity<Unit,T> >
   static inline std::string name()
   {
     return std::string("boost::units::quantity<") +
-      Utility::UnitTraits<Unit>::name() + "," +
+      Utility::UnitTraits<Unit>::symbol() + "," +
       TypeNameTraits<T>::name() +">";
   }
 };

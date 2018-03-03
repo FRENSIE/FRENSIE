@@ -142,7 +142,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
 {
   const std::string test_ascii_file_name( "test_mp_data_container.txt" );
 
-  mp_data_container.saveToFile( test_ascii_file_name );
+  mp_data_container.saveToFile( test_ascii_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
     mp_data_container_copy( test_ascii_file_name );
@@ -174,7 +174,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
 {
   const std::string test_binary_file_name( "test_mp_data_container.bin" );
 
-  mp_data_container.saveToFile( test_binary_file_name );
+  mp_data_container.saveToFile( test_binary_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
     mp_data_container_copy( test_binary_file_name );
@@ -206,7 +206,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
 {
   const std::string test_xml_file_name( "test_mp_data_container.xml" );
 
-  mp_data_container.saveToFile( test_xml_file_name );
+  mp_data_container.saveToFile( test_xml_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
     mp_data_container_copy( test_xml_file_name );
