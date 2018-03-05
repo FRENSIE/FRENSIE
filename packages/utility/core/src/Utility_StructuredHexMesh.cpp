@@ -138,64 +138,65 @@ std::vector<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh::co
                                             const double start_point[3],
                                             const double end_point[3] )const
 {
-  // Make sure end point isn't the same as start point - use after bugs with end point of dying particle is fixed
-  testPrecondition( start_point[0] != end_point[0] ||
-                    start_point[1] != end_point[1] ||
-                    start_point[2] != end_point[2] );
-
-  // Calculate track length and direction unit vector
-  double direction[3] {end_point[X_DIMENSION] - start_point[X_DIMENSION],
-                       end_point[Y_DIMENSION] - start_point[Y_DIMENSION],
-                       end_point[Z_DIMENSION] - start_point[Z_DIMENSION]};
-                       
-  double track_length = Utility::vectorMagnitude( direction[X_DIMENSION],
-                                                  direction[Y_DIMENSION],
-                                                  direction[Z_DIMENSION] );
-                                                  
-  Utility::normalizeVector( direction );
-  
-  // Initialize contribution array
-  std::vector<std::pair<HexIndex,double>> contribution_array;
-
-  double current_point[3] { start_point[X_DIMENSION], 
-                            start_point[Y_DIMENSION], 
-                            start_point[Z_DIMENSION] };
-
-  // Test if point starts in mesh. If not, figure out if it interacts with mesh
-  if( !this->isPointInMesh(current_point) )
+  if( !(start_point[X_DIMENSION] == end_point[X_DIMENSION] &&
+        start_point[Y_DIMENSION] == end_point[Y_DIMENSION] &&
+        start_point[Z_DIMENSION] == end_point[Z_DIMENSION]) )
   {
-    /* 
-      First member of pair is whether the mesh was intersected,
-      second member of pair is the distance to the intersection
-    */
-    std::tuple<bool, Dimension, double> ray_intersection_tuple = 
-      this->doesRayIntersectMesh( current_point,
-                                  direction,
-                                  track_length);
-    if( std::get<0>( ray_intersection_tuple ) )
+    // Calculate track length and direction unit vector
+    double direction[3] {end_point[X_DIMENSION] - start_point[X_DIMENSION],
+                         end_point[Y_DIMENSION] - start_point[Y_DIMENSION],
+                         end_point[Z_DIMENSION] - start_point[Z_DIMENSION]};
+  
+                   
+    double track_length = Utility::vectorMagnitude( direction[X_DIMENSION],
+                                                    direction[Y_DIMENSION],
+                                                    direction[Z_DIMENSION] );
+                                                  
+    Utility::normalizeVector( direction );
+  
+    // Initialize contribution array
+    std::vector<std::pair<HexIndex,double>> contribution_array;
+
+    double current_point[3] { start_point[X_DIMENSION], 
+                              start_point[Y_DIMENSION], 
+                              start_point[Z_DIMENSION] };
+
+    // Test if point starts in mesh. If not, figure out if it interacts with mesh
+    if( !this->isPointInMesh(current_point) )
     {
-      this->pushPoint( current_point, 
-                       direction,
-                       std::get<2>( ray_intersection_tuple ) );
+      /* 
+        First member of pair is whether the mesh was intersected,
+        second member of pair is the distance to the intersection
+      */
+      std::tuple<bool, Dimension, double> ray_intersection_tuple = 
+        this->doesRayIntersectMesh( current_point,
+                                    direction,
+                                    track_length);
+      if( std::get<0>( ray_intersection_tuple ) )
+      {
+        this->pushPoint( current_point, 
+                         direction,
+                         std::get<2>( ray_intersection_tuple ) );
+        PlaneIndex hex_plane_indices[3]; 
+        this->setHexPlaneIndices( std::get<1>( ray_intersection_tuple ),
+                                  current_point,
+                                  hex_plane_indices );
+        contribution_array = this->traceThroughMesh( current_point,
+                                                     direction,
+                                                     track_length - std::get<2>( ray_intersection_tuple ),
+                                                     hex_plane_indices );
+      }
+    }
+    else
+    {
       PlaneIndex hex_plane_indices[3]; 
-      this->setHexPlaneIndices( std::get<1>( ray_intersection_tuple ),
-                              current_point,
-                              hex_plane_indices );
+      this->setHexPlaneIndices( current_point, hex_plane_indices );
+
       contribution_array = this->traceThroughMesh( current_point,
                                                    direction,
-                                                   track_length - std::get<2>( ray_intersection_tuple ),
+                                                   track_length,
                                                    hex_plane_indices );
     }
-  }
-  else
-  {
-    PlaneIndex hex_plane_indices[3]; 
-    this->setHexPlaneIndices( current_point, hex_plane_indices );
-
-    contribution_array = this->traceThroughMesh( current_point,
-                                                 direction,
-                                                 track_length,
-                                                 hex_plane_indices );
   }
   return contribution_array;
 }
@@ -472,6 +473,7 @@ double StructuredHexMesh::findDistanceToInteractionPlane( const double interacti
 std::pair<StructuredHexMesh::Dimension, double> 
   StructuredHexMesh::findShortestDistance( const std::vector<std::pair<Dimension, double>>& distance_array ) const
 {
+  testPrecondition( distance_array.size() > 0);
   unsigned j = 0;
   double shortest_distance = distance_array[0].second;
   for(unsigned i = 0; i < distance_array.size(); ++i)

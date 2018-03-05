@@ -385,7 +385,7 @@ void ParticleSimulateManager<mode>::advanceParticleToCollisionSite(
   double distance_to_collision =
     remaining_subtrack_op/cell_total_macro_cross_section;
 
-  // Advance the particle and the navigator ray
+  // Advance the particle
   particle.advance( distance_to_collision );
 
   // Update the observers: particle subtrack ending in cell event

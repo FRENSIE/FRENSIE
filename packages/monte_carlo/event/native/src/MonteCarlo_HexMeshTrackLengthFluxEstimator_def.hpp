@@ -90,11 +90,6 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                 const double end_point[3])
 {
 
-  // Make sure end point isn't the same as start point
-  testPrecondition( !( start_point[0] == end_point[0] &&
-                         start_point[1] == end_point[1] &&
-                         start_point[2] == end_point[2] ) );
-
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
     
@@ -129,43 +124,27 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
   // Export data in FRENSIE formatting for data manipulation
   StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>::exportData( hdf5_file,
                                                            process_data );
-
   // Set the estimator as a mesh estimator
   EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
-
   estimator_hdf5_file.setMeshEstimator( this->getId() );
+
   // Export data for visualization
   if( process_data )
   {
+
     // Preset this value to be used with all the functions that MOAB uses
     moab::ErrorCode rval;
 
     // Create pointer that points to a new instance of the moab_interface
-    std::unique_ptr<moab::Interface> moab_interface (new moab::Core);
+    moab::Interface *moab_interface = new moab::Core();
+    // Create pointer that points to a new instance of the structured mesh interface
+    moab::ScdInterface *scdiface = new moab::ScdInterface(moab_interface);
   
-    // Create new structured mesh interface
-    std::unique_ptr<moab::ScdInterface> scdiface;
-    {
-
-      // Allow moab to create a new heap allocated object
-      moab::ScdInterface* raw_scdiface;
-      
-      rval = moab_interface->query_interface(raw_scdiface);
-     
-      TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                        Utility::MOABException,
-                        moab::ErrorCodeStr[rval] );
-      
-      // Tell the smart pointer to won the new raw pointer
-      scdiface.reset( raw_scdiface);
-
-    }
 
     // Transform planes of mesh into moab useable interleaved coordinates;
     std::vector<double>::size_type x_coordinates_size = d_hex_mesh->getNumberOfXPlanes();
     std::vector<double>::size_type y_coordinates_size = d_hex_mesh->getNumberOfYPlanes();
     std::vector<double>::size_type z_coordinates_size = d_hex_mesh->getNumberOfZPlanes();
-
 
     // Make an array called coordinates that MOAB can use to construct a structured hex mesh
     unsigned long size_of_coordinates = x_coordinates_size * y_coordinates_size * z_coordinates_size;
@@ -182,6 +161,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
        also requires every single point of the mesh to be constructed, which means
        that plane locations must be repeated in the sequence.
     */
+
     unsigned l = 0;
     for( unsigned k = 0; k < z_coordinates_size; ++k)
     {
@@ -196,12 +176,9 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
         }
       }
     }
- 
-    // Set up the actual box
-    std::unique_ptr<moab::ScdBox> box;
+    
+    moab::ScdBox* box;
     {
-      // Allow moab to create a new heap allocated object
-      moab::ScdBox* raw_scdbox;
 
       // Create the box filled with the coordinates
       rval = scdiface->construct_box( moab::HomCoord( 0, 0, 0),
@@ -210,30 +187,32 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                                                       z_coordinates_size - 1 ),
                                       coordinates,
                                       size_of_coordinates*3,
-                                      raw_scdbox );
+                                      box );
       
       TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                           Utility::MOABException,
                           moab::ErrorCodeStr[rval] );
 
-      // Tell the smart pointer to own the new raw pointer
-      box.reset( raw_scdbox);
     }
-    scdiface.release();
-    delete[] coordinates;   
+    delete[] coordinates; 
+ 
     std::vector<moab::Tag> mean_tag( this->getNumberOfBins()*
                                      this->getNumberOfResponseFunctions() +
                                      this->getNumberOfResponseFunctions() ),
                            relative_error_tag( mean_tag.size() ),
                            vov_tag( this->getNumberOfResponseFunctions() ),
                            fom_tag( vov_tag.size() );
+
     // Process moments    
     HexIDIterator hex;
     HexIDIterator start_hex = getStartHex();
     HexIDIterator end_hex = getEndHex();
     unsigned hex_parameter_indices[3];
+
     for( hex = start_hex; hex != end_hex; ++hex)
     {
+ 
+ 
       // Convert from hex index to moab entity handle
       d_hex_mesh->getHexPlaneIndices( *hex, hex_parameter_indices);
       moab::EntityHandle moab_hex = box->get_element( hex_parameter_indices[0],
@@ -244,21 +223,22 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       
       const Estimator::TwoEstimatorMomentsArray& hex_bin_data = 
         this->getEntityBinData( *hex );
-      
+   
       std::string mean_tag_prefix = "mean: ";
       std::string relative_error_tag_prefix = "relative_error: ";	
       std::string vov_tag_prefix = "vov: ";
       std::string fom_tag_prefix = "fom: ";
-      
+     
       for( unsigned i = 0; i < hex_bin_data.size(); ++i)
       {
-
+ 
         double mean, relative_error;
         
         this->processMoments( hex_bin_data[i],
                               hex_volume,
                               mean,
                               relative_error);
+
     	  std::string bin_name = this->getBinName( i );
     	  std::string mean_tag_name = mean_tag_prefix + bin_name;
     	  std::string relative_error_tag_name = relative_error_tag_prefix +
@@ -300,6 +280,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                             Utility::MOABException,
                             moab::ErrorCodeStr[rval] );
       }
+
     
       // Assign total bin data for each entity
       std::string total_tag_prefix = "total_";
@@ -311,9 +292,10 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       
       const Estimator::FourEstimatorMomentsArray& total_hex_data = 
         this->getEntityTotalData( *hex );
-      
+
       for( unsigned i = 0; i < total_hex_data.size(); ++ i)
       {
+  
         double mean, relative_error, vov, fom;
         this->processMoments( total_hex_data[i],
                               hex_volume,
@@ -323,7 +305,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                               fom);
 
         unsigned tag_index = this->getNumberOfBins() + i;
-        
+           
         // Assign total mean tag data
         rval = moab_interface->tag_get_handle( total_mean_tag_name.c_str(),
                                                1,
@@ -366,14 +348,14 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
         rval = moab_interface->tag_get_handle( total_vov_tag_name.c_str(),
                                                1,
                                                moab::MB_TYPE_DOUBLE,
-                                               vov_tag[tag_index],
+                                               vov_tag[i],
                                                moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
                                                
         TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[rval] );
 
-        rval = moab_interface->tag_set_data( vov_tag[tag_index],
+        rval = moab_interface->tag_set_data( vov_tag[i],
                                              &moab_hex,
                                              1,
                                              &vov );
@@ -385,22 +367,26 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
         rval = moab_interface->tag_get_handle( total_fom_tag_name.c_str(),
                                                1,
                                                moab::MB_TYPE_DOUBLE,
-                                               fom_tag[tag_index],
+                                               fom_tag[i],
                                                moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
                                                
         TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[rval] );
 
-        rval = moab_interface->tag_set_data( fom_tag[tag_index],
+        rval = moab_interface->tag_set_data( fom_tag[i],
                                              &moab_hex,
                                              1,
                                              &fom );
         TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[rval] );
+    
       }
+
     }
+
+
     // Export the mesh
     std::vector<moab::Tag> output_tags = mean_tag;
       
@@ -412,11 +398,23 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                         vov_tag.end() );
     output_tags.insert( output_tags.end(),
                         fom_tag.begin(),
-                        fom_tag.end() ); 
-    rval = moab_interface->write_file( d_output_mesh_file_name.c_str() );
+                        fom_tag.end() );
+    moab::EntityHandle mesh = box->box_set();
+    rval = moab_interface->write_file( d_output_mesh_file_name.c_str(),
+                                       NULL,
+                                       NULL,
+                                       &mesh,
+                                       1,
+                                       &(output_tags[0]),
+                                       output_tags.size() );
     TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                         Utility::MOABException,
-                        moab::ErrorCodeStr[rval] );
+                        moab::ErrorCodeStr[rval] ); 
+    // tidy up
+    delete box;
+    delete scdiface;
+    delete moab_interface;
+
   }
 }
 
