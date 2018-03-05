@@ -138,6 +138,9 @@ std::vector<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh::co
                                             const double start_point[3],
                                             const double end_point[3] )const
 {
+  // Initialize contribution array
+  std::vector<std::pair<HexIndex,double>> contribution_array;
+    
   if( !(start_point[X_DIMENSION] == end_point[X_DIMENSION] &&
         start_point[Y_DIMENSION] == end_point[Y_DIMENSION] &&
         start_point[Z_DIMENSION] == end_point[Z_DIMENSION]) )
@@ -153,9 +156,6 @@ std::vector<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh::co
                                                     direction[Z_DIMENSION] );
                                                   
     Utility::normalizeVector( direction );
-  
-    // Initialize contribution array
-    std::vector<std::pair<HexIndex,double>> contribution_array;
 
     double current_point[3] { start_point[X_DIMENSION], 
                               start_point[Y_DIMENSION], 
