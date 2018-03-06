@@ -93,7 +93,7 @@ public:
                            const UnitAwareTabularDistribution& dist_instance );
 
   //! Destructor
-  ~UnitAwareTabularDistribution()
+  virtual ~UnitAwareTabularDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution

@@ -18,13 +18,14 @@ namespace Utility{
  * \ingroup bivariate_distributions
  */
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 class UnitAwareInterpolatedFullyTabularBasicBivariateDistribution : public UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > BaseType;
+  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef typename BaseType::QT QT;
@@ -47,7 +48,7 @@ class UnitAwareInterpolatedFullyTabularBasicBivariateDistribution : public UnitA
 public:
 
   //! This type
-  typedef UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
   
   //! The primary independent quantity type
   typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
@@ -68,71 +69,100 @@ public:
   UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
-     secondary_distributions );
+     secondary_distributions,
+     const double fuzzy_boundary_tol = 1e-3,
+     const double evaluate_relative_error_tol = 1e-7,
+     const double evaluate_error_tol = 1e-16 );
 
   //! Grid constructor
   UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
               const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
               const std::vector<std::vector<SecondaryIndepQuantity> >& secondary_indep_grids,
-              const std::vector<std::vector<DepQuantity> >& dependent_values );
+              const std::vector<std::vector<DepQuantity> >& dependent_values,
+              const double fuzzy_boundary_tol = 1e-3,
+              const double evaluate_relative_error_tol = 1e-7,
+              const double evaluate_error_tol = 1e-16 );
 
   //! Destructor
-  ~UnitAwareInterpolatedFullyTabularBasicBivariateDistribution()
+  virtual ~UnitAwareInterpolatedFullyTabularBasicBivariateDistribution()
   { /* ... */ }
 
+  using ParentType::sampleSecondaryConditional;
+  using ParentType::evaluateSecondaryConditionalPDF;
+  using ParentType::ParentType::sampleSecondaryConditionalWithRandomNumber;
+  using ParentType::ParentType::sampleSecondaryConditionalInSubrange;
+  using ParentType::ParentType::sampleSecondaryConditionalWithRandomNumberInSubrange;
+
   //! Evaluate the secondary conditional CDF
-  double evaluateSecondaryConditionalCDF(
+  virtual double evaluateSecondaryConditionalCDF(
        const PrimaryIndepQuantity primary_indep_var_value,
        const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
+  //! Evaluate the secondary conditional CDF
+  double evaluateSecondaryConditionalCDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const override;
+
   //! Return a random sample from the secondary conditional PDF and the index
-  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             size_t& primary_bin_index,
                             size_t& secondary_bin_index ) const override;
 
   //! Return a random sample from the secondary conditional PDF and the index
-  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
                             size_t& primary_bin_index,
                             size_t& secondary_bin_index ) const override;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
-  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const;
+                            const double random_number ) const override;
+
+  //! Return a random sample from the secondary conditional PDF at the CDF val
+  SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+            min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+            max_secondary_indep_var_functor ) const override;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
+   const PrimaryIndepQuantity primary_indep_var_value,
+   const SecondaryIndepQuantity max_secondary_indep_var_value ) const override;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
    const PrimaryIndepQuantity primary_indep_var_value,
+   const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+   min_secondary_indep_var_functor,
+   const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+   max_secondary_indep_var_functor,
+   const SecondaryIndepQuantity max_secondary_indep_var_value ) const override;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
+   const PrimaryIndepQuantity primary_indep_var_value,
+   const double random_number,
    const SecondaryIndepQuantity max_secondary_indep_var_value ) const override;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
-   const PrimaryIndepQuantity primary_indep_var_value,
-   const double random_number,
-   const SecondaryIndepQuantity max_secondary_indep_var_value ) const override;
-
-  //! Return a random sample from the secondary conditional PDF 
-  SecondaryIndepQuantity sampleSecondaryConditionalExact(
-           const PrimaryIndepQuantity primary_indep_var_value ) const override;
-
-  //! Return a random sample from the secondary conditional PDF at the CDF val
-  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const override;
-
-  //! Return a random sample from the secondary conditional PDF in the subrange
-  SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
-   const PrimaryIndepQuantity primary_indep_var_value,
-   const SecondaryIndepQuantity max_secondary_indep_var_value ) const override;
-
-  //! Return a random sample from the secondary conditional PDF in the subrange
-  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInSubrange(
-   const PrimaryIndepQuantity primary_indep_var_value,
-   const double random_number,
-   const SecondaryIndepQuantity max_secondary_indep_var_value ) const override;
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const double random_number,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+    min_secondary_indep_var_functor,
+    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+    max_secondary_indep_var_functor,
+    const SecondaryIndepQuantity max_secondary_indep_var_value ) const override
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override;
@@ -141,6 +171,25 @@ private:
 
   // Default constructor
   UnitAwareInterpolatedFullyTabularBasicBivariateDistribution();
+
+  //! Evaluate the distribution using the desired CDF evaluation method
+  template<typename LocalTwoDInterpPolicy, typename EvaluationMethod>
+  double evaluateCDFImpl(
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluateCDF ) const;
+
+  //! Evaluate the distribution using the desired CDF evaluation method
+  template<typename LocalTwoDInterpPolicy, typename EvaluationMethod>
+  double evaluateCDFImpl(
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const SecondaryIndepQuantity secondary_indep_var_value,
+             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+             min_secondary_indep_var_functor,
+             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+             max_secondary_indep_var_functor,
+             EvaluationMethod evaluateCDF,
+             unsigned max_number_of_iterations = 500 ) const;
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -165,15 +214,15 @@ template<typename TwoDInterpPolicy> using InterpolatedFullyTabularBasicBivariate
   
 } // end Utility namespace
 
-BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION5_VERSION( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, 0 );
 
 #define BOOST_SERIALIZATION_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
-  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, Utility ) \
+  BOOST_SERIALIZATION_CLASS5_EXPORT_STANDARD_KEY( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, Utility ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
     UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, Utility, \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedFullyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy>() + ">" ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void, void ) )
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedFullyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy>() + "," + Utility::typeName<SamplePolicy>() + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy, typename SamplePolicy ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, SamplePolicy, void, void, void ) )
 
 BOOST_SERIALIZATION_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
 

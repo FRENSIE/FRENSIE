@@ -54,7 +54,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -76,7 +76,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -98,7 +98,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -119,7 +119,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -253,7 +253,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -275,7 +275,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -297,7 +297,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -318,7 +318,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -452,7 +452,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -474,7 +474,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -496,7 +496,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -517,7 +517,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -654,7 +654,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -676,7 +676,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -698,7 +698,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -719,7 +719,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -815,7 +815,7 @@ private:
 
   //! Estimate the interpolated CDF and the corresponding lower and upper y indep values
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -867,7 +867,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -889,7 +889,7 @@ public:
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -911,7 +911,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -932,7 +932,7 @@ public:
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -1028,7 +1028,7 @@ private:
 
   //! Estimate the interpolated CDF and the corresponding lower and upper y indep values
   template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+           typename BaseUnivariateDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,

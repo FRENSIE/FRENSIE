@@ -16,28 +16,23 @@
 #include "Utility_ArrayString.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
+BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareTabularCDFDistribution, Utility );
+
 namespace Utility{
-
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLog,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLin,void,void> );
-
-// Explicit cosine instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LogLogCos,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularCDFDistribution<LinLogCos,void,void> );
 
 // Default constructor
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularCDFDistribution()
-{ /* ... */ }
+{ 
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
 
 // Basic constructor (potentially dangerous)
 /*! \details The independent values are assumed to be sorted (lowest to
@@ -48,22 +43,20 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularCDFDistribution(
-                  const Teuchos::Array<double>& independent_values,
-                  const Teuchos::Array<double>& dependent_values,
+                  const std::vector<double>& independent_values,
+                  const std::vector<double>& dependent_values,
                   const bool interpret_dependent_values_as_cdf )
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() ),
     d_interpret_dependent_values_as_cdf( interpret_dependent_values_as_cdf )
 {
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( dependent_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values );
 
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // CDF constructor
@@ -76,20 +69,18 @@ typename IndependentUnit,
 typename DependentUnit>
 template<typename InputIndepQuantity>
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularCDFDistribution(
-const Teuchos::Array<InputIndepQuantity>& independent_values,
-const Teuchos::Array<double>& cdf_values )
+const std::vector<InputIndepQuantity>& independent_values,
+const std::vector<double>& cdf_values )
 : d_distribution( independent_values.size() ),
   d_norm_constant( DNQT::zero() ),
   d_interpret_dependent_values_as_cdf( true )
 {
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( cdf_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
-
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values );
+  
   this->initializeDistributionFromCDF( independent_values, cdf_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Constructor
@@ -102,20 +93,18 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularCDFDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values )
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values )
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() ),
     d_interpret_dependent_values_as_cdf( false )
 {
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( dependent_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values, dependent_values );
 
   this->initializeDistribution( independent_values, dependent_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -135,20 +124,17 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
     d_norm_constant(),
     d_interpret_dependent_values_as_cdf( dist_instance.wasConstructedFromCDF() )
 {
-  // Make sure the distribution is valid
-  testPrecondition( dist_instance.d_distribution.size() > 0 );
-
   typedef typename UnitAwareTabularCDFDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
   typedef typename UnitAwareTabularCDFDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
 
   // Reconstruct the original input distribution
-  Teuchos::Array<InputIndepQuantity> input_indep_values;
+  std::vector<InputIndepQuantity> input_indep_values;
 
   if( d_interpret_dependent_values_as_cdf )
   {
-    Teuchos::Array<double> input_cdf_values;
+    std::vector<double> input_cdf_values;
 
     dist_instance.reconstructOriginalCDFDistribution( input_indep_values,
                                                       input_cdf_values );
@@ -157,13 +143,15 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
   }
   else
   {
-    Teuchos::Array<InputDepQuantity> input_dep_values;
+    std::vector<InputDepQuantity> input_dep_values;
 
     dist_instance.reconstructOriginalDistribution( input_indep_values,
                                                    input_dep_values );
 
     this->initializeDistribution( input_indep_values, input_dep_values );
   }
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -179,7 +167,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
 
   // Reconstruct the original input distribution
-  Teuchos::Array<double> input_indep_values, input_dep_values;
+  std::vector<double> input_indep_values, input_dep_values;
 
   if( d_interpret_dependent_values_as_cdf )
   {
@@ -253,6 +241,10 @@ typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Dep
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluatePDF(
  const typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
+  FRENSIE_LOG_TAGGED_WARNING( "TabularCDFDistribution",
+                              "The PDF cannot be evaluated! Use the "
+                              "TabularDistribution if the PDF must be "
+                              "evaluated." );
   return IIQT::zero();
 }
 
@@ -322,7 +314,7 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-                                                       unsigned& trials ) const
+                                    DistributionTraits::Counter& trials ) const
 {
   ++trials;
 
@@ -474,7 +466,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -505,156 +497,40 @@ template<typename InterpolationPolicy,
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toStream(
                                                        std::ostream& os ) const
 {
-  Teuchos::Array<double> independent_values, dependent_values;
+  std::vector<double> independent_values, dependent_values;
 
   this->reconstructOriginalUnitlessDistribution( independent_values,
                                                  dependent_values );
 
-  os << "{" << independent_values << ","
-            << dependent_values << ","
-            << d_interpret_dependent_values_as_cdf << "}";
-}
-
-// Method for initializing the object from an input stream
-template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStream( std::istream& is )
-{
-  // Read the initial '{'
-  std::string start_bracket;
-  std::getline( is, start_bracket, '{' );
-  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
-
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
-                      InvalidDistributionStringRepresentation,
-                      "Error: the input stream is not a valid tabular "
-                      "distribution representation!" );
-
-  std::string independent_values_rep;
-  std::getline( is, independent_values_rep, '}' );
-  independent_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( independent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( independent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the tabular distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> independent_values;
-  try{
-    independent_values =
-      Teuchos::fromStringToArray<double>( independent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the tabular distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
-                                                independent_values.end() ),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the tabular distribution cannot be constructed "
-                      "because the bin boundaries "
-                      << independent_values_rep << " are not sorted!" );
-
-  // Read the ","
-  std::string separator;
-  std::getline( is, separator, ',' );
-
-  std::string dependent_values_rep;
-  std::getline( is, dependent_values_rep, '}' );
-  dependent_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dependent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the tabular distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> dependent_values;
-  try{
-    dependent_values =
-      Teuchos::fromStringToArray<double>( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the tabular distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the tabular distribution "
-                      "{" << independent_values_rep << "},{"
-                      << dependent_values_rep << "} "
-                      "cannot be constructed because the number of "
-                      "independent values does not equal the number of "
-                      "dependent values" );
-
-  // Read the ","
-  std::getline( is, separator, ',' );
-
-  std::string interpret_dependent_values_as_cdf_rep;
-  std::getline( is, interpret_dependent_values_as_cdf_rep, '}' );
-
-  // Check if end of file is reached
-  if ( is.eof() || interpret_dependent_values_as_cdf_rep.empty() )
-  {
-    THROW_EXCEPTION( std::runtime_error,
-                     "Error: their is no \'interpret dependent "
-                     "values as cdf\' boolean!\n" );
-  }
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( interpret_dependent_values_as_cdf_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the tabular cdf distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  bool interpret_dependent_values_as_cdf;
-  try{
-    interpret_dependent_values_as_cdf =
-                  std::stoul( interpret_dependent_values_as_cdf_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the tabular cdf distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  // Set the interpret dependent values as cdf flag
-  d_interpret_dependent_values_as_cdf = interpret_dependent_values_as_cdf;
-
-  this->initializeDistributionFromRawData( independent_values,
-                                           dependent_values );
+  this->toStreamDistImpl( os,
+                          std::make_pair( "interp", InterpolationPolicy::name() ),
+                          std::make_pair( "independent values", independent_values ),
+                          std::make_pair( "dependent values", dependent_values ),
+                          std::make_pair( "cdf dependent values", d_interpret_dependent_values_as_cdf ) );
 }
 
 // Method for testing if two objects are equivalent
 template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isEqual(
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator==(
  const UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
-         d_norm_constant == other.d_norm_constant &&
-         d_interpret_dependent_values_as_cdf == other.d_interpret_dependent_values_as_cdf;
+    d_norm_constant == other.d_norm_constant &&
+    d_interpret_dependent_values_as_cdf == other.d_interpret_dependent_values_as_cdf;
+}
+
+// Method for testing if two objects are different
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator!=(
+ const UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+{
+  return d_distribution != other.d_distribution ||
+    d_norm_constant != other.d_norm_constant ||
+    d_interpret_dependent_values_as_cdf != other.d_interpret_dependent_values_as_cdf;
 }
 
 // Calculate the processed slope
@@ -701,15 +577,11 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromRawData(
-                              const Teuchos::Array<double>& independent_values,
-                              const Teuchos::Array<double>& dependent_values )
+                              const std::vector<double>& independent_values,
+                              const std::vector<double>& dependent_values )
 {
-  // Make sure there is at least one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( dependent_values.size() == independent_values.size() );
-
   // Convert the raw independent values to quantities
-  Teuchos::Array<IndepQuantity> independent_quantities;
+  std::vector<IndepQuantity> independent_quantities;
 
   this->convertUnitlessValues( independent_values, independent_quantities );
 
@@ -720,7 +592,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   else
   {
     // Convert the raw dependent values to quantities
-    Teuchos::Array<DepQuantity> dependent_quantities;
+    std::vector<DepQuantity> dependent_quantities;
 
     this->convertUnitlessValues( dependent_values, dependent_quantities );
 
@@ -737,19 +609,9 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
-              const Teuchos::Array<InputIndepQuantity>& independent_values,
-              const Teuchos::Array<double>& cdf_values )
+              const std::vector<InputIndepQuantity>& independent_values,
+              const std::vector<double>& cdf_values )
 {
-  // Make sure that the bin boundaries are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
-  // Make sure that the bin values are sorted
-  testPrecondition( Sort::isSortedAscending( cdf_values.begin(),
-                                             cdf_values.end() ) );
-  // Make sure there is at least one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( independent_values.size() == cdf_values.size() );
-
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
 
@@ -782,17 +644,9 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values )
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values )
 {
-  // Make sure that at least two points of the distribution are specified
-  testPrecondition( independent_values.size() > 1 );
-  // Make sure that every independent value has a dependent value
-  testPrecondition( independent_values.size() == dependent_values.size() );
-  // Make sure that the independent values are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-                                             independent_values.end() ) );
-
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
 
@@ -827,8 +681,8 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
-                         Teuchos::Array<IndepQuantity>& independent_values,
-                         Teuchos::Array<DepQuantity>& dependent_values ) const
+                         std::vector<IndepQuantity>& independent_values,
+                         std::vector<DepQuantity>& dependent_values ) const
 {
   // Resize the arrays
   independent_values.resize( d_distribution.size() );
@@ -846,8 +700,8 @@ template<typename InterpolationPolicy,
 typename IndependentUnit,
 typename DependentUnit>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalCDFDistribution(
-                Teuchos::Array<IndepQuantity>& independent_values,
-                Teuchos::Array<double>& cdf_values ) const
+                std::vector<IndepQuantity>& independent_values,
+                std::vector<double>& cdf_values ) const
 {
   // Resize the arrays
   independent_values.resize( d_distribution.size() );
@@ -865,8 +719,8 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
-                               Teuchos::Array<double>& independent_values,
-                               Teuchos::Array<double>& dependent_values ) const
+                               std::vector<double>& independent_values,
+                               std::vector<double>& dependent_values ) const
 {
   // Resize the arrays
   independent_values.resize( d_distribution.size() );
@@ -893,8 +747,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename Quantity>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues(
-                                 const Teuchos::Array<double>& unitless_values,
-                                 Teuchos::Array<Quantity>& quantities )
+                                 const std::vector<double>& unitless_values,
+                                 std::vector<Quantity>& quantities )
 {
   // Resize the quantity array
   quantities.resize( unitless_values.size() );
@@ -964,6 +818,115 @@ bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 {
   return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
 }
+
+// Verify that the values are valid
+template<typename InputIndepQuantity, typename InputDepQuantity>
+void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::verifyValidValues(
+                     const std::vector<InputIndepQuantity>& independent_values,
+                     const std::vector<InputDepQuantity>& dependent_values )
+{
+  // There must be at least two independent values
+  TEST_FOR_EXCEPTION( independent_values.size() < 2,
+                      Utility::StringConversionException,
+                      "The tabular distribution cannot be constructed "
+                      "because there aren't enough independent values "
+                      "specified!" );
+  
+  // The independent values must be sorted
+  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
+						independent_values.end() ),
+		      Utility::StringConversionException,
+		      "The tabular distribution cannot be constructed "
+		      "because the independent values are not sorted!" );
+
+  typedef Utility::QuantityTraits<InputIndepQuantity> InputIQT;
+
+  TEST_FOR_EXCEPTION( InputIQT::isnaninf( independent_values.front() ),
+                      Utility::StringConversionException,
+                      "The tabular distribution cannot be constructed "
+                      "because the first independent value is invalid!" );
+
+  TEST_FOR_EXCEPTION( InputIQT::isnaninf( independent_values.back() ),
+                      Utility::StringConversionException,
+                      "The tabular distribution cannot be constructed "
+                      "because the last independent value is invalid!" );
+
+  // Make sure that the independent values are compatible with the
+  // interpolation type
+  TEST_FOR_EXCEPTION( !InterpolationPolicy::isIndepVarInValidRange( independent_values.front() ),
+                      Utility::StringConversionException,
+                      "The tabular distribution cannot be constructed "
+                      "because the independent values are not within the "
+                      "range supported by "
+                      << boost::algorithm::to_lower_copy( InterpolationPolicy::name() ) <<
+                      " interpolation!" );
+
+  // There must be a dependent value for every independent value specified
+  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
+		      Utility::StringConversionException,
+		      "The tabular distribution cannot be constructed "
+                      "because the number of independent values ("
+                      << independent_values.size() << ") does not "
+                      "equal the number of dependent values ("
+                      << dependent_values.size() << ")!" );
+
+  typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
+  
+  // Search for bad dependent values
+  typename std::vector<InputDepQuantity>::const_iterator bad_dependent_value =
+    std::find_if( dependent_values.begin(),
+                  dependent_values.end(),
+                  [](const InputDepQuantity& element){ return element < InputDQT::zero() || InputDQT::isnaninf( element ) || !InterpolationPolicy::isDepVarInValidRange( element ); } );
+
+  TEST_FOR_EXCEPTION( bad_dependent_value != dependent_values.end(),
+                      Utility::StringConversionException,
+                      "The tabular distribution cannot be constructed "
+                      "because the dependent value at index "
+                      << std::distance( dependent_values.begin(), bad_dependent_value ) <<
+                      " (" << *bad_dependent_value << ") is not valid!" );
+}
+
+// Save the distribution to an archive
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename Archive>
+void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_interpret_dependent_values_as_cdf );
+}
+
+// Load the distribution from an archive
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename Archive>
+void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_interpret_dependent_values_as_cdf );
+}
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLog,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLin,void,void> );
+
+// Explicit cosine instantiation (extern declaration)
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLogCos,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLogCos,void,void> );
 
 } // end Utility namespace
 

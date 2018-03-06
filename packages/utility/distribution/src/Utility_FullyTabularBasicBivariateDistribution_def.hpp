@@ -22,19 +22,47 @@ UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,Secondary
   : BaseType( primary_indep_grid, secondary_distributions )
 { /* ... */ }
 
-// Return a random sample from the secondary conditional PDF
-/*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). Ideally the 
- * "non-exact" method will be faster and stochastically correct.
- */
+// Evaluate the distribution
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExact(
-                     const PrimaryIndepQuantity primary_indep_var_value ) const
-  -> SecondaryIndepQuantity
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
+     const PrimaryIndepQuantity primary_indep_var_value,
+     const SecondaryIndepQuantity secondary_indep_var_value,
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
+  -> DepQuantity
 {
-  return this->sampleSecondaryConditional( primary_indep_var_value );
+  return this->evaluate( primary_indep_var_value, secondary_indep_var_value );
+}
+
+// Evaluate the secondary conditional PDF
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+     const PrimaryIndepQuantity primary_indep_var_value,
+     const SecondaryIndepQuantity secondary_indep_var_value,
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
+  ->InverseSecondaryIndepQuantity
+{
+  return this->evaluateSecondaryConditionalPDF( primary_indep_var_value,
+                                                secondary_indep_var_value );
+}
+
+// Evaluate the secondary conditional CDF
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline double UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+     const PrimaryIndepQuantity primary_indep_var_value,
+     const SecondaryIndepQuantity secondary_indep_var_value,
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
+{
+  return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
+                                                secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF and the index
@@ -62,17 +90,28 @@ auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,Seco
   return raw_sample;
 }
 
-// Return a random sample from the secondary conditional PDF at the CDF val
-/*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). Ideally the 
- * "non-exact" method will be faster and stochastically correct.
- */
+// Return a random sample from the secondary conditional PDF
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+     const PrimaryIndepQuantity primary_indep_var_value,
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
+  -> SecondaryIndepQuantity
+{
+  return this->sampleSecondaryConditional( primary_indep_var_value );
+}
+
+// Return a random sample from the secondary conditional PDF at the CDF val
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+     const PrimaryIndepQuantity primary_indep_var_value,
+     const double random_number,
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditionalWithRandomNumber(
@@ -80,34 +119,29 @@ auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,Seco
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
-/*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). Ideally the 
- * "non-exact" method will be faster and stochastically correct.
- */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactInSubrange(
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
   return this->sampleSecondaryConditionalInSubrange(
-                                               primary_indep_var_value,
-                                               max_secondary_indep_var_value );
+                    primary_indep_var_value, max_secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
-/*! \details There are often multiple ways to sample from two-dimensional
- * distributions (e.g. stochastic and correlated sampling). Ideally the 
- * "non-exact" method will be faster and stochastically correct.
- */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -115,6 +149,31 @@ auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,Seco
                                                primary_indep_var_value,
                                                random_number,
                                                max_secondary_indep_var_value );
+}
+
+// Return a random sample from the secondary conditional PDF and the index
+/*! \details When the secondary conditional sampling method is unit-base or
+ * direct it is common to use statistical sampling, which samples from one of
+ * the distributions on the bin boundaries and, if unit-base, then scales the
+ * sample so that it preserves intermediate grid limits. Certain methods require
+ * the unscaled (or raw) sample, which can be acquired with this method.
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            SecondaryIndepQuantity& raw_sample,
+                            unsigned& primary_bin_index,
+                            unsigned& secondary_bin_index ) const
+  -> SecondaryIndepQuantity
+{
+  raw_sample = this->sampleSecondaryConditionalAndRecordBinIndices(
+                                                       primary_indep_var_value,
+                                                       primary_bin_index,
+                                                       secondary_bin_index );
+
+  return raw_sample;
 }
 
 // Save the distribution to an archive

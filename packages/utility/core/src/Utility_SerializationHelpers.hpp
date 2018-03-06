@@ -117,6 +117,17 @@ namespace serialization{                            \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, typename U, typename V, typename W ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, U, V, W ) )
 
+/*! Declare the version of a class with five template parameters
+ *
+ * This macro must be called from the global namespace.
+ * \ingroup boost_serialization_helpers
+ */
+#define BOOST_SERIALIZATION_CLASS5_VERSION( ClassName, Namespace, Version )      \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+    ClassName, Namespace, Version, \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, typename U, typename V, typename W, typename X ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, U, V, W, X ) )
+
 /*! Declare that a template class is abstract
  *
  * In order to serialize base class pointers we need to register the base class
@@ -350,6 +361,17 @@ namespace ext{                                                          \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, typename U, typename V, typename W ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, U, V, W ) )
 
+/*! Declare the GUID (key) of a class with five template parameters
+ *
+ * This macro must be called from the global namespace.
+ * \ingroup boost_serialization_helpers
+ */
+#define BOOST_SERIALIZATION_CLASS5_EXPORT_STANDARD_KEY( ClassName, Namespace )   \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_STANDARD_KEY_IMPL( \
+    ClassName, Namespace,                                        \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, typename U, typename V, typename W, typename X ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, U, V, W, X ) )
+
 /*! Register the class GUID
  *
  * The BOOST_SERIALIZATION_CLASSN_EXPORT_STANDARD_KEY macros simply declare the GUID 
@@ -433,6 +455,18 @@ namespace extra_detail{ \
     ClassName, Namespace,                                     \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, typename U, typename V, typename W ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, U, V, W ) )
+
+/*! Register the GUID of a class with five template parameters
+ *
+ * This macro must be called after calling the 
+ * BOOST_SERIALIZATION_CLASS5_EXPORT_STANDARD_KEY.
+ * \ingroup boost_serialization_helpers
+ */
+#define BOOST_SERIALIZATION_CLASS5_EXPORT_IMPLEMENT( ClassName, Namespace )      \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_IMPLEMENT_IMPL( \
+    ClassName, Namespace,                                     \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, typename U, typename V, typename W, typename X ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, U, V, W, X ) )
 
 /*! Finalize the registration of the template class GUID
  *

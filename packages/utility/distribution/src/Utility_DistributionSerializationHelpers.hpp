@@ -39,6 +39,15 @@
 #define BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( FullName, Version )  \
   BOOST_SERIALIZATION_CLASS4_VERSION( FullName, Utility, Version )
 
+/*! Declare the version of a distribution class with five template parameters
+ *
+ * This macro must be called from the global namespace.
+ * \ingroup boost_serialization_helpers
+ * \ingroup bivariate_distributions
+ */
+#define BOOST_SERIALIZATION_DISTRIBUTION5_VERSION( FullName, Version )  \
+  BOOST_SERIALIZATION_CLASS5_VERSION( FullName, Utility, Version )
+
 /*! Declare that a distribution class with two template parameters is abstract
  *
  * This macro must be called from the global namespace.
@@ -86,7 +95,17 @@
  * \ingroup bivariate_distributions
  */
 #define BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_STANDARD_KEY( BaseName ) \
-  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility ) 
+  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility )
+
+/*! \brief Declare the GUID (key) of a distribution class that has five 
+ * template parameters.
+ *
+ * The BaseName is the distribution class name without the UnitAware prefix.
+ * \ingroup boost_serialization_helpers
+ * \ingroup bivariate_distributions
+ */
+#define BOOST_SERIALIZATION_DISTRIBUTION5_EXPORT_STANDARD_KEY( BaseName ) \
+  BOOST_SERIALIZATION_CLASS5_EXPORT_STANDARD_KEY( UnitAware##BaseName, Utility ) 
 
 /*! Register the GUID of a distribution class with two template parameters.
  *
@@ -111,12 +130,22 @@
 /*! Register the GUID of a distribution class with four template parameters.
  *
  * This macro must be called after calling the 
- * BOOST_SERIALIZATION_DISTRIBUTION3_EXPORT_STANDARD_KEY.
+ * BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_STANDARD_KEY.
  * \ingroup boost_serialization_helpers
  * \ingroup bivariate_distributions
  */
 #define BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( FullName )  \
   BOOST_SERIALIZATION_CLASS4_EXPORT_IMPLEMENT( FullName, Utility )
+
+/*! Register the GUID of a distribution class with five template parameters.
+ *
+ * This macro must be called after calling the 
+ * BOOST_SERIALIZATION_DISTRIBUTION5_EXPORT_STANDARD_KEY.
+ * \ingroup boost_serialization_helpers
+ * \ingroup bivariate_distributions
+ */
+#define BOOST_SERIALIZATION_DISTRIBUTION5_EXPORT_IMPLEMENT( FullName )  \
+  BOOST_SERIALIZATION_CLASS5_EXPORT_IMPLEMENT( FullName, Utility )
 
 #endif // end UTILITY_DISTRIBUTION_SERIALIZATION_HELPERS_HPP
 

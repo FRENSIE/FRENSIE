@@ -19,7 +19,6 @@
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ArrayString.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -27,20 +26,18 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ElasticElectronTraits.hpp"
 
-namespace Utility{
+BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareHybridElasticDistribution, Utility );
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLin,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
+namespace Utility{
 
 // Default constructor
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareCoupledElasticDistribution()
-{ /* ... */ }
+{ 
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
 
 // Basic constructor (potentially dangerous)
 /*! \details The independent values are assumed to be sorted (lowest to
@@ -54,8 +51,8 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareCoupledElasticDistribution(
-                  const Teuchos::Array<double>& independent_values,
-                  const Teuchos::Array<double>& dependent_values,
+                  const std::vector<double>& independent_values,
+                  const std::vector<double>& dependent_values,
                   const double& moliere_screening_constant,
                   const double& cutoff_cross_section_ratio )
   : d_distribution( independent_values.size() ),
@@ -83,8 +80,16 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   testPrecondition( cutoff_cross_section_ratio > 0.0 );
   testPrecondition( cutoff_cross_section_ratio <= 1.0 );
 
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values,
+                           dependent_values,
+                           moliere_screening_constant,
+                           cutoff_cross_section_ratio );
+  
   this->initializeDistributionFromRawData( independent_values,
                                            dependent_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 
@@ -94,8 +99,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareCoupledElasticDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values,
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values,
                   const double& moliere_screening_constant,
                   const double& cutoff_cross_section_ratio )
   : d_distribution( independent_values.size() ),
@@ -123,7 +128,15 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   testPrecondition( cutoff_cross_section_ratio > 0.0 );
   testPrecondition( cutoff_cross_section_ratio <= 1.0 );
 
+  // Verify that the values are valid
+  this->verifyValidValues( independent_values,
+                           dependent_values,
+                           moliere_screening_constant,
+                           cutoff_cross_section_ratio );
+
   this->initializeDistribution( independent_values, dependent_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -140,11 +153,11 @@ template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareCoupledElasticDistribution(
  const UnitAwareCoupledElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
   : d_distribution(),
-    d_moliere_eta(),
-    d_cutoff_cross_section_ratio(),
-    d_scaling_parameter(),
+    d_moliere_eta( dist_instance.d_moliere_eta ),
+    d_cutoff_cross_section_ratio( dist_instance.d_cutoff_cross_section_ratio ),
+    d_scaling_parameter( dist_instance.d_scaling_parameter ),
     d_pdf_parameter(),
-    d_cdf_parameter(),
+    d_cdf_parameter( dist_instance.d_cdf_parameter ),
     d_norm_constant(),
     d_scaled_norm_constant(),
     d_max_cdf()
@@ -152,24 +165,20 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
 
-  // Assign unitless member data
-  d_moliere_eta = dist_instance.d_moliere_eta;
-  d_cutoff_cross_section_ratio = dist_instance.d_cutoff_cross_section_ratio;
-  d_scaling_parameter = dist_instance.d_scaling_parameter;
-  d_cdf_parameter = dist_instance.d_cdf_parameter;
-
   typedef typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
   typedef typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
   // Reconstruct the original input distribution
-  Teuchos::Array<InputIndepQuantity> input_indep_values;
-  Teuchos::Array<InputDepQuantity> input_dep_values;
+  std::vector<InputIndepQuantity> input_indep_values;
+  std::vector<InputDepQuantity> input_dep_values;
 
   dist_instance.reconstructOriginalDistribution( input_indep_values,
                                                  input_dep_values );
 
   this->initializeDistribution( input_indep_values, input_dep_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -178,11 +187,11 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareCoupledElasticDistribution( const UnitAwareCoupledElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
   : d_distribution(),
-    d_moliere_eta(),
-    d_cutoff_cross_section_ratio(),
-    d_scaling_parameter(),
+    d_moliere_eta( unitless_dist_instance.d_moliere_eta ),
+    d_cutoff_cross_section_ratio( unitless_dist_instance.d_cutoff_cross_section_ratio ),
+    d_scaling_parameter( unitless_dist_instance.d_scaling_parameter ),
     d_pdf_parameter(),
-    d_cdf_parameter(),
+    d_cdf_parameter( unitless_dist_instance.d_cdf_parameter ),
     d_norm_constant(),
     d_scaled_norm_constant(),
     d_max_cdf()
@@ -190,16 +199,8 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   // Make sure the distribution is valid
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
 
-  // Assign unitless member data
-  d_moliere_eta =
-        unitless_dist_instance.d_moliere_eta;
-  d_cutoff_cross_section_ratio =
-        unitless_dist_instance.d_cutoff_cross_section_ratio;
-  d_scaling_parameter = unitless_dist_instance.d_scaling_parameter;
-  d_cdf_parameter = unitless_dist_instance.d_cdf_parameter;
-
   // Reconstruct the original input distribution
-  Teuchos::Array<double> input_indep_values, input_dep_values;
+  std::vector<double> input_indep_values, input_dep_values;
 
   unitless_dist_instance.reconstructOriginalDistribution( input_indep_values,
                                                           input_dep_values );
@@ -643,7 +644,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -686,171 +687,25 @@ template<typename InterpolationPolicy,
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toStream(
                                                        std::ostream& os ) const
 {
-  Teuchos::Array<double> independent_values, dependent_values;
+  std::vector<double> independent_values, dependent_values;
 
   this->reconstructOriginalUnitlessDistribution( independent_values,
                                                  dependent_values );
 
-  os << "{" << independent_values << ","
-            << dependent_values << ","
-            << d_moliere_eta << ","
-            << d_cutoff_cross_section_ratio << "}";
-}
-
-// Method for initializing the object from an input stream
-template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStream( std::istream& is )
-{
-  // Read the initial '{'
-  std::string start_bracket;
-  std::getline( is, start_bracket, '{' );
-  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
-
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
-                      InvalidDistributionStringRepresentation,
-                      "Error: the input stream is not a valid coupled elastic "
-                      "distribution representation!" );
-
-  std::string independent_values_rep;
-  std::getline( is, independent_values_rep, '}' );
-  independent_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( independent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( independent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> independent_values;
-  try{
-    independent_values =
-      Teuchos::fromStringToArray<double>( independent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
-                                                independent_values.end() ),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the coupled elastic distribution cannot be constructed "
-                      "because the bin boundaries "
-                      << independent_values_rep << " are not sorted!" );
-
-  // Read the ","
-  std::string separator;
-  std::getline( is, separator, ',' );
-
-  std::string dependent_values_rep;
-  std::getline( is, dependent_values_rep, '}' );
-  dependent_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dependent_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> dependent_values;
-  try{
-    dependent_values =
-      Teuchos::fromStringToArray<double>( dependent_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the coupled elastic distribution "
-                      "{" << independent_values_rep << "},{"
-                      << dependent_values_rep << "} "
-                      "cannot be constructed because the number of "
-                      "independent values does not equal the number of "
-                      "dependent values" );
-
-  // Read the ","
-  std::getline( is, separator, ',' );
-
-  std::string moliere_eta_rep;
-  std::getline( is, moliere_eta_rep, ',' );
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( moliere_eta_rep );
-//    ArrayString::locateAndReplaceIntervalOperator( moliere_eta_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  double moliere_eta;
-  try{
-    moliere_eta = std::stod( moliere_eta_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  std::string cutoff_ratio_value_rep;
-  std::getline( is, cutoff_ratio_value_rep, '}' );
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( cutoff_ratio_value_rep );
-//    ArrayString::locateAndReplaceIntervalOperator( cutoff_ratio_value_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  double cutoff_cross_section_ratio;
-  try{
-    cutoff_cross_section_ratio = std::stod( cutoff_ratio_value_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the coupled elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  // Set the member data
-  d_moliere_eta = moliere_eta;
-  d_cutoff_cross_section_ratio = cutoff_cross_section_ratio;
-  d_scaling_parameter = 1.0/( 1.0 - cutoff_cross_section_ratio );
-  d_cdf_parameter = ( 1.0 - cutoff_cross_section_ratio )*moliere_eta*1e6;
-  this->initializeDistributionFromRawData( independent_values,
-                                           dependent_values );
+  this->toStreamImpl( os,
+                      std::make_pair( "interp", InterpolationPolicy::name() ),
+                      std::make_pair( "independent values", independent_values ),
+                      std::make_pair( "dependent values", dependent_values ),
+                      std::make_pair( "molier eta", moliere_eta );,
+                      std::make_pair( "cutoff cs ratio", d_cutoff_cross_section_ratio ) );
 }
 
 // Method for testing if two objects are equivalent
 template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isEqual(
- const UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator==(
+ const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
          d_moliere_eta == other.d_moliere_eta &&
@@ -860,13 +715,28 @@ bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
          d_max_cdf == other.d_max_cdf;
 }
 
+// Method for testing if two objects are different
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator!=(
+ const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+{
+  return d_distribution != other.d_distribution ||
+         d_moliere_eta != other.d_moliere_eta ||
+         d_cutoff_cross_section_ratio != other.d_cutoff_cross_section_ratio ||
+         d_norm_constant != other.d_norm_constant ||
+         d_scaled_norm_constant != other.d_scaled_norm_constant ||
+         d_max_cdf != other.d_max_cdf;
+}
+
 // Initialize the distribution
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromRawData(
-                              const Teuchos::Array<double>& independent_values,
-                              const Teuchos::Array<double>& dependent_values )
+                              const std::vector<double>& independent_values,
+                              const std::vector<double>& dependent_values )
 {
   // Make sure there is at least one bin
   testPrecondition( independent_values.size() > 1 );
@@ -876,12 +746,12 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
   testPrecondition( independent_values.back() == 0.999999 );
 
   // Convert the raw independent values to quantities
-  Teuchos::Array<IndepQuantity> independent_quantities;
+  std::vector<IndepQuantity> independent_quantities;
 
   this->convertUnitlessValues( independent_values, independent_quantities );
 
   // Convert the raw dependent values to quantities
-  Teuchos::Array<DepQuantity> dependent_quantities;
+  std::vector<DepQuantity> dependent_quantities;
 
   this->convertUnitlessValues( dependent_values, dependent_quantities );
 
@@ -895,8 +765,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values )
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values )
 {
   // Make sure that at least two points of the distribution are specified
   testPrecondition( independent_values.size() > 1 );
@@ -960,8 +830,8 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
-                         Teuchos::Array<IndepQuantity>& independent_values,
-                         Teuchos::Array<DepQuantity>& dependent_values ) const
+                         std::vector<IndepQuantity>& independent_values,
+                         std::vector<DepQuantity>& dependent_values ) const
 {
   // Resize the arrays
   independent_values.resize( d_distribution.size() );
@@ -980,8 +850,8 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
-                               Teuchos::Array<double>& independent_values,
-                               Teuchos::Array<double>& dependent_values ) const
+                               std::vector<double>& independent_values,
+                               std::vector<double>& dependent_values ) const
 {
   // Resize the arrays
   independent_values.resize( d_distribution.size() );
@@ -1000,8 +870,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename Quantity>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues(
-                                 const Teuchos::Array<double>& unitless_values,
-                                 Teuchos::Array<Quantity>& quantities )
+                                 const std::vector<double>& unitless_values,
+                                 std::vector<Quantity>& quantities )
 {
   // Resize the quantity array
   quantities.resize( unitless_values.size() );
@@ -1072,7 +942,72 @@ bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
   return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
 }
 
+// Verify that the values are valid
+template<typename InputIndepQuantity, typename InputDepQuantity>
+void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::verifyValidValues(
+                    const std::vector<InputIndepQuantity>& independent_values,
+                    const std::vector<InputDepQuantity>& dependent_values,
+                    const double& moliere_screening_constant,
+                    const double& cutoff_cross_section_ratio )
+{
+
+}
+
+// Save the distribution to an archive
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename Archive>
+void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_scaled_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_max_cdf );
+  ar & BOOST_SERIALIZATION_NVP( d_min_indep_var );
+  ar & BOOST_SERIALIZATION_NVP( d_max_indep_var );
+  ar & BOOST_SERIALIZATION_NVP( d_moliere_eta );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_cross_section_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_scaling_parameter );
+  ar & BOOST_SERIALIZATION_NVP( d_pdf_parameter );
+  ar & BOOST_SERIALIZATION_NVP( d_cdf_parameter );
+}
+
+// Load the distribution from an archive
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename Archive>
+void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_scaled_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_max_cdf );
+  ar & BOOST_SERIALIZATION_NVP( d_min_indep_var );
+  ar & BOOST_SERIALIZATION_NVP( d_max_indep_var );
+  ar & BOOST_SERIALIZATION_NVP( d_moliere_eta );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_cross_section_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_scaling_parameter );
+  ar & BOOST_SERIALIZATION_NVP( d_pdf_parameter );
+  ar & BOOST_SERIALIZATION_NVP( d_cdf_parameter );
+}
+
 } // end Utility namespace
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LinLogCos,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareCoupledElasticDistribution<LogLogCos,void,void> );
 
 #endif // end UTILITY_COUPLED_ELASTIC_DISTRIBUTION_DEF_HPP
 

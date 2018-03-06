@@ -77,14 +77,49 @@ public:
   virtual ~UnitAwareFullyTabularBasicBivariateDistribution()
   { /* ... */ }
 
+  using ParentType::evaluate;
+  using ParentType::evaluateSecondaryConditionalPDF;
+  using ParentType::sampleSecondaryConditional;
+
+  //! Evaluate the distribution
+  virtual DepQuantity evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
+
+  //! Evaluate the secondary conditional PDF
+  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
+
   //! Evaluate the secondary conditional CDF
   virtual double evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
-  //! Return a random sample from the secondary conditional PDF 
-  virtual SecondaryIndepQuantity sampleSecondaryConditionalExact(
-                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+  //! Evaluate the secondary conditional CDF
+  virtual double evaluateSecondaryConditionalCDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
+
+  //! Return a random sample from the secondary conditional PDF
+  virtual SecondaryIndepQuantity sampleSecondaryConditional(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
@@ -94,10 +129,10 @@ public:
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            SecondaryIndepQuantity& raw_sample,
-                            size_t& primary_bin_index,
-                            size_t& secondary_bin_index ) const;
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        SecondaryIndepQuantity& raw_sample,
+                        unsigned& primary_bin_index,
+                        unsigned& secondary_bin_index ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -105,9 +140,13 @@ public:
                             const double random_number ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
-  virtual SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            const double random_number ) const;
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
@@ -115,8 +154,12 @@ public:
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
-  virtual SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
@@ -126,9 +169,13 @@ public:
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
-  virtual SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              min_secondary_indep_var_functor,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+              max_secondary_indep_var_functor,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
 protected:

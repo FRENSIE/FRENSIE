@@ -9,16 +9,12 @@
 #ifndef UTILITY_HYBRID_ELASTIC_HPP
 #define UTILITY_HYBRID_ELASTIC_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_QuantityTraits.hpp"
-#include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
@@ -28,17 +24,17 @@ namespace Utility{
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-class UnitAwareHybridElasticDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-                                     public ParameterListCompatibleObject<UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
+class UnitAwareHybridElasticDistribution : public UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the independent unit dimensionless
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, dimensionless_type );
 
-private:
+  // Typedef for base type
+  typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
 
   // The unnormalized cdf quantity
-  typedef typename QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
+  typedef typename QuantityTraits<typename BaseType::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
 
   // The slope unit traits
   typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> SlopeUnitTraits;
@@ -47,19 +43,19 @@ private:
   typedef typename SlopeUnitTraits::template GetQuantityType<double>::type SlopeQuantity;
 
   // The distribution normalization quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+  typedef typename BaseType::DistNormQuantity DistNormQuantity;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
   // Typedef for QuantityTraits<IndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+  typedef QuantityTraits<typename BaseType::IndepQuantity> IQT;
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+  typedef QuantityTraits<typename BaseType::InverseIndepQuantity> IIQT;
 
   // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+  typedef QuantityTraits<typename BaseType::DepQuantity> DQT;
 
   // Typedef for QuantityTraits<DistNormQuantity>
   typedef QuantityTraits<DistNormQuantity> DNQT;
@@ -73,35 +69,35 @@ public:
   typedef UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+  typedef typename BaseType::IndepQuantity IndepQuantity;
 
   //! The inverse independent quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename BaseType::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+  typedef typename BaseType::DepQuantity DepQuantity;
 
   //! Default constructor
   UnitAwareHybridElasticDistribution();
 
   //! Basic constructor (potentially dangerous)
   UnitAwareHybridElasticDistribution(
-                    const Teuchos::Array<double>& independent_cutoff_values,
-                    const Teuchos::Array<double>& dependent_cutoff_values,
-                    const Teuchos::Array<double>& independent_discrete_values,
-                    const Teuchos::Array<double>& dependent_discrete_values,
-                    const double& cutoff_angle_cosine,
-                    const double& cutoff_cross_section_ratio );
+                    const std::vector<double>& independent_cutoff_values,
+                    const std::vector<double>& dependent_cutoff_values,
+                    const std::vector<double>& independent_discrete_values,
+                    const std::vector<double>& dependent_discrete_values,
+                    const double cutoff_angle_cosine,
+                    const double cutoff_cross_section_ratio );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareHybridElasticDistribution(
-        const Teuchos::Array<InputIndepQuantity>& independent_cutoff_values,
-        const Teuchos::Array<InputDepQuantity>& dependent_cutoff_values,
-        const Teuchos::Array<InputIndepQuantity>& independent_discrete_values,
-        const Teuchos::Array<InputDepQuantity>& dependent_discrete_values,
+        const std::vector<InputIndepQuantity>& independent_cutoff_values,
+        const std::vector<InputDepQuantity>& dependent_cutoff_values,
+        const std::vector<InputIndepQuantity>& independent_discrete_values,
+        const std::vector<InputDepQuantity>& dependent_discrete_values,
         const InputIndepQuantity& cutoff_angle_cosine,
-        const double& cutoff_cross_section_ratio );
+        const double cutoff_cross_section_ratio );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -119,60 +115,60 @@ public:
   { /* ... */ }
 
   //! Evaluate the distribution
-  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const override;
 
   //! Evaluate the PDF
-  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const override;
 
   //! Evaluate the CDF
-  double evaluateCDF( const IndepQuantity indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const override;
 
   //! Return a random sample from the distribution
-  IndepQuantity sample() const;
+  IndepQuantity sample() const override;
 
   //! Return a random sample and record the number of trials
-  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample and bin index from the distribution
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
-  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample from the distribution in a subrange
-  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
   IndepQuantity sampleWithRandomNumberInSubrange(
-                                     const double random_number,
-                                     const IndepQuantity max_indep_var ) const;
+                            const double random_number,
+                            const IndepQuantity max_indep_var ) const override;
 
   //! Return the upper bound of the distribution independent variable
-  IndepQuantity getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const override;
 
   //! Return the cutoff bound of the distribution independent variable
-  IndepQuantity getCutoffBoundOfIndepVar() const;
+  IndepQuantity getCutoffBoundOfIndepVar() const override;
 
   //! Return the lower bound of the distribution independent variable
-  IndepQuantity getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const override;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const;
+  UnivariateDistributionType getDistributionType() const override;
 
   //! Return the cutoff cross section ratio for the distribution
-  double getCutoffCrossSectionRatio() const;
+  double getCutoffCrossSectionRatio() const override;
 
   //! Test if the distribution is continuous
-  bool isContinuous() const;
+  bool isContinuous() const override;
 
   //! Method for placing the object in an output stream
-  void toStream( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const override;
 
-  //! Method for initializing the object from an input stream
-  void fromStream( std::istream& is );
+  //! Equality comparison operator
+  bool operator==( const UnitAwareTabularCDFDistribution& other ) const;
 
-  //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareHybridElasticDistribution& other ) const;
+  //! Inequality comparison operator
+  bool operator!=( const UnitAwareTabularCDFDistribution& other ) const;
 
 protected:
 
@@ -180,64 +176,64 @@ protected:
   UnitAwareHybridElasticDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
 
   //! Test if the dependent variable can be zero within the indep bounds
-  bool canDepVarBeZeroInIndepBounds() const;
+  bool canDepVarBeZeroInIndepBounds() const override;
 
   //! Test if the independent variable is compatible with Lin processing
   bool isIndepVarCompatibleWithProcessingType(
-                                        const LinIndepVarProcessingTag ) const;
+                               const LinIndepVarProcessingTag ) const override;
 
   //! Test if the independent variable is compatible with Log processing
   bool isIndepVarCompatibleWithProcessingType(
-                                        const LogIndepVarProcessingTag ) const;
+                               const LogIndepVarProcessingTag ) const override;
 
   //! Test if the dependent variable is compatible with Lin processing
   bool isDepVarCompatibleWithProcessingType(
-                                          const LinDepVarProcessingTag ) const;
+                                 const LinDepVarProcessingTag ) const override;
 
   //! Test if the dependent variable is compatible with Log processing
   bool isDepVarCompatibleWithProcessingType(
-                                          const LogDepVarProcessingTag ) const;
+                                 const LogDepVarProcessingTag ) const override;
 
 private:
 
   // Initialize the distribution
   void initializeDistributionsFromRawData(
-                    const Teuchos::Array<double>& independent_cutoff_values,
-                    const Teuchos::Array<double>& dependent_cutoff_values,
-                    const Teuchos::Array<double>& independent_discrete_values,
-                    const Teuchos::Array<double>& dependent_discrete_values );
+                    const std::vector<double>& independent_cutoff_values,
+                    const std::vector<double>& dependent_cutoff_values,
+                    const std::vector<double>& independent_discrete_values,
+                    const std::vector<double>& dependent_discrete_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
   void initializeCutoffDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values );
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
   void initializeDiscreteDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values );
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values );
 
   // Reconstruct original distributions
   void reconstructOriginalDistributions(
-                 Teuchos::Array<IndepQuantity>& independent_cutoff_values,
-                 Teuchos::Array<DepQuantity>& dependent_cutoff_values,
-                 Teuchos::Array<IndepQuantity>& independent_discrete_values,
-                 Teuchos::Array<DepQuantity>& dependent_discrete_values ) const;
+                 std::vector<IndepQuantity>& independent_cutoff_values,
+                 std::vector<DepQuantity>& dependent_cutoff_values,
+                 std::vector<IndepQuantity>& independent_discrete_values,
+                 std::vector<DepQuantity>& dependent_discrete_values ) const;
 
   // Reconstruct original distributions w/o units
   void reconstructOriginalUnitlessDistributions(
-                      Teuchos::Array<double>& independent_cutoff_values,
-                      Teuchos::Array<double>& dependent_cutoff_values,
-                      Teuchos::Array<double>& independent_discrete_values,
-                      Teuchos::Array<double>& dependent_discrete_values ) const;
+                      std::vector<double>& independent_cutoff_values,
+                      std::vector<double>& dependent_cutoff_values,
+                      std::vector<double>& independent_discrete_values,
+                      std::vector<double>& dependent_discrete_values ) const;
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
   static void convertUnitlessValues(
-                                 const Teuchos::Array<double>& unitless_values,
-                                 Teuchos::Array<Quantity>& quantities );
+                                 const std::vector<double>& unitless_values,
+                                 std::vector<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
@@ -251,6 +247,29 @@ private:
   IndepQuantity sampleCutoff( double random_number,
                               unsigned& sampled_bin_index ) const;
 
+  // Verify that the values are valid
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  static void verifyValidValues(
+                 const std::vector<IndepQuantity>& independent_cutoff_values,
+                 const std::vector<DepQuantity>& dependent_cutoff_values,
+                 const std::vector<IndepQuantity>& independent_discrete_values,
+                 const std::vector<DepQuantity>& dependent_discrete_values,
+                 const InputIndepQuantity cutoff_angle_cosine,
+                 const double cutoff_cross_section_ratio);
+  
+  // Save the distribution to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the distribution from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // All possible instantiations are friends
   template<typename FriendInterpolationPolicy,
            typename FriendIndepUnit,
@@ -258,16 +277,16 @@ private:
   friend class UnitAwareHybridElasticDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = HYBRID_ELASTIC_DISTRIBUTION;
+  static const UnivariateDistributionType distribution_type = HYBRID_ELASTIC_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
   // prevent altering the grid with log interpolation
-  typedef Teuchos::Array<Quad<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
+  typedef std::vector<std::tuple<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
   DistributionArray d_cutoff_distribution;
 
   // The distribution (first = independent value, second = CDF)
-  Teuchos::Array<Pair<IndepQuantity,double> > d_discrete_distribution;
+  std::vector<std::pair<IndepQuantity,double> > d_discrete_distribution;
 
   // The discrete normalization constant
   DistNormQuantity d_discrete_norm_constant;
@@ -298,58 +317,17 @@ template<typename InterpolationPolicy> using HybridElasticDistribution =
 
 } // end Utility namespace
 
-namespace Teuchos{
+BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareHybridElasticDistribution, Utility, 0 );
 
-/*! Type name traits specialization for the Utility::HybridElasticDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files.
- */
-template<typename InterpolationPolicy>
-class TypeNameTraits<Utility::HybridElasticDistribution<InterpolationPolicy> >
-{
-public:
-  static std::string name()
-  {
-    std::ostringstream iss;
-    iss << "Hybrid Elastic " << InterpolationPolicy::name() << " Distribution";
+#define BOOST_SERIALIZATION_HYBRID_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY()   \
+  BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAwareHybridElasticDistribution, Utility ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
+    UnitAwareHybridElasticDistribution, Utility,                                \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "HybridElasticDistribution<" ) + Utility::typeName<InterpPolicy>() + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void ) )
 
-    return iss.str();
-  }
-  static std::string concreteName(
-            const Utility::HybridElasticDistribution<InterpolationPolicy>& instance )
-  {
-    return name();
-  }
-};
-
-/*! \brief Type name traits partial specialization for the
- * Utility::UnitAwareHybridElasticDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files
- */
-template<typename InterpolationPolicy, typename U, typename V>
-class TypeNameTraits<Utility::UnitAwareHybridElasticDistribution<InterpolationPolicy,U,V> >
-{
-  public:
-  static std::string name()
-  {
-    std::ostringstream iss;
-    iss << "Unit-Aware Hybrid Elastic " << InterpolationPolicy::name()
-        << " Distribution ("
-        << Utility::UnitTraits<U>::symbol() << ","
-        << Utility::UnitTraits<V>::symbol() << ")";
-
-    return iss.str();
-  }
-  static std::string concreteName( const Utility::UnitAwareHybridElasticDistribution<InterpolationPolicy,U,V>& instance )
-  {
-    return name();
-  }
-};
-
-} // end Teuchos namespace
+BOOST_SERIALIZATION_HYBRID_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY();
 
 //---------------------------------------------------------------------------//
 // Template includes.

@@ -24,23 +24,8 @@
 
 namespace Utility{
 
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLin,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLin,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLog,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLog,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLin,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLin,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLog,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLog,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> > );
-
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLin,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLin,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLinLog,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LinLogLog,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLin,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLin,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLinLog,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
-EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<Utility::LogLogLog,UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> > );
+EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( Utility::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
+EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
 
 } // end Utility namespace
 

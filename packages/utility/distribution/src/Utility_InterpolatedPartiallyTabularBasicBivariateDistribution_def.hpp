@@ -13,12 +13,13 @@
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 
-BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION5_EXPORT_IMPLEMENT( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution );
 
 namespace Utility{
 
 // Default constructor
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
@@ -29,20 +30,29 @@ UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy
 
 // Constructor
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
-     secondary_distributions )
-  : BaseType( primary_indep_grid, secondary_distributions )
+     secondary_distributions,
+     const double fuzzy_boundary_tol,
+     const double relative_error_tol,
+     const double error_tol )
+  : BaseType( primary_indep_grid,
+              secondary_distributions,
+              fuzzy_boundary_tol,
+              relative_error_tol,
+              error_tol )
 { 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Method for placing the object in an output stream
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
@@ -50,11 +60,13 @@ void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpP
 {
   this->toStreamTabularDistImpl( os,
                                  "InterpolatedPartiallyTabularBasicBivariateDistribution",
-                                 std::make_pair( "interp", TwoDInterpPolicy::name() ) );
+                                 std::make_pair( "interp", TwoDInterpPolicy::name() ),
+                                 std::make_pair( "sampling", TwoDSamplePolicy::name() ) );
 }
 
 // Save the distribution to an archive
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
@@ -67,6 +79,7 @@ void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpP
 
 // Load the distribution from an archive
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
@@ -79,14 +92,9 @@ void UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpP
   
 } // end Utility namespace
 
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLinLin,void,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLogLin,void,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLinLog,void,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LinLogLog,void,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLinLin,void,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLogLin,void,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLinLog,void,void,void> );
-EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::LogLogLog,void,void,void> );
+#define 
+
+EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( Utility::InterpolatedPartiallyTabularBasicBivariateDistribution, void, void, void );
 
 #endif // end UTILITY_INTERPOLATED_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

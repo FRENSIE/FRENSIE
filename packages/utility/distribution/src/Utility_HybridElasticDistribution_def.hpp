@@ -19,7 +19,6 @@
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ArrayString.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -27,18 +26,18 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ElasticElectronTraits.hpp"
 
-namespace Utility{
+BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareHybridElasticDistribution, Utility );
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareHybridElasticDistribution<LinLin,void,void> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareHybridElasticDistribution<LogLin,void,void> );
+namespace Utility{
 
 // Default constructor
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareHybridElasticDistribution()
-{ /* ... */ }
+{
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
 
 // Basic constructor (potentially dangerous)
 /*! \details The independent values are assumed to be sorted (lowest to
@@ -52,12 +51,12 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareHybridElasticDistribution(
-                    const Teuchos::Array<double>& independent_cutoff_values,
-                    const Teuchos::Array<double>& dependent_cutoff_values,
-                    const Teuchos::Array<double>& independent_discrete_values,
-                    const Teuchos::Array<double>& dependent_discrete_values,
-                    const double& cutoff_angle_cosine,
-                    const double& cutoff_cross_section_ratio )
+                    const std::vector<double>& independent_cutoff_values,
+                    const std::vector<double>& dependent_cutoff_values,
+                    const std::vector<double>& independent_discrete_values,
+                    const std::vector<double>& dependent_discrete_values,
+                    const double cutoff_angle_cosine,
+                    const double cutoff_cross_section_ratio )
   : d_cutoff_distribution( independent_cutoff_values.size() ),
     d_discrete_distribution( independent_discrete_values.size() ),
     d_cutoff_mu( cutoff_angle_cosine ),
@@ -84,10 +83,20 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( independent_discrete_values.front() >= cutoff_angle_cosine );
   testPrecondition( independent_discrete_values.back() < 1.0 );
 
+  // Verify that the values are valid
+  this->verifyValidValues( independent_cutoff_values,
+                           dependent_cutoff_values,
+                           independent_discrete_values,
+                           dependent_discrete_values,
+                           cutoff_angle_cosine,
+                           cutoff_corss_section_ratio );
+
   this->initializeDistributionsFromRawData( independent_cutoff_values,
                                             dependent_cutoff_values,
                                             independent_discrete_values,
                                             dependent_discrete_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 
@@ -97,12 +106,12 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareHybridElasticDistribution(
-        const Teuchos::Array<InputIndepQuantity>& independent_cutoff_values,
-        const Teuchos::Array<InputDepQuantity>& dependent_cutoff_values,
-        const Teuchos::Array<InputIndepQuantity>& independent_discrete_values,
-        const Teuchos::Array<InputDepQuantity>& dependent_discrete_values,
+        const std::vector<InputIndepQuantity>& independent_cutoff_values,
+        const std::vector<InputDepQuantity>& dependent_cutoff_values,
+        const std::vector<InputIndepQuantity>& independent_discrete_values,
+        const std::vector<InputDepQuantity>& dependent_discrete_values,
         const InputIndepQuantity& cutoff_angle_cosine,
-        const double& cutoff_cross_section_ratio )
+        const double cutoff_cross_section_ratio )
   : d_cutoff_distribution( independent_cutoff_values.size() ),
     d_discrete_distribution( independent_discrete_values.size() ),
     d_cutoff_mu( cutoff_angle_cosine*QuantityTraits<InputDepQuantity>::one() ),
@@ -128,10 +137,20 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( independent_discrete_values.front() >= cutoff_angle_cosine );
   testPrecondition( independent_discrete_values.back() < 1.0 );
 
+  // Verify that the values are valid
+  this->verifyValidValues( independent_cutoff_values,
+                           dependent_cutoff_values,
+                           independent_discrete_values,
+                           dependent_discrete_values,
+                           cutoff_angle_cosine,
+                           cutoff_corss_section_ratio );
+
   this->initializeCutoffDistribution( independent_cutoff_values,
                                       dependent_cutoff_values );
   this->initializeDiscreteDistribution( independent_discrete_values,
                                         dependent_discrete_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor
@@ -149,9 +168,9 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
  const UnitAwareHybridElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
   : d_cutoff_distribution(),
     d_discrete_distribution(),
-    d_cutoff_mu(),
-    d_cutoff_cross_section_ratio(),
-    d_scaling_parameter(),
+    d_cutoff_mu( dist_instance.d_cutoff_mu ),
+    d_cutoff_cross_section_ratio( dist_instance.d_cutoff_cross_section_ratio ),
+    d_scaling_parameter( dist_instance.d_scaling_parameter ),
     d_discrete_norm_constant(),
     d_cutoff_norm_constant(),
     d_max_cutoff_cdf()
@@ -160,31 +179,36 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( dist_instance.d_cutoff_distribution.size() > 0 );
   testPrecondition( dist_instance.d_discrete_distribution.size() > 0 );
 
-  // Assign unitless member data
-  d_cutoff_mu = dist_instance.d_cutoff_mu;
-  d_cutoff_cross_section_ratio = dist_instance.d_cutoff_cross_section_ratio;
-  d_scaling_parameter = dist_instance.d_scaling_parameter;
-
   typedef typename UnitAwareHybridElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
   typedef typename UnitAwareHybridElasticDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
   // Reconstruct the original cutoff input distribution
-  Teuchos::Array<InputIndepQuantity> input_indep_cutoff_values;
-  Teuchos::Array<InputDepQuantity> input_dep_cutoff_values;
-  Teuchos::Array<InputIndepQuantity> input_indep_discrete_values;
-  Teuchos::Array<InputDepQuantity> input_dep_discrete_values;
+  std::vector<InputIndepQuantity> input_indep_cutoff_values;
+  std::vector<InputDepQuantity> input_dep_cutoff_values;
+  std::vector<InputIndepQuantity> input_indep_discrete_values;
+  std::vector<InputDepQuantity> input_dep_discrete_values;
 
   dist_instance.reconstructOriginalDistributions( input_indep_cutoff_values,
                                                   input_dep_cutoff_values,
                                                   input_indep_discrete_values,
                                                   input_dep_discrete_values );
 
+  // Verify that the values are valid
+  this->verifyValidValues( independent_cutoff_values,
+                           dependent_cutoff_values,
+                           independent_discrete_values,
+                           dependent_discrete_values,
+                           cutoff_angle_cosine,
+                           cutoff_corss_section_ratio );
+
   this->initializeCutoffDistribution( input_indep_cutoff_values,
                                       input_dep_cutoff_values );
 
   this->initializeDiscreteDistribution( input_indep_discrete_values,
                                         input_dep_discrete_values );
+
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -194,9 +218,9 @@ template<typename InterpolationPolicy,
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareHybridElasticDistribution( const UnitAwareHybridElasticDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
   : d_cutoff_distribution(),
     d_discrete_distribution(),
-    d_cutoff_mu(),
-    d_cutoff_cross_section_ratio(),
-    d_scaling_parameter(),
+    d_cutoff_mu( unitless_dist_instance.d_cutoff_mu )
+    d_cutoff_cross_section_ratio( unitless_dist_instance.d_cutoff_cross_section_ratio ),
+    d_scaling_parameter( unitless_dist_instance.d_scaling_parameter ),
     d_discrete_norm_constant(),
     d_cutoff_norm_constant(),
     d_max_cutoff_cdf()
@@ -205,14 +229,8 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
   testPrecondition( unitless_dist_instance.d_cutoff_distribution.size() > 0 );
   testPrecondition( unitless_dist_instance.d_discrete_distribution.size() > 0 );
 
-  // Assign unitless member data
-  d_cutoff_mu = unitless_dist_instance.d_cutoff_mu;
-  d_cutoff_cross_section_ratio =
-                        unitless_dist_instance.d_cutoff_cross_section_ratio;
-  d_scaling_parameter = unitless_dist_instance.d_scaling_parameter;
-
   // Reconstruct the original cutoff input distribution
-  Teuchos::Array<double> input_indep_cutoff_values, input_dep_cutoff_values,
+  std::vector<double> input_indep_cutoff_values, input_dep_cutoff_values,
                          input_indep_discrete_values, input_dep_discrete_values;
 
   unitless_dist_instance.reconstructOriginalDistributions(
@@ -333,13 +351,13 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 //  else if( indep_var_value >= d_discrete_distribution.front().first &&
 //           indep_var_value <= d_discrete_distribution.back().first )
 //  {
-//    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
+//    typename std::vector<Pair<IndepQuantity,double> >::const_iterator bin =
 //        Search::binaryLowerBound<FIRST>( d_discrete_distribution.begin(),
 //                                         d_discrete_distribution.end(),
 //                                         indep_var_value );
 
 
-//    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator
+//    typename std::vector<Pair<IndepQuantity,double> >::const_iterator
 //      prev_bin = bin;
 //    --prev_bin;
 
@@ -383,7 +401,7 @@ double UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,De
     return 1.0;
   else // indep_var_value >= d_discrete_distribution.front().first && indep_var_value <= d_discrete_distribution.back().first
   {
-    typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator bin =
+    typename std::vector<Pair<IndepQuantity,double> >::const_iterator bin =
       Search::binaryLowerBound<FIRST>( d_discrete_distribution.begin(),
                                        d_discrete_distribution.end(),
                                        indep_var_value );
@@ -652,7 +670,7 @@ UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Dependent
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-OneDDistributionType
+UnivariateDistributionType
 UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getDistributionType() const
 {
   return ThisType::distribution_type;
@@ -684,251 +702,30 @@ template<typename InterpolationPolicy,
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toStream(
                                                        std::ostream& os ) const
 {
-  Teuchos::Array<double> independent_cutoff_values, dependent_cutoff_values,
-                         independent_discrete_values, dependent_discrete_values;
+  std::vector<double> independent_cutoff_values, dependent_cutoff_values,
+    independent_discrete_values, dependent_discrete_values;
 
   this->reconstructOriginalUnitlessDistributions( independent_cutoff_values,
                                                   dependent_cutoff_values,
                                                   independent_discrete_values,
                                                   dependent_discrete_values );
 
-  os << "{" << independent_cutoff_values << ","
-            << dependent_cutoff_values << ","
-            << independent_discrete_values << ","
-            << dependent_discrete_values << ","
-            << d_cutoff_mu << ","
-            << d_cutoff_cross_section_ratio << "}";
-}
-
-// Method for initializing the object from an input stream
-template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromStream( std::istream& is )
-{
-  // Read the initial '{'
-  std::string start_bracket;
-  std::getline( is, start_bracket, '{' );
-  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
-
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
-                      InvalidDistributionStringRepresentation,
-                      "Error: the input stream is not a valid hybrid elastic "
-                      "distribution representation!" );
-
-  std::string independent_cutoff_values_rep;
-  std::getline( is, independent_cutoff_values_rep, '}' );
-  independent_cutoff_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( independent_cutoff_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( independent_cutoff_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> independent_cutoff_values;
-  try{
-    independent_cutoff_values =
-      Teuchos::fromStringToArray<double>( independent_cutoff_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_cutoff_values.begin(),
-                                                independent_cutoff_values.end() ),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the hybrid elastic distribution cannot be constructed "
-                      "because the cutoff bin boundaries "
-                      << independent_cutoff_values_rep << " are not sorted!" );
-
-  // Read the ","
-  std::string separator;
-  std::getline( is, separator, ',' );
-
-  std::string dependent_cutoff_values_rep;
-  std::getline( is, dependent_cutoff_values_rep, '}' );
-  dependent_cutoff_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dependent_cutoff_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( dependent_cutoff_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> dependent_cutoff_values;
-  try{
-    dependent_cutoff_values =
-      Teuchos::fromStringToArray<double>( dependent_cutoff_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( independent_cutoff_values.size() != dependent_cutoff_values.size(),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the hybrid elastic distribution "
-                      "{" << independent_cutoff_values_rep << "},{"
-                      << dependent_cutoff_values_rep << "} "
-                      "cannot be constructed because the number of "
-                      "independent cutoff values does not equal the number of "
-                      "dependent cutoff values" );
-
-  // Read the ","
-  std::getline( is, separator, ',' );
-
-  std::string independent_discrete_values_rep;
-  std::getline( is, independent_discrete_values_rep, '}' );
-  independent_discrete_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( independent_discrete_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( independent_discrete_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> independent_discrete_values;
-  try{
-    independent_discrete_values =
-      Teuchos::fromStringToArray<double>( independent_discrete_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_discrete_values.begin(),
-                                                independent_discrete_values.end() ),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the hybrid elastic distribution cannot be constructed "
-                      "because the discrete bin boundaries "
-                      << independent_discrete_values_rep << " are not sorted!" );
-
-  // Read the ","
-  std::getline( is, separator, ',' );
-
-  std::string dependent_discrete_values_rep;
-  std::getline( is, dependent_discrete_values_rep, '}' );
-  dependent_discrete_values_rep += "}";
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( dependent_discrete_values_rep );
-    ArrayString::locateAndReplaceIntervalOperator( dependent_discrete_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  Teuchos::Array<double> dependent_discrete_values;
-  try{
-    dependent_discrete_values =
-      Teuchos::fromStringToArray<double>( dependent_discrete_values_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  TEST_FOR_EXCEPTION( independent_discrete_values.size() != dependent_discrete_values.size(),
-                      InvalidDistributionStringRepresentation,
-                      "Error: the hybrid elastic distribution "
-                      "{" << independent_discrete_values_rep << "},{"
-                      << dependent_discrete_values_rep << "} "
-                      "cannot be constructed because the number of "
-                      "independent discrete values does not equal the number of "
-                      "dependent discrete values" );
-
-  // Read the ","
-  std::getline( is, separator, ',' );
-
-  std::string cutoff_mu_rep;
-  std::getline( is, cutoff_mu_rep, ',' );
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( cutoff_mu_rep );
-//    ArrayString::locateAndReplaceIntervalOperator( cutoff_mu_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  double cutoff_mu;
-  try{
-    cutoff_mu = std::stod( cutoff_mu_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  std::string cutoff_ratio_value_rep;
-  std::getline( is, cutoff_ratio_value_rep, '}' );
-
-  // Parse special characters
-  try{
-    ArrayString::locateAndReplacePi( cutoff_ratio_value_rep );
-//    ArrayString::locateAndReplaceIntervalOperator( cutoff_ratio_value_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  double cutoff_cross_section_ratio;
-  try{
-    cutoff_cross_section_ratio = std::stod( cutoff_ratio_value_rep );
-  }
-  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                              InvalidDistributionStringRepresentation,
-                              "Error: the hybrid elastic distribution cannot be "
-                              "constructed because the representation is not "
-                              "valid (see details below)!\n" );
-
-  // Set the member data
-  d_cutoff_mu = cutoff_mu;
-  d_cutoff_cross_section_ratio = cutoff_cross_section_ratio;
-  d_scaling_parameter = 1.0/( 1.0 - cutoff_cross_section_ratio );
-  this->initializeDistributionsFromRawData( independent_cutoff_values,
-                                            dependent_cutoff_values,
-                                            independent_discrete_values,
-                                            dependent_discrete_values );
+  this->toStreamDistImpl( os,
+                          std::make_pair( "interp", InterpolationPolicy::name() ),
+                          std::make_pair( "independent cutoff values", independent_cutoff_values ),
+                          std::make_pair( "dependent cutoff values", dependent_cutoff_values ),
+                          std::make_pair( "independent discrete values", independent_discrete_values ),
+                          std::make_pair( "dependent discrete values", dependent_discrete_values ),
+                          std::make_pair( "cutoff mu", d_cutoff_mu ),
+                          std::make_pair( "cutoff cs ratio", d_cutoff_cross_section_ratio ) );
 }
 
 // Method for testing if two objects are equivalent
 template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-bool UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isEqual(
- const UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator==(
+ const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_cutoff_distribution == other.d_cutoff_distribution &&
          d_discrete_distribution == other.d_discrete_distribution &&
@@ -939,15 +736,31 @@ bool UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
          d_max_cutoff_cdf == other.d_max_cutoff_cdf;
 }
 
+// Method for testing if two objects are different
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator!=(
+ const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+{
+  return d_cutoff_distribution != other.d_cutoff_distribution ||
+         d_discrete_distribution != other.d_discrete_distribution ||
+         d_cutoff_mu != other.d_cutoff_mu ||
+         d_cutoff_cross_section_ratio != other.d_cutoff_cross_section_ratio ||
+         d_discrete_norm_constant != other.d_discrete_norm_constant ||
+         d_cutoff_norm_constant != other.d_cutoff_norm_constant ||
+         d_max_cutoff_cdf != other.d_max_cutoff_cdf;
+}
+
 // Initialize the distributions
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionsFromRawData(
-                      const Teuchos::Array<double>& independent_cutoff_values,
-                      const Teuchos::Array<double>& dependent_cutoff_values,
-                      const Teuchos::Array<double>& independent_discrete_values,
-                      const Teuchos::Array<double>& dependent_discrete_values )
+                      const std::vector<double>& independent_cutoff_values,
+                      const std::vector<double>& dependent_cutoff_values,
+                      const std::vector<double>& independent_discrete_values,
+                      const std::vector<double>& dependent_discrete_values )
 {
   // Make sure there is at least one bin
   testPrecondition( independent_cutoff_values.size() > 1 );
@@ -965,12 +778,12 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   // Initialize the cutoff distribution
   {
   // Convert the raw independent cutoff values to quantities
-  Teuchos::Array<IndepQuantity> independent_quantities;
+  std::vector<IndepQuantity> independent_quantities;
 
   this->convertUnitlessValues( independent_cutoff_values, independent_quantities );
 
   // Convert the raw dependent cutoff values to quantities
-  Teuchos::Array<DepQuantity> dependent_quantities;
+  std::vector<DepQuantity> dependent_quantities;
 
   this->convertUnitlessValues( dependent_cutoff_values, dependent_quantities );
 
@@ -981,12 +794,12 @@ void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   // Initialize the discrete distribution
   {
   // Convert the raw independent discrete values to quantities
-  Teuchos::Array<IndepQuantity> independent_quantities;
+  std::vector<IndepQuantity> independent_quantities;
 
   this->convertUnitlessValues( independent_discrete_values, independent_quantities );
 
   // Convert the raw dependent discrete values to quantities
-  Teuchos::Array<DepQuantity> dependent_quantities;
+  std::vector<DepQuantity> dependent_quantities;
 
   this->convertUnitlessValues( dependent_discrete_values, dependent_quantities );
 
@@ -1001,8 +814,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeCutoffDistribution(
-                  const Teuchos::Array<InputIndepQuantity>& independent_values,
-                  const Teuchos::Array<InputDepQuantity>& dependent_values )
+                  const std::vector<InputIndepQuantity>& independent_values,
+                  const std::vector<InputDepQuantity>& dependent_values )
 {
   // Make sure that at least two points of the distribution are specified
   testPrecondition( independent_values.size() > 1 );
@@ -1065,8 +878,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDiscreteDistribution(
-                const Teuchos::Array<InputIndepQuantity>& independent_values,
-                const Teuchos::Array<InputDepQuantity>& dependent_values )
+                const std::vector<InputIndepQuantity>& independent_values,
+                const std::vector<InputDepQuantity>& dependent_values )
 {
   // Make sure that every value has a probability assigned
   testPrecondition( independent_values.size() == dependent_values.size() );
@@ -1099,10 +912,10 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalDistributions(
-                 Teuchos::Array<IndepQuantity>& independent_cutoff_values,
-                 Teuchos::Array<DepQuantity>& dependent_cutoff_values,
-                 Teuchos::Array<IndepQuantity>& independent_discrete_values,
-                 Teuchos::Array<DepQuantity>& dependent_discrete_values ) const
+                 std::vector<IndepQuantity>& independent_cutoff_values,
+                 std::vector<DepQuantity>& dependent_cutoff_values,
+                 std::vector<IndepQuantity>& independent_discrete_values,
+                 std::vector<DepQuantity>& dependent_discrete_values ) const
 {
   // Resize the arrays
   independent_cutoff_values.resize( d_cutoff_distribution.size() );
@@ -1142,10 +955,10 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistributions(
-                 Teuchos::Array<double>& independent_cutoff_values,
-                 Teuchos::Array<double>& dependent_cutoff_values,
-                 Teuchos::Array<double>& independent_discrete_values,
-                 Teuchos::Array<double>& dependent_discrete_values ) const
+                 std::vector<double>& independent_cutoff_values,
+                 std::vector<double>& dependent_cutoff_values,
+                 std::vector<double>& independent_discrete_values,
+                 std::vector<double>& dependent_discrete_values ) const
 {
   // Resize the arrays
   independent_cutoff_values.resize( d_cutoff_distribution.size() );
@@ -1186,8 +999,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename Quantity>
 void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues(
-                                 const Teuchos::Array<double>& unitless_values,
-                                 Teuchos::Array<Quantity>& quantities )
+                                 const std::vector<double>& unitless_values,
+                                 std::vector<Quantity>& quantities )
 {
   // Resize the quantity array
   quantities.resize( unitless_values.size() );
@@ -1258,7 +1071,66 @@ bool UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,Depe
   return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
 }
 
+// Verify that the values are valid
+template<typename InputIndepQuantity, typename InputDepQuantity>
+void verifyValidValues(
+                 const std::vector<IndepQuantity>& independent_cutoff_values,
+                 const std::vector<DepQuantity>& dependent_cutoff_values,
+                 const std::vector<IndepQuantity>& independent_discrete_values,
+                 const std::vector<DepQuantity>& dependent_discrete_values,
+                 const InputIndepQuantity cutoff_angle_cosine,
+                 const double cutoff_cross_section_ratio)
+{
+
+}
+
+// Save the distribution to an archive
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename Archive>
+void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_discrete_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_discrete_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_max_cutoff_cdf );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_mu );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_cross_section_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_scaling_parameter );
+}
+
+// Load the distribution from an archive
+template<typename InterpolationPolicy,
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename Archive>
+void UnitAwareHybridElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_discrete_distribution );
+  ar & BOOST_SERIALIZATION_NVP( d_discrete_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_max_cutoff_cdf );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_mu );
+  ar & BOOST_SERIALIZATION_NVP( d_cutoff_cross_section_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_scaling_parameter );
+}
+
 } // end Utility namespace
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHybridElasticDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareHybridElasticDistribution<LogLin,void,void> );
 
 #endif // end UTILITY_HYBRID_ELASTIC_DISTRIBUTION_DEF_HPP
 

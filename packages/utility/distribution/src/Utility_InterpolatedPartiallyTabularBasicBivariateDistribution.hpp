@@ -19,18 +19,19 @@ namespace Utility{
  * \ingroup bivariate_distributions
  */
 template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 class UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution : public UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > BaseType;
+  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwarePartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > BaseType;
   
 public:
 
   //! This type
-  typedef UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
   
   //! The primary independent quantity type
   typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
@@ -51,7 +52,10 @@ public:
   UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
-     secondary_distributions );
+     secondary_distributions,
+     const double fuzzy_boundary_tol = 1e-3,
+     const double relative_error_tol = 1e-7,
+     const double error_tol = 1e-16 );
 
   //! Destructor
   ~UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution()
@@ -88,15 +92,15 @@ template<typename TwoDInterpPolicy> using InterpolatedPartiallyTabularBasicBivar
   
 } // end Utility namespace
 
-BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION5_VERSION( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, 0 );
 
 #define BOOST_SERIALIZATION_INTERPOLATED_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
   BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, Utility ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
     UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, Utility, \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedPartiallyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy>() + ">" ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void, void ) )
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedPartiallyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy>() + "," + Utility::typeName<SamplePolicy>() + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy, typename SamplePolicy ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, SamplePolicy, void, void, void ) )
 
 BOOST_SERIALIZATION_INTERPOLATED_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
 
