@@ -19,6 +19,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_AdjointPhotonState.hpp"
 #include "MonteCarlo_AdjointPhotonProbeState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
@@ -68,6 +69,9 @@ void ParticleStateFactory::createState(
       particle.reset( new AdjointPhotonProbeState( history ) );
     else
       particle.reset( new AdjointPhotonState( history ) );
+    break;
+  case ADJOINT_ELECTRON:
+    particle.reset( new AdjointElectronState( history ) );
     break;
   default:
     THROW_EXCEPTION( std::logic_error,

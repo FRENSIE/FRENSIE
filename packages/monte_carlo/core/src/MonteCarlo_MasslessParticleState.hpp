@@ -30,11 +30,13 @@ public:
 
   //! Constructor
   MasslessParticleState( const historyNumberType history_number,
-			 const ParticleType type );
+			 const ParticleType type,
+			 const chargeType charge );
 
   //! Copy constructor (with possible creation of new generation)
   MasslessParticleState( const ParticleState& existing_base_state,
 			 const ParticleType new_type,
+			 const chargeType new_charge,
 			 const bool increment_generation_number,
 			 const bool reset_collision_number );
 

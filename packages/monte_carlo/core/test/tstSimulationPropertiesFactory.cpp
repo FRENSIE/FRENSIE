@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -37,10 +38,10 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
 
   // General Properties
   TEST_EQUALITY_CONST( parsed_properties->getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+                       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST( parsed_properties->getNumberOfHistories(), 10 );
   TEST_EQUALITY_CONST( parsed_properties->getSurfaceFluxEstimatorAngleCosineCutoff(),
-		       0.1 );
+                       0.1 );
   TEST_ASSERT( !parsed_properties->displayWarnings() );
   TEST_ASSERT( parsed_properties->isImplicitCaptureModeOn() );
   TEST_EQUALITY_CONST( parsed_properties->getNumberOfBatchesPerProcessor(), 25 );
@@ -77,11 +78,25 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   // Electron Properties
   TEST_EQUALITY_CONST( parsed_properties->getMinElectronEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( parsed_properties->getMaxElectronEnergy(), 10.0 );
+  TEST_EQUALITY_CONST( parsed_properties->getNumberOfElectronHashGridBins(), 400 );
+  TEST_EQUALITY_CONST( parsed_properties->getElectronEvaluationTolerance(), 1e-5 );
+  TEST_EQUALITY_CONST( parsed_properties->getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LINLINLIN_INTERPOLATION );
+  TEST_EQUALITY_CONST( parsed_properties->getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::CORRELATED_SAMPLING );
   TEST_ASSERT( !parsed_properties->isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( !parsed_properties->isElasticModeOn() );
+  TEST_EQUALITY_CONST( parsed_properties->getElasticElectronDistributionMode(),
+                       MonteCarlo::COUPLED_DISTRIBUTION );
+  TEST_EQUALITY_CONST( parsed_properties->getCoupledElasticSamplingMode(),
+                       MonteCarlo::ONE_D_UNION );
+  TEST_EQUALITY_CONST( parsed_properties->getElasticCutoffAngleCosine(), 0.9 );
+  TEST_ASSERT( !parsed_properties->isElectroionizationModeOn() );
+  TEST_ASSERT( !parsed_properties->isBremsstrahlungModeOn() );
   TEST_EQUALITY_CONST(
              parsed_properties->getBremsstrahlungAngularDistributionFunction(),
              MonteCarlo::DIPOLE_DISTRIBUTION );
-  TEST_EQUALITY_CONST( parsed_properties->getElasticCutoffAngleCosine(), 0.9 );
+  TEST_ASSERT( !parsed_properties->isAtomicExcitationModeOn() );
 }
 
 //---------------------------------------------------------------------------//

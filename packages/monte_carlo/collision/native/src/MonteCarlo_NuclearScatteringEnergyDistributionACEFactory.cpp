@@ -143,7 +143,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     energy_grid.resize(incoming_energies);
 
     // Loop through the incident energies
-    for(int i = 0; i != incoming_energies; i++)
+    for(int i = 0; i != incoming_energies; ++i)
     {
       Utility::get<0>( energy_grid[i] ) =
         dlw_block_array[ldat_start_index + 3 + i];
@@ -153,12 +153,12 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     double outgoing_energies = dlw_block_array[ldat_start_index + 3 + incoming_energies];
 
     // Loop through the incoming energies
-    for(int i = 0; i != incoming_energies; i++)
+    for(int i = 0; i != incoming_energies; ++i)
     {
       Utility::get<1>( energy_grid[i] ).resize(outgoing_energies,0);
 
       // Loop through the outgoing energies
-      for(int j = 0; i != outgoing_energies; j++)
+      for(int j = 0; i != outgoing_energies; ++j)
       {
         Utility::get<1>( energy_grid[i] )[j] =
           dlw_block_array[ldat_start_index + 4 + incoming_energies +
@@ -166,7 +166,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
       }
     }
 
-    // Create the equiprobable bin scattering energy distriubtion (law 1)
+    // Create the equiprobable bin scattering energy distribution (law 1)
     distribution.reset(
 	       new AceLaw1NuclearScatteringEnergyDistribution( energy_grid ) );
 }
@@ -265,7 +265,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
        energy_distribution( incoming_energies );
 
      // Loop through the incoming energies
-     for(int i = 0; i != incoming_energies; i++)
+     for(int i = 0; i != incoming_energies; ++i)
      {
        Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
 
@@ -420,7 +420,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
      probabilistic_distribution( prob_function_number );
 
   // Update random_variables_array
-  for(int i = 0; i != prob_function_number; i++)
+  for(int i = 0; i != prob_function_number; ++i)
   {
     Utility::get<0>( probabilistic_distribution[i] ) = prob_bin_width*i;
     Utility::get<1>( probabilistic_distribution[i] ) =
@@ -432,7 +432,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
      energy_distribution( incoming_energies );
 
   // Loop through incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
     Utility::get<1>( energy_distribution[i] ) =
@@ -484,7 +484,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribut
      energy_distribution( incoming_energies );
 
   // Loop through incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
     Utility::get<1>( energy_distribution[i] ) =
@@ -540,7 +540,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw9EnergyDistribut
      energy_distribution( incoming_energies );
 
   // Loop through incoming energies
-  for(int i = 0; i != incoming_energies; i++)
+  for(int i = 0; i != incoming_energies; ++i)
   {
     Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
     Utility::get<1>( energy_distribution[i] ) =
@@ -609,7 +609,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
      a_distribution( incoming_energies_a );
 
   // Loop through incoming energies (a)
-  for(int i = 0; i != incoming_energies_a; i++)
+  for(int i = 0; i != incoming_energies_a; ++i)
   {
     Utility::get<0>( a_distribution[i] ) = incoming_energies_array_a[i];
     Utility::get<1>( a_distribution[i] ) = tabulated_a[i];
@@ -620,7 +620,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
      b_distribution( incoming_energies_b );
 
   // Loop through incoming energies (b)
-  for(int i = 0; i != incoming_energies_b; i++)
+  for(int i = 0; i != incoming_energies_b; ++i)
   {
     Utility::get<0>( b_distribution[i] ) = incoming_energies_array_b[i];
     Utility::get<1>( b_distribution[i] ) = tabulated_b[i];

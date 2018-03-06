@@ -61,6 +61,9 @@ public:
   ~XSSEPRDataExtractor()
   { /* ... */ }
 
+  //! Check if the file version is eprdata14
+  bool isEPRVersion14() const;
+
   //! Check if old fluorescence data is present
   bool hasOldFluorescenceData() const;
 
@@ -148,6 +151,9 @@ public:
   //! Extract the ESZE block
   Utility::ArrayView<const double> extractESZEBlock() const;
 
+  //! Extract the ESZE2 block - only in epr14
+  Utility::ArrayView<const double> extractESZE2Block() const;
+
   //! Extract the incoming electron energy grid
   Utility::ArrayView<const double> extractElectronEnergyGrid() const;
 
@@ -160,11 +166,23 @@ public:
   //! Extract the electron total cross section
   Utility::ArrayView<const Area> extractElectronTotalCrossSectionInBarns() const;
 
-  //! Extract the electron elastic cross section
-  Utility::ArrayView<const double> extractElasticCrossSection() const;
+  //! Extract the electron elastic total cross section
+  Utility::ArrayView<const double> extractElasticTotalCrossSection() const;
 
-  //! Extract the electron elastic cross section
-  Utility::ArrayView<const Area> extractElasticCrossSectionInBarns() const;
+  //! Extract the electron elastic total cross section
+  Utility::ArrayView<const Area> extractElasticTotalCrossSectionInBarns() const;
+
+  //! Extract the electron elastic cutoff cross section ( mu = -1 to 0.999999 )
+  Utility::ArrayView<const double> extractElasticCutoffCrossSection() const;
+
+  //! Extract the electron elastic cutoff cross section ( mu = -1 to 0.999999 )
+  Utility::ArrayView<const Area> extractElasticCutoffCrossSectionInBarns() const;
+
+  //! Extract the electron elastic transport cross section
+  Utility::ArrayView<const double> extractElasticTransportCrossSection() const;
+
+  //! Extract the electron elastic transport cross section
+  Utility::ArrayView<const Area> extractElasticTransportCrossSectionInBarns() const;
 
   //! Extract the bremsstrahlung cross section
   Utility::ArrayView<const double> extractBremsstrahlungCrossSection() const;
@@ -236,6 +254,9 @@ private:
 
   // The ESZE block (cached for quick access to cross sections in this block)
   Utility::ArrayView<const double> d_esze_block;
+
+  // The ESZE2 block (cached for quick access to cross sections in this block)
+  Utility::ArrayView<const double> d_esze2_block;
 };
 
 } // end Data namespace

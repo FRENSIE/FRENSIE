@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_STANDARD_FORM_FACTOR_SQUARED_HPP
-#define MOTNE_CARLO_STANDARD_FORM_FACTOR_SQUARED_HPP
+#define MONTE_CARLO_STANDARD_FORM_FACTOR_SQUARED_HPP
 
 // Std Lib Includes
 #include <memory>

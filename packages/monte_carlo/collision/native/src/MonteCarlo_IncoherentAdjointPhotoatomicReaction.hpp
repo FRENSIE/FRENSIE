@@ -42,7 +42,7 @@ public:
           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
           const Teuchos::ArrayRCP<const double>& cross_section,
           const unsigned threshold_energy_index,
-	  const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+          const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
           scattering_distribution );
 
   //! Constructor
@@ -76,8 +76,8 @@ public:
 
   //! Simulate the reaction
   void react( AdjointPhotonState& adjoint_photon,
-	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
+              ParticleBank& bank,
+              Data::SubshellType& shell_of_interaction ) const;
 
 private:
 

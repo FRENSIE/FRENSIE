@@ -16,61 +16,50 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The cutoff scattering distribution base class
 class CutoffElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+            public PositronScatteringDistribution,
             public AdjointElectronScatteringDistribution
 {
 
 public:
 
-  //! Typedef for the  elastic distribution
-  typedef std::vector<Utility::Pair< double,
-		       std::shared_ptr<const Utility::TabularOneDDistribution> > >
-  ElasticDistribution;
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+
+  //! Basic Constructor
+  CutoffElasticElectronScatteringDistribution(
+        const std::shared_ptr<TwoDDist>& scattering_distribution );
 
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
-        const ElasticDistribution& cutoff_elastic_scattering_distribution,
-        const double cutoff_angle_cosine = 1.0 );
+        const std::shared_ptr<TwoDDist>& full_scattering_distribution,
+        const std::shared_ptr<TwoDDist>& partial_scattering_distribution,
+        const double cutoff_angle_cosine );
 
   //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  double evaluate( const unsigned incoming_energy_bin,
-                   const double scattering_angle_cosine ) const;
+  //! Evaluate the cutoff cross section ratio
+  double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
 
-  //! Evaluate the PDF
+  //! Evaluate the partial cutoff distribution
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
 
-  //! Evaluate the PDF
-  double evaluatePDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle_cosine ) const;
-
-  //! Evaluate the distribution
+  //! Evaluate the partial cutoff PDF
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
-  //! Evaluate the CDF
+  //! Evaluate the partial cutoff CDF
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
-
-  //! Evaluate the CDF
-  double evaluateCDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle_cosine ) const;
-
-  //! Evaluate the cross section ratio for the cutoff angle cosine
-  double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
-
-  //! Return the energy at a given energy bin
-  double getEnergy( const unsigned energy_bin ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -84,18 +73,23 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-                        ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the adjoint electron
-  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
-                               ParticleBank& bank,
+  void scatterAdjointElectron( MonteCarlo::AdjointElectronState& adjoint_electron,
+                               MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 
-   //! Sample an outgoing direction from the distribution
+  //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
@@ -105,8 +99,11 @@ private:
   // The cutoff scattering angle cosine (mu) below which the cutoff distribution is used
   double d_cutoff_angle_cosine;
 
-  // cutoff elastic scattering distribution (no screened Rutherford data)
-  ElasticDistribution d_elastic_scattering_distribution;
+  // The full cutoff elastic scattering distribution (no screened Rutherford data)
+  std::shared_ptr<TwoDDist> d_full_cutoff_distribution;
+
+  // The cutoff elastic scattering distribution below cutoff_angle_cosine
+  std::shared_ptr<TwoDDist> d_partial_cutoff_distribution;
 };
 
 } // end MonteCarlo namespace

@@ -25,7 +25,8 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::PhotoatomicReaction> ace_basic_pp_reaction;
+Teuchos::RCP<MonteCarlo::PhotoatomicReaction> ace_basic_pp_reaction,
+                                              ace_detailed_pp_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -42,7 +43,10 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_basic_pp_reaction->getReactionType(),
-		       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+                       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( ace_detailed_pp_reaction->getReactionType(),
+                       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -50,22 +54,40 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getReactionType_ace )
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getThresholdEnergy_ace )
 {
   TEST_EQUALITY_CONST( ace_basic_pp_reaction->getThresholdEnergy(),
-		       exp( 2.17614917816E-02 ) );
+                       exp( 2.17614917816E-02 ) );
+
+  TEST_EQUALITY_CONST( ace_detailed_pp_reaction->getThresholdEnergy(),
+                       exp( 2.17614917816E-02 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
-		   getNumberOfEmittedPhotons_ace_basic )
+                   getNumberOfEmittedPhotons_ace_basic )
 {
   TEST_EQUALITY_CONST(ace_basic_pp_reaction->getNumberOfEmittedPhotons( 1e-4 ),
-		      0u);
+                      0u);
 
   TEST_EQUALITY_CONST( ace_basic_pp_reaction->getNumberOfEmittedPhotons(
                        ace_basic_pp_reaction->getThresholdEnergy() ),
-		       2u );
+                       2u );
 
   TEST_EQUALITY_CONST( ace_basic_pp_reaction->getNumberOfEmittedPhotons( 20.0 ), 2u);
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of photons emitted from the rxn can be returned
+TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
+                   getNumberOfEmittedPhotons_ace_detailed )
+{
+  TEST_EQUALITY_CONST(ace_detailed_pp_reaction->getNumberOfEmittedPhotons( 1e-4 ),
+                      0u);
+
+  TEST_EQUALITY_CONST( ace_detailed_pp_reaction->getNumberOfEmittedPhotons(
+                       ace_detailed_pp_reaction->getThresholdEnergy() ),
+                       0u );
+
+  TEST_EQUALITY_CONST( ace_detailed_pp_reaction->getNumberOfEmittedPhotons( 20.0 ), 0u);
 }
 
 //---------------------------------------------------------------------------//
@@ -78,7 +100,7 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
 
   TEST_EQUALITY_CONST( ace_basic_pp_reaction->getNumberOfEmittedElectrons(
                          ace_basic_pp_reaction->getThresholdEnergy() ),
-		       1u );
+                       1u );
 
   TEST_EQUALITY_CONST(
               ace_basic_pp_reaction->getNumberOfEmittedElectrons( 20.0 ), 1u );
@@ -140,7 +162,7 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
 
   // Check the photon (which is now an annihilation photon)
   TEST_EQUALITY_CONST( photon->getEnergy(),
-		       Utility::PhysicalConstants::electron_rest_mass_energy );
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_FLOATING_EQUALITY( photon->getZDirection(), 0.8649171183642954, 1e-15 );
   TEST_FLOATING_EQUALITY( photon->getYDirection(), -0.5019147122374511, 1e-15);
   UTILITY_TEST_FLOATING_EQUALITY( photon->getXDirection(), 0.0, 1e-15 );
@@ -161,11 +183,11 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
   TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
 
   bank.pop();
-  
+
   // Check the second annihilation photon
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
   TEST_EQUALITY_CONST( bank.top().getEnergy(),
-		       Utility::PhysicalConstants::electron_rest_mass_energy );
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
   TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
                           -0.8649171183642954,
                           1e-15 );
@@ -178,42 +200,92 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+// Check that the pair production reaction can be simulated
+TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_detailed )
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  Teuchos::RCP<MonteCarlo::PhotonState> photon(new MonteCarlo::PhotonState(0));
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setEnergy( 2.0 );
 
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
+  MonteCarlo::ParticleBank bank;
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  Data::SubshellType subshell;
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
+  std::vector<double> fake_stream( 5 );
+  fake_stream[0] = 0.0; // Sample energy ratio = 0.0
+  fake_stream[1] = 0.5; // Assign energy ratio to the electron
+  fake_stream[2] = 0.5; // Sample azimuthal angle = pi
+  fake_stream[3] = 0.0; // Sample electron angle cosine = 1.0
+  fake_stream[4] = 1.0-1e-12; // Sample second angle cosine = -1.0
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
+  ace_detailed_pp_reaction->react( *photon, bank, subshell );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Check the bank
+  TEST_EQUALITY_CONST( bank.size(), 2 );
+
+  // Check the subshell
+  TEST_EQUALITY_CONST( subshell, Data::UNKNOWN_SUBSHELL );
+
+  // Check the photon
+  TEST_ASSERT( photon->isGone() );
+  TEST_EQUALITY_CONST( photon->getCollisionNumber(), 1 );
+  TEST_EQUALITY_CONST( photon->getGenerationNumber(), 0 );
+
+  // Check the generated electron
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-15);
+  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
+
+  bank.pop();
+
+  // Check the generated positron
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::POSITRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 9.7800217974000003e-01, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), -1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_ace_file",
+                   &test_ace_file_name,
+                   "Test ACE file name" );
+  clp().setOption( "test_ace_table",
+                   &test_ace_table_name,
+                   "Test ACE table name" );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+                                 new Data::ACEFileHandler( test_ace_file_name,
+                                                           test_ace_table_name,
+                                                           1u ) );
   Teuchos::RCP<Data::XSSPhotoatomicDataExtractor> xss_data_extractor(
                             new Data::XSSPhotoatomicDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+                                      ace_file_handler->getTableNXSArray(),
+                                      ace_file_handler->getTableJXSArray(),
+                                      ace_file_handler->getTableXSSArray() ) );
 
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
@@ -223,8 +295,8 @@ int main( int argc, char** argv )
 
   Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_pp_cross_section.begin(),
-		  raw_pp_cross_section.end(),
-		  notEqualZero );
+                  raw_pp_cross_section.end(),
+                  notEqualZero );
 
   Teuchos::ArrayRCP<double> pp_cross_section;
   pp_cross_section.assign( start, raw_pp_cross_section.end() );
@@ -235,31 +307,26 @@ int main( int argc, char** argv )
   ace_basic_pp_reaction.reset(
     new MonteCarlo::PairProductionPhotoatomicReaction<Utility::LogLog>(
                                                         energy_grid,
-						        pp_cross_section,
-						        pp_threshold_index,
-							false ) );
+                                                        pp_cross_section,
+                                                        pp_threshold_index,
+                                                        false ) );
 
-  // Clear setup data
-  ace_file_handler.reset();
-  xss_data_extractor.reset();
+  ace_detailed_pp_reaction.reset(
+    new MonteCarlo::PairProductionPhotoatomicReaction<Utility::LogLog>(
+                                                        energy_grid,
+                                                        pp_cross_section,
+                                                        pp_threshold_index,
+                                                        true ) );
+
+  // // Clear setup data
+  // ace_file_handler.reset();
+  // xss_data_extractor.reset();
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPairProductionPhotoatomicReaction.cpp

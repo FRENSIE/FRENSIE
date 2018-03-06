@@ -41,6 +41,8 @@ FRENSIE_ADD_TEST(XSSEPRDataExtractor
   EXTRA_ARGS
   --pb_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
   --pb_ace_table=82000.12p
+  --pb_ace14_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt
+  --pb_ace14_table=82000.14p
   --b_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_b_epr_ace_file.txt
   --b_ace_table=5000.12p)
 

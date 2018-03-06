@@ -23,10 +23,9 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const unsigned threshold_energy_index,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                    incoming_energy_grid,
-                                                    cross_section,
-                                                    threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid
@@ -39,14 +38,13 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
-  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                    incoming_energy_grid,
-                                                    cross_section,
-                                                    threshold_energy_index,
-                                                    grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid
@@ -76,12 +74,29 @@ ElectroatomicReactionType ScreenedRutherfordElasticElectroatomicReaction<InterpP
   return SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION;
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+                const double incoming_energy,
+                const double scattering_angle_cosine ) const
+{
+  // Get the PDF
+  double pdf =
+    d_scattering_distribution->evaluatePDF( incoming_energy,
+                                            scattering_angle_cosine );
+
+  // Get the cross section
+  double cross_section = this->getCrossSection( incoming_energy );
+
+  return pdf*cross_section;
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+            ElectronState& electron,
+            ParticleBank& bank,
+            Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterElectron( electron,
                                               bank,

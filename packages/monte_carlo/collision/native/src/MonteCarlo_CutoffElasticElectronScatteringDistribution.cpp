@@ -8,63 +8,83 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
-#include "Utility_PhysicalConstants.hpp"
-#include "Utility_TabularDistribution.hpp"
+#include "Utility_ElasticElectronTraits.hpp"
 
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic Constructor
+/*! \details The basic constructor should only be used when sampling from the
+ *  full cutoff elastic distribution. The other constructor should be used
+ *  when sampling from a subrange of the cutoff distribution.
+ */
 CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
-    const ElasticDistribution& elastic_scattering_distribution,
+    const std::shared_ptr<TwoDDist>& scattering_distribution )
+  : d_full_cutoff_distribution( scattering_distribution ),
+    d_partial_cutoff_distribution( scattering_distribution ),
+    d_cutoff_angle_cosine( scattering_distribution->getUpperBoundOfConditionalIndepVar(
+        scattering_distribution->getLowerBoundOfPrimaryIndepVar() ) )
+{
+  // Make sure the array is valid
+  testPrecondition( d_full_cutoff_distribution.use_count() > 0 );
+  // Make sure the cutoff angle cosine is valid
+  testPrecondition( d_cutoff_angle_cosine > -1.0 );
+  testPrecondition( d_cutoff_angle_cosine <= 1.0 );
+}
+
+// Constructor
+/*! \details The constructor should be used when sampling from a subrange of
+ *  the cutoff distribution. The full cutoff distribution is still needed for
+ *  calculating the partial cutoff cross section.
+ */
+CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
+    const std::shared_ptr<TwoDDist>& full_scattering_distribution,
+    const std::shared_ptr<TwoDDist>& partial_scattering_distribution,
     const double cutoff_angle_cosine )
-  : d_elastic_scattering_distribution( elastic_scattering_distribution ),
+  : d_full_cutoff_distribution( full_scattering_distribution ),
+    d_partial_cutoff_distribution( partial_scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the array is valid
-  testPrecondition( d_elastic_scattering_distribution.size() > 0 );
+  testPrecondition( d_full_cutoff_distribution.use_count() > 0 );
+  // Make sure the array is valid
+  testPrecondition( d_partial_cutoff_distribution.use_count() > 0 );
   // Make sure the cutoff_angle_cosine is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
 }
 
+// Evaluate the cutoff cross section ratio
+double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRatio(
+    const double incoming_energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  return d_full_cutoff_distribution->evaluateSecondaryConditionalCDF(
+                                                        incoming_energy,
+                                                        d_cutoff_angle_cosine );
+}
+
 // Evaluate the distribution
 double CutoffElasticElectronScatteringDistribution::evaluate(
-    const double incoming_energy,
-    const double scattering_angle_cosine ) const
+                            const double incoming_energy,
+                            const double scattering_angle_cosine ) const
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // evaluate the distribution at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelated<ElasticDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_scattering_distribution );
-}
-
-// Evaluate the distribution
-double CutoffElasticElectronScatteringDistribution::evaluate(
-                            const unsigned incoming_energy_bin,
-                            const double scattering_angle_cosine ) const
-{
-  // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy_bin <
-                    d_elastic_scattering_distribution.size() );
-  testPrecondition( incoming_energy_bin >= 0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // evaluate the distribution at the bin and scattering_angle_cosine
-  return Utility::get<1>( d_elastic_scattering_distribution[incoming_energy_bin] )->evaluate(
-        scattering_angle_cosine );
+  if ( scattering_angle_cosine > d_cutoff_angle_cosine )
+    return 0.0;
+  else
+    return d_partial_cutoff_distribution->evaluate( incoming_energy,
+                                                    scattering_angle_cosine );
 }
 
 // Evaluate the PDF
@@ -77,28 +97,12 @@ double CutoffElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // evaluate the PDF at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<ElasticDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_scattering_distribution );
-}
-
-// Evaluate the PDF
-double CutoffElasticElectronScatteringDistribution::evaluatePDF(
-                            const unsigned incoming_energy_bin,
-                            const double scattering_angle_cosine ) const
-{
-  // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy_bin <
-                    d_elastic_scattering_distribution.size() );
-  testPrecondition( incoming_energy_bin >= 0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // evaluate the PDF at the bin and scattering_angle_cosine
-  return Utility::get<1>( d_elastic_scattering_distribution[incoming_energy_bin] )->evaluatePDF(
-        scattering_angle_cosine );
+  if ( scattering_angle_cosine > d_cutoff_angle_cosine )
+    return 0.0;
+  else
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalPDF(
+                        incoming_energy,
+                        scattering_angle_cosine );
 }
 
 // Evaluate the CDF
@@ -111,51 +115,12 @@ double CutoffElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // evaluate the CDF at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<ElasticDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_scattering_distribution );
-}
-
-// Evaluate the cross section ratio at the cutoff delta mu
-/*! \details The cutoff cross section ration represents the ratio of the
- *  elastic_scattering_distribution within the angular displacement cutoff
- */
-double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRatio(
-        const double incoming_energy ) const
-{
-  double cross_section_ratio = 0.0;
-
-  // Get the max cdf value (aka the CDF at an angle cosine of 0.999999)
-  double max_cdf = evaluateCDF( incoming_energy, 1.0 );
-
-  /* Get the cdf at the cutoff angle cosine
-   * Note: the cutoff cdf represents the unormalized ratio of the distribution within
-   * the cutoff value
-   */
-  double cutoff_cdf = evaluateCDF( incoming_energy, d_cutoff_angle_cosine );
-
-  // Make sure the cdf values are valid
-  testPostcondition( max_cdf >= cutoff_cdf );
-  testPostcondition( cutoff_cdf >= 0.0 );
-
-  // normalize the cross_section_ratio by the max_cdf value
-  if ( max_cdf > 0.0 )
-   cross_section_ratio = cutoff_cdf/max_cdf;
-
-  return cross_section_ratio;
-}
-
-// Return the energy at a given energy bin
-double CutoffElasticElectronScatteringDistribution::getEnergy(
-    const unsigned energy_bin ) const
-{
-  // Make sure the energy bin is valid
-  testPrecondition( energy_bin < d_elastic_scattering_distribution.size() );
-  testPrecondition( energy_bin >= 0 );
-
-  return Utility::get<0>( d_elastic_scattering_distribution[energy_bin] );
+  if ( scattering_angle_cosine >= d_cutoff_angle_cosine )
+    return 1.0;
+  else
+    return d_partial_cutoff_distribution->evaluateSecondaryConditionalCDF(
+                        incoming_energy,
+                        scattering_angle_cosine );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -177,10 +142,10 @@ void CutoffElasticElectronScatteringDistribution::sample(
 
 // Sample an outgoing energy and direction and record the number of trials
 void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrials(
-					    const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+                        const double incoming_energy,
+                        double& outgoing_energy,
+                        double& scattering_angle_cosine,
+                        unsigned& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -193,9 +158,9 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void CutoffElasticElectronScatteringDistribution::scatterElectron(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     ElectronState& electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -203,21 +168,43 @@ void CutoffElasticElectronScatteringDistribution::scatterElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine,
-			  this->sampleAzimuthalAngle() );
+                            this->sampleAzimuthalAngle() );
+}
+
+// Randomly scatter the positron
+void CutoffElasticElectronScatteringDistribution::scatterPositron(
+         PositronState& positron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( positron.getEnergy(),
+                                   scattering_angle_cosine,
+                                   trial_dummy );
+
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  positron.rotateDirection( scattering_angle_cosine,
+                            this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
 void CutoffElasticElectronScatteringDistribution::scatterAdjointElectron(
-				     AdjointElectronState& adjoint_electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     AdjointElectronState& adjoint_electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -225,14 +212,14 @@ void CutoffElasticElectronScatteringDistribution::scatterAdjointElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine,
-				                    this->sampleAzimuthalAngle() );
+                                    this->sampleAzimuthalAngle() );
 }
 
 // Sample an outgoing direction from the distribution
@@ -249,10 +236,7 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   // sample the scattering angle cosine
   scattering_angle_cosine =
-        sampleTwoDDistributionCorrelatedInSubrange<ElasticDistribution, Utility::LinLog>(
-            incoming_energy,
-            d_elastic_scattering_distribution,
-            d_cutoff_angle_cosine );
+    d_partial_cutoff_distribution->sampleSecondaryConditional( incoming_energy );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

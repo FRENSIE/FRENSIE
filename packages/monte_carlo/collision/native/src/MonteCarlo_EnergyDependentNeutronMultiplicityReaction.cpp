@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_EnergyDependentNeutronMultiplicityReaction.cpp
 //! \author Alex Robinson
-//! \brief  The energy dependent neutron mulitplicity reaction class decl.
+//! \brief  The energy dependent neutron multiplicity reaction class decl.
 //!
 //---------------------------------------------------------------------------//
 

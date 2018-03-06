@@ -1,12 +1,12 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_CompleteTwoDDistribuiton.hpp
+//! \file   Utility_CompleteTwoDDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The complete bivariate distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_COMPLETE_TWO_D_DISTRIBUITON_HPP
+#ifndef UTILITY_COMPLETE_TWO_D_DISTRIBUTION_HPP
 #define UTILITY_COMPLETE_TWO_D_DISTRIBUTION_HPP
 
 // Std Lib Includes

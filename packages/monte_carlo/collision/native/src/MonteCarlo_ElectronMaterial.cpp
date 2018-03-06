@@ -21,11 +21,11 @@ namespace MonteCarlo{
 
 // Constructor
 ElectronMaterial::ElectronMaterial(
-			   const ModuleTraits::InternalMaterialHandle id,
-			   const double density,
-			   const ElectroatomNameMap& electroatom_name_map,
-			   const Teuchos::Array<double>& electroatom_fractions,
-			   const Teuchos::Array<std::string>& electroatom_names )
+               const ModuleTraits::InternalMaterialHandle id,
+               const double density,
+               const ElectroatomNameMap& electroatom_name_map,
+               const Teuchos::Array<double>& electroatom_fractions,
+               const Teuchos::Array<std::string>& electroatom_names )
   : d_id( id ),
     d_number_density( density ),
     d_atoms( electroatom_fractions.size() )
@@ -36,7 +36,7 @@ ElectronMaterial::ElectronMaterial(
   testPrecondition( density != 0.0 );
   // Make sure the fraction values are valid (all positive or all negative)
   testPrecondition( areFractionValuesValid( electroatom_fractions.begin(),
-					    electroatom_fractions.end() ) );
+                                            electroatom_fractions.end() ) );
   testPrecondition( electroatom_fractions.size() == electroatom_names.size() );
 
   // Copy the electroatoms that make up this material
@@ -48,9 +48,9 @@ ElectronMaterial::ElectronMaterial(
       electroatom_name_map.find( electroatom_names[i] );
 
     TEST_FOR_EXCEPTION( atom == electroatom_name_map.end(),
-			std::logic_error,
-			"Error: atom " << electroatom_names[i] <<
-			" has not been loaded!" );
+                        std::logic_error,
+                        "Error: atom " << electroatom_names[i] <<
+                        " has not been loaded!" );
 
     Utility::get<1>( d_atoms[i] ) = atom->second;
   }
@@ -59,11 +59,11 @@ ElectronMaterial::ElectronMaterial(
   if( Utility::get<0>( d_atoms.front() ) < 0.0 )
   {
     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
-					    d_atoms.begin(),
-					    d_atoms.end(),
-					    d_atoms.begin(),
-					    d_atoms.end(),
-					    &ElectronMaterial::getAtomicWeight );
+                        d_atoms.begin(),
+                        d_atoms.end(),
+                        d_atoms.begin(),
+                        d_atoms.end(),
+                        &ElectronMaterial::getAtomicWeight );
   }
   else // Normalize the atom fractions
   {
@@ -75,12 +75,12 @@ ElectronMaterial::ElectronMaterial(
   {
     d_number_density =
       convertMassDensityToNumberDensity<Utility::FIRST,Utility::SECOND>(
-					  -1.0*density,
-					  d_atoms.begin(),
-					  d_atoms.end(),
-					  d_atoms.begin(),
-					  d_atoms.end(),
-					  &ElectronMaterial::getAtomicWeight );
+                      -1.0*density,
+                      d_atoms.begin(),
+                      d_atoms.end(),
+                      d_atoms.begin(),
+                      d_atoms.end(),
+                      &ElectronMaterial::getAtomicWeight );
   }
 
   // Convert the atom fractions to isotopic number densities
@@ -103,7 +103,7 @@ double ElectronMaterial::getNumberDensity() const
 
 // Return the macroscopic total cross section (1/cm)
 double ElectronMaterial::getMacroscopicTotalCrossSection(
-						    const double energy ) const
+                            const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -122,7 +122,7 @@ double ElectronMaterial::getMacroscopicTotalCrossSection(
 
 // Return the macroscopic absorption cross section (1/cm)
 double ElectronMaterial::getMacroscopicAbsorptionCrossSection(
-						    const double energy ) const
+                            const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -167,8 +167,8 @@ double ElectronMaterial::getSurvivalProbability( const double energy ) const
 
 // Return the macroscopic cross section (1/cm) for a specific reaction
 double ElectronMaterial::getMacroscopicReactionCrossSection(
-			         const double energy,
-				 const ElectroatomicReactionType reaction ) const
+                     const double energy,
+                     const ElectroatomicReactionType reaction ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -188,7 +188,7 @@ double ElectronMaterial::getMacroscopicReactionCrossSection(
 
 // Collide with a electron
 void ElectronMaterial::collideAnalogue( ElectronState& electron,
-				      ParticleBank& bank ) const
+                                        ParticleBank& bank ) const
 {
   unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
 
@@ -206,7 +206,7 @@ void ElectronMaterial::collideAnalogue( ElectronState& electron,
  * former, which is why the former was chosen.
  */
 void ElectronMaterial::collideSurvivalBias( ElectronState& electron,
-					  ParticleBank& bank ) const
+                      ParticleBank& bank ) const
 {
   unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
 
@@ -215,7 +215,7 @@ void ElectronMaterial::collideSurvivalBias( ElectronState& electron,
 
 // Get the atomic weight from an atom pointer
 double ElectronMaterial::getAtomicWeight(
-	     const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair )
+         const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair )
 {
   return Utility::get<1>( pair )->getAtomicWeight();
 }
@@ -246,7 +246,7 @@ unsigned ElectronMaterial::sampleCollisionAtom( const double energy ) const
 
   // Make sure a collision index was found
   testPostcondition( collision_atom_index !=
-		     std::numeric_limits<unsigned>::max() );
+             std::numeric_limits<unsigned>::max() );
 
   return collision_atom_index;
 }

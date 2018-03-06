@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
 
   // Scatter the electron
   ace_atomic_excitation_distribution->scatterElectron( electron,
-	                                               bank,
+                                                       bank,
                                                        shell_of_interaction );
 
   // Test
@@ -111,46 +111,63 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+// Check that the screening angle can be evaluated
+TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
+                   scatterPositron )
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  MonteCarlo::ParticleBank bank;
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  MonteCarlo::PositronState positron( 0 );
+  positron.setEnergy( 1e-03 );
+  positron.setDirection( 0.0, 0.0, 1.0 );
 
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
+  Data::SubshellType shell_of_interaction;
+  double final_energy = (positron.getEnergy() - 9.32298E-06);
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  // Scatter the positron
+  ace_atomic_excitation_distribution->scatterPositron( positron,
+                                                       bank,
+                                                       shell_of_interaction );
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
+  // Test
+  TEST_FLOATING_EQUALITY( positron.getEnergy(), final_energy, 1e-12 );
+  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+}
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_ace_file",
+                   &test_ace_file_name,
+                   "Test ACE file name" );
+  clp().setOption( "test_ace_table",
+                   &test_ace_table_name,
+                   "Test ACE table name" );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
 
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+     new Data::ACEFileHandler( test_ace_file_name,
+                               test_ace_table_name,
+                               1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+    new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                   ace_file_handler->getTableJXSArray(),
+                                   ace_file_handler->getTableXSSArray() ) );
 
   // Extract the atomic excitation information data block (EXCIT)
   Teuchos::ArrayView<const double> excit_block(
-				      xss_data_extractor->extractEXCITBlock() );
+                  xss_data_extractor->extractEXCITBlock() );
 
   // Extract the number of tabulated energies
   int size = excit_block.size()/2;
@@ -166,12 +183,12 @@ int main( int argc, char** argv )
 
   energy_loss_function.reset(
     new Utility::TabularDistribution<Utility::LinLin>( energy_grid,
-	                                               energy_loss ) );
+                                                       energy_loss ) );
 
   // Create the distribution
   ace_atomic_excitation_distribution.reset(
     new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
-						       energy_loss_function ) );
+           energy_loss_function ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -179,21 +196,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicExcitationElectronScatteringDistribution.cpp

@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_COLLISION_MODULE_INTERFACE_NATIVE_HPP
-#define MONTE_CARLO_COLLISION_MUDULE_INTERFACE_NATIVE_HPP
+#define MONTE_CARLO_COLLISION_MODULE_INTERFACE_NATIVE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionModuleInterfaceDecl.hpp"
@@ -16,6 +16,7 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PositronState.hpp"
 
 namespace MonteCarlo{
 
@@ -34,7 +35,7 @@ public:
   //! The internal material handle class (used within FRENSIE)
   typedef ModuleTraits::InternalMaterialHandle InternalMaterialHandle;
 
-  //! The value of an invalie external material handle
+  //! The value of an invalid external material handle
   static const ExternalMaterialHandle invalid_external_material_handle;
 
   //! Set the collision handler instance
@@ -76,7 +77,7 @@ CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
 {
   // Make sure the collision handler is valid
   testPrecondition( collision_handler.get() );
-  
+
   s_collision_handler = collision_handler;
 }
 

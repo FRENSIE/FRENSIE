@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_FreeGasElasticSAlphaBetaFunction.hpp
+//! \file   DataGen_FreeGasElasticSAlphaBetaFunction.cpp
 //! \author Alex Robinson
 //! \brief  Free gas elastic scattering S(alpha,beta) function definition
 //!

@@ -12,27 +12,20 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "Utility_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
 class ScreenedRutherfordElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+    public PositronScatteringDistribution,
     public AdjointElectronScatteringDistribution
 {
 
@@ -41,10 +34,13 @@ public:
   typedef std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;
 
+  //! Typedef for the Elastic electron traits
+  typedef Utility::ElasticElectronTraits ElasticTraits;
+
   //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ElasticDistribution& elastic_cutoff_distribution,
-    const int atomic_number );
+    const int atomic_number,
+    const bool seltzer_modification_on = true );
 
   //! Destructor
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()
@@ -92,20 +88,15 @@ public:
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
-
-  //! Evaluate Moliere's atomic screening constant at the given electron energy
-  double evaluateMoliereScreeningConstant( const double energy ) const;
-
-  //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy ) const;
-
-  //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy,
-                                const double eta ) const;
 
 protected:
 
@@ -116,29 +107,8 @@ protected:
 
 private:
 
-  // The change scattering angle cosine below which the screened Rutherford distribution is used
-  static double s_cutoff_delta_mu;
-
-  // The scattering angle cosine above which the screened Rutherford distribution is used
-  static double s_cutoff_mu;
-
-  // The fine structure constant (fsc) squared
-  static double s_fine_structure_const_squared;
-
-  // A parameter for moliere's screening factor  (1/2*(fsc/0.885)**2)
-  static double s_screening_param1;
-
-  // Atomic number (Z) of the target atom
-  int d_atomic_number;
-
-  // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
-  double d_Z_two_thirds_power;
-
-  // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
-  double d_screening_param2;
-
-  // Cutoff elastic scattering distribution
-  ElasticDistribution d_elastic_cutoff_distribution;
+  // Elastic electron traits
+  std::shared_ptr<ElasticTraits> d_elastic_traits;
 };
 
 } // end MonteCarlo namespace

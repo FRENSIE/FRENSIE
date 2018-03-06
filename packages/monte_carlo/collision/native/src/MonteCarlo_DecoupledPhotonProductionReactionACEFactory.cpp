@@ -208,6 +208,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
 	  else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
 	            static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
 	  {
+	  
 	    TEST_FOR_EXCEPTION( static_cast<unsigned>( sigp_block[cs_index + 2u] ) != 0,
 	                        std::runtime_error,
 	                        "Error: multiple interpolation regions were defined "

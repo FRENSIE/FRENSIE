@@ -17,11 +17,11 @@
 
 namespace MonteCarlo{
 
-/*! \bridf The standard generic atomic reaction helper class for processed 
+/*! \brief The standard generic atomic reaction helper class for processed
  * cross sections
- * \details This helper class should only be used by the 
+ * \details This helper class should only be used by the
  * MonteCarlo::StandardGenericAtomicReaction class.
- */ 
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 struct StandardGenericAtomicReactionHelper
 {
@@ -50,11 +50,11 @@ struct StandardGenericAtomicReactionHelper
   }
 };
 
-/*! \brief The standard generic atomic reaction helper class for raw cross 
+/*! \brief The standard generic atomic reaction helper class for raw cross
  * sections
- * \details This helper class should only be used by the 
+ * \details This helper class should only be used by the
  * MonteCarlo::StandardGenericAtomicReaction class.
- */ 
+ */
 template<typename InterpPolicy>
 struct StandardGenericAtomicReactionHelper<InterpPolicy,false>
 {
@@ -85,9 +85,9 @@ template<typename AtomicReactionBase,
          typename InterpPolicy,
          bool processed_cross_section>
 StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::StandardGenericAtomicReaction(
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const unsigned threshold_energy_index )
+           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+           const Teuchos::ArrayRCP<const double>& cross_section,
+           const unsigned threshold_energy_index )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
     d_threshold_energy_index( threshold_energy_index )
@@ -95,21 +95,21 @@ StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_se
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
+            incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 
   // Construct the grid searcher
   d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,processed_cross_section>(
-			   incoming_energy_grid,
-			   incoming_energy_grid[0],
-			   incoming_energy_grid[incoming_energy_grid.size()-1],
-			   incoming_energy_grid.size()/10+1 ) );
+               incoming_energy_grid,
+               incoming_energy_grid[0],
+               incoming_energy_grid[incoming_energy_grid.size()-1],
+               incoming_energy_grid.size()/10+1 ) );
 }
 
 // Constructor
@@ -129,12 +129,12 @@ StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_se
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                        incoming_energy_grid.begin(),
+                        incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
+            incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the grid searcher is valid
@@ -167,12 +167,24 @@ double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_c
 
     unsigned cs_index = energy_index - d_threshold_energy_index;
 
-    cross_section = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
+    if( d_cross_section[cs_index] == 0.0 )
+    {
+      cross_section = StandardGenericAtomicReactionHelper<Utility::LinLin,processed_cross_section>::calculateInterpolatedCrossSection(
                                         d_incoming_energy_grid[energy_index],
                                         d_incoming_energy_grid[energy_index+1],
                                         energy,
                                         d_cross_section[cs_index],
                                         d_cross_section[cs_index+1] );
+    }
+    else
+    {
+      cross_section = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
+                                        d_incoming_energy_grid[energy_index],
+                                        d_incoming_energy_grid[energy_index+1],
+                                        energy,
+                                        d_cross_section[cs_index],
+                                        d_cross_section[cs_index+1] );
+    }
   }
   else
     cross_section = 0.0;
@@ -201,12 +213,24 @@ double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_c
   {
     unsigned cs_index = bin_index - d_threshold_energy_index;
 
-    return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
-                                           d_incoming_energy_grid[bin_index],
-                                           d_incoming_energy_grid[bin_index+1],
-                                           energy,
-                                           d_cross_section[cs_index],
-                                           d_cross_section[cs_index+1] );
+    if( d_cross_section[cs_index] == 0.0 )
+    {
+      return StandardGenericAtomicReactionHelper<Utility::LinLin,processed_cross_section>::calculateInterpolatedCrossSection(
+                                          d_incoming_energy_grid[bin_index],
+                                          d_incoming_energy_grid[bin_index+1],
+                                          energy,
+                                          d_cross_section[cs_index],
+                                          d_cross_section[cs_index+1] );
+    }
+    else
+    {
+      return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
+                                          d_incoming_energy_grid[bin_index],
+                                          d_incoming_energy_grid[bin_index+1],
+                                          energy,
+                                          d_cross_section[cs_index],
+                                          d_cross_section[cs_index+1] );
+    }
   }
   else
     return 0.0;
@@ -238,7 +262,7 @@ const double* StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,proc
 {
   return d_incoming_energy_grid.getRawPtr();
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_GENERIC_ATOMIC_REACTION_DEF_HPP

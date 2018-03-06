@@ -89,7 +89,7 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
                                          0 );
 
   // Get the mean coefficients and variances for the orthogonal recursion relationship
-  for ( int i = 1; i < number_of_roots; i++ )
+  for ( int i = 1; i < number_of_roots; ++i )
   {
     // Get the normalization ratio to calculate the mean coefficient value
     evaluateOrthogonalNormalizationRatio( normalization_ratios,
@@ -113,7 +113,7 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
                                            radau_moments,
                                            i );
 
-    // Calculate the varience of the orthogonal coefficient
+    // Calculate the variance of the orthogonal coefficient
     variances[i] = evaluateVariance( normalization_factors_N, i );
 
     // If variance is negative it will cause a negative weight
@@ -156,7 +156,7 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
     roots[1][0] = mean_coefficients[1];
 
     // Loop through to get other roots
-    for ( int i = 2; i < number_of_coefficients; i++ )
+    for ( int i = 2; i < number_of_coefficients; ++i )
     {
       was_root_found = evaluateOrthogonalRoots( roots,
                                                 variances,
@@ -170,7 +170,7 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
       }
     }
 
-    /* For an odd legendre expansion it may be possible to approcimate the n+1
+    /* For an odd legendre expansion it may be possible to approximate the n+1
      * expansion and increase the number of possible roots by 1. */
     if ( number_of_coefficients == number_of_roots )
     {
@@ -203,7 +203,7 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
      nodes.resize( number_of_roots + 1 );
      weights.resize( number_of_roots + 1 );
 
-    for ( int k = 0; k < number_of_roots; k++ )
+    for ( int k = 0; k < number_of_roots; ++k )
     {
       nodes[k] = roots[number_of_roots][k];
     }
@@ -215,7 +215,7 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
      nodes.resize( number_of_angles_wanted );
      weights.resize( number_of_angles_wanted );
 
-    for ( int k = 0; k < number_of_angles_wanted-1; k++ )
+    for ( int k = 0; k < number_of_angles_wanted-1; ++k )
     {
       nodes[k] = roots[number_of_angles_wanted-1][k];
     }
@@ -223,15 +223,15 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
     nodes[number_of_angles_wanted-1] = long_float(1);
   }
 
-  // Calucalte the weights of the nodes
+  // Calculate the weights of the nodes
   long_float polynomial_at_node, variable;
   long_float sum_of_weights = long_float(0);
 
-  for ( int i = 0; i < weights.size()-1; i++ )
+  for ( int i = 0; i < weights.size()-1; ++i )
   {
     variable = long_float(0);
 
-    for ( int k = 0; k < weights.size()-1; k++ )
+    for ( int k = 0; k < weights.size()-1; ++k )
     {
       polynomial_at_node = evaluateOrthogonalPolynomial( variances,
                                                          mean_coefficients,
@@ -266,7 +266,7 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
   nodes.resize( node.size() );
   weights.resize( node.size() );
 
-  for ( int i = 0; i < node.size(); i++ )
+  for ( int i = 0; i < node.size(); ++i )
   {
     nodes[i] = node[i].convert_to<long double>();
     weights[i] = weight[i].convert_to<long double>();
@@ -287,11 +287,8 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
   nodes.resize( node.size() );
   weights.resize( node.size() );
 
-  for ( int i = 0; i < node.size(); i++ )
-  {/*
-std::cout << std::endl << "i = \t" << i << std::endl;
-std::cout << std::setprecision(20) << "node[i] = \t" << node[i] << std::endl;
-std::cout << std::setprecision(20) << "weight[i] = \t" << weight[i] << std::endl;*/
+  for ( int i = 0; i < node.size(); ++i )
+  {
     nodes[i] = node[i].convert_to<double>();
     weights[i] = weight[i].convert_to<long double>();
   }
@@ -299,7 +296,7 @@ std::cout << std::setprecision(20) << "weight[i] = \t" << weight[i] << std::endl
 }
 
 // Return the Radau moments of the legendre expansion of a function, f(x)
-/*! \details The Radau moments can be calulated from the Gauss moments:
+/*! \details The Radau moments can be calculated from the Gauss moments:
  *! radau_moment_n = gauss_moment_n - gauss_moment_n_plus_one
  *! Because the Radau Quadrature fixes a node at mu = 1, it will have one less
  *! degree of freedom and will preserve one less moment then the Gauss Quadrature
@@ -316,19 +313,19 @@ void SloanRadauQuadrature::getRadauMoments(
   // Make sure the zeroth legendre moment is included
   //testPrecondition( d_legendre_expansion_moments[0] == 1.0 );
 
-  // Get the Guass moments
+  // Get the Gauss moments
   std::vector<long_float> gauss_moments( d_legendre_expansion_moments.size() );
 
   Utility::getGaussMoments( d_legendre_expansion_moments, gauss_moments );
 
-  for ( int n = 0; n < radau_moments.size(); n++ )
+  for ( int n = 0; n < radau_moments.size(); ++n )
   {
     radau_moments[n] = gauss_moments[n] - gauss_moments[n+1];
   }
 }
 
 // Return the Radau moments of the legendre expansion of a function, f(x)
-/*! \details The Radau moments can be calulated from the Gauss moments:
+/*! \details The Radau moments can be calculated from the Gauss moments:
  *! radau_moment_n = gauss_moment_n - gauss_moment_n_plus_one
  *! Because the Radau Quadrature fixes a node at mu = 1, it will have one less
  *! degree of freedom and will preserve one less moment then the Gauss Quadrature
@@ -356,10 +353,10 @@ void SloanRadauQuadrature::getLongRadauMoments(
                                                   number_of_moments );
 
   long_float moment_n;
-  for ( int n = 0; n < radau_moments.size(); n++ )
+  for ( int n = 0; n < radau_moments.size(); ++n )
   {
     moment_n = 0;
-    for ( int l = 0; l <= n; l++ )
+    for ( int l = 0; l <= n; ++l )
     {
       // Calculate moment n
       moment_n += ( coefficients[n][l] - coefficients[n+1][l] )*
@@ -370,9 +367,9 @@ void SloanRadauQuadrature::getLongRadauMoments(
   }
 }
 
-// Evaulate the normalization ratio for the orthogonal polynomial, Q and x*Q
+// Evaluate the normalization ratio for the orthogonal polynomial, Q and x*Q
 /*! \details The ratio of the normalization factor for the moments of Q, N, and
- *! for the moments of x*Q, L, is evaluated using the Guass moments, M_i, and
+ *! for the moments of x*Q, L, is evaluated using the Gauss moments, M_i, and
  *! the orthogonal coefficients, a_(i,k). Sloan Eq. (B-101b) gives L as
  *! L_(i+1) = sum_( k=0,...,i ) a_(i,k)*M_(k+i+1). The ratio is defined as:
  *! normalization ratio = L_i/N_(i-1)
@@ -390,7 +387,7 @@ void SloanRadauQuadrature::evaluateOrthogonalNormalizationRatio(
 
   long_float normalization_factor_L = long_float(0);
 
-  for ( int k = 0; k <= i-1; k++ )
+  for ( int k = 0; k <= i-1; ++k )
   {
     normalization_factor_L += orthogonal_coefficients[i-1][k]*
                               radau_moments[k+i];
@@ -399,7 +396,7 @@ void SloanRadauQuadrature::evaluateOrthogonalNormalizationRatio(
                             /normalization_factors_N[i-1];
 }
 
-// Evaulate the ith mean coefficients for orthogonal polynomial recursion relation
+// Evaluate the ith mean coefficients for orthogonal polynomial recursion relation
 /*! \details The ith mean coefficient can be calculated from the Q and x*Q normalization factors:
  *! mean_coefficient_i = L_i/N_(i-1) - L_(i-1)/N_(i-2)
  *! see Sloan Eq. (B-103b)
@@ -422,11 +419,11 @@ long_float SloanRadauQuadrature::evaluateMeanCoefficient(
   }
 }
 
-// Evaulate the ith row of coefficients of of the orthogonal polynomial Q
+// Evaluate the ith row of coefficients of of the orthogonal polynomial Q
 /*! \details Given the coefficients for the rows before the ith row the ith
  *! row can be found using a recursion relationship for the coefficients of the
  *! orthogonal polynomial as given by Sloan: Eq (B-106).
- *! Note: The ith row should be initiallized to zero when the function is called
+ *! Note: The ith row should be initialized to zero when the function is called
  *! since all coefficients were k > i are zero.
  */
 void SloanRadauQuadrature::evaluateOrthogonalCoefficients(
@@ -461,7 +458,7 @@ void SloanRadauQuadrature::evaluateOrthogonalCoefficients(
     /* Use the recursion relationship for all other values of k < i.
      * When k > i all coeffcients reduce to zero.
      */
-    for ( int k = 1; k < i; k++ )
+    for ( int k = 1; k < i; ++k )
     {
       orthogonal_coefficients[i][k] =
                         orthogonal_coefficients[i-1][k-1] -
@@ -471,8 +468,8 @@ void SloanRadauQuadrature::evaluateOrthogonalCoefficients(
   }
 }
 
-// Evaulate the normalization factors, N_i for the orthogonal polynomial, Q
-/*! \details N can be evaluated using the Guass moments, M_i, and
+// Evaluate the normalization factors, N_i for the orthogonal polynomial, Q
+/*! \details N can be evaluated using the Gauss moments, M_i, and
  *! the orthogonal coefficients, a_(i,k) ( see Sloan Eq. (B-100b) ):
  *! N_i = sum_( k=0,...,i ) a_(i,k)*M_(k+i)
  */
@@ -487,7 +484,7 @@ void SloanRadauQuadrature::evaluateOrthogonalNormalizationFactor(
 
   long_float normalization_factor_N = long_float(0);
 
-  for ( int k = 0; k <= i; k++ )
+  for ( int k = 0; k <= i; ++k )
   {
     normalization_factor_N += orthogonal_coefficients[i][k]*
                               radau_moments[k+i];
@@ -496,7 +493,7 @@ void SloanRadauQuadrature::evaluateOrthogonalNormalizationFactor(
   normalization_factors_N[i] = normalization_factor_N.convert_to<long_float>();
 }
 
-// Evaulate the variance of the moments of the orthogonal polynomial, Q_i
+// Evaluate the variance of the moments of the orthogonal polynomial, Q_i
 /*! \details The variance can be found from the ratio of the orthogonal
  *! normalization factor to the i-1 factor: variance = N_i/N_(i-1)
  *! see Sloan Eq. (B-99)
@@ -512,8 +509,8 @@ long_float SloanRadauQuadrature::evaluateVariance(
   return normalization_factors_N[i]/normalization_factors_N[i-1];
 }
 
-// Evaulate the nth orthogonal polynomial at x, Q_n(x)
-/*! \details The orthogonal polynomial can be evaulated at a value x using the
+// Evaluate the nth orthogonal polynomial at x, Q_n(x)
+/*! \details The orthogonal polynomial can be evaluated at a value x using the
  *! variance and the mean coefficients in the following recursion relationship:
  *! Q_n(x) = ( x - mean_coefficient_i )Q_(n-1)(x) - variance_(i-1)Q_(n-2)(x)
  *! see Sloan Eq. (B-97) */
@@ -540,7 +537,7 @@ long_float SloanRadauQuadrature::evaluateOrthogonalPolynomial(
     // Update for i > 1
     q_n_minus_two = long_float(1);
     q_n_minus_one = q_n;
-    for ( int k = 2; k <= i; k++ )
+    for ( int k = 2; k <= i; ++k )
     {
       // Use recursion relationship to calculate q_k(x)
       q_n = ( x - mean_coefficients[k] )*q_n_minus_one -
@@ -554,7 +551,7 @@ long_float SloanRadauQuadrature::evaluateOrthogonalPolynomial(
   return q_n;
 }
 
-// Evaulate the roots of the nth orthogonal polynomial using the roots of the (n-1)th
+// Evaluate the roots of the nth orthogonal polynomial using the roots of the (n-1)th
 /*! \details The roots of the nth orthogonal polynomial are found through a binary
  *! search using the (n-1)th roots as an upper and lower bound.
  *! The roots array should pass in the (n-1)th roots
@@ -577,7 +574,7 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
   root_bounds[i] = long_float(1);
 
   // Use the (n-1)th roots as bounds for the nth roots
-  for ( int k = 1; k < i; k++ )
+  for ( int k = 1; k < i; ++k )
   {
     root_bounds[k] = roots[i-1][k-1];
   }
@@ -612,7 +609,7 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
   long_float remainder,  lower_bound,          upper_bound,
                           polynomial_at_lower,  polynomial_at_upper;
 
-  for ( int k = 0; k < i; k++ )
+  for ( int k = 0; k < i; ++k )
   {
     // Set lower and upper bound for root[i][k]
     lower_bound = root_bounds[k];
@@ -683,7 +680,7 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
 }
 
 // Estimate an extra (i+1)th mean coefficient for the ith orthogonal polynomial
-/*! \details For an odd legendre expansion it may be possible to approcimate the
+/*! \details For an odd legendre expansion it may be possible to approximate the
  *! n+1expansion and increase the number of possible roots by 1.
  */
 void SloanRadauQuadrature::estimateExtraMeanCoefficient(
@@ -729,7 +726,7 @@ void SloanRadauQuadrature::estimateExtraMeanCoefficient(
   long_float parm = d_legendre_expansion_moments[0] -
                     normalization_factors_N[0]/poly_n;
 
-  for ( int k = 2; k < number_of_roots; k++ )
+  for ( int k = 2; k < number_of_roots; ++k )
   {
     poly_n_minus_one = poly_n;
     poly_n = evaluateOrthogonalPolynomial( variances,

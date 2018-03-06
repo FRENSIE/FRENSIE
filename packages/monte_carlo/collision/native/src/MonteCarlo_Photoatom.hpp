@@ -9,28 +9,18 @@
 #ifndef MONTE_CARLO_PHOTOATOM_HPP
 #define MONTE_CARLO_PHOTOATOM_HPP
 
-// Std Lib Includes
-#include <string>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_PhotoatomCore.hpp"
+#include "MonteCarlo_Atom.hpp"
 
 namespace MonteCarlo{
 
 //! The atom class for photoatomic reactions
-class Photoatom
+class Photoatom : public Atom<PhotoatomCore>
 {
 
 private:
@@ -69,59 +59,18 @@ public:
   Photoatom( const std::string& name,
 	     const unsigned atomic_number,
 	     const double atomic_weight,
-	     const PhotoatomCore& core );
+	     const PhotoatomCore& core )
+    : Atom<PhotoatomCore>( name, atomic_number, atomic_weight, core )
+  { /* ... */ }
 
   //! Destructor
   virtual ~Photoatom()
   { /* ... */ }
 
-  //! Return the atom name
-  const std::string& getAtomName() const;
-
-  //! Return the nuclide name
-  virtual const std::string& getNuclideName() const;
-
-  //! Return the atomic number
-  unsigned getAtomicNumber() const;
-
-  //! Return the atomic mass number
-  virtual unsigned getAtomicMassNumber() const;
-
-  //! Return the nuclear isomer number
-  virtual unsigned getIsomerNumber() const;
-
-  //! Return the atomic weight
-  double getAtomicWeight() const;
-
-  //! Return the temperature of the atom
-  virtual double getTemperature() const;
-
-  //! Return the total cross section at the desired energy
-  double getTotalCrossSection( const double energy ) const;
-
-  //! Return the total cross section from atomic interactions
-  double getAtomicTotalCrossSection( const double energy ) const;
-
-  //! Return the total cross section from nuclear interactions
-  virtual double getNuclearTotalCrossSection( const double energy ) const;
-
-  //! Return the total absorption cross section at the desired energy
-  double getAbsorptionCrossSection( const double energy ) const;
-
-  //! Return the total absorption cross section from atomic interactions
-  double getAtomicAbsorptionCrossSection( const double energy ) const;
-
-  //! Return the total absorption cross section from nuclear interactions
-  virtual double getNuclearAbsorptionCrossSection( const double energy ) const;
-
-  //! Return the survival probability at the desired energy
-  double getSurvivalProbability( const double energy ) const;
-
-  //! Return the survival probability from atomic interactions
-  double getAtomicSurvivalProbability( const double energy ) const;
-
-  //! Return the survival probability from nuclear interactions
-  double getNuclearSurvivalProbability( const double energy ) const;
+  //! Relax the atom
+  void relaxAtom( const Data::SubshellType vacancy_shell,
+                  const PhotonState& photon,
+                  ParticleBank& bank ) const;
 
   //! Return the cross section for a specific photoatomic reaction
   double getReactionCrossSection(
@@ -132,121 +81,7 @@ public:
   virtual double getReactionCrossSection(
 			       const double energy,
 			       const PhotonuclearReactionType reaction ) const;
-
-  //! Collide with a photon
-  virtual void collideAnalogue( PhotonState& photon,
-				ParticleBank& bank ) const;
-
-  //! Collide with a photon and survival bias
-  virtual void collideSurvivalBias( PhotonState& photon,
-				    ParticleBank& bank ) const;
-
-  //! Return the core
-  const PhotoatomCore& getCore() const;
-
-private:
-
-  // Return the total cross section from atomic interactions with a bin index
-  double getAtomicScatteringCrossSection(
-				        const double energy,
-					const unsigned energy_grid_bin ) const;
-
-  // Return the absorption cross section from atomic interactions w/ bin index
-  double getAtomicAbsorptionCrossSection(
-				        const double energy,
-					const unsigned energy_grid_bin ) const;
-
-  // Sample an absorption reaction
-  void sampleAbsorptionReaction( const double scaled_random_number,
-				 const unsigned energy_grid_bin,
-				 PhotonState& photon,
-				 ParticleBank& bank ) const;
-
-  // Sample a scattering reaction
-  void sampleScatteringReaction( const double scaled_random_number,
-				 const unsigned energy_grid_bin,
-				 PhotonState& photon,
-				 ParticleBank& bank ) const;
-
-  // The atom name
-  std::string d_name;
-
-  // The atomic number of the atom
-  unsigned d_atomic_number;
-
-  // The atomic weight of the atom
-  double d_atomic_weight;
-
-  // The photoatom core (storing all reactions, relaxation model)
-  PhotoatomCore d_core;
 };
-
-// Return the nuclide name
-inline const std::string& Photoatom::getNuclideName() const
-{
-  return this->getAtomName();
-}
-
-// Return the atomic mass number
-inline unsigned Photoatom::getAtomicMassNumber() const
-{
-  return 0u;
-}
-
-// Return the nuclear isomer number
-inline unsigned Photoatom::getIsomerNumber() const
-{
-  return 0u;
-}
-
-// Return the temperature of the atom
-/*! \details This information is irrelevant for photoatomic reactions. However,
- * it my be important for photonuclear reactions where Doppler broadening of
- * cross sections may be necessary.
- */
-inline double Photoatom::getTemperature() const
-{
-  return 0.0;
-}
-
-// Return the total cross section at the desired energy
-inline double Photoatom::getTotalCrossSection( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( energy > 0.0 );
-
-  return this->getAtomicTotalCrossSection( energy ) +
-    this->getNuclearTotalCrossSection( energy );
-}
-
-// Return the total cross section from nuclear interactions
-/*! \details By default, photonuclear reactions are not considered.
- */
-inline double Photoatom::getNuclearTotalCrossSection(
-						    const double energy ) const
-{
-  return 0.0;
-}
-
-// Return the total absorption cross section at the desired energy
-inline double Photoatom::getAbsorptionCrossSection( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-
-  return this->getAtomicAbsorptionCrossSection( energy ) +
-    this->getNuclearAbsorptionCrossSection( energy );
-}
-
-// Return the total absorption cross section from nuclear interactions
-/*! \details By default, photonuclear reactions are not considered.
- */
-inline double
-Photoatom::getNuclearAbsorptionCrossSection( const double energy ) const
-{
-  return 0.0;
-}
 
 // Return the cross section for a specific photonuclear reaction
 /*! \details By default, photonuclear reactions are not considered.
@@ -258,52 +93,15 @@ inline double Photoatom::getReactionCrossSection(
   return 0.0;
 }
 
-// Return the core
-inline const PhotoatomCore& Photoatom::getCore() const
+// Relax the atom
+inline void Photoatom::relaxAtom( const Data::SubshellType vacancy_shell,
+                                  const PhotonState& photon,
+                                  ParticleBank& bank ) const
 {
-  return d_core;
-}
-
-// Return the scatt. cross section from atomic interactions with a bin index
-inline double Photoatom::getAtomicScatteringCrossSection(
-					 const double energy,
-				         const unsigned energy_grid_bin ) const
-{
-  double cross_section = 0.0;
-
-  ConstReactionMap::const_iterator photoatomic_reaction =
-    d_core.getScatteringReactions().begin();
-
-  while( photoatomic_reaction != d_core.getScatteringReactions().end() )
-  {
-    cross_section +=
-      photoatomic_reaction->second->getCrossSection( energy, energy_grid_bin );
-
-    ++photoatomic_reaction;
-  }
-
-  return cross_section;
-}
-
-// Return the absorption cross section from atomic interactions w/ bin index
-inline double Photoatom::getAtomicAbsorptionCrossSection(
-					 const double energy,
-					 const unsigned energy_grid_bin ) const
-{
-  double cross_section = 0.0;
-
-  ConstReactionMap::const_iterator photoatomic_reaction =
-    d_core.getAbsorptionReactions().begin();
-
-  while( photoatomic_reaction != d_core.getAbsorptionReactions().end() )
-  {
-    cross_section +=
-      photoatomic_reaction->second->getCrossSection( energy, energy_grid_bin );
-
-    ++photoatomic_reaction;
-  }
-
-  return cross_section;
+  // Relax the atom
+  d_core.getAtomicRelaxationModel().relaxAtom( vacancy_shell,
+                                               photon,
+                                               bank );
 }
 
 } // end MonteCarlo namespace

@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 //! The massive particle state class
-class MassiveParticleState : public ParticleState
+class MassiveParticleState : public MonteCarlo::ParticleState
 {
 
 private:
@@ -30,11 +30,13 @@ public:
 
   //! Constructor
   MassiveParticleState( const historyNumberType history_number,
-			const ParticleType type );
+			const ParticleType type,
+			const chargeType charge );
 
   //! Copy constructor (with possible creation of new generation)
   MassiveParticleState( const ParticleState& existing_base_state,
 			const ParticleType new_type,
+			const chargeType new_charge,
 			const double new_rest_mass_energy,
 			const bool increment_generation_number,
 			const bool reset_collision_number );
@@ -42,6 +44,7 @@ public:
   //! Copy constructor (with possible creation of new generation)
   MassiveParticleState( const MassiveParticleState& existing_state,
 			const ParticleType new_type,
+			const chargeType new_charge,
 			const double new_rest_mass_energy,
 			const bool increment_generation_number,
 			const bool reset_collision_number );

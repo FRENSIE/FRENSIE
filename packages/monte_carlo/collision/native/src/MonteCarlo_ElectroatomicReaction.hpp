@@ -18,7 +18,7 @@
 
 namespace MonteCarlo{
 
-//! The electron/positron reaction base class
+//! The electron reaction base class
 class ElectroatomicReaction : public AtomicReaction
 {
 
@@ -35,24 +35,29 @@ public:
   //! Return the reaction type
   virtual ElectroatomicReactionType getReactionType() const = 0;
 
+  //! Return the differential cross section
+  virtual double getDifferentialCrossSection( const double incoming_energy,
+                                              const double secondary_variable ) const = 0;
+
   //! Simulate the reaction
   virtual void react( ElectronState& electron,
-		      ParticleBank& bank,
-		      Data::SubshellType& shell_of_interaction ) const = 0;
+                      ParticleBank& bank,
+                      Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Simulate the reaction and track the number of sampling trials
   virtual void react( ElectronState& electron,
-		      ParticleBank& bank,
-		      Data::SubshellType& shell_of_interaction,
-		      unsigned& trials ) const;
+                      ParticleBank& bank,
+                      Data::SubshellType& shell_of_interaction,
+                      unsigned& trials ) const;
 
 };
 
 // Simulate the reaction and track the number of sampling trials
-inline void ElectroatomicReaction::react( ElectronState& electron,
-					ParticleBank& bank,
-					Data::SubshellType& shell_of_interaction,
-					unsigned& trials ) const
+inline void ElectroatomicReaction::react(
+                ElectronState& electron,
+                ParticleBank& bank,
+                Data::SubshellType& shell_of_interaction,
+                unsigned& trials ) const
 {
   ++trials;
 

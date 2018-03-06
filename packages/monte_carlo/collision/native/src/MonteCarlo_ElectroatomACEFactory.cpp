@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -22,7 +23,7 @@ namespace MonteCarlo{
  * core. Special care must be taken to assure that the model corresponds to
  * the atom of interest. If the use of atomic relaxation data has been
  * requested, a electroionization reaction for each subshell will be created.
- * Otherwize a single total electroionization reaction will be created.
+ * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomACEFactory::createElectroatomCore(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
@@ -41,26 +42,42 @@ void ElectroatomACEFactory::createElectroatomCore(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_electroatom_data.extractElectronEnergyGrid() );
 
-  // Create a hash based energy grid seacher
+  // Create a hash based energy grid searcher
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-                              energy_grid,
-			      properties.getNumberOfElectronHashGridBins() ) );
+                      energy_grid,
+                      properties.getNumberOfElectronHashGridBins() ) );
 
-  // Create the cutoff elastic scattering reaction
+  // Create the elastic scattering reaction
+  if ( properties.isElasticModeOn() ) // Create the decoupled elastic scattering reaction
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+    // Check the ACE file version
+    if( raw_electroatom_data.isEPRVersion14() )
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+      ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
-        reaction_pointer,
-        properties.getElasticCutoffAngleCosine() );
+        reaction_pointer );
+    }
+    else // Create the cutoff elastic scattering reaction
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+
+      ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer );
+    }
   }
 
   // Create the bremsstrahlung scattering reaction
+  if ( properties.isBremsstrahlungModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
@@ -74,6 +91,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
 
   // Create the atomic excitation scattering reaction
+  if ( properties.isAtomicExcitationModeOn() )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
@@ -85,8 +103,8 @@ void ElectroatomACEFactory::createElectroatomCore(
         reaction_pointer );
   }
 
-  // Create the electroionization reaction(s)
-  if( properties.isAtomicRelaxationModeOn() )
+  // Create the subshell electroionization reaction(s)
+  if ( properties.isElectroionizationModeOn() )
   {
     std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
@@ -96,31 +114,34 @@ void ElectroatomACEFactory::createElectroatomCore(
         grid_searcher,
         reaction_pointers );
 
-    for( unsigned i = 0; i < reaction_pointers.size(); ++i )
+    for( unsigned i = 0u; i < reaction_pointers.size(); ++i )
     {
       scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];
     }
   }
-  else
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
-
-    ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
-        raw_electroatom_data,
-        energy_grid,
-        grid_searcher,
-        reaction_pointer );
-  }
 
   // Create the electroatom core
-  electroatom_core.reset( new ElectroatomCore( energy_grid,
-                                               scattering_reactions,
-                                               absorption_reactions,
-                                               atomic_relaxation_model,
-                                               false,
-                                               Utility::LinLin() ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    electroatom_core.reset( new ElectroatomCore( energy_grid,
+                                                 grid_searcher,
+                                                 scattering_reactions,
+                                                 absorption_reactions,
+                                                 atomic_relaxation_model,
+                                                 false,
+                                                 Utility::LogLog() ) );
+  }
+  else
+  {
+    electroatom_core.reset( new ElectroatomCore( energy_grid,
+                                                 grid_searcher,
+                                                 scattering_reactions,
+                                                 absorption_reactions,
+                                                 atomic_relaxation_model,
+                                                 false,
+                                                 Utility::LinLin() ) );
+  }
 }
 
 // Create a electroatom (using the provided atomic relaxation model)
@@ -131,12 +152,12 @@ void ElectroatomACEFactory::createElectroatomCore(
  * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomACEFactory::createElectroatom(
-	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	    const std::string& electroatom_name,
+            const Data::XSSEPRDataExtractor& raw_electroatom_data,
+            const std::string& electroatom_name,
             const double atomic_weight,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-	    Teuchos::RCP<Electroatom>& electroatom )
+            Teuchos::RCP<Electroatom>& electroatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -149,7 +170,7 @@ void ElectroatomACEFactory::createElectroatom(
                                                 atomic_relaxation_model,
                                                 properties,
                                                 core );
-                                                
+
   // Create the electroatom
   electroatom.reset(
     new Electroatom( electroatom_name,

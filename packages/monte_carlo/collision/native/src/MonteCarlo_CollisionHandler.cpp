@@ -21,15 +21,17 @@ CollisionHandler::CollisionHandler( const bool analogue_collisions )
   : NeutronCollisionHandler( analogue_collisions ),
     PhotonCollisionHandler( analogue_collisions ),
     AdjointPhotonCollisionHandler( analogue_collisions ),
-    ElectronCollisionHandler( analogue_collisions )
+    ElectronCollisionHandler( analogue_collisions ),
+    AdjointElectronCollisionHandler( analogue_collisions ),
+    PositronCollisionHandler( analogue_collisions )
 { /* ... */ }
 
 // Add a material to the collision handler (neutron-photon mode)
 void CollisionHandler::addMaterial(
-	      const Teuchos::RCP<const NeutronMaterial>& neutron_material,
-	      const Teuchos::RCP<const PhotonMaterial>& photon_material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material )
+          const Teuchos::RCP<const NeutronMaterial>& neutron_material,
+          const Teuchos::RCP<const PhotonMaterial>& photon_material,
+          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          cells_containing_material )
 {
   // Make sure the material pointers are valid
   testPrecondition( !neutron_material.is_null() );
@@ -48,12 +50,14 @@ void CollisionHandler::addMaterial(
 void CollisionHandler::addMaterial(
               const Teuchos::RCP<const PhotonMaterial>& photon_material,
               const Teuchos::RCP<const ElectronMaterial>& electron_material,
+              const Teuchos::RCP<const PositronMaterial>& positron_material,
               const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
               cells_containing_material )
 {
   // Make sure the material pointers are valid
   testPrecondition( !photon_material.is_null() );
   testPrecondition( !electron_material.is_null() );
+  testPrecondition( !positron_material.is_null() );
   // Make sure the cells are valid
   testPrecondition( cells_containing_material.size() > 0 );
 
@@ -62,6 +66,9 @@ void CollisionHandler::addMaterial(
 
   ElectronCollisionHandler::addMaterial(
                                 electron_material, cells_containing_material );
+
+  PositronCollisionHandler::addMaterial(
+                                positron_material, cells_containing_material );
 }
 
 // Add a material to the collision handler (neutron-photon-electron mode)
@@ -69,6 +76,7 @@ void CollisionHandler::addMaterial(
               const Teuchos::RCP<const NeutronMaterial>& neutron_material,
               const Teuchos::RCP<const PhotonMaterial>& photon_material,
               const Teuchos::RCP<const ElectronMaterial>& electron_material,
+              const Teuchos::RCP<const PositronMaterial>& positron_material,
               const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
               cells_containing_material )
 {
@@ -76,6 +84,7 @@ void CollisionHandler::addMaterial(
   testPrecondition( !neutron_material.is_null() );
   testPrecondition( !photon_material.is_null() );
   testPrecondition( !electron_material.is_null() );
+  testPrecondition( !positron_material.is_null() );
   // Make sure the cells are valid
   testPrecondition( cells_containing_material.size() > 0 );
 
@@ -87,12 +96,15 @@ void CollisionHandler::addMaterial(
 
   ElectronCollisionHandler::addMaterial(
                                 electron_material, cells_containing_material );
+
+  PositronCollisionHandler::addMaterial(
+                                positron_material, cells_containing_material );
 }
 
 // Check if a cell is void
 bool CollisionHandler::isCellVoid(
-			 const Geometry::ModuleTraits::InternalCellHandle cell,
-			 const MonteCarlo::ParticleType particle_type )
+             const Geometry::ModuleTraits::InternalCellHandle cell,
+             const MonteCarlo::ParticleType particle_type )
 {
   switch( particle_type )
   {
@@ -104,10 +116,14 @@ bool CollisionHandler::isCellVoid(
     return AdjointPhotonCollisionHandler::isCellVoid( cell );
   case ELECTRON:
     return ElectronCollisionHandler::isCellVoid( cell );
+  case ADJOINT_ELECTRON:
+    return AdjointElectronCollisionHandler::isCellVoid( cell );
+  case POSITRON:
+    return PositronCollisionHandler::isCellVoid( cell );
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: particle type " << particle_type <<
-		     " is not recognized by the collision handler!" );
+                     "Error: particle type " << particle_type <<
+                     " is not recognized by the collision handler!" );
   }
 }
 

@@ -67,7 +67,7 @@ public:
   //! Set the incoherent model type
   void setIncoherentModelType( const IncoherentModelType model );
 
-  //! Return the incohernt model
+  //! Return the incoherent model
   IncoherentModelType getIncoherentModelType() const;
 
   //! Set atomic relaxation mode to off (on by default)
@@ -81,7 +81,7 @@ public:
 
   //! Set detailed pair production mode to off (off by default)
   void setDetailedPairProductionModeOff();
-  
+
   //! Set detailed pair production mode to on (off by default)
   void setDetailedPairProductionModeOn();
 
@@ -90,7 +90,7 @@ public:
 
   //! Set photonuclear interaction mode to off (off by default)
   void setPhotonuclearInteractionModeOff();
-  
+
   //! Set photonuclear interaction mode to on (off by default)
   void setPhotonuclearInteractionModeOn();
 

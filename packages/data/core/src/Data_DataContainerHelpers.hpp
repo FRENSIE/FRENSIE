@@ -33,27 +33,47 @@ namespace Data{
 
   // Test preconditions for energy grids
   template<typename Array>
-  void testPreconditionEnergyGrid( const Array& energy_grid );
+  bool EnergyGridValid( const Array& energy_grid );
 
   // Test preconditions for values in array greater than zero
   template<typename Array>
-  void testPreconditionValuesGreaterThanZero( const Array& values );
+  bool ValuesGreaterThanZero( const Array& values );
 
   // Test preconditions for values in array greater than or equal to zero
   template<typename Array>
-  void testPreconditionValuesGreaterThanOrEqualToZero( const Array& values );
+  bool ValuesGreaterThanOrEqualToZero( const Array& values );
+
+  // Test preconditions for values in array less than one
+  template<typename Array>
+  bool ValuesLessThanOne( const Array& values );
+
+  // Test preconditions for values in array less than or equal to one
+  template<typename Array>
+  bool ValuesLessThanOrEqualToOne( const Array& values );
 
   // Test if a value is less than or equal to zero
-  static bool isValueLessThanOrEqualToZero( const double value );
+  bool isValueLessThanOrEqualToZero( const double value );
 
   // Test if a value is less than zero
-  static bool isValueLessThanZero( const double value );
+  bool isValueLessThanZero( const double value );
 
   // Test if a value is greater than one
-  static bool isValueGreaterThanOne( const double value );
+  bool isValueGreaterThanOne( const double value );
+
+  // Test if a value is greater than or equal to one
+  bool isValueGreaterThanOrEqualToOne( const double value );
 
   // Test if a value is less than minus one
-  static bool isValueLessThanMinusOne( const double value );
+  bool isValueLessThanMinusOne( const double value );
+
+  // Test if the TwoDInterpPolicy is valid
+  bool isTwoDInterpPolicyValid( const std::string value );
+
+  // Test if the TwoDSamplingPolicy is valid
+  bool isTwoDSamplingPolicyValid( const std::string value );
+
+  // Test if the InterpPolicy is valid
+  bool isInterpPolicyValid( const std::string value );
 
 } // end Data namespace
 

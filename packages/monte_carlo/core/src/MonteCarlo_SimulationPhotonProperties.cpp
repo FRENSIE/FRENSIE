@@ -56,7 +56,7 @@ double SimulationPhotonProperties::getAbsoluteMinPhotonEnergy()
 {
   return s_absolute_min_photon_energy;
 }
-  
+
 // Set the max photon energy (MeV)
 void SimulationPhotonProperties::setMaxPhotonEnergy( const double energy )
 {
@@ -123,7 +123,7 @@ void SimulationPhotonProperties::setIncoherentModelType(
   d_incoherent_model_type = model;
 }
 
-// Return the incohernt model
+// Return the incoherent model
 IncoherentModelType SimulationPhotonProperties::getIncoherentModelType() const
 {
   return d_incoherent_model_type;
@@ -170,7 +170,7 @@ void SimulationPhotonProperties::setPhotonuclearInteractionModeOff()
 {
   d_photonuclear_interaction_mode_on = false;
 }
-  
+
 // Set photonuclear interaction mode to on (off by default)
 void SimulationPhotonProperties::setPhotonuclearInteractionModeOn()
 {

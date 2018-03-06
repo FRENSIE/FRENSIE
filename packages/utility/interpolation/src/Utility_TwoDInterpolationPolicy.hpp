@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_TypeNameTraits.hpp"
@@ -22,7 +23,7 @@ namespace Utility{
 
 namespace {
 
-//! Helper class used by unit base interpolation methods (Lin-Lin)
+//! Helper class used by unit base interpolation methods
 template<typename YProcessingTag, typename XProcessingTag>
 struct UnitBaseHelper
 { /* ... */ };
@@ -57,6 +58,22 @@ struct UnitBaseHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
 {
   //! The YX interpolation policy
   typedef LogLog YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (LogCos-Lin)
+template<>
+struct UnitBaseHelper<LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogCosLin YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (Log-Lin)
+template<>
+struct UnitBaseHelper<LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogCosLog YXInterpPolicy;
 };
 
 } // end local namespace
@@ -150,6 +167,13 @@ public:
                                               const IndepType indep_var_x,
                                               const LengthType grid_0_length,
                                               const LengthType grid_1_length );
+
+  //! Calculate the length of an intermediate grid using the indep variable ratio (beta)
+  template<typename IndepRatioType, typename LengthType>
+  static LengthType calculateIntermediateGridLength(
+                       const IndepRatioType beta,
+                       const LengthType grid_0_length,
+                       const LengthType grid_1_length );
 
   //! Calculate the length of a processed intermediate grid
   template<typename T>
@@ -258,7 +282,8 @@ public:
     const typename ZYLowerFunctor::result_type below_lower_limit_return_value =
     QuantityTraits<typename ZYLowerFunctor::result_type>::zero(),
     const typename ZYLowerFunctor::result_type above_upper_limit_return_value =
-    QuantityTraits<typename ZYLowerFunctor::result_type>::zero() );
+    QuantityTraits<typename ZYLowerFunctor::result_type>::zero(),
+    const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct unit base interpolation between two grids
   template<size_t YIndepMember,
@@ -277,7 +302,8 @@ public:
 				YIterator start_indep_y_grid_1,
 				YIterator end_indep_y_grid_1,
 				ZIterator start_dep_grid_1,
-				ZIterator end_dep_grid_1 );
+				ZIterator end_dep_grid_1,
+                const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct the interpolation between two grids
   template<size_t YIndepMember,
@@ -291,7 +317,8 @@ public:
 				Iterator start_grid_0,
 				Iterator end_grid_0,
 				Iterator start_grid_1,
-				Iterator end_grid_1 );
+				Iterator end_grid_1,
+                const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct unit base interpolation between two grids (no tuples)
   template<typename YIterator, typename ZIterator, typename T>
@@ -306,7 +333,8 @@ public:
 				YIterator start_indep_var_y_1,
 				YIterator end_indep_var_y_1,
 				ZIterator start_dep_var_1,
-				ZIterator end_dep_var_1 );
+				ZIterator end_dep_var_1,
+                const double fuzzy_boundary_tol = 1e-3 );
 
   //! Conduct the interpolation between two processed grids
   template<size_t YIndepMember,
@@ -412,11 +440,13 @@ private:
 
   // Calculate the "fuzzy" lower bound (lower bound with roundoff tolerance)
   template<typename T>
-  static T calculateFuzzyLowerBound( const T lower_bound );
+  static T calculateFuzzyLowerBound( const T lower_bound,
+                                     const double tol = 1e-3 );
 
   // Calculate the "fuzzy" upper bound (upper bound with roundoff tolerance)
   template<typename T>
-  static T calculateFuzzyUpperBound( const T upper_bound );
+  static T calculateFuzzyUpperBound( const T upper_bound,
+                                     const double tol = 1e-3 );
 
   // Interpolate on the specified y grid
   template<size_t YIndepMember,
@@ -451,6 +481,7 @@ struct LinLinLin : public TwoDInterpolationPolicyImpl<LinLin,LinLin>
 {
   typedef LinLin ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
+  typedef LinLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -463,6 +494,7 @@ struct LinLogLin : public TwoDInterpolationPolicyImpl<LinLog,LinLin>
 {
   typedef LinLog ZYInterpPolicy;
   typedef LinLin ZXInterpPolicy;
+  typedef LogLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -475,6 +507,7 @@ struct LinLinLog : public TwoDInterpolationPolicyImpl<LinLin,LinLog>
 {
   typedef LinLin ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
+  typedef LinLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -487,6 +520,7 @@ struct LinLogLog : public TwoDInterpolationPolicyImpl<LinLog,LinLog>
 {
   typedef LinLog ZYInterpPolicy;
   typedef LinLog ZXInterpPolicy;
+  typedef LogLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -499,6 +533,7 @@ struct LogLinLin : public TwoDInterpolationPolicyImpl<LogLin,LogLin>
 {
   typedef LogLin ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
+  typedef LinLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -511,6 +546,7 @@ struct LogLogLin : public TwoDInterpolationPolicyImpl<LogLog,LogLin>
 {
   typedef LogLog ZYInterpPolicy;
   typedef LogLin ZXInterpPolicy;
+  typedef LogLin YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -523,6 +559,7 @@ struct LogLinLog : public TwoDInterpolationPolicyImpl<LogLin,LogLog>
 {
   typedef LogLin ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
+  typedef LinLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();
@@ -535,6 +572,59 @@ struct LogLogLog : public TwoDInterpolationPolicyImpl<LogLog,LogLog>
 {
   typedef LogLog ZYInterpPolicy;
   typedef LogLog ZXInterpPolicy;
+  typedef LogLog YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-LogCos and Z-X policy interpolation policy is Lin-Lin).
+ */
+struct LinLogCosLin : public TwoDInterpolationPolicyImpl<LinLogCos,LinLin>
+{
+  typedef LinLogCos ZYInterpPolicy;
+  typedef LinLin ZXInterpPolicy;
+  typedef LogCosLin YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-LogCos and Z-X policy interpolation policy is Lin-Log).
+ */
+struct LinLogCosLog : public TwoDInterpolationPolicyImpl<LinLogCos,LinLog>
+{
+  typedef LinLogCos ZYInterpPolicy;
+  typedef LinLog ZXInterpPolicy;
+  typedef LogCosLog YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-LogCos and Z-X policy interpolation policy is Log-Lin).
+ */
+struct LogLogCosLin : public TwoDInterpolationPolicyImpl<LogLogCos,LogLin>
+{
+  typedef LogLogCos ZYInterpPolicy;
+  typedef LogLin ZXInterpPolicy;
+  typedef LogCosLin YXInterpPolicy;
+
+  //! The name of the policy
+  static const std::string name();
+};
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-LogCos and Z-X policy interpolation policy is Log-Log).
+ */
+struct LogLogCosLog : public TwoDInterpolationPolicyImpl<LogLogCos,LogLog>
+{
+  typedef LogLogCos ZYInterpPolicy;
+  typedef LogLog ZXInterpPolicy;
+  typedef LogCosLog YXInterpPolicy;
 
   //! The name of the policy
   static const std::string name();

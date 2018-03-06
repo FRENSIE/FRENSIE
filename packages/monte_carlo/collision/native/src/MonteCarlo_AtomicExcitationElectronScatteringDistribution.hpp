@@ -11,12 +11,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The atomic excitation scattering distribution base class
-class AtomicExcitationElectronScatteringDistribution : public ElectronScatteringDistribution
+class AtomicExcitationElectronScatteringDistribution : public ElectronScatteringDistribution,
+                                                       public PositronScatteringDistribution
 {
 
 public:
@@ -47,12 +49,6 @@ public:
                       const double scattering_angle_cosine ) const
   { /* ... */ }
 
-  //! Evaluate the integrated cross section (b)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double precision) const
-  { /*...*/}
-
-
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
@@ -65,8 +61,13 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:

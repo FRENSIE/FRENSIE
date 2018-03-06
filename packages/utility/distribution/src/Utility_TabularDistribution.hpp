@@ -90,7 +90,7 @@ public:
 
   //! Assignment operator
   UnitAwareTabularDistribution& operator=(
-			   const UnitAwareTabularDistribution& dist_instance );
+                           const UnitAwareTabularDistribution& dist_instance );
 
   //! Destructor
   ~UnitAwareTabularDistribution()
@@ -162,7 +162,7 @@ protected:
   //! Test if the independent variable is compatible with Lin processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LinIndepVarProcessingTag ) const;
-  
+
   //! Test if the independent variable is compatible with Log processing
   bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;
@@ -257,8 +257,8 @@ private:
 
   // All possible instantiations are friends
   template<typename FriendInterpolationPolicy,
-	   typename FriendIndepUnit,
-	   typename FriendDepUnit>
+           typename FriendIndepUnit,
+           typename FriendDepUnit>
   friend class UnitAwareTabularDistribution;
 
   // The distribution type
@@ -295,7 +295,7 @@ BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareTabularDistribution, Utility, 0 );
 BOOST_SERIALIZATION_TABULAR_DISRIBUTION_EXPORT_STANDARD_KEY();
 
 //---------------------------------------------------------------------------//
-// Template inludes.
+// Template includes.
 //---------------------------------------------------------------------------//
 
 #include "Utility_TabularDistribution_def.hpp"

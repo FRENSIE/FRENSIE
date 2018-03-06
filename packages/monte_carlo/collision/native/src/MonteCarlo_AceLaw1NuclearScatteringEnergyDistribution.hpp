@@ -19,7 +19,7 @@
 
 namespace MonteCarlo{
 
-/*! \brief The inelastic equiprobable energy bins scattering enery
+/*! \brief The inelastic equiprobable energy bins scattering energy
  * distribution class (ENDF Law 1)
  * \ingroup ace_laws
  */

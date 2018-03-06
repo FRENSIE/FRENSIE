@@ -9,50 +9,37 @@
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_ElectronState.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
-class BremsstrahlungElectronScatteringDistribution : public ElectronScatteringDistribution
+class BremsstrahlungElectronScatteringDistribution : public ElectronScatteringDistribution,
+                                                     public PositronScatteringDistribution
 {
 
 public:
 
-  //! Typedef for the bremsstrahlung distribution
-  typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
+  //! Typedef for this type
+  typedef BremsstrahlungElectronScatteringDistribution ThisType;
 
-  //! Typedef for interpolation policy
-  typedef Utility::LinLog InterpolationPolicy;
+  //! Typedef for the two d distributions
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
-
-  //! Constructor with detailed tabular photon angular distribution
-  BremsstrahlungElectronScatteringDistribution(
-    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
-    const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
-    const double lower_cutoff_energy,
-    const double upper_cutoff_energy );
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool bank_secondary_particles = true );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
-    const int atomic_number );
+    const int atomic_number,
+    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const bool bank_secondary_particles = true );
 
   //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
@@ -64,18 +51,9 @@ public:
   //! Return the Max incoming energy
   double getMaxEnergy() const;
 
-  //! Return the max incoming electron energy for a given photon energy
-  double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
-
-  //! Evaluate the distribution
+  //! Evaluate the distribution for a given incoming and photon energy
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const
-  { /* ... */ }
-
-  //! Evaluate the PDF value for a given incoming and photon energy (efficient)
-  double evaluatePDF( const unsigned lower_bin_index,
-                      const double incoming_energy,
-                      const double photon_energy ) const;
+                   const double photon_energy ) const;
 
   //! Evaluate the PDF value for a given incoming and photon energy
   double evaluatePDF( const double incoming_energy,
@@ -83,8 +61,7 @@ public:
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const
-  { /* ... */ }
+                      const double scattering_angle ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -98,30 +75,16 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
 private:
-
-  // atomic number (Z)
-  double d_atomic_number;
-
-  // upper cutoff energy for the condensed-history method
-  double d_upper_cutoff_energy;
-
-  // lower cutoff energy for the condensed-history method
-  double d_lower_cutoff_energy;
-
-  // bremsstrahlung scattering distribution
-  BremsstrahlungDistribution d_bremsstrahlung_scattering_distribution;
-
-  // bremsstrahlung angular distribution of generated photons
-  std::shared_ptr<Utility::OneDDistribution> d_angular_distribution;
-
-  // Sample the outgoing photon angle from a tabular distribution
-  double SampleTabularAngle(  const double incoming_electron_energy,
-                              const double photon_energy ) const ;
 
   // Sample the outgoing photon angle from a dipole distribution
   double SampleDipoleAngle(  const double incoming_electron_energy,
@@ -137,10 +100,18 @@ private:
                                 const double parameter1,
                                 const double x ) const;
 
-  // The doppler broadening function pointer
-  boost::function<double ( const double, const double )>
+  // atomic number (Z)
+  double d_atomic_number;
+
+  // bremsstrahlung scattering distribution
+  std::shared_ptr<TwoDDist> d_bremsstrahlung_scattering_distribution;
+
+  // The outgoing angle function pointer
+  std::function<double ( const double, const double )>
                                         d_angular_distribution_func;
 
+  // Turn secondary particle on/off
+  bool d_bank_secondary_particles;
 };
 
 } // end MonteCarlo namespace

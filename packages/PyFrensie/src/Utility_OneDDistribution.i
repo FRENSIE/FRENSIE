@@ -23,8 +23,10 @@
 #include "Utility_PolynomialDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 
 // Add the Utility namespace to the global lookup scope
@@ -387,6 +389,30 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 %tabular_distribution_interface_setup( LogLog )
 
 //---------------------------------------------------------------------------//
+// Add support for the TabularCDFDistribution
+//---------------------------------------------------------------------------//
+// Import the Tabular CDF Distribution
+%import "Utility_TabularCDFDistribution.hpp"
+
+// There are many tabular cdf distributions - use this macro to set up each
+%define %tabular_cdf_distribution_interface_setup( INTERP )
+
+// Add a more detailed docstring for the constructor
+%feature("docstring")
+Utility::UnitAwareTabularCDFDistribution<Utility::INTERP,void,void>::UnitAwareTabularCDFDistribution
+"The independent values and dependent values should be stored in a NumPy array.
+"
+
+%advanced_tab_distribution_interface_setup( TabularCDFDistribution_ ## INTERP, TabularCDFDistribution, Utility::INTERP )
+
+%enddef
+
+%tabular_cdf_distribution_interface_setup( LinLin )
+%tabular_cdf_distribution_interface_setup( LinLog )
+%tabular_cdf_distribution_interface_setup( LogLin )
+%tabular_cdf_distribution_interface_setup( LogLog )
+
+//---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
 //---------------------------------------------------------------------------//
 // Ignore the static methods
@@ -448,6 +474,27 @@ input parameter are the following:
 // Standard distribution interface setup
 %standard_distribution_interface_setup( WattDistribution )
 
+//---------------------------------------------------------------------------//
+// Add support for the CoupledElasticDistribution
+//---------------------------------------------------------------------------//
+// Import the Coupled Elastic OneDDistribution
+%import "Utility_CoupledElasticDistribution.hpp"
+
+// There are many Coupled Elastic One D distributions - use this macro to set up each
+%define %coupled_elastic_distribution_interface_setup( INTERP )
+
+// Add a more detailed docstring for the constructor
+%feature("docstring")
+Utility::UnitAwareCoupledElasticDistribution<Utility::INTERP,void,void>::UnitAwareCoupledElasticDistribution
+"The independent values and dependent values should be stored in a NumPy array.
+"
+
+%advanced_tab_distribution_interface_setup( CoupledElasticDistribution_ ## INTERP, CoupledElasticDistribution, Utility::INTERP )
+
+%enddef
+
+%coupled_elastic_distribution_interface_setup( LinLin )
+%coupled_elastic_distribution_interface_setup( LinLog )
 //---------------------------------------------------------------------------//
 // end Utility_OneDDistribution.i
 //---------------------------------------------------------------------------//

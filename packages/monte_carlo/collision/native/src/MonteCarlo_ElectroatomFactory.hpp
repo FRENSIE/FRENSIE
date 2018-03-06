@@ -48,30 +48,30 @@ public:
 
   //! Create the map of electroatoms
   void createElectroatomMap(
-		    std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
-		    electroatom_map ) const;
+            std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+            electroatom_map ) const;
 
 private:
 
   // Create a electroatom from an ACE table
   void createElectroatomFromACETable(
-			  const std::string& electroatom_alias,
-			  const std::string& ace_file_path,
-			  const std::string& electroatomic_table_name,
-			  const int electroatomic_file_start_line,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
+              const std::string& electroatom_alias,
+              const std::string& ace_file_path,
+              const std::string& electroatomic_table_name,
+              const int electroatomic_file_start_line,
+              const double atomic_weight,
+              const Teuchos::RCP<AtomicRelaxationModelFactory>&
                           atomic_relaxation_model_factory,
-			  const SimulationProperties& properties );
+              const SimulationProperties& properties );
 
   // Create a electroatom from a Native table
   void createElectroatomFromNativeTable(
-			  const std::string& electroatom_alias,
-			  const std::string& ace_file_path,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
+              const std::string& electroatom_alias,
+              const std::string& ace_file_path,
+              const double atomic_weight,
+              const Teuchos::RCP<AtomicRelaxationModelFactory>&
                           atomic_relaxation_model_factory,
-			  const SimulationProperties& properties );
+              const SimulationProperties& properties );
 
   // The electroatom map
   std::unordered_map<std::string,Teuchos::RCP<Electroatom> >

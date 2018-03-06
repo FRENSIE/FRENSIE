@@ -13,7 +13,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
@@ -21,8 +22,14 @@ namespace MonteCarlo{
 //! \todo Write Unit Test once ENDL Data is available
 //! The screened rutherford elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ScreenedRutherfordElasticElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class ScreenedRutherfordElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+    BaseType;
 
 public:
 
@@ -39,7 +46,7 @@ public:
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
             scattering_distribution );
 
@@ -56,6 +63,10 @@ public:
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
+
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double scattering_angle_cosine ) const;
 
   //! Simulate the reaction
   void react( ElectronState& electron,

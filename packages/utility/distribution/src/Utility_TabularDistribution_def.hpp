@@ -20,8 +20,6 @@
 
 BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareTabularDistribution, Utility );
 
-namespace Utility{
-
 // Basic constructor (potentially dangerous)
 /*! \details The independent values are assumed to be sorted (lowest to
  * highest). If cdf values are provided a pdf will be calculated. Because
@@ -31,8 +29,8 @@ namespace Utility{
  * the distribution)!
  */
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
 		  const std::vector<double>& independent_values,
 		  const std::vector<double>& dependent_values )
@@ -50,8 +48,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Constructor
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
 		  const std::vector<InputIndepQuantity>& independent_values,
@@ -75,8 +73,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
  * are completely taken care of by boost::units)!
  */
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
  const UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
@@ -92,7 +90,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   std::vector<InputDepQuantity> input_dep_values;
 
   dist_instance.reconstructOriginalDistribution( input_indep_values,
-						 input_dep_values );
+                                                 input_dep_values );
 
   this->initializeDistribution( input_indep_values, input_dep_values );
 
@@ -101,8 +99,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Copy constructor (copying from unitless distribution only)
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
   : d_distribution(),
     d_norm_constant()
@@ -111,7 +109,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   std::vector<double> input_indep_values, input_dep_values;
 
   unitless_dist_instance.reconstructOriginalDistribution( input_indep_values,
-							  input_dep_values );
+                                                          input_dep_values );
 
   this->initializeDistributionFromRawData( input_indep_values,
                                            input_dep_values );
@@ -127,8 +125,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
  * of the boost::units::quantity, which also has to deal with this issue.
  */
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_distribution )
 {
@@ -137,8 +135,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Assignment operator
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>&
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator=(
   const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& dist_instance )
@@ -154,8 +152,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Evaluate the distribution
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::DepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluate(
  const typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
@@ -174,8 +172,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
     end = d_distribution.end();
 
     lower_bin_boundary = Search::binaryLowerBound<0>( start,
-							  end,
-							  indep_var_value );
+                                                      end,
+                                                      indep_var_value );
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
@@ -186,17 +184,17 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
     DepQuantity upper_dep_value = Utility::get<2>(*upper_bin_boundary);
 
     return InterpolationPolicy::interpolate( lower_indep_value,
-					     upper_indep_value,
-					     indep_var_value,
-					     lower_dep_value,
-					     upper_dep_value );
+                                             upper_indep_value,
+                                             indep_var_value,
+                                             lower_dep_value,
+                                             upper_dep_value );
   }
 }
 
 // Evaluate the PDF
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::InverseIndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluatePDF(
  const typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
@@ -206,8 +204,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Evaluate the CDF
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 double UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCDF(
   const typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
@@ -222,9 +220,8 @@ double UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,Dependen
     end = d_distribution.end();
 
     lower_bin_boundary = Search::binaryLowerBound<0>( start,
-							  end,
-							  indep_var_value );
-
+                                                      end,
+                                                      indep_var_value );
     IndepQuantity indep_diff =
       indep_var_value - Utility::get<0>(*lower_bin_boundary);
 
@@ -237,8 +234,8 @@ double UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,Dependen
 
 // Return a random sample from the distribution
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 inline typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sample() const
 {
@@ -251,11 +248,11 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Return a random sample and record the number of trials
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-						       DistributionTraits::Counter& trials ) const
+                                    DistributionTraits::Counter& trials ) const
 {
   ++trials;
 
@@ -264,8 +261,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Return a random sample and bin index from the distribution
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
 					    size_t& sampled_bin_index ) const
@@ -277,11 +274,11 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Return a sample from the distribution at the given CDF value
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumber(
-					     const double random_number ) const
+                                             const double random_number ) const
 {
   size_t dummy_index;
 
@@ -290,8 +287,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Return a random sample from the corresponding CDF in a subrange
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleInSubrange(
  const typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
@@ -302,13 +299,13 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleWithRandomNumberInSubrange( random_number,
-						 max_indep_var );
+                                                 max_indep_var );
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 inline typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange(
  const double random_number,
@@ -331,8 +328,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Return a random sample using the random number and record the bin index
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleImplementation(
 					    double random_number,
@@ -351,8 +348,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   end = d_distribution.end();
 
   lower_bin_boundary = Search::binaryLowerBound<1>( start,
-							 end,
-							 scaled_random_number);
+                                                    end,
+                                                    scaled_random_number);
 
   // Calculate the sampled bin index
   sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
@@ -397,8 +394,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Return the upper bound of the distribution independent variable
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
@@ -407,8 +404,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Return the lower bound of the distribution independent variable
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
@@ -427,8 +424,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
 // Test if the distribution is continuous
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isContinuous() const
 {
   return true;
@@ -436,10 +433,10 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Method for placing the object in an output stream
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::toStream(
-						       std::ostream& os ) const
+                                                       std::ostream& os ) const
 {
   std::vector<IndepQuantity> independent_values;
   std::vector<DepQuantity> dependent_values;
@@ -507,8 +504,8 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Initialize the distribution
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromRawData(
 			      const std::vector<double>& independent_values,
 			      const std::vector<double>& dependent_values )
@@ -533,8 +530,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Initialize the distribution
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution(
 		  const std::vector<InputIndepQuantity>& independent_values,
@@ -546,7 +543,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   testPrecondition( independent_values.size() == dependent_values.size() );
   // Make sure that the independent values are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					     independent_values.end() ) );
+                                             independent_values.end() ) );
 
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
@@ -570,8 +567,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Reconstruct original distribution
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
 			 std::vector<IndepQuantity>& independent_values,
 			 std::vector<DepQuantity>& dependent_values ) const
@@ -590,8 +587,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Reconstruct original distribution w/o units
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
 			       std::vector<double>& independent_values,
 			       std::vector<double>& dependent_values ) const
@@ -612,8 +609,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Convert the unitless values to the correct units
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 template<typename Quantity>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues(
 		                 const std::vector<double>& unitless_values,
@@ -629,8 +626,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Test if the dependent variable can be zero within the indep bounds
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const
 {
   bool possible_zero = false;
@@ -650,18 +647,18 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Test if the independent variable is compatible with Lin processing
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
                                          const LinIndepVarProcessingTag ) const
 {
   return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LinIndepVarProcessingTag>::value;
 }
-  
+
 // Test if the independent variable is compatible with Log processing
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
                                          const LogIndepVarProcessingTag ) const
 {
@@ -670,8 +667,8 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Test if the dependent variable is compatible with Lin processing
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                            const LinDepVarProcessingTag ) const
 {
@@ -680,8 +677,8 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
 // Test if the dependent variable is compatible with Log processing
 template<typename InterpolationPolicy,
-	 typename IndependentUnit,
-	 typename DependentUnit>
+         typename IndependentUnit,
+         typename DependentUnit>
 bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                            const LogDepVarProcessingTag ) const
 {

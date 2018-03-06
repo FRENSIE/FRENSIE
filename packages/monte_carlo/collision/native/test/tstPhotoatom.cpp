@@ -599,6 +599,23 @@ TEUCHOS_UNIT_TEST( Photoatom, collideSurvivalBias )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atom can be relaxed
+TEUCHOS_UNIT_TEST( Photoatom, relaxAtom )
+{
+  Teuchos::RCP<MonteCarlo::PhotonState> photon(
+                                            new MonteCarlo::PhotonState( 0 ) );
+  photon->setEnergy( exp( -1.214969212306E+01 ) );
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setWeight( 1.0 );
+
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
+  MonteCarlo::ParticleBank bank;
+
+  ace_photoatom->relaxAtom( vacancy, *photon, bank );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a photoatom can be constructed from a core
 TEUCHOS_UNIT_TEST( Photoatom, core_constructor )
 {
@@ -735,7 +752,8 @@ int main( int argc, char** argv )
 	    new MonteCarlo::PairProductionPhotoatomicReaction<Utility::LogLog>(
 							energy_grid,
 							pp_cross_section,
-							pp_threshold_index ) );
+							pp_threshold_index,
+							false ) );
 
     // Create the reaction maps
     MonteCarlo::Photoatom::ReactionMap scattering_reactions,

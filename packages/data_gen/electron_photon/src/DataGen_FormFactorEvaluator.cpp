@@ -59,7 +59,7 @@ double FormFactorEvaluator::evaluateFormFactorSquared(
 
 // Return a function that wraps the evaluation method
 std::function<double(double)>
-FormFactorEvaluator::getFormFactorSquaredEvalutionWrapper() const
+FormFactorEvaluator::getFormFactorSquaredEvaluationWrapper() const
 {
   return std::bind<double>( &FormFactorEvaluator::evaluateFormFactorSquared,
                             std::cref( *this ),

@@ -113,10 +113,33 @@ TEUCHOS_UNIT_TEST( ParticleTrackerHDF5FileHandler, constructor_ownership )
   // Make sure file has not been overwritten
   std::string data_location = "/Particle_Tracker/0/0/0/0/";
 
-  std::vector< double > sample_x_pos;
-  file_handler->getXPositionData( data_location, sample_x_pos );
+  std::vector< double > sample;
+  file_handler->getXPositionData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, x_pos );
 
-  UTILITY_TEST_COMPARE_ARRAYS( sample_x_pos, x_pos );
+  file_handler->getYPositionData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, y_pos );
+
+  file_handler->getZPositionData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, z_pos );
+
+  file_handler->getXDirectionData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, x_dir );
+
+  file_handler->getYDirectionData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, y_dir );
+
+  file_handler->getZDirectionData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, z_dir );
+
+  file_handler->getEnergyData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, energy );
+
+  file_handler->getCollisionNumberData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, col_num );
+
+  file_handler->getWeightData( data_location, sample );
+  UTILITY_TEST_COMPARE_ARRAYS( sample, weight );
 
   file_handler.reset();
 

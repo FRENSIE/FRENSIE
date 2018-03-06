@@ -9,6 +9,9 @@ FRENSIE_ADD_TEST(InterpolationPolicy)
 FRENSIE_ADD_TEST_EXECUTABLE(StandardInterpolator DEPENDS tstStandardInterpolator.cpp)
 FRENSIE_ADD_TEST(StandardInterpolator)
 
+FRENSIE_ADD_EXECUTABLE(CosineInterpolationPolicy DEPENDS tstCosineInterpolationPolicy.cpp)
+FRENSIE_ADD_TEST(CosineInterpolationPolicy)
+
 FRENSIE_ADD_TEST_EXECUTABLE(HistogramInterpolator DEPENDS tstHistogramInterpolator.cpp)
 FRENSIE_ADD_TEST(HistogramInterpolator)
 
@@ -41,3 +44,5 @@ FRENSIE_ADD_TEST(LogLogLogTwoDInterpolationPolicy)
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(utility_interp)
 
+FRENSIE_ADD_EXECUTABLE(LogLogCosLogTwoDInterpolationPolicy DEPENDS tstLogLogCosLogTwoDInterpolationPolicy.cpp)
+FRENSIE_ADD_TEST(LogLogCosLogTwoDInterpolationPolicy)

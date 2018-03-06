@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_ElectronVoltUnit.hpp
-//! \author Alex Robison
+//! \author Alex Robinson
 //! \brief  The electron volt unit declaration
 //!
 //---------------------------------------------------------------------------//

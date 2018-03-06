@@ -13,31 +13,38 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The cutoff elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class CutoffElasticElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class CutoffElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
+
+private:
+
+  // Typedef for the base class type
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+    BaseType;
 
 public:
 
   //! Basic Constructor
   CutoffElasticElectroatomicReaction(
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             scattering_distribution );
 
   //! Constructor
   CutoffElasticElectroatomicReaction(
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             scattering_distribution );
@@ -68,8 +75,11 @@ public:
   double getCrossSection( const double energy,
                           const unsigned bin_index ) const;
 
-private:
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double scattering_angle_cosine ) const;
 
+private:
 
   // The cutoff_elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>

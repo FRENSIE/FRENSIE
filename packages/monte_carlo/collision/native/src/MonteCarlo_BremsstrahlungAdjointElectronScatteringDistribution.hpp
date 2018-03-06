@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
+#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -22,31 +22,33 @@ class BremsstrahlungAdjointElectronScatteringDistribution : public AdjointElectr
 public:
 
   //! Typedef for the adjoint bremsstrahlung distribution
-  typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
   //! Constructor
   BremsstrahlungAdjointElectronScatteringDistribution(
-     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
+    const std::shared_ptr<TwoDDist>& adjoint_brem_scatter_dist );
 
   //! Destructor
   virtual ~BremsstrahlungAdjointElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Return the min incoming energy
+  double getMinEnergy() const;
+
+  //! Return the Max incoming energy
+  double getMaxEnergy() const;
+
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double outgoing_energy ) const
-  { /* ... */ }
+                   const double outgoing_energy ) const;
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy ) const
-  { /* ... */ }
+                      const double outgoing_energy ) const;
 
-  //! Evaluate the integrated cross section (b)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double precision) const
-  { /* ... */ }
-
+  //! Evaluate the PDF
+  double evaluateCDF( const double incoming_energy,
+                      const double outgoing_energy ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -67,8 +69,7 @@ public:
 private:
 
   // bremsstrahlung scattering distribution
-  BremsstrahlungDistribution d_bremsstrahlung_scattering_distribution;
-
+  std::shared_ptr<TwoDDist> d_adjoint_brem_scatter_dist;
 };
 
 } // end MonteCarlo namespace

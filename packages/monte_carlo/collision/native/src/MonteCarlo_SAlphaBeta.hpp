@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_S_ALHPA_BETA_HPP
+#ifndef MONTE_CARLO_S_ALPHA_BETA_HPP
 #define MONTE_CARLO_S_ALPHA_BETA_HPP
 
 namespace MonteCarlo{
@@ -21,7 +21,7 @@ class SAlphaBeta
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_S_ALHPA_BETA_HPP
+#endif // end MONTE_CARLO_S_ALPHA_BETA_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SAlphaBeta.hpp

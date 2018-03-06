@@ -14,7 +14,7 @@ namespace Data{
 
 // Convert an ENDF designator to a Subshell enumeration
 SubshellType convertENDFDesignatorToSubshellEnum(
-					       const unsigned endf_designator )
+               const unsigned endf_designator )
 {
   switch( endf_designator )
   {
@@ -63,7 +63,7 @@ SubshellType convertENDFDesignatorToSubshellEnum(
 
 // Convert an EADL designator to a Subshell enumeration
 SubshellType convertEADLDesignatorToSubshellEnum(
-					       const unsigned eadl_designator )
+               const unsigned eadl_designator )
 {
   switch( eadl_designator )
   {
@@ -113,7 +113,7 @@ SubshellType convertEADLDesignatorToSubshellEnum(
 
 // Convert an EADL designator to an ENDF designator
 unsigned convertEADLDesignatorToENDFDesignator(
-					       const unsigned eadl_designator )
+               const unsigned eadl_designator )
 {
   switch( eadl_designator )
   {

@@ -93,7 +93,7 @@ double NeutronMaterial::getNumberDensity() const
   return d_number_density;
 }
 
-// Return the macroscopic total crosss section (1/cm)
+// Return the macroscopic total cross section (1/cm)
 double NeutronMaterial::getMacroscopicTotalCrossSection(
 						    const double energy ) const
 {

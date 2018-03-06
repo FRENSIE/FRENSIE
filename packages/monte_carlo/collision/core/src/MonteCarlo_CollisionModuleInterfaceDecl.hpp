@@ -17,11 +17,15 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PositronState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
+#include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
+#include "MonteCarlo_PositronatomicReactionType.hpp"
 
 /*! \defgroup collision_module Collision Module
  * \ingroup physics_simulation_modules
@@ -52,7 +56,7 @@ public:
   //! The internal material handle class (used within FRENSIE)
   typedef ModuleTraits::InternalMaterialHandle InternalMaterialHandle;
 
-  //! The value of an invalie external material handle
+  //! The value of an invalid external material handle
   static const ExternalMaterialHandle invalid_external_material_handle = 0;
 
   //! Set the collision handler instance

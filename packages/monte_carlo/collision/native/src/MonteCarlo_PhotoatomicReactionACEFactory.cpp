@@ -65,7 +65,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   // Create the incoherent reaction
   incoherent_reaction.reset(new IncoherentPhotoatomicReaction<Utility::LogLog>(
 						      energy_grid,
-			                              incoherent_cross_section,
+						      incoherent_cross_section,
 						      threshold_energy_index,
 						      grid_searcher,
 						      distribution ) );

@@ -110,7 +110,7 @@ std::string convertAdjointPhotoatomicReactionEnumToString(
     return "Triplet Production Photoatomic Reaction";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the adjoint photoatomic rection "
+                     "Error: cannot convert the adjoint photoatomic reaction "
                      "type to a string!" );
   }
 }
@@ -207,7 +207,7 @@ convertSubshellEnumToIncoherentAdjointPhotoatomicReactionEnum(
                      "reaction!" );
   }
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

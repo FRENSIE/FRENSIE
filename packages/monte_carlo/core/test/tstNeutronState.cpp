@@ -33,6 +33,15 @@ TEUCHOS_UNIT_TEST( NeutronState, getParticleType )
 }
 
 //---------------------------------------------------------------------------//
+// Get the particle charge
+TEUCHOS_UNIT_TEST( NeutronState, getCharge )
+{
+  MonteCarlo::NeutronState particle( 1ull );
+
+  TEST_EQUALITY_CONST( particle.getCharge(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Get the particle speed
 TEUCHOS_UNIT_TEST( NeutronState, getSpeed )
 {
@@ -115,6 +124,7 @@ TEUCHOS_UNIT_TEST( NeutronState, clone )
   TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
   TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getCharge(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
   TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
@@ -146,6 +156,7 @@ TEUCHOS_UNIT_TEST( NeutronState, clone_new_hist )
   TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
   TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getCharge(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
   TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
@@ -191,6 +202,7 @@ TEUCHOS_UNIT_TEST( NeutronState, archive )
   TEST_EQUALITY_CONST( loaded_particle.getYDirection(), 0.0 );
   TEST_EQUALITY_CONST( loaded_particle.getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getCharge(), 0 );
   TEST_EQUALITY_CONST( loaded_particle.getTime(), 0.5 );
   TEST_EQUALITY_CONST( loaded_particle.getCollisionNumber(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getGenerationNumber(), 0.0 );
@@ -227,6 +239,8 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
 		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() );
   TEST_EQUALITY( particle_gen_a_copy.getSpeed(),
 		 particle_gen_a.getSpeed() );
   TEST_EQUALITY( particle_gen_a_copy.getTime(),
@@ -255,6 +269,8 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
 		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_b.getCharge(),
+		 particle_gen_a.getCharge() );
   TEST_EQUALITY( particle_gen_b.getSpeed(),
 		 particle_gen_a.getSpeed() );
   TEST_EQUALITY( particle_gen_b.getTime(),
@@ -283,6 +299,8 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 		 particle_gen_b.getZDirection() );
   TEST_EQUALITY( particle_gen_c.getEnergy(),
 		 particle_gen_b.getEnergy() );
+  TEST_EQUALITY( particle_gen_c.getCharge(),
+		 particle_gen_b.getCharge() );
   TEST_EQUALITY( particle_gen_c.getSpeed(),
 		 particle_gen_b.getSpeed() );
   TEST_EQUALITY( particle_gen_c.getTime(),
@@ -322,6 +340,8 @@ TEUCHOS_UNIT_TEST( NeutronState, assignment_operator )
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
 		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_a_copy.getCharge(),
+		 particle_gen_a.getCharge() );
   TEST_EQUALITY( particle_gen_a_copy.getTime(),
 		 particle_gen_a.getTime() );
   TEST_EQUALITY( particle_gen_a_copy.getCollisionNumber(),

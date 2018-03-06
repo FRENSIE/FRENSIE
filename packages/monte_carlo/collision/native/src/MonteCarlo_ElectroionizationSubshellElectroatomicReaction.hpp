@@ -23,6 +23,12 @@ template<typename InterpPolicy, bool processed_cross_section = false>
 class ElectroionizationSubshellElectroatomicReaction : public ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
 
+private:
+
+  // Typedef for the base class type
+typedef ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>
+    BaseType;
+
 public:
 
   //! Basic Constructor
@@ -50,20 +56,13 @@ public:
   { /* ... */ }
 
   //! Return the differential cross section
-  double getDifferentialCrossSection(
-    const double incoming_energy,
-    const double outgoing_energy ) const;
-
-  //! Return the differential cross section (efficient)
-  double getDifferentialCrossSection(
-    const unsigned incoming_energy_bin,
-    const double incoming_energy,
-    const double outgoing_energy ) const;
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double outgoing_energy ) const;
 
   //! Simulate the reaction
   void react( ElectronState& electron,
-	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
+              ParticleBank& bank,
+              Data::SubshellType& shell_of_interaction ) const;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;

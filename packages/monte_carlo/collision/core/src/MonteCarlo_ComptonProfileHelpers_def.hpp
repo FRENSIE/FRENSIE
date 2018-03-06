@@ -24,7 +24,7 @@ namespace MonteCarlo{
  * of the momentum grid. To ensure that they still integrate to 1.0 they are
  * also usually multiplied by 2. If only half of the grid is given and it
  * it is not multiplied by two, the doubled_half_profile parameter should
- * be passed in as false. Additionally, the momemtum grid should be in
+ * be passed in as false. Additionally, the momentum grid should be in
  * units of me*e^2/h_bar (atomic units) and not me*c units. The Compton
  * profile should have units of h_bar/(me*e^2) and not 1/(me*c) units.
  */

@@ -201,7 +201,7 @@ void mapTwoColumnTestingArray(
 
   processTwoColumnTestingArray( shell, data );
 
-  for( int i = 0; i < shell.size(); i++ )
+  for( int i = 0; i < shell.size(); ++i )
   {
     subshells[i] = shell[i];
     subshell_data.emplace( shell[i], data[i] );
@@ -218,7 +218,7 @@ void mapThreeColumnTestingArray(
 
   processThreeColumnTestingArray( data_bin, indep, dep );
 
-  for( int i = 0; i < data_bin.size(); i++ )
+  for( int i = 0; i < data_bin.size(); ++i )
   {
     bin[i] = data_bin[i];
     indep_true.emplace( bin[i], indep[i] );
@@ -237,7 +237,7 @@ void mapThreeColumnTestingArray(
 
   processThreeColumnTestingVector( bin, indep, dep );
 
-  for( int i = 0; i < 2; i++ )
+  for( int i = 0; i < 2; ++i )
   {
     indep_point.push_back( indep[i] );
     dep_point.push_back( dep[i] );
@@ -249,7 +249,7 @@ void mapThreeColumnTestingArray(
   indep_point.clear();
   dep_point.clear();
 
-  for( int i = 2; i < bin.size(); i++ )
+  for( int i = 2; i < bin.size(); ++i )
   {
     indep_point.push_back( indep[i] );
     dep_point.push_back( dep[i] );
@@ -275,7 +275,7 @@ void mapFourColumnTestingArray(
 
   processFourColumnTestingArray( bin_1, bin_2, indep_point, dep_point );
 
-  for( int i = 0; i < 3; i++ )
+  for( int i = 0; i < 3; ++i )
   {
     sec_bin.push_pack( bin_2[i] );
 
@@ -292,7 +292,7 @@ void mapFourColumnTestingArray(
     indep.clear();
     dep.clear();
 
-  for( int i = 3; i < bin.size(); i++ )
+  for( int i = 3; i < bin.size(); ++i )
   {
     bin.push_back( bin_1[i] );
     secondary_bin.emplace( bin.back(), bin_2[i] );
@@ -818,7 +818,7 @@ FRENSIE_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 
   FRENSIE_CHECK_EQUAL( bin, bin_true );
 
-  for ( int i = 0; i < bin.size(); i++ )
+  for ( int i = 0; i < bin.size(); ++i )
   {
     double indep_result, true_indep_result;
     indep_result = indep.find(bin[i])->second.find(secondary_bin[i])->second;
@@ -829,7 +829,7 @@ FRENSIE_UNIT_TEST( ENDLFileHandler, mapFourColumnTable )
 
   FRENSIE_CHECK_EQUAL( secondary_bin, secondary_bin_true );
 
-  for ( int i = 0; i < bin.size(); i++ )
+  for ( int i = 0; i < bin.size(); ++i )
   {
     double dep_result, true_dep_result;
     dep_result = dep.find(bin[i])->second.find(secondary_bin[i])->second;

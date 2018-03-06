@@ -11,7 +11,7 @@
 
 namespace MonteCarlo {
 
-/*! The histogram intropolation policy
+/*! The histogram interpolation policy
  * \ingroup ace_laws
  */
 struct AceLaw44HistogramInterpolationPolicy

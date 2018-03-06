@@ -70,7 +70,7 @@ private:
   // The message output stream
   std::ostream* d_os_message;
 };
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTOATOM_FACTORY_HPP

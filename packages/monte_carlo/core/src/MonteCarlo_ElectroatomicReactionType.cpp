@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ElectroatomicReactionType.cpp
 //! \author Luke Kersting
-//! \brief  Electroatomic reaction type helper function definitions.
+//! \brief  Electro-atomic reaction type helper function definitions.
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,120 +18,122 @@ namespace MonteCarlo{
 
 // Convert a ElectroatomicReactionType enum to a string
 std::string convertElectroatomicReactionEnumToString(
-				       const ElectroatomicReactionType reaction )
+                       const ElectroatomicReactionType reaction )
 {
   switch( reaction )
   {
   case TOTAL_ELECTROATOMIC_REACTION:
-    return "Total Electroatomic Reaction";
+    return "Total Electro-atomic Reaction";
   case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION:
-    return "Total Absorption Electroatomic Reaction";
-  case ANALOG_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Analog Elastic Electroatomic Reaction";
+    return "Total Absorption Electro-atomic Reaction";
+  case COUPLED_ELASTIC_ELECTROATOMIC_REACTION:
+    return "Coupled Elastic Electro-atomic Reaction";
   case HYBRID_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Hybrid Elastic Electroatomic Reaction";
+    return "Hybrid Elastic Electro-atomic Reaction";
+  case DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION:
+    return "Decoupled Elastic Electro-atomic Reaction";
   case CUTOFF_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Cutoff Elastic Electroatomic Reaction";
+    return "Cutoff Elastic Electro-atomic Reaction";
   case SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Screened Rutherford Elastic Electroatomic Reaction";
+    return "Screened Rutherford Elastic Electro-atomic Reaction";
   case MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Moment Preserving Elastic Electroatomic Reaction";
+    return "Moment Preserving Elastic Electro-atomic Reaction";
   case BREMSSTRAHLUNG_ELECTROATOMIC_REACTION:
-    return "Bremsstrahlung Electroatomic Reaction";
+    return "Bremsstrahlung Electro-atomic Reaction";
   case POSITRON_ANNIHILATION_ELECTROATOMIC_REACTION:
-    return "Positron Annihilation Electroatomic Reaction";
+    return "Positron Annihilation Electro-atomic Reaction";
   case ATOMIC_EXCITATION_ELECTROATOMIC_REACTION:
-    return "Atomic Excitation Electroatomic Reaction";
+    return "Atomic Excitation Electro-atomic Reaction";
   case TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "Total Electroionization Electroatomic Reaction";
+    return "Total Electro-ionization Electro-atomic Reaction";
   case K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "K Subshell Electroionization Electroatomic Reaction";
+    return "K Subshell Electro-ionization Electro-atomic Reaction";
   case L1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "L1 Subshell Electroionization Electroatomic Reaction";
+    return "L1 Subshell Electro-ionization Electro-atomic Reaction";
   case L2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "L2 Subshell Electroionization Electroatomic Reaction";
+    return "L2 Subshell Electro-ionization Electro-atomic Reaction";
   case L3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "L3 Subshell Electroionization Electroatomic Reaction";
+    return "L3 Subshell Electro-ionization Electro-atomic Reaction";
   case M1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "M1 Subshell Electroionization Electroatomic Reaction";
+    return "M1 Subshell Electro-ionization Electro-atomic Reaction";
   case M2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "M2 Subshell Electroionization Electroatomic Reaction";
+    return "M2 Subshell Electro-ionization Electro-atomic Reaction";
   case M3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "M3 Subshell Electroionization Electroatomic Reaction";
+    return "M3 Subshell Electro-ionization Electro-atomic Reaction";
   case M4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "M4 Subshell Electroionization Electroatomic Reaction";
+    return "M4 Subshell Electro-ionization Electro-atomic Reaction";
   case M5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "M5 Subshell Electroionization Electroatomic Reaction";
+    return "M5 Subshell Electro-ionization Electro-atomic Reaction";
   case N1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "N1 Subshell Electroionization Electroatomic Reaction";
+    return "N1 Subshell Electro-ionization Electro-atomic Reaction";
   case N2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "N2 Subshell Electroionization Electroatomic Reaction";
+    return "N2 Subshell Electro-ionization Electro-atomic Reaction";
   case N3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "N3 Subshell Electroionization Electroatomic Reaction";
+    return "N3 Subshell Electro-ionization Electro-atomic Reaction";
   case N4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "N4 Subshell Electroionization Electroatomic Reaction";
+    return "N4 Subshell Electro-ionization Electro-atomic Reaction";
   case N5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "N5 Subshell Electroionization Electroatomic Reaction";
+    return "N5 Subshell Electro-ionization Electro-atomic Reaction";
   case N6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "N6 Subshell Electroionization Electroatomic Reaction";
+    return "N6 Subshell Electro-ionization Electro-atomic Reaction";
   case N7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "N7 Subshell Electroionization Electroatomic Reaction";
+    return "N7 Subshell Electro-ionization Electro-atomic Reaction";
   case O1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O1 Subshell Electroionization Electroatomic Reaction";
+    return "O1 Subshell Electro-ionization Electro-atomic Reaction";
   case O2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O2 Subshell Electroionization Electroatomic Reaction";
+    return "O2 Subshell Electro-ionization Electro-atomic Reaction";
   case O3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O3 Subshell Electroionization Electroatomic Reaction";
+    return "O3 Subshell Electro-ionization Electro-atomic Reaction";
   case O4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O4 Subshell Electroionization Electroatomic Reaction";
+    return "O4 Subshell Electro-ionization Electro-atomic Reaction";
   case O5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O5 Subshell Electroionization Electroatomic Reaction";
+    return "O5 Subshell Electro-ionization Electro-atomic Reaction";
   case O6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O6 Subshell Electroionization Electroatomic Reaction";
+    return "O6 Subshell Electro-ionization Electro-atomic Reaction";
   case O7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O7 Subshell Electroionization Electroatomic Reaction";
+    return "O7 Subshell Electro-ionization Electro-atomic Reaction";
   case O8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O8 Subshell Electroionization Electroatomic Reaction";
+    return "O8 Subshell Electro-ionization Electro-atomic Reaction";
   case O9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "O9 Subshell Electroionization Electroatomic Reaction";
+    return "O9 Subshell Electro-ionization Electro-atomic Reaction";
   case P1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P1 Subshell Electroionization Electroatomic Reaction";
+    return "P1 Subshell Electro-ionization Electro-atomic Reaction";
   case P2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P2 Subshell Electroionization Electroatomic Reaction";
+    return "P2 Subshell Electro-ionization Electro-atomic Reaction";
   case P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P3 Subshell Electroionization Electroatomic Reaction";
+    return "P3 Subshell Electro-ionization Electro-atomic Reaction";
   case P4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P4 Subshell Electroionization Electroatomic Reaction";
+    return "P4 Subshell Electro-ionization Electro-atomic Reaction";
   case P5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P5 Subshell Electroionization Electroatomic Reaction";
+    return "P5 Subshell Electro-ionization Electro-atomic Reaction";
   case P6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P6 Subshell Electroionization Electroatomic Reaction";
+    return "P6 Subshell Electro-ionization Electro-atomic Reaction";
   case P7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P7 Subshell Electroionization Electroatomic Reaction";
+    return "P7 Subshell Electro-ionization Electro-atomic Reaction";
   case P8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P8 Subshell Electroionization Electroatomic Reaction";
+    return "P8 Subshell Electro-ionization Electro-atomic Reaction";
   case P9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P9 Subshell Electroionization Electroatomic Reaction";
+    return "P9 Subshell Electro-ionization Electro-atomic Reaction";
   case P10_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P10 Subshell Electroionization Electroatomic Reaction";
+    return "P10 Subshell Electro-ionization Electro-atomic Reaction";
   case P11_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "P11 Subshell Electroionization Electroatomic Reaction";
+    return "P11 Subshell Electro-ionization Electro-atomic Reaction";
   case Q1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "Q1 Subshell Electroionization Electroatomic Reaction";
+    return "Q1 Subshell Electro-ionization Electro-atomic Reaction";
   case Q2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "Q2 Subshell Electroionization Electroatomic Reaction";
+    return "Q2 Subshell Electro-ionization Electro-atomic Reaction";
   case Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
-    return "Q3 Subshell Electroionization Electroatomic Reaction";
+    return "Q3 Subshell Electro-ionization Electro-atomic Reaction";
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: cannot convert the Electroatomic reaction type "
-		     "to a string!" );
+                     "Error: cannot convert the Electro-atomic reaction type "
+                     "to a string!" );
   }
 }
 
 // Convert a Data::SubshellType enum to a ElectroatomicReactionType enum
-ElectroatomicReactionType convertSubshellEnumToElectroatomicReactionEnum(
-						  const Data::SubshellType subshell )
+ElectroatomicReactionType convertSubshellEnumToElectroionizationElectroatomicReactionEnum(
+                                            const Data::SubshellType subshell )
 {
   switch( subshell )
   {
@@ -176,8 +178,8 @@ ElectroatomicReactionType convertSubshellEnumToElectroatomicReactionEnum(
   case Data::Q3_SUBSHELL: return Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: the invalid shell does not have a corresponding "
-		     "Electroionization Electroatomic reaction!" );
+             "Error: the invalid shell does not have a corresponding "
+             "Electro-ionization Electro-atomic reaction!" );
   }
 }
 

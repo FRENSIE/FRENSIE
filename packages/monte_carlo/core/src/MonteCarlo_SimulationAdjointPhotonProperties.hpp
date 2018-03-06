@@ -73,7 +73,7 @@ private:
   // The absolute mimimum adjoint photon energy (MeV)
   static const double s_absolute_min_adjoint_photon_energy;
 
-  // The absolume maximum adjoint photon energy (MeV)
+  // The absolute maximum adjoint photon energy (MeV)
   static const double s_absolute_max_adjoint_photon_energy;
 
   // The minimum adjoint photon energy (MeV)
@@ -91,7 +91,7 @@ private:
   // The critical line energies
   Teuchos::Array<double> d_critical_line_energies;
 };
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP

@@ -57,20 +57,22 @@ public:
                         ThisType::getDefaultIndepValues<double>(),
 			const std::vector<double>& dependent_values =
                         ThisType::getDefaultDepValues<double>(),
-			const bool interpret_dependent_values_as_cdf = false );
+			const bool interpret_dependent_values_as_cdf = false,
+                        const bool treat_as_continuous = false );
 
   //! CDF constructor
   template<typename InputIndepQuantity>
   UnitAwareDiscreteDistribution(
 	      const std::vector<InputIndepQuantity>& independent_quantities,
-	      const std::vector<double>& cdf_values );
+	      const std::vector<double>& cdf_values,
+              const bool treat_as_continuous = false );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareDiscreteDistribution(
 	      const std::vector<InputIndepQuantity>& independent_quantities,
-	      const std::vector<InputDepQuantity>& dependent_quantities );
-
+	      const std::vector<InputDepQuantity>& dependent_quantities,
+              const bool treat_as_continuous = false );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -227,6 +229,9 @@ private:
 
   // The distribution normalization constant
   DepQuantity d_norm_constant;
+
+  // Bool to treat the distribution as continuous or not
+  bool d_continuous;
 };
 
 /*! The discrete distribution (unit-agnostic)

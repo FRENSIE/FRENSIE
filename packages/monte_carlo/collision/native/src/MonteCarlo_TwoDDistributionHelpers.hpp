@@ -16,10 +16,10 @@
 
 namespace MonteCarlo{
 
-//! Typedef for a 2-D distribution 
-typedef std::vector<Utility::Pair<double, 
-                       std::shared_ptr<const Utility::TabularOneDDistribution> > > 
-TwoDDistribution; 
+//! Typedef for a 2-D distribution
+typedef std::vector<Utility::Pair<double,
+                       std::shared_ptr<const Utility::TabularOneDDistribution> > >
+TwoDDistribution;
 
 //! Return the primary grid values of the 2-D distribution
 template<typename DependentTwoDDistribution>
@@ -116,6 +116,32 @@ double evaluateTwoDDistributionCorrelated(
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
+//! Evaluate a correlated from a two dimensional distribution
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelated(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution );
+
+//! Evaluate a correlated value from a two dimensional distribution with a fractionally weighted dependent variable
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedWithWeightedVariable(
+    const double independent_variable,
+    const double dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution );
+
+//! Evaluate a correlated from a two dimensional distribution with a fractionally weighted dependent variable
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedWithWeightedVariable(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution );
+
 //! Evaluate a correlated PDF from a two dimensional distribution
 template<typename DependentTwoDDistribution,
          typename InterpolationPolicy = Utility::LinLin>
@@ -133,6 +159,23 @@ double evaluateTwoDDistributionCorrelatedPDF(
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
+//! Evaluate a correlated PDF from a two dimensional distribution with a fractionally weighted dependent variable
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable(
+    const double independent_variable,
+    const double weighted_dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution );
+
+//! Evaluate a correlated PDF from a two dimensional distribution with a fractionally weighted dependent variable
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedPDFWithWeightedVariable(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double weighted_dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution );
+
 //! Evaluate a correlated CDF from a two dimensional distribution
 template<typename DependentTwoDDistribution,
          typename InterpolationPolicy = Utility::LinLin>
@@ -144,7 +187,7 @@ double evaluateTwoDDistributionCorrelatedCDF(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// Template inludes.
+// Template includes.
 //---------------------------------------------------------------------------//
 
 #include "MonteCarlo_TwoDDistributionHelpers_def.hpp"

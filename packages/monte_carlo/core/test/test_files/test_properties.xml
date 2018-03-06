@@ -38,9 +38,35 @@
   <ParameterList name="Electron Properties">
     <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
     <Parameter name="Max Electron Energy" type="double" value="10.0"/>
+    <Parameter name="Electron Hash Grid Bins" type="unsigned int" value="400"/>
+    <Parameter name="Electron Evaluation Tolerance" type="double" value="1e-5"/>
+    <Parameter name="Electron Interpolation Policy" type="string" value="LinLinLin"/>
+    <Parameter name="Electron Sampling Policy" type="string" value="Correlated"/>
     <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
-    <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Electron Elastic" type="bool" value="false"/>
+    <Parameter name="Electron Elastic Distribution" type="string" value="Coupled"/>
+    <Parameter name="Coupled Elastic Sampling Method" type="string" value="One D Union"/>
     <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
+    <Parameter name="Electron Electroionization" type="bool" value="false"/>
+    <Parameter name="Electron Bremsstrahlung" type="bool" value="false"/>
+    <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Electron Atomic Excitation" type="bool" value="false"/>
+  </ParameterList>
+
+  <ParameterList name="Adjoint Electron Properties">
+    <Parameter name="Min Adjoint Electron Energy" type="double" value="1e-2"/>
+    <Parameter name="Max Adjoint Electron Energy" type="double" value="10.0"/>
+    <Parameter name="Adjoint Electron Hash Grid Bins" type="unsigned int" value="400"/>
+    <Parameter name="Adjoint Electron Evaluation Tolerance" type="double" value="1e-5"/>
+<!--    <Parameter name="Adjoint Electron Atomic Relaxation" type="bool" value="false"/>-->
+    <Parameter name="Adjoint Electron Elastic" type="bool" value="true"/>
+    <Parameter name="Adjoint Electron Elastic Distribution" type="string" value="Coupled"/>
+    <Parameter name="Adjoint Coupled Elastic Sampling Method" type="string" value="One D Union"/>
+    <Parameter name="Adjoint Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
+    <Parameter name="Adjoint Electron Electroionization" type="bool" value="false"/>
+    <Parameter name="Adjoint Electron Bremsstrahlung" type="bool" value="true"/>
+    <Parameter name="Adjoint Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Adjoint Electron Atomic Excitation" type="bool" value="false"/>
   </ParameterList>
 
 </ParameterList>

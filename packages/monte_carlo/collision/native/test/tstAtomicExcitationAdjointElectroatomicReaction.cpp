@@ -2,7 +2,7 @@
 //!
 //! \file   tstAtomicExcitationAdjointElectroatomicReaction.cpp
 //! \author Luke Kersting
-//! \brief  Atomic Excitation Adjoint electroatomic reaction unit tests
+//! \brief  Atomic Excitation adjoint electroatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,10 +15,9 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp"
-#include "Data_ACEFileHandler.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
+#include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -26,7 +25,8 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::ElectroatomicReaction> ace_excitation_reaction;
+std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction>
+    excitation_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -40,198 +40,132 @@ bool notEqualZero( double value )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getReactionType_ace )
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST( ace_excitation_reaction->getReactionType(),
-		       MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( excitation_reaction->getReactionType(),
+                 MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getThresholdEnergy_ace )
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( ace_excitation_reaction->getThresholdEnergy(),
-                       1.000000000000E-05 );
+  TEST_EQUALITY_CONST( excitation_reaction->getThresholdEnergy(), 1e-05 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getNumberOfEmittedElectrons_ace )
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getNumberOfEmittedElectrons )
 {
-  TEST_EQUALITY_CONST( ace_excitation_reaction->getNumberOfEmittedElectrons(1e-3),
-		       0u );
+  TEST_EQUALITY_CONST( excitation_reaction->getNumberOfEmittedElectrons(1e-3),
+                       0u );
 
-  TEST_EQUALITY_CONST( ace_excitation_reaction->getNumberOfEmittedElectrons(20.0),
-		       0u );
+  TEST_EQUALITY_CONST( excitation_reaction->getNumberOfEmittedElectrons(20.0),
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getNumberOfEmittedPhotons_ace )
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getNumberOfEmittedPhotons )
 {
-  TEST_EQUALITY_CONST( ace_excitation_reaction->getNumberOfEmittedPhotons(1e-3),
-		       0u );
+  TEST_EQUALITY_CONST( excitation_reaction->getNumberOfEmittedPhotons(1e-3),
+                       0u );
 
-  TEST_EQUALITY_CONST( ace_excitation_reaction->getNumberOfEmittedPhotons(20.0),
-		       0u );
+  TEST_EQUALITY_CONST( excitation_reaction->getNumberOfEmittedPhotons(20.0),
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getCrossSection_ace )
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, getCrossSection )
 {
-  double cross_section =
-    ace_excitation_reaction->getCrossSection( 9.000000000000E-05 );
+  double cross_section = excitation_reaction->getCrossSection( 1e-5 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.160420000000E+09, 1e-12 );
+  cross_section = excitation_reaction->getCrossSection( 1e-3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.0551636170350602e+07, 1e-12 );
 
-  cross_section =
-    ace_excitation_reaction->getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 6.226820000000E+08, 1e-12 );
-
-  cross_section =
-    ace_excitation_reaction->getCrossSection( 2.000000000000E-03 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 1.965170000000E+08, 1e-12 );
+  cross_section = excitation_reaction->getCrossSection( 20.0 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation reaction can be simulated
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, react_ace )
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectroatomicReaction, react )
 {
-  MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.000000000000e-03 );
+  MonteCarlo::AdjointElectronState electron( 0 );
+  electron.setEnergy( 9.2946e-06 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   MonteCarlo::ParticleBank bank;
 
   Data::SubshellType shell_of_interaction;
 
-  double final_energy = (electron.getEnergy() - 9.32298000000E-06);
+  double final_energy = 9.2946e-06 + 1.57054e-05;
 
-  ace_excitation_reaction->react( electron, bank, shell_of_interaction );
+  excitation_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_FLOATING_EQUALITY( electron.getEnergy(), final_energy, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
-  TEST_ASSERT( bank.empty() );
+  TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  clp().setOption( "test_native_file",
+                   &test_native_file_name,
+                   "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Create Native Reaction
+  {
+    // Get native data container
+    Data::AdjointElectronPhotonRelaxationDataContainer data_container =
+      Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
+    std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
+        scattering_distribution;
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+    MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
+      data_container,
+      scattering_distribution );
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
+    // Get the energy grid
+    Teuchos::ArrayRCP<double> energy_grid;
+    energy_grid.assign(
+        data_container.getAdjointElectronEnergyGrid().begin(),
+        data_container.getAdjointElectronEnergyGrid().end() );
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
+    // Get the cross section
+    Teuchos::ArrayRCP<double> cross_section;
+    cross_section.assign(
+        data_container.getAdjointAtomicExcitationCrossSection().begin(),
+        data_container.getAdjointAtomicExcitationCrossSection().end() );
+
+    // Create the reaction
+    excitation_reaction.reset(
+      new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin>(
+        energy_grid,
+        cross_section,
+        data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(),
+        scattering_distribution ) );
   }
-
-  // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
-
-  // Extract the energy grid and cross section
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
-
-  Teuchos::ArrayView<const double> raw_excitation_cross_section =
-    xss_data_extractor->extractExcitationCrossSection();
-
-  Teuchos::ArrayView<const double>::iterator start =
-    std::find_if( raw_excitation_cross_section.begin(),
-                  raw_excitation_cross_section.end(),
-                  notEqualZero );
-
-  Teuchos::ArrayRCP<double> excitation_cross_section;
-  excitation_cross_section.assign( start, raw_excitation_cross_section.end() );
-
-  unsigned excitation_threshold_index =
-    energy_grid.size() - excitation_cross_section.size();
-
-  // Extract the atomic excitation information data block (EXCIT)
-  Teuchos::ArrayView<const double> excit_block(
-				      xss_data_extractor->extractEXCITBlock() );
-
-  // Extract the number of tabulated energies
-  int size = excit_block.size()/2;
-
-  // Extract the energy grid for atomic excitation energy loss
-  Teuchos::Array<double> excitation_energy_grid(excit_block(0,size));
-
-  // Extract the energy loss for atomic excitation
-  Teuchos::Array<double> excitation_energy_loss(excit_block(size,size));
-
-  // Create the energy loss distributions
-  Teuchos::RCP<Utility::OneDDistribution> energy_loss_function;
-
-  energy_loss_function.reset(
-  new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
-		                                     excitation_energy_loss ) );
-
-  Teuchos::RCP<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
-                      excitation_energy_loss_distribution;
-
-  excitation_energy_loss_distribution.reset(
-    new MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution(
-                      energy_loss_function ) );
-
-
-
-  // Create the reaction
-  ace_excitation_reaction.reset(
-    new MonteCarlo::AtomicExcitationAdjointElectroatomicReaction<Utility::LinLin>(
-				      energy_grid,
-				      excitation_cross_section,
-				      excitation_threshold_index,
-				      excitation_energy_loss_distribution ) );
-
-  // Clear setup data
-  ace_file_handler.reset();
-  xss_data_extractor.reset();
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicExcitationAdjointElectroatomicReaction.cpp

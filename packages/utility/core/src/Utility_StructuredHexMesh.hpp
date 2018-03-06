@@ -3,7 +3,7 @@
 //! \file   Utility_StructuredHexMesh.hpp
 //! \author Philip Britt
 //! \brief  Hexahedron mesh storage header file
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_STRUCTURED_HEX_MESH_HPP
@@ -19,6 +19,7 @@
 #include <boost/unordered_map.hpp>
 
 namespace Utility{
+  
 /*! StructuredHexMesh stores the mesh itself and performs calculations
  *  to return important information from the mesh */
 class StructuredHexMesh
@@ -31,7 +32,7 @@ public:
 
   //! plane index handle
   typedef unsigned PlaneIndex;
-  
+
   //! HexVolume handles
   typedef double HexVolume;
 
@@ -51,7 +52,7 @@ public:
 
   //! Returns a bool that says whether or not a point is in the mesh.
   bool isPointInMesh( const double point[3] ) const;
-  
+
   //! Returns the index of the hex that contains a given point.
   HexIndex whichHexIsPointIn( const double point[3] ) const;
 
@@ -59,41 +60,41 @@ public:
   std::vector<std::pair<HexIndex,double>> computeTrackLengths( 
                               const double start_point[3],
                               const double end_point[3] )const;
-  
+
   //! Get the start iterator of the hex element list.
   /*! \details returns the iterator that points to the first element in the list containing
    *           all of the hex ID elements */
   HexIDIterator getStartHexIDIterator() const;
-  
+
   //! Get the end iterator of the hex element list.
   /*! \details returns the iterator that points to one beyond the last element in the list containing
    *           all of the hex ID elements */
   HexIDIterator getEndHexIDIterator() const;
-  
+
   //! Get the number of planes on the X axis.
   unsigned getNumberOfXPlanes() const;
-  
+
   //! Get the number of planes on the Y axis.
   unsigned getNumberOfYPlanes() const;
-  
+
   //! Get the number of planes on the Z axis.
   unsigned getNumberOfZPlanes() const;
-  
+
   //! Get the location of a specific plane on the x axis.
   double getXPlaneLocation( PlaneIndex i) const;
-  
+
   //! Get the location of a specific plane on the y axis.
   double getYPlaneLocation( PlaneIndex i) const;
-  
+
   //! Get the location of a specific plane on the z axis.
   double getZPlaneLocation( PlaneIndex i) const;
-  
+
   //! Deconstruct a hex index into indices of planes on each dimension.
   /*! \details This method is used primarily with moab since the moab
    *           methods used in the estimator class require the parameter space over
    *           all three dimensions to form a structured mesh */
   void getHexPlaneIndices(const HexIndex h, unsigned hex_parameter_indices[3]) const;
-  
+
 private:
   // enumeration type converting dimensions to integers
   enum Dimension: unsigned{ X_DIMENSION = 0,
@@ -136,7 +137,7 @@ private:
   // set the plane indices that make up the hex element index
   void setHexPlaneIndices( const double current_point[3],
                          PlaneIndex hex_plane_indices[3] )const;
-  
+
   // overloaded function for setting member indices
   void setHexPlaneIndices( const Dimension intersection_dimension,
                          const double current_point[3],
@@ -146,7 +147,7 @@ private:
   StructuredHexMesh::PlaneIndex setHexPlaneIndex( const double position_component, 
                        const std::vector<double>& plane_set,
                        const Dimension plane_dimension  ) const;
-                       
+
   // Returns a set of distances to up to 3 planes that bound the mesh which the particle may interact with
   std::vector<std::pair<Dimension, double>> findBoundingInteractionPlaneDistances( const double point[3],
                                                                                       const double direction[3] ) const;
@@ -187,7 +188,7 @@ private:
   void pushPoint( double point[3],
                   const double direction[3],
                   const double push_distance ) const;
-  
+
   // finds interaction plane for a given dimension
   void findInteractionPlaneForDimension( const Dimension dim,
                                          const double coordinate_component,
@@ -212,7 +213,7 @@ private:
   
   // all hex elements
   std::list<HexIndex> d_hex_elements;
-                            
+
 };
 
 } // end Utility namespace

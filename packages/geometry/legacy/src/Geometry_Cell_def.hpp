@@ -380,7 +380,7 @@ Cell<CellOrdinalType,
 }
 
 
-// Get a const iterator to first occurance of specific surface-sense pair
+// Get a const iterator to first occurrence of specific surface-sense pair
 template<typename CellOrdinalType,
 	 typename SurfaceOrdinalType,
 	 typename ScalarType>

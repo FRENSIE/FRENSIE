@@ -24,7 +24,7 @@ SimulationGeneralProperties::SimulationGeneralProperties()
   
 // Set the particle mode
 void SimulationGeneralProperties::setParticleMode(
-					 const ParticleModeType particle_mode )
+                                         const ParticleModeType particle_mode )
 {
   d_particle_mode = particle_mode;
 }
@@ -37,7 +37,7 @@ ParticleModeType SimulationGeneralProperties::getParticleMode() const
 
 // Set the number of histories to run
 void SimulationGeneralProperties::setNumberOfHistories(
-					   const unsigned long long histories )
+                                           const unsigned long long histories )
 {
   d_number_of_histories = histories;
 }
@@ -54,7 +54,7 @@ unsigned long long SimulationGeneralProperties::getNumberOfHistories() const
  * a possible divide by zero).
  */
 void SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
-							  const double cutoff )
+                                                          const double cutoff )
 {
   // Make sure the cutoff is valid
   testPrecondition( cutoff > 0.0 );

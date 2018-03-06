@@ -10,23 +10,19 @@
 #define DATA_GEN_ELASTIC_ELECTRON_MOMENTS_EVALUATOR_HPP
 
 // Boost Includes
-#include <boost/scoped_ptr.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
+#include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CoupledElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
 
 
 namespace DataGen{
@@ -38,42 +34,51 @@ class ElasticElectronMomentsEvaluator
 public:
 
   //! Typedef for the elastic distribution
-  typedef MonteCarlo::TwoDDistribution ElasticDistribution;
-
-  //! Typedef for the cutoff elastic distribution
-  typedef MonteCarlo::AnalogElasticElectronScatteringDistribution::CutoffDistribution
-    CutoffDistribution;
-
-  //! Typedef for the elastic distribution
   typedef Utility::GaussKronrodIntegrator<Utility::long_float>
   Integrator;
+
+  // Typedef for elastic electron traits
+  typedef Utility::ElasticElectronTraits ElasticTraits;
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 1.0 );
+    const MonteCarlo::TwoDInterpolationType two_d_interp,
+    const MonteCarlo::TwoDSamplingType two_d_sample,
+    const double cutoff_angle_cosine,
+    const double tabular_evaluation_tol );
 
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-        analog_distribution,
-    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
-        analog_reaction,
-    const double cutoff_angle_cosine = 1.0 );
+    const Teuchos::ArrayRCP<double>& incoming_energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
+    const Teuchos::ArrayRCP<double>& total_elastic_cross_section,
+    const unsigned screened_rutherford_threshold_energy_index,
+    const std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+        coupled_distribution,
+    const std::shared_ptr<const ElasticTraits>& elastic_traits,
+    const double cutoff_angle_cosine );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
 
-  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+  //! Evaluate the Legendre Polynomial expansion of the screened rutherford pdf
+  double evaluateLegendreExpandedRutherford(
+            const double scattering_angle_cosine,
+            const double incoming_energy,
+            const int polynomial_order = 0 ) const;
+
+  //! Evaluate the Legendre Polynomial expansion of the screened rutherford pdf
   double evaluateLegendreExpandedRutherford(
             const double scattering_angle_cosine,
             const double incoming_energy,
             const double eta,
             const int polynomial_order = 0 ) const;
 
-  //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
+  //! Evaluate the Legendre Polynomial expansion of the differential hard elastic pdf
   double evaluateLegendreExpandedPDF(
             const double scattering_angle_cosine,
             const double incoming_energy,
@@ -129,8 +134,10 @@ protected:
    */
   void evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
             Utility::long_float& rutherford_moment,
-            const double& energy,
-            const int& n ) const;
+            const double energy,
+            const int n,
+            const double tolerance = 1e-13,
+            const unsigned number_of_iterations = 1000 ) const;
 
   /* Evaluate the nth PDF moment of the screened Rutherford peak distribution
    * at the energy using numerical integration
@@ -138,8 +145,10 @@ protected:
   void evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
             Utility::long_float& rutherford_moment,
             const Utility::long_float& eta,
-            const double& energy,
-            const int& n ) const;
+            const double energy,
+            const int n,
+            const double tolerance = 1e-13,
+            const unsigned number_of_iterations = 1000 ) const;
 
 private:
 
@@ -147,14 +156,25 @@ private:
   void getAngularIntegrationPoints(
         std::vector<double>& angular_integration_points,
         const double energy ) const;
- 
-  // The analog reaction
-  Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
-    d_analog_reaction;
 
-  // The analog distribution
-  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    d_analog_distribution;
+
+  // Grid searcher for the energy grid
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+
+  // The screened rutherford elastic threshold_energy_index
+  unsigned d_screened_rutherford_threshold_energy_index;
+
+  // The coupled distribution
+  std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
+    d_coupled_distribution;
+
+  // The cutoff elastic reaction
+  std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
+    d_cutoff_reaction;
+
+  // The total elastic reaction
+  std::shared_ptr<const MonteCarlo::ElectroatomicReaction>
+    d_total_reaction;
 
   // The map of the cutoff angles
   std::map<double,std::vector<double> > d_cutoff_elastic_angles;
@@ -162,11 +182,8 @@ private:
   // The angle cosine cutoff between hard and soft scattering
   double d_cutoff_angle_cosine;
 
-  // The angle cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff_delta_angle_cosine;
-
-  // The angle cosine cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff_angle_cosine;
+  // Elastic electron traits
+  std::shared_ptr<const ElasticTraits> d_elastic_traits;
 };
 
 } // end DataGen namespace

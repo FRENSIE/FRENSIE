@@ -201,7 +201,7 @@ void mapTwoColumnTestingArray(
 
   processTwoColumnTestingArray( shell, data );
 
-  for( int i = 0; i < shell.size(); i++ )
+  for( int i = 0; i < shell.size(); ++i )
   {
     subshells[i] = shell[i];
     subshell_data.emplace( shell[i], data[i] );
@@ -218,7 +218,7 @@ void mapThreeColumnTestingArray(
 
   processThreeColumnTestingArray( data_bin, indep, dep );
 
-  for( int i = 0; i < data_bin.size(); i++ )
+  for( int i = 0; i < data_bin.size(); ++i )
   {
     bin[i] = data_bin[i];
     indep_true.emplace( bin[i], indep[i] );
@@ -237,7 +237,7 @@ void mapThreeColumnTestingArray(
 
   processThreeColumnTestingVector( bin, indep, dep );
 
-  for( int i = 0; i < 2; i++ )
+  for( int i = 0; i < 2; ++i )
   {
     indep_point.push_back( indep[i] );
     dep_point.push_back( dep[i] );
@@ -249,7 +249,7 @@ void mapThreeColumnTestingArray(
   indep_point.clear();
   dep_point.clear();
 
-  for( int i = 2; i < bin.size(); i++ )
+  for( int i = 2; i < bin.size(); ++i )
   {
     indep_point.push_back( indep[i] );
     dep_point.push_back( dep[i] );
@@ -275,7 +275,7 @@ void mapFourColumnTestingArray(
 
   processFourColumnTestingArray( bin_1, bin_2, indep_point, dep_point );
 
-  for( int i = 0; i < 3; i++ )
+  for( int i = 0; i < 3; ++i )
   {
     sec_bin.second.push_back( bin_2[i] );
 
@@ -294,7 +294,7 @@ void mapFourColumnTestingArray(
     indep.clear();
     dep.clear();
 
-  for( int i = 3; i < bin_1.size(); i++ )
+  for( int i = 3; i < bin_1.size(); ++i )
   {
     bin.push_back( bin_1[i] );
     sec_bin.first = bin.back();

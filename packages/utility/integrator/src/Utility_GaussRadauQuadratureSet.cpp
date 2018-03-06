@@ -33,7 +33,7 @@ GaussRadauQuadratureSet::GaussRadauQuadratureSet(
   testPrecondition( polynomial_order > 0 );
 }
 
-// Caluclate the nth order Jacobi Polynomial at x
+// Calculate the nth order Jacobi Polynomial at x
 /*! \details The Jacobi Polynomials can be calculated by the following recursion
  * relationship:
  * a1_n P_{n+1}^{\alpha,\beta}(x) = (a2_n + a3_n x)P_n^{\alpha,\beta}(x) - a4_n P_{n-1}^{\alpha,\beta}(x)
@@ -148,12 +148,12 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
   double root_k, s, jacobi, jacobi_derivative, delta_root;
 
   // Iterate through all n roots ( 0 < k < n )
-  for (int k = 0; k < n; k++)
+  for (int k = 0; k < n; ++k)
   {
     // Make an initial guess that the roots are equal to the roots of the Chebyshev Polynomial
     root_k = -cos( ( 2.0*k + 1.0 )/( 2.0 * n )* PhysicalConstants::pi );
 
-    // Actual root is known to be inbetween roots of Chebyshev Polynomial
+    // Actual root is known to be in between roots of Chebyshev Polynomial
     if (k > 0)
     {
       root_k = ( root_k + roots[k-1] )/2.0;
@@ -166,7 +166,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
     {
       s = 0;
 
-      for (int i = 0; i < k; i++)
+      for (int i = 0; i < k; ++i)
       {
         s += 1.0/( root_k - roots[i] );
       }
@@ -188,7 +188,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
          break;
 /*
       TEST_FOR_EXCEPTION( iteration > max_iterations,
-		          RadauQuadratueError,
+		          RadauQuadratureError,
 		          "Error: the root of the Jacobi Polynomial "
                           "did not converge" );
 */
@@ -199,7 +199,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
   }
 }
 
-// Find the Radau nodes and wieghts including at end point -1 or 1
+// Find the Radau nodes and weights including at end point -1 or 1
 void GaussRadauQuadratureSet::findNodesAndWeights(
                             double end_point,
                             std::vector<double>& nodes,
@@ -247,7 +247,7 @@ void GaussRadauQuadratureSet::findNodesAndWeights(
   }
 }
 
-// Find the Radau nodes and wieghts including at end point -1 or 1
+// Find the Radau nodes and weights including at end point -1 or 1
 void GaussRadauQuadratureSet::findNodesAndPositiveWeights(
                             double end_point,
                             std::vector<double>& nodes,
@@ -322,7 +322,7 @@ double GaussRadauQuadratureSet::getWeightIntegrand(
   return getFixedWeightIntegrand( x, n )*( x - end_point )/( x - node );
 }
 
-// Find the Radau wieght for the function at the end point -1 or 1
+// Find the Radau weight for the function at the end point -1 or 1
 double GaussRadauQuadratureSet::findWeightAtEndPoint( double end_point,
                                                          int n ) const
 {
@@ -353,7 +353,7 @@ double GaussRadauQuadratureSet::findWeightAtEndPoint( double end_point,
 
 }
 
-// Find the Radau wieght for the function at a given node
+// Find the Radau weight for the function at a given node
 double GaussRadauQuadratureSet::findWeightAtNode( double node,
                                                      double end_point,
                                                      int n ) const

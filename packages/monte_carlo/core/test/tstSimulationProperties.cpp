@@ -28,7 +28,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
                        MonteCarlo::NEUTRON_MODE );
   TEST_EQUALITY_CONST( properties.getNumberOfHistories(), 0 );
   TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-		       0.001 );
+                       0.001 );
   TEST_ASSERT( properties.displayWarnings() );
   TEST_ASSERT( !properties.isImplicitCaptureModeOn() );
   
@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( properties.getKahnSamplingCutoffEnergy(), 3.0 );
   TEST_EQUALITY_CONST( properties.getNumberOfPhotonHashGridBins(), 1000 );
   TEST_EQUALITY_CONST( properties.getIncoherentModelType(),
-		       MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+                       MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
   TEST_ASSERT( properties.isAtomicRelaxationModeOn( MonteCarlo::PHOTON ) );
   TEST_ASSERT( !properties.isDetailedPairProductionModeOn() );
   TEST_ASSERT( !properties.isPhotonuclearInteractionModeOn() );
@@ -70,9 +70,21 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 20.0 );
   TEST_EQUALITY_CONST( properties.getAbsoluteMaxElectronEnergy(), 1.0e5 );
   TEST_ASSERT( properties.isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
-  TEST_EQUALITY_CONST(
-                     properties.getBremsstrahlungAngularDistributionFunction(),
-                     MonteCarlo::TWOBS_DISTRIBUTION );
+  TEST_ASSERT( properties.isElasticModeOn() );
+  TEST_ASSERT( properties.isElectroionizationModeOn() );
+  TEST_ASSERT( properties.isBremsstrahlungModeOn() );
+  TEST_ASSERT( properties.isAtomicExcitationModeOn() );
+  TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-7 );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
+                       MonteCarlo::LOGLOGLOG_INTERPOLATION );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( properties.getBremsstrahlungAngularDistributionFunction(),
+                       MonteCarlo::TWOBS_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
+                       MonteCarlo::DECOUPLED_DISTRIBUTION );
+  TEST_EQUALITY_CONST( properties.getCoupledElasticSamplingMode(),
+                       MonteCarlo::SIMPLIFIED_UNION );
   TEST_EQUALITY_CONST( properties.getElasticCutoffAngleCosine(), 1.0 );
 }
 

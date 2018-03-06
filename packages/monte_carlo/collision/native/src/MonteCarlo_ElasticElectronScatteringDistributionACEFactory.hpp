@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
@@ -21,23 +22,25 @@ class ElasticElectronScatteringDistributionACEFactory
 
 public:
 
-  typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
-            ElasticDistribution;
-
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
-	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
+    std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double upper_cutoff_angle_cosine = 1.0 );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data );
+
+  //! Create a screened Rutherford elastic distribution
+  static void createScreenedRutherfordElasticDistribution(
+    std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+        screened_rutherford_elastic_distribution,
+    const unsigned atomic_number );
 
 protected:
 
   //! Create the elastic scattering function
   static void createScatteringFunction(
-        const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        ElasticDistribution&
-            scattering_function );
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+        scattering_function );
 };
 
 } // end MonteCarlo namespace

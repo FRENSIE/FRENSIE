@@ -24,6 +24,8 @@
 #include "MonteCarlo_AdjointPhotonMaterial.hpp"
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_ElectronMaterial.hpp"
+#include "MonteCarlo_PositronatomFactory.hpp"
+#include "MonteCarlo_PositronMaterial.hpp"
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -35,6 +37,7 @@ Teuchos::RCP<const MonteCarlo::NeutronMaterial> neutron_hydrogen;
 Teuchos::RCP<const MonteCarlo::PhotonMaterial> photon_hydrogen;
 Teuchos::RCP<const MonteCarlo::AdjointPhotonMaterial> adjoint_photon_hydrogen;
 Teuchos::RCP<const MonteCarlo::ElectronMaterial> electron_hydrogen;
+Teuchos::RCP<const MonteCarlo::PositronMaterial> positron_hydrogen;
 
 std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler;
 
@@ -45,12 +48,12 @@ std::shared_ptr<MonteCarlo::CollisionHandler> collision_handler;
 TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial_neutron_only )
 {
   collision_handler.reset( new MonteCarlo::CollisionHandler );
-  
+
   TEST_ASSERT( collision_handler->isCellVoid( 1, MonteCarlo::NEUTRON ) );
 
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
     cells_containing_material( 1, 1 );
-  
+
   collision_handler->addMaterial( neutron_hydrogen, cells_containing_material );
 
   TEST_ASSERT( !collision_handler->isCellVoid( 1, MonteCarlo::NEUTRON ) );
@@ -140,6 +143,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial_photon_electron )
 
   collision_handler->addMaterial( photon_hydrogen,
                                   electron_hydrogen,
+                                  positron_hydrogen,
                                   cells_containing_material );
 
   TEST_ASSERT( !collision_handler->isCellVoid( 1, MonteCarlo::PHOTON ) );
@@ -162,6 +166,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial_neutron_photon_electron )
   collision_handler->addMaterial( neutron_hydrogen,
                                   photon_hydrogen,
                                   electron_hydrogen,
+                                  positron_hydrogen,
                                   cells_containing_material );
 
   TEST_ASSERT( !collision_handler->isCellVoid( 1, MonteCarlo::NEUTRON ) );
@@ -181,8 +186,9 @@ TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicTotalCrossSection )
   collision_handler->addMaterial( neutron_hydrogen,
                                   photon_hydrogen,
                                   electron_hydrogen,
+                                  positron_hydrogen,
                                   cells_containing_material );
-  
+
   collision_handler->addMaterial( adjoint_photon_hydrogen,
                                   cells_containing_material );
 
@@ -240,8 +246,9 @@ TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicTotalForwardCrossSection )
   collision_handler->addMaterial( neutron_hydrogen,
                                   photon_hydrogen,
                                   electron_hydrogen,
+                                  positron_hydrogen,
                                   cells_containing_material );
-  
+
   collision_handler->addMaterial( adjoint_photon_hydrogen,
                                   cells_containing_material );
 
@@ -298,11 +305,12 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial_analogue )
   collision_handler->addMaterial( neutron_hydrogen,
                                   photon_hydrogen,
                                   electron_hydrogen,
+                                  positron_hydrogen,
                                   cells_containing_material );
-  
+
   collision_handler->addMaterial( adjoint_photon_hydrogen,
                                   cells_containing_material );
-  
+
   // Neutron collision
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setCell( 1 );
@@ -346,7 +354,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial_analogue )
   adjoint_photon.setWeight( 1.0 );
 
   collision_handler->collideWithCellMaterial( adjoint_photon, bank );
-  
+
   TEST_FLOATING_EQUALITY( adjoint_photon.getWeight(),
                           1.8606465722488712,
                           1e-12 );
@@ -364,11 +372,12 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial_survival_bias )
   collision_handler->addMaterial( neutron_hydrogen,
                                   photon_hydrogen,
                                   electron_hydrogen,
+                                  positron_hydrogen,
                                   cells_containing_material );
-  
+
   collision_handler->addMaterial( adjoint_photon_hydrogen,
                                   cells_containing_material );
-  
+
   // Neutron collision
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setCell( 1 );
@@ -377,10 +386,10 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial_survival_bias )
   neutron.setWeight( 1.0 );
 
   MonteCarlo::ParticleBank bank;
-  
+
   collision_handler->collideWithCellMaterial( neutron, bank );
   out.precision( 18 );
-  TEST_FLOATING_EQUALITY( neutron.getWeight(), 
+  TEST_FLOATING_EQUALITY( neutron.getWeight(),
                           9.99992063679718601e-01,
                           1e-12 );
 
@@ -416,7 +425,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial_survival_bias )
   adjoint_photon.setWeight( 1.0 );
 
   collision_handler->collideWithCellMaterial( adjoint_photon, bank );
-  
+
   TEST_FLOATING_EQUALITY( adjoint_photon.getWeight(),
                           1.8606465722488712,
                           1e-12 );
@@ -443,11 +452,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   cross_section_xml_file += "/cross_sections.xml";
 
   Teuchos::ParameterList cross_section_table_info;
-  
+
   // Read in the xml file storing the cross section table information
   Teuchos::updateParametersFromXmlFile(
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
+                                 cross_section_xml_file,
+                                 Teuchos::inoutArg(cross_section_table_info) );
 
   std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
@@ -466,31 +475,31 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   properties.setMaxAdjointPhotonEnergy( 20.0 );
   properties.setNumberOfAdjointPhotonHashGridBins( 100 );
   properties.setIncoherentAdjointModelType( MonteCarlo::WH_INCOHERENT_ADJOINT_MODEL );
-  
+
   // Create the nuclide factory
-  MonteCarlo::NuclideFactory nuclide_factory(test_cross_sections_xml_directory,
-					     cross_section_table_info,
-					     nuclide_aliases,
-                                             properties );
+  MonteCarlo::NuclideFactory nuclide_factory( test_cross_sections_xml_directory,
+                                              cross_section_table_info,
+                                              nuclide_aliases,
+                                              properties );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> >
     nuclide_map;
 
   nuclide_factory.createNuclideMap( nuclide_map );
-  
+
   // Create hydrogen
   Teuchos::Array<double> nuclide_fractions( 1 );
   Teuchos::Array<std::string> nuclide_names( 1 );
-  
+
   nuclide_fractions[0] = -1.0;
   nuclide_names[0] = "H-1_293.6K";
-  
+
   neutron_hydrogen.reset( new MonteCarlo::NeutronMaterial( 0,
                                                            -1.0,
                                                            nuclide_map,
                                                            nuclide_fractions,
                                                            nuclide_names ) );
-  
+
   // Create the atomic relaxation factory
   Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
     atomic_relaxation_model_factory(
@@ -508,7 +517,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     photoatom_map;
 
   photoatom_factory.createPhotoatomMap( photoatom_map );
-  
+
   // Create hydrogen for photons
   photon_hydrogen.reset( new MonteCarlo::PhotonMaterial( 0,
                                                          -1.0,
@@ -528,15 +537,35 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     electroatom_map;
 
   electroatom_factory.createElectroatomMap( electroatom_map );
-  
-  // Create hydgrogen for electrons
+
+  // Create hydrogen for electrons
   electron_hydrogen.reset( new MonteCarlo::ElectronMaterial( 0,
                                                              -1.0,
                                                              electroatom_map,
                                                              nuclide_fractions,
                                                              nuclide_names ) );
 
-  // Create the atom factory
+  // Create the positron-atom factory
+  MonteCarlo::PositronatomFactory positronatom_factory(
+                                             test_cross_sections_xml_directory,
+                                             cross_section_table_info,
+                                             nuclide_aliases,
+                                             atomic_relaxation_model_factory,
+                                             properties );
+
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Positronatom> >
+    positronatom_map;
+
+  positronatom_factory.createPositronatomMap( positronatom_map );
+
+  // Create hydrogen for positrons
+  positron_hydrogen.reset( new MonteCarlo::PositronMaterial( 0,
+                                                             -1.0,
+                                                             positronatom_map,
+                                                             nuclide_fractions,
+                                                             nuclide_names ) );
+
+  // Create the adjoint photoatom factory
   MonteCarlo::AdjointPhotoatomFactory factory(
                                              test_cross_sections_xml_directory,
                                              cross_section_table_info,

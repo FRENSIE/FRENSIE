@@ -723,7 +723,7 @@ FRENSIE_UNIT_TEST( GaussKronrodIntegrator,
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
 
-  Utility::ExtrpolatedBinTraits<double> bin, bin_1, bin_2;
+  Utility::ExtrapolatedBinTraits<double> bin, bin_1, bin_2;
   int round_off_1 = 0;
   int round_off_2 = 0;
   int round_off_3 = 0;
@@ -844,7 +844,7 @@ FRENSIE_UNIT_TEST( GaussKronrodIntegrator,
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
 
-  Utility::ExtrpolatedBinTraits<double> bin, bin_1, bin_2;
+  Utility::ExtrapolatedBinTraits<double> bin, bin_1, bin_2;
 
   int nr_max = 0;
   int number_of_intervals = 1;

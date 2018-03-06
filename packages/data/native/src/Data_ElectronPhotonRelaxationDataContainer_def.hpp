@@ -24,7 +24,7 @@ namespace Data{
 // Save the data to an archive
 template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
-						  const unsigned version) const
+                                                  const unsigned version) const
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
@@ -38,8 +38,10 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, occupation_number_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_incoherent_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, photon_threshold_energy_nudge_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_total_elastic_integrated_cross_section_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, grid_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, grid_distance_tol );
@@ -85,30 +87,35 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_total_cross_section );
   // Electron Data
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
   DATA_MAKE_NVP_DEFAULT( ar, angular_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_interp );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_pdf );
-  DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_normalization_constant );
-  DATA_MAKE_NVP_DEFAULT( ar, moliere_screening_constant );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
+  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_cross_section_reductions );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_loss_interp );
   DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_loss );
   DATA_MAKE_NVP_DEFAULT( ar, electron_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_cross_section_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, total_electron_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_cross_section );
@@ -120,7 +127,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 // Load the data from an archive
 template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
-						  const unsigned version )
+                                                  const unsigned version )
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
@@ -134,8 +141,10 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, occupation_number_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, subshell_incoherent_evaluation_tolerance );
   DATA_MAKE_NVP_DEFAULT( ar, photon_threshold_energy_nudge_factor );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_total_elastic_integrated_cross_section_mode_on );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_angle_cosine );
   DATA_MAKE_NVP_DEFAULT( ar, number_of_moment_preserving_angles );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_tabular_evaluation_tol );
   DATA_MAKE_NVP_DEFAULT( ar, grid_convergence_tol );
   DATA_MAKE_NVP_DEFAULT( ar, grid_absolute_diff_tol );
   DATA_MAKE_NVP_DEFAULT( ar, grid_distance_tol );
@@ -181,30 +190,35 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, waller_hartree_total_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, impulse_approx_total_cross_section );
   // Electron Data
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
   DATA_MAKE_NVP_DEFAULT( ar, angular_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_interp );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_pdf );
-  DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_normalization_constant );
-  DATA_MAKE_NVP_DEFAULT( ar, moliere_screening_constant );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_discrete_angles );
   DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_weights );
+  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_cross_section_reductions );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_interp );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_energy );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_recoil_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_interp );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_energy );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_photon_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_loss_interp );
   DATA_MAKE_NVP_DEFAULT( ar, atomic_excitation_energy_loss );
   DATA_MAKE_NVP_DEFAULT( ar, electron_energy_grid );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_cross_section_interp );
+  DATA_MAKE_NVP_DEFAULT( ar, total_electron_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, cutoff_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, screened_rutherford_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, total_elastic_cross_section_threshold_index );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section );
-  DATA_MAKE_NVP_DEFAULT( ar, moment_preserving_elastic_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, electroionization_subshell_cross_section_threshold_index );
   DATA_MAKE_NVP_DEFAULT( ar, bremsstrahlung_cross_section );

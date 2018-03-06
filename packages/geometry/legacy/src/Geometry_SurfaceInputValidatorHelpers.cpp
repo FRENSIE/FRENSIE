@@ -73,7 +73,7 @@ void validateSurfaceName( const std::string& surface_name )
     error_message += "\": the name is reserved.\n";
   }
 
-  // If any errors have occured, throw
+  // If any errors have occurred, throw
   if( error_message.size() > 0 )
   {
     throw std::invalid_argument( error_message );
@@ -93,7 +93,7 @@ void validateSurfaceName( const std::string& surface_name )
  *  <li> sphere
  *  <li> general surface
  * </ul>
- * If any other type is specified, a std::invalid_argument excpetion is thrown.
+ * If any other type is specified, a std::invalid_argument exception is thrown.
  */
 void validateSurfaceType( const std::string& surface_type,
 			  const std::string& surface_name )

@@ -68,7 +68,7 @@ protected:
 
   //! Run the simulation batch
   void runSimulationBatch( const unsigned long long start_history,
-			   const unsigned long long end_history );
+                           const unsigned long long end_history );
 
   //! Return the number of histories
   unsigned long long getNumberOfHistories() const;

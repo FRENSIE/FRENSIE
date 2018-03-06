@@ -20,7 +20,7 @@ class CompleteDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadened
 
 public:
 
-  //! The Compton profile array 
+  //! The Compton profile array
   typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
   ComptonProfileArray;
 
@@ -42,7 +42,7 @@ public:
   virtual double getSubshellBindingEnergy(
                                        const Data::SubshellType subshell ) const = 0;
 
-  //! Return the occupancy of a subshell (default is the ENDF occupacy)
+  //! Return the occupancy of a subshell (default is the ENDF occupancy)
   virtual double getSubshellOccupancy( const Data::SubshellType subshell ) const = 0;
 
   //! Evaluate the subshell distribution with electron momentum projection
@@ -108,14 +108,14 @@ public:
 					  const double precision ) const = 0;
 
   //! Evaluate the exact integrated cross section (b/mu)
-  virtual double evaluateSubshellIntegratedCrossSectionExact( 
+  virtual double evaluateSubshellIntegratedCrossSectionExact(
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,
 					  const double precision ) const = 0;
 
   //! Sample an electron momentum from the subshell distribution
-  virtual double sampleSubshellMomentum( 
+  virtual double sampleSubshellMomentum(
                                  const double incoming_energy,
                                  const double scattering_angle_cosine,
                                  const Data::SubshellType subshell ) const = 0;
@@ -153,7 +153,7 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshell(
                                                      incoming_energy,
                                                      outgoing_energy,
                                                      scattering_angle_cosine );
-  
+
   // Calculate the cross section
   const double cross_section =
     this->evaluateJacobian( incoming_energy,
@@ -225,7 +225,7 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDFExact(
 }
 
 // Evaluate the subshell PDF
-/*! \details The approximate PDF dependent on the outgoing energy will be 
+/*! \details The approximate PDF dependent on the outgoing energy will be
  * evaluated by evaluating the approximate PDF dependent on the
  * electron momentum projection (pz) and doing a change of variable to
  * energy.
@@ -255,9 +255,9 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF(
                                                      incoming_energy,
                                                      outgoing_energy,
                                                      scattering_angle_cosine );
-  
+
   // Calculate the cross section
-  const double pdf = 
+  const double pdf =
     this->evaluateJacobian( incoming_energy,
                             outgoing_energy,
                             scattering_angle_cosine )*

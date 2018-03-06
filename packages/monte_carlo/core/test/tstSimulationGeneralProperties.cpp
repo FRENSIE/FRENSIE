@@ -27,7 +27,7 @@ TEUCHOS_UNIT_TEST( SimulationGeneralProperties, defaults )
                        MonteCarlo::NEUTRON_MODE );
   TEST_EQUALITY_CONST( properties.getNumberOfHistories(), 0 );
   TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-		       0.001 );
+                       0.001 );
   TEST_ASSERT( properties.displayWarnings() );
   TEST_ASSERT( !properties.isImplicitCaptureModeOn() );
 }
@@ -50,27 +50,32 @@ TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setParticleMode )
   properties.setParticleMode( MonteCarlo::ELECTRON_MODE );
 
   TEST_EQUALITY_CONST( properties.getParticleMode(),
-		       MonteCarlo::ELECTRON_MODE );
+                       MonteCarlo::ELECTRON_MODE );
 
   properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
 
   TEST_EQUALITY_CONST( properties.getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+                       MonteCarlo::NEUTRON_PHOTON_MODE );
 
   properties.setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
 
   TEST_EQUALITY_CONST( properties.getParticleMode(),
-		       MonteCarlo::PHOTON_ELECTRON_MODE );
+                       MonteCarlo::PHOTON_ELECTRON_MODE );
 
   properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
   TEST_EQUALITY_CONST( properties.getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+                       MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
   properties.setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
 
   TEST_EQUALITY_CONST( properties.getParticleMode(),
                        MonteCarlo::ADJOINT_PHOTON_MODE );
+
+  properties.setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
+
+  TEST_EQUALITY_CONST( properties.getParticleMode(),
+                       MonteCarlo::ADJOINT_ELECTRON_MODE );
 }
 
 //---------------------------------------------------------------------------//
@@ -87,14 +92,14 @@ TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
 //---------------------------------------------------------------------------//
 // Test that the surface flux angle cosine cutoff can be set
 TEUCHOS_UNIT_TEST( SimulationGeneralProperties,
-		   setSurfaceFluxEstimatorAngleCosineCutoff )
+                   setSurfaceFluxEstimatorAngleCosineCutoff )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
   properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
 
   TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-		       0.1 );
+                       0.1 );
 }
 
 //---------------------------------------------------------------------------//

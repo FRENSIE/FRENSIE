@@ -264,7 +264,7 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
   // Sample the azimuthal angle of the outgoing photon
   const double azimuthal_angle = this->sampleAzimuthalAngle();
 
-  // Create the ejectected electron
+  // Create the ejected electron
   this->createEjectedElectron( photon,
 			       scattering_angle_cosine,
 			       azimuthal_angle,

@@ -29,13 +29,12 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
-  : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                       incoming_energy_grid,
-                                                       cross_section,
-                                                       threshold_energy_index ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index ),
     d_interaction_subshell( interaction_subshell ),
     d_electroionization_subshell_distribution( electroionization_subshell_distribution ),
-    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum(
+    d_reaction_type( convertSubshellEnumToElectroionizationElectroatomicReactionEnum(
                                                         interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
@@ -44,6 +43,10 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 
   // Make sure the distribution data is valid
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+
+  // Make sure the threshold energy isn't less than the binding energy
+  testPrecondition( incoming_energy_grid[threshold_energy_index] >=
+                    d_electroionization_subshell_distribution->getBindingEnergy() );
 }
 
 
@@ -57,15 +60,14 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
-  : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
-            incoming_energy_grid,
-            cross_section,
-            threshold_energy_index,
-            grid_searcher ),
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index,
+              grid_searcher ),
     d_interaction_subshell( interaction_subshell ),
     d_electroionization_subshell_distribution(
             electroionization_subshell_distribution ),
-    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum(
+    d_reaction_type( convertSubshellEnumToElectroionizationElectroatomicReactionEnum(
             interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
@@ -74,6 +76,10 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 
   // Make sure the distribution data is valid
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+
+  // Make sure the threshold energy isn't less than the binding energy
+  testPrecondition( incoming_energy_grid[threshold_energy_index] >=
+                    d_electroionization_subshell_distribution->getBindingEnergy() );
 }
 
 // Return the differential cross section
@@ -106,48 +112,17 @@ double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cro
   return forward_cs*pdf;
 }
 
-// Return the differential cross section (efficient)
-/*! \details Electroionization produces a secondary electron (knock-on) that is
- * indistinguishable from the primary scattered electron. The convention is to
- * treat the outgoing electron with the lower energy as the knock-on electron.
- * outgoing_energy_1 can be either the primary or secondary scattered electron.
- * The incoming energy bin must be the the bin index of the subshell
- * distribution that has an energy right below or equal to the incoming energy.
- */
-template<typename InterpPolicy, bool processed_cross_section>
-double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
-    const unsigned incoming_energy_bin,
-    const double incoming_energy,
-    const double outgoing_energy ) const
-{
-  // Make sure the energies are valid
-  testPrecondition( incoming_energy_bin >= 0 );
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( outgoing_energy >= 0.0 );
-  testPrecondition( outgoing_energy <= incoming_energy );
-
-  if ( !this->isEnergyWithinEnergyGrid( incoming_energy ) )
-    return 0.0;
-
-  // Evaluate the forward cross section at the incoming energy
-  double forward_cs = this->getCrossSection( incoming_energy );
-
-  // Get the pdf for the incoming_energy and outgoing_energy
-  double pdf =
-      d_electroionization_subshell_distribution->evaluatePDF( incoming_energy_bin,
-                                                              incoming_energy,
-                                                              outgoing_energy );
-
-  return forward_cs*pdf;
-}
-
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+     ElectronState& electron,
+     ParticleBank& bank,
+     Data::SubshellType& shell_of_interaction ) const
 {
+  // Make sure the electron energy isn't less than the binding energy
+  testPrecondition( electron.getEnergy() >=
+                    d_electroionization_subshell_distribution->getBindingEnergy() );
+
   d_electroionization_subshell_distribution->scatterElectron(
                                                electron,
                                                bank,

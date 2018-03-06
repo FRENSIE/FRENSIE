@@ -30,6 +30,10 @@ DagMCRay::DagMCRay( const Ray& ray, moab::EntityHandle cell_handle )
     d_intersection_distance( -1.0 ),
     d_intersection_surface_handle( 0 )
 {
+  // Make sure the position and direction are valid
+  testPrecondition( Utility::isNotNanOrInf( d_basic_ray->getPosition() ) );
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( d_basic_ray->getDirection() ) );
   // Make sure the cell handle is valid
   testPrecondition( cell_handle != 0 );
 }
@@ -44,6 +48,8 @@ DagMCRay::DagMCRay( const double position[3],
     d_intersection_distance( -1.0 ),
     d_intersection_surface_handle( 0 )
 {
+  // Make sure the position and direction are valid
+  testPrecondition( Utility::isNotNanOrInf( d_basic_ray->getPosition() ) );
   // Make sure the direction is valid
   testPrecondition( Utility::isUnitVector( direction ) );
   // Make sure the cell handle is valid
@@ -121,6 +127,8 @@ void DagMCRay::set( const double position[3],
                     const double direction[3],
                     const moab::EntityHandle cell_handle )
 {
+  // Make sure the position and direction are valid
+  testPrecondition( Utility::isNotNanOrInf( position ) );
   // Make sure the direction is valid
   testPrecondition( Utility::isUnitVector( direction ) );
   // Make sure the cell is valid

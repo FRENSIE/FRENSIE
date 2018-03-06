@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
 #define MONTE_CARLO_VOID_ABSORPTION_ELECTROATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 
@@ -44,6 +41,10 @@ public:
   double getCrossSection( const double energy,
                           const unsigned bin_index ) const;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double outgoing_energy ) const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
 
@@ -58,8 +59,8 @@ public:
 
   //! Simulate the reaction
   void react( ElectronState& electron,
-		      ParticleBank& bank,
-		      Data::SubshellType& shell_of_interaction ) const;
+              ParticleBank& bank,
+              Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 
@@ -85,6 +86,14 @@ inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
 inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
     const double energy,
     const unsigned bin_index ) const
+{
+  return 0.0;
+}
+
+// Return the differential cross section
+inline double VoidAbsorptionElectroatomicReaction::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const
 {
   return 0.0;
 }
@@ -120,7 +129,9 @@ inline void VoidAbsorptionElectroatomicReaction::react(
        ElectronState& electron,
        ParticleBank& bank,
        Data::SubshellType& shell_of_interaction ) const
-{ /* ... */ }
+{
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
+}
 
 // Return the head of the energy grid
 inline const double* VoidAbsorptionElectroatomicReaction::getEnergyGridHead() const

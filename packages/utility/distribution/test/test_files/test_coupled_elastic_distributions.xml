@@ -1,0 +1,22 @@
+<ParameterList name="Coupled Elastic Distributions">
+
+  <Parameter name="Coupled Elastic Distribution A" type="Coupled Elastic LinLin Distribution"
+	     value="{{-1.0,0.0,0.5,0.999999},{100,10,1,0.1},1.0,0.1,0}"/>
+  <Parameter name="Coupled Elastic Distribution B" type="Coupled Elastic LinLin Distribution"
+	     value="{{-1.0, 2i, 0.999999},{100,10,1,0.1},1.0,0.2,0}"/>
+
+  <Parameter name="Coupled Elastic Distribution C" type="Coupled Elastic LogLin Distribution"
+	     value="{{-1.0, 0.5, 3l, 0.999999},{pi, 1.0, 10.0, 100.0, 1000.0, 10000.0},1.0,0.5,0}"/>
+
+  <Parameter name="Unit-Aware Coupled Elastic Distribution A"
+	     type="Unit-Aware Coupled Elastic LinLin Distribution (dimensionless,mol)"
+	     value="{{-1.0,0.0,0.5,0.999999},{100,10,1,0.0},1.0,0.1,0}"/>
+  <Parameter name="Unit-Aware Coupled Elastic Distribution B"
+	     type="Unit-Aware Coupled Elastic LinLin Distribution (dimensionless,mol)"
+	     value="{{-1.0, 2i, 0.999999},{100,10,1,0.1},1.0,0.2,0}"/>
+
+  <Parameter name="Unit-Aware Coupled Elastic Distribution C"
+	     type="Unit-Aware Coupled Elastic LogLin Distribution (dimensionless,mol)"
+	     value="{{-1.0, 0.5, 3l, 0.999999},{pi,1.0,10.0,100.0,1000.0,10000.0},1.0,0.5,0}"/>
+
+</ParameterList>

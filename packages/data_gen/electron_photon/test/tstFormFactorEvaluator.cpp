@@ -90,7 +90,7 @@ TEUCHOS_UNIT_TEST( FormFactorEvaluator,
                    getFormFactorSquaredEvaluationWrapper )
 {
   std::function<double(double)> evaluation_wrapper =
-    evaluator->getFormFactorSquaredEvalutionWrapper();
+    evaluator->getFormFactorSquaredEvaluationWrapper();
   
   TEST_FLOATING_EQUALITY( evaluation_wrapper( 0.0 ),
                           82.0*82.0,
@@ -115,11 +115,11 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_pb_ace_file",
-		 &test_pb_ace_file_name,
-		 "Test ACE file name" );
+                 &test_pb_ace_file_name,
+                 "Test ACE file name" );
   clp.setOption( "test_pb_ace_table",
-		 &test_pb_ace_table_name,
-		 "Test ACE table name" );
+                 &test_pb_ace_table_name,
+                 "Test ACE table name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -135,15 +135,15 @@ int main( int argc, char** argv )
   {
     // Create the file handler and data extractor for lead
     std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
-			      new Data::ACEFileHandler( test_pb_ace_file_name,
-							test_pb_ace_table_name,
-							1u ) );
+                              new Data::ACEFileHandler( test_pb_ace_file_name,
+                                                        test_pb_ace_table_name,
+                                                        1u ) );
 
     std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
-				new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+                                new Data::XSSEPRDataExtractor(
+                                      ace_file_handler->getTableNXSArray(),
+                                      ace_file_handler->getTableJXSArray(),
+                                      ace_file_handler->getTableXSSArray() ) );
 
     Teuchos::ArrayView<const double> jcohe_block =
       xss_data_extractor->extractJCOHEBlock();
@@ -151,10 +151,10 @@ int main( int argc, char** argv )
     unsigned form_factor_size = jcohe_block.size()/3;
 
     Teuchos::Array<double> recoil_momentum(
-					  jcohe_block( 0, form_factor_size ) );
+                                          jcohe_block( 0, form_factor_size ) );
 
     Teuchos::Array<double> form_factor_values(
-			 jcohe_block( 2*form_factor_size, form_factor_size ) );
+                         jcohe_block( 2*form_factor_size, form_factor_size ) );
 
     evaluator = DataGen::FormFactorEvaluator::createEvaluator<Utility::LinLin,Utility::Units::InverseAngstrom>(
                                                           recoil_momentum,

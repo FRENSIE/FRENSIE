@@ -54,7 +54,7 @@ void CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParti
 
     this->addPartialHistoryRangeContribution<OBSERVER_TIME_DIMENSION>(
                                                         cell_of_subtrack,
-							particle_state_wrapper,
+                                                        particle_state_wrapper,
                                                         contribution);
   }
 }

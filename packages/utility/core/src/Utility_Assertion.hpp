@@ -21,7 +21,7 @@
  * coding errors (debugging assertions) and assertions that check for user
  * error. Debugging assertions will only be activated when the code has been
  * compiled in debug mode. When compiled in release mode, the macro NDEBUG
- * is set by the compiler, which will prevent the execution of degubbing
+ * is set by the compiler, which will prevent the execution of debugging
  * assertion code.
  *
  * Use assertions in parts of the code where Design-by-Contract is not used,
@@ -37,7 +37,7 @@
 namespace Utility
 {
 
-/*! Exception class to be thrown when degub assertion condition is not met.
+/*! Exception class to be thrown when debug assertion condition is not met.
  *
  * This Assertion class is a key part of \ref assert.
  * \ingroup assertion_exceptions_macros

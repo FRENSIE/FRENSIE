@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_PHOTON_SCATTEIRNG_DISTRIBUTION_HPP
+#define MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -55,7 +55,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_PHOTON_SCATTEIRNG_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp

@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_NeutronAbsorptionReaction.hpp
 //! \author Alex Robinson
-//! \brief  The neuton absorption reaction class declaration
+//! \brief  The neutron absorption reaction class declaration
 //!
 //---------------------------------------------------------------------------//
 

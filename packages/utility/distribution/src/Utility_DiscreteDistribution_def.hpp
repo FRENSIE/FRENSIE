@@ -25,7 +25,7 @@ BOOST_SERIALIZATION_DISTRIBUTION2_EXPORT_IMPLEMENT( UnitAwareDiscreteDistributio
 
 namespace Utility{
 
-// Basic Constructor (potentiall dangerous)
+// Basic Constructor (potentially dangerous)
 /*! \details A precalculated CDF can be passed as the dependent values as
  * long as the interpret_dependent_values_as_cdf argument is true.
  */
@@ -33,8 +33,10 @@ template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 			      const std::vector<double>& independent_values,
 			      const std::vector<double>& dependent_values,
-			      const bool interpret_dependent_values_as_cdf )
+			      const bool interpret_dependent_values_as_cdf,
+                              const bool treat_as_continuous )
   : d_distribution( independent_values.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
   // Verify that the values are valid
@@ -54,8 +56,10 @@ template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	      const std::vector<InputIndepQuantity>& independent_quantities,
-	      const std::vector<double>& dependent_values )
+	      const std::vector<double>& dependent_values,
+              const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
   // Verify that the values are valid
@@ -72,8 +76,10 @@ template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	      const std::vector<InputIndepQuantity>& independent_quantities,
-	      const std::vector<InputDepQuantity>& dependent_quantities )
+	      const std::vector<InputDepQuantity>& dependent_quantities,
+              const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
+    d_continuous( treat_as_continuous ),
     d_norm_constant()
 {
   // Verify that the values are valid
@@ -193,7 +199,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::evaluate( const ty
 
 // Evaluate the PDF
 /*! \details It is acceptable for the same independent variable to appear
- * multiple times. When multiple occurances are found, the sum will be
+ * multiple times. When multiple occurrences are found, the sum will be
  * returned.
  */
 template<typename IndependentUnit,typename DependentUnit>
@@ -393,7 +399,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::getDistributionTyp
 template<typename IndependentUnit,typename DependentUnit>
 bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isContinuous() const
 {
-  return false;
+  return d_continuous;
 }
 
 // Method for placing the object in an output stream
@@ -421,6 +427,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::save( Archive
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_distribution );
   ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_continuous );
 }
 
 // Load the distribution from an archive
@@ -434,6 +441,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::load( Archive
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_distribution );
   ar & BOOST_SERIALIZATION_NVP( d_norm_constant );
+  ar & BOOST_SERIALIZATION_NVP( d_continuous );
 }
 
 // Equality comparison operator

@@ -34,7 +34,7 @@ CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::CrossSect
 {
   // Make sure the photon production ids are valid
   testPrecondition( photon_production_ids.size() > 0 );
-  // Make sure the ougtoing particle distributions are valid
+  // Make sure the outgoing particle distributions are valid
   testPrecondition( outgoing_particle_distributions.size() ==
 		    photon_production_ids.size() );
 }

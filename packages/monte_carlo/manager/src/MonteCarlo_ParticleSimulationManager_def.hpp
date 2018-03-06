@@ -22,6 +22,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PositronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -118,7 +119,7 @@ void ParticleSimulationManager<mode>::runSimulation()
 
   // Enable geometry thread support
   GMI::enableThreadSupport(
-	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   // Enable source thread support
   SMI::enableThreadSupport(
@@ -126,7 +127,7 @@ void ParticleSimulationManager<mode>::runSimulation()
 
   // Enable estimator thread support
   EMI::enableThreadSupport(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   // Set the start time
   this->setStartTime( Utility::GlobalOpenMPSession::getTime() );
@@ -159,12 +160,15 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
     #pragma omp for
     for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
+      double history_start_time =
+        Utility::GlobalOpenMPSession::getTime(); - d_start_time;
+
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
       if( !d_end_simulation )
       {
-	// Initialize the random number generator for this history
-	Utility::RandomNumberGenerator::initialize( history );
+        // Initialize the random number generator for this history
+        Utility::RandomNumberGenerator::initialize( history );
 
 	// Sample a particle state from the source
         try{
@@ -185,7 +189,7 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
 
 	// Increment the number of histories completed
         #pragma omp atomic
-	++d_histories_completed;
+        ++d_histories_completed;
       }
     }
   }
@@ -551,8 +555,8 @@ void ParticleSimulationManager<mode>::printSimulationStateInfo()
   {
     #pragma omp flush( d_histories_completed )
     std::cerr << " History: " << d_histories_completed
-	      << " Run Time: " << time - d_start_time
-	      << std::endl;
+              << " Run Time: " << time - d_start_time
+              << std::endl;
   }
 }
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_KinematicHelpers.hpp
-//! \author Alex Bennett, Alex Robinson
+//! \author Alex Bennett, Alex Robinson, Luke Kersting
 //! \brief  Kinematic helper function declarations
 //!
 //---------------------------------------------------------------------------//
@@ -25,6 +25,10 @@ double calculateKineticEnergy( const double rest_mass_energy,
                                const double speed );
 
 //! Calculate the dimensionless speed of a relativistic particle: velocity / speed of light
+double calculateDimensionlessRelativisticSpeed( const double rest_mass_energy,
+                                                const double kinetic_energy );
+
+//! Calculate the squared dimensionless speed of a relativistic particle: velocity / speed of light
 double calculateDimensionlessRelativisticSpeedSquared(
                                                   const double rest_mass_energy,
                                                   const double kinetic_energy );
@@ -44,8 +48,7 @@ double calculateRelativisticMomentumEnergySquared(
 
 //! Calculate the dimensionless momentum**2 of a relativistic particle ( momentum/mass*c )**2
 double calculateDimensionlessRelativisticMomentumSquared(
-                                                  const double rest_mass_energy,
-                                                  const double kinetic_energy );
+                            const double kinetic_energy_in_rest_mass_units );
 
 //! Calculate the momentum of a massive particle ( MeV*s/cm )
 double calculateRelativisticMomentum( const double rest_mass_energy,
@@ -68,7 +71,7 @@ double calculateAlphaMax( const double kinetic_energy,
 			  const double kT );
 
 
-// Calculate the kinetic enery of a relativistic particle (MeV)
+// Calculate the kinetic energy of a relativistic particle (MeV)
 inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
                                                  const double speed )
 {
@@ -87,7 +90,7 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
 }
 
 
-// Calculate the kinetic enery of a massive particle (MeV)
+// Calculate the kinetic energy of a massive particle (MeV)
 inline double calculateKineticEnergy( const double rest_mass_energy,
 				      const double speed )
 {
@@ -102,6 +105,15 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
   return 0.5 * rest_mass_energy * speed * speed /
         ( Utility::PhysicalConstants::speed_of_light *
           Utility::PhysicalConstants::speed_of_light );
+}
+
+//! Calculate the dimensionless speed of a relativistic particle: velocity / speed of light
+inline double calculateDimensionlessRelativisticSpeed(
+                                                const double rest_mass_energy,
+                                                const double kinetic_energy )
+{
+  return sqrt( calculateDimensionlessRelativisticSpeedSquared( rest_mass_energy,
+                                                               kinetic_energy ) );
 }
 
 //! Calculate the dimensionless speed**2 of a massive particle (beta = v/c)**2
@@ -128,8 +140,8 @@ inline double calculateRelativisticSpeed( const double rest_mass_energy,
   double energy = kinetic_energy + rest_mass_energy;
 
   return Utility::PhysicalConstants::speed_of_light*
-    sqrt( calculateDimensionlessRelativisticSpeedSquared( rest_mass_energy,
-                                                          kinetic_energy ) );
+                  calculateDimensionlessRelativisticSpeed( rest_mass_energy,
+                                                           kinetic_energy );
 }
 
 // Calculate the speed of a massive particle
@@ -163,14 +175,12 @@ inline double calculateRelativisticMomentumEnergySquared(
 }
 
 // Calculate the dimensionless momentum of a relativistic particle ( momentum/mass*c )**2
-//! Write Unit Test
+//! \todo Write Unit Test
 inline double calculateDimensionlessRelativisticMomentumSquared(
-                                                  const double rest_mass_energy,
-                                                  const double kinetic_energy )
+                            const double kinetic_energy_in_rest_mass_units )
 {
-  return calculateRelativisticMomentumEnergySquared(
-               rest_mass_energy, kinetic_energy ) /
-               (rest_mass_energy*rest_mass_energy);
+  return kinetic_energy_in_rest_mass_units*( kinetic_energy_in_rest_mass_units +
+                                             2.0L );
 }
 
 // Calculate the momentum of a relativistic particle ( MeV*s/cm )

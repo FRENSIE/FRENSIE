@@ -60,8 +60,8 @@ public:
 
   //! Simulate the reaction
   void react( AdjointPhotonState& adjoint_photon,
-	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
+              ParticleBank& bank,
+              Data::SubshellType& shell_of_interaction ) const;
 
 private:
 

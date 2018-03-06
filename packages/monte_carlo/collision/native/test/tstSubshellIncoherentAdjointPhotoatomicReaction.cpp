@@ -125,25 +125,18 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
 TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    getCrossSection )
 {
-  double cross_section = 
-    incoherent_adjoint_reaction->getCrossSection( 1e-3 );
-  
+  double cross_section = incoherent_adjoint_reaction->getCrossSection( 1e-3 );
   TEST_FLOATING_EQUALITY( cross_section, 3.36049064970995307e-05, 1e-12 );
 
-  cross_section =
-    incoherent_adjoint_reaction->getCrossSection( 1.0 );
-  
+  cross_section = incoherent_adjoint_reaction->getCrossSection( 1.0 );
   TEST_FLOATING_EQUALITY( cross_section, 0.720525445117274344, 1e-12 );
 
   // The cross section must go to zero at E_max - E_b
   cross_section =
     incoherent_adjoint_reaction->getCrossSection( 20.0 - 1.8285e-3 );
-
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  cross_section =
-    incoherent_adjoint_reaction->getCrossSection( 20.0 );
-  
+  cross_section = incoherent_adjoint_reaction->getCrossSection( 20.0 );
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
 
@@ -199,8 +192,8 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction, react )
                                       shell_of_interaction );
 
   TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
-			  0.053789358961052636, 
-			  1e-15 );
+                          0.053789358961052636, 
+                          1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.5, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
@@ -217,12 +210,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction, react )
 
   TEST_EQUALITY_CONST( bank.size(), 2 );
   TEST_EQUALITY_CONST( bank.top().getEnergy(),
-		       Utility::PhysicalConstants::electron_rest_mass_energy );
+                       Utility::PhysicalConstants::electron_rest_mass_energy );
   // Due to the coarseness of the 2d test grid the weight will not be
   // exactly what it should theoretically be
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
-			  0.471349591314760286,
-			  5e-3 );
+                          0.471349591314760286,
+                          5e-3 );
   
   bank.pop();
 
@@ -261,21 +254,24 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                            data_container.getAdjointPhotonEnergyGrid().end() );
 
   // Evaluate the cross section at the energy of interest
-  Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>
-    two_d_cross_section( data_container.getAdjointPhotonEnergyGrid(),
-                         data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( Data::K_SUBSHELL ),
-                         data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( Data::K_SUBSHELL ) );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> two_d_cross_section;
+  {
+  two_d_cross_section.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+      data_container.getAdjointPhotonEnergyGrid(),
+      data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( Data::K_SUBSHELL ),
+      data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( Data::K_SUBSHELL ) ) );
+  }
 
   Teuchos::ArrayRCP<double> cross_section( incoming_energy_grid.size() );
-
   for( size_t i = 0; i < incoming_energy_grid.size(); ++i )
   {
     cross_section[i] =
-      two_d_cross_section.evaluate( incoming_energy_grid[i], 20.0 );
+      two_d_cross_section->evaluate( incoming_energy_grid[i], 20.0 );
     std::cout.precision( 18 );
     std::cout << incoming_energy_grid[i] << " " << cross_section[i] << std::endl;
   }
-  
+
   // Create the scattering distribution
   std::shared_ptr<MonteCarlo::SubshellIncoherentAdjointPhotonScatteringDistribution>
     scattering_distribution;

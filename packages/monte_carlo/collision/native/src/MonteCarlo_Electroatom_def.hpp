@@ -17,19 +17,22 @@ namespace MonteCarlo{
 // Constructor
 template<typename InterpPolicy>
 Electroatom::Electroatom(
-	  const std::string& name,
-	  const unsigned atomic_number,
-	  const double atomic_weight,
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const Electroatom::ReactionMap& standard_scattering_reactions,
-	  const Electroatom::ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_cross_sections,
-	  const InterpPolicy policy )
-  : d_name( name ),
-    d_atomic_number( atomic_number ),
-    d_atomic_weight( atomic_weight ),
-    d_core()
+      const std::string& name,
+      const unsigned atomic_number,
+      const double atomic_weight,
+      const Teuchos::ArrayRCP<double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const Electroatom::ReactionMap& standard_scattering_reactions,
+      const Electroatom::ReactionMap& standard_absorption_reactions,
+      const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+      const bool processed_cross_sections,
+      const InterpPolicy policy )
+  : Atom<ElectroatomCore>( name,
+                           atomic_number,
+                           atomic_weight,
+                           grid_searcher,
+                           standard_scattering_reactions,
+                           standard_absorption_reactions )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -42,14 +45,18 @@ Electroatom::Electroatom(
                     standard_absorption_reactions.size() > 0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 
   // Populate the core
-  d_core = ElectroatomCore( energy_grid,
-                            standard_scattering_reactions,
-                            standard_absorption_reactions,
-                            atomic_relaxation_model,
-                            processed_cross_sections,
-                            policy );
+  Atom<ElectroatomCore>::setCore(
+                      ElectroatomCore( energy_grid,
+                                       grid_searcher,
+                                       standard_scattering_reactions,
+                                       standard_absorption_reactions,
+                                       atomic_relaxation_model,
+                                       processed_cross_sections,
+                                       policy ) );
 }
 
 } // end MonteCarlo namespace

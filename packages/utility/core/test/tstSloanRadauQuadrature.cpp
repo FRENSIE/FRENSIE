@@ -354,9 +354,9 @@ FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauNodesAndWeights )
   std::vector<Utility::long_float> legendres_4( 5 );
 
   legendres_4[0] = Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 5; m++ )
+    for ( int m = 1; m < 5; ++m )
     {
       legendres_4[m] +=
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
@@ -406,9 +406,9 @@ FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauNodesAndWeights )
   std::vector<Utility::long_float>  legendres_8( 9 );
 
   legendres_8[0] = Utility::long_float(1)*Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 9; m++ )
+    for ( int m = 1; m < 9; ++m )
     {
       legendres_8[m] +=
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
@@ -482,9 +482,9 @@ FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauNodesAndWeights )
   std::vector<Utility::long_float>  legendres_double( 9 );
 
   legendres_double[0] = Utility::long_float(1)*Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 9; m++ )
+    for ( int m = 1; m < 9; ++m )
     {
       legendres_double[m] +=
         Utility::getLegendrePolynomial( node[i], m )
@@ -529,9 +529,9 @@ FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauNodesAndWeights )
   std::vector<Utility::long_float>  legendres_ld( 9 );
 
   legendres_ld[0] = Utility::long_float(1)*Utility::long_float(259700);
-  for ( int i = 0; i < number_of_angles_wanted; i++ )
+  for ( int i = 0; i < number_of_angles_wanted; ++i )
   {
-    for ( int m = 1; m < 9; m++ )
+    for ( int m = 1; m < 9; ++m )
     {
       legendres_ld[m] +=
         Utility::getLegendrePolynomial( node_ld[i], m )
@@ -575,17 +575,14 @@ FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauNodesAndWeights )
   std::vector<Utility::long_float> legendres( test_legendre.size() );
 
   legendres[0] = Utility::long_float(1);
-  for ( int i = 0; i < nodes_preserved; i++ )
+  for ( int i = 0; i < nodes_preserved; ++i )
   {
-    for ( int m = 1; m < test_legendre.size(); m++ )
+    for ( int m = 1; m < test_legendre.size(); ++m )
     {
       legendres[m] +=
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
         *weights[i];
     }
-std::cout <<  "i          =\t" << i << std::endl;
-std::cout << std::setprecision(20) << "nodes[i]   =\t" << nodes[i] << std::endl;
-std::cout << std::setprecision(20) << "weights[i] =\t" << weights[i] << std::endl;
   }
 
   FRENSIE_CHECK_FLOATING_EQUALITY( legendres[0].convert_to<double>(), test_legendre[0].convert_to<double>(), tol);
@@ -776,11 +773,6 @@ FRENSIE_UNIT_TEST( SloanRadauQuadrature, AlgorithmMatch)
 
   test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
 
-std::cout << std::setprecision(20)<< " weights[0] =\t " <<weights[0] <<std::endl;
-std::cout << std::setprecision(20)<< " weights[1] =\t " <<weights[1] <<std::endl;
-std::cout << std::setprecision(20)<< " nodes[0] =\t " <<nodes[0] <<std::endl;
-std::cout << std::setprecision(20)<< " nodes[1] =\t " <<nodes[1] <<std::endl;
-
   node[0] = -7.684804997909467E-08L;
   node[1] = 1.000000000000000E+00L;
 
@@ -957,9 +949,9 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   test_weight = 1.0L/num_roots;
 
   test_legendre[0] = Utility::long_float(1);
-  for ( int i = 0; i < num_roots; i++ )
+  for ( int i = 0; i < num_roots; ++i )
   {
-    for ( int m = 1; m < num_moments; m++ )
+    for ( int m = 1; m < num_moments; ++m )
     {
       test_legendre[m] +=
         Utility::getLegendrePolynomial( test_roots[i].convert_to<long double>(),

@@ -2,7 +2,7 @@
 //!
 //! \file   tstPhotoatomicReactionTypeHelpers.cpp
 //! \author Alex Robinson
-//! \brief  Photoatomic reaction tyhpe helper function unit tests
+//! \brief  Photoatomic reaction type helper function unit tests
 //!
 //---------------------------------------------------------------------------//
 

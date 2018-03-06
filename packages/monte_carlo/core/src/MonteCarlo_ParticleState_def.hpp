@@ -36,6 +36,7 @@ void ParticleState::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_source_id );
   ar & BOOST_SERIALIZATION_NVP( d_source_energy );
   ar & BOOST_SERIALIZATION_NVP( d_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_charge );
   ar & BOOST_SERIALIZATION_NVP( d_source_time );
   ar & BOOST_SERIALIZATION_NVP( d_time );
   ar & BOOST_SERIALIZATION_NVP( d_collision_number );
@@ -66,6 +67,7 @@ void ParticleState::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_source_id );
     ar & BOOST_SERIALIZATION_NVP( d_source_energy );
   ar & BOOST_SERIALIZATION_NVP( d_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_charge );
   ar & BOOST_SERIALIZATION_NVP( d_source_time );
   ar & BOOST_SERIALIZATION_NVP( d_time );
   ar & BOOST_SERIALIZATION_NVP( d_collision_number );

@@ -42,6 +42,10 @@ XSSEPRDataExtractor::XSSEPRDataExtractor(
                       std::runtime_error,
                       "Invalid jxs array encountered!" );
 
+  TEST_FOR_EXCEPTION( nxs[5] == 1 || nxs[5] == 3,
+                      std::runtime_error,
+                      "Invalid file type!" );
+
   TEST_FOR_EXCEPTION( xss->size() != nxs[0],
                       std::runtime_error,
                       "The nxs array expected the xss array to have size "
@@ -69,6 +73,22 @@ XSSEPRDataExtractor::XSSEPRDataExtractor(
 
   // Extract and cache the ESZE block
   d_esze_block = d_xss_view( d_jxs[18], d_nxs[7]*(6+d_nxs[6]) );
+
+  if ( nxs[5] == 3 )
+  {
+    // Extract and cache the ESZE2 block
+    d_esze2_block = d_xss_view( d_jxs[26], d_nxs[7]*2 );
+  }
+}
+
+// Check if the file version is eprdata14
+/*! \details Version eprdata14 has a ESZE2 block with additional
+ * (total and transport) elastic cross section data.
+ * Check this before attempting to extract the ESZE2 block.
+ */
+bool XSSEPRDataExtractor::isEPRVersion14() const
+{
+  return d_nxs[5] == 3;
 }
 
 // Check if old fluorescence data is present
@@ -284,6 +304,13 @@ XSSEPRDataExtractor::extractESZEBlock() const
   return d_esze_block;
 }
 
+// Extract the ESZE2 block
+Teuchos::ArrayView<const double>
+XSSEPRDataExtractor::extractESZE2Block() const
+{
+  return d_esze2_block();
+}
+
 // Extract the incoming electron energy grid
 Utility::ArrayView<const double> XSSEPRDataExtractor::extractElectronEnergyGrid() const
 {
@@ -312,8 +339,29 @@ auto XSSEPRDataExtractor::extractElectronTotalCrossSectionInBarns() const -> Uti
           Utility::ArrayView<const Area>::size_type(d_nxs[7]) );
 }
 
-// Extract the electron elastic cross section
-Utility::ArrayView<const double> XSSEPRDataExtractor::extractElasticCrossSection() const
+// Extract the electron elastic transport cross section
+Teuchos::ArrayView<const double>
+XSSEPRDataExtractor::extractElasticTransportCrossSection() const
+{
+  if( isEPRVersion14() )
+    return d_esze2_block( 0, d_nxs[7] );
+  else
+    return Teuchos::ArrayView<const double>();
+}
+
+// Extract the electron elastic total cross section
+Teuchos::ArrayView<const double>
+XSSEPRDataExtractor::extractElasticTotalCrossSection() const
+{
+  if( isEPRVersion14() )
+    return d_esze2_block( d_nxs[7], d_nxs[7] );
+  else
+    return Teuchos::ArrayView<const double>();
+}
+
+// Extract the electron elastic cutoff cross section ( mu = -1 to 0.999999 )
+Teuchos::ArrayView<const double>
+XSSEPRDataExtractor::extractElasticCutoffCrossSection() const
 {
   return d_esze_block( 2*d_nxs[7], d_nxs[7] );
 }

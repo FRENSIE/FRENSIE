@@ -75,10 +75,10 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::isVerboseModeOn() const
 }
 
 // Throw exception on dirty convergence
-/*! \details "Dirty Convergence" has occured when the distance tolerance or
+/*! \details "Dirty Convergence" has occurred when the distance tolerance or
  * the absolute difference tolerance is reached before the convergence
  * tolerance. This type of convergence should be avoided because the grid
- * has not truely converged.
+ * has not truly converged.
  */
 template<typename TwoDInterpPolicy>
 void TwoDGridGenerator<TwoDInterpPolicy>::throwExceptionOnDirtyConvergence()
@@ -89,10 +89,10 @@ void TwoDGridGenerator<TwoDInterpPolicy>::throwExceptionOnDirtyConvergence()
 }
 
 // Warn on dirty convergence (default)
-/*! \details "Dirty Convergence" has occured when the distance tolerance or
+/*! \details "Dirty Convergence" has occurred when the distance tolerance or
  * the absolute difference tolerance is reached before the convergence
  * tolerance. This type of convergence should be avoided because the grid
- * has not truely converged.
+ * has not truly converged.
  */
 template<typename TwoDInterpPolicy>
 void TwoDGridGenerator<TwoDInterpPolicy>::warnOnDirtyConvergence()
@@ -183,7 +183,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::addCriticalValuesToPrimaryGrid(
 
 // Generate the primary grid in place
 /*! \details The container must have a push_back method defined. The
- * function must have the following signature: double (double,double). 
+ * function must have the following signature: double (double,double).
  * The first function parameter must correspond to the primary value.
  */
 template<typename TwoDInterpPolicy>
@@ -209,7 +209,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateInPlace(
 
 // Generate the primary grid in place (return secondary grids and evaluated function)
 /*! \details The containers must have a push_back method defined. The
- * function must have the following signature: double (double,double). 
+ * function must have the following signature: double (double,double).
  * The first function parameter must correspond to the primary value.
  */
 template<typename TwoDInterpPolicy>
@@ -246,9 +246,9 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluateInPlace(
   evaluated_function.clear();
 
   double primary_value_0, primary_value_1;
-  
+
   std::vector<double> secondary_grid_0, secondary_grid_1;
-  
+
   typename STLCompliantContainerC::value_type
     evaluated_function_0, evaluated_function_1;
 
@@ -257,12 +257,12 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluateInPlace(
   primary_grid_queue.pop_front();
 
   this->initializeSecondaryGrid( secondary_grid_0, primary_value_0 );
-  
+
   this->generateAndEvaluateSecondaryInPlace( secondary_grid_0,
                                              evaluated_function_0,
                                              primary_value_0,
                                              function );
-  
+
   // Optimize the 2D grid
   while( !primary_grid_queue.empty() )
   {
@@ -270,7 +270,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluateInPlace(
     primary_value_1 = primary_grid_queue.front();
 
     this->initializeSecondaryGrid( secondary_grid_1, primary_value_1 );
-    
+
     this->generateAndEvaluateSecondaryInPlace( secondary_grid_1,
                                                evaluated_function_1,
                                                primary_value_1,
@@ -294,7 +294,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluateInPlace(
       evaluated_function.push_back( evaluated_function_0 );
 
       this->logAddedPrimaryGridPoint( primary_value_0, primary_grid.size()-1 );
-      
+
       primary_value_0 = primary_value_1;
       primary_grid_queue.pop_front();
 
@@ -310,13 +310,13 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluateInPlace(
   }
 
   primary_grid.push_back( primary_value_0 );
-  
+
   secondary_grids.push_back( typename STLCompliantContainerB::value_type() );
   secondary_grids.back().assign( secondary_grid_0.begin(),
                                  secondary_grid_0.end() );
-  
+
   evaluated_function.push_back( evaluated_function_0 );
-  
+
   // Make sure there is a secondary grid for every primary grid point
   testPostcondition( primary_grid.size() == secondary_grids.size() );
   testPostcondition( secondary_grids.size() == evaluated_function.size() );
@@ -326,7 +326,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluateInPlace(
 
 // Generate the primary grid
 /*! \details The container must have a push_back method defined. The
- * function must have the following signature: double (double,double). 
+ * function must have the following signature: double (double,double).
  * The first function parameter must correspond to the primary value.
  */
 template<typename TwoDInterpPolicy>
@@ -351,7 +351,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generate(
   primary_grid.clear();
   primary_grid.assign( initial_primary_grid.begin(),
                        initial_primary_grid.end() );
-  
+
   std::vector<STLCompliantContainerA> secondary_grids, evaluated_function;
 
   this->generateAndEvaluateInPlace(
@@ -360,7 +360,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generate(
 
 // Generate the primary grid (return secondary grids and evaluated function)
 /*! \details The container must have a push_back method defined. The
- * function must have the following signature: double (double,double). 
+ * function must have the following signature: double (double,double).
  * The first function parameter must correspond to the primary value.
  */
 template<typename TwoDInterpPolicy>
@@ -398,7 +398,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluate(
 
 // Generate and evaluate the secondary grid in place
 /*! \details The container must have a push_back method defined. The
- * function must have the following signature: double (double,double). 
+ * function must have the following signature: double (double,double).
  * The first function parameter must correspond to the primary value. It is
  * acceptable to pass an empty secondary grid (it will be initialized with the
  * initializeSecondaryGrid method).
@@ -419,7 +419,7 @@ void TwoDGridGenerator<TwoDInterpPolicy>::generateAndEvaluateSecondaryInPlace(
 
   // Initialize the secondary grid
   std::vector<double> initial_secondary_grid;
-  
+
   this->initializeSecondaryGrid( initial_secondary_grid, primary_value );
 
   // Create a function for this secondary grid
@@ -446,7 +446,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConverged(
                     const STLCompliantContainerB& evaluated_function_1,
                     const Functor& function ) const
 {
-  // Make sure the same inerpolation is used for the primary and secondary
+  // Make sure the same interpolation is used for the primary and secondary
   testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   // Make sure the primary values are valid
   testPrecondition( primary_value_0 < primary_value_1 );
@@ -525,7 +525,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 
       if( !converged )
         break;
-      
+
       // Check for convergence at the secondary grid mid point
       if( next_secondary_grid_mid_value_it != secondary_grid_mid.end() )
       {
@@ -535,7 +535,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConverged(
         double exact_function_value =
           function( intermediate_primary_value,
                     secondary_grid_mid_midpoint_value );
-        
+
         converged = this->hasGridConvergedAtSecondaryPoint(
                                              primary_value_0,
                                              primary_value_1,
@@ -576,7 +576,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
                      const STLCompliantContainerB& evaluated_function_1 ) const
 {
   bool converged = true;
-  
+
   // Check for convergence at the grid point
   double interp_function_value = TwoDInterpPolicy::interpolateUnitBase(
                                                   primary_value_0,
@@ -595,7 +595,8 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
   double relative_error =
     Utility::RelativeErrorComparisonPolicy::calculateRelativeError( exact_function_value, interp_function_value );
   
-  double abs_diff = Utility::CloseComparisonPolicy::calculateDistance( exact_function_value, interp_function_value );
+  double abs_diff =
+    Utility::CloseComparisonPolicy::calculateDistance( exact_function_value, interp_function_value );
   
   // Not converged
   if( relative_error > d_convergence_tol &&
@@ -615,7 +616,7 @@ bool TwoDGridGenerator<TwoDInterpPolicy>::hasGridConvergedAtSecondaryPoint(
         << primary_value_1 << ", secondary="
         << secondary_value << ", abs_diff_val="
         << abs_diff;
-    
+
     if( d_throw_exceptions )
     {
       THROW_EXCEPTION( std::runtime_error, oss.str() );
@@ -649,7 +650,7 @@ double TwoDGridGenerator<TwoDInterpPolicy>::calculatePrimaryMidpoint(
               0.5*(TwoDInterpPolicy::processFirstIndepVar(primary_value_0) +
                    TwoDInterpPolicy::processFirstIndepVar(primary_value_1) ) );
 }
-  
+
 // Calculate the midpoint between two secondary values
 template<typename TwoDInterpPolicy>
 double TwoDGridGenerator<TwoDInterpPolicy>::calculateSecondaryMidpoint(

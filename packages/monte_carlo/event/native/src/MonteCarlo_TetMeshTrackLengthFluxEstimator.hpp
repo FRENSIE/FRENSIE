@@ -39,7 +39,7 @@ namespace MonteCarlo{
  * Kerry Dunn (UW-Madison CNERG group). The DAGMC repo that contains her
  * class can be found at https://github.com/svalinn/DAGMC.
  */
-template<typename ContributionMutliplierPolicy = WeightMultiplier>
+template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>,
   public ParticleSubtrackEndingGlobalEventObserver
 {

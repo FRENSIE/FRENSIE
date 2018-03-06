@@ -51,7 +51,7 @@ AdjointPairProductionEnergyDistributionNormConstantEvaluator::createEvaluator(
          new AdjointPairProductionEnergyDistributionNormConstantEvaluator(
                                                         pair_production_cs ) );
 }
-  
+
 } // end DataGen namespace
 
 #endif // end DATA_GEN_ADJOINT_PAIR_PRODUCTION_ENERGY_DISTRIBUTION_NORM_CONSTANT_EVALUTOR_DEF_HPP

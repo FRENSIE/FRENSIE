@@ -335,5 +335,5 @@ EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareDeltaDistribution<void,void> );
 #endif // end UTILITY_DELTA_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utiliyt_DeltaDistribution_def.hpp
+// end Utility_DeltaDistribution_def.hpp
 //---------------------------------------------------------------------------//

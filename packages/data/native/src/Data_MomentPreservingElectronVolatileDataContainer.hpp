@@ -34,11 +34,6 @@ public:
   using MomentPreservingElectronDataContainer::setNumberOfDiscreteAngles;
   using MomentPreservingElectronDataContainer::setMomentPreservingDiscreteAngles;
   using MomentPreservingElectronDataContainer::setMomentPreservingWeights;
-/*
-  using MomentPreservingElectronDataContainer::setElectronEnergyGrid;
-  using MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSection;
-  using MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex;
-*/
 };
 
 } // end Data namespace

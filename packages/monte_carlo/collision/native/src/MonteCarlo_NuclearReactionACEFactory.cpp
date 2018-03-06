@@ -162,7 +162,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
                                        reaction_threshold_index,
                                        reaction_cross_section,
                                        scattering_dist_factory );
-  
+
   this->initializeAbsorptionReactions( temperature,
                                        energy_grid,
                                        reaction_q_value,
@@ -170,7 +170,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
                                        reaction_energy_dependent_multiplicity,
                                        reaction_threshold_index,
                                        reaction_cross_section );
-  
+
   this->initializeFissionReactions( temperature,
                                     energy_grid,
                                     properties,
@@ -635,7 +635,7 @@ void NuclearReactionACEFactory::initializeFissionReactions(
 			  fission_neutron_multiplicity_distribution,
 			  prompt_neutron_emission_distribution ) );
       }
-      // Create a detaild neutron fission reaction (with delayed info)
+      // Create a detailed neutron fission reaction (with delayed info)
       else
       {
 	reaction.reset( new DetailedNeutronFissionReaction(

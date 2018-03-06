@@ -23,13 +23,26 @@ class ElectroatomicReactionACEFactory
 
 public:
 
+  //! Create a Decoupled elastic scattering electroatomic reaction
+  static void createDecoupledElasticReaction(
+      const Data::XSSEPRDataExtractor& raw_electroatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
+
   //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-      const double lower_cutoff_angle_cosine = 1.0 );
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
+
+  //! Create a screened Rutherford elastic scattering electroatomic reaction
+  static void createScreenedRutherfordElasticReaction(
+      const Data::XSSEPRDataExtractor& raw_electroatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
@@ -79,6 +92,13 @@ public:
   static void removeZerosFromCrossSection(
       const Teuchos::ArrayRCP<const double>& energy_grid,
       const Teuchos::ArrayView<const double>& raw_cross_section,
+      Teuchos::ArrayRCP<double>& cross_section,
+      unsigned& threshold_energy_index );
+
+  //! Remove the zeros from a cross section
+  static void removeZerosFromCrossSection(
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::ArrayRCP<const double>& raw_cross_section,
       Teuchos::ArrayRCP<double>& cross_section,
       unsigned& threshold_energy_index );
 

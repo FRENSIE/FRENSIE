@@ -256,7 +256,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::calculateNor
 {
   double argument = (d_incident_energy - d_restriction_energy) / d_nuclear_temperature;
 
-  d_norm_constant =  rpow<3,-2>(d_nuclear_temperature)/
+  d_norm_constant = rpow<3,-2>(d_nuclear_temperature)/
     (d_multiplier*(sqrt( PhysicalConstants::pi ) * 0.5 * erf( sqrt(argument) )-
 		   sqrt(argument) * exp(-argument) ) );
 }

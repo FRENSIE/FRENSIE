@@ -40,7 +40,7 @@ ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDist
 
 // Randomly scatter the nuclear
 /*! \details The energy of the nuclear in the lab frame is used to sample
- * a center-of-mass scattering angle cosine (this is also done in openmc). It
+ * a center-of-mass scattering angle cosine (this is also done in openMC). It
  * may be more appropriate to instead use the energy of the nuclear in the
  * target-at-rest frame as recommended in the MCNP manual.
  */
@@ -166,7 +166,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
  }
 }
 
-// Sample the velociy of the target nucleus
+// Sample the velocity of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */
 void ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity(

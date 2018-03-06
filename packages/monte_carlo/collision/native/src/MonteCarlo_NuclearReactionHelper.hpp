@@ -37,15 +37,15 @@ inline double getCrossSection(
   {
     unsigned energy_index =
       Utility::Search::binaryLowerBoundIndex( incoming_energy_grid.begin(),
-					      incoming_energy_grid.end(),
-					      energy );
+                                              incoming_energy_grid.end(),
+                                              energy );
     unsigned cs_index = energy_index - threshold_energy_index;
 
     return Utility::LinLin::interpolate(incoming_energy_grid[energy_index],
-					incoming_energy_grid[energy_index+1],
-					energy,
-					cross_section[cs_index],
-					cross_section[cs_index+1] );
+                                        incoming_energy_grid[energy_index+1],
+                                        energy,
+                                        cross_section[cs_index],
+                                        cross_section[cs_index+1] );
   }
   else if( energy < incoming_energy_grid[threshold_energy_index] )
     return 0.0;

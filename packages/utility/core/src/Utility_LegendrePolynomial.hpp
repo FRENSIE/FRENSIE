@@ -25,7 +25,7 @@ double getLegendrePolynomialDerivative( const double value,
 
 } // end Utility namespace
 
-#endif // end UTILITY_GUASS_KRONROD_QUADRATURE_KERNEL_HPP
+#endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_LegendrePolynomial.hpp

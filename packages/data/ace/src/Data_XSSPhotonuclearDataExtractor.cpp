@@ -44,7 +44,7 @@ XSSPhotonuclearDataExtractor::XSSPhotonuclearDataExtractor(
                       << xss->size() << "!" );
 
   //Adjust the indices in the JXS array so they are zero indexed
-  for( size_t i = 0; i < d_jxs.size();i++)
+  for( unsigned i = 0; i < d_jxs.size();++i)
     d_jxs[i] -= 1;
 
   // Create the XSS view

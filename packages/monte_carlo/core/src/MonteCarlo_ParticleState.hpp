@@ -44,6 +44,9 @@ public:
   //! Typedef for energy type
   typedef double energyType;
 
+  //! Typedef for charge type
+  typedef int chargeType;
+
   //! Typedef for time type
   typedef double timeType;
 
@@ -68,11 +71,13 @@ public:
 
   //! Constructor
   ParticleState( const historyNumberType history_number,
-		 const ParticleType type );
+		 const ParticleType type,
+		 const chargeType charge );
 
   //! Copy constructor (with possible creation of new generation)
   ParticleState( const ParticleState& existing_base_state,
 		 const ParticleType new_type,
+		 const chargeType new_charge,
 		 const bool increment_generation_number,
 		 const bool reset_collision_number );
 
@@ -172,6 +177,9 @@ public:
 
   //! Return the speed of the particle (cm/s)
   virtual double getSpeed() const = 0;
+
+  //! Return the charge of the particle (e)
+  chargeType getCharge() const;
 
   //! Return the source (starting) time of the particle (history) (s)
   timeType getSourceTime() const;
@@ -298,6 +306,9 @@ private:
 
   // Energy of the particle (MeV)
   energyType d_energy;
+
+  // Charge of the particle (e)
+  chargeType d_charge;
 
   // Source (starting) time of the particle (history) (s)
   timeType d_source_time;

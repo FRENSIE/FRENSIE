@@ -19,7 +19,6 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ElasticElectronDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 
@@ -27,126 +26,179 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 std::shared_ptr< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-  ace_cutoff_elastic_distribution;
-
+  epr12_cutoff_distribution, epr14_cutoff_distribution;
+std::shared_ptr< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+  epr14_rutherford_distribution;
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check sample can be evaluated
+// Check that the cutoff distribution can be created
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
-                   sample )
+                   createCutoffElasticDistribution_epr12 )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
-                                                ace_cutoff_elastic_distribution,
-                                                *xss_data_extractor );
-  // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample mu = 0.9874366113907
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  double incoming_energy = 1.0e-3;
-  double scattering_angle_cosine, outgoing_energy;
-
-  // sampleAndRecordTrialsImpl cutoff
-  ace_cutoff_elastic_distribution->sample( incoming_energy,
-                                           outgoing_energy,
-                                           scattering_angle_cosine );
-
-  // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
-}
-
-//---------------------------------------------------------------------------//
-// Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
-                   sampleAndRecordTrials )
-{
-  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
-                                                ace_cutoff_elastic_distribution,
-                                                *xss_data_extractor );
-
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // sample mu = 0.9874366113907
-  fake_stream[1] = 0.5; // sample mu = 9.99999500000093E-01
+  fake_stream[1] = 0.5; // sample mu = 9.9999621617094148e-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0e-3;
   double scattering_angle_cosine, outgoing_energy;
-  unsigned trials = 10;
 
-  // sampleAndRecordTrialsImpl from distribution
-  ace_cutoff_elastic_distribution->sampleAndRecordTrials(
-                                          incoming_energy,
-                                          outgoing_energy,
-                                          scattering_angle_cosine,
-                                          trials );
+  // sample
+  epr12_cutoff_distribution->sample( incoming_energy,
+                                     outgoing_energy,
+                                     scattering_angle_cosine );
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 );
+
+  // Sample
+  incoming_energy = 12.45;
+  epr12_cutoff_distribution->sample( incoming_energy,
+                                     outgoing_energy,
+                                     scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999621617094148e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 12.45, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+// Check that the cutoff distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
+                   createCutoffElasticDistribution_epr14 )
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  // Set fake random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // sample mu = 9.8786332385681019e-01
+  fake_stream[1] = 0.5; // sample mu = 9.9999529365431461e-01
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
+  double incoming_energy = 1.0e-3;
+  double scattering_angle_cosine, outgoing_energy;
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
+  // sample
+  epr14_cutoff_distribution->sample( incoming_energy,
+                                     outgoing_energy,
+                                     scattering_angle_cosine );
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.8750450783598187e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
+  // Sample
+  incoming_energy = 12.45;
+  epr14_cutoff_distribution->sample( incoming_energy,
+                                     outgoing_energy,
+                                     scattering_angle_cosine );
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999513901893400e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 12.45, 1e-12 );
+}
 
+
+//---------------------------------------------------------------------------//
+// Check that the screened Rutherford distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
+                   createScreenedRutherfordElasticDistribution_epr14 )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5; // sample mu = 9.99999500000093E-01
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 1.0e-3;
+  double scattering_angle_cosine, outgoing_energy;
+
+  // samplefrom distribution
+  epr14_rutherford_distribution->sample( incoming_energy,
+                                         outgoing_energy,
+                                         scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+}
+
+
+//---------------------------------------------------------------------------//
+// Custom setup
+//---------------------------------------------------------------------------//
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace12_file_name, test_ace12_table_name,
+            test_ace14_file_name, test_ace14_table_name;
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  clp().setOption( "test_ace12_file",
+                   &test_ace12_file_name,
+                   "Test ACE12 file name" );
+  clp().setOption( "test_ace12_table",
+                   &test_ace12_table_name,
+                   "Test ACE12 table name" );
+  clp().setOption( "test_ace14_file",
+                   &test_ace14_file_name,
+                   "Test ACE14 file name" );
+  clp().setOption( "test_ace14_table",
+                   &test_ace14_table_name,
+                   "Test ACE14 table name" );
+}
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+{
+  // Create eprdata12 distributions
+  {
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
-  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+        new Data::ACEFileHandler( test_ace12_file_name,
+                                  test_ace12_table_name,
+                                  1u ) );
+
+  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+        new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                       ace_file_handler->getTableJXSArray(),
+                                       ace_file_handler->getTableXSSArray() ) );
+
+  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
+                                                epr12_cutoff_distribution,
+                                                *xss_data_extractor );
+  }
+
+  // Create eprdata14 distributions
+  {
+  // Create a file handler and data extractor
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+        new Data::ACEFileHandler( test_ace14_file_name,
+                                  test_ace14_table_name,
+                                  1u ) );
+
+  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+        new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
+                                       ace_file_handler->getTableJXSArray(),
+                                       ace_file_handler->getTableXSSArray() ) );
+
+  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
+                                                epr14_cutoff_distribution,
+                                                *xss_data_extractor );
+
+
+  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+                                    epr14_rutherford_distribution,
+                                    xss_data_extractor->extractAtomicNumber() );
+  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElasticElectronScatteringDistribution.cpp

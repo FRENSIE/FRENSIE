@@ -21,7 +21,7 @@ AdjointPhotonState::AdjointPhotonState()
 // Constructor
 AdjointPhotonState::AdjointPhotonState(
 		        const ParticleState::historyNumberType history_number )
-  : MasslessParticleState( history_number, ADJOINT_PHOTON )
+  : MasslessParticleState( history_number, ADJOINT_PHOTON, 0 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -31,6 +31,7 @@ AdjointPhotonState::AdjointPhotonState(
 				      const bool reset_collision_number )
   : MasslessParticleState( existing_base_state,
 			   ADJOINT_PHOTON,
+			   0,
 			   increment_generation_number,
 			   reset_collision_number )
 { /* ... */ }
@@ -42,6 +43,29 @@ AdjointPhotonState::AdjointPhotonState(
 				 const bool reset_collision_number )
   : MasslessParticleState( existing_base_state,
 			   ADJOINT_PHOTON,
+			   0,
+			   increment_generation_number,
+			   reset_collision_number )
+{ /* ... */ }
+
+// Probe constructor
+AdjointPhotonState::AdjointPhotonState(
+			 const ParticleState::historyNumberType history_number,
+			 const ParticleType probe_type,
+			 const chargeType probe_charge )
+  : MasslessParticleState( history_number, probe_type, probe_charge )
+{ /* ... */ }
+
+// Probe copy constructor
+AdjointPhotonState::AdjointPhotonState(
+				     const ParticleState& existing_base_state,
+				     const ParticleType probe_type,
+				     const chargeType probe_charge,
+				     const bool increment_generation_number,
+				     const bool reset_collision_number )
+  : MasslessParticleState( existing_base_state,
+			   probe_type,
+			   probe_charge,
 			   increment_generation_number,
 			   reset_collision_number )
 { /* ... */ }

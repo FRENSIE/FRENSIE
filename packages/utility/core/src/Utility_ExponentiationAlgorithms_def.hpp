@@ -27,7 +27,6 @@ template<typename BaseScalarType, typename ExponentOrdinalType>
 typename std::enable_if<std::is_arithmetic<BaseScalarType>::value,BaseScalarType>::type
 recursive( const BaseScalarType x, const ExponentOrdinalType y )
 {
-  // Make sure thta the exponent is positive
   testPrecondition( y >= 0 );
 
   // The output integer

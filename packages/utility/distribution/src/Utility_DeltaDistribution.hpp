@@ -80,8 +80,13 @@ public:
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const override;
 
+<<<<<<< HEAD
   //! Evaulate the CDF
   double evaluateCDF( const IndepQuantity indep_var_value ) const override;
+=======
+  //! Evaluate the CDF
+  double evaluateCDF( const IndepQuantity indep_var_value ) const;
+>>>>>>> lkersting_master
 
   //! Return a random sample from the corresponding CDF
   IndepQuantity sample() const override;

@@ -14,6 +14,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
+#include "MonteCarlo_PositronatomicReactionType.hpp"
 
 namespace MonteCarlo{
 
@@ -61,7 +62,7 @@ protected:
 
 // Test if two Atomic reactions share the same energy grid
 inline bool AtomicReaction::isEnergyGridShared(
-			      const AtomicReaction& other_reaction ) const
+              const AtomicReaction& other_reaction ) const
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
 }

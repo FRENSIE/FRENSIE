@@ -520,7 +520,7 @@ std::string convertPhotonuclearReactionTypeToString(
   case GAMMA__2P_REACTION: return "(gamma,2p)";
   case GAMMA__P_ALPHA_REACTION: return "(gamma,p-alpha)";
   case GAMMA__T_2ALPHA_REACTION: return "(gamma,t-2alpha)";
-  case GAMMA__D_2ALPHA_REACTION: return "(gamma,d-2alph)";
+  case GAMMA__D_2ALPHA_REACTION: return "(gamma,d-2alpha)";
   case GAMMA__P_D_REACTION: return "(gamma,p-d)";
   case GAMMA__P_T_REACTION: return "(gamma,p-t)";
   case GAMMA__D_ALPHA_REACTION: return "(gamma,d-alpha)";

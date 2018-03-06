@@ -228,17 +228,21 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                            data_container.getAdjointPhotonEnergyGrid().end() );
 
   // Evaluate the cross section at the energy of interest
-  Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>
-    two_d_cross_section( data_container.getAdjointPhotonEnergyGrid(),
-                         data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
-                         data_container.getAdjointWallerHartreeIncoherentCrossSection() );
+  std::shared_ptr<Utility::FullyTabularTwoDDistribution> two_d_cross_section;
+  {
+  two_d_cross_section.reset(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+        data_container.getAdjointPhotonEnergyGrid(),
+        data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
+        data_container.getAdjointWallerHartreeIncoherentCrossSection() ) );
+  }
 
   Teuchos::ArrayRCP<double> cross_section( incoming_energy_grid.size() );
 
   for( size_t i = 0; i < incoming_energy_grid.size(); ++i )
   {
     cross_section[i] =
-      two_d_cross_section.evaluate( incoming_energy_grid[i], 20.0 );
+      two_d_cross_section->evaluate( incoming_energy_grid[i], 20.0 );
   }
   
   // Create the scattering distribution

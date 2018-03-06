@@ -281,7 +281,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLin, interpolate )
 {
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
     Utility::StandardInterpolator<Utility::LinLin,double>::getInstance();
-  
+
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y0 = 5.0, y1 = 10.0;
 
@@ -308,7 +308,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLin, interpolate )
 {
   std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::StandardUnitAwareInterpolator<Utility::LinLin,MegaElectronVolt,Barn,double>::getInstance();
-  
+
   quantity<MegaElectronVolt,double> e0 = 0.0*MeV, e1 = 1.0*MeV, e = 0.5*MeV;
   quantity<Barn,double> cs0 = 5.0*barns, cs1 = 10.0*barns;
 
@@ -323,7 +323,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLin, interpolate )
   FRENSIE_CHECK_EQUAL( cs, 5.0*barns );
 
   e = 1.0*MeV;
-  
+
   cs = interpolator->interpolate( e0, e1, e, cs0, cs1 );
 
   FRENSIE_CHECK_EQUAL( cs, 10.0*barns );
@@ -450,7 +450,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLin,
 {
   std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::StandardUnitAwareInterpolator<Utility::LinLin,MegaElectronVolt,Barn,double>::getInstance();
-  
+
   quantity<MegaElectronVolt,double> e0 = 0.0*MeV, e1 = 1.0*MeV, e = 0.5*MeV;
   quantity<Barn,double> cs0 = 5.0*barns, cs1 = 10.0*barns;
 
@@ -466,7 +466,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLin,
   FRENSIE_CHECK_EQUAL( processed_cs, 5.0 );
 
   e = 1.0*MeV;
-  
+
   processed_cs = interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
 
   FRENSIE_CHECK_EQUAL( processed_cs, 10.0 );
@@ -746,7 +746,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLog, interpolate )
 {
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
     Utility::StandardInterpolator<Utility::LinLog,double>::getInstance();
-  
+
   double x0 = 0.1, x1 = 10.0, x = 1.0;
   double y0 = 0.0, y1 = 1.0;
 
@@ -807,7 +807,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLog, interpolateProcessed )
   double processed_y0 = interpolator->processDepVar( 0.0 );
   double processed_y1 = interpolator->processDepVar( 1.0 );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_y1 - processed_y0)/(processed_x1 - processed_x0);
 
   double y = interpolator->interpolateProcessed( processed_x0,
@@ -849,7 +849,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLog, interpolateProcessed )
   double processed_cs0 = interpolator->processDepVar( 0.0*barn );
   double processed_cs1 = interpolator->processDepVar( 1.0*barn );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_cs1 - processed_cs0)/(processed_e1 - processed_e0);
 
   quantity<Barn,double> cs =
@@ -949,7 +949,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLog,
   double processed_y0 = interpolator->processDepVar( 0.0 );
   double processed_y1 = interpolator->processDepVar( 1.0 );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_y1 - processed_y0)/(processed_x1 - processed_x0);
 
   double y = interpolator->interpolateProcessedAndProcess( processed_x0,
@@ -965,7 +965,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLog,
                                                     processed_x,
                                                     processed_y0,
                                                     processed_slope );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 0.0, 1e-15 );
 
   processed_x = interpolator->processIndepVar( 10.0 );
@@ -974,7 +974,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLog,
                                                     processed_x,
                                                     processed_y0,
                                                     processed_slope );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1.0, 1e-15 );
 }
 
@@ -992,7 +992,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLog,
   double processed_cs0 = interpolator->processDepVar( 0.0*barn );
   double processed_cs1 = interpolator->processDepVar( 1.0*barn );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_cs1 - processed_cs0)/(processed_e1 - processed_e0);
 
   double processed_cs =
@@ -1209,7 +1209,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin, interpolate )
 
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y0 = 0.1, y1 = 10.0;
-  
+
   double y = interpolator->interpolate( x0, x1, x, y0, y1 );
   
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1.0, 1e-15 );
@@ -1260,7 +1260,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin, interpolateProcessed )
 {
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
     Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
-  
+
   double processed_x0 = interpolator->processIndepVar( 0.0 );
   double processed_x1 = interpolator->processIndepVar( 1.0 );
   double processed_x = interpolator->processIndepVar( 0.5 );
@@ -1287,7 +1287,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin, interpolateProcessed )
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 0.1, 1e-15 );
 
   processed_x = interpolator->processIndepVar( 1.0 );
-  
+
   y = interpolator->interpolateProcessed( processed_x0,
                                           processed_x,
                                           processed_y0,
@@ -1330,7 +1330,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLin, interpolateProcessed )
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 0.1*barn, 1e-15 );
 
   processed_e = interpolator->processIndepVar( 1.0*MeV );
-  
+
   cs = interpolator->interpolateProcessed( processed_e0,
                                            processed_e,
                                            processed_cs0,
@@ -1345,10 +1345,10 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin, interpolateAndProcess )
 {
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
     Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
-  
+
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double y0 = 0.1, y1 = 10.0;
-  
+
   double processed_y = interpolator->interpolateAndProcess( x0, x1, x, y0, y1);
 
   FRENSIE_CHECK_SMALL( processed_y, 1e-15 );
@@ -1373,23 +1373,23 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLin,
 {
   std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
-  
+
   quantity<MegaElectronVolt,double> e0 = 0.0*MeV, e1 = 1.0*MeV, e = 0.5*MeV;
   quantity<Barn,double> cs0 = 0.1*barn, cs1 = 10.0*barns;
-  
+
   double processed_cs =
     interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
   
   FRENSIE_CHECK_SMALL( processed_cs, 1e-15 );
   
   e = 0.0*MeV;
-  
+
   processed_cs = interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
   
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, std::log( 0.1 ), 1e-15 );
   
   e = 1.0*MeV;
-  
+
   processed_cs = interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
   
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, std::log( 10.0 ), 1e-15 );
@@ -1402,14 +1402,14 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin,
 {
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
     Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
-  
+
   double processed_x0 = interpolator->processIndepVar( 0.0 );
   double processed_x1 = interpolator->processIndepVar( 1.0 );
   double processed_x = interpolator->processIndepVar( 0.5 );
   double processed_y0 = interpolator->processDepVar( 0.1 );
   double processed_y1 = interpolator->processDepVar( 10.0 );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_y1 - processed_y0)/(processed_x1 - processed_x0);
 
   double processed_y = interpolator->interpolateProcessedAndProcess(
@@ -1452,10 +1452,10 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator,
   double processed_e = interpolator->processIndepVar( 0.5*MeV );
   double processed_cs0 = interpolator->processDepVar( 0.1*barn );
   double processed_cs1 = interpolator->processDepVar( 10.0*barns );
-  
-  double processed_slope = 
+
+  double processed_slope =
     (processed_cs1 - processed_cs0)/(processed_e1 - processed_e0);
-  
+
   double processed_cs = interpolator->interpolateProcessedAndProcess(
                                                              processed_e0,
                                                              processed_e,
@@ -1465,7 +1465,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator,
   FRENSIE_CHECK_SMALL( processed_cs, 1e-15 );
   
   processed_e = interpolator->processIndepVar( 0.0*MeV );
-  
+
   processed_cs = interpolator->interpolateProcessedAndProcess(processed_e0,
                                                               processed_e,
                                                               processed_cs0,
@@ -1727,7 +1727,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog, interpolateProcessed )
   double processed_y0 = interpolator->processDepVar( 10.0 );
   double processed_y1 = interpolator->processDepVar( 1000.0 );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_y1 - processed_y0)/(processed_x1 - processed_x0);
 
   double y = interpolator->interpolateProcessed( processed_x0,
@@ -1769,7 +1769,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog, interpolateProcessed )
   double processed_cs0 = interpolator->processDepVar( 10.0*barns );
   double processed_cs1 = interpolator->processDepVar( 1000.0*barns );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_cs1 - processed_cs0)/(processed_e1 - processed_e0);
 
   quantity<Barn,double> cs =
@@ -1869,7 +1869,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog,
   double processed_y0 = interpolator->processDepVar( 10.0 );
   double processed_y1 = interpolator->processDepVar( 1000.0 );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_y1 - processed_y0)/(processed_x1 - processed_x0);
 
   double processed_y = interpolator->interpolateProcessedAndProcess(
@@ -1913,7 +1913,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog,
   double processed_cs0 = interpolator->processDepVar( 10.0*barns );
   double processed_cs1 = interpolator->processDepVar( 1000.0*barns );
 
-  double processed_slope = 
+  double processed_slope =
     (processed_cs1 - processed_cs0)/(processed_e1 - processed_e0);
 
   double processed_cs = interpolator->interpolateProcessedAndProcess(

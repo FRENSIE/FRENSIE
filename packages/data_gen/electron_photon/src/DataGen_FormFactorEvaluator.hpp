@@ -47,7 +47,7 @@ public:
   double evaluateFormFactorSquared( const double squared_argument ) const;
 
   //! Return a function that wraps the form factor squared evaluation method
-  std::function<double(double)> getFormFactorSquaredEvalutionWrapper() const;
+  std::function<double(double)> getFormFactorSquaredEvaluationWrapper() const;
 
 private:
 

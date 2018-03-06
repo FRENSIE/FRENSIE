@@ -70,7 +70,7 @@ FRENSIE_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentumEnergySquared 
 FRENSIE_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticMomentumSquared )
 {
   double momentum_squared =
-         Utility::calculateDimensionlessRelativisticMomentumSquared( 1.0, 1.0 );
+         Utility::calculateDimensionlessRelativisticMomentumSquared( 1.0 );
   double result = 3.0;
   FRENSIE_CHECK_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }

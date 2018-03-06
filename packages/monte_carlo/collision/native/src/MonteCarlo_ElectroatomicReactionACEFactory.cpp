@@ -11,7 +11,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_DecoupledElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
@@ -29,27 +31,98 @@
 
 namespace MonteCarlo{
 
-// Create an cutoff elastic scattering electroatomic reaction
-void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
-		const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-		std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
-        const double upper_cutoff_angle_cosine )
+// Create a Decoupled elastic scattering electroatomic reaction
+void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
+      const Data::XSSEPRDataExtractor& raw_electroatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-		    energy_grid.size() );
+                    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+                                                      energy_grid.end() ) );
+  // Make sure the ACE file version is valid
+  testPrecondition( raw_electroatom_data.isEPRVersion14() );
+
+
+  // Create the cutoff elastic scattering distribution
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
+  ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
+    tabular_distribution,
+    raw_electroatom_data );
+
+  // Create the screened Rutherford elastic scattering distribution
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution> analytical_distribution;
+  ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+    analytical_distribution,
+    raw_electroatom_data.extractAtomicNumber() );
+
+  // Index of first non zero cross section in the energy grid
+  unsigned threshold_energy_index;
+
+  // Remove all cross sections equal to zero
+  Teuchos::ArrayRCP<double> total_elastic_cross_section;
+  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+                      energy_grid,
+                      raw_electroatom_data.extractElasticTotalCrossSection(),
+                      total_elastic_cross_section,
+                      threshold_energy_index );
+
+  Teuchos::ArrayView<const double> cutoff_elastic_cross_section =
+                    raw_electroatom_data.extractElasticCutoffCrossSection();
+
+  // Calculate sampling ratios
+  Teuchos::ArrayRCP<double> sampling_ratios( total_elastic_cross_section.size() );
+  for( unsigned i = 0; i < sampling_ratios.size(); ++i )
+  {
+    double relative_diff =
+      (total_elastic_cross_section[i] - cutoff_elastic_cross_section[i+threshold_energy_index])/
+                        cutoff_elastic_cross_section[i+threshold_energy_index];
+
+    // Check for cross sections below roundoff error
+    if( relative_diff < 1e-8 )
+      sampling_ratios[i] = 1.0;
+    else
+    {
+      sampling_ratios[i] = cutoff_elastic_cross_section[i+threshold_energy_index]/
+                            total_elastic_cross_section[i];
+    }
+
+    testPostcondition( sampling_ratios[i] <= 1.0 );
+  }
+
+  elastic_reaction.reset(
+    new DecoupledElasticElectroatomicReaction<Utility::LogLog>(
+                energy_grid,
+                total_elastic_cross_section,
+                sampling_ratios,
+                threshold_energy_index,
+                grid_searcher,
+                tabular_distribution,
+                analytical_distribution ) );
+}
+
+// Create an cutoff elastic scattering electroatomic reaction
+void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+        std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
 
   // Create the elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
   ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
                                                  distribution,
-                                                 raw_electroatom_data,
-                                                 upper_cutoff_angle_cosine );
+                                                 raw_electroatom_data );
 
   // Elastic cross section with zeros removed
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -60,31 +133,109 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
   // Remove all cross sections equal to zero
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
                               energy_grid,
-                              raw_electroatom_data.extractElasticCrossSection(),
+                              raw_electroatom_data.extractElasticCutoffCrossSection(),
                               elastic_cross_section,
                               threshold_energy_index );
 
-  elastic_reaction.reset(
-	new CutoffElasticElectroatomicReaction<Utility::LinLin>(
-						  energy_grid,
-						  elastic_cross_section,
-						  threshold_energy_index,
-						  distribution ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    elastic_reaction.reset(
+      new CutoffElasticElectroatomicReaction<Utility::LogLog>(
+                            energy_grid,
+                            elastic_cross_section,
+                            threshold_energy_index,
+                            distribution ) );
+  }
+  else
+  {
+    elastic_reaction.reset(
+      new CutoffElasticElectroatomicReaction<Utility::LinLin>(
+                            energy_grid,
+                            elastic_cross_section,
+                            threshold_energy_index,
+                            distribution ) );
+  }
 }
 
-
-// Create an atomic excitation electroatomic reaction
-void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-	std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction )
+// Create a screened Rutherford elastic scattering electroatomic reaction
+void ElectroatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
+      const Data::XSSEPRDataExtractor& raw_electroatom_data,
+      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-		    energy_grid.size() );
+                    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+                                                      energy_grid.end() ) );
+  // Make sure the ACE file version is valid
+  testPrecondition( raw_electroatom_data.isEPRVersion14() );
+
+
+  // Create the screened Rutherford elastic scattering distribution
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution> distribution;
+  ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
+    distribution,
+    raw_electroatom_data.extractAtomicNumber() );
+
+  // Extract the total elastic cross section
+  Teuchos::ArrayView<const double> total_elastic_cross_section =
+    raw_electroatom_data.extractElasticTotalCrossSection();
+
+  // Extract the cutoff elastic cross section
+  Teuchos::ArrayView<const double> cutoff_elastic_cross_section =
+    raw_electroatom_data.extractElasticCutoffCrossSection();
+
+  // Calculate the screened Rutherford elastic cross section
+  Teuchos::ArrayRCP<double> elastic_cross_section( cutoff_elastic_cross_section.size() );
+  for ( unsigned i = 0; i < elastic_cross_section.size(); ++i )
+  {
+    elastic_cross_section[i] =
+        total_elastic_cross_section[i] - cutoff_elastic_cross_section[i];
+
+    // Check for cross sections below roundoff error
+    if( elastic_cross_section[i] != 0.0 &&
+        elastic_cross_section[i]/cutoff_elastic_cross_section[i] < 1e-8 )
+    {
+      elastic_cross_section[i] = 0.0;
+    }
+
+    testPostcondition( elastic_cross_section[i] >= 0.0 );
+  }
+
+  // Index of first non zero cross section in the energy grid
+  unsigned threshold_energy_index;
+
+  // Remove all cross sections equal to zero
+  Teuchos::ArrayRCP<double> sr_elastic_cross_section;
+  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+                              energy_grid,
+                              elastic_cross_section,
+                              sr_elastic_cross_section,
+                              threshold_energy_index );
+
+  elastic_reaction.reset(
+    new ScreenedRutherfordElasticElectroatomicReaction<Utility::LogLog>(
+                            energy_grid,
+                            sr_elastic_cross_section,
+                            threshold_energy_index,
+                            grid_searcher,
+                            distribution ) );
+}
+
+// Create an atomic excitation electroatomic reaction
+void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
 
   // Atomic Excitation cross section with zeros removed
   Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
@@ -107,26 +258,39 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
                                                  raw_electroatom_data,
                                                  energy_loss_distribution );
 
-  atomic_excitation_reaction.reset(
-	new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-                                                energy_grid,
-                                                atomic_excitation_cross_section,
-                                                threshold_energy_index,
-                                                energy_loss_distribution ) );
+
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    atomic_excitation_reaction.reset(
+      new AtomicExcitationElectroatomicReaction<Utility::LogLog>(
+                    energy_grid,
+                    atomic_excitation_cross_section,
+                    threshold_energy_index,
+                    energy_loss_distribution ) );
+  }
+  else
+  {
+    atomic_excitation_reaction.reset(
+      new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+                    energy_grid,
+                    atomic_excitation_cross_section,
+                    threshold_energy_index,
+                    energy_loss_distribution ) );
+  }
 }
 
 // Create the total electroionization electroatomic reaction
 void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
-		const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-		std::shared_ptr<ElectroatomicReaction>& total_electroionization_reaction )
+        std::shared_ptr<ElectroatomicReaction>& total_electroionization_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-		    energy_grid.size() );
+                    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+                                                      energy_grid.end() ) );
 
   // Electroionization cross section with zeros removed
   Teuchos::ArrayRCP<double> total_electroionization_cross_section;
@@ -141,17 +305,28 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
                            total_electroionization_cross_section,
                            threshold_energy_index );
 
-  total_electroionization_reaction.reset(
-	new ElectroionizationElectroatomicReaction<Utility::LinLin>(
-					energy_grid,
-					total_electroionization_cross_section,
-					threshold_energy_index ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    total_electroionization_reaction.reset(
+      new ElectroionizationElectroatomicReaction<Utility::LogLog>(
+                      energy_grid,
+                      total_electroionization_cross_section,
+                      threshold_energy_index ) );
+  }
+  else
+  {
+    total_electroionization_reaction.reset(
+      new ElectroionizationElectroatomicReaction<Utility::LinLin>(
+                      energy_grid,
+                      total_electroionization_cross_section,
+                      threshold_energy_index ) );
+  }
 }
 
 // Create the subshell electroionization electroatomic reaction
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
-		const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     std::shared_ptr<ElectroatomicReaction>& electroionization_subshell_reaction,
     const unsigned subshell )
@@ -160,62 +335,33 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+                                                      energy_grid.end() ) );
 
   // Extract the subshell information
   Teuchos::ArrayView<const double> subshell_endf_designators =
     raw_electroatom_data.extractSubshellENDFDesignators();
 
   Teuchos::Array<Data::SubshellType> subshell_order(
-					    subshell_endf_designators.size() );
+                        subshell_endf_designators.size() );
 
-    for( unsigned i = 0; i < subshell_order.size(); ++i )
-    {
-      subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
-				      (unsigned)subshell_endf_designators[i] );
-    }
+  unsigned shell_index = 0;
 
-  // Extract the subshell binding energies
-  Teuchos::ArrayView<const double> binding_energies =
-    raw_electroatom_data.extractSubshellBindingEnergies();
+  for( unsigned i = 0; i < subshell_order.size(); ++i )
+  {
+    subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
+                    (unsigned)subshell_endf_designators[i] );
 
-  // Extract the number of subshells (N_s)
-  unsigned num_subshells = subshell_order.size();
-
-  // Extract the number of points in the energy grid
-  unsigned num_energy_points = energy_grid.size();
+    if ( subshell == subshell_order[i] )
+      shell_index = i;
+  }
 
   // Extract the subshell cross sections
   Teuchos::ArrayView<const double> raw_subshell_cross_sections =
     raw_electroatom_data.extractElectroionizationSubshellCrossSections();
 
-
-  // Extract the electroionization data block (EION)
-  Teuchos::ArrayView<const double> eion_block(
-				      raw_electroatom_data.extractEIONBlock() );
-
-  // Extract the location of info about first knock-on table relative to the EION block
-  unsigned eion_loc = raw_electroatom_data.returnEIONLoc();
-
-  // Extract the number of knock-on tables by subshell (N_i)
-  Teuchos::Array<double> num_tables(eion_block(0,num_subshells));
-
-  // Extract the location of info about knock-on tables by subshell
-  Teuchos::Array<double> table_info(eion_block(num_subshells,num_subshells));
-
-  // Extract the location of knock-on tables by subshell
-  Teuchos::Array<double> table_loc(eion_block(2*num_subshells,num_subshells));
-
-  // Subshell table info realtive to the EION Block
-  unsigned subshell_info = table_info[subshell]- eion_loc - 1;
-
-  // Subshell table loc realtive to the EION Block
-  unsigned subshell_loc = table_loc[subshell]- eion_loc - 1;
-
-
   // Subshell cross section without zeros removed
   Teuchos::ArrayView<const double> raw_subshell_cross_section =
-  raw_subshell_cross_sections( subshell*num_energy_points,num_energy_points );
+  raw_subshell_cross_sections( shell_index*energy_grid.size(),energy_grid.size() );
 
   // Electroionization cross section with zeros removed
   Teuchos::ArrayRCP<double> subshell_cross_section;
@@ -236,37 +382,46 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
 
   // Create the electroionization subshell distribution
   ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
-      subshell_info,
-      subshell_loc,
-      num_tables[subshell],
-      binding_energies[subshell],
-      eion_block,
-      electroionization_subshell_distribution );
-
+    raw_electroatom_data,
+    electroionization_subshell_distribution,
+    subshell );
 
   // Create the subshell electroelectric reaction
-  electroionization_subshell_reaction.reset(
-    new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    electroionization_subshell_reaction.reset(
+      new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
+              energy_grid,
+              subshell_cross_section,
+              threshold_energy_index,
+              subshell_order[shell_index],
+              electroionization_subshell_distribution ) );
+  }
+  else
+  {
+    electroionization_subshell_reaction.reset(
+      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
             energy_grid,
             subshell_cross_section,
             threshold_energy_index,
-            subshell_order[subshell],
+            subshell_order[shell_index],
             electroionization_subshell_distribution ) );
+  }
 }
 
 // Create the subshell electroionization electroatomic reactions
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
-		const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-		std::vector<std::shared_ptr<ElectroatomicReaction> >&
-		electroionization_subshell_reactions )
+        std::vector<std::shared_ptr<ElectroatomicReaction> >&
+        electroionization_subshell_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
                     energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+                                                      energy_grid.end() ) );
 
   electroionization_subshell_reactions.clear();
 
@@ -275,13 +430,13 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
     raw_electroatom_data.extractSubshellENDFDesignators();
 
   Teuchos::Array<Data::SubshellType> subshell_order(
-					    subshell_endf_designators.size() );
+                        subshell_endf_designators.size() );
 
-    for( unsigned i = 0; i < subshell_order.size(); ++i )
-    {
-      subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
-				      (unsigned)subshell_endf_designators[i] );
-    }
+  for( unsigned i = 0; i < subshell_order.size(); ++i )
+  {
+    subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
+                    (unsigned)subshell_endf_designators[i] );
+  }
 
   // Extract the subshell binding energies
   Teuchos::ArrayView<const double> binding_energies =
@@ -300,7 +455,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 
   // Extract the electroionization data block (EION)
   Teuchos::ArrayView<const double> eion_block(
-				      raw_electroatom_data.extractEIONBlock() );
+                      raw_electroatom_data.extractEIONBlock() );
 
   // Extract the location of info about first knock-on table relative to the EION block
   unsigned eion_loc = raw_electroatom_data.returnEIONLoc();
@@ -316,19 +471,19 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 
  std::shared_ptr<ElectroatomicReaction> electroionization_subshell_reaction;
 
-  for( unsigned subshell = 0; subshell < num_subshells; ++subshell )
+  for( unsigned shell_index = 0; shell_index < num_subshells; ++shell_index )
   {
 
     // Subshell table info realtive to the EION Block
-    unsigned subshell_info = table_info[subshell]- eion_loc - 1;
+    unsigned subshell_info = table_info[shell_index]- eion_loc - 1;
 
     // Subshell table loc realtive to the EION Block
-    unsigned subshell_loc = table_loc[subshell]- eion_loc - 1;
+    unsigned subshell_loc = table_loc[shell_index]- eion_loc - 1;
 
 
     // Subshell cross section without zeros removed
     Teuchos::ArrayView<const double> raw_subshell_cross_section =
-    raw_subshell_cross_sections( subshell*num_energy_points,num_energy_points );
+    raw_subshell_cross_sections( shell_index*energy_grid.size(),energy_grid.size() );
 
     // Electroionization cross section with zeros removed
     Teuchos::ArrayRCP<double> subshell_cross_section;
@@ -343,6 +498,10 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
                            subshell_cross_section,
                            threshold_energy_index );
 
+    // Make sure the threshold energy is at least the binding energy
+    testPrecondition( energy_grid[threshold_energy_index] >=
+                      binding_energies[shell_index] );
+
     // The electroionization subshell distribution
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
       electroionization_subshell_distribution;
@@ -351,23 +510,36 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
     ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
         subshell_info,
         subshell_loc,
-        num_tables[subshell],
-        binding_energies[subshell],
-	eion_block,
-	electroionization_subshell_distribution );
-
+        num_tables[shell_index],
+        binding_energies[shell_index],
+        raw_electroatom_data.isEPRVersion14(),
+        eion_block,
+        electroionization_subshell_distribution );
 
     // Create the subshell electroelectric reaction
-    electroionization_subshell_reaction.reset(
-      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+    if( raw_electroatom_data.isEPRVersion14() )
+    {
+      electroionization_subshell_reaction.reset(
+        new ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>(
+                energy_grid,
+                subshell_cross_section,
+                threshold_energy_index,
+                subshell_order[shell_index],
+                electroionization_subshell_distribution ) );
+    }
+    else
+    {
+      electroionization_subshell_reaction.reset(
+        new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
-              subshell_order[subshell],
+              subshell_order[shell_index],
               electroionization_subshell_distribution ) );
+    }
 
     electroionization_subshell_reactions.push_back(
-					  electroionization_subshell_reaction );
+                      electroionization_subshell_reaction );
   }
 
   // Make sure the subshell electroelectric reactions have been created
@@ -376,17 +548,17 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 
 // Create a bremsstrahlung electroatomic reactions
 void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
-		const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-		std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reaction,
-		BremsstrahlungAngularDistributionType photon_distribution_function )
+        std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reaction,
+        BremsstrahlungAngularDistributionType photon_distribution_function )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-		    energy_grid.size() );
+                    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+                                                      energy_grid.end() ) );
 
   // Bremsstrahlung cross section with zeros removed
   Teuchos::ArrayRCP<double> bremsstrahlung_cross_section;
@@ -395,10 +567,10 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   unsigned threshold_energy_index;
 
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-			energy_grid,
-			raw_electroatom_data.extractBremsstrahlungCrossSection(),
-			bremsstrahlung_cross_section,
-			threshold_energy_index );
+            energy_grid,
+            raw_electroatom_data.extractBremsstrahlungCrossSection(),
+            bremsstrahlung_cross_section,
+            threshold_energy_index );
 
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
         bremsstrahlung_distribution;
@@ -412,26 +584,44 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   }
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
   {
-    //! \todo Find detailed bremsstrahlung data and implement
   THROW_EXCEPTION( std::logic_error,
-          "Error! The detailed bremsstrahlung reaction has not been implemented");
+        "Error! The detailed bremsstrahlung reaction has not been implemented");
   }
   else if( photon_distribution_function = TWOBS_DISTRIBUTION )
   {
   // Create bremsstrahlung 2BS distribution
   BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+    raw_electroatom_data.extractAtomicNumber(),
     raw_electroatom_data,
-    bremsstrahlung_distribution,
-    raw_electroatom_data.extractAtomicNumber() );
+    bremsstrahlung_distribution );
+  }
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Error! The photon distribution function: " <<
+                     photon_distribution_function <<
+                     " is not recognized");
   }
 
   // Create the bremsstrahlung reaction
-  bremsstrahlung_reaction.reset(
-		     new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-					      energy_grid,
-					      bremsstrahlung_cross_section,
-					      threshold_energy_index,
-					      bremsstrahlung_distribution ) );
+  if( raw_electroatom_data.isEPRVersion14() )
+  {
+    bremsstrahlung_reaction.reset(
+      new BremsstrahlungElectroatomicReaction<Utility::LogLog>(
+                 energy_grid,
+                 bremsstrahlung_cross_section,
+                 threshold_energy_index,
+                 bremsstrahlung_distribution ) );
+  }
+  else
+  {
+    bremsstrahlung_reaction.reset(
+      new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+                 energy_grid,
+                 bremsstrahlung_cross_section,
+                 threshold_energy_index,
+                 bremsstrahlung_distribution ) );
+  }
 }
 
 // Create a void absorption electroatomic reaction
@@ -440,15 +630,15 @@ void ElectroatomicReactionACEFactory::createVoidAbsorptionReaction(
 {
   // Create the void absorption reaction
   void_absorption_reaction.reset(
-		     new VoidAbsorptionElectroatomicReaction() );
+             new VoidAbsorptionElectroatomicReaction() );
 }
 
 // Remove the zeros from a cross section
 void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-		     const Teuchos::ArrayRCP<const double>& energy_grid,
-		     const Teuchos::ArrayView<const double>& raw_cross_section,
-		     Teuchos::ArrayRCP<double>& cross_section,
-		     unsigned& threshold_energy_index )
+             const Teuchos::ArrayRCP<const double>& energy_grid,
+             const Teuchos::ArrayView<const double>& raw_cross_section,
+             Teuchos::ArrayRCP<double>& cross_section,
+             unsigned& threshold_energy_index )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -461,8 +651,39 @@ void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
   // Find the first non-zero cross section value
   Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_cross_section.begin(),
-		  raw_cross_section.end(),
-		  ElectroatomicReactionACEFactory::notEqualZero );
+          raw_cross_section.end(),
+          ElectroatomicReactionACEFactory::notEqualZero );
+
+  // Remove the zeros from the cross section
+  cross_section.assign( start, raw_cross_section.end() );
+
+  // Determine the threshold energy index of the reaction
+  threshold_energy_index = energy_grid.size() - cross_section.size();
+
+  // Make sure the cross section is valid
+  testPostcondition( cross_section.size() > 1 );
+}
+
+// Remove the zeros from a cross section
+void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+             const Teuchos::ArrayRCP<const double>& energy_grid,
+             const Teuchos::ArrayRCP<const double>& raw_cross_section,
+             Teuchos::ArrayRCP<double>& cross_section,
+             unsigned& threshold_energy_index )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( energy_grid.size() > 1 );
+
+  // Make sure the raw cross section is valid
+  testPrecondition( raw_cross_section.size() == energy_grid.size() );
+
+  cross_section.clear();
+
+  // Find the first non-zero cross section value
+  Teuchos::ArrayRCP<const double>::iterator start =
+    std::find_if( raw_cross_section.begin(),
+          raw_cross_section.end(),
+          ElectroatomicReactionACEFactory::notEqualZero );
 
   // Remove the zeros from the cross section
   cross_section.assign( start, raw_cross_section.end() );

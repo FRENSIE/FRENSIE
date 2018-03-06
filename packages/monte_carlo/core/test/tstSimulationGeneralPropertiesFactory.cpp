@@ -42,10 +42,10 @@ TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory, initializeProperties )
                                                             properties );
 
   TEST_EQUALITY_CONST( properties.getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+                       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST( properties.getNumberOfHistories(), 10 );
   TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
-		       0.1 );
+                       0.1 );
   TEST_ASSERT( !properties.displayWarnings() );
   TEST_ASSERT( properties.isImplicitCaptureModeOn() );
   TEST_EQUALITY_CONST( properties.getNumberOfBatchesPerProcessor(), 25 );

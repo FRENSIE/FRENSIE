@@ -56,7 +56,7 @@ public:
   const std::string& getNotes() const;
 
 //---------------------------------------------------------------------------//
-// GET TABLE DATA
+// GET BASIC TABLE DATA
 //---------------------------------------------------------------------------//
 
   //! Return the atomic number
@@ -73,6 +73,19 @@ public:
 
   //! Return the maximum electron energy
   double getMaxElectronEnergy() const;
+
+  //! Return the union energy grid convergence tolerance
+  double getGridConvergenceTolerance() const;
+
+  //! Return the union energy grid absolute difference tolerance
+  double getGridAbsoluteDifferenceTolerance() const;
+
+  //! Return the union energy grid distance tolerance
+  double getGridDistanceTolerance() const;
+
+//---------------------------------------------------------------------------//
+// GET PHOTON TABLE DATA
+//---------------------------------------------------------------------------//
 
   //! Return the adjoint pair production energy dist norm constant evaluation tol
   double getAdjointPairProductionEnergyDistNormConstantEvaluationTolerance() const;
@@ -104,23 +117,57 @@ public:
   //! Return the adjoint incoherent grid distance tolerance
   double getAdjointIncoherentGridDistanceTolerance() const;
 
+//---------------------------------------------------------------------------//
+// GET ELECTRON TABLE DATA
+//---------------------------------------------------------------------------//
+
   //! Return the upper cutoff scattering angle cosine above which moment preserving elastic scattering is used
   double getCutoffAngleCosine() const;
 
   //! Return the number of discrete moment preserving angles
   unsigned getNumberOfAdjointMomentPreservingAngles() const;
 
-  //! Return the adjoint bremsstrahlung evaluation tolerance
+  //! Reutrn the adjoint electron grid convergence tolerance
+  double getAdjointElectronGridConvergenceTolerance() const;
+
+  //! Reutrn the adjoint electron absolute diff tolerance
+  double getAdjointElectronAbsoluteDifferenceTolerance() const;
+
+  //! Reutrn the adjoint electron distance tolerance
+  double getAdjointElectronDistanceTolerance() const;
+
+  //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
+  double getElectronTabularEvaluationTolerance() const;
+
+  //! Return the adjoint bremsstrahlung max energy nudge value
+  double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
+
+  //! Return the adjoint bremsstrahlung energy to outgoing energy nudge value
+  double getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue() const;
+
+  //! Return the adjoint bremsstrahlung cross section evaluation tolerance
   double getAdjointBremsstrahlungEvaluationTolerance() const;
 
-  //! Return the union energy grid convergence tolerance
-  double getGridConvergenceTolerance() const;
+  //! Return the adjoint bremsstrahlung grid convergence tolerance
+  double getAdjointBremsstrahlungGridConvergenceTolerance() const;
 
-  //! Return the union energy grid absolute difference tolerance
-  double getGridAbsoluteDifferenceTolerance() const;
+  //! Reutrn the adjoint bremsstrahlung absolute difference tolerance
+  double getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const;
 
-  //! Return the union energy grid distance tolerance
-  double getGridDistanceTolerance() const;
+  //! Reutrn the adjoint bremsstrahlung distance tolerance
+  double getAdjointBremsstrahlungDistanceTolerance() const;
+
+  //! Return the adjoint electroionization cross section evaluation tolerance
+  double getAdjointElectroionizationEvaluationTolerance() const;
+
+  //! Return the adjoint electroionization grid convergence tolerance
+  double getAdjointElectroionizationGridConvergenceTolerance() const;
+
+  //! Reutrn the adjoint electroionization absolute difference tolerance
+  double getAdjointElectroionizationAbsoluteDifferenceTolerance() const;
+
+  //! Reutrn the adjoint electroionization distance tolerance
+  double getAdjointElectroionizationDistanceTolerance() const;
 
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
@@ -151,11 +198,11 @@ public:
 
   //! Return the occupation number momentum grid
   const std::vector<double>& getOccupationNumberMomentumGrid(
-					       const unsigned subshell ) const;
+                   const unsigned subshell ) const;
 
   //! Return the occupation number for a subshell
   const std::vector<double>& getOccupationNumber(
-					       const unsigned subshell ) const;
+                   const unsigned subshell ) const;
 
   //! Return the Waller-Hartree scattering function momentum grid
   const std::vector<double>&
@@ -270,11 +317,11 @@ public:
 
   //! Return the bremsstrahlung electron energy for an incoming photon energy
   const std::vector<double>& getAdjointPhotonBremsstrahlungEnergy(
-					       const double incoming_adjoint_energy ) const;
+                               const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung pdf for an incoming photon energy
   const std::vector<double>& getAdjointPhotonBremsstrahlungPDF(
-					       const double incoming_adjoint_energy ) const;
+                               const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung photon cross section
   const std::vector<double>& getAdjointBremsstrahlungPhotonCrossSection() const;
@@ -286,25 +333,34 @@ public:
 // GET ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  //! Return the electron TwoDInterpPolicy
+  const std::string& getElectronTwoDInterpPolicy() const;
+
+  //! Return the electron TwoDSamplingPolicy
+  const std::string& getElectronTwoDSamplingPolicy() const;
+
   //! Return the elastic angular energy grid
   const std::vector<double>& getAdjointElasticAngularEnergyGrid() const;
 
   //! Return the map of the cutoff elastic scattering angles
   const std::map<double,std::vector<double> >& getAdjointCutoffElasticAngles() const;
 
-  //! Return the map of the cutoff elastic scatering pdf
+  //! Return the map of the cutoff elastic scattering pdf
   const std::map<double,std::vector<double> >& getAdjointCutoffElasticPDF() const;
 
   //! Return the cutoff elastic scattering angles for an incoming energy
   const std::vector<double>& getAdjointCutoffElasticAngles(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
-  //! Return the cutoff elastic scatering pdf for an incoming energy
+  //! Return the cutoff elastic scattering pdf for an incoming energy
   const std::vector<double>& getAdjointCutoffElasticPDF(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return if there is moment preserving data
   bool hasAdjointMomentPreservingData() const;
+
+  //! Return the moment preserving cross section reductions
+  const std::vector<double>& getAdjointMomentPreservingCrossSectionReduction() const;
 
   //! Return the moment preserving elastic discrete angles
   const std::map<double,std::vector<double> >
@@ -316,11 +372,14 @@ public:
 
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getAdjointMomentPreservingElasticDiscreteAngles(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the moment preserving elastic weights for an incoming energy
   const std::vector<double>& getAdjointMomentPreservingElasticWeights(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
+
+  //! Return the ratio of the reduced cutoff cross section to the full cutoff
+  const std::vector<double>& getReducedCutoffCrossSectionRatios() const;
 
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getAdjointElectroionizationEnergyGrid(
@@ -332,12 +391,12 @@ public:
   //! Return the electroionization recoil energy for a subshell and incoming energy
   const std::vector<double>& getAdjointElectroionizationRecoilEnergy(
                            const unsigned subshell,
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the electroionization recoil energy pdf for a subshell and incoming energy
   const std::vector<double>& getAdjointElectroionizationRecoilPDF(
                            const unsigned subshell,
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung incoming electron energy grid for the scattering spectrum
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergyGrid() const;
@@ -347,11 +406,11 @@ public:
 
   //! Return the bremsstrahlung electron energy for an incoming electron energy
   const std::vector<double>& getAdjointElectronBremsstrahlungEnergy(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the bremsstrahlung pdf for an incoming electron energy
   const std::vector<double>& getAdjointElectronBremsstrahlungPDF(
-					       const double incoming_adjoint_energy ) const;
+                           const double incoming_adjoint_energy ) const;
 
   //! Return the atomic excitation average energy gain energy grid
   const std::vector<double>& getAdjointAtomicExcitationEnergyGrid() const;
@@ -380,12 +439,6 @@ public:
   //! Return the total elastic cross section threshold energy bin index
   unsigned getAdjointTotalElasticCrossSectionThresholdEnergyIndex() const;
 
-  //! Return the Moment Preserving (MP) elastic electron cross section
-  const std::vector<double>& getAdjointMomentPreservingCrossSection() const;
-
-  //! Return the MP elastic cross section threshold energy bin index
-  unsigned getAdjointMomentPreservingCrossSectionThresholdEnergyIndex() const;
-
   //! Return the electroionization electron cross section for a subshell
   const std::vector<double>&
     getAdjointElectroionizationCrossSection( const unsigned subshell ) const;
@@ -406,6 +459,12 @@ public:
   //! Return the atomic excitation cross section threshold energy bin index
   unsigned getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex() const;
 
+  //! Return the forward inelastic electron cross section
+  const std::vector<double>& getForwardInelasticElectronCrossSection() const;
+
+  //! Return the forward inelastic electron cross section threshold energy bin index
+  unsigned getForwardInelasticElectronCrossSectionThresholdEnergyIndex() const;
+
 protected:
 
   //! Default constructor
@@ -420,7 +479,7 @@ protected:
   void setNotes( const std::string& notes );
 
 //---------------------------------------------------------------------------//
-// SET TABLE DATA
+// SET BASIC TABLE DATA
 //---------------------------------------------------------------------------//
 
   //! Set the atomic number
@@ -437,6 +496,19 @@ protected:
 
   //! Set the maximum electron energy
   void setMaxElectronEnergy( const double max_electron_energy );
+
+  //! Set the union energy grid convergence tolerance
+  void setGridConvergenceTolerance( const double grid_convergence_tol );
+
+  //! Set the union energy grid absolute difference tolerance
+  void setGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
+
+  //! Set the union energy grid distance tolerance
+  void setGridDistanceTolerance( const double grid_distance_tol );
+
+//---------------------------------------------------------------------------//
+// SET PHOTON TABLE DATA
+//---------------------------------------------------------------------------//
 
   //! Set the adjoint pair production energy dist norm constant evaluation tol
   void setAdjointPairProductionEnergyDistNormConstantEvaluationTolerance(
@@ -475,6 +547,10 @@ protected:
   //! Set the adjoint incoherent grid distance tolerance
   void setAdjointIncoherentGridDistanceTolerance( const double distance_tol );
 
+//---------------------------------------------------------------------------//
+// SET ELECTRON TABLE DATA
+//---------------------------------------------------------------------------//
+
   //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -482,18 +558,61 @@ protected:
   void setNumberOfAdjointMomentPreservingAngles(
     const unsigned number_of_adjoint_moment_preserving_angles );
 
-  //! Set the adjoint bremsstrahlung evaluation tolerance
+  //! Set the adjoint electron grid convergence tolerance
+  void setAdjointElectronGridConvergenceTolerance(
+    const double adjoint_electron_grid_convergence_tol );
+
+  //! Set the adjoint electron absolute diff tolerance
+  void setAdjointElectronAbsoluteDifferenceTolerance(
+    const double adjoint_electron_absolute_diff_tol );
+
+  //! Set the adjoint electron distance tolerance
+  void setAdjointElectronDistanceTolerance(
+    const double adjoint_electron_distance_tol );
+
+  //! Set the electron FullyTabularTwoDDistribution evaluation tolerance
+  void setElectronTabularEvaluationTolerance(
+    const double electron_tabular_evaluation_tol );
+
+  //! Set the adjoint bremsstrahlung max energy nudge value
+  void setAdjointBremsstrahlungMaxEnergyNudgeValue(
+    const double adjoint_bremsstrahlung_max_energy_nudge_value );
+
+  //! Set the adjoint bremsstrahlung energy to outgoing energy nudge value
+  void setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(
+    const double adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value );
+
+  //! Set the adjoint bremsstrahlung cross section evaluation tolerance
   void setAdjointBremsstrahlungEvaluationTolerance(
     const double adjoint_bremsstrahlung_evaluation_tolerance );
 
-  //! Set the union energy grid convergence tolerance
-  void setGridConvergenceTolerance( const double grid_convergence_tol );
+  //! Set the adjoint bremsstrahlung grid convergence tolerance
+  void setAdjointBremsstrahlungGridConvergenceTolerance(
+    const double adjoint_bremsstrahlung_convergence_tolerance );
 
-  //! Set the union energy grid absolute difference tolerance
-  void setGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
+  //! Set the adjoint bremsstrahlung absolute difference tolerance
+  void setAdjointBremsstrahlungAbsoluteDifferenceTolerance(
+    const double adjoint_bremsstrahlung_absolute_diff_tol );
 
-  //! Set the union energy grid distance tolerance
-  void setGridDistanceTolerance( const double grid_distance_tol );
+  //! Set the adjoint bremsstrahlung distance tolerance
+  void setAdjointBremsstrahlungDistanceTolerance(
+    const double adjoint_bremsstrahlung_distance_tol );
+
+  //! Set the adjoint electroionization cross section evaluation tolerance
+  void setAdjointElectroionizationEvaluationTolerance(
+    const double adjoint_electroionization_evaluation_tol );
+
+  //! Set the adjoint electroionization grid convergence tolerance
+  void setAdjointElectroionizationGridConvergenceTolerance(
+    const double adjoint_electroionization_convergence_tol );
+
+  //! Set the adjoint electroionization absolute difference tolerance
+  void setAdjointElectroionizationAbsoluteDifferenceTolerance(
+    const double adjoint_electroionization_absolute_diff_tol );
+
+  //! Set the adjoint electroionization distance tolerance
+  void setAdjointElectroionizationDistanceTolerance(
+    const double adjoint_electroionization_distance_tol );
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
@@ -504,11 +623,11 @@ protected:
 
   //! Set the occupancy for a subshell
   void setSubshellOccupancy( const unsigned subshell,
-			     const double occupancy );
+                             const double occupancy );
 
   //! Set the binding energy for a subshell
   void setSubshellBindingEnergy( const unsigned subshell,
-				 const double binding_energy );
+                                 const double binding_energy );
 
 //---------------------------------------------------------------------------//
 // SET PHOTON DATA
@@ -685,7 +804,7 @@ protected:
 
   //! Set the bremsstrahlung photon cross section
   void setAdjointBremsstrahlungPhotonCrossSection(
-			 const std::vector<double>& adjoint_bremsstrahlung_cross_section );
+            const std::vector<double>& adjoint_bremsstrahlung_cross_section );
 
   //! Set the bremsstrahlung photon cross section threshold energy bin index
   void setAdjointBremsstrahlungPhotonCrossSectionThresholdEnergyIndex(
@@ -694,6 +813,12 @@ protected:
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA
 //---------------------------------------------------------------------------//
+
+  //! Set the electron TwoDInterpPolicy
+  void setElectronTwoDInterpPolicy( const std::string& electron_two_d_interp );
+
+  //! Set the electron TwoDSamplingPolicy
+  void setElectronTwoDSamplingPolicy( const std::string& electron_two_d_sampling );
 
   //! Set the elastic angular energy grid
   void setAdjointElasticAngularEnergyGrid(
@@ -717,15 +842,19 @@ protected:
   void setAdjointCutoffElasticPDF(
     const std::map<double,std::vector<double> >& adjoint_cutoff_elastic_pdf );
 
+  //! Set the adjoint moment preserving cross section reduction
+  void setAdjointMomentPreservingCrossSectionReduction(
+    const std::vector<double>& adjoint_cross_section_reduction );
+
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setAdjointMomentPreservingElasticDiscreteAnglesAtEnergy(
-	const double incoming_adjoint_energy,
-	const std::vector<double>& adjoint_moment_preserving_elastic_discrete_angles );
+    const double incoming_adjoint_energy,
+    const std::vector<double>& adjoint_moment_preserving_elastic_discrete_angles );
 
   //! Set the moment preserving elastic weights for an incoming energy
   void setAdjointMomentPreservingElasticWeightsAtEnergy(
-	const double incoming_adjoint_energy,
-	const std::vector<double>& adjoint_moment_preserving_elastic_weights );
+    const double incoming_adjoint_energy,
+    const std::vector<double>& adjoint_moment_preserving_elastic_weights );
 
   //! Set the moment preserving elastic discrete angles
   void setAdjointMomentPreservingElasticDiscreteAngles(
@@ -734,6 +863,10 @@ protected:
   //! Set the moment preserving elastic weights
   void setAdjointMomentPreservingElasticWeights(
     const std::map<double,std::vector<double> >& adjoint_moment_preserving_elastic_weights );
+
+  //! Set the ratio of the reduced cutoff cross section to the full cutoff
+  void setReducedCutoffCrossSectionRatios(
+    const std::vector<double>& reduced_cutoff_cross_section_ratios );
 
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setAdjointElectroionizationEnergyGrid(
@@ -824,26 +957,18 @@ protected:
   void setAdjointTotalElasticCrossSectionThresholdEnergyIndex(
     const unsigned index );
 
-  //! Set the moment preserving elastic electron cross section using Moment Preserving (MP) theory
-  void setAdjointMomentPreservingCrossSection(
-    const std::vector<double>& adjoint_moment_preserving_elastic_cross_section );
-
-  //! Set the MP moment preserving elastic cross section threshold energy bin index
-  void setAdjointMomentPreservingCrossSectionThresholdEnergyIndex(
-						        const unsigned index );
-
   //! Set the electroionization electron cross section for a subshell
   void setAdjointElectroionizationCrossSection( const unsigned subshell,
-			 const std::vector<double>& adjoint_electroionization_cross_section );
+        const std::vector<double>& adjoint_electroionization_cross_section );
 
   //! Set the electroionization cross section threshold energy bin index
   void setAdjointElectroionizationCrossSectionThresholdEnergyIndex(
-             const unsigned subshell,
-             const unsigned index );
+        const unsigned subshell,
+        const unsigned index );
 
   //! Set the bremsstrahlung electron cross section
   void setAdjointBremsstrahlungElectronCrossSection(
-			 const std::vector<double>& adjoint_bremsstrahlung_cross_section );
+        const std::vector<double>& adjoint_bremsstrahlung_cross_section );
 
   //! Set the bremsstrahlung electron cross section threshold energy bin index
   void setAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex(
@@ -851,10 +976,18 @@ protected:
 
   //! Set the atomic excitation electron cross section
   void setAdjointAtomicExcitationCrossSection(
-			 const std::vector<double>& adjoint_atomic_excitation_cross_section );
+        const std::vector<double>& adjoint_atomic_excitation_cross_section );
 
   //! Set the atomic excitation cross section threshold energy bin index
   void setAdjointAtomicExcitationCrossSectionThresholdEnergyIndex(
+                                const unsigned index );
+
+  //! Set the forward inelastic electron cross section
+  void setForwardInelasticElectronCrossSection(
+           const std::vector<double>& forward_inelastic_electron_cross_section );
+
+  //! Set the forward inelastic electron cross section threshold energy bin index
+  void setForwardInelasticElectronCrossSectionThresholdEnergyIndex(
                                 const unsigned index );
 
 private:
@@ -883,7 +1016,7 @@ private:
   std::string d_notes;
 
 //---------------------------------------------------------------------------//
-// SET TABLE DATA
+// BASIC TABLE DATA
 //---------------------------------------------------------------------------//
 
   // The atomic number
@@ -900,6 +1033,19 @@ private:
 
   // The maximum electron energy
   double d_max_electron_energy;
+
+  // The union energy grid convergence tolerance
+  double d_grid_convergence_tol;
+
+  // The union energy grid absolute difference tolerance
+  double d_grid_absolute_diff_tol;
+
+  // The union energy grid distance tolerance
+  double d_grid_distance_tol;
+
+//---------------------------------------------------------------------------//
+// PHOTON TABLE DATA
+//---------------------------------------------------------------------------//
 
   // The adjoint pair production energy dist norm constant evaluation tol
   double d_adjoint_pair_production_energy_dist_norm_constant_evaluation_tol;
@@ -931,20 +1077,58 @@ private:
   // The adjoint incoherent grid distance tol
   double d_adjoint_incoherent_grid_distance_tol;  
 
+//---------------------------------------------------------------------------//
+// ELECTRON TABLE DATA
+//---------------------------------------------------------------------------//
+
   // The elastic cutoff angle
   double d_cutoff_angle_cosine;
 
   // The number of discrete moment preserving angles
   double d_number_of_adjoint_moment_preserving_angles;
 
-  // The union energy grid convergence tolerance
-  double d_grid_convergence_tol;
+  // The adjoint electron grid convergence tolerance
+  double d_adjoint_electron_grid_convergence_tol;
 
-  // The union energy grid absolute difference tolerance
-  double d_grid_absolute_diff_tol;
+  // The adjoint electron absolute diff tolerance
+  double d_adjoint_electron_absolute_diff_tol;
 
-  // The union energy grid distance tolerance
-  double d_grid_distance_tol;
+  // The adjoint electron distance tolerance
+  double d_adjoint_electron_distance_tol;
+
+  // The electron FullyTabularTwoDDistribution evaluation tolerance
+  double d_electron_tabular_evaluation_tol;
+
+  // The adjoint bremsstrahlung max energy nudge value
+  double d_adjoint_bremsstrahlung_max_energy_nudge_value;
+
+  // The adjoint bremsstrahlung energy to outgoing energy nudge value
+  double d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value;
+
+  // The adjoint bremsstrahlung cross section evaluation tolerance
+  double d_adjoint_bremsstrahlung_evaluation_tolerance;
+
+  // The adjoint bremsstrahlung grid convergence tolerance
+  double d_adjoint_bremsstrahlung_convergence_tolerance;
+
+  // The adjoint bremsstrahlung absolute difference tolerance
+  double d_adjoint_bremsstrahlung_absolute_diff_tol;
+
+  // The adjoint bremsstrahlung distance tolerance
+  double d_adjoint_bremsstrahlung_distance_tol;
+
+  // The adjoint electroionization cross section evaluation tolerance
+  double d_adjoint_electroionization_evaluation_tol;
+
+  // The adjoint electroionization grid convergence tolerance
+  double d_adjoint_electroionization_convergence_tol;
+
+  // The adjoint electroionization absolute difference tolerance
+  double d_adjoint_electroionization_absolute_diff_tol;
+
+  // The adjoint electroionization distance tolerance
+  double d_adjoint_electroionization_distance_tol;
+
 
 //---------------------------------------------------------------------------//
 // RELAXATION DATA
@@ -1089,6 +1273,12 @@ private:
 // ELECTRON DATA
 //---------------------------------------------------------------------------//
 
+  // The electron TwoDInterpPolicy
+  std::string d_electron_two_d_interp;
+
+  // The electron TwoDSamplingPolicy
+  std::string d_electron_two_d_sampling;
+
   // The elastic angular energy grid (MeV)
   std::vector<double> d_adjoint_angular_energy_grid;
 
@@ -1098,11 +1288,17 @@ private:
   // The cutoff elastic scattering pdf
   std::map<double,std::vector<double> > d_adjoint_cutoff_elastic_pdf;
 
+  // The moment preserving cross section reductions
+  std::vector<double> d_adjoint_moment_preserving_cross_section_reductions;
+
   // The moment preserving elastic discrete angles
   std::map<double,std::vector<double> > d_adjoint_moment_preserving_elastic_discrete_angles;
 
   // The moment preserving elastic weights
   std::map<double,std::vector<double> > d_adjoint_moment_preserving_elastic_weights;
+
+  //! The ratio of the reduced cutoff cross section to the full cutoff
+  std::vector<double> d_reduced_cutoff_cross_section_ratios;
 
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_adjoint_electroionization_energy_grid;
@@ -1151,12 +1347,6 @@ private:
   // The total elastic electron cross section threshold energy index
   unsigned d_adjoint_total_elastic_cross_section_threshold_index;
 
-  // The Moment Preserving elastic electron cross section (b)
-  std::vector<double> d_adjoint_moment_preserving_elastic_cross_section;
-
-  // The Moment Preserving elastic electron cross section threshold energy index
-  unsigned d_adjoint_moment_preserving_elastic_cross_section_threshold_index;
-
   // The electroionization subshell electron cross section (b)
   std::map<unsigned,std::vector<double> >
     d_adjoint_electroionization_subshell_cross_section;
@@ -1176,6 +1366,13 @@ private:
 
   // The atomic excitation electron cross section threshold energy index
   unsigned d_adjoint_atomic_excitation_cross_section_threshold_index;
+
+  // The forward inelastic electron cross section (b)
+  std::vector<double> d_forward_inelastic_electron_cross_section;
+
+  // The forward inelastic electron cross section threshold energy index
+  unsigned d_forward_inelastic_electron_cross_section_threshold_index;
+
 };
 
 } // end Data namespace

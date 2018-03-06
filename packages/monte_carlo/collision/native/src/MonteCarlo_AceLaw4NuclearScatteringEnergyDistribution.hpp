@@ -21,7 +21,7 @@
 
 namespace MonteCarlo{
 
-/*! The law 4 scattering eneryg distribution class (Ace Law 4)
+/*! The law 4 scattering energy distribution class (Ace Law 4)
  * \ingroup ace_laws
  */
 class AceLaw4NuclearScatteringEnergyDistribution : public NuclearScatteringEnergyDistribution

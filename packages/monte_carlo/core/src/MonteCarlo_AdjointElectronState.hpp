@@ -61,6 +61,20 @@ public:
   //! Print the adjoint electron state
   virtual void print( std::ostream& os ) const;
 
+protected:
+
+  //! Probe constructor
+  AdjointElectronState( const ParticleState::historyNumberType history_number,
+                        const ParticleType probe_type,
+                        const chargeType probe_charge );
+
+  //! Probe copy constructor
+  AdjointElectronState( const ParticleState& existing_base_state,
+                        const ParticleType probe_type,
+                        const chargeType probe_charge,
+                        const bool increment_generation_number,
+                        const bool reset_collision_number );
+
 private:
 
   // Save the state to an archive

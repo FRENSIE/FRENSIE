@@ -19,9 +19,39 @@ bool isValidParticleTypeName( const std::string& particle_type_name )
   return particle_type_name.compare( "Photon" ) == 0 ||
     particle_type_name.compare( "Neutron" ) == 0 ||
     particle_type_name.compare( "Electron" ) == 0 ||
+    particle_type_name.compare( "Positron" ) == 0 ||
     particle_type_name.compare( "Adjoint Photon" ) == 0 ||
     particle_type_name.compare( "Adjoint Neutron" ) == 0 ||
     particle_type_name.compare( "Adjoint Electron" ) == 0;
+}
+
+// Convert shorthand particle type name to verbose particle type name
+/*! \details These shorthand names should correspond to the names that would
+ * be encountered in DagMC.
+ */
+std::string convertShortParticleTypeNameToVerboseParticleTypeName(
+				 const std::string& short_particle_type_name )
+{
+  if( short_particle_type_name == "n" )
+    return "Neutron";
+  else if( short_particle_type_name == "p" )
+    return "Photon";
+  else if( short_particle_type_name == "e" )
+    return "Electron";
+  else if( short_particle_type_name == "e+" )
+    return "Positron";
+  else if( short_particle_type_name == "an" )
+    return "Adjoint Neutron";
+  else if( short_particle_type_name == "ap" )
+    return "Adjoint Photon";
+  else if( short_particle_type_name == "ae" )
+    return "Adjoint Electron";
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the short particle type name ("
+                     << short_particle_type_name << ") is not valid!" );
+  }
 }
 
 // Convert the particle type name to a ParticleType enum
@@ -34,6 +64,8 @@ ParticleType convertParticleTypeNameToParticleTypeEnum(
     return NEUTRON;
   else if( particle_type_name.compare( "Electron" ) == 0 )
     return ELECTRON;
+  else if( particle_type_name.compare( "Positron" ) == 0 )
+    return POSITRON;
   else if( particle_type_name.compare( "Adjoint Photon" ) == 0 )
     return ADJOINT_PHOTON;
   else if( particle_type_name.compare( "Adjoint Neutron" ) == 0 )
@@ -75,6 +107,7 @@ std::string convertParticleTypeEnumToString( const ParticleType particle_type )
   case PHOTON: return "Photon";
   case NEUTRON: return "Neutron";
   case ELECTRON: return "Electron";
+  case POSITRON: return "Positron";
   case ADJOINT_PHOTON: return "Adjoint Photon";
   case ADJOINT_NEUTRON: return "Adjoint Neutron";
   case ADJOINT_ELECTRON: return "Adjoint Electron";

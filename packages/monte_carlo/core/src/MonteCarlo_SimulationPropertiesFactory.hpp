@@ -30,8 +30,8 @@ public:
 
   //! Initialize the simulation properties
   static std::shared_ptr<const SimulationProperties> createProperties(
-				      const Teuchos::ParameterList& properties,
-				      std::ostream* os_warn = &std::cerr );
+                                      const Teuchos::ParameterList& properties,
+                                      std::ostream* os_warn = &std::cerr );
 };
 
 } // end MonteCarlo namespace

@@ -121,7 +121,7 @@ void SurfaceInputValidator::validateSurface(
     error_message += surface_exception.what();
   }
 
-  // If any errors have occured, throw
+  // If any errors have occurred, throw
   if( error_message.size() > 0 )
   {
     throw std::invalid_argument( error_message );

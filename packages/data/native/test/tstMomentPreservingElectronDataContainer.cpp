@@ -89,7 +89,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
   FRENSIE_CHECK_EQUAL( mp_data_container.getMomentPreservingWeights(0),
                        weights );
 }
-/*
+
 //---------------------------------------------------------------------------//
 // Check that the electron energy grid can be set
 FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
@@ -134,7 +134,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
   FRENSIE_CHECK_EQUAL( mp_data_container.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
                        0 );
 }
-*/
+
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
@@ -157,14 +157,6 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
-		       3u );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -189,14 +181,6 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
-		       3u );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -209,7 +193,31 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
   mp_data_container.saveToFile( test_xml_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
-    mp_data_container_copy( test_xml_file_name );
+    mp_data_container_copy( test_xml_file_name,
+			     Utility::ArchivableObject::XML_ARCHIVE );
+
+  FRENSIE_CHECK_EQUAL( mp_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL(
+    mp_data_container_copy.getElasticAngularEnergyGrid().front(),
+    1.0 );
+  FRENSIE_CHECK_EQUAL(
+    mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
+  FRENSIE_CHECK_EQUAL(
+    mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
+  FRENSIE_CHECK_EQUALn(
+    mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the data can be packed into a string and unpacked from a string
+TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
+                   pack_unpackDataFromString )
+{
+  std::string packed_data = mp_data_container.packDataInString();
+
+  Data::MomentPreservingElectronVolatileDataContainer mp_data_container_copy;
+
+  mp_data_container_copy.unpackDataFromString( packed_data );
 
   FRENSIE_CHECK_EQUAL( mp_data_container_copy.getAtomicNumber(), 1 );
   FRENSIE_CHECK_EQUAL(
@@ -221,14 +229,6 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
-		       3u );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//

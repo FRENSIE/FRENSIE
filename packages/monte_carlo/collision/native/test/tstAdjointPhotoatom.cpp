@@ -590,11 +590,15 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideSurvivalBias )
 
 //---------------------------------------------------------------------------//
 // Check that a line energy collision can be modeled
+//! \details This unit test is dependent on the version of boost being used.
 TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 {
   // Sample the pair production reaction
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.95; // select pair production
+  if( BOOST_VERSION < 106000 )
+    fake_stream[0] = 0.95; // select pair production (for boost below version 1.60)
+  else
+    fake_stream[0] = 0.05; // select pair production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -620,7 +624,10 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
   bank.pop();
 
   // Sample the triplet production reaction
-  fake_stream[0] = 0.96; // select triplet production
+  if( BOOST_VERSION < 106000 )
+    fake_stream[0] = 0.96; // select triplet production (for boost below version 1.60)
+  else
+    fake_stream[0] = 0.04; // select triplet production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -641,6 +648,23 @@ TEUCHOS_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
                           1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atom can be relaxed
+TEUCHOS_UNIT_TEST( AdjointPhotoatom, relaxAtom )
+{
+  Teuchos::RCP<MonteCarlo::AdjointPhotonState> adjoint_photon(
+                                    new MonteCarlo::AdjointPhotonState( 0 ) );
+  adjoint_photon->setEnergy( exp( -1.214969212306E+01 ) );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
+  MonteCarlo::ParticleBank bank;
+
+  adjoint_photoatom->relaxAtom( vacancy, *adjoint_photon, bank );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//

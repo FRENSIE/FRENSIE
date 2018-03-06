@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_HybridElasticElectronScatteringDistribution.cpp
 //! \author Luke Kersting
-//! \brief  The analog elastic electron scattering distribution definition
+//! \brief  The coupled elastic electron scattering distribution definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,24 +18,26 @@ namespace MonteCarlo{
 
 // Constructor
 HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDistribution(
-    const TwoDDistribution& elastic_cutoff_distribution,
-    const DiscreteDistribution& elastic_discrete_distribution,
-    const double& cutoff_angle_cosine )
-  : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
-    d_elastic_discrete_distribution( elastic_discrete_distribution ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine )
+    const std::shared_ptr<TwoDDist>& hybrid_distribution,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol )
+  : d_hybrid_distribution( hybrid_distribution ),
+    d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_evaluation_tol( evaluation_tol )
 {
-  // Make sure the arrays are valid
-  testPrecondition( d_elastic_cutoff_distribution.size() > 0 );
-  testPrecondition( d_elastic_discrete_distribution.size() > 0 );
+  // Make sure the pointers are valid
+  testPrecondition( d_hybrid_distribution.use_count() > 0 );
   // Make sure the cutoff angle cosine is valid
-  testPostcondition( d_cutoff_angle_cosine >= -1.0 );
-  testPostcondition( d_cutoff_angle_cosine < 1.0 );
+  testPrecondition( d_cutoff_angle_cosine >= -1.0 );
+  testPrecondition( d_cutoff_angle_cosine < 1.0 );
+  // Make sure the evaluation tolerance is valid
+  testPrecondition( d_evaluation_tol > 0.0 );
+  testPrecondition( d_evaluation_tol < 1.0 );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
-/*! \details The cutoff and moment preserving distributions are evaluated 
- *  independently of eachother.
+/*! \details Only scattering angle cosines below the cutoff angle cosine are
+ *  evaluated. If it is above the cutoff angle a value of zero is returned.
  */
 double HybridElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
@@ -46,26 +48,22 @@ double HybridElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
-  {
-    return MonteCarlo::evaluateTwoDDistributionCorrelated<TwoDDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_cutoff_distribution );
-  }
-  else
-  {
-    return MonteCarlo::evaluateTwoDDistributionCorrelated<DiscreteDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_discrete_distribution );
-  }
+  THROW_EXCEPTION( std::runtime_error,
+                   "Error: evaluation of the hybrid distribution" <<
+                   " is currently not supported!" );
+
+  // if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
+  // {
+  //   return d_hybrid_distribution->evaluate(
+  //             incoming_energy, scattering_angle_cosine );
+  // }
+  // else
+  //   return 0.0;
 }
 
-
 // Evaluate the PDF at the given energy and scattering angle cosine
-/*! \details The cutoff and moment preserving PDF values are evaluated 
- *  independently of eachother.
+/*! \details Only scattering angle cosines below the cutoff angle cosine are
+ *  evaluated. If it is above the cutoff angle a value of zero is returned.
  */
 double HybridElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
@@ -76,61 +74,42 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
-  {
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<TwoDDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_cutoff_distribution );
-  }
-  else
-  {
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<DiscreteDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_discrete_distribution );
-  }
+  THROW_EXCEPTION( std::runtime_error,
+                   "Error: evaluation of the hybrid PDF is" <<
+                   " currently not supported!" );
+
+  // if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
+  // {
+  //   return d_hybrid_distribution->evaluateSecondaryConditionalPDF(
+  //             incoming_energy,
+  //             scattering_angle_cosine );
+  // }
+  // else
+  //   return 0.0;
 }
 
 // Evaluate the CDF
-/*! \details The cutoff and moment preserving CDF values are evaluated 
- *  independently of eachother.
+/*! \details Unlike the evaluate and evaluatePDF function the CDF can be
+ *  evaluated across the entire range of the angle cosine.
  */
 double HybridElasticElectronScatteringDistribution::evaluateCDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
-  // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
   // Make sure the energy, eta and angle are valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
-  {
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<TwoDDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_cutoff_distribution );
-  }
-  else
-  {
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<DiscreteDistribution>(
-                         incoming_energy,
-                         scattering_angle_cosine,
-                         d_elastic_discrete_distribution );
-  }
+  return d_hybrid_distribution->evaluateSecondaryConditionalCDF(
+            incoming_energy, scattering_angle_cosine );
 }
 
 // Sample an outgoing energy and direction from the distribution
 void HybridElasticElectronScatteringDistribution::sample(
-				     const double incoming_energy,
-				     double& outgoing_energy,
-				     double& scattering_angle_cosine ) const
+                     const double incoming_energy,
+                     double& outgoing_energy,
+                     double& scattering_angle_cosine ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -145,10 +124,10 @@ void HybridElasticElectronScatteringDistribution::sample(
 
 // Sample an outgoing energy and direction and record the number of trials
 void HybridElasticElectronScatteringDistribution::sampleAndRecordTrials(
-					    const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+                        const double incoming_energy,
+                        double& outgoing_energy,
+                        double& scattering_angle_cosine,
+                        unsigned& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -161,9 +140,9 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void HybridElasticElectronScatteringDistribution::scatterElectron(
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     ElectronState& electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -171,21 +150,43 @@ void HybridElasticElectronScatteringDistribution::scatterElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine,
-			  this->sampleAzimuthalAngle() );
+                            this->sampleAzimuthalAngle() );
+}
+
+// Randomly scatter the positron
+void HybridElasticElectronScatteringDistribution::scatterPositron(
+         PositronState& positron,
+         ParticleBank& bank,
+         Data::SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( positron.getEnergy(),
+                                   scattering_angle_cosine,
+                                   trial_dummy );
+
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  positron.rotateDirection( scattering_angle_cosine,
+                            this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
 void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
-				     AdjointElectronState& adjoint_electron,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+                     AdjointElectronState& adjoint_electron,
+                     ParticleBank& bank,
+                     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -193,17 +194,23 @@ void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
-				                   scattering_angle_cosine,
-				                   trial_dummy );
+                                   scattering_angle_cosine,
+                                   trial_dummy );
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine,
-				                    this->sampleAzimuthalAngle() );
+                                    this->sampleAzimuthalAngle() );
 }
 
 // Sample an outgoing direction from the distribution
+/*! \details The union of the 1-D tabular Cutoff distribution and the discrete
+ *  moment preserving distribution are sampled without taking into account
+ *  The interpolated value of the sampling ratio at the given incoming energy.
+ *  Because the secondary energy grid in very course, this routine will likely
+ *  lead to interpolation errors.
+ */
 void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
                                                 double& scattering_angle_cosine,
@@ -215,79 +222,16 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   // Increment the number of trials
   ++trials;
 
-  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
-  lower_bin_boundary = d_elastic_cutoff_distribution.begin();
-  upper_bin_boundary = d_elastic_cutoff_distribution.end();
-
-  unsigned lower_bin_index, upper_bin_index;
-  findLowerAndUpperBinIndex(
-        incoming_energy,
-        d_elastic_cutoff_distribution,
-        lower_bin_index,
-        upper_bin_index );
-
   double random_number =
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  double lower_angle, upper_angle;
-  // sample lower bin
-  this->sampleIndependent( lower_bin_index, random_number, lower_angle );
-
-  // sample upper bin
-  this->sampleIndependent( upper_bin_index, random_number, upper_angle );
-
-  if ( lower_bin_index != upper_bin_index )
-  {
-    scattering_angle_cosine = Utility::LinLog::interpolate(
-             Utility::get<0>( d_elastic_cutoff_distribution[lower_bin_index] ),
-             Utility::get<0>( d_elastic_cutoff_distribution[upper_bin_index] ),
-             incoming_energy,
-             lower_angle,
-             upper_angle );
-  }
-  else
-  {
-    scattering_angle_cosine = lower_angle;
-  }
+  scattering_angle_cosine =
+    d_hybrid_distribution->sampleSecondaryConditionalWithRandomNumber(
+      incoming_energy, random_number );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
-}
-
-// Sample an outgoing direction from the given distribution
-void HybridElasticElectronScatteringDistribution::sampleIndependent(
-        const unsigned& energy_bin,
-        const double& random_number,
-        double& scattering_angle_cosine ) const
-{
-  // get the ratio of the cutoff cross section to the moment preserving cross section
-  double cross_section_ratio =
-    Utility::get<2>(d_elastic_discrete_distribution[energy_bin]);
-
-  // calculate a sampling ratio
-  double sampling_ratio =  cross_section_ratio/( 1.0 + cross_section_ratio );
-
-  // Scale the random number
-  double scaled_random_number = sampling_ratio*random_number;
-
-  if ( random_number < sampling_ratio )
-  {
-    double scaled_random_number = random_number/sampling_ratio;
-
-    scattering_angle_cosine =
-      Utility::get<1>( d_elastic_cutoff_distribution[energy_bin] )->sampleWithRandomNumberInSubrange(
-            scaled_random_number, d_cutoff_angle_cosine );
-  }
-  else
-  {
-    double scaled_random_number =
-        random_number*( 1.0 + cross_section_ratio) - cross_section_ratio;
-
-    scattering_angle_cosine =
-      Utility::get<1>( d_elastic_discrete_distribution[energy_bin] )->sampleWithRandomNumber(
-            scaled_random_number );
-  }
 }
 
 } // end MonteCarlo namespace

@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_ExceptionTestMacros.hpp
 //! \author Alex Robinson
-//! \brief  Macros that test if an exception has occured and throw if so
+//! \brief  Macros that test if an exception has occurred and throw if so
 //!
 //---------------------------------------------------------------------------//
 

@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE( formatKeyword,
     formatter.formatKeyword<Utility::UnderlinedTextFormat,Utility::GreenTextColor,Utility::MagentaTextBackgroundColor>( "test" );
 
     formatter.formatKeyword<Utility::BoldTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "This" );
-    
+
     // Make sure repeats are ignored
     formatter.formatKeyword<Utility::BoldTextFormat,Utility::BlueTextColor,Utility::DefaultTextBackgroundColor>( "This" );
 
@@ -400,7 +400,7 @@ BOOST_AUTO_TEST_CASE( formatKeyword,
 
     formatter.formatKeyword<Utility::UnderlinedTextFormat,Utility::GreenTextColor,Utility::MagentaTextBackgroundColor>( "test" );
 
-    formatter.formatKeyword<Utility::BoldTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "\\w*is\\b" ); 
+    formatter.formatKeyword<Utility::BoldTextFormat,Utility::RedTextColor,Utility::DefaultTextBackgroundColor>( "\\w*is\\b" );
 
     // Make sure repeats are ignored
     formatter.formatKeyword<Utility::BoldTextFormat,Utility::BlueTextColor,Utility::DefaultTextBackgroundColor>( "This" );
@@ -679,7 +679,7 @@ BOOST_AUTO_TEST_CASE( formatStandardErrorKeywords,
     Utility::DynamicOutputFormatter formatter( "Error: this is a test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;31;49mError: \E[0mthis is a test!" );
@@ -734,12 +734,12 @@ BOOST_AUTO_TEST_CASE( formatStandardErrorKeywords,
                        "This is an error test!" );
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "Error: this is an error test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;31;49mError: \E[0mthis is an error test!" );
@@ -831,7 +831,7 @@ BOOST_AUTO_TEST_CASE( formatStandardWarningKeywords,
     Utility::DynamicOutputFormatter formatter( "Warning: this is a test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;35;49mWarning: \E[0mthis is a test!" );
@@ -861,12 +861,12 @@ BOOST_AUTO_TEST_CASE( formatStandardWarningKeywords,
                        "This is a warning test!" );
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "Warning: This is a warning test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;35;49mWarning: \E[0mThis is a warning test!" );
@@ -887,7 +887,7 @@ BOOST_AUTO_TEST_CASE( formatStandardNoteKeywords,
     Utility::DynamicOutputFormatter formatter( "Note: this is a test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;36;49mNote:\E[0m this is a test!" );
@@ -902,7 +902,7 @@ BOOST_AUTO_TEST_CASE( formatStandardNoteKeywords,
     Utility::DynamicOutputFormatter formatter( " note: this is a test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;36;49m note:\E[0m this is a test!" );
@@ -932,12 +932,12 @@ BOOST_AUTO_TEST_CASE( formatStandardNoteKeywords,
                        "This is a note test!" );
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "Note: This is a note test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;36;49mNote:\E[0m This is a note test!" );
@@ -1507,7 +1507,7 @@ BOOST_AUTO_TEST_CASE( formatStandardFilenameKeywords,
 #endif
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "These are test files: include/test.hpp, /home/src/test.cpp:1111" );
 
@@ -1588,7 +1588,7 @@ BOOST_AUTO_TEST_CASE( formatStandardPassKeywords,
 #endif
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is a passed test: [Pass]" );
 
@@ -1669,7 +1669,7 @@ BOOST_AUTO_TEST_CASE( formatStandardFailKeywords,
 #endif
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "This is a failed test: [Fail]" );
 
@@ -1963,7 +1963,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the green text color only
@@ -1984,7 +1984,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the yellow text color only
@@ -2005,7 +2005,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the blue text color only
@@ -2026,7 +2026,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the magenta text color only
@@ -2047,7 +2047,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the cyan text color only
@@ -2068,7 +2068,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the white text color only
@@ -2089,7 +2089,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the black text background color only
@@ -2110,7 +2110,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the red text background color
@@ -2131,7 +2131,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the green text background color
@@ -2152,7 +2152,7 @@ BOOST_AUTO_TEST_CASE( toStream,
 
     std::cout << formatter << std::endl;
     oss.str( "" ); oss_raw.str( "" );
-    oss.clear(); oss_raw.clear(); 
+    oss.clear(); oss_raw.clear();
   }
 
   // Check the yellow text background color

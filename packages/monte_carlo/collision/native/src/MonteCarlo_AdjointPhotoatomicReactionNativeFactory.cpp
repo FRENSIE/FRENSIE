@@ -88,7 +88,7 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
     incoherent_adjoint_reactions.resize( 1 );
 
     // Extract the cross section and slice based on max energy
-    Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>
+    Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>
       two_d_cross_section( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                            raw_adjoint_photoatom_data.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
                            raw_adjoint_photoatom_data.getAdjointWallerHartreeIncoherentCrossSection() );
@@ -142,7 +142,7 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
     while( subshell_it != raw_adjoint_photoatom_data.getSubshells().end() )
     {
       // Extract the cross section and slice based on max energy
-      Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin>
+      Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>
       two_d_cross_section( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                            raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell_it ),
                            raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell_it ) );

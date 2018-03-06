@@ -118,6 +118,18 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the electron total elastic integrated cross section mode can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   ElectronTotalElasticIntegratedCrossSectionModeOnOff )
+{
+  epr_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( true );
+  FRENSIE_CHECK( epr_data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
+
+  epr_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( false );
+  FRENSIE_CHECK( !epr_data_container.isElectronTotalElasticIntegratedCrossSectionModeOn() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the Cutoff Angle can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
 {
@@ -136,6 +148,17 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getNumberOfMomentPreservingAngles(),
                        1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron tabular tol can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronTabularEvaluationTolerance )
+{
+  epr_data_container.setElectronTabularEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectronTabularEvaluationTolerance(),
+                       1e-3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -236,7 +259,6 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getSubshellRelaxationVacancies( 1 ),
                        vacancies );
-
 }
 
 //---------------------------------------------------------------------------//
@@ -280,7 +302,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   compton_profile_momentum_grid[2] = 1.0;
 
   epr_data_container.setComptonProfileMomentumGrid(
-					    1, compton_profile_momentum_grid );
+                                            1, compton_profile_momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getComptonProfileMomentumGrid( 1 ),
 		       compton_profile_momentum_grid );
@@ -346,7 +368,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   momentum_grid[3] = 1e8;
 
   epr_data_container.setWallerHartreeScatteringFunctionMomentumGrid(
-							       momentum_grid );
+                                                               momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeScatteringFunctionMomentumGrid(),
 		       momentum_grid );
@@ -381,7 +403,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   momentum_grid[3] = 1e8;
 
   epr_data_container.setWallerHartreeAtomicFormFactorMomentumGrid(
-							       momentum_grid );
+                                                               momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeAtomicFormFactorMomentumGrid(),
 		       momentum_grid );
@@ -717,7 +739,31 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       cross_section );
 }
 
-// Electron Tests
+//---------------------------------------------------------------------------//
+// ELECTRON TESTS
+//---------------------------------------------------------------------------//
+// Check that the electron TwoDInterpPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronTwoDInterpPolicy )
+{
+  std::string interp = "Lin-Lin-Lin";
+  epr_data_container.setElectronTwoDInterpPolicy( interp );
+
+  FRENSIE_CHECK_EQUAL( interp,
+                       epr_data_container.getElectronTwoDInterpPolicy() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron TwoDSamplingPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronTwoDSamplingPolicy )
+{
+  std::string sampling = "Unit-base Correlated";
+  epr_data_container.setElectronTwoDSamplingPolicy( sampling );
+
+  FRENSIE_CHECK_EQUAL( sampling,
+                       epr_data_container.getElectronTwoDSamplingPolicy() );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the angular energy grid can be set
@@ -732,6 +778,18 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   grid = epr_data_container.getElasticAngularEnergyGrid();
   FRENSIE_CHECK_EQUAL( grid[0], angular_energy_grid[0] );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cutoff elastic InterpPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setCutoffElasticInterpPolicy )
+{
+  std::string interp = "Lin-Lin";
+  epr_data_container.setCutoffElasticInterpPolicy( interp );
+
+  FRENSIE_CHECK_EQUAL( interp,
+                       epr_data_container.getCutoffElasticInterpPolicy() );
 }
 
 //---------------------------------------------------------------------------//
@@ -819,17 +877,17 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 {
   FRENSIE_CHECK( !epr_data_container.hasScreenedRutherfordData() );
 
-  std::vector<double> norm( 3 );
-  norm[0] = 100;
-  norm[1] = 200;
-  norm[2] = 700;
+//  std::vector<double> norm( 3 );
+//  norm[0] = 100;
+//  norm[1] = 200;
+//  norm[2] = 700;
 
-  epr_data_container.setScreenedRutherfordNormalizationConstant( norm );
+//  epr_data_container.setScreenedRutherfordNormalizationConstant( norm );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getScreenedRutherfordNormalizationConstant(),
-                       norm );
+  // FRENSIE_CHECK_EQUAL( epr_data_container.getScreenedRutherfordNormalizationConstant(),
+  //                      norm );
 
-  FRENSIE_CHECK( epr_data_container.hasScreenedRutherfordData() );
+  // FRENSIE_CHECK( epr_data_container.hasScreenedRutherfordData() );
 }
 
 //---------------------------------------------------------------------------//
@@ -842,10 +900,10 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   eta[1] = 0.0;
   eta[2] = 0.90;
 
-  epr_data_container.setMoliereScreeningConstant( eta );
+//  epr_data_container.setMoliereScreeningConstant( eta );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getMoliereScreeningConstant(),
-                       eta );
+  // FRENSIE_CHECK_EQUAL( epr_data_container.getMoliereScreeningConstant(),
+  //                      eta );
 }
 
 //---------------------------------------------------------------------------//
@@ -866,7 +924,14 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container.getMomentPreservingElasticDiscreteAngles(1.0),
                        discrete_angles );
 
-  FRENSIE_CHECK( epr_data_container.hasMomentPreservingData() );
+  FRENSIE_CHECK_EQUAL( epr_data_container.hasMomentPreservingData() );
+
+  epr_data_container.clearMomentPreservingData();
+
+  FRENSIE_CHECK_EQUAL( !epr_data_container.hasMomentPreservingData() );
+
+  epr_data_container.setMomentPreservingElasticDiscreteAngles( 1.0,
+                                                            discrete_angles );
 }
 
 //---------------------------------------------------------------------------//
@@ -886,6 +951,22 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the moment preserving elastic discrete angles can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setMomentPreservingCrossSectionReduction )
+{
+  FRENSIE_CHECK( epr_data_container.hasMomentPreservingData() );
+
+  std::vector<double> reductions( 1 );
+  reductions[0] = 0.90;
+
+  epr_data_container.setMomentPreservingCrossSectionReduction( reductions );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getMomentPreservingCrossSectionReduction(),
+                       reductions );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the electroionization energy grid can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectroionizationEnergyGrid )
@@ -902,6 +983,18 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getElectroionizationEnergyGrid( subshell ),
                        energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization Recoil InterpPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectroionizationRecoilInterpPolicy )
+{
+  std::string interp = "Lin-Lin";
+  epr_data_container.setElectroionizationRecoilInterpPolicy( interp );
+
+  FRENSIE_CHECK_EQUAL( interp,
+                       epr_data_container.getElectroionizationRecoilInterpPolicy() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1016,6 +1109,18 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the bremsstrahlung photon InterpPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setBremsstrahlungPhotonInterpPolicy )
+{
+  std::string interp = "Lin-Lin";
+  epr_data_container.setBremsstrahlungPhotonInterpPolicy( interp );
+
+  FRENSIE_CHECK_EQUAL( interp,
+                       epr_data_container.getBremsstrahlungPhotonInterpPolicy() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the bremsstrahlung photon energy can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setBremsstrahlungPhotonEnergyAtIncomingEnergy )
@@ -1111,6 +1216,18 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atomic excitation energy loss InterpPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setAtomicExcitationEnergyLossInterpPolicy )
+{
+  std::string interp = "Lin-Lin";
+  epr_data_container.setAtomicExcitationEnergyLossInterpPolicy( interp );
+
+  FRENSIE_CHECK_EQUAL( interp,
+                       epr_data_container.getAtomicExcitationEnergyLossInterpPolicy() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the atomic excitation energy loss can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setAtomicExcitationEnergyLoss )
@@ -1141,6 +1258,36 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getElectronEnergyGrid(),
                        electron_energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron cross section InterpPolicy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronCrossSectionInterpPolicy )
+{
+  std::string interp = "Lin-Lin";
+  epr_data_container.setElectronCrossSectionInterpPolicy( interp );
+
+  FRENSIE_CHECK_EQUAL( interp,
+                       epr_data_container.getElectronCrossSectionInterpPolicy() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the total electron electron cross section can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setTotalElectronCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  epr_data_container.setTotalElectronCrossSection(
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS(
+            epr_data_container.getTotalElectronCrossSection(),
+            cross_section );
 }
 
 //---------------------------------------------------------------------------//
@@ -1228,35 +1375,6 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setTotalElasticCrossSectionThresholdEnergyIndex( 0 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getTotalElasticCrossSectionThresholdEnergyIndex(),
-                       0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving (MP) elastic electron cross section can be set
-FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setMomentPreservingCrossSection )
-{
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
-
-  epr_data_container.setMomentPreservingCrossSection(
-                        cross_section );
-
-  FRENSIE_CHECK_EQUAL(
-            epr_data_container.getMomentPreservingCrossSection(),
-            cross_section );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving elastic cs threshold index can be set
-FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		        setMomentPreservingCrossSectionThresholdEnergyIndex )
-{
-  epr_data_container.setMomentPreservingCrossSectionThresholdEnergyIndex( 0 );
-
-  FRENSIE_CHECK_EQUAL( epr_data_container.getMomentPreservingCrossSectionThresholdEnergyIndex(),
                        0 );
 }
 
@@ -1378,6 +1496,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-3 );
   FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
                        1.01 );
+  FRENSIE_CHECK( !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1395,81 +1514,83 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK( !epr_data_container_copy.getSubshells().count( 2 ) );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellBindingEnergy( 1 ),
-		       1.361e-5 );
+                       1.361e-5 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationTransitions(1),
-		       1 );
+                       1 );
   FRENSIE_CHECK( epr_data_container_copy.hasRelaxationData() );
   FRENSIE_CHECK( epr_data_container_copy.hasSubshellRelaxationData( 1 ) );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationVacancies( 1 ).size(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationParticleEnergies( 1 ).size(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
-		       1 );
+                       1 );
 
   // Photon Tests
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getComptonProfile( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getOccupationNumber( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeScatteringFunction().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonEnergyGrid().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAveragePhotonHeatingNumbers().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeIncoherentCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxIncoherentCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
-		       0u );
+                       0u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxSubshellIncoherentCrossSection( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1 ),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeCoherentCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPairProductionCrossSection().size(),
-		       2 );
+                       2 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPairProductionCrossSectionThresholdEnergyIndex(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getTripletProductionCrossSection().size(),
                        2 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getTripletProductionCrossSectionThresholdEnergyIndex(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotoelectricCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotoelectricCrossSectionThresholdEnergyIndex(),
-		       0u );
+                       0u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellPhotoelectricCrossSection( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 1 ),
-		       0u );
+                       0u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
-		       3u );
+                       3u );
 
   // Electron Tests
+  FRENSIE_CHECK(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL(
@@ -1482,12 +1603,14 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
-  FRENSIE_CHECK( epr_data_container_copy.hasScreenedRutherfordData() );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+//  FRENSIE_CHECK( epr_data_container_copy.hasScreenedRutherfordData() );
+//  FRENSIE_CHECK_EQUAL(
+//    epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
+//  FRENSIE_CHECK_EQUAL(
+//    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
   FRENSIE_CHECK( epr_data_container_copy.hasMomentPreservingData() );
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getMomentPreservingCrossSectionReduction().size(), 1 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
@@ -1531,47 +1654,44 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getElectronEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getTotalElectronCrossSection().size(),
+                       3u );
+  FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffElasticCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getTotalElasticCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getMomentPreservingCrossSection().size(),
-		       3u );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getElectroionizationCrossSection(1u).size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getElectroionizationCrossSectionThresholdEnergyIndex(1u),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getBremsstrahlungCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getAtomicExcitationCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1599,6 +1719,8 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        1e-3 );
   FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonThresholdEnergyNudgeFactor(),
                        1.01 );
+  FRENSIE_CHECK(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getCutoffAngleCosine(),
                        0.9 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
@@ -1616,81 +1738,83 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK( !epr_data_container_copy.getSubshells().count( 2 ) );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellBindingEnergy( 1 ),
-		       1.361e-5 );
+                       1.361e-5 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationTransitions(1),
-		       1 );
+                       1 );
   FRENSIE_CHECK( epr_data_container_copy.hasRelaxationData() );
   FRENSIE_CHECK( epr_data_container_copy.hasSubshellRelaxationData( 1 ) );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationVacancies( 1 ).size(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationParticleEnergies( 1 ).size(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
-		       1 );
+                       1 );
 
   // Photon Tests
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getComptonProfile( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getOccupationNumber( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeScatteringFunction().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeSquaredAtomicFormFactor().size(),
-		       4 );
+                       4 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotonEnergyGrid().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAveragePhotonHeatingNumbers().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeIncoherentCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxIncoherentCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
-		       0u );
+                       0u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxSubshellIncoherentCrossSection( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1 ),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeCoherentCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPairProductionCrossSection().size(),
-		       2 );
+                       2 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPairProductionCrossSectionThresholdEnergyIndex(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getTripletProductionCrossSection().size(),
                        2 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getTripletProductionCrossSectionThresholdEnergyIndex(),
-		       1 );
+                       1 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotoelectricCrossSection().size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getPhotoelectricCrossSectionThresholdEnergyIndex(),
-		       0u );
+                       0u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellPhotoelectricCrossSection( 1 ).size(),
-		       3 );
+                       3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 1 ),
-		       0u );
+                       0u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
-		       3u );
+                       3u );
 
   // Electron Tests
+  FRENSIE_CHECK(
+    !epr_data_container_copy.isElectronTotalElasticIntegratedCrossSectionModeOn() );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   FRENSIE_CHECK_EQUAL(
@@ -1703,12 +1827,14 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
-  FRENSIE_CHECK( epr_data_container_copy.hasScreenedRutherfordData() );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+//  FRENSIE_CHECK( epr_data_container_copy.hasScreenedRutherfordData() );
+//  FRENSIE_CHECK_EQUAL(
+//    epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
+//  FRENSIE_CHECK_EQUAL(
+//    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
   FRENSIE_CHECK( epr_data_container_copy.hasMomentPreservingData() );
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getMomentPreservingCrossSectionReduction().size(), 1 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   FRENSIE_CHECK_EQUAL(
@@ -1752,47 +1878,44 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getElectronEnergyGrid().size(), 3 );
   FRENSIE_CHECK_EQUAL(
+    epr_data_container_copy.getTotalElectronCrossSection().size(),
+                       3u );
+  FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffElasticCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getTotalElasticCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getMomentPreservingCrossSection().size(),
-		       3u );
-  FRENSIE_CHECK_EQUAL(
-    epr_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getElectroionizationCrossSection(1u).size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getElectroionizationCrossSectionThresholdEnergyIndex(1u),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getBremsstrahlungCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getAtomicExcitationCrossSection().size(),
-		       3u );
+                       3u );
   FRENSIE_CHECK_EQUAL(
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
 }
 
 //---------------------------------------------------------------------------//

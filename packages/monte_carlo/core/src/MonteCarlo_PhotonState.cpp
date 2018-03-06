@@ -21,7 +21,7 @@ PhotonState::PhotonState()
 
 // Constructor
 PhotonState::PhotonState(const ParticleState::historyNumberType history_number)
-  : MasslessParticleState( history_number, PHOTON )
+  : MasslessParticleState( history_number, PHOTON, 0 )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -30,6 +30,7 @@ PhotonState::PhotonState( const ParticleState& existing_base_state,
 			  const bool reset_collision_number )
   : MasslessParticleState( existing_base_state,
 			   PHOTON,
+			   0,
 			   increment_generation_number,
 			   reset_collision_number )
 { /* ... */ }
@@ -40,6 +41,7 @@ PhotonState::PhotonState( const PhotonState& existing_base_state,
 			  const bool reset_collision_number )
   : MasslessParticleState( existing_base_state,
 			   PHOTON,
+			   0,
 			   increment_generation_number,
 			   reset_collision_number )
 { /* ... */ }

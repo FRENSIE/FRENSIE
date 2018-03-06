@@ -11,52 +11,41 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_AdjointElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_DiscreteDistribution.hpp"
-#include "Utility_InterpolationPolicy.hpp"
+#include "Utility_FullyTabularTwoDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
 class HybridElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+    public PositronScatteringDistribution,
     public AdjointElectronScatteringDistribution
 {
 
 public:
 
-  //! Typedef for the elastic cutoff distribution
-  typedef MonteCarlo::TwoDDistribution CutoffDistribution;
+  //! Typedef for the two d distributions
+  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
 
-  //! Typedef for the elastic discrete distribution
-  typedef std::vector<Utility::Trip< double, 
-                        std::shared_ptr<const Utility::TabularOneDDistribution>,
-                        double > >
-    DiscreteDistribution;
+  typedef double (Utility::TabularOneDDistribution::*EvaluationMethodType)(double) const;
 
   //! Constructor
   HybridElasticElectronScatteringDistribution(
-    const TwoDDistribution& elastic_cutoff_distribution,
-    const DiscreteDistribution& elastic_discrete_distribution,
-    const double& cutoff_angle_cosine );
+    const std::shared_ptr<TwoDDist>& hybrid_distribution,
+    const double cutoff_angle_cosine,
+    const double evaluation_tol );
 
   //! Destructor
   virtual ~HybridElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  double evaluate( const unsigned incoming_energy_bin,
-                   const double scattering_angle_cosine ) const;
-
   //! Evaluate the PDF
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
-
-  //! Evaluate the PDF
-  double evaluatePDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the distribution
   double evaluatePDF( const double incoming_energy,
@@ -78,13 +67,18 @@ public:
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
-  void scatterElectron( ElectronState& electron,
-                        ParticleBank& bank,
+  void scatterElectron( MonteCarlo::ElectronState& electron,
+                        MonteCarlo::ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
+  //! Randomly scatter the positron
+  void scatterPositron( MonteCarlo::PositronState& positron,
+                        MonteCarlo::ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the adjoint electron
-  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
-                               ParticleBank& bank,
+  void scatterAdjointElectron( MonteCarlo::AdjointElectronState& adjoint_electron,
+                               MonteCarlo::ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
 
 protected:
@@ -94,22 +88,16 @@ protected:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
-// Sample an outgoing direction from the given distribution
-void sampleIndependent(
-        const unsigned& energy_bin,
-        const double& random_number,
-        double& scattering_angle_cosine ) const;
-
 private:
 
   // cutoff angle cosine
   double d_cutoff_angle_cosine;
 
-  // Cutoff elastic scattering distribution
-  TwoDDistribution d_elastic_cutoff_distribution;
+  // The tabular evaluation tolerance
+  double d_evaluation_tol;
 
-  // Moment preserving discrete elastic scattering distribution and cross section ratio
-  DiscreteDistribution d_elastic_discrete_distribution;
+  // The hybrid elastic distribution
+  std::shared_ptr<TwoDDist> d_hybrid_distribution;
 };
 
 } // end MonteCarlo namespace

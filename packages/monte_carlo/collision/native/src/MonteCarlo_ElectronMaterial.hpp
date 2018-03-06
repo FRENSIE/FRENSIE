@@ -66,8 +66,8 @@ public:
 
   //! Return the macroscopic cross section (1/cm) for a specific reaction
   double getMacroscopicReactionCrossSection(
-				const double energy,
-				const ElectroatomicReactionType reaction ) const;
+                const double energy,
+                const ElectroatomicReactionType reaction ) const;
 
   //! Collide with a electron
   void collideAnalogue( ElectronState& electron, ParticleBank& bank ) const;
@@ -79,7 +79,7 @@ private:
 
   // Get the atomic weight from an atom pointer
   static double getAtomicWeight(
-	    const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair );
+        const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair );
 
   // Sample the atom that is collided with
   unsigned sampleCollisionAtom( const double energy ) const;

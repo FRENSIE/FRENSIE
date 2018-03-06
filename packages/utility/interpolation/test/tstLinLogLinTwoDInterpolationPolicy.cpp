@@ -19,7 +19,6 @@
 //---------------------------------------------------------------------------//
 // Testing Types
 //---------------------------------------------------------------------------//
-
 typedef std::tuple<
   std::tuple<std::integral_constant<size_t,0>,std::tuple<double,double>,
              std::integral_constant<size_t,0>,std::tuple<double,double> >,
@@ -135,51 +134,51 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   Utility::set<zmember>( z_1_grid[2], 5.0 );
 
   double z = Utility::LinLogLin::interpolate<ymember,zmember>(x0,
-							      x1,
-							      x,
-							      y,
-							      y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x1,
+                                  x,
+                                  y,
+                                  y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 10.467348080163, 1e-12 );
 
   x = 0.0;
 
   z = Utility::LinLogLin::interpolate<ymember,zmember>( x0,
-							x1,
-							x,
-							y,
-							y_0_grid.begin(),
-							y_0_grid.end(),
-							z_0_grid.begin(),
-							z_0_grid.end(),
-							y_1_grid.begin(),
-							y_1_grid.end(),
-							z_1_grid.begin(),
-							z_1_grid.end() );
+                            x1,
+                            x,
+                            y,
+                            y_0_grid.begin(),
+                            y_0_grid.end(),
+                            z_0_grid.begin(),
+                            z_0_grid.end(),
+                            y_1_grid.begin(),
+                            y_1_grid.end(),
+                            z_1_grid.begin(),
+                            z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
 
   z = Utility::LinLogLin::interpolate<ymember,zmember>( x0,
-							x1,
-							x,
-							y,
-							y_0_grid.begin(),
-							y_0_grid.end(),
-							z_0_grid.begin(),
-							z_0_grid.end(),
-							y_1_grid.begin(),
-							y_1_grid.end(),
-							z_1_grid.begin(),
-							z_1_grid.end() );
+                            x1,
+                            x,
+                            y,
+                            y_0_grid.begin(),
+                            y_0_grid.end(),
+                            z_0_grid.begin(),
+                            z_0_grid.end(),
+                            y_1_grid.begin(),
+                            y_1_grid.end(),
+                            z_1_grid.begin(),
+                            z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
@@ -218,39 +217,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   Utility::set<zmember>( grid_1[2], 5.0 );
 
   double z = Utility::LinLogLin::interpolate<ymember,zmember>( x0,
-							       x1,
-							       x,
-							       y,
-							       grid_0.begin(),
-							       grid_0.end(),
-							       grid_1.begin(),
-							       grid_1.end() );
+                                   x1,
+                                   x,
+                                   y,
+                                   grid_0.begin(),
+                                   grid_0.end(),
+                                   grid_1.begin(),
+                                   grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 10.467348080163, 1e-12 );
 
   x = 0.0;
 
   z = Utility::LinLogLin::interpolate<ymember,zmember>( x0,
-							x1,
-							x,
-							y,
-							grid_0.begin(),
-							grid_0.end(),
-							grid_1.begin(),
-							grid_1.end() );
+                            x1,
+                            x,
+                            y,
+                            grid_0.begin(),
+                            grid_0.end(),
+                            grid_1.begin(),
+                            grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
 
   z = Utility::LinLogLin::interpolate<ymember,zmember>( x0,
-							x1,
-							x,
-							y,
-							grid_0.begin(),
-							grid_0.end(),
-							grid_1.begin(),
-							grid_1.end() );
+                            x1,
+                            x,
+                            y,
+                            grid_0.begin(),
+                            grid_0.end(),
+                            grid_1.begin(),
+                            grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
@@ -284,51 +283,51 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolate_no_tuple_grids )
   z_1_grid[2] = 5.0;
 
   double z = Utility::LinLogLin::interpolate( x0,
-					      x1,
-					      x,
-					      y,
-					      y_0_grid.begin(),
-					      y_0_grid.end(),
-					      z_0_grid.begin(),
-					      z_0_grid.end(),
-					      y_1_grid.begin(),
-					      y_1_grid.end(),
-					      z_1_grid.begin(),
-					      z_1_grid.end() );
+                                              x1,
+                                              x,
+                                              y,
+                                              y_0_grid.begin(),
+                                              y_0_grid.end(),
+                                              z_0_grid.begin(),
+                                              z_0_grid.end(),
+                                              y_1_grid.begin(),
+                                              y_1_grid.end(),
+                                              z_1_grid.begin(),
+                                              z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 10.467348080163, 1e-12 );
 
   x = 0.0;
 
   z = Utility::LinLogLin::interpolate( x0,
-				       x1,
-				       x,
-				       y,
-				       y_0_grid.begin(),
-				       y_0_grid.end(),
-				       z_0_grid.begin(),
-				       z_0_grid.end(),
-				       y_1_grid.begin(),
-				       y_1_grid.end(),
-				       z_1_grid.begin(),
-				       z_1_grid.end() );
+                                       x1,
+                                       x,
+                                       y,
+                                       y_0_grid.begin(),
+                                       y_0_grid.end(),
+                                       z_0_grid.begin(),
+                                       z_0_grid.end(),
+                                       y_1_grid.begin(),
+                                       y_1_grid.end(),
+                                       z_1_grid.begin(),
+                                       z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
 
   z = Utility::LinLogLin::interpolate( x0,
-				       x1,
-				       x,
-				       y,
-				       y_0_grid.begin(),
-				       y_0_grid.end(),
-				       z_0_grid.begin(),
-				       z_0_grid.end(),
-				       y_1_grid.begin(),
-				       y_1_grid.end(),
-				       z_1_grid.begin(),
-				       z_1_grid.end() );
+                                       x1,
+                                       x,
+                                       y,
+                                       y_0_grid.begin(),
+                                       y_0_grid.end(),
+                                       z_0_grid.begin(),
+                                       z_0_grid.end(),
+                                       y_1_grid.begin(),
+                                       y_1_grid.end(),
+                                       z_1_grid.begin(),
+                                       z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
@@ -341,7 +340,7 @@ FRENSIE_UNIT_TEST( LinLogLin, calculateIntermediateGridLength )
   double L0 = 3.0, L1 = 5.0;
 
   double Lx = Utility::LinLogLin::calculateIntermediateGridLength(
-							   x0, x1, x, L0, L1 );
+                               x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
 
@@ -366,21 +365,21 @@ FRENSIE_UNIT_TEST( LinLogLin, calculateIntermediateGridLimit )
   double y0_min = 1e-3, y1_min = 1e-2;
 
   double yx_min = Utility::LinLogLin::calculateIntermediateGridLimit(
-						   x0, x1, x, y0_min, y1_min );
+                           x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, 3.1622776601686e-3, 1e-12 );
 
   x = 0.0;
 
   yx_min = Utility::LinLogLin::calculateIntermediateGridLimit(
-						   x0, x1, x, y0_min, y1_min );
+                           x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, 1e-3, 1e-12 );
 
   x = 1.0;
 
   yx_min = Utility::LinLogLin::calculateIntermediateGridLimit(
-						   x0, x1, x, y0_min, y1_min );
+                           x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min, 1e-2, 1e-12 );
 }
@@ -425,54 +424,54 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   Utility::set<zmember>( z_1_grid[2], 3.0 );
 
   double z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   y = 0.0031622776601684; // min possible y at x = 0.5
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
   y = 1.0; // max possible y at x = 0.5
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -480,54 +479,54 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = 1e-3;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_SMALL( z, 1e-12 );
 
   y = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -535,54 +534,54 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = 1e-2;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
@@ -622,40 +621,40 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   Utility::set<zmember>( grid_1[2], 3.0 );
 
   double z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>(
-							        x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                    x0,
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   y = 0.0031622776601684; // min possible y at x = 0.5
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
   y = 1.0; // max possible y at x = 0.5
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
@@ -664,39 +663,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = 1e-3;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_SMALL( z, 1e-12 );
 
   y = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -704,39 +703,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = 1e-2;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
@@ -771,51 +770,51 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateUnitBase_no_tuple_grids )
   z_1_grid[2] = 3.0;
 
   double z = Utility::LinLogLin::interpolateUnitBase( x0,
-						      x1,
-						      x,
-						      y,
-						      y_0_grid.begin(),
-						      y_0_grid.end(),
-						      z_0_grid.begin(),
-						      z_0_grid.end(),
-						      y_1_grid.begin(),
-						      y_1_grid.end(),
-						      z_1_grid.begin(),
-						      z_1_grid.end() );
+                              x1,
+                              x,
+                              y,
+                              y_0_grid.begin(),
+                              y_0_grid.end(),
+                              z_0_grid.begin(),
+                              z_0_grid.end(),
+                              y_1_grid.begin(),
+                              y_1_grid.end(),
+                              z_1_grid.begin(),
+                              z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
   y = 0.0031622776601684; // min possible y at x = 0.5
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
   y = 1.0; // max possible y at x = 0.5
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -823,51 +822,51 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateUnitBase_no_tuple_grids )
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = 1e-3;
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_SMALL( z, 1e-12 );
 
   y = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -875,51 +874,51 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateUnitBase_no_tuple_grids )
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = 1e-2;
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = 1.0;
 
   z = Utility::LinLogLin::interpolateUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
@@ -1010,13 +1009,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
+             Utility::LinLogLin::processSecondIndepVar(1e-3) );
   Utility::set<ymember>( y_0_grid[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
+             Utility::LinLogLin::processSecondIndepVar(1e-2) );
   Utility::set<ymember>( y_0_grid[2],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( y_0_grid[3],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 100.0 );
@@ -1026,11 +1025,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
+             Utility::LinLogLin::processSecondIndepVar(1e-3) );
   Utility::set<ymember>( y_1_grid[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( y_1_grid[2],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 50.0 );
@@ -1038,54 +1037,54 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   Utility::set<zmember>( z_1_grid[2], 5.0 );
 
   double z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-							      y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                  y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 10.467348080163, 1e-12 );
 
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
-							x0,
-							x1,
-							x,
-							y,
-							y_0_grid.begin(),
-							y_0_grid.end(),
-							z_0_grid.begin(),
-							z_0_grid.end(),
-							y_1_grid.begin(),
-							y_1_grid.end(),
-							z_1_grid.begin(),
-							z_1_grid.end() );
+                            x0,
+                            x1,
+                            x,
+                            y,
+                            y_0_grid.begin(),
+                            y_0_grid.end(),
+                            z_0_grid.begin(),
+                            z_0_grid.end(),
+                            y_1_grid.begin(),
+                            y_1_grid.end(),
+                            z_1_grid.begin(),
+                            z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
-							x0,
-							x1,
-							x,
-							y,
-							y_0_grid.begin(),
-							y_0_grid.end(),
-							z_0_grid.begin(),
-							z_0_grid.end(),
-							y_1_grid.begin(),
-							y_1_grid.end(),
-							z_1_grid.begin(),
-							z_1_grid.end() );
+                            x0,
+                            x1,
+                            x,
+                            y,
+                            y_0_grid.begin(),
+                            y_0_grid.end(),
+                            z_0_grid.begin(),
+                            z_0_grid.end(),
+                            y_1_grid.begin(),
+                            y_1_grid.end(),
+                            z_1_grid.begin(),
+                            z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
@@ -1109,13 +1108,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
+             Utility::LinLogLin::processSecondIndepVar(1e-3) );
   Utility::set<ymember>( grid_0[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
+             Utility::LinLogLin::processSecondIndepVar(1e-2) );
   Utility::set<ymember>( grid_0[2],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( grid_0[3],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_0[0], 100.0 );
   Utility::set<zmember>( grid_0[1], 0.0 );
   Utility::set<zmember>( grid_0[2], 1.0 );
@@ -1123,52 +1122,52 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
+             Utility::LinLogLin::processSecondIndepVar(1e-3) );
   Utility::set<ymember>( grid_1[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( grid_1[2],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_1[0], 50.0 );
   Utility::set<zmember>( grid_1[1], 10.0 );
   Utility::set<zmember>( grid_1[2], 5.0 );
 
   double z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
-							       x0,
-							       x1,
-							       x,
-							       y,
-							       grid_0.begin(),
-							       grid_0.end(),
-							       grid_1.begin(),
-							       grid_1.end() );
+                                   x0,
+                                   x1,
+                                   x,
+                                   y,
+                                   grid_0.begin(),
+                                   grid_0.end(),
+                                   grid_1.begin(),
+                                   grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 10.467348080163, 1e-12 );
 
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
-							x0,
-							x1,
-							x,
-							y,
-							grid_0.begin(),
-							grid_0.end(),
-							grid_1.begin(),
-							grid_1.end() );
+                            x0,
+                            x1,
+                            x,
+                            y,
+                            grid_0.begin(),
+                            grid_0.end(),
+                            grid_1.begin(),
+                            grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateProcessed<ymember,zmember>(
-							x0,
-							x1,
-							x,
-							y,
-							grid_0.begin(),
-							grid_0.end(),
-							grid_1.begin(),
-							grid_1.end() );
+                            x0,
+                            x1,
+                            x,
+                            y,
+                            grid_0.begin(),
+                            grid_0.end(),
+                            grid_1.begin(),
+                            grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
@@ -1204,51 +1203,51 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateProcessed_no_tuple_grids )
   z_1_grid[2] = 5.0;
 
   double z = Utility::LinLogLin::interpolateProcessed( x0,
-						       x1,
-						       x,
-						       y,
-						       y_0_grid.begin(),
-						       y_0_grid.end(),
-						       z_0_grid.begin(),
-						       z_0_grid.end(),
-						       y_1_grid.begin(),
-						       y_1_grid.end(),
-						       z_1_grid.begin(),
-						       z_1_grid.end() );
+                               x1,
+                               x,
+                               y,
+                               y_0_grid.begin(),
+                               y_0_grid.end(),
+                               z_0_grid.begin(),
+                               z_0_grid.end(),
+                               y_1_grid.begin(),
+                               y_1_grid.end(),
+                               z_1_grid.begin(),
+                               z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 10.467348080163, 1e-12 );
 
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateProcessed( x0,
-						x1,
-						x,
-						y,
-						y_0_grid.begin(),
-						y_0_grid.end(),
-						z_0_grid.begin(),
-						z_0_grid.end(),
-						y_1_grid.begin(),
-						y_1_grid.end(),
-						z_1_grid.begin(),
-						z_1_grid.end() );
+                        x1,
+                        x,
+                        y,
+                        y_0_grid.begin(),
+                        y_0_grid.end(),
+                        z_0_grid.begin(),
+                        z_0_grid.end(),
+                        y_1_grid.begin(),
+                        y_1_grid.end(),
+                        z_1_grid.begin(),
+                        z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.47712125471965, 1e-12 );
 
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateProcessed( x0,
-						x1,
-						x,
-						y,
-						y_0_grid.begin(),
-						y_0_grid.end(),
-						z_0_grid.begin(),
-						z_0_grid.end(),
-						y_1_grid.begin(),
-						y_1_grid.end(),
-						z_1_grid.begin(),
-						z_1_grid.end() );
+                        x1,
+                        x,
+                        y,
+                        y_0_grid.begin(),
+                        y_0_grid.end(),
+                        z_0_grid.begin(),
+                        z_0_grid.end(),
+                        y_1_grid.begin(),
+                        y_1_grid.end(),
+                        z_1_grid.begin(),
+                        z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 20.457574905607, 1e-12 );
 }
@@ -1261,21 +1260,21 @@ FRENSIE_UNIT_TEST( LinLogLin, calculateIntermediateGridLengthProcessed )
   double L0 = 3.0, L1 = 5.0;
 
   double Lx = Utility::LinLogLin::calculateIntermediateGridLengthProcessed(
-							   x0, x1, x, L0, L1 );
+                               x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 4.0, 1e-15 );
 
   x = 0.0;
 
   Lx = Utility::LinLogLin::calculateIntermediateGridLengthProcessed(
-							   x0, x1, x, L0, L1 );
+                               x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 3.0, 1e-15 );
 
   x = 1.0;
 
   Lx = Utility::LinLogLin::calculateIntermediateGridLengthProcessed(
-							   x0, x1, x, L0, L1 );
+                               x0, x1, x, L0, L1 );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( Lx, 5.0, 1e-15 );
 }
@@ -1289,7 +1288,7 @@ FRENSIE_UNIT_TEST( LinLogLin, calculateIntermediateProcessedGridLimit )
   double y1_min = Utility::LinLogLin::processSecondIndepVar(1e-2);
 
   double yx_min = Utility::LinLogLin::calculateIntermediateProcessedGridLimit(
-						   x0, x1, x, y0_min, y1_min );
+                           x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY(
 		 yx_min,
@@ -1299,7 +1298,7 @@ FRENSIE_UNIT_TEST( LinLogLin, calculateIntermediateProcessedGridLimit )
   x = 0.0;
 
   yx_min = Utility::LinLogLin::calculateIntermediateProcessedGridLimit(
-						   x0, x1, x, y0_min, y1_min );
+                           x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
 			  Utility::LinLogLin::processSecondIndepVar(1e-3),
@@ -1308,7 +1307,7 @@ FRENSIE_UNIT_TEST( LinLogLin, calculateIntermediateProcessedGridLimit )
   x = 1.0;
 
   yx_min = Utility::LinLogLin::calculateIntermediateProcessedGridLimit(
-						   x0, x1, x, y0_min, y1_min );
+                           x0, x1, x, y0_min, y1_min );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( yx_min,
 			  Utility::LinLogLin::processSecondIndepVar(1e-2),
@@ -1335,13 +1334,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<ytuple> y_0_grid( 4 );
   Utility::set<ymember>( y_0_grid[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
+             Utility::LinLogLin::processSecondIndepVar(1e-3) );
   Utility::set<ymember>( y_0_grid[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
+             Utility::LinLogLin::processSecondIndepVar(1e-2) );
   Utility::set<ymember>( y_0_grid[2],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( y_0_grid[3],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_0_grid( 4 );
   Utility::set<zmember>( z_0_grid[0], 0.0 );
@@ -1351,11 +1350,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<ytuple> y_1_grid( 3 );
   Utility::set<ymember>( y_1_grid[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
+             Utility::LinLogLin::processSecondIndepVar(1e-2) );
   Utility::set<ymember>( y_1_grid[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( y_1_grid[2],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
 
   std::vector<ztuple> z_1_grid( 3 );
   Utility::set<zmember>( z_1_grid[0], 1.0 );
@@ -1363,18 +1362,18 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   Utility::set<zmember>( z_1_grid[2], 3.0 );
 
   double z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
@@ -1382,18 +1381,18 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
@@ -1401,18 +1400,18 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -1420,54 +1419,54 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1e-3);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_SMALL( z, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -1475,54 +1474,54 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1e-2);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							      x0,
-							      x1,
-							      x,
-							      y,
-						              y_0_grid.begin(),
-							      y_0_grid.end(),
-							      z_0_grid.begin(),
-							      z_0_grid.end(),
-							      y_1_grid.begin(),
-							      y_1_grid.end(),
-							      z_1_grid.begin(),
-							      z_1_grid.end() );
+                                  x0,
+                                  x1,
+                                  x,
+                                  y,
+                                      y_0_grid.begin(),
+                                  y_0_grid.end(),
+                                  z_0_grid.begin(),
+                                  z_0_grid.end(),
+                                  y_1_grid.begin(),
+                                  y_1_grid.end(),
+                                  z_1_grid.begin(),
+                                  z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
@@ -1546,13 +1545,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<tuple> grid_0( 4 );
   Utility::set<ymember>( grid_0[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-3) );
+             Utility::LinLogLin::processSecondIndepVar(1e-3) );
   Utility::set<ymember>( grid_0[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
+             Utility::LinLogLin::processSecondIndepVar(1e-2) );
   Utility::set<ymember>( grid_0[2],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( grid_0[3],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_0[0], 0.0 );
   Utility::set<zmember>( grid_0[1], 1.0 );
   Utility::set<zmember>( grid_0[2], 2.0 );
@@ -1560,24 +1559,24 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
 
   std::vector<tuple> grid_1( 3 );
   Utility::set<ymember>( grid_1[0],
-			 Utility::LinLogLin::processSecondIndepVar(1e-2) );
+             Utility::LinLogLin::processSecondIndepVar(1e-2) );
   Utility::set<ymember>( grid_1[1],
-			 Utility::LinLogLin::processSecondIndepVar(1e-1) );
+             Utility::LinLogLin::processSecondIndepVar(1e-1) );
   Utility::set<ymember>( grid_1[2],
-			 Utility::LinLogLin::processSecondIndepVar(1.0) );
+             Utility::LinLogLin::processSecondIndepVar(1.0) );
   Utility::set<zmember>( grid_1[0], 1.0 );
   Utility::set<zmember>( grid_1[1], 2.0 );
   Utility::set<zmember>( grid_1[2], 3.0 );
 
   double z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>(
-							        x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                    x0,
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
@@ -1585,13 +1584,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
@@ -1599,13 +1598,13 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
@@ -1614,39 +1613,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1e-3);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_SMALL( z, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -1654,39 +1653,39 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( LinLogLin,
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1e-2);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase<ymember,zmember>( x0,
-								x1,
-								x,
-								y,
-						                grid_0.begin(),
-								grid_0.end(),
-								grid_1.begin(),
-								grid_1.end() );
+                                x1,
+                                x,
+                                y,
+                                        grid_0.begin(),
+                                grid_0.end(),
+                                grid_1.begin(),
+                                grid_1.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }
@@ -1722,17 +1721,17 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
   z_1_grid[2] = 3.0;
 
   double z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-						      x1,
-						      x,
-						      y,
-						      y_0_grid.begin(),
-						      y_0_grid.end(),
-						      z_0_grid.begin(),
-						      z_0_grid.end(),
-						      y_1_grid.begin(),
-						      y_1_grid.end(),
-						      z_1_grid.begin(),
-						      z_1_grid.end() );
+                              x1,
+                              x,
+                              y,
+                              y_0_grid.begin(),
+                              y_0_grid.end(),
+                              z_0_grid.begin(),
+                              z_0_grid.end(),
+                              y_1_grid.begin(),
+                              y_1_grid.end(),
+                              z_1_grid.begin(),
+                              z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4162061049085, 1e-12 );
 
@@ -1740,17 +1739,17 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
   y = Utility::LinLogLin::processSecondIndepVar(0.0031622776601684);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 0.4, 1e-12 );
 
@@ -1758,17 +1757,17 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -1776,51 +1775,51 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
   x = 0.0;
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1e-3);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_SMALL( z, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 
@@ -1828,51 +1827,51 @@ FRENSIE_UNIT_TEST( LinLogLin, interpolateProcessedUnitBase_no_tuple_grids )
   x = 1.0;
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.4771212547197, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1e-2);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 1.0, 1e-12 );
 
   y = Utility::LinLogLin::processSecondIndepVar(1.0);
 
   z = Utility::LinLogLin::interpolateProcessedUnitBase( x0,
-					       x1,
-					       x,
-					       y,
-					       y_0_grid.begin(),
-					       y_0_grid.end(),
-					       z_0_grid.begin(),
-					       z_0_grid.end(),
-					       y_1_grid.begin(),
-					       y_1_grid.end(),
-					       z_1_grid.begin(),
-					       z_1_grid.end() );
+                           x1,
+                           x,
+                           y,
+                           y_0_grid.begin(),
+                           y_0_grid.end(),
+                           z_0_grid.begin(),
+                           z_0_grid.end(),
+                           y_1_grid.begin(),
+                           y_1_grid.end(),
+                           z_1_grid.begin(),
+                           z_1_grid.end() );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( z, 3.0, 1e-12 );
 }

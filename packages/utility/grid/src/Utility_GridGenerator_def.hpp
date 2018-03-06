@@ -48,10 +48,10 @@ GridGenerator<InterpPolicy>::GridGenerator( const double convergence_tol,
 }
 
 // Throw exception on dirty convergence
-/*! \details "Dirty Convergence" has occured when the distance tolerance or
+/*! \details "Dirty Convergence" has occurred when the distance tolerance or
  * the absolute difference tolerance is reached before the convergence
  * tolerance. This type of convergence should be avoided because the grid
- * has not truely converged.
+ * has not truly converged.
  */
 template<typename InterpPolicy>
 void GridGenerator<InterpPolicy>::throwExceptionOnDirtyConvergence()
@@ -60,10 +60,10 @@ void GridGenerator<InterpPolicy>::throwExceptionOnDirtyConvergence()
 }
 
 // Warn on dirty convergence (default)
-/*! \details "Dirty Convergence" has occured when the distance tolerance or
+/*! \details "Dirty Convergence" has occurred when the distance tolerance or
  * the absolute difference tolerance is reached before the convergence
  * tolerance. This type of convergence should be avoided because the grid
- * has not truely converged.
+ * has not truly converged.
  */
 template<typename InterpPolicy>
 void GridGenerator<InterpPolicy>::warnOnDirtyConvergence()
@@ -129,7 +129,7 @@ void GridGenerator<InterpPolicy>::setDistanceTolerance(
 }
 
 // Refine the grid in place between a min and max value
-/*! \details New grid points will only be generate between the min_value and 
+/*! \details New grid points will only be generate between the min_value and
  * max_value. There must be at least two initial grid points given (the lower
  * grid boundary and the upper grid boundary). If there are discontinuities in
  * the function, the grid points just below and just above the discontinuity
@@ -145,26 +145,33 @@ void GridGenerator<InterpPolicy>::setDistanceTolerance(
 template<typename InterpPolicy>
 template<typename STLCompliantContainer, typename Functor>
 void GridGenerator<InterpPolicy>::refineInPlace(
-			STLCompliantContainer& grid,
-			const Functor& function,
-            const double min_value,
-            const double max_value ) const
+            STLCompliantContainer& grid,
+            const Functor& function,
+            const double requested_min_value,
+            const double requested_max_value ) const
 {
   // Make sure the container value type is a floating point type
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainer::value_type>::value) );
   // Make sure at least 2 initial grid points have been given
   testPrecondition( grid.size() >= 2 );
-  // Make sure the intial grid points are sorted
+  // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
+  // Make sure the min and max values are valid
+  testPrecondition( requested_min_value < requested_max_value );
 
   STLCompliantContainer evaluated_function;
 
-  this->refineAndEvaluateInPlace(
-        grid,
-        evaluated_function,
-        function,
-        min_value,
-        max_value );
+  // Don't let the min value be lower than the min grid value
+  double min_value = std::max( grid.front(), requested_min_value );
+
+  // Don't let the max value be greater than the max grid value
+  double max_value = std::min( grid.back(), requested_max_value );
+
+  this->refineAndEvaluateInPlace( grid,
+                                  evaluated_function,
+                                  function,
+                                  min_value,
+                                  max_value );
 }
 
 // Get the distance tolerance
@@ -208,7 +215,7 @@ void GridGenerator<InterpPolicy>::generateInPlace(
 
 // Generate the grid in place between min and max (return evaluated function on grid)
 /*! \details There must be at least two initial grid points given (the lower
- * grid boundary and the upper grid boundary). New grid points will only be 
+ * grid boundary and the upper grid boundary). New grid points will only be
  * generate between the min_value and max_value. If there are discontinuities in
  * the function, the grid points just below and just above the discontinuity
  * should also be given to speed up the algorithm. The convergence tolerance
@@ -236,9 +243,10 @@ void GridGenerator<InterpPolicy>::refineAndEvaluateInPlace(
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerB::value_type>::value) );
   // Make sure at least 2 initial grid points have been given
   testPrecondition( grid.size() >= 2 );
-  // Make sure the intial grid points are sorted
+  // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
   // Make sure the min_value and max_value are valid
+  testPrecondition( min_value < max_value );
   testPrecondition( min_value >= grid.front() );
   testPrecondition( max_value <= grid.back() );
 
@@ -382,7 +390,7 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerB::value_type>::value) );
   // Make sure at least 2 initial grid points have been given
   testPrecondition( grid.size() >= 2 );
-  // Make sure the intial grid points are sorted
+  // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( grid.begin(), grid.end(), true ));
 
   this->refineAndEvaluateInPlace<STLCompliantContainerA,STLCompliantContainerB,Functor>(
@@ -420,7 +428,7 @@ void GridGenerator<InterpPolicy>::generate(
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerB::value_type>::value) );
   // Make sure at least 2 initial grid points have been given
   testPrecondition( initial_grid_points.size() >= 2 );
-  // Make sure the intial grid points are sorted
+  // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( initial_grid_points.begin(),
 					     initial_grid_points.end(),
 					     true ) );
@@ -462,7 +470,7 @@ void GridGenerator<InterpPolicy>::generateAndEvaluate(
   testStaticPrecondition( (boost::is_float<typename STLCompliantContainerC::value_type>::value) );
   // Make sure at least 2 initial grid points have been given
   testPrecondition( initial_grid_points.size() >= 2 );
-  // Make sure the intial grid points are sorted
+  // Make sure the initial grid points are sorted
   testPrecondition( Sort::isSortedAscending( initial_grid_points.begin(),
 					     initial_grid_points.end() ) );
 
@@ -479,7 +487,7 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
                                                const double upper_grid_point,
                                                const double y_mid_estimated,
                                                const double y_mid_exact ) const
-                                            
+
 {
   bool converged = false;
 
@@ -496,7 +504,8 @@ bool GridGenerator<InterpPolicy>::hasGridConverged(
   {
     std::ostringstream oss;
     oss.precision( 18 );
-    oss << "distance tolerance hit before convergence - "
+    oss << "distance tolerance (" << d_distance_tol
+        << ") hit before convergence (" << d_convergence_tol << ")- "
         << "relError(x0,x1) = relError(" << lower_grid_point << ","
         << upper_grid_point << ") = " << relative_distance
         << ", relError(ym,ym_exact) = relError(" << y_mid_estimated
