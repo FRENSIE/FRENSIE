@@ -820,22 +820,18 @@ FRENSIE_UNIT_TEST_TEMPLATE( SampleMomentCollection, archive, TestingTypes )
   // Add a raw score to all elements
   moment_collection.addRawScore( Utility::QuantityTraits<T>::one()*10. );
 
-  std::string moment_collection_archive;
+  std::ostringstream archive_ostream;
 
   {
-    std::ostringstream oss;
-    
-    boost::archive::xml_oarchive archive( oss );
+    boost::archive::xml_oarchive archive( archive_ostream );
 
     FRENSIE_REQUIRE_NO_THROW( archive << boost::serialization::make_nvp( "collection", moment_collection ) );
-
-    moment_collection_archive = oss.str();
   }
 
   Utility::SampleMomentCollection<T,1,2,3,4> extracted_moment_collection;
 
   {
-    std::istringstream iss( moment_collection_archive );
+    std::istringstream iss( archive_ostream.str() );
 
     boost::archive::xml_iarchive archive( iss );
 
