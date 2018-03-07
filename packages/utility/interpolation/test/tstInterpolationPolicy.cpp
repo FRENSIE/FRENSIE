@@ -25,7 +25,8 @@ FRENSIE_UNIT_TEST( LinLin, getInterpolationType )
                        Utility::LINLIN_INTERPOLATION );
 
   typedef Utility::InverseInterpPolicy<Utility::LinLin>::InterpPolicy InverseInterp;
-  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
+  
+  FRENSIE_CHECK_EQUAL( InverseInterp::getInterpolationType(),
                        Utility::LINLIN_INTERPOLATION );
 }
 
@@ -259,7 +260,7 @@ FRENSIE_UNIT_TEST( LinLin, interpolate_raw )
 
 //---------------------------------------------------------------------------//
 // Check that linear-linear interpolation between two points can be done
-TEUCHOS_UNIT_TEST( LinLin, interpolate_raw_beta )
+FRENSIE_UNIT_TEST( LinLin, interpolate_raw_beta )
 {
   double x0 = 0.0, x1 = 1.0, x = 0.5;
   double beta = ( x - x0 )/( x1 - x0 );
@@ -267,21 +268,21 @@ TEUCHOS_UNIT_TEST( LinLin, interpolate_raw_beta )
 
   double y = Utility::LinLin::interpolate( beta, y0, y1 );
 
-  TEST_EQUALITY_CONST( y, 7.5 );
+  FRENSIE_CHECK_EQUAL( y, 7.5 );
 
   x = 0.0;
   beta = ( x - x0 )/( x1 - x0 );
 
   y = Utility::LinLin::interpolate( beta, y0, y1 );
 
-  TEST_EQUALITY_CONST( y, 5.0 );
+  FRENSIE_CHECK_EQUAL( y, 5.0 );
 
   x = 1.0;
   beta = ( x - x0 )/( x1 - x0 );
 
   y = Utility::LinLin::interpolate( beta, y0, y1 );
 
-  TEST_EQUALITY_CONST( y, 10.0 );
+  FRENSIE_CHECK_EQUAL( y, 10.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -406,7 +407,7 @@ FRENSIE_UNIT_TEST( LogLin, getInterpolationType )
                        Utility::LOGLIN_INTERPOLATION );
 
   typedef Utility::InverseInterpPolicy<Utility::LogLin>::InterpPolicy InverseInterp;
-  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
+  FRENSIE_CHECK_EQUAL( InverseInterp::getInterpolationType(),
                        Utility::LINLOG_INTERPOLATION );
 }
 
@@ -762,7 +763,7 @@ FRENSIE_UNIT_TEST( LinLog, getInterpolationType )
                        Utility::LINLOG_INTERPOLATION );
 
   typedef Utility::InverseInterpPolicy<Utility::LinLog>::InterpPolicy InverseInterp;
-  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
+  FRENSIE_CHECK_EQUAL( InverseInterp::getInterpolationType(),
                        Utility::LOGLIN_INTERPOLATION );
 }
 
@@ -1103,7 +1104,7 @@ FRENSIE_UNIT_TEST( LogLog, getInterpolationType )
                        Utility::LOGLOG_INTERPOLATION );
 
   typedef Utility::InverseInterpPolicy<Utility::LogLog>::InterpPolicy InverseInterp;
-  TEST_EQUALITY_CONST( InverseInterp::getInterpolationType(),
+  FRENSIE_CHECK_EQUAL( InverseInterp::getInterpolationType(),
                        Utility::LOGLOG_INTERPOLATION );
 }
 

@@ -791,8 +791,8 @@ inline DepType LinLin::interpolate( const T beta,
                                     const DepType dep_var_1 )
 {
   // The IndepType must be a floating point type
-  testStaticPrecondition( (QuantityTraits<T>::is_floating_point::value) );
-  testStaticPrecondition( (QuantityTraits<DepType>::is_floating_point::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<T>::RawType>::value) );
+  testStaticPrecondition( (std::is_floating_point<typename QuantityTraits<DepType>::RawType>::value) );
   // Make sure the independent variables are valid
   testPrecondition( beta >= QuantityTraits<T>::zero() );
   testPrecondition( beta <= QuantityTraits<T>::one() );

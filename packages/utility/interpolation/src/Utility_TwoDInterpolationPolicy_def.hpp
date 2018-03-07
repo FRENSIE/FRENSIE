@@ -996,11 +996,13 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 			  eta,
 			  Utility::get<YIndepMember>( *start_processed_indep_y_grid_0 ),
 			  L0 );
+  
   // Calculate the y value on the second grid
   T processed_indep_var_y_1 = ZYInterpPolicy::calculateProcessedIndepVar(
 			  eta,
 			  Utility::get<YIndepMember>( *start_processed_indep_y_grid_1 ),
 			  L1 );
+
   // Conduct the ZY interpolation on the first y grid
   T processed_dep_var_0 =
     ThisType::interpolateAndProcessOnProcessedYGrid<YIndepMember,DepMember>(
@@ -1351,8 +1353,6 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateOnYGrid(
     dep_var = ZYInterpPolicy::interpolate(
 				   Utility::get<YIndepMember>( *lower_y_bin_boundary ),
                                    Utility::get<YIndepMember>( *upper_y_bin_boundary ),
-                                   get<YIndepMember>( *lower_y_bin_boundary ),
-                                   get<YIndepMember>( *upper_y_bin_boundary ),
                                    indep_var_y,
                                    Utility::get<DepMember>( *lower_dep_bin_boundary ),
                                    Utility::get<DepMember>( *upper_dep_bin_boundary ) );
@@ -1404,6 +1404,9 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   testPrecondition( Sort::isSortedAscending<YIndepMember>(
                         start_processed_indep_y_grid,
                         end_processed_indep_y_grid ) );
+  testPrecondition( processed_indep_var_y >=
+              ThisType::calculateFuzzyLowerBound(
+                 Utility::get<YIndepMember>(*start_processed_indep_y_grid) ) );
   remember( YIterator true_end_processed_indep_y_grid_test =
                       end_processed_indep_y_grid );
   remember( --true_end_processed_indep_y_grid_test );
@@ -1424,7 +1427,9 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
   T processed_dep_var;
 
   if( processed_indep_var_y <
-      Utility::get<YIndepMember>( *true_end_processed_indep_y_grid ) )
+      Utility::get<YIndepMember>( *true_end_processed_indep_y_grid ) &&
+      processed_indep_var_y >=
+      Utility::get<YIndepMember>( *start_processed_indep_y_grid ) )
   {
     YIterator lower_y_bin_boundary =
       Search::binaryLowerBound<YIndepMember>( start_processed_indep_y_grid,
@@ -1460,13 +1465,21 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 
     processed_dep_var = Utility::get<DepMember>( *true_end_processed_dep_grid );
   }
-  else if( processed_indep_var_y > ThisType::calculateFuzzyUpperBound(
-                      Utility::get<YIndepMember>( *true_end_processed_indep_y_grid ) ) )
+  else
   {
-    ZIterator true_end_processed_dep_grid = end_processed_dep_grid;
-    --true_end_processed_dep_grid;
+    if( processed_indep_var_y <
+        Utility::get<YIndepMember>( *start_processed_indep_y_grid ) )
+    {
+      processed_dep_var = Utility::get<DepMember>( *start_processed_dep_grid );
+    }
+    else
+    {
+      ZIterator true_end_processed_dep_grid = end_processed_dep_grid;
+      --true_end_processed_dep_grid;
 
-    processed_dep_var = Utility::get<DepMember>( *true_end_processed_dep_grid );
+      processed_dep_var =
+        Utility::get<DepMember>( *true_end_processed_dep_grid );
+    }
   }
 
   return processed_dep_var;
