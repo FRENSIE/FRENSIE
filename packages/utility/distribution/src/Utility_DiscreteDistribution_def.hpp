@@ -727,6 +727,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
                         << std::distance( dependent_values.begin(), repeat_cdf_value ) <<
                         " (" << *repeat_cdf_value << ")!" );
   }
+}
 
 // Test if the dependent variable is compatible with Log processing
 /*! \details Log interpolation of the dependant variable can not be used to
