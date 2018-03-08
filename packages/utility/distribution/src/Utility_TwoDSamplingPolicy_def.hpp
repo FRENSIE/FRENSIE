@@ -145,20 +145,28 @@ ReturnType Direct::evaluatePDF(
   else
   {
     // Get the evaluation at the lower and upper bin boundaries
-    ReturnType min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
-    ReturnType min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
+    ReturnType bin_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value);
+    ReturnType bin_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value);
 
-    if ( min_eval_0 == min_eval_1 )
-      return min_eval_0;
-    else
+    if ( getRawQuantity( bin_eval_0*bin_eval_1 ) > 0.0 )
     {
       // Return the interpolated evaluation
       return TwoDInterpPolicy::ZXInterpPolicy::interpolate(
               lower_bin_boundary->first,
               upper_bin_boundary->first,
               x_indep_value,
-              min_eval_0,
-              min_eval_1 );
+              bin_eval_0,
+              bin_eval_1 );
+    }
+    else
+    {
+      // Return the interpolated evaluation using LinLin interpolation
+      return LinLin::interpolate(
+              lower_bin_boundary->first,
+              upper_bin_boundary->first,
+              x_indep_value,
+              bin_eval_0,
+              bin_eval_1 );
     }
   }
 }
@@ -745,11 +753,11 @@ double UnitBase::evaluateCDF(
                           grid_length_1 );
 
       // Get the evaluation at the lower and upper bin boundaries
-      double min_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value_0);
-      double min_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value_1);
+      double bin_eval_0 = ((*lower_bin_boundary->second).*evaluate)(y_indep_value_0);
+      double bin_eval_1 = ((*upper_bin_boundary->second).*evaluate)(y_indep_value_1);
 
-      if ( min_eval_0 == min_eval_1 )
-        return min_eval_0;
+      if ( bin_eval_0 == bin_eval_1 )
+        return bin_eval_0;
       else
       {
         // Return the interpolated evaluation
@@ -757,8 +765,8 @@ double UnitBase::evaluateCDF(
                 lower_bin_boundary->first,
                 upper_bin_boundary->first,
                 x_indep_value,
-                min_eval_0,
-                min_eval_1 );
+                bin_eval_0,
+                bin_eval_1 );
       }
     }
     else // y_indep_value < min_y_indep_value || y_indep_value > max_y_indep_value

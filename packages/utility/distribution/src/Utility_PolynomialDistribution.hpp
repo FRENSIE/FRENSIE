@@ -120,6 +120,10 @@ protected:
   //! Copy constructor (copying from unitless distribution only)
   UnitAwarePolynomialDistribution( const UnitAwarePolynomialDistribution<void,void>& unitless_dist_instance, int );
 
+  //! Test if the independent variable is compatible with Log processing
+  bool isIndepVarCompatibleWithProcessingType(
+                                        const LogIndepVarProcessingTag ) const;
+
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const override;
 

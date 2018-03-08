@@ -311,30 +311,16 @@ TEUCHOS_UNIT_TEST( Electroatom, getTotalCrossSection_epr14 )
 {
   double cross_section =
     epr14_electroatom->getTotalCrossSection( 5.2371421547030929e-02 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.4981484456753917e+07, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          4.4981474879191741e+07,
-                          1e-12 );
+  cross_section = epr14_electroatom->getTotalCrossSection( 2e-03 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.9416460301500607e+08, 1e-12 );
 
-  cross_section =
-    epr14_electroatom->getTotalCrossSection( 2e-03 );
+  cross_section = epr14_electroatom->getTotalCrossSection( 4e-04 );
+  TEST_FLOATING_EQUALITY( cross_section, 9.1706481556832719e+08, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          3.9416460301500607e+08,
-                          1e-12 );
-  cross_section =
-    epr14_electroatom->getTotalCrossSection( 4e-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          9.1706481556832719e+08,
-                          1e-12 );
-  cross_section =
-    epr14_electroatom->getTotalCrossSection( 9e-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section,
-                          1.5083218251907730e+09,
-                          1e-12 );
-
+  cross_section = epr14_electroatom->getTotalCrossSection( 9e-05 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.5083218251907730e+09, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

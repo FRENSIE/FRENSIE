@@ -104,9 +104,23 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
                       "cannot be created because at least one primary bin "
                       "needs to be specified!" );
 
+  // Check that every univariate distribution is continuous
+  typename std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >::const_iterator bad_secondary_dist =
+    std::find_if( secondary_distributions.begin(),
+                  secondary_distributions.end(),
+                  [](const std::shared_ptr<const BaseUnivariateDistributionType>& dist){ return !dist->isContinuous(); } );
+
+  TEST_FOR_EXCEPTION( bad_secondary_dist != secondary_distributions.end(),
+                      Utility::BadBivariateDistributionParameter,
+                      "The interpolated tabular basic bivariate distribution "
+                      "cannot be created because the secondary distribution "
+                      "at index "
+                      << std::distance( secondary_distributions.begin(), bad_secondary_dist ) <<
+                      " is not continuous!" );
+
   // Check that every univariate distribution is compatible with the
   // interpolation type
-  typename std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >::const_iterator bad_secondary_dist =
+  bad_secondary_dist =
     std::find_if( secondary_distributions.begin(),
                   secondary_distributions.end(),
                   [](const std::shared_ptr<const BaseUnivariateDistributionType>& dist){ return !dist->template isCompatibleWithInterpType<typename TwoDInterpPolicy::SecondaryBasePolicy>(); } );

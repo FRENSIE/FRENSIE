@@ -14,7 +14,6 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -80,6 +79,24 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
   // Make sure the threshold energy isn't less than the binding energy
   testPrecondition( incoming_energy_grid[threshold_energy_index] >=
                     d_electroionization_subshell_distribution->getBindingEnergy() );
+}
+
+// Return the number of photons emitted from the rxn at the given energy
+//! \details This does not include photons from atomic relaxation.
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+{
+  return 0u;
+}
+
+// Return the number of electrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
+    return 0u;
 }
 
 // Return the differential cross section

@@ -82,7 +82,8 @@ template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
                                          const LogIndepVarProcessingTag ) const
 {
-  return LogLog::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+  return (LogLog::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) ||
+    Utility::getRawQuantity( this->getLowerBoundOfIndepVar() ) == 0.0) &&
     LogLog::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
 }
 
@@ -128,7 +129,7 @@ template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                         const LogCosDepVarProcessingTag ) const
 {
-  return !this->canDepVarBeZeroInIndepBounds();
+  return false;
 }
 
 // Test if the distribution has the same bounds

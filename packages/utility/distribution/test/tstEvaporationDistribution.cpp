@@ -409,7 +409,7 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution, isContinuous )
 FRENSIE_UNIT_TEST( EvaporationDistribution, isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }
@@ -420,7 +420,7 @@ FRENSIE_UNIT_TEST( UnitAwareEvaporationDistribution,
                    isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }

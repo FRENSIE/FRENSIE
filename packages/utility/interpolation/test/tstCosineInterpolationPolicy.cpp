@@ -35,13 +35,13 @@ FRENSIE_UNIT_TEST( LogLogCos, isIndepVarInValidRange )
 {
   FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange(
                   -std::numeric_limits<double>::max() ) );
-  FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange( -1.0 - 1e-10 ) );
-  FRENSIE_CHECK( Utility::LogLogCos::isIndepVarInValidRange( -1.0 ) );
-  FRENSIE_CHECK( Utility::LogLogCos::isIndepVarInValidRange( 0.0 ) );
-  FRENSIE_CHECK( Utility::LogLogCos::isIndepVarInValidRange( 1.0 - 1e-15 ) );
-  FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange( 1.0 ) );
-  FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange(
-                  std::numeric_limits<double>::max() ) );
+  FRENSIE_CHECK_EQUAL( !Utility::LogLogCos::isIndepVarInValidRange( -1.0 - 1e-10 ) );
+  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( -1.0 ) );
+  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( 0.0 ) );
+  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( 1.0 - 1e-15 ) );
+  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( 1.0 ) );
+  FRENSIE_CHECK_EQUAL( !Utility::LogLogCos::isIndepVarInValidRange( 1.0 + 1e-15 ) );
+  FRENSIE_CHECK_EQUAL( !Utility::LogLogCos::isIndepVarInValidRange( std::numeric_limits<double>::max() ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -111,7 +111,7 @@ FRENSIE_UNIT_TEST( LogLogCos, calculateUnitBaseGridLength )
 {
   double grid_length =
     Utility::LogLogCos::calculateUnitBaseGridLength( -1.0, 0.0 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, std::log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -160,9 +160,9 @@ FRENSIE_UNIT_TEST( LogLogCos, calculateIndepVar )
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 0.5, 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LogLogCos::calculateIndepVar( eta, y_min, L );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, -1.0, 1e-12 );
 
   eta = std::log(3)/35.0;
@@ -178,7 +178,7 @@ FRENSIE_UNIT_TEST( LogLogCos, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
     Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( std::log(1.0), std::log(2.0) );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, std::log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -471,7 +471,7 @@ FRENSIE_UNIT_TEST( LogCosLin, calculateUnitBaseGridLength )
 {
   double grid_length =
     Utility::LogCosLin::calculateUnitBaseGridLength( -4.0, -1.0 );
-  
+
   FRENSIE_CHECK_EQUAL( grid_length, 3.0 );
 
   grid_length =
@@ -543,9 +543,9 @@ FRENSIE_UNIT_TEST( LogCosLin, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
     Utility::LogCosLin::calculateUnitBaseGridLengthProcessed( -4.0, -1.0 );
-  
-  FRENSIE_CHECK_EQUAL( grid_length, 3.0 );
 
+  FRENSIE_CHECK_EQUAL( grid_length, 3.0 );
+  
   grid_length =
     Utility::LogCosLin::calculateUnitBaseGridLengthProcessed( -1.0, 0.0 );
 
@@ -841,7 +841,7 @@ FRENSIE_UNIT_TEST( LinLogCos, calculateUnitBaseGridLength )
 {
   double grid_length =
     Utility::LinLogCos::calculateUnitBaseGridLength( -1.0, 0.0 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, std::log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -890,9 +890,11 @@ FRENSIE_UNIT_TEST( LinLogCos, calculateIndepVar )
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 0.5, 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LinLogCos::calculateIndepVar( eta, y_min, L );
   
+  FRENSIE_CHECK_FLOATING_EQUALITY( y, -1.0, 1e-12 );
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, -1.0, 1e-12 );
 
   eta = std::log(3)/35.0;
@@ -908,7 +910,7 @@ FRENSIE_UNIT_TEST( LinLogCos, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
     Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( std::log(1.0), std::log(2.0) );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, std::log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -1206,7 +1208,7 @@ FRENSIE_UNIT_TEST( LogCosLog, calculateUnitBaseGridLength )
   double grid_length =
     Utility::LogCosLog::calculateUnitBaseGridLength( 1e-3, 1.0 );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
+  FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1244,9 +1246,9 @@ FRENSIE_UNIT_TEST( LogCosLog, calculateIndepVar )
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 0.0044816890703382, 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LogCosLog::calculateIndepVar( eta, y_min, L );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1e-3, 1e-12 );
 
   eta = 1.0;
@@ -1263,7 +1265,7 @@ FRENSIE_UNIT_TEST( LogCosLog, calculateUnitBaseGridLengthProcessed )
   double grid_length = Utility::LogCosLog::calculateUnitBaseGridLengthProcessed(
                                                          std::log(1e-3), std::log(1.0) );
 
-  FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
+  FRENSIE_CHECK_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

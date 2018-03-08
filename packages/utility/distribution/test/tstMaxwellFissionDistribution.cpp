@@ -97,7 +97,7 @@ FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluate )
 {
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       0.0*si::mole );
-  
+
   double scale_factor = sqrt( 0.9 )*exp( -0.9 );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.9*MeV ),
@@ -493,7 +493,7 @@ FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution, isContinuous )
 FRENSIE_UNIT_TEST( MaxwellFissionDistribution, isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }
@@ -504,7 +504,7 @@ FRENSIE_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
                    isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }

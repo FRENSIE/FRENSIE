@@ -775,41 +775,46 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularDistribution,
   
   initialize<InterpolationPolicy>( distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
-  {
-    FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {  
-    FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
-  {
-    FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
-  else
-  {
-    FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  // {
+  //   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  // {
+  //   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
-    FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
-  else
-  {
-    FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  // {
+  //   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
+
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  // {
+  //   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
 }
 
 //---------------------------------------------------------------------------//
@@ -821,42 +826,47 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularDistribution,
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
   
   initialize<InterpolationPolicy>( unit_aware_distribution );
+  
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
-  {
-    FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {  
-    FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  // {
+  //   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
-  {
-    FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
-  else
-  {
-    FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  // {
+  //   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  // {
+  //   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
-    FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
-  else
-  {
-    FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  // {
+  //   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
+  // else
+  // {
+  //   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
 }
 
 //---------------------------------------------------------------------------//

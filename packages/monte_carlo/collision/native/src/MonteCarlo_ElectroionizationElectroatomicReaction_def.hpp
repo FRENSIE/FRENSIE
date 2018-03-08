@@ -11,18 +11,21 @@
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 namespace MonteCarlo{
 
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index )
+  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+  const Teuchos::ArrayRCP<const double>& cross_section,
+  const unsigned threshold_energy_index,
+  const std::vector<std::shared_ptr<ElectroatomicReaction> >& subshell_reactions )
   : BaseType( incoming_energy_grid,
               cross_section,
-              threshold_energy_index )
+              threshold_energy_index ),
+    d_subshell_reactions( subshell_reactions )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -40,14 +43,16 @@ ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::El
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
+  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+  const Teuchos::ArrayRCP<const double>& cross_section,
+  const unsigned threshold_energy_index,
+  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+  const std::vector<std::shared_ptr<ElectroatomicReaction> >& subshell_reactions )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
-              grid_searcher )
+              grid_searcher ),
+    d_subshell_reactions( subshell_reactions )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -106,13 +111,29 @@ void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section
                      ParticleBank& bank,
                      Data::SubshellType& shell_of_interaction ) const
 {
-  electron.incrementCollisionNumber();
+  // Sum cross section over all subshells
+  std::vector<double> cumulative_cross_section( d_subshell_reactions.size() );
+  cumulative_cross_section[0] =
+        d_subshell_reactions[0]->getCrossSection( electron.getEnergy() );
 
-  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
+  for ( unsigned i = 1; i < d_subshell_reactions.size(); ++i )
+  {
+    cumulative_cross_section[i] = cumulative_cross_section[i-1] +
+        d_subshell_reactions[i]->getCrossSection( electron.getEnergy() );
+  }
 
-  THROW_EXCEPTION( std::logic_error,
-                   "Error! The total electroionization reaction scatter "
-                   "function has not been implemented");
+  // Sample the subshell reaction
+  double scaled_random_number = cumulative_cross_section.back()*
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  for ( unsigned i = 0; i < d_subshell_reactions.size(); ++i )
+  {
+    if ( scaled_random_number <= cumulative_cross_section[i] )
+    {
+      d_subshell_reactions[i]->react( electron, bank, shell_of_interaction );
+      break;
+    }
+  }
 }
 
 } // end MonteCarlo namespace

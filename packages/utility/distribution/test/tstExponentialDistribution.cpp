@@ -439,9 +439,9 @@ FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution, isContinuous )
 FRENSIE_UNIT_TEST( ExponentialDistribution, isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types
@@ -459,9 +459,9 @@ FRENSIE_UNIT_TEST( UnitAwareExponentialDistribution,
                    isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types

@@ -157,6 +157,10 @@ protected:
   static std::vector<InputDepQuantity> getDefaultDepValues()
   { return std::vector<InputDepQuantity>({Utility::QuantityTraits<InputDepQuantity>::one()}); }
 
+  //! Test if the dependent variable is compatible with Log processing
+  bool isDepVarCompatibleWithProcessingType(
+                                          const LogDepVarProcessingTag ) const;
+
 private:
 
   // Return a random sample using the random number and record the bin index

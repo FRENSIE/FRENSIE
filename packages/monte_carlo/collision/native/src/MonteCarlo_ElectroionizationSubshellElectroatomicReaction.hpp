@@ -13,20 +13,21 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The electroionization electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ElectroionizationSubshellElectroatomicReaction : public ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>
+class ElectroionizationSubshellElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
 private:
 
   // Typedef for the base class type
-typedef ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -55,6 +56,12 @@ public:
   ~ElectroionizationSubshellElectroatomicReaction()
   { /* ... */ }
 
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,
                                       const double outgoing_energy ) const;
@@ -80,11 +87,7 @@ private:
 
   // The reaction type
   ElectroatomicReactionType d_reaction_type;
-/*
-  // The electroionization subshell scattering distribution
-  ElectroionizationSubshellElectronScatteringDistribution
-    d_scattering_distribution;
-*/
+
 };
 
 } // end MonteCarlo namespace

@@ -39,6 +39,56 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::CellPulseHeightEstimator
     d_dimension_values( 1 )
 { /* ... */ }
 
+// Set the response functions
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<
+                           ContributionMultiplierPolicy>::setResponseFunctions(
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
+{
+  std::cerr << "Warning: Response functions cannot be set for pulse height "
+	    << "estimators. The response functions requested for pulse height "
+	    << "estimator " << this->getId() << " will be ignored."
+	    << std::endl;
+}
+
+// Set the particle types that can contribute to the estimator
+/*! \details Only photons and electrons can contribute to this estimator
+ */
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
+			   const Teuchos::Array<ParticleType>& particle_types )
+{
+  Teuchos::Array<ParticleType> valid_particle_types;
+
+  bool warning_issued = false;
+
+  for( unsigned i = 0; i < particle_types.size(); ++i )
+  {
+    if( particle_types[i] != PHOTON && particle_types[i] != ELECTRON && particle_types[i] != POSITRON )
+    {
+      if( !warning_issued )
+      {
+	std::cerr << "Warning: Only photons and charged particles can "
+		  << "contribute to pulse height estimators. The other "
+		  << "particle types requested (" << particle_types[i] << ") for pulse height estimator "
+		  << this->getId() << " will be ignored."
+		  << std::endl;
+
+	warning_issued = true;
+      }
+    }
+    else
+      valid_particle_types.push_back( particle_types[i] );
+  }
+
+  Estimator::setParticleTypes( valid_particle_types );
+
+  testPostcondition( !this->isParticleTypeAssigned( NEUTRON ) );
+  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_NEUTRON ) );
+  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_PHOTON ) );
+}
+
 // Add current history estimator contribution
 /*! \details It is unsafe to call this function directly! This function will
  * be called by the appropriate dispatcher when an event of interest occurs.

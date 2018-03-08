@@ -37,7 +37,7 @@ public:
   DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
       const unsigned threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
@@ -48,7 +48,7 @@ public:
   DecoupledElasticElectroatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
@@ -92,9 +92,8 @@ private:
   std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
     d_analytical_distribution;
 
-  // The sampling ratios
- // std::shared_ptr<const std::vector<double> >
-  Teuchos::ArrayRCP<const double> d_sampling_ratios;
+  // The cutoff cross sections
+  Teuchos::ArrayRCP<const double> d_cutoff_cross_section;
 
   // The processed incoming energy grid
   Teuchos::ArrayRCP<const double> d_incoming_energy_grid;

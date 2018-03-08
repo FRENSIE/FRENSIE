@@ -173,7 +173,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
-  
+
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
     0.0*si::mole );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1e-3*MeV ),
@@ -204,7 +204,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( distribution );
-  
+
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 1e-3 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 0.0 );
@@ -227,7 +227,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
                                    InterpolationPolicy )
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
-  
+
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 0.0/MeV );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1e-3*MeV ), 0.0/MeV );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF(1.0*MeV ), 0.0/MeV );
@@ -1144,79 +1144,89 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
-  else
-  {  
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
 
   initializeCDF<InterpolationPolicy>( distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
-  else
-  {  
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  // {
+  //   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
 }
 
 UNIT_TEST_INSTANTIATION( TabularCDFDistribution, isCompatibleWithInterpType );
@@ -1229,79 +1239,89 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularCDFDistribution,
 {
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
-  else
-  {  
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
 
   initializeUnitAwareCDF<InterpolationPolicy>( unit_aware_distribution );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
-  else
-  {  
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  }
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLin>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
-  else
-  {  
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLog>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  // }
 
-  if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
-  {
-    TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
-  else
-  {
-    TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  }
+  // if( boost::is_same<InterpolationPolicy,Utility::LinLog>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  // }
+
+  // if( boost::is_same<InterpolationPolicy,Utility::LogLin>::value )
+  // {
+  //   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
+  // else
+  // {
+  //   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
+  // }
 }
 
 UNIT_TEST_INSTANTIATION( UnitAwareTabularCDFDistribution,

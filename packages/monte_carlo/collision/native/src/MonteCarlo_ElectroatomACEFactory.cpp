@@ -106,19 +106,14 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the subshell electroionization reaction(s)
   if ( properties.isElectroionizationModeOn() )
   {
-    std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
+    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
+    ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
         raw_electroatom_data,
         energy_grid,
         grid_searcher,
-        reaction_pointers );
-
-    for( unsigned i = 0u; i < reaction_pointers.size(); ++i )
-    {
-      scattering_reactions[reaction_pointers[i]->getReactionType()] =
-        reaction_pointers[i];
-    }
+        reaction_pointer );
   }
 
   // Create the electroatom core

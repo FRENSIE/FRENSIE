@@ -525,10 +525,9 @@ FRENSIE_UNIT_TEST_TEMPLATE( PowerDistribution,
   initializeDistribution<WrappedN::value,void,void>( distribution );
 
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-
   // Create another distribution that is compatible with all interpolation
   // types
   Utility::PowerDistribution<WrappedN::value> test_dist( 1.0, 1.0, 2.0 );
@@ -550,7 +549,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwarePowerDistribution,
   initializeDistribution<WrappedN::value,cgs::length,si::amount>( unit_aware_distribution );
 
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 

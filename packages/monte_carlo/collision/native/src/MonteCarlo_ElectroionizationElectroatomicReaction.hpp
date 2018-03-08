@@ -30,7 +30,7 @@ class ElectroionizationElectroatomicReaction : public StandardGenericAtomicReact
 private:
 
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -39,14 +39,18 @@ public:
   ElectroionizationElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
-    const unsigned threshold_energy_index );
+    const unsigned threshold_energy_index,
+    const std::vector<std::shared_ptr<ElectroatomicReaction> >&
+        subshell_reactions );
 
   //! Constructor
   ElectroionizationElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::vector<std::shared_ptr<ElectroatomicReaction> >&
+        subshell_reactions );
 
 
   //! Destructor
@@ -70,6 +74,12 @@ public:
   void react( ElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
+
+private:
+
+  // Electroionization subshell reactions
+  std::vector<std::shared_ptr<ElectroatomicReaction> >
+        d_subshell_reactions;
 };
 
 } // end MonteCarlo namespace

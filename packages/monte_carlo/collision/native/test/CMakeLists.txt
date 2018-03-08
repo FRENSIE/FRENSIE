@@ -981,6 +981,13 @@ TARGET_LINK_LIBRARIES(tstBremsstrahlungAdjointElectroatomicReaction monte_carlo_
 ADD_TEST(BremsstrahlungAdjointElectroatomicReaction_test tstBremsstrahlungAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
 SET_PROPERTY(TEST BremsstrahlungAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
 
+ADD_EXECUTABLE(tstElectroionizationElectroatomicReaction
+  tstElectroionizationElectroatomicReaction.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElectroionizationElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(ElectroionizationElectroatomicReaction_test tstElectroionizationElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt" --test_ace_table=82000.14p)
+SET_PROPERTY(TEST ElectroionizationElectroatomicReaction_test PROPERTY LABELS electron)
+
 ADD_EXECUTABLE(tstElectroionizationSubshellElectroatomicReaction
   tstElectroionizationSubshellElectroatomicReaction.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
