@@ -176,13 +176,13 @@ protected:
   //! Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
 
-  //! Test if the independent variable is compatible with Lin processing
-  bool isIndepVarCompatibleWithProcessingType(
-                                        const LinIndepVarProcessingTag ) const;
+  // //! Test if the independent variable is compatible with Lin processing
+  // bool isIndepVarCompatibleWithProcessingType(
+  //                                       const LinIndepVarProcessingTag ) const;
 
-  //! Test if the independent variable is compatible with Log processing
-  bool isIndepVarCompatibleWithProcessingType(
-                                        const LogIndepVarProcessingTag ) const;
+  // //! Test if the independent variable is compatible with Log processing
+  // bool isIndepVarCompatibleWithProcessingType(
+  //                                       const LogIndepVarProcessingTag ) const;
 
   //! Test if the dependent variable is compatible with Lin processing
   bool isDepVarCompatibleWithProcessingType(

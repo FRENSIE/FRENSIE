@@ -749,6 +749,8 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   // Make sure there is at least one bin
   testPrecondition( independent_values.size() > 1 );
   testPrecondition( independent_values.size() == cdf_values.size() );
+  // Make sure the cdf values begin at 0.0
+  testPrecondition( cdf_values.front() == 0.0 );
 
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
@@ -925,25 +927,25 @@ bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   return possible_zero;
 }
 
-// Test if the independent variable is compatible with Lin processing
-template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
-                                         const LinIndepVarProcessingTag ) const
-{
-  return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LinIndepVarProcessingTag>::value;
-}
+// // Test if the independent variable is compatible with Lin processing
+// template<typename InterpolationPolicy,
+//          typename IndependentUnit,
+//          typename DependentUnit>
+// bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+//                                          const LinIndepVarProcessingTag ) const
+// {
+//   return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LinIndepVarProcessingTag>::value;
+// }
 
-// Test if the independent variable is compatible with Log processing
-template<typename InterpolationPolicy,
-         typename IndependentUnit,
-         typename DependentUnit>
-bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
-                                         const LogIndepVarProcessingTag ) const
-{
-  return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LogIndepVarProcessingTag>::value;
-}
+// // Test if the independent variable is compatible with Log processing
+// template<typename InterpolationPolicy,
+//          typename IndependentUnit,
+//          typename DependentUnit>
+// bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+//                                          const LogIndepVarProcessingTag ) const
+// {
+//   return boost::is_same<typename InterpolationPolicy::IndepVarProcessingTag,LogIndepVarProcessingTag>::value;
+// }
 
 // Test if the dependent variable is compatible with Lin processing
 template<typename InterpolationPolicy,
@@ -952,7 +954,10 @@ template<typename InterpolationPolicy,
 bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                            const LinDepVarProcessingTag ) const
 {
-  return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LinDepVarProcessingTag>::value;
+  if( d_interpret_dependent_values_as_cdf )
+    return true;
+  else
+    return !this->canDepVarBeZeroInIndepBounds();
 }
 
 // Test if the dependent variable is compatible with Log processing
@@ -962,7 +967,10 @@ template<typename InterpolationPolicy,
 bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                            const LogDepVarProcessingTag ) const
 {
-  return boost::is_same<typename InterpolationPolicy::DepVarProcessingTag,LogDepVarProcessingTag>::value;
+  if( d_interpret_dependent_values_as_cdf )
+    return true;
+  else
+    return !this->canDepVarBeZeroInIndepBounds();
 }
 
 } // end Utility namespace

@@ -412,9 +412,9 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, isContinuous )
 TEUCHOS_UNIT_TEST( ExponentialDistribution, isCompatibleWithInterpType )
 {
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types
@@ -432,9 +432,9 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution,
                    isCompatibleWithInterpType )
 {
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types

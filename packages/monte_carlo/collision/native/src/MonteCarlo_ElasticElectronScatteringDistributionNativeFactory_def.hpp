@@ -673,7 +673,7 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 
     // Fuzzy bound tolerance
     double fuzzy_bound_tol = 1e-6;
-    
+
     // Create the TwoDDistribution between the two distributions
     std::shared_ptr<TwoDDist> scattering_function(
       new Utility::ElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(

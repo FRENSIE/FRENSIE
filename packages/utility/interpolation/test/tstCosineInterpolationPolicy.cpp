@@ -42,7 +42,8 @@ TEUCHOS_UNIT_TEST( LogLogCos, isIndepVarInValidRange )
   TEST_ASSERT( Utility::LogLogCos::isIndepVarInValidRange( -1.0 ) );
   TEST_ASSERT( Utility::LogLogCos::isIndepVarInValidRange( 0.0 ) );
   TEST_ASSERT( Utility::LogLogCos::isIndepVarInValidRange( 1.0 - 1e-15 ) );
-  TEST_ASSERT( !Utility::LogLogCos::isIndepVarInValidRange( 1.0 ) );
+  TEST_ASSERT( Utility::LogLogCos::isIndepVarInValidRange( 1.0 ) );
+  TEST_ASSERT( !Utility::LogLogCos::isIndepVarInValidRange( 1.0 + 1e-15 ) );
   TEST_ASSERT( !Utility::LogLogCos::isIndepVarInValidRange(
                   std::numeric_limits<double>::max() ) );
 }
@@ -114,7 +115,7 @@ TEUCHOS_UNIT_TEST( LogLogCos, calculateUnitBaseGridLength )
 {
   double grid_length =
     Utility::LogLogCos::calculateUnitBaseGridLength( -1.0, 0.0 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -163,9 +164,9 @@ TEUCHOS_UNIT_TEST( LogLogCos, calculateIndepVar )
   TEST_FLOATING_EQUALITY( y, 0.5, 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LogLogCos::calculateIndepVar( eta, y_min, L );
-  
+
   TEST_FLOATING_EQUALITY( y, -1.0, 1e-12 );
 
   eta = log(3)/35.0;
@@ -181,7 +182,7 @@ TEUCHOS_UNIT_TEST( LogLogCos, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
     Utility::LogLogCos::calculateUnitBaseGridLengthProcessed( log(1.0), log(2.0) );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -474,7 +475,7 @@ TEUCHOS_UNIT_TEST( LogCosLin, calculateUnitBaseGridLength )
 {
   double grid_length =
     Utility::LogCosLin::calculateUnitBaseGridLength( -4.0, -1.0 );
-  
+
   TEST_EQUALITY_CONST( grid_length, 3.0 );
 
   grid_length =
@@ -546,7 +547,7 @@ TEUCHOS_UNIT_TEST( LogCosLin, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
     Utility::LogCosLin::calculateUnitBaseGridLengthProcessed( -4.0, -1.0 );
-  
+
   TEST_EQUALITY_CONST( grid_length, 3.0 );
 
   grid_length =
@@ -844,7 +845,7 @@ TEUCHOS_UNIT_TEST( LinLogCos, calculateUnitBaseGridLength )
 {
   double grid_length =
     Utility::LinLogCos::calculateUnitBaseGridLength( -1.0, 0.0 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -893,9 +894,9 @@ TEUCHOS_UNIT_TEST( LinLogCos, calculateIndepVar )
   TEST_FLOATING_EQUALITY( y, 0.5, 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LinLogCos::calculateIndepVar( eta, y_min, L );
-  
+
   TEST_FLOATING_EQUALITY( y, -1.0, 1e-12 );
 
   eta = log(3)/35.0;
@@ -911,7 +912,7 @@ TEUCHOS_UNIT_TEST( LinLogCos, calculateUnitBaseGridLengthProcessed )
 {
   double grid_length =
     Utility::LinLogCos::calculateUnitBaseGridLengthProcessed( log(1.0), log(2.0) );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( grid_length, log( 2.0 ), 1e-15 );
 
   grid_length =
@@ -1209,7 +1210,7 @@ TEUCHOS_UNIT_TEST( LogCosLog, calculateUnitBaseGridLength )
   double grid_length =
     Utility::LogCosLog::calculateUnitBaseGridLength( 1e-3, 1.0 );
 
-  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
+  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1247,9 +1248,9 @@ TEUCHOS_UNIT_TEST( LogCosLog, calculateIndepVar )
   TEST_FLOATING_EQUALITY( y, 0.0044816890703382, 1e-12 );
 
   eta = 0.0;
-  
+
   y = Utility::LogCosLog::calculateIndepVar( eta, y_min, L );
-  
+
   TEST_FLOATING_EQUALITY( y, 1e-3, 1e-12 );
 
   eta = 1.0;
@@ -1266,7 +1267,7 @@ TEUCHOS_UNIT_TEST( LogCosLog, calculateUnitBaseGridLengthProcessed )
   double grid_length = Utility::LogCosLog::calculateUnitBaseGridLengthProcessed(
                                                          log(1e-3), log(1.0) );
 
-  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );     
+  TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

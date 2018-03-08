@@ -154,6 +154,10 @@ protected:
   // Test if the dependent variable can be zero within the indep bounds
   bool canDepVarBeZeroInIndepBounds() const;
 
+  //! Test if the dependent variable is compatible with Log processing
+  bool isDepVarCompatibleWithProcessingType(
+                                          const LogDepVarProcessingTag ) const;
+
 private:
 
   // Return a random sample using the random number and record the bin index

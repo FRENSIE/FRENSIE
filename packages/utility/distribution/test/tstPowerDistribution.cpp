@@ -513,7 +513,7 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
   initializeDistribution<N,void,void>( distribution );
 
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
@@ -538,7 +538,7 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
   initializeDistribution<N,cgs::length,si::amount>( unit_aware_distribution );
 
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 

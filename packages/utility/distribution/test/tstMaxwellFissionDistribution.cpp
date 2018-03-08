@@ -69,12 +69,12 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, evaluate )
 {
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ),
 		       0.0*si::mole );
-  
+
   double scale_factor = sqrt( 0.9 )*exp( -0.9 );
 
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.9*MeV ),
                        scale_factor*si::mole );
-  
+
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ),
 		       0.0*si::mole );
 }
@@ -87,7 +87,7 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, evaluatePDF )
   double test_value_2 = sqrt( 0.9 )*exp( -0.9 )/
     (sqrt(Utility::PhysicalConstants::pi)*0.5*erf(sqrt(0.9)) -
      sqrt(0.9)*exp(-0.9));
-  
+
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), test_value_1 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.9 ), test_value_2 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 0.0 );
@@ -465,7 +465,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, isContinuous )
 TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, isCompatibleWithInterpType )
 {
   TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }
@@ -476,7 +476,7 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
                    isCompatibleWithInterpType )
 {
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
   TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 }

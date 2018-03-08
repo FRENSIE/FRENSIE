@@ -2038,9 +2038,9 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
                    isCompatibleWithInterpType )
 {
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Check an alternative distribution that is compatible with all interp types
   Teuchos::Array<double> bin_boundaries( 4 );

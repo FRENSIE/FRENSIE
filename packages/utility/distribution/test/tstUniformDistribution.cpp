@@ -659,9 +659,9 @@ TEUCHOS_UNIT_TEST( UniformDistribution, isCompatibleWithInterpType )
 TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, isCompatibleWithInterpType )
 {
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types

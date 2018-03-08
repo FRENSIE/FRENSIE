@@ -515,6 +515,15 @@ bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isValidSamp
   return valid;
 }
 
+// Test if the independent variable is compatible with Log processing
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+                                         const LogIndepVarProcessingTag ) const
+{
+  return LogLog::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+         LogLog::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+}
+
 // Test if the dependent variable can be zero within the indep bounds
 template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::canDepVarBeZeroInIndepBounds() const

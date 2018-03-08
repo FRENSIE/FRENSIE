@@ -29,7 +29,7 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSample
   // Make sure the distributions are continuous
   testPrecondition( this->areSecondaryDistributionsContinuous() );
   // Make sure the distributions are compatible with the requested interp
-  //testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( distribution ) );
+  testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( distribution ) );
   // Make sure the fuzzy boundary tolerance is valid
   testPrecondition( d_fuzzy_boundary_tol >= 0.0 )
   testPrecondition( d_fuzzy_boundary_tol < 1.0 )
@@ -56,10 +56,9 @@ UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSample
       2-D interpolation mathod should be agnostic to the 1-D interpolation
       method such that you could perform a Lin-Lin (y-z) interpolation in the
       OneDDistribution and a Log-Log-Log (ie: Log-Log x-z and Log-Log y-z)
-      interpolation in the TwoDDistribution. For now this precondition test will
-      be commented out. */
+      interpolation in the TwoDDistribution. */
   // Make sure the distributions are compatible with the requested interp
-  //testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( secondary_distributions ) );
+  testPrecondition( this->areSecondaryDistsCompatibleWithInterpType( secondary_distributions ) );
   // Make sure the fuzzy boundary tolerance is valid
   testPrecondition( d_fuzzy_boundary_tol >= 0.0 )
   testPrecondition( d_fuzzy_boundary_tol < 1.0 )
@@ -114,7 +113,7 @@ bool UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDS
                                    const DistributionType& distribution ) const
 {
   bool compatible = true;
-  
+
   for( size_t i = 0; i < distribution.size(); ++i )
   {
     if( !distribution[i].second->template isCompatibleWithInterpType<typename TwoDInterpPolicy::SecondaryBasePolicy>() )
@@ -136,7 +135,7 @@ bool UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDS
                  secondary_distributions ) const
 {
   bool compatible = true;
-  
+
   for( size_t i = 0; i < secondary_distributions.size(); ++i )
   {
     if( !secondary_distributions[i]->template isCompatibleWithInterpType<typename TwoDInterpPolicy::SecondaryBasePolicy>() )
@@ -258,7 +257,7 @@ inline ReturnType UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInter
     {
       return ((*lower_bin_boundary->second).*evaluate)(secondary_indep_var_value);
     }
-    else 
+    else
       return QuantityTraits<ReturnType>::zero();
   }
 }
@@ -338,7 +337,7 @@ inline double UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPol
     {
       return ((*lower_bin_boundary->second).*evaluateCDF)(secondary_indep_var_value);
     }
-    else 
+    else
       return 0.0;
   }
 }
@@ -592,7 +591,7 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDS
   -> SecondaryIndepQuantity
 {
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
+
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
@@ -621,7 +620,7 @@ auto UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDS
   -> SecondaryIndepQuantity
 {
   typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
-  
+
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );

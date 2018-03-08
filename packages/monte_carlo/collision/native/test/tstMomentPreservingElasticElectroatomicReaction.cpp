@@ -178,7 +178,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
 
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog,Utility::Correlated>(
         function_data ) );
 
     discrete_elastic_distribution.reset(

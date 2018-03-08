@@ -218,8 +218,9 @@ template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
                                          const LogIndepVarProcessingTag ) const
 {
-  return LogLog::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
-    LogLog::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+  return ( LogLog::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) ||
+         getRawQuantity( this->getLowerBoundOfIndepVar() ) == 0.0 ) &&
+         LogLog::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
 }
 
 // Test if the independent variable is compatible with LogCos processing

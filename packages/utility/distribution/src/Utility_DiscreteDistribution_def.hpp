@@ -670,6 +670,21 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZe
   return true;
 }
 
+// Test if the dependent variable is compatible with Log processing
+/*! \details Log interpolation of the dependant variable can not be used to
+ *  evaluate the distribution, pdf, or cdf between two one-d distribution. There
+ *  are cases where it can be used to sample between two one-d distribution.
+ *  This is the case with the elastic moment-preserving distribution. To
+ *  accomidate the elastic moment-preserving distribution this function is set
+ *  to true.
+ */
+template<typename IndependentUnit,typename DependentUnit>
+bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+                                           const LogDepVarProcessingTag ) const
+{
+  return true;
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_DISCRETE_DISTRIBUTION_DEF_HPP

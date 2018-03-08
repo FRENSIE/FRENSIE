@@ -511,7 +511,7 @@ template<typename T>
 inline bool LogLogCos::isIndepVarInValidRange( const T indep_var )
 {
   return indep_var >= QuantityTraits<T>::initializeQuantity(-1.0) &&
-         indep_var < QuantityTraits<T>::one();
+         indep_var <= QuantityTraits<T>::one();
 }
 
 // Test if the dependent value is in a valid range (doesn't check nan/inf)
