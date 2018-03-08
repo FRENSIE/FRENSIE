@@ -41,7 +41,7 @@ struct CosineSamplingHelper<UnitBase,TwoDInterpPolicy>
   using CosSamplingPolicy = Direct;
 
   //! The CDF interpolation policy
-  using CDFInterpPolicy = Details::CDFInterpolationHelper<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy
+  using CDFInterpPolicy = typename Details::CDFInterpolationHelper<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy;
 };
 
 //! Helper class used to construct a UnitBaseCorrelated cosine sampling policy
@@ -63,18 +63,29 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
+UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticBasicBivariateDistribution()
+{
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
+
+// Constructor
+template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
 UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticBasicBivariateDistribution(
       const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
-      const std::vector<std::shared_ptr<const UnitAwareTabularBivariateDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
+      const std::vector<std::shared_ptr<const UnitAwareTabularUnivariateDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
       const SecondaryIndepQuantity upper_bound_conditional_indep_var,
       const double fuzzy_boundary_tol,
       const double evaluate_relative_error_tol,
       const double evaluate_error_tol )
-  : ParentType( primary_indep_grid,
-                secondary_distributions,
-                fuzzy_boundary_tol,
-                evaluate_relative_error_tol,
-                evaluate_error_tol ),
+  : BaseType( primary_indep_grid,
+              secondary_distributions,
+              fuzzy_boundary_tol,
+              evaluate_relative_error_tol,
+              evaluate_error_tol ),
     d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
     d_max_upper_bound_conditional_indep_var( SIQT::one() ),
     d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
@@ -100,9 +111,9 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
   -> DepQuantity
 {
   return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseBivariateDistributionType::evaluate );
+                                    primary_indep_var_value,
+                                    secondary_indep_var_value,
+                                    &BaseUnivariateDistributionType::evaluate );
 }
 
 // Evaluate the secondary conditional PDF
@@ -119,7 +130,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
   return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseBivariateDistributionType::evaluatePDF );
+                                      &BaseUnivariateDistributionType::evaluatePDF );
 }
 
 // Evaluate the secondary conditional PDF
@@ -142,7 +153,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
                                       secondary_indep_var_value,
                                       min_secondary_indep_var_functor,
                                       max_secondary_indep_var_functor,
-                                      &BaseBivariateDistributionType::evaluatePDF );
+                                      &BaseUnivariateDistributionType::evaluatePDF );
 }
 
 // Evaluate the secondary conditional CDF
@@ -155,10 +166,10 @@ double UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePol
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  return this->evaluateCDFImpl<typename Details::CosSamplingPolicyHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CDFInterpPolicy>(
+  return this->evaluateCDFImpl<typename Details::CosineSamplingHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CDFInterpPolicy>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseBivariateDistributionType::evaluateCDF );
+                                      &BaseUnivariateDistributionType::evaluateCDF );
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -180,7 +191,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,Tw
   testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
 
   // Find the bin boundaries
-  typename DistributionTypeConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
 
   this->findBinBoundaries( incoming_energy,
                            lower_bin_boundary,
@@ -202,7 +213,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,Tw
           return d_upper_bound_conditional_indep_var;
         };
 
-    return typename CosSamplingPolicyHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseBivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+    return Details::CosineSamplingHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -276,7 +287,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,Tw
   testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
 
   // Find the bin boundaries
-  typename DistributionTypeConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
 
   this->findBinBoundaries( incoming_energy,
                            lower_bin_boundary,
@@ -284,7 +295,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,Tw
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return typename CosSamplingPolicyHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseBivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+    return Details::CosineSamplingHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -325,7 +336,7 @@ inline double UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSa
   testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
 
   // Find the bin boundaries
-  typename DistributionTypeConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
 
   this->findBinBoundaries( incoming_energy,
                            lower_bin_boundary,
@@ -347,7 +358,7 @@ inline double UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSa
           return d_upper_bound_conditional_indep_var;
         };
 
-    return typename CosSamplingPolicyHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseBivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    return Details::CosineSamplingHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -393,7 +404,7 @@ inline double UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSa
   testPrecondition( angle_cosine <= d_max_upper_bound_conditional_indep_var );
 
   // Find the bin boundaries
-  typename DistributionTypeConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
 
   this->findBinBoundaries( incoming_energy,
                            lower_bin_boundary,
@@ -401,7 +412,7 @@ inline double UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSa
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return typename CosSamplingPolicyHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseBivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    return Details::CosineSamplingHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -443,9 +454,9 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseBivariateDistributionType&)>
+  std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseBivariateDistributionType::sampleWithRandomNumber,
+                             &BaseUnivariateDistributionType::sampleWithRandomNumber,
                              std::placeholders::_1,
                              random_number );
 
@@ -476,7 +487,7 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const
+                            DistributionTraits::Counter& trials ) const
   -> SecondaryIndepQuantity
 {
   ++trials;
@@ -494,17 +505,17 @@ template<typename TwoDInterpPolicy,
          typename DependentUnit>
 auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Dummy variable
   SecondaryIndepQuantity dummy_raw_sample;
   
   // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseBivariateDistributionType&)>
+  std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseBivariateDistributionType::sampleAndRecordBinIndex,
+                            &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
                             std::placeholders::_1,
                             std::ref( secondary_bin_index ) );
 
@@ -527,14 +538,14 @@ template<typename TwoDInterpPolicy,
 auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
+                            size_t& primary_bin_index,
+                            size_t& secondary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseBivariateDistributionType&)>
+  std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseBivariateDistributionType::sampleAndRecordBinIndex,
+                            &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
                             std::placeholders::_1,
                             std::ref( secondary_bin_index ) );
 
@@ -560,9 +571,9 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
   testPrecondition( random_number <= 1.0 );
   
   // Create the sampling functor
-  std::function<SecondaryIndepQuantity(const BaseBivariateDistributionType&)>
+  std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseBivariateDistributionType::sampleWithRandomNumber,
+                             &BaseUnivariateDistributionType::sampleWithRandomNumber,
                              std::placeholders::_1,
                              random_number );
 
@@ -608,7 +619,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
   testPrecondition( max_secondary_indep_var_value >
                     d_lower_bound_conditional_indep_var );
 
-  std::function<SecondaryIndepQuantity(const BaseBivariateDistributionType&)>
+  std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
       sampling_functor;
 
   // Check if the max_secondary_indep_var_value is greater than the max indep value at the energy
@@ -617,7 +628,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
   {
     // Create the sampling functor
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseBivariateDistributionType::sampleWithRandomNumberInSubrange,
+                             &BaseUnivariateDistributionType::sampleWithRandomNumberInSubrange,
                              std::placeholders::_1,
                              random_number,
                              d_upper_bound_conditional_indep_var );
@@ -626,7 +637,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolic
   {
     // Create the sampling functor
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseBivariateDistributionType::sampleWithRandomNumberInSubrange,
+                             &BaseUnivariateDistributionType::sampleWithRandomNumberInSubrange,
                              std::placeholders::_1,
                              random_number,
                              max_secondary_indep_var_value );
@@ -649,7 +660,7 @@ inline auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamp
 {
   // Dummy variables
   SecondaryIndepQuantity dummy_raw_sample;
-  unsigned dummy_primary_bin_index;
+  size_t dummy_primary_bin_index;
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sample_functor,
@@ -668,11 +679,11 @@ inline auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamp
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index ) const
+                            size_t& primary_bin_index ) const
   -> SecondaryIndepQuantity
 {
   // Find the bin boundaries
-  typename DistributionTypeConstIterator lower_bin_boundary, upper_bin_boundary;
+  DistributionDataConstIterator lower_bin_boundary, upper_bin_boundary;
 
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
@@ -681,8 +692,8 @@ inline auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamp
   SecondaryIndepQuantity sample;
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    typename DistributionTypeConstIterator sampled_bin_boundary;
-    sample = typename CosSamplingPolicyHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template sampleCosDetailed<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    DistributionDataConstIterator sampled_bin_boundary;
+    sample = Details::CosineSamplingHelper<TwoDSamplePolicy,TwoDInterpPolicy>::CosSamplingPolicy::template sampleCosDetailed<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
           sample_functor,
           primary_indep_var_value,
           lower_bin_boundary,
@@ -728,7 +739,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getLowerBoundOfConditionalIndepVar(
+auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getLowerBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -751,7 +762,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getUpperBoundOfConditionalIndepVar(
+auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getUpperBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -774,10 +785,25 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-bool UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::verifyValidSecondIndepVarProcessingType()
+void UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::verifyValidSecondIndepVarProcessingType()
 {
   testStaticPrecondition( (std::is_same<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
                            std::is_same<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value) );
+}
+
+// Method for placing the object in an output stream
+template<typename TwoDInterpPolicy,
+         typename TwoDSamplePolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+void UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
+{
+  this->interpolatedFullyTabularToStreamImpl( os,
+                                              "ElasticBasicBivariateDistribution",
+                                              std::make_pair( "max conditional upper bound", d_max_upper_bound_conditional_indep_var ),
+                                              std::make_pair( "conditional upper bound", d_upper_bound_conditional_indep_var ),
+                                              std::make_pair( "conditional lower bound", d_lower_bound_conditional_indep_var ) );
 }
 
 // Save the distribution to an archive
@@ -787,7 +813,7 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename Archive>
-void UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
+void UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -805,7 +831,7 @@ template<typename TwoDInterpPolicy,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename Archive>
-void UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
+void UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -818,7 +844,30 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,PrimaryIndepend
 
 } // end Utility namespace
 
-EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( Utility::ElasticBasicBivariateDistribution, void, void, void );
+#define __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, TwoDSamplePolicy, ... ) \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LinLinLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LinLogCosLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LinLinLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LinLogCosLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LogLinLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LogLogCosLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LogLinLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( Utility::UnitAwareElasticBasicBivariateDistribution<Utility::LogLogCosLog,TwoDSamplePolicy,__VA_ARGS__ > )
+
+#define ___ELASTIC_BASIC_BIVARIATE_DIST__( DECL_TYPE, ... ) \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::Direct, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::UnitBase, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::CumulativePoints, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::Correlated, __VA_ARGS__ ); \
+  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::UnitBaseCorrelated, __VA_ARGS__ )
+
+#define EXTERN_EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST( ... ) \
+  ___ELASTIC_BASIC_BIVARIATE_DIST__( EXTERN_EXPLICIT, __VA_ARGS__ )
+
+#define EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST( ... ) \
+  ___ELASTIC_BASIC_BIVARIATE_DIST__( EXPLICIT, __VA_ARGS__ )
+
+EXTERN_EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST( void, void, void );
 
 #endif // UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 

@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_TabularUnivariateDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
@@ -130,7 +129,7 @@ public:
   IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample and bin index from the distribution
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
+  IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
   IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
@@ -147,7 +146,7 @@ public:
   IndepQuantity getUpperBoundOfIndepVar() const override;
 
   //! Return the cutoff bound of the distribution independent variable
-  IndepQuantity getCutoffBoundOfIndepVar() const override;
+  IndepQuantity getCutoffBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
   IndepQuantity getLowerBoundOfIndepVar() const override;
@@ -156,7 +155,7 @@ public:
   UnivariateDistributionType getDistributionType() const override;
 
   //! Return the cutoff cross section ratio for the distribution
-  double getCutoffCrossSectionRatio() const override;
+  double getCutoffCrossSectionRatio() const;
 
   //! Test if the distribution is continuous
   bool isContinuous() const override;
@@ -165,10 +164,10 @@ public:
   void toStream( std::ostream& os ) const override;
 
   //! Equality comparison operator
-  bool operator==( const UnitAwareTabularCDFDistribution& other ) const;
+  bool operator==( const UnitAwareHybridElasticDistribution& other ) const;
 
   //! Inequality comparison operator
-  bool operator!=( const UnitAwareTabularCDFDistribution& other ) const;
+  bool operator!=( const UnitAwareHybridElasticDistribution& other ) const;
 
 protected:
 
@@ -237,25 +236,25 @@ private:
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
-                                      unsigned& sampled_bin_index ) const;
+                                      size_t& sampled_bin_index ) const;
 
   // Return a random sample of the moment preserving discrete distribution using the random number and record the bin index
   IndepQuantity sampleDiscrete( double random_number,
-                                unsigned& sampled_bin_index ) const;
+                                size_t& sampled_bin_index ) const;
 
   // Return a random sample of the cutoff tabular distribution using the random number and record the bin index
   IndepQuantity sampleCutoff( double random_number,
-                              unsigned& sampled_bin_index ) const;
+                              size_t& sampled_bin_index ) const;
 
   // Verify that the values are valid
   template<typename InputIndepQuantity, typename InputDepQuantity>
   static void verifyValidValues(
-                 const std::vector<IndepQuantity>& independent_cutoff_values,
-                 const std::vector<DepQuantity>& dependent_cutoff_values,
-                 const std::vector<IndepQuantity>& independent_discrete_values,
-                 const std::vector<DepQuantity>& dependent_discrete_values,
-                 const InputIndepQuantity cutoff_angle_cosine,
-                 const double cutoff_cross_section_ratio);
+           const std::vector<InputIndepQuantity>& independent_cutoff_values,
+           const std::vector<InputDepQuantity>& dependent_cutoff_values,
+           const std::vector<InputIndepQuantity>& independent_discrete_values,
+           const std::vector<InputDepQuantity>& dependent_discrete_values,
+           const InputIndepQuantity cutoff_angle_cosine,
+           const double cutoff_cross_section_ratio);
   
   // Save the distribution to an archive
   template<typename Archive>

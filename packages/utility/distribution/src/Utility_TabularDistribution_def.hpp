@@ -20,6 +20,8 @@
 
 BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareTabularDistribution, Utility );
 
+namespace Utility{
+
 // Basic constructor (potentially dangerous)
 /*! \details The independent values are assumed to be sorted (lowest to
  * highest). If cdf values are provided a pdf will be calculated. Because

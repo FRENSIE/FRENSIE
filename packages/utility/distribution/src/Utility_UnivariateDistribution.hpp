@@ -19,6 +19,7 @@
 #include "Utility_UnivariateDistributionType.hpp"
 #include "Utility_OStreamableObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
@@ -133,6 +134,10 @@ protected:
   virtual bool isIndepVarCompatibleWithProcessingType(
                                         const LogIndepVarProcessingTag ) const;
 
+  //! Test if the independent variable is compatible with LogCos processing
+  virtual bool isIndepVarCompatibleWithProcessingType(
+                                     const LogCosIndepVarProcessingTag ) const;
+
   //! Test if the dependent variable is compatible with Lin processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LinDepVarProcessingTag ) const;
@@ -140,6 +145,10 @@ protected:
   //! Test if the dependent variable is compatible with Log processing
   virtual bool isDepVarCompatibleWithProcessingType(
                                           const LogDepVarProcessingTag ) const;
+
+  //! Test if the dependent variable is compatible with LogCos processing
+  virtual bool isDepVarCompatibleWithProcessingType(
+                                       const LogCosDepVarProcessingTag ) const;
 
   //! Add distribution data to the stream
   template<typename... Types>

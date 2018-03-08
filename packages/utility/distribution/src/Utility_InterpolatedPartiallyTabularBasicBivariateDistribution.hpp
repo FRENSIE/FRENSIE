@@ -23,7 +23,7 @@ template<typename TwoDInterpPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution : public UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution : public UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwarePartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
   // The parent distribution type
   typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwarePartiallyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > BaseType;
@@ -87,15 +87,15 @@ private:
  * (unit-agnostic)
  * \ingroup bivariate_distributions
  */
-template<typename TwoDInterpPolicy> using InterpolatedPartiallyTabularBasicBivariateDistribution =
-  UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,void,void,void>;
+template<typename TwoDInterpPolicy, typename TwoDSamplePolicy> using InterpolatedPartiallyTabularBasicBivariateDistribution =
+UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
   
 } // end Utility namespace
 
 BOOST_SERIALIZATION_DISTRIBUTION5_VERSION( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, 0 );
 
 #define BOOST_SERIALIZATION_INTERPOLATED_PARTIALLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
-  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, Utility ) \
+  BOOST_SERIALIZATION_CLASS5_EXPORT_STANDARD_KEY( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, Utility ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
     UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution, Utility, \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "InterpolatedPartiallyTabularBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy>() + "," + Utility::typeName<SamplePolicy>() + ">" ), \

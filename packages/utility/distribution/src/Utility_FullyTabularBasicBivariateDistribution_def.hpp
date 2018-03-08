@@ -26,10 +26,10 @@ UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,Secondary
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
+inline auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
      const PrimaryIndepQuantity primary_indep_var_value,
      const SecondaryIndepQuantity secondary_indep_var_value,
-     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
      const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
   -> DepQuantity
 {
@@ -40,10 +40,10 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+inline auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
      const PrimaryIndepQuantity primary_indep_var_value,
      const SecondaryIndepQuantity secondary_indep_var_value,
-     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
      const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
   ->InverseSecondaryIndepQuantity
 {
@@ -55,10 +55,10 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline double UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+inline double UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
      const PrimaryIndepQuantity primary_indep_var_value,
      const SecondaryIndepQuantity secondary_indep_var_value,
-     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
      const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
 {
   return this->evaluateSecondaryConditionalCDF( primary_indep_var_value,
@@ -94,9 +94,9 @@ auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,Seco
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+inline auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
      const PrimaryIndepQuantity primary_indep_var_value,
-     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
      const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
   -> SecondaryIndepQuantity
 {
@@ -107,10 +107,10 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+inline auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
      const PrimaryIndepQuantity primary_indep_var_value,
      const double random_number,
-     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
      const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& ) const
   -> SecondaryIndepQuantity
 {
@@ -122,10 +122,10 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+inline auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -137,11 +137,11 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+inline auto UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
-            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
+            const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -149,31 +149,6 @@ inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,Seconda
                                                primary_indep_var_value,
                                                random_number,
                                                max_secondary_indep_var_value );
-}
-
-// Return a random sample from the secondary conditional PDF and the index
-/*! \details When the secondary conditional sampling method is unit-base or
- * direct it is common to use statistical sampling, which samples from one of
- * the distributions on the bin boundaries and, if unit-base, then scales the
- * sample so that it preserves intermediate grid limits. Certain methods require
- * the unscaled (or raw) sample, which can be acquired with this method.
- */
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-inline auto UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
-                            const PrimaryIndepQuantity primary_indep_var_value,
-                            SecondaryIndepQuantity& raw_sample,
-                            unsigned& primary_bin_index,
-                            unsigned& secondary_bin_index ) const
-  -> SecondaryIndepQuantity
-{
-  raw_sample = this->sampleSecondaryConditionalAndRecordBinIndices(
-                                                       primary_indep_var_value,
-                                                       primary_bin_index,
-                                                       secondary_bin_index );
-
-  return raw_sample;
 }
 
 // Save the distribution to an archive

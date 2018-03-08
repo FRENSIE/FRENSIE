@@ -23,7 +23,7 @@
 
 namespace Utility{
 
-EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( Utility::ElasticBasicBivariateDistribution, void, void, void );
+EXPLICIT_ELASTIC_BASIC_BIVARIATE_DIST( void, void, void );
   
 } // end Utility namespace
 

@@ -60,6 +60,9 @@ class UnitAwareElasticBasicBivariateDistribution : public UnitAwareInterpolatedF
 
   //! The secondary independent quantity type
   typedef typename TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
+  
+  //! The distribution data const iterator
+  typedef typename BaseType::DistributionDataConstIterator DistributionDataConstIterator;
 
 public:
   
@@ -74,10 +77,7 @@ public:
 
   //! The dependent quantity type
   typedef typename BaseType::DepQuantity DepQuantity;
-
-  //! The distribution type
-  typedef typename BaseType::DistributionType DistributionType;
-
+  
   //! Constructor
   UnitAwareElasticBasicBivariateDistribution(
         const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
@@ -130,20 +130,20 @@ public:
   //! Return a random sample and record the number of trials
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
             const PrimaryIndepQuantity primary_indep_var_value,
-            unsigned& trials ) const override;
+            DistributionTraits::Counter& trials ) const override;
 
 // Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
             const PrimaryIndepQuantity primary_indep_var_value,
-            unsigned& primary_bin_index,
-            unsigned& secondary_bin_index ) const override;
+            size_t& primary_bin_index,
+            size_t& secondary_bin_index ) const override;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
             const PrimaryIndepQuantity primary_indep_var_value,
             SecondaryIndepQuantity& raw_sample,
-            unsigned& primary_bin_index,
-            unsigned& secondary_bin_index ) const override;
+            size_t& primary_bin_index,
+            size_t& secondary_bin_index ) const override;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
@@ -162,14 +162,20 @@ public:
    const SecondaryIndepQuantity max_secondary_indep_var_value ) const override;
 
   //! Return the lower bound of the conditional distribution
-  SecondaryIndepQuantity getLowerBoundOfConditionalIndepVar(
+  SecondaryIndepQuantity getLowerBoundOfSecondaryConditionalIndepVar(
            const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
   //! Return the upper bound of the conditional distribution
-  SecondaryIndepQuantity getUpperBoundOfConditionalIndepVar(
+  SecondaryIndepQuantity getUpperBoundOfSecondaryConditionalIndepVar(
            const PrimaryIndepQuantity primary_indep_var_value ) const override;
 
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const override;
+  
 private:
+
+  //! Default constructor
+  UnitAwareElasticBasicBivariateDistribution();
 
   //! Evaluate the distribution using the desired evaluation method
   template<typename LocalTwoDInterpPolicy,
@@ -221,7 +227,7 @@ private:
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SampleFunctor sample_functor,
                         SecondaryIndepQuantity& raw_sample,
-                        unsigned& primary_bin_index ) const;
+                        size_t& primary_bin_index ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
@@ -230,7 +236,7 @@ private:
                         SampleFunctor sample_functor ) const;
 
   //! Verify that the second independent variable processing type is compatible with Cosine processing
-  bool verifyValidSecondIndepVarProcessingType() const;
+  static void verifyValidSecondIndepVarProcessingType();
 
   // Save the distribution to an archive
   template<typename Archive>
@@ -280,12 +286,12 @@ BOOST_SERIALIZATION_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_ElasticBivariateDistribution_def.hpp"
+#include "Utility_ElasticBasicBivariateDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
 #endif // end UTILITY_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_ElasticBivariateDistribution.hpp
+// end Utility_ElasticBasicBivariateDistribution.hpp
 //---------------------------------------------------------------------------//

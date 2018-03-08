@@ -26,7 +26,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ElasticElectronTraits.hpp"
 
-BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareHybridElasticDistribution, Utility );
+BOOST_SERIALIZATION_CLASS3_EXPORT_IMPLEMENT( UnitAwareCoupledElasticDistribution, Utility );
 
 namespace Utility{
 
@@ -277,7 +277,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   }
   else if( indep_var_value == this->getCutoffBoundOfIndepVar() )
   {
-    return d_distribution.back().third;
+    return Utility::get<2>(d_distribution.back());
   }
   else
   { // evaluate the cutoff tabular large angle distribution
@@ -294,11 +294,12 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
 
-    return InterpolationPolicy::interpolate( lower_bin_boundary->first,
-                                             upper_bin_boundary->first,
-                                             indep_var_value,
-                                             lower_bin_boundary->third,
-                                             upper_bin_boundary->third );
+    return InterpolationPolicy::interpolate(
+                                        Utility::get<0>(*lower_bin_boundary),
+                                        Utility::get<0>(*upper_bin_boundary),
+                                        indep_var_value,
+                                        Utility::get<2>(*lower_bin_boundary),
+                                        Utility::get<2>(*upper_bin_boundary) );
   }
 }
 
@@ -345,10 +346,13 @@ double UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,D
                                                           end,
                                                           indep_var_value );
 
-    IndepQuantity indep_diff = indep_var_value - lower_bin_boundary->first;
+    IndepQuantity indep_diff =
+      indep_var_value - Utility::get<0>(*lower_bin_boundary);
 
-    return (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
-          indep_diff*indep_diff*lower_bin_boundary->fourth/2.0)*d_scaled_norm_constant;
+    return (Utility::get<1>(*lower_bin_boundary) +
+            indep_diff*Utility::get<2>(*lower_bin_boundary) +
+            indep_diff*indep_diff*Utility::get<3>(*lower_bin_boundary)/2.0)*
+      d_scaled_norm_constant;
   }
   else if( indep_var_value == this->getCutoffBoundOfIndepVar() )
     return d_cutoff_cross_section_ratio;
@@ -372,7 +376,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -383,7 +387,7 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-                                                       unsigned& trials ) const
+                                    DistributionTraits::Counter& trials ) const
 {
   ++trials;
 
@@ -396,7 +400,7 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-                                            unsigned& sampled_bin_index ) const
+                                            size_t& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -415,7 +419,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -456,7 +460,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
@@ -468,7 +472,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleImplementation(
                                             double random_number,
-                                            unsigned& sampled_bin_index ) const
+                                            size_t& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -550,7 +554,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleCutoff(
                                             double random_number,
-                                            unsigned& sampled_bin_index ) const
+                                            size_t& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -575,11 +579,11 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
   // Calculate the sampled bin index
   sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
 
-  IndepQuantity indep_value = lower_bin_boundary->first;
+  IndepQuantity indep_value = Utility::get<0>(*lower_bin_boundary);
   UnnormCDFQuantity cdf_diff =
-    scaled_random_number - lower_bin_boundary->second;
-  DepQuantity pdf_value = lower_bin_boundary->third;
-  SlopeQuantity slope = lower_bin_boundary->fourth;
+    scaled_random_number - Utility::get<1>(*lower_bin_boundary);
+  DepQuantity pdf_value = Utility::get<2>(*lower_bin_boundary);
+  SlopeQuantity slope = Utility::get<3>(*lower_bin_boundary);
 
   // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
   if( slope != QuantityTraits<SlopeQuantity>::zero() )
@@ -614,8 +618,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
+auto UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const -> IndepQuantity
 {
   return IQT::one();
 }
@@ -624,8 +627,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffBoundOfIndepVar() const
+auto UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getCutoffBoundOfIndepVar() const -> IndepQuantity
 {
   return IQT::initializeQuantity(0.999999);
 }
@@ -634,8 +636,7 @@ UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dependen
 template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
-typename UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
+auto UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const -> IndepQuantity
 {
   return IQT::initializeQuantity(-1.0);
 }
@@ -696,7 +697,7 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
                       std::make_pair( "interp", InterpolationPolicy::name() ),
                       std::make_pair( "independent values", independent_values ),
                       std::make_pair( "dependent values", dependent_values ),
-                      std::make_pair( "molier eta", moliere_eta );,
+                      std::make_pair( "moliere eta", d_moliere_eta ),
                       std::make_pair( "cutoff cs ratio", d_cutoff_cross_section_ratio ) );
 }
 
@@ -705,7 +706,7 @@ template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
 bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator==(
- const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+ const UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution == other.d_distribution &&
          d_moliere_eta == other.d_moliere_eta &&
@@ -720,7 +721,7 @@ template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
 bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::operator!=(
- const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+ const UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
 {
   return d_distribution != other.d_distribution ||
          d_moliere_eta != other.d_moliere_eta ||
@@ -786,19 +787,21 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
   // Assign the raw distribution data
   for( unsigned i = 0; i < independent_values.size(); ++i )
   {
-    d_distribution[i].first = IndepQuantity( independent_values[i] );
+    Utility::get<0>(d_distribution[i]) =
+      IndepQuantity( independent_values[i] );
 
     // Scale the dependent values by the cross section ratio
     /*! \details The pdf values are for the tabular cutoff elastic distribution
      *  and must be re-scaled for the total elastic distribution.
      */
-    d_distribution[i].third = DepQuantity( dependent_values[i]*d_cutoff_cross_section_ratio );
+    Utility::get<2>(d_distribution[i]) =
+      DepQuantity( dependent_values[i]*d_cutoff_cross_section_ratio );
   }
 
   /* Set the PDF evaluating parameter
    * ( cutoff_cs_ratio * cutoff_pdf * ( 1 - mu_c + eta )**2 )
    */
-  d_pdf_parameter = d_distribution.back().third*
+  d_pdf_parameter = Utility::get<2>(d_distribution.back())*
     ( ElasticElectronTraits::delta_mu_peak + d_moliere_eta )*( ElasticElectronTraits::delta_mu_peak + d_moliere_eta );
 
   // Create a CDF from the raw distribution data
@@ -839,9 +842,10 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_values[i] = d_distribution[i].first;
+    independent_values[i] = Utility::get<0>(d_distribution[i]);
 
-    dependent_values[i] = d_distribution[i].third/d_cutoff_cross_section_ratio;
+    dependent_values[i] =
+      Utility::get<2>(d_distribution[i])/d_cutoff_cross_section_ratio;
   }
 }
 
@@ -859,8 +863,11 @@ void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_values[i] = getRawQuantity( d_distribution[i].first );
-    dependent_values[i] = getRawQuantity( d_distribution[i].third/d_cutoff_cross_section_ratio );
+    independent_values[i] =
+      Utility::getRawQuantity( Utility::get<0>(d_distribution[i]) );
+    
+    dependent_values[i] =
+      Utility::getRawQuantity( Utility::get<2>(d_distribution[i])/d_cutoff_cross_section_ratio );
   }
 }
 
@@ -891,7 +898,7 @@ bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
-    if( d_distribution[i].third == DQT::zero() )
+    if( Utility::get<2>(d_distribution[i]) == DQT::zero() )
     {
       possible_zero = true;
 
@@ -943,6 +950,9 @@ bool UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,Dep
 }
 
 // Verify that the values are valid
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareCoupledElasticDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::verifyValidValues(
                     const std::vector<InputIndepQuantity>& independent_values,

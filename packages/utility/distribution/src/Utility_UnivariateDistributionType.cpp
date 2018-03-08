@@ -33,17 +33,20 @@ void ToStringTraits<UnivariateDistributionType>::toStream(
 {
   switch( obj )
   {
+  case COUPLED_ELASTIC_DISTRIBUTION: os << "Coupled Elastic Distribution"; return;
   case DELTA_DISTRIBUTION: os << "Delta Distribution"; return;
   case DISCRETE_DISTRIBUTION: os << "Discrete Distribution"; return;
   case EQUIPROBABLE_BIN_DISTRIBUTION: os << "Equiprobable Bin Distribution"; return;
   case EVAPORATION_DISTRIBUTION: os << "Evaporation Distribution"; return;
   case EXPONENTIAL_DISTRIBUTION: os << "Exponential Distribution"; return;
   case HISTOGRAM_DISTRIBUTION: os << "Histogram Distribution"; return;
+  case HYBRID_ELASTIC_DISTRIBUTION: os << "Hybrid Elastic Distribution"; return;
   case MAXWELL_FISSION_DISTRIBUTION: os << "Maxwell Fission Distribution"; return;
   case NORMAL_DISTRIBUTION: os << "Normal Distribution"; return;
   case POLYNOMIAL_DISTRIBUTION: os << "Polynomial Distribution"; return;
   case POWER_DISTRIBUTION: os << "Power Distribution"; return;
   case TABULAR_DISTRIBUTION: os << "Tabular Distribution"; return;
+  case TABULAR_CDF_DISTRIBUTION: os << "Tabular CDF Distribution"; return;
   case UNIFORM_DISTRIBUTION: os << "Uniform Distribution"; return;
   case WATT_DISTRIBUTION: os << "Watt Distribution"; return;
     

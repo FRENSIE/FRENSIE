@@ -77,9 +77,9 @@ public:
   virtual ~UnitAwareFullyTabularBasicBivariateDistribution()
   { /* ... */ }
 
-  using ParentType::evaluate;
-  using ParentType::evaluateSecondaryConditionalPDF;
-  using ParentType::sampleSecondaryConditional;
+  using BaseType::evaluate;
+  using BaseType::evaluateSecondaryConditionalPDF;
+  using BaseType::sampleSecondaryConditional;
 
   //! Evaluate the distribution
   virtual DepQuantity evaluate(
@@ -131,8 +131,8 @@ public:
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         SecondaryIndepQuantity& raw_sample,
-                        unsigned& primary_bin_index,
-                        unsigned& secondary_bin_index ) const;
+                        size_t& primary_bin_index,
+                        size_t& secondary_bin_index ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(

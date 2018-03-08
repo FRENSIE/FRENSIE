@@ -11,8 +11,8 @@
 
 // FRENSIE Includes
 #include "Utility_TabularUnivariateDistribution.hpp"
-#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_CosineInterpolationPolicy.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -126,7 +126,7 @@ public:
   IndepQuantity sampleAndRecordTrials( DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample and bin index from the distribution
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const override;
+  IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
   IndepQuantity sampleWithRandomNumber( const double random_number ) const override; 
@@ -143,7 +143,7 @@ public:
   IndepQuantity getUpperBoundOfIndepVar() const override;
 
   //! Return the cutoff bound of the distribution independent variable
-  IndepQuantity getCutoffBoundOfIndepVar() const override;
+  IndepQuantity getCutoffBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
   IndepQuantity getLowerBoundOfIndepVar() const override;
@@ -164,10 +164,10 @@ public:
   void toStream( std::ostream& os ) const override;
 
   //! Equality comparison operator
-  bool operator==( const UnitAwareTabularCDFDistribution& other ) const;
+  bool operator==( const UnitAwareCoupledElasticDistribution& other ) const;
 
   //! Inequality comparison operator
-  bool operator!=( const UnitAwareTabularCDFDistribution& other ) const;
+  bool operator!=( const UnitAwareCoupledElasticDistribution& other ) const;
 
 protected:
 
@@ -224,14 +224,14 @@ private:
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
-                                      unsigned& sampled_bin_index ) const;
+                                      size_t& sampled_bin_index ) const;
 
   // Return a random sample of the screened Rutherford analytical peak using the random number
   IndepQuantity sampleScreenedRutherford( double random_number ) const;
 
   // Return a random sample of the cutoff tabular distribution using the random number and record the bin index
   IndepQuantity sampleCutoff( double random_number,
-                              unsigned& sampled_bin_index ) const;
+                              size_t& sampled_bin_index ) const;
 
   // Verify that the values are valid
   template<typename InputIndepQuantity, typename InputDepQuantity>
@@ -266,7 +266,7 @@ private:
   // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = pdf slope): both the pdf and cdf are left unnormalized to
   // prevent altering the grid with log interpolation
-  typedef std::vector<std::pair<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
+  typedef std::vector<std::tuple<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
   DistributionArray d_distribution;
 
   // The normalization constant

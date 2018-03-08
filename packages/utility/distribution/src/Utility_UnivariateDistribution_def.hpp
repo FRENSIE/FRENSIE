@@ -86,6 +86,18 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIn
     LogLog::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
 }
 
+// Test if the independent variable is compatible with LogCos processing
+/*! \details It may be necessary to override this default behavior
+ * (e.g. Utility::TabularDistribution).
+ */
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIndepVarCompatibleWithProcessingType(
+                                      const LogCosIndepVarProcessingTag ) const
+{
+  return LogLogCos::isIndepVarInValidRange( this->getLowerBoundOfIndepVar() ) &&
+    LogLogCos::isIndepVarInValidRange( this->getUpperBoundOfIndepVar() );
+}
+
 // Test if the dependent variable is compatible with Lin processing
 /*! \details It may be necessary to override this default behavior
  * (e.g. Utility::TabularDistribution).
@@ -104,6 +116,17 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDe
 template<typename IndependentUnit, typename DependentUnit>
 inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
                                            const LogDepVarProcessingTag ) const
+{
+  return !this->canDepVarBeZeroInIndepBounds();
+}
+
+// Test if the dependent variable is compatible with LogCos processing
+/*! \details It may be necessary to override this default behavior
+ * (e.g. Utility::TabularDistribution).
+ */
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isDepVarCompatibleWithProcessingType(
+                                        const LogCosDepVarProcessingTag ) const
 {
   return !this->canDepVarBeZeroInIndepBounds();
 }
