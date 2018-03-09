@@ -810,30 +810,6 @@ public:
 
   //! The name of the policy
   static const std::string name();
-
-private:
-
-  //! Estimate the interpolated CDF and the corresponding lower and upper y indep values
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
-           typename XIndepType,
-           typename YIndepType,
-           typename YZIterator,
-           typename EvaluationMethod,
-           typename YBoundsFunctor,
-           typename T>
-  static double estimateCDF(
-              double& lower_cdf_est,
-              double& upper_cdf_est,
-              YIndepType& y_indep_value_0,
-              YIndepType& y_indep_value_1,
-              const T& beta,
-              const YIndepType& y_indep_value,
-              const YZIterator& lower_bin_boundary,
-              const YZIterator& upper_bin_boundary,
-              const double rel_error_tol = 1e-7,
-              const double error_tol = 1e-15,
-              unsigned max_number_of_iterations = 500u );
 };
 
 /*! \brief Policy struct for evaluting and sampling 2D tables. A unit-base
@@ -1023,32 +999,6 @@ public:
 
   //! The name of the policy
   static const std::string name();
-
-private:
-
-  //! Estimate the interpolated CDF and the corresponding lower and upper y indep values
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
-           typename XIndepType,
-           typename YIndepType,
-           typename YZIterator,
-           typename EvaluationMethod,
-           typename YBoundsFunctor,
-           typename T>
-  static double estimateCDF(
-        double& lower_cdf_est,
-        double& upper_cdf_est,
-        YIndepType& y_indep_value_0,
-        YIndepType& y_indep_value_1,
-        const T& beta,
-        const typename QuantityTraits<YIndepType>::RawType& grid_length_0,
-        const typename QuantityTraits<YIndepType>::RawType& grid_length_1,
-        const typename QuantityTraits<YIndepType>::RawType& eta,
-        const YZIterator& lower_bin_boundary,
-        const YZIterator& upper_bin_boundary,
-        const double rel_error_tol = 1e-7,
-        const double error_tol = 1e-15,
-        unsigned max_number_of_iterations = 500u );
 };
 
 } // end Utility namespace
