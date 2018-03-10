@@ -1130,20 +1130,65 @@ namespace Details{
 /*! The helper struct used to calculate the secondary independent value
  * 
  * Specialization of this class for different OneDDistribution classes is
- * required.
+ * required. Using a OneDDistribution class that does not have a specialization
+ * (and is therefore assumed to be unsupported) will result in the following
+ * compile time error message: "...::thisInterpPolicyIsNotSupported()".
  */
 template<typename BaseOneDDistributionType>
-struct CorrelatedEvaluatePDFSecondaryIndepHelper;
+struct CorrelatedEvaluatePDFSecondaryIndepHelper
+{
+  //! Typedef for this type
+  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType> ThisType;
 
-/*! \brief Specialization of the 
+  //! Calculate the secondary independent values
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename T>
+  static void calculateSecondaryIndepValues( const EvaluationMethod& evaluate,
+                                             const YIndepType& y_indep_value,
+                                             const YZIterator& lower_bin_boundary,
+                                             const YZIterator& upper_bin_boundary,
+                                             const T& beta,
+                                             const double fuzzy_boundary_tol,
+                                             const double rel_error_tol,
+                                             const double error_tol,
+                                             const unsigned max_number_of_iterations,
+                                             YIndepType& lower_y_value,
+                                             YIndepType& upper_y_value )
+  { BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
+
+  // Estimate the interpolated CDF and the corresponding lower and upper y
+  // indep values
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename T>
+  static double estimateCDF(
+              double& lower_cdf_est,
+              double& upper_cdf_est,
+              YIndepType& y_indep_value_0,
+              YIndepType& y_indep_value_1,
+              const T& beta,
+              const YIndepType& y_indep_value,
+              const YZIterator& lower_bin_boundary,
+              const YZIterator& upper_bin_boundary,
+              const double rel_error_tol = 1e-7,
+              const double error_tol = 1e-15,
+              unsigned max_number_of_iterations = 500u )
+  { BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
+};
+
+/*! \brief Partial specialization of the 
  * Utility::Details::CorrelatedEvaluatePDFSecondaryIndepHelper class for
- * Utility::TabularOneDDistribution
+ * Utility::UnitAwareTabularOneDDistribution
  */
-template<>
-struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>
+template<typename _T, typename _U>
+struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >
 {
   //! Typdef for this type
-  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution> ThisType;
+  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> > ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -1168,8 +1213,6 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistributio
   template<typename TwoDInterpPolicy,
            typename YIndepType,
            typename YZIterator,
-           typename EvaluationMethod,
-           typename YBoundsFunctor,
            typename T>
   static double estimateCDF(
               double& lower_cdf_est,
@@ -1186,12 +1229,13 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistributio
 };
 
 // Calculate the secondary independent values
+template<typename _T, typename _U>
 template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename EvaluationMethod,
          typename T>  
-void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>::calculateSecondaryIndepValues(
+void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::calculateSecondaryIndepValues(
                                        const EvaluationMethod& evaluate,
                                        const YIndepType& y_indep_value,
                                        const YZIterator& lower_bin_boundary,
@@ -1209,9 +1253,9 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>
   {
     // Evaluate the cdf at the upper and lower bin boundaries
     double bin_eval_0 =
-      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
     double bin_eval_1 =
-      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
     
     if ( bin_eval_0 <= bin_eval_1 )
     {
@@ -1225,7 +1269,7 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>
     }
   }
   
-  double est_cdf = ThisType::estimateCDF<TwoDInterpPolicy,BaseOneDDistributionType,XIndepType,YIndepType,YZIterator,EvaluationMethod,YBoundsFunctor>(
+  double est_cdf = ThisType::estimateCDF<TwoDInterpPolicy>(
                                                     lower_cdf_bound,
                                                     upper_cdf_bound,
                                                     lower_y_value,
@@ -1242,12 +1286,12 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>
   
 // Estimate the interpolated CDF and the corresponding lower and upper y indep
 // values
+template<typename _T, typename _U>
 template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
-         typename YBoundsFunctor,
          typename T>
-double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>::estimateCDF(
+double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::estimateCDF(
                                           double& lower_cdf_est,
                                           double& upper_cdf_est,
                                           YIndepType& y_indep_value_0,
@@ -1284,9 +1328,9 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistributio
     
     // Get the sampled values at the upper and lower bin for the estimated_cdf
     y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     
     // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
     YIndepType est_y_indep_value =
@@ -1375,7 +1419,7 @@ struct CorrelatedEvaluatePDFCosHelperLinBase
                                      const T beta )
   {
     return lower_eval*upper_eval/
-      Utility::LinLin::interpolate( beta, upper_eval, lower_evl );
+      Utility::LinLin::interpolate( beta, upper_eval, lower_eval );
   }
 };
 
@@ -1405,12 +1449,12 @@ struct CorrelatedEvaluatePDFCosHelperLogCosBase
      */
     if( lower_y_value == upper_y_value && lower_y_value == y_indep_value )
     {
-      return CorrelatedEvaluatePDFCosHelperLinBase::evaluateImpl( y_indep_value,
-                                                               lower_y_value,
-                                                               lower_eval,
-                                                               upper_y_value,
-                                                               upper_eval,
-                                                               bet );
+      return CorrelatedEvaluatePDFCosHelperLinBase::evaluate( y_indep_value,
+                                                              lower_y_value,
+                                                              lower_eval,
+                                                              upper_y_value,
+                                                              upper_eval,
+                                                              beta );
     }
     else
     {
@@ -1621,7 +1665,6 @@ struct CorrelatedEvaluatePDFHelperLogBase
     return (lower_product*upper_product)/
       (Utility::LinLin::interpolate( beta, upper_product, lower_product )*
        y_indep_value);
-    }
   }
 };
 
@@ -1652,36 +1695,42 @@ struct CorrelatedEvaluatePDFHelper
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
  * Utility::LinLin
  */
+template<>
 struct CorrelatedEvaluatePDFHelper<Utility::LinLin> : public CorrelatedEvaluatePDFHelperLinBase
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
  * Utility::LinLog
  */
+template<>
 struct CorrelatedEvaluatePDFHelper<Utility::LinLog> : public CorrelatedEvaluatePDFHelperLinBase
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
  * Utility::LogLog
  */
+template<>
 struct CorrelatedEvaluatePDFHelper<Utility::LogLog> : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
  * Utility::LogCosLog
  */
+template<>
 struct CorrelatedEvaluatePDFHelper<Utility::LogCosLog> : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
  * Utility::LogLin
  */
+template<>
 struct CorrelatedEvaluatePDFHelper<Utility::LogLin> : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFHelper for
  * Utility::LogCosLin
  */
+template<>
 struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin> : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
   
@@ -2342,17 +2391,72 @@ namespace Details{
  * required.
  */
 template<typename BaseOneDDistributionType>
-struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper;
-
-/*! \brief Specialization of the 
- * Utility::Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper class
- * for Utility::TabularOneDDistribution
- */
-template<>
-struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>
+struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper
 {
   //! Typdef for this type
-  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution> ThisType;
+  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType> ThisType;
+
+  //! Calculate the secondary independent values
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename EvaluationMethod,
+           typename T>
+  static void calculateSecondaryIndepValues(
+             const EvaluationMethod& evaluate,
+             const YIndepType& min_y_indep_value,
+             const YIndepType& max_y_indep_value,
+             const YIndepType& y_indep_value,
+             const T& beta,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_0,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_1,
+             const typename QuantityTraits<YIndepType>::RawType& intermediate_grid_length,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             const double fuzzy_boundary_tol,
+             const double rel_error_tol,
+             const double error_tol,
+             const unsigned max_number_of_iterations,
+             YIndepType& lower_y_value,
+             YIndepType& upper_y_value )
+  {
+    BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
+  }
+
+  // Estimate the interpolated CDF and the corresponding lower and upper y
+  // indep values
+  template<typename TwoDInterpPolicy,
+           typename YIndepType,
+           typename YZIterator,
+           typename T>
+  static double estimateCDF(
+             double& lower_cdf_est,
+             double& upper_cdf_est,
+             YIndepType& y_indep_value_0,
+             YIndepType& y_indep_value_1,
+             const T& beta,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_0,
+             const typename QuantityTraits<YIndepType>::RawType& grid_length_1,
+             const typename QuantityTraits<YIndepType>::RawType& eta,
+             const YZIterator& lower_bin_boundary,
+             const YZIterator& upper_bin_boundary,
+             const double rel_error_tol = 1e-7,
+             const double error_tol = 1e-15,
+             unsigned max_number_of_iterations = 500u )
+  {
+    BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithUnitBaseCorrelatedEvaluation();
+  }
+};
+
+/*! \brief Partial specialization of the 
+ * Utility::Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper class
+ * for Utility::UnitAwareTabularOneDDistribution
+ */
+template<typename _T, typename _U>
+struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >
+{
+  //! Typdef for this type
+  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> > ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -2383,7 +2487,6 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDis
   template<typename TwoDInterpPolicy,
            typename YIndepType,
            typename YZIterator,
-           typename YBoundsFunctor,
            typename T>
   static double estimateCDF(
              double& lower_cdf_est,
@@ -2402,12 +2505,13 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDis
 };
 
 // Calculate the secondary independent values
+template<typename _T, typename _U>
 template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename EvaluationMethod,
          typename T>
-void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>::calculateSecondaryIndepValues(
+void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::calculateSecondaryIndepValues(
              const EvaluationMethod& evaluate,
              const YIndepType& min_y_indep_value,
              const YIndepType& max_y_indep_value,
@@ -2459,9 +2563,9 @@ void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistr
 
     // Evaluate the cdf at the upper and lower bin boundaries
     double bin_eval_0 =
-      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value_0 );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value_0 );
     double bin_eval_1 =
-      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::evaluateCDF)( y_indep_value_1 );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value_1 );
 
     if ( bin_eval_0 <= bin_eval_1 )
     {
@@ -2475,31 +2579,29 @@ void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistr
     }
   }
 
-  YIndepType lower_y_value, upper_y_value;
-  
-  return ThisType::estimateCDF<TwoDInterpPolicy>( lower_cdf_bound,
-                                                  upper_cdf_bound,
-                                                  lower_y_value,
-                                                  upper_y_value,
-                                                  beta,
-                                                  grid_length_0,
-                                                  grid_length_1,
-                                                  eta,
-                                                  lower_bin_boundary,
-                                                  upper_bin_boundary,
-                                                  rel_error_tol,
-                                                  error_tol,
-                                                  max_number_of_iterations );
+  ThisType::estimateCDF<TwoDInterpPolicy>( lower_cdf_bound,
+                                           upper_cdf_bound,
+                                           lower_y_value,
+                                           upper_y_value,
+                                           beta,
+                                           grid_length_0,
+                                           grid_length_1,
+                                           eta,
+                                           lower_bin_boundary,
+                                           upper_bin_boundary,
+                                           rel_error_tol,
+                                           error_tol,
+                                           max_number_of_iterations );
 }
 
 // Estimate the interpolated CDF and the corresponding lower and upper y
 // indep values
+template<typename _T, typename _U>
 template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
-         typename YBoundsFunctor,
          typename T>
-double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>::estimateCDF(
+double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::estimateCDF(
              double& lower_cdf_est,
              double& upper_cdf_est,
              YIndepType& y_indep_value_0,
@@ -2538,9 +2640,9 @@ double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDis
 
     // Get the sampled values at the upper and lower bin for the estimated_cdf
     y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&BaseOneDDistributionType::sampleWithRandomNumber)( estimated_cdf );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
 
     // Calculate the unit base variable on the intermediate grid corresponding to the
     // raw samples on the lower and upper boundaries
@@ -2659,7 +2761,7 @@ struct UnitBaseCorrelatedEvaluatePDFHelperLinBase
  * f(x,y) = 1/(eta*L)*( eta_0*L_0*f_0( y_0 ) * eta_1*L_1*f_1( y_1 ) )/
  * ( eta_1*L_1*f_1(y_1) + ( (eta_0*L_0*f_0(y_0)) - (eta_1*L_1*f_1(y_1)) )*beta )
  */
-struct CorrelatedEvaluatePDFHelperLogBase
+struct UnitBaseCorrelatedEvaluatePDFHelperLogBase
 {
   template<typename YIndepType,
            typename ReturnType,
@@ -2698,10 +2800,10 @@ struct CorrelatedEvaluatePDFHelperLogBase
     }
     
     auto lower_product =
-      lower_eval*std::log( lower_y_value/lower_y_min_indep_value );
+      lower_eval*std::log( lower_y_indep_value/lower_y_min_indep_value );
     
     auto upper_product =
-      upper_eval*std::log( upper_y_value/upper_y_min_indep_value );
+      upper_eval*std::log( upper_y_indep_value/upper_y_min_indep_value );
 
     return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/std::log(y_indep_value/y_min_indep_value);
   }
@@ -2741,36 +2843,42 @@ struct UnitBaseCorrelatedEvaluatePDFHelper
 /*! \brief Specialization of 
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LinLin
  */
+template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LinLin> : public UnitBaseCorrelatedEvaluatePDFHelperLinBase
 { /* ... */ };
 
 /*! \brief Specialization of 
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LinLog
  */
+template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LinLog> : public UnitBaseCorrelatedEvaluatePDFHelperLinBase
 { /* ... */ };
 
 /*! \brief Specialization of 
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogLog
  */
+template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLog> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of 
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLog
  */
+template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLog> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of 
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogLin
  */
+template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLin> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
 /*! \brief Specialization of 
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLin
  */
+template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLin> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
@@ -2868,14 +2976,14 @@ ReturnType UnitBaseCorrelated::evaluatePDF(
     }
     else // Between min and max y values
     {
-      UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
+      Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template calculateSecondaryIndepValues<TwoDInterpPolicy>(
                                                       evaluate,
                                                       min_y_indep_value,
                                                       max_y_indep_value,
                                                       y_indep_value,
                                                       beta,
                                                       grid_length_0,
-                                                      grid_longth_1,
+                                                      grid_length_1,
                                                       intermediate_grid_length,
                                                       lower_bin_boundary,
                                                       upper_bin_boundary,
@@ -3089,7 +3197,7 @@ double UnitBaseCorrelated::evaluateCDF(
       }
 
       YIndepType lower_y_value, upper_y_value;
-      return UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::TabularOneDDistribution>::template estimateCDF<TwoDInterpPolicy>(
+      return Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<BaseOneDDistributionType>::template estimateCDF<TwoDInterpPolicy>(
                                                     lower_cdf_bound,
                                                     upper_cdf_bound,
                                                     lower_y_value,
