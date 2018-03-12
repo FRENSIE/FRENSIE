@@ -276,7 +276,7 @@ YIndepType Direct<_TwoDInterpPolicy>::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Direct::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Direct<TwoDInterpPolicy>::sampleDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -311,7 +311,7 @@ YIndepType Direct<_TwoDInterpPolicy>::sampleCos(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Direct::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Direct<TwoDInterpPolicy>::sampleCosDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -483,7 +483,7 @@ YZIterator Direct<_TwoDInterpPolicy>::sampleBinBoundary(
 template<typename _TwoDInterpPolicy>
 inline const std::string Direct<_TwoDInterpPolicy>::name()
 {
-  return "Direct";
+  return TwoDInterpPolicy::name() + " Direct";
 }
 
 // Calculate the Y independent lower bound between bin boundaries
@@ -811,7 +811,7 @@ YIndepType UnitBase<_TwoDInterpPolicy>::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return UnitBase::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return UnitBase<TwoDInterpPolicy>::sampleDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -848,7 +848,7 @@ YIndepType UnitBase<_TwoDInterpPolicy>::sampleCos(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return UnitBase::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return UnitBase<TwoDInterpPolicy>::sampleCosDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -1096,7 +1096,7 @@ YZIterator UnitBase<_TwoDInterpPolicy>::sampleBinBoundary(
 template<typename _TwoDInterpPolicy>
 inline const std::string UnitBase<_TwoDInterpPolicy>::name()
 {
-  return "Unit Base";
+  return TwoDInterpPolicy::name() + " Unit-Base";
 }
 
 // Calculate the Y independent lower bound between bin boundaries
@@ -2090,7 +2090,7 @@ YIndepType Correlated<_TwoDInterpPolicy>::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Correlated::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated<TwoDInterpPolicy>::sampleDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -2120,7 +2120,7 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleCos(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Correlated::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated<TwoDInterpPolicy>::sampleCosDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -2306,7 +2306,7 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleCosDetailed(
 template<typename _TwoDInterpPolicy>
 inline const std::string Correlated<_TwoDInterpPolicy>::name()
 {
-  return "Correlated";
+  return TwoDInterpPolicy::name() + " Correlated";
 }
 
 // Calculate the Y independent lower bound between bin boundaries
@@ -3509,7 +3509,7 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleCosDetailed(
 template<typename _TwoDInterpPolicy>
 inline const std::string UnitBaseCorrelated<_TwoDInterpPolicy>::name()
 {
-  return "Unit-base Correlated";
+  return TwoDInterpPolicy::name() + " Unit-base Correlated";
 }
 
 } // end Utility namespace
