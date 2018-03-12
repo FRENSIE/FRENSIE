@@ -17,7 +17,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 
 namespace Utility{
 
@@ -1135,8 +1135,8 @@ namespace Details{
 
 /*! The helper struct used to calculate the secondary independent value
  *
- * Specialization of this class for different OneDDistribution classes is
- * required. Using a OneDDistribution class that does not have a specialization
+ * Specialization of this class for different UnivariateDistribution classes is
+ * required. Using a UnivariateDistribution class that does not have a specialization
  * (and is therefore assumed to be unsupported) will result in the following
  * compile time error message: "...::thisInterpPolicyIsNotSupported()".
  */
@@ -1188,13 +1188,13 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper
 
 /*! \brief Partial specialization of the
  * Utility::Details::CorrelatedEvaluatePDFSecondaryIndepHelper class for
- * Utility::UnitAwareTabularOneDDistribution
+ * Utility::UnitAwareTabularUnivariateDistribution
  */
 template<typename _T, typename _U>
-struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >
+struct CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >
 {
   //! Typdef for this type
-  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> > ThisType;
+  typedef CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> > ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -1241,7 +1241,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename T>
-void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::calculateSecondaryIndepValues(
+void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::calculateSecondaryIndepValues(
                                        const EvaluationMethod& evaluate,
                                        const YIndepType& y_indep_value,
                                        const YZIterator& lower_bin_boundary,
@@ -1259,9 +1259,9 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDist
   {
     // Evaluate the cdf at the upper and lower bin boundaries
     double bin_eval_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value );
     double bin_eval_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value );
 
     if ( bin_eval_0 <= bin_eval_1 )
     {
@@ -1297,7 +1297,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename T>
-double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::estimateCDF(
+double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::estimateCDF(
                                           double& lower_cdf_est,
                                           double& upper_cdf_est,
                                           YIndepType& y_indep_value_0,
@@ -1334,9 +1334,9 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDi
 
     // Get the sampled values at the upper and lower bin for the estimated_cdf
     y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
 
     // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
     YIndepType est_y_indep_value =
@@ -2396,7 +2396,7 @@ namespace Details{
 
 /*! The helper struct used to calculate the secondary independent value
  *
- * Specialization of this class for different OneDDistribution classes is
+ * Specialization of this class for different UnivariateDistribution classes is
  * required.
  */
 template<typename BaseUnivariateDistributionType>
@@ -2459,13 +2459,13 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper
 
 /*! \brief Partial specialization of the
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper class
- * for Utility::UnitAwareTabularOneDDistribution
+ * for Utility::UnitAwareTabularUnivariateDistribution
  */
 template<typename _T, typename _U>
-struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >
+struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >
 {
   //! Typdef for this type
-  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> > ThisType;
+  typedef UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> > ThisType;
 
   //! Calculate the secondary independent values
   template<typename TwoDInterpPolicy,
@@ -2520,7 +2520,7 @@ template<typename TwoDInterpPolicy,
          typename YZIterator,
          typename EvaluationMethod,
          typename T>
-void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::calculateSecondaryIndepValues(
+void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::calculateSecondaryIndepValues(
              const EvaluationMethod& evaluate,
              const YIndepType& min_y_indep_value,
              const YIndepType& max_y_indep_value,
@@ -2572,9 +2572,9 @@ void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabular
 
     // Evaluate the cdf at the upper and lower bin boundaries
     double bin_eval_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value_0 );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value_0 );
     double bin_eval_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value_1 );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::evaluateCDF)( y_indep_value_1 );
 
     if ( bin_eval_0 <= bin_eval_1 )
     {
@@ -2610,7 +2610,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename T>
-double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::estimateCDF(
+double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularUnivariateDistribution<_T,_U> >::estimateCDF(
              double& lower_cdf_est,
              double& upper_cdf_est,
              YIndepType& y_indep_value_0,
@@ -2649,9 +2649,9 @@ double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabul
 
     // Get the sampled values at the upper and lower bin for the estimated_cdf
     y_indep_value_0 =
-      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     y_indep_value_1 =
-      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
+      ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularUnivariateDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
 
     // Calculate the unit base variable on the intermediate grid corresponding to the
     // raw samples on the lower and upper boundaries
@@ -3082,8 +3082,8 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDFCos(
  *  unit-base correlated sampling to a relative error tolerance in order to get
  *  the proper interpolation parameters.
  */
-template<typename TwoDInterpPolicy,
-         typename BaseUnivariateDistributionType,
+template<typename _TwoDInterpPolicy>
+template<typename BaseUnivariateDistributionType,
          typename XIndepType,
          typename YIndepType,
          typename YZIterator,

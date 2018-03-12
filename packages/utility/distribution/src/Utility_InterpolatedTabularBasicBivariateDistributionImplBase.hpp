@@ -10,8 +10,7 @@
 #define UTILITY_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_HPP
 
 // FRENSIE Includes
-#include "Utility_TwoDInterpolationPolicy.hpp"
-#include "Utility_TwoDSamplingPolicy.hpp"
+#include "Utility_TwoDGridPolicy.hpp"
 #include "Utility_TabularBasicBivariateDistribution.hpp"
 
 namespace Utility{

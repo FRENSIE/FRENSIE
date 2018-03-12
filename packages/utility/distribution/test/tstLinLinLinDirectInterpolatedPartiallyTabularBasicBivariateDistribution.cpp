@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLinLinLinDirectInterpolatedPartiallyTabularTwoDDistribution.cpp
+//! \file   tstLinLinLinDirectInterpolatedPartiallyTabularBasicBivariateDistribution.cpp
 //! \author Alex Robinson
 //! \brief  The interpolated partially tabular two-dimensional dist. unit tests
 //!         (LinLinLin Direct interpolation)
@@ -16,19 +16,17 @@
 #include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DynamicOutputFormatter.hpp"
-#include "Utility_InterpolatedPartiallyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedPartiallyTabularBasicBivariateDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_ElectronVoltUnit.hpp"
 #include "Utility_BarnUnit.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
 
 using boost::units::quantity;
 using Utility::Units::MegaElectronVolt;
@@ -41,124 +39,124 @@ namespace cgs = boost::units::cgs;
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<Utility::UnitAwarePartiallyTabularTwoDDistribution<MegaElectronVolt,cgs::length,Barn> >
+std::shared_ptr<Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> >
   unit_aware_distribution;
 
-std::shared_ptr<Utility::PartiallyTabularTwoDDistribution> distribution;
+std::shared_ptr<Utility::PartiallyTabularBasicBivariateDistribution> distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution is tabular in the primary dimension
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    isPrimaryDimensionTabular )
 {
-  TEST_ASSERT( distribution->isPrimaryDimensionTabular() );
+  FRENSIE_CHECK( distribution->isPrimaryDimensionTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution is tabular in the primary dimension
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    isPrimaryDimensionTabular )
 {
-  TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionTabular() );
+  FRENSIE_CHECK( unit_aware_distribution->isPrimaryDimensionTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution is continuous in the primary dimension
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    isPrimaryDimensionContinuous )
 {
-  TEST_ASSERT( distribution->isPrimaryDimensionContinuous() );
+  FRENSIE_CHECK( distribution->isPrimaryDimensionContinuous() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution is continuous in the primary dim.
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    isPrimaryDimensionContinuous )
 {
-  TEST_ASSERT( unit_aware_distribution->isPrimaryDimensionTabular() );
+  FRENSIE_CHECK( unit_aware_distribution->isPrimaryDimensionTabular() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution's primary dimension lower bound can be returned
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    getLowerBoundOfPrimaryIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfPrimaryIndepVar(), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfPrimaryIndepVar(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution's primary dimension lower bound can
 // be returned
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    getLowerBoundOfPrimaryIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfPrimaryIndepVar(), 0.0*MeV );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfPrimaryIndepVar(), 0.0*MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution's primary dimension upper bound can be returned
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    getUpperBoundOfPrimaryIndepVar )
 {
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfPrimaryIndepVar(), 2.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfPrimaryIndepVar(), 2.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution's primary dimension upper bound can
 // be returned
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    getUpperBoundOfPrimaryIndepVar )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfPrimaryIndepVar(), 2.0*MeV );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfPrimaryIndepVar(), 2.0*MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the conditional distribution can be returned
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
                        0.0 );
 
   // Before the first bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
                        0.0 );
 
   distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 0.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 0.0 ),
                        0.0 );
 
   // In the second bin
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 0.5 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 0.5 ),
                        0.0 );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 1.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 1.0 ),
                        2.5 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 1.5 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 1.5 ),
                        0.0 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 2.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 2.0 ),
                        0.0 );
 
   // Beyond the third bin - no extension
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 3.0 ),
                        0.0 );
 
   // Beyond the third bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->getLowerBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 3.0 ),
                        0.0 );
 
   distribution->limitToPrimaryIndepLimits();
@@ -167,49 +165,49 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the unit-aware conditional distribution can be
 // returned
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    getLowerBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( -1.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Before the first bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( -1.0*MeV ),
                        0.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.0*MeV ),
                        0.0*cgs::centimeter );
 
   // In the second bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.5*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.5*MeV ),
                        0.0*cgs::centimeter );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.0*MeV ),
                        2.5*cgs::centimeter );
 
   // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.5*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.5*MeV ),
                        0.0*cgs::centimeter );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 2.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 2.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Beyond the third bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 3.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Beyond the third bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 3.0*MeV ),
                        0.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
@@ -217,49 +215,49 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the conditional distribution can be returned
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar(-1.0),
                        0.0 );
 
   // Before the first bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar(-1.0),
                        10.0 );
 
   distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 0.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 0.0 ),
                        10.0 );
 
   // In the second bin
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 0.5 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 0.5 ),
                        10.0 );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 1.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 1.0 ),
                        7.5 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 1.5 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 1.5 ),
                        10.0 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 2.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 2.0 ),
                        10.0 );
 
   // Beyond the third bin - no extension
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 3.0 ),
                        0.0 );
 
   // Beyond the third bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->getUpperBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 3.0 ),
                        10.0 );
 
   distribution->limitToPrimaryIndepLimits();
@@ -268,49 +266,49 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the unit-aware conditional distribution can be
 // returned
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    getUpperBoundOfConditionalIndepVar )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( -1.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Before the first bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( -1.0*MeV ),
                        10.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.0*MeV ),
                        10.0*cgs::centimeter );
 
   // In the second bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.5*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.5*MeV ),
                        10.0*cgs::centimeter );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.0*MeV ),
                        7.5*cgs::centimeter );
 
   // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.5*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.5*MeV ),
                        10.0*cgs::centimeter );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 2.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 2.0*MeV ),
                        10.0*cgs::centimeter );
 
   // Beyond the third bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 3.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Beyond the third bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 3.0*MeV ),
                        10.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
@@ -318,17 +316,17 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the bounds of two distributions can be compared
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    hasSamePrimaryBounds )
 {
   // Self test
-  TEST_ASSERT( distribution->hasSamePrimaryBounds( *distribution ) );
+  FRENSIE_CHECK( distribution->hasSamePrimaryBounds( *distribution ) );
 
   // Create a test distribution with same lower bound, different upper bound
-  std::shared_ptr<Utility::PartiallyTabularTwoDDistribution> test_dist;
+  std::shared_ptr<Utility::PartiallyTabularBasicBivariateDistribution> test_dist;
 
   {
-    Utility::PartiallyTabularTwoDDistribution::DistributionType
+    Utility::PartiallyTabularBasicBivariateDistribution::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
@@ -339,15 +337,15 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
     distribution_data[1].first = 1.0;
     distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
-    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
-  TEST_ASSERT( !distribution->hasSamePrimaryBounds( *test_dist ) );
+  FRENSIE_CHECK( !distribution->hasSamePrimaryBounds( *test_dist ) );
 
   // Create a test distribution with different lower bound, same upper bound
   {
-    Utility::PartiallyTabularTwoDDistribution::DistributionType
+    Utility::PartiallyTabularBasicBivariateDistribution::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
@@ -358,15 +356,15 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
-    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
-  TEST_ASSERT( !distribution->hasSamePrimaryBounds( *test_dist ) );
+  FRENSIE_CHECK( !distribution->hasSamePrimaryBounds( *test_dist ) );
 
   // Create a test distribution with different bounds
   {
-    Utility::PartiallyTabularTwoDDistribution::DistributionType
+    Utility::PartiallyTabularBasicBivariateDistribution::DistributionType
       distribution_data( 2 );
 
     // Create the secondary distribution in the first bin
@@ -377,379 +375,379 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
     distribution_data[1].first = 1.5;
     distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
-    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
-  TEST_ASSERT( !distribution->hasSamePrimaryBounds( *test_dist ) );
+  FRENSIE_CHECK( !distribution->hasSamePrimaryBounds( *test_dist ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution, evaluate )
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution, evaluate )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 5.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 10.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 0.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 5.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 10.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 11.0 ), 0.0 );
 
   // Before the first bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 5.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 10.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 11.0 ), 0.0 );
 
   distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 10.0 ), exp( -10.0 ) );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0, 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0, 10.0 ), exp( -10.0 ) );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0, 11.0 ), 0.0 );
 
   // In the second bin
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluate( 0.5, 1.0 ),
                           1.83939720585721167e-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 2.5 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluate( 0.5, 2.5 ),
                           5.410424993119490E-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 5.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluate( 0.5, 5.0 ),
                           5.033689734995430E-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 7.5 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluate( 0.5, 7.5 ),
                           5.002765421850740E-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.5, 9.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluate( 0.5, 9.0 ),
                           6.170490204333980E-05,
                           1e-15 );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 2.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 2.5 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 5.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 7.5 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0, 8.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0, 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0, 2.5 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0, 7.5 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.0, 8.0 ), 0.0 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 1.0 ), 0.05 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 2.5 ), 0.55 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 5.0 ), 0.55 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 7.5 ), 0.55 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.5, 9.0 ), 0.05 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.5, 1.0 ), 0.05 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.5, 2.5 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.5, 5.0 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.5, 7.5 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 1.5, 9.0 ), 0.05 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 5.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 10.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 2.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 2.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 2.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 2.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 2.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 2.0, 11.0 ), 0.0 );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 5.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 10.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 0.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 5.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 10.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 11.0 ), 0.0 );
 
   // After the third bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 5.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 10.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 3.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 11.0 ), 0.0 );
 
   distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware distribution can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    evaluate )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   // Before the first bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 10.0*cgs::centimeter ), exp( -10.0 )*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*MeV, 10.0*cgs::centimeter ), exp( -10.0 )*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   // In the second bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 1.0*cgs::centimeter ),
                           1.83939720585721167e-01*barns,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 2.5*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 2.5*cgs::centimeter ),
                           5.410424993119490E-01*barns,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
                           5.033689734995430E-01*barns,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 7.5*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 7.5*cgs::centimeter ),
                           5.002765421850740E-01*barns,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 9.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 0.5*MeV, 9.0*cgs::centimeter ),
                           6.170490204333980E-05*barns,
                           1e-15 );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 1.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
 
   // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.05*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 2.5*cgs::centimeter ), 0.55*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 5.0*cgs::centimeter ), 0.55*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 7.5*cgs::centimeter ), 0.55*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.05*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.05*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.5*MeV, 2.5*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.5*MeV, 5.0*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.5*MeV, 7.5*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.05*barn );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   // After the third bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    evaluateSecondaryConditionalPDF )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0 ), 0.0 );
 
   // Before the first bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 11.0 ), 0.0 );
 
   distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 0.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.0, 0.0 ),
                           1.0000454019910097,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.0, 10.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.0, 10.0 ),
                           4.540199100968777e-05,
                           1e-15 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 0.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 0.0, 11.0 ), 0.0 );
 
   // In the second bin
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 1.0 ),
                           1.83948071815261516e-01,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 2.5 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 2.5 ),
                           1.410443627231340E-01,
                           1e-12 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 5.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 5.0 ),
                           1.033691264576470E-01,
                           1e-12 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 7.5 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 7.5 ),
                           1.002765547406400E-01,
                           1e-12 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 9.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 0.5, 9.0 ),
                           6.17077035687476114e-05,
                           1e-15 );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 2.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 2.5 ), 0.2 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 5.0 ), 0.2 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 7.5 ), 0.2 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.0, 8.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 1.0, 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 1.0, 2.5 ), 0.2 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 1.0, 5.0 ), 0.2 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 1.0, 7.5 ), 0.2 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 1.0, 8.0 ), 0.0 );
 
   // In the third bin
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0 ), 0.05 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 2.5 ),
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 1.5, 1.0 ), 0.05 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 2.5 ),
                           0.15,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 5.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 5.0 ),
                           0.15,
                           1e-15 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 7.5 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( distribution->evaluateSecondaryConditionalPDF( 1.5, 7.5 ),
                           0.15,
                           1e-15 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 1.5, 9.0 ), 0.05 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 1.5, 9.0 ), 0.05 );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 5.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 10.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 2.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 2.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 2.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 2.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 2.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 2.0, 11.0 ), 0.0 );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0 ), 0.0 );
 
   // After the third bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0 ), 0.1 );
-  TEST_EQUALITY_CONST( distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 11.0 ), 0.0 );
 
   distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the unit-aware secondary conditional PDF can be evaluated
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    evaluateSecondaryConditionalPDF )
 {
   // Before the first bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   // Before the first bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 5.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 10.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::centimeter ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 0.0*cgs::centimeter ),
                           1.0000454019910097/cgs::centimeter,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 10.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 10.0*cgs::centimeter ),
                           4.540199100968777e-05/cgs::centimeter,
                           1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   // In the second bin
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 1.0*cgs::centimeter ),
                           1.83948071815261516e-01/cgs::centimeter,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 2.5*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 2.5*cgs::centimeter ),
                           1.410443627231340E-01/cgs::centimeter,
                           1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 5.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 5.0*cgs::centimeter ),
                           1.033691264576470E-01/cgs::centimeter,
                           1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 7.5*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 7.5*cgs::centimeter ),
                           1.002765547406400E-01/cgs::centimeter,
                           1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 9.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 0.5*MeV, 9.0*cgs::centimeter ),
                           6.17077035687476114e-05/cgs::centimeter,
                           1e-15 );
 
   // On the third bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.5*cgs::centimeter ), 0.2/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 5.0*cgs::centimeter ), 0.2/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 7.5*cgs::centimeter ), 0.2/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 8.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 2.5*cgs::centimeter ), 0.2/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 5.0*cgs::centimeter ), 0.2/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 7.5*cgs::centimeter ), 0.2/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.0*MeV, 8.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   // In the third bin
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.05/cgs::centimeter );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 2.5*cgs::centimeter ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.05/cgs::centimeter );
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 2.5*cgs::centimeter ),
                           0.15/cgs::centimeter,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 5.0*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 5.0*cgs::centimeter ),
                           0.15/cgs::centimeter,
                           1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 7.5*cgs::centimeter ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 7.5*cgs::centimeter ),
                           0.15/cgs::centimeter,
                           1e-15 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 9.0*cgs::centimeter ), 0.05/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 1.5*MeV, 9.0*cgs::centimeter ), 0.05/cgs::centimeter );
 
   // On the upper bin boundary
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 5.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 10.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 5.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 10.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 2.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   // After the third bin - no extension
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   // After the third bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter ), 0.1/cgs::centimeter );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 5.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 10.0*cgs::centimeter ), 0.1/cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 11.0*cgs::centimeter ), 0.0/cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 }
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    sampleSecondaryConditional )
 {
   // Before the first bin - no extension
@@ -768,15 +766,15 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   double sample = distribution->sampleSecondaryConditional( -1.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( -1.0 );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( -1.0 );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   distribution->limitToPrimaryIndepLimits();
 
@@ -792,15 +790,15 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditional( 0.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.0 );
 
-  TEST_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
 
   sample = distribution->sampleSecondaryConditional( 0.0 );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
 
   // In the second bin
   fake_stream.resize( 12 );
@@ -821,28 +819,28 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = distribution->sampleSecondaryConditional( 0.5 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
 
   // Samples from upper boundary of second bin
   sample = distribution->sampleSecondaryConditional( 0.5 );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
+  FRENSIE_CHECK_EQUAL( sample, 2.5 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // On the third bin
   fake_stream.resize( 6 );
@@ -856,15 +854,15 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditional( 1.0 );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
+  FRENSIE_CHECK_EQUAL( sample, 2.5 );
 
   sample = distribution->sampleSecondaryConditional( 1.0 );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 1.0 );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // In the third bin
   fake_stream.resize( 12 );
@@ -885,28 +883,28 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = distribution->sampleSecondaryConditional( 1.5 );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
+  FRENSIE_CHECK_EQUAL( sample, 2.5 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = distribution->sampleSecondaryConditional( 1.5 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // On the upper bin boundary
   fake_stream.resize( 6 );
@@ -920,15 +918,15 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditional( 2.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 2.0 );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 2.0 );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // After the third bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditional( 3.0 ),
@@ -946,15 +944,15 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditional( 3.0 );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 3.0 );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 3.0 );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   distribution->limitToPrimaryIndepLimits();
 
@@ -963,7 +961,7 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    sampleSecondaryConditional )
 {
    // Before the first bin - no extension
@@ -983,15 +981,15 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
@@ -1007,15 +1005,15 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
 
   // In the second bin
   fake_stream.resize( 12 );
@@ -1036,28 +1034,28 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
 
   // Samples from upper boundary of second bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
 
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // On the third bin
   fake_stream.resize( 6 );
@@ -1071,15 +1069,15 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // In the third bin
   fake_stream.resize( 12 );
@@ -1100,28 +1098,28 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
 
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // On the upper bin boundary
   fake_stream.resize( 6 );
@@ -1135,15 +1133,15 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // After the third bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV ),
@@ -1161,15 +1159,15 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
@@ -1178,7 +1176,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
   unsigned trials = 0u;
@@ -1186,7 +1184,7 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
   // Before the first bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
               std::logic_error );
-  TEST_EQUALITY_CONST( trials, 0u );
+  FRENSIE_CHECK_EQUAL( trials, 0u );
 
   // Before the first bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
@@ -1200,18 +1198,18 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   double sample = distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   distribution->limitToPrimaryIndepLimits();
 
@@ -1229,18 +1227,18 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.0, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // In the second bin
   fake_stream.resize( 12 );
@@ -1263,34 +1261,34 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284, 1e-15 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-9 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // Samples from upper boundary of second bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
-  TEST_EQUALITY_CONST( trials, 4u );
+  FRENSIE_CHECK_EQUAL( sample, 2.5 );
+  FRENSIE_CHECK_EQUAL( trials, 4u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 5u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( trials, 5u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 0.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 6u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 6u );
 
   // On the third bin
   fake_stream.resize( 6 );
@@ -1306,18 +1304,18 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 2.5 );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.0, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // In the third bin
   fake_stream.resize( 12 );
@@ -1340,34 +1338,34 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 2.5 );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 2.5 );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // Samples from upper boundary of third bin
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 4u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( trials, 4u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 5u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( trials, 5u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 1.5, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 6u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 6u );
 
   // On the upper bin boundary
   fake_stream.resize( 6 );
@@ -1383,18 +1381,18 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 2.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 2.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 2.0, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // After the third bin - no extension
   TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials ),
@@ -1413,18 +1411,18 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0 );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials );
 
-  TEST_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   distribution->limitToPrimaryIndepLimits();
 
@@ -1433,7 +1431,7 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware secondary conditional PDF can be sampled
-TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
+FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
   unsigned trials = 0u;
@@ -1441,7 +1439,7 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
   // Before the first bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),
               std::logic_error );
-  TEST_EQUALITY_CONST( trials, 0u );
+  FRENSIE_CHECK_EQUAL( trials, 0u );
 
   // Before the first bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
@@ -1455,18 +1453,18 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   quantity<cgs::length> sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
@@ -1484,18 +1482,18 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.0*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // In the second bin
   fake_stream.resize( 12 );
@@ -1518,34 +1516,34 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of second bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 0.6931017816607284*cgs::centimeter, 1e-15 );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // Samples from upper boundary of second bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 4u );
+  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 4u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 5u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 5u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 0.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 6u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 6u );
 
   // On the third bin
   fake_stream.resize( 6 );
@@ -1561,18 +1559,18 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.0*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // In the third bin
   fake_stream.resize( 12 );
@@ -1595,34 +1593,34 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
   // Samples from lower boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 2.5*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // Samples from upper boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 4u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 4u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 5u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 5u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 1.5*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 6u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 6u );
 
   // On the upper bin boundary
   fake_stream.resize( 6 );
@@ -1638,18 +1636,18 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 2.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 2.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 2.0*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // After the third bin - no extension
   TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials ),
@@ -1668,18 +1666,18 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 1u );
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 1u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials );
 
-  TEST_EQUALITY_CONST( sample, 5.0*cgs::centimeter );
-  TEST_EQUALITY_CONST( trials, 2u );
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( trials, 2u );
 
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials );
 
-  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
-  TEST_EQUALITY_CONST( trials, 3u );
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
+  FRENSIE_CHECK_EQUAL( trials, 3u );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
@@ -1689,40 +1687,42 @@ TEUCHOS_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularTwoDDistribution,
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the two-dimensional distribution
   {
-    Utility::PartiallyTabularTwoDDistribution::DistributionType
-      distribution_data( 4 );
-
+    std::vector<double> primary_grid( 4 );
+    std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
+      secondary_dists( 4 );
+    
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    primary_grid[0] = 0.0;
+    secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
 
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 0.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    primary_grid[1] = 0.0;
+    secondary_dists[1].reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     // Create the secondary distribution in the third bin
-    distribution_data[2].first = 1.0;
-    distribution_data[2].second.reset( new Utility::UniformDistribution( 2.5, 7.5, 1.0 ) );
+    primary_grid[2] = 1.0;
+    secondary_dists[2].reset( new Utility::UniformDistribution( 2.5, 7.5, 1.0 ) );
 
     // Create the secondary distribution beyond the third bin
-    distribution_data[3].first = 2.0;
-    distribution_data[3].second = distribution_data[0].second;
+    primary_grid[3] = 2.0;
+    secondary_dists[3] = secondary_dists[0];
 
-    distribution.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::Direct>(
-                                                         distribution_data ) );
+    distribution.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::Direct<Utility::LinLinLin> >(
+                                                               primary_grid,
+                                                               secondary_dist )
   }
 
   // Create the unit-aware two-dimensional distribution
   {
     std::vector<quantity<MegaElectronVolt> > primary_bins( 4 );
 
-    Teuchos::Array<std::shared_ptr<const Utility::UnitAwareOneDDistribution<cgs::length,Barn> > > secondary_dists( 4 );
+    std::vector<std::shared_ptr<const Utility::UnitAwareOneDDistribution<cgs::length,Barn> > > secondary_dists( 4 );
 
     // Create the secondary distribution in the first bin
     primary_bins[0] = 0.0*MeV;
@@ -1740,15 +1740,15 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     primary_bins[3] = 2.0*MeV;
     secondary_dists[3] = secondary_dists[0];
 
-    unit_aware_distribution.reset( new Utility::UnitAwareInterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::Direct,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists ) );
+    unit_aware_distribution.reset( new Utility::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::Direct<Utility::LinLinLin>,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists ) );
   }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstLinLinLinDirectInterpolatedPartiallyTabularTwoDDistribution.cpp
+// end tstLinLinLinDirectInterpolatedPartiallyTabularBasicBivariateDistribution.cpp
 //---------------------------------------------------------------------------//

@@ -16,7 +16,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-BOOST_SERIALIZATION_DISTRIBUTION5_EXPORT_IMPLEMENT( UnitAwareElasticBasicBivariateDistribution );
+BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareElasticBasicBivariateDistribution );
 
 namespace Utility{
 
@@ -47,28 +47,6 @@ struct CosGridHelper<UnitBaseCorrelated<TwoDInterpPolicy> >
 };
   
 } // end Details namespace
-
-// Constructor
-template<typename TwoDGridPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticBasicBivariateDistribution(
-      const DistributionType& distribution,
-      const SecondaryIndepQuantity upper_bound_conditional_indep_var,
-      const double fuzzy_boundary_tol,
-      const double evaluate_relative_error_tol,
-      const double evaluate_error_tol )
-  : ParentType( distribution,
-                fuzzy_boundary_tol,
-                evaluate_relative_error_tol,
-                evaluate_error_tol ),
-    d_upper_bound_conditional_indep_var( upper_bound_conditional_indep_var ),
-    d_max_upper_bound_conditional_indep_var( SIQT::one() ),
-    d_lower_bound_conditional_indep_var( -1.0*SIQT::one() )
-{
-  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
-}
 
 // Constructor
 template<typename TwoDGridPolicy,
@@ -113,7 +91,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   return ThisType::evaluateImpl<DepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluate );
+                                      &BaseUnivariateDistributionType::evaluate );
 }
 
 // Evaluate the secondary conditional PDF
@@ -165,7 +143,7 @@ double UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndepend
 {
   return this->evaluateCDFImpl( primary_indep_var_value,
                                 secondary_indep_var_value,
-                                &BaseOneDDistributionType::evaluateCDF );
+                                &BaseUnivariateDistributionType::evaluateCDF );
 }
 
 // Evaluate the distribution using the desired evaluation method
@@ -207,7 +185,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,Prim
           return d_upper_bound_conditional_indep_var;
         };
 
-    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluatePDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluatePDFCos<BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -287,7 +265,7 @@ inline ReturnType UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,Prim
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluatePDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluatePDFCos<BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -348,7 +326,7 @@ inline double UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryI
           return d_upper_bound_conditional_indep_var;
         };
 
-    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluateCDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluateCDFCos<BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -400,7 +378,7 @@ inline double UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryI
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluateCDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    return Details::CosGridHelper<TwoDGridPolicy>::CosGridPolicy::template evaluateCDFCos<BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -470,7 +448,7 @@ template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
+auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             DistributionTraits::Counter& trials ) const
   -> SecondaryIndepQuantity

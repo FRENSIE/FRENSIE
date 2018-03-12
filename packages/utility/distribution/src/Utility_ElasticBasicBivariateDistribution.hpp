@@ -24,17 +24,17 @@ template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareElasticBasicBivariateDistribution : public UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the primary independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( PrimaryIndependentUnit, energy_dimension );
 
   // The typedef for this type
-  typedef UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
 
   // The base one-dimensional distribution type (UnitAwareTabularUnivariateDist)
   typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
@@ -60,8 +60,8 @@ class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabula
   // The secondary independent quantity type
   typedef typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
 
-  // The cosine sampling policy
-  typedef typename CosGridHelper<TwoDGridPolicy>::CosGridPolicy CosGridPolicy;
+  // The distribution data const iterator
+  typedef typename BaseType::DistributionDataConstIterator DistributionDataConstIterator;
 
 public:
   
@@ -261,7 +261,7 @@ private:
  * \ingroup two_d_distributions
  */
 template<typename TwoDGridPolicy> using ElasticBasicBivariateDistribution =
-  UnitAwareElasticTwoDDistribution<TwoDGridPolicy,void,void,void>;
+  UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,void,void,void>;
   
 } // end Utility namespace
 

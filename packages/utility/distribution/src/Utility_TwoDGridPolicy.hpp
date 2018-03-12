@@ -961,7 +961,7 @@ struct UnitBaseCorrelated
  */
 #define TWO_D_GRID_POLICY_TYPE_NAME_TRAITS_QUICK_DECL( GridPolicy ) \
   template<typename _TwoDInterpPolicy>                              \
-  struct TypeNameTraits<GridPolicy<_TwoDInterpPolicy>               \
+  struct TypeNameTraits<GridPolicy<_TwoDInterpPolicy> >             \
   {                                                                 \
     typedef std::true_type IsSpecialized;                           \
                                                                     \

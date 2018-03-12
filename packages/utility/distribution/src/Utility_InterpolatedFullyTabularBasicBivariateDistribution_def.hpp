@@ -21,7 +21,7 @@ BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedFullyTa
 namespace Utility{
 
 // Default constructor
-template<typename TwoGridPolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
@@ -242,7 +242,7 @@ double UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolic
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return TwoDSamplePolicy::template evaluateCDF<BaseUnivariateDistributionType>(
+    return TwoDGridPolicy::template evaluateCDF<BaseUnivariateDistributionType>(
                                              primary_indep_var_value,
                                              secondary_indep_var_value,
                                              min_secondary_indep_var_functor,

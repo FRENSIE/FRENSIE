@@ -75,7 +75,7 @@ const std::vector<double>& cdf_values )
   d_interpret_dependent_values_as_cdf( true )
 {
   // Verify that the values are valid
-  this->verifyValidValues( independent_values, dependent_values );
+  this->verifyValidValues( independent_values, cdf_values );
   
   this->initializeDistributionFromCDF( independent_values, cdf_values );
 
@@ -254,25 +254,25 @@ template<typename InterpolationPolicy,
 double UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluateCDF(
   const typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < d_distribution.front().first )
+  if( indep_var_value < Utility::get<0>(d_distribution.front()) )
     return 0.0;
-  else if( indep_var_value >= d_distribution.back().first )
+  else if( indep_var_value >= Utility::get<0>(d_distribution.back()) )
     return 1.0;
   else
   {
     typename DistributionArray::const_iterator lower_bin_boundary =
                     Search::binaryLowerBound<FIRST>( d_distribution.begin(),
-                                                    d_distribution.end(),
-                                                    indep_var_value );
+                                                     d_distribution.end(),
+                                                     indep_var_value );
 
     typename DistributionArray::const_iterator upper_bin_boundary =
                                                             lower_bin_boundary;
     ++upper_bin_boundary;
 
-    IndepQuantity lower_indep_value = lower_bin_boundary->first;
-    IndepQuantity upper_indep_value = upper_bin_boundary->first;
-    UnnormCDFQuantity lower_dep_value = lower_bin_boundary->second;
-    UnnormCDFQuantity upper_dep_value = upper_bin_boundary->second;
+    IndepQuantity lower_indep_value = Utility::get<0>(*lower_bin_boundary);
+    IndepQuantity upper_indep_value = Utility::get<0>(*upper_bin_boundary);
+    UnnormCDFQuantity lower_dep_value = Utility::get<1>(*lower_bin_boundary);
+    UnnormCDFQuantity upper_dep_value = Utility::get<1>(*upper_bin_boundary);
 
     if( lower_dep_value == QuantityTraits<UnnormCDFQuantity>::zero() )
     {
@@ -302,7 +302,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -326,7 +326,7 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleAndRecordBinIndex(
-                                            unsigned& sampled_bin_index ) const
+                                            size_t& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -341,7 +341,7 @@ typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Dep
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleWithRandomNumber(
                                              const double random_number ) const
 {
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( random_number, dummy_index );
 }
@@ -382,7 +382,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
   double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
 
-  unsigned dummy_index;
+  size_t dummy_index;
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
@@ -394,7 +394,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::sampleImplementation(
                                             double random_number,
-                                            unsigned& sampled_bin_index ) const
+                                            size_t& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -402,7 +402,7 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
 
   // Scale the random number
   UnnormCDFQuantity scaled_random_number = random_number*
-    d_distribution.back().second;
+    Utility::get<1>(d_distribution.back());
 
   typename DistributionArray::const_iterator lower_bin_boundary =
                 Search::binaryLowerBound<SECOND>( d_distribution.begin(),
@@ -415,22 +415,23 @@ UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUni
   // Calculate the sampled independent value
   IndepQuantity sample;
 
-  if( lower_bin_boundary->second == QuantityTraits<UnnormCDFQuantity>::zero() )
+  if( Utility::get<1>(*lower_bin_boundary) == QuantityTraits<UnnormCDFQuantity>::zero() )
   {
     sample = QuantityTraits<IndepQuantity>::initializeQuantity(
-      LinLin::interpolate( LinLin::processIndepVar(lower_bin_boundary->second),
-                           LinLin::processIndepVar(scaled_random_number),
-                           LinLin::processIndepVar(lower_bin_boundary->first),
-                           LinLin::processIndepVar(lower_bin_boundary->fourth ) ) );
+               LinLin::interpolate( LinLin::processIndepVar(Utility::get<1>(*lower_bin_boundary)),
+                                    LinLin::processIndepVar(scaled_random_number),
+                                    LinLin::processIndepVar(Utility::get<0>(*lower_bin_boundary)),
+                                    LinLin::processIndepVar(Utility::get<3>(*lower_bin_boundary)) ) );
   }
   else
   {
     sample = QuantityTraits<IndepQuantity>::initializeQuantity(
-     InverseInterp::interpolate( InterpolationPolicy::processDepVar(lower_bin_boundary->second),
-                                 InterpolationPolicy::processDepVar(scaled_random_number),
-                                 InterpolationPolicy::processIndepVar(lower_bin_boundary->first),
-                                 getRawQuantity(lower_bin_boundary->fourth) ) );
+              InverseInterp::interpolate( InterpolationPolicy::processDepVar(Utility::get<1>(*lower_bin_boundary)),
+                                          InterpolationPolicy::processDepVar(scaled_random_number),
+                                          InterpolationPolicy::processIndepVar(Utility::get<0>(*lower_bin_boundary)),
+                                          Utility::getRawQuantity(Utility::get<3>(*lower_bin_boundary)) ) );
   }
+    
   ++lower_bin_boundary;
 
   // Make sure the sample is valid
@@ -448,7 +449,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.back().first;
+  return Utility::get<0>(d_distribution.back());
 }
 
 // Return the lower bound of the distribution independent variable
@@ -458,7 +459,7 @@ template<typename InterpolationPolicy,
 typename UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.front().first;
+  return Utility::get<0>(d_distribution.front());
 }
 
 // Return the distribution type
@@ -615,26 +616,29 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   d_distribution.resize( independent_values.size() );
 
   // Set the first distribution point
-  d_distribution[0].first = IndepQuantity( independent_values[0] );
-  setQuantity( d_distribution[0].second, cdf_values[0] );
+  Utility::get<0>(d_distribution[0]) = IndepQuantity( independent_values[0] );
+  Utility::setQuantity( Utility::get<1>(d_distribution[0]), cdf_values[0] );
 
   // Assign the distribution
   for( unsigned i = 1; i < independent_values.size(); ++i )
   {
-    d_distribution[i].first = IndepQuantity( independent_values[i] );
-    setQuantity( d_distribution[i].second, cdf_values[i] );
-    d_distribution[i-1].fourth =
-                 calculateProcessedSlope( d_distribution[i-1].first,
-                                          d_distribution[i].first,
-                                          d_distribution[i-1].second,
-                                          d_distribution[i].second );
+    Utility::get<0>(d_distribution[i]) =
+      IndepQuantity( independent_values[i] );
+    
+    Utility::setQuantity( Utility::get<1>(d_distribution[i]), cdf_values[i] );
+    
+    Utility::get<3>(d_distribution[i-1]) =
+      calculateProcessedSlope( Utility::get<0>(d_distribution[i-1]),
+                               Utility::get<0>(d_distribution[i]),
+                               Utility::get<1>(d_distribution[i-1]),
+                               Utility::get<1>(d_distribution[i]) );
   }
 
   // Set the last slope to zero
-  setQuantity( d_distribution[independent_values.size()-1].fourth, 0.0 );
+  Utility::setQuantity( Utility::get<3>(d_distribution.back()), 0.0 );
 
   // Set normalization constant
-  d_norm_constant = 1.0/d_distribution.back().second;
+  d_norm_constant = 1.0/Utility::get<1>(d_distribution.back());
 }
 
 // Initialize the distribution
@@ -652,8 +656,11 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   // Assign the raw distribution data
   for( unsigned i = 0; i < independent_values.size(); ++i )
   {
-    d_distribution[i].first = IndepQuantity( independent_values[i] );
-    d_distribution[i].third = DepQuantity( dependent_values[i] );
+    Utility::get<0>(d_distribution[i]) =
+      IndepQuantity( independent_values[i] );
+    
+    Utility::get<2>(d_distribution[i]) =
+      DepQuantity( dependent_values[i] );
   }
 
   // Create a CDF from the raw distribution data
@@ -664,15 +671,15 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   // Calculate the CDF slopes
   for( unsigned i = 1; i < independent_values.size(); ++i )
   {
-    d_distribution[i-1].fourth =
-                          calculateProcessedSlope( d_distribution[i-1].first,
-                                                   d_distribution[i].first,
-                                                   d_distribution[i-1].second,
-                                                   d_distribution[i].second );
+    Utility::get<3>(d_distribution[i-1]) =
+      calculateProcessedSlope( Utility::get<0>(d_distribution[i-1]),
+                               Utility::get<0>(d_distribution[i]),
+                               Utility::get<1>(d_distribution[i-1]),
+                               Utility::get<1>(d_distribution[i]) );
   }
 
   // Set the last slope to zero
-  setQuantity( d_distribution[independent_values.size()-1].fourth, 0.0 );
+  Utility::setQuantity( Utility::get<3>(d_distribution.back()), 0.0 );
 }
 
 // Reconstruct original distribution
@@ -689,8 +696,8 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_values[i] = d_distribution[i].first;
-    dependent_values[i] = d_distribution[i].third;
+    independent_values[i] = Utility::get<0>(d_distribution[i]);
+    dependent_values[i] = Utility::get<2>(d_distribution[i]);
   }
 }
 
@@ -708,8 +715,8 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_values[i] = d_distribution[i].first;
-    cdf_values[i] = getRawQuantity( d_distribution[i].second );
+    independent_values[i] = Utility::get<0>(d_distribution[i]);
+    cdf_values[i] = Utility::getRawQuantity( Utility::get<1>(d_distribution[i]) );
   }
 }
 
@@ -727,15 +734,18 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
-    independent_values[i] = getRawQuantity( d_distribution[i].first );
+    independent_values[i] =
+      Utility::getRawQuantity( Utility::get<0>(d_distribution[i]) );
 
     if( d_interpret_dependent_values_as_cdf )
     {
-      dependent_values[i] = getRawQuantity( d_distribution[i].second );
+      dependent_values[i] =
+        Utility::getRawQuantity( Utility::get<1>(d_distribution[i]) );
     }
     else
     {
-      dependent_values[i] = getRawQuantity( d_distribution[i].third );
+      dependent_values[i] =
+        Utility::getRawQuantity( Utility::get<2>(d_distribution[i]) );
     }
   }
 }
@@ -754,7 +764,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 
   // Copy the bin boundaries
   for( unsigned i = 0u; i < unitless_values.size(); ++i )
-    setQuantity( quantities[i], unitless_values[i] );
+    Utility::setQuantity( quantities[i], unitless_values[i] );
 }
 
 // Test if the dependent variable can be zero within the indep bounds
@@ -767,7 +777,7 @@ bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
-    if( d_distribution[i].third == DQT::zero() )
+    if( Utility::get<2>(d_distribution[i]) == DQT::zero() )
     {
       possible_zero = true;
 
@@ -825,6 +835,9 @@ bool UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
 }
 
 // Verify that the values are valid
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::verifyValidValues(
                      const std::vector<InputIndepQuantity>& independent_values,
@@ -923,6 +936,8 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   ar & BOOST_SERIALIZATION_NVP( d_interpret_dependent_values_as_cdf );
 }
 
+} // end Utility namespace
+
 // Explicit instantiation (extern declaration)
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLin,void,void> );
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLog,void,void> );
@@ -932,8 +947,6 @@ EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLin,void,v
 // Explicit cosine instantiation (extern declaration)
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LogLogCos,void,void> );
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularCDFDistribution<LinLogCos,void,void> );
-
-} // end Utility namespace
 
 #endif // end Utility_TabularCDFDistribution_def.hpp
 
