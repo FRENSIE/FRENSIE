@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
     MonteCarlo::SIMPLIFIED_UNION;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -79,7 +79,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -116,7 +116,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   double cutoff_angle_cosine = 1.0;
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -191,7 +191,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
   double cutoff_angle_cosine = 0.9;
   double evaluation_tol = 1e-15;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 
   std::vector<std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction> > reactions;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
         *data_container,
         energy_grid,
         grid_searcher,
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomicReactionNativeFactory,
 {
   double evaluation_tol = 1e-7;
 
-  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
         *data_container,
         energy_grid,
         grid_searcher,

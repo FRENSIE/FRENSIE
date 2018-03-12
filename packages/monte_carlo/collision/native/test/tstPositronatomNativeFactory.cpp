@@ -549,7 +549,7 @@ TEUCHOS_UNIT_TEST( PositronatomNativeFactory, createPositronatom_hybrid )
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  properties.setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
+  properties.setElectronTwoDGridPolicy( MonteCarlo::CORRELATED_GRID );
   properties.setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
   properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setElectronEvaluationTolerance( evaluation_tol );
@@ -567,7 +567,7 @@ TEUCHOS_UNIT_TEST( PositronatomNativeFactory, createPositronatom_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
         cutoff_elastic_distribution,
         *data_container,
         properties.getElasticCutoffAngleCosine(),
@@ -766,7 +766,7 @@ TEUCHOS_UNIT_TEST( PositronatomNativeFactory, createPositronatom_no_elastic )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
         cutoff_elastic_distribution,
         *data_container,
         1.0,
@@ -1094,7 +1094,7 @@ TEUCHOS_UNIT_TEST( PositronatomNativeFactory, createPositronatom_no_positronioni
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
-  // Test that tthere is no P3 subshell positron-ionization cross section
+  // Test that there is no P3 subshell positron-ionization cross section
   reaction = MonteCarlo::P3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1.0e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );

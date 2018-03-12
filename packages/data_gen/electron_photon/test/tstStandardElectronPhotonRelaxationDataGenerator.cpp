@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstStandardElectronPhotonRelaxationDataGenerator.cpp
-//! \author Alex Robinson, Luke Kerstings
+//! \author Alex Robinson, Luke Kersting
 //! \brief  Standard electron-photon-relaxation data generator unit tests
 //!
 //---------------------------------------------------------------------------//
@@ -365,7 +365,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                 20.0,
                 1.0e-5,
                 1.0e+5 );
-    
+
     raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
     raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
@@ -603,10 +603,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                        0.0 );
   TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().back(),
                        3.29199999999999979e-03 );
-  
+
   unsigned pp_threshold_index =
     data_container.getPairProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( pp_threshold_index, 429 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[pp_threshold_index],
                       2*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -622,7 +622,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   unsigned tp_threshold_index =
     data_container.getTripletProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( tp_threshold_index, 655 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[tp_threshold_index],
                       4*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -656,7 +656,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST(
                      data_container.getWallerHartreeTotalCrossSection().size(),
                      854 );
-  
+
   TEST_FLOATING_EQUALITY(
                     data_container.getWallerHartreeTotalCrossSection().front(),
                     1.20745489798488403e+01,
@@ -939,7 +939,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                 20.0,
                 1.0e-5,
                 1.0e+5 );
-    
+
     raw_data_generator->setOccupationNumberEvaluationTolerance( 1e-3 );
     raw_data_generator->setSubshellIncoherentEvaluationTolerance( 1e-3 );
     raw_data_generator->setPhotonThresholdEnergyNudgeFactor( 1.0001 );
@@ -1178,10 +1178,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                        0.0 );
   TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().back(),
                        3.29199999999999979e-03 );
-  
+
   unsigned pp_threshold_index =
     data_container.getPairProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( pp_threshold_index, 429 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[pp_threshold_index],
                       2*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -1197,7 +1197,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   unsigned tp_threshold_index =
     data_container.getTripletProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( tp_threshold_index, 655 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[tp_threshold_index],
                       4*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -1231,7 +1231,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST(
                      data_container.getWallerHartreeTotalCrossSection().size(),
                      854 );
-  
+
   TEST_FLOATING_EQUALITY(
                     data_container.getWallerHartreeTotalCrossSection().front(),
                     1.20745489798488403e+01,
@@ -1750,10 +1750,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                        0.0 );
   TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().back(),
                        3.29199999999999979e-03 );
-  
+
   unsigned pp_threshold_index =
     data_container.getPairProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( pp_threshold_index, 429 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[pp_threshold_index],
                       2*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -1769,7 +1769,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   unsigned tp_threshold_index =
     data_container.getTripletProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( tp_threshold_index, 655 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[tp_threshold_index],
                       4*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -1803,7 +1803,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST(
                      data_container.getWallerHartreeTotalCrossSection().size(),
                      854 );
-  
+
   TEST_FLOATING_EQUALITY(
                     data_container.getWallerHartreeTotalCrossSection().front(),
                     1.20745489798488403e+01,
@@ -2323,10 +2323,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                        0.0 );
   TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().back(),
                        3.29199999999999979e-03 );
-  
+
   unsigned pp_threshold_index =
     data_container.getPairProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( pp_threshold_index, 429 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[pp_threshold_index],
                       2*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -2342,7 +2342,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
   unsigned tp_threshold_index =
     data_container.getTripletProductionCrossSectionThresholdEnergyIndex();
-  
+
   TEST_EQUALITY_CONST( tp_threshold_index, 655 );
   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[tp_threshold_index],
                       4*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -2376,7 +2376,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST(
                      data_container.getWallerHartreeTotalCrossSection().size(),
                      854 );
-  
+
   TEST_FLOATING_EQUALITY(
                     data_container.getWallerHartreeTotalCrossSection().front(),
                     1.20745489798488403e+01,
@@ -3080,7 +3080,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //   unsigned pp_threshold_index =
 //     data_container.getPairProductionCrossSectionThresholdEnergyIndex();
-  
+
 //   TEST_EQUALITY_CONST( pp_threshold_index, 492 );
 //   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[pp_threshold_index],
 //                       2*Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -3696,7 +3696,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 
 //   unsigned pp_threshold_index =
 //     data_container.getPairProductionCrossSectionThresholdEnergyIndex();
-  
+
 //   TEST_EQUALITY_CONST( pp_threshold_index, 492 );
 //   TEST_EQUALITY_CONST(data_container.getPhotonEnergyGrid()[pp_threshold_index],
 //                       2*Utility::PhysicalConstants::electron_rest_mass_energy);

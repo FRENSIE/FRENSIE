@@ -477,7 +477,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::in
 
   // Create the distribution
   d_secondary_energy_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LinLinLin> >(
             function_data ) );
 }
 

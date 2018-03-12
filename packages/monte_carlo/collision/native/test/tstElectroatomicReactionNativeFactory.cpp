@@ -43,7 +43,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::SIMPLIFIED_UNION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -78,7 +78,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LogLogCosLog )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction_LogLogCosLog )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::Correlated<Utility::LogLogCosLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -189,7 +189,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::SIMPLIFIED_UNION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -224,7 +224,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createDecoupledElasticReaction_LinLinLog )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -260,7 +260,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   double cutoff_angle_cosine = 0.9;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createHybridElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -295,7 +295,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction_LinLinLog )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -363,7 +363,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createMomentPreservingElasticReaction_LinLinLog )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::Correlated<Utility::LinLinLog> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -567,7 +567,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::CoupledElasticSamplingMethod sampling_method =
     MonteCarlo::SIMPLIFIED_UNION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCoupledElasticReaction<Utility::Correlated<Utility::LinLinLin> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -602,7 +602,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createCutoffElasticReaction_LinLinLin )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction<Utility::Correlated<Utility::LinLinLin> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -637,7 +637,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
                    createMomentPreservingElasticReaction_LinLinLin )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<Utility::Correlated<Utility::LinLinLin> >(
                 *data_container,
                 energy_grid,
                 grid_searcher,

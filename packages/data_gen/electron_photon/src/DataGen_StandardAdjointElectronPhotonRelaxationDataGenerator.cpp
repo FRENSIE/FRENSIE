@@ -536,15 +536,15 @@ MonteCarlo::TwoDInterpolationType StandardAdjointElectronPhotonRelaxationDataGen
   return d_electron_two_d_interp;
 }
 
-// Set the electron TwoDSamplingPolicy (LogLogLog by default)
+// Set the electron TwoDSamplingPolicy (Unit-base Correlated by default)
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDSamplingPolicy(
-                    const MonteCarlo::TwoDSamplingType two_d_sampling )
+                    const MonteCarlo::TwoDGridType two_d_sampling )
 {
   d_electron_two_d_sampling = two_d_sampling;
 }
 
-// Return the electron TwoDSamplingPolicy (LogLogLog by default)
-MonteCarlo::TwoDSamplingType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDSamplingPolicy() const
+// Return the electron TwoDSamplingPolicy (Unit-base Correlated by default)
+MonteCarlo::TwoDGridType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDSamplingPolicy() const
 {
   return d_electron_two_d_sampling;
 }
@@ -713,7 +713,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
   }
   {
   std::string sampling =
-    MonteCarlo::convertTwoDSamplingTypeToString( d_electron_two_d_sampling );
+    MonteCarlo::convertTwoDGridTypeToString( d_electron_two_d_sampling );
   data_container.setElectronTwoDSamplingPolicy( sampling );
   }
 }

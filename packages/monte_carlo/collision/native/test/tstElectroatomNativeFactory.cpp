@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_default )
   MonteCarlo::SimulationProperties properties;
 
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -221,7 +221,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_coupled )
   properties.setNumberOfElectronHashGridBins( 100 );
 
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -385,7 +385,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
   properties.setNumberOfElectronHashGridBins( 100 );
 
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -549,14 +549,14 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   MonteCarlo::SimulationProperties properties;
   properties.setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties.setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  properties.setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
+  properties.setElectronTwoDGridPolicy( MonteCarlo::CORRELATED_GRID );
   properties.setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
   properties.setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties.setElectronEvaluationTolerance( evaluation_tol );
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );
   properties.setNumberOfElectronHashGridBins( 100 );
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -567,7 +567,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
         cutoff_elastic_distribution,
         *data_container,
         properties.getElasticCutoffAngleCosine(),
@@ -766,7 +766,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_elastic )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
         cutoff_elastic_distribution,
         *data_container,
         1.0,
@@ -950,7 +950,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_electroionizat
   properties.setElectroionizationModeOff();
 
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -1094,7 +1094,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_electroionizat
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
 
-  // Test that tthere is no P3 subshell electroionization cross section
+  // Test that there is no P3 subshell electroionization cross section
   reaction = MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
   cross_section = atom->getReactionCrossSection( 1.0e-5, reaction );
   TEST_EQUALITY_CONST( cross_section, 0.0 );
@@ -1118,7 +1118,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_bremsstrahlung
   properties.setBremsstrahlungModeOff();
 
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,
@@ -1277,7 +1277,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_no_atomic_excitat
   properties.setAtomicExcitationModeOff();
 
   Teuchos::RCP<MonteCarlo::Electroatom> atom;
-  
+
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( *data_container,
                                                            electroatom_name,
                                                            atomic_weight,

@@ -14,7 +14,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 
 namespace MonteCarlo{
 
@@ -64,11 +64,11 @@ public:
   //! Return the electron 2D interpolation policy
   TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron 2D sampling policy (UnitBaseCorrelated by default)
-  void setElectronTwoDSamplingPolicy( TwoDSamplingType sampling_type );
+  //! Set the electron 2D grid policy (UnitBaseCorrelated by default)
+  void setElectronTwoDGridPolicy( TwoDGridType grid_type );
 
-  //! Return the electron 2D sampling policy
-  TwoDSamplingType getElectronTwoDSamplingPolicy() const;
+  //! Return the electron 2D grid policy
+  TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Set the number of electron hash grid bins
   void setNumberOfElectronHashGridBins( const unsigned bins );
@@ -175,8 +175,8 @@ private:
   // The electron 2D interpolation type ( LogLogLog - default )
   TwoDInterpolationType d_electron_interpolation_type;
 
-  // The electron 2D sampling type ( UnitBaseCorrelated - default )
-  TwoDSamplingType d_electron_sampling_type;
+  // The electron 2D grid type ( UnitBaseCorrelated - default )
+  TwoDGridType d_electron_grid_type;
 
   // The number of electron hash grid bins
   unsigned d_num_electron_hash_grid_bins;

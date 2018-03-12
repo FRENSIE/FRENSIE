@@ -163,12 +163,12 @@ TARGET_LINK_LIBRARIES(tstTwoDInterpolationType monte_carlo_core)
 ADD_TEST(TwoDInterpolationType_test tstTwoDInterpolationType)
 SET_PROPERTY(TEST TwoDInterpolationType_test PROPERTY LABELS electron)
 
-ADD_EXECUTABLE(tstTwoDSamplingType
-  tstTwoDSamplingType.cpp
+ADD_EXECUTABLE(tstTwoDGridType
+  tstTwoDGridType.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDSamplingType monte_carlo_core)
-ADD_TEST(TwoDSamplingType_test tstTwoDSamplingType)
-SET_PROPERTY(TEST TwoDSamplingType_test PROPERTY LABELS electron)
+TARGET_LINK_LIBRARIES(tstTwoDGridType monte_carlo_core)
+ADD_TEST(TwoDGridType_test tstTwoDGridType)
+SET_PROPERTY(TEST TwoDGridType_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstSimulationProperties
   tstSimulationProperties.cpp

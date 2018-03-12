@@ -616,7 +616,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering function
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LinLinLog> >(
         function_data,
         fuzzy_boundary_tol,
         evaluate_relative_error_tol,

@@ -127,7 +127,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     double evaluation_tol = 1e-7;
 
-    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         scattering_distribution,

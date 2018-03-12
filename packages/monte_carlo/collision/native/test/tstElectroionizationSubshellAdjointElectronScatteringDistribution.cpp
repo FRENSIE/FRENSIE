@@ -338,7 +338,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   { // Create the LinLinLog scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
             function_data,
             1e-6,
             evaluation_tol ) );
@@ -352,7 +352,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   { // Create the LogLogLog scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
             function_data,
             1e-6,
             evaluation_tol ) );

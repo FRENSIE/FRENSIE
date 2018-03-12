@@ -769,7 +769,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering distribution
     ace_scattering_distribution.reset(
-        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+        new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LinLinLin> >(
                 ace_data ) );
 
     // Create the distributions
@@ -848,11 +848,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering distribution
   native_scattering_distribution.reset(
-    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Correlated>( native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::Correlated<Utility::LinLinLin> >( native_data ) );
 
   // Create the scattering distribution
   partial_native_scattering_distribution.reset(
-    new Utility::ElasticTwoDDistribution<Utility::LinLinLin,Utility::Correlated>( partial_native_data ) );
+    new Utility::ElasticTwoDDistribution<Utility::Correlated<Utility::LinLinLin> >( partial_native_data ) );
 
   // Create cutoff distributions
   native_elastic_distribution.reset(

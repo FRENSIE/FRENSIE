@@ -24,7 +24,7 @@ SimulationElectronProperties::SimulationElectronProperties()
     d_max_electron_energy( 20.0 ),
     d_evaluation_tol( 1e-7 ),
     d_electron_interpolation_type( LOGLOGLOG_INTERPOLATION ),
-    d_electron_sampling_type( UNIT_BASE_CORRELATED_SAMPLING ),
+    d_electron_grid_type( UNIT_BASE_CORRELATED_GRID ),
     d_num_electron_hash_grid_bins( 1000 ),
     d_atomic_relaxation_mode_on( true ),
     d_elastic_mode_on( true ),
@@ -119,18 +119,18 @@ SimulationElectronProperties::getElectronTwoDInterpPolicy() const
   return d_electron_interpolation_type;
 }
 
-// Set the electron 2D sampling policy (LogLogLog by default)
-void SimulationElectronProperties::setElectronTwoDSamplingPolicy(
-    TwoDSamplingType sampling_type )
+// Set the electron 2D grid policy (Unit-base Correlated by default)
+void SimulationElectronProperties::setElectronTwoDGridPolicy(
+    TwoDGridType grid_type )
 {
-  d_electron_sampling_type = sampling_type;
+  d_electron_grid_type = grid_type;
 }
 
-// Return the electron 2D sampling policy
-TwoDSamplingType
-SimulationElectronProperties::getElectronTwoDSamplingPolicy() const
+// Return the electron 2D grid policy
+TwoDGridType
+SimulationElectronProperties::getElectronTwoDGridPolicy() const
 {
-  return d_electron_sampling_type;
+  return d_electron_grid_type;
 }
 
 // Set the number of electron hash grid bins

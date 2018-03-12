@@ -107,16 +107,16 @@ void SimulationElectronPropertiesFactory::initializeProperties(
     electron_properties.setElectronTwoDInterpPolicy( interp_policy );
   }
 
-  // Get the electron 2D sampling policy - optional
-  if( properties.isParameter( "Electron Sampling Policy" ) )
+  // Get the electron 2D grid policy - optional
+  if( properties.isParameter( "Electron Grid Policy" ) )
   {
     std::string raw_policy =
-      properties.get<std::string>( "Electron Sampling Policy" );
+      properties.get<std::string>( "Electron Grid Policy" );
 
-    TwoDSamplingType sample_policy =
-      convertStringToTwoDSamplingType( raw_policy );
+    TwoDGridType sample_policy =
+      convertStringToTwoDGridType( raw_policy );
 
-    electron_properties.setElectronTwoDSamplingPolicy( sample_policy );
+    electron_properties.setElectronTwoDGridPolicy( sample_policy );
   }
 
   // Get the elastic scattering reaction mode - optional
@@ -163,7 +163,7 @@ void SimulationElectronPropertiesFactory::initializeProperties(
                             << raw_method <<
                             " is not currently supported!" );
         }
- 
+
         electron_properties.setCoupledElasticSamplingMode( method );
       }
     }

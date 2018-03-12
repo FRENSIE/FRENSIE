@@ -24,21 +24,21 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::string sampling_method,
     const double evaluation_tol );
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
 //! Create a cutoff elastic distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
@@ -49,7 +49,7 @@ std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDis
     const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
 //! Create a moment preserving elastic distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
@@ -60,13 +60,13 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //----------------------------------------------------------------------------//
 
 //! Create a simple dipole bremsstrahlung distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double evaluation_tol = 1e-7 );
 
 //! Create a detailed 2BS bremsstrahlung distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
@@ -77,7 +77,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution> 
 //----------------------------------------------------------------------------//
 
 //! Create a electroionization subshell distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,

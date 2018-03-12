@@ -97,7 +97,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 
     // Set the scattering function with LogLogCosLog interp (eprdata14)
     scattering_function.reset(
-      new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+      new Utility::ElasticTwoDDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
         function_data,
         0.999999 ) );
   }
@@ -116,7 +116,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 
     // Set the scattering function with LinLinLin interp (eprdata12)
     scattering_function.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LinLinLin> >(
         function_data ) );
   }
 

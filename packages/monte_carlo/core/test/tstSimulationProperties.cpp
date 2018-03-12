@@ -31,7 +31,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
                        0.001 );
   TEST_ASSERT( properties.displayWarnings() );
   TEST_ASSERT( !properties.isImplicitCaptureModeOn() );
-  
+
   // Neutron properties
   TEST_EQUALITY_CONST( properties.getFreeGasThreshold(), 400.0 );
   TEST_EQUALITY_CONST( properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
@@ -77,8 +77,8 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   TEST_EQUALITY_CONST( properties.getBremsstrahlungAngularDistributionFunction(),
                        MonteCarlo::TWOBS_DISTRIBUTION );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 TEUCHOS_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
 {
   MonteCarlo::SimulationProperties properties;
-  
+
   TEST_EQUALITY_CONST( properties.getMinParticleEnergy<MonteCarlo::NeutronState>(),
                        1e-11 );
   TEST_EQUALITY_CONST( properties.getMinParticleEnergy<MonteCarlo::PhotonState>(),
@@ -109,7 +109,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
 TEUCHOS_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
 {
   MonteCarlo::SimulationProperties properties;
-  
+
   TEST_EQUALITY_CONST( properties.getMaxParticleEnergy<MonteCarlo::NeutronState>(),
                        20.0 );
   TEST_EQUALITY_CONST( properties.getMaxParticleEnergy<MonteCarlo::PhotonState>(),
@@ -127,7 +127,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setAtomicRelaxationModeOffOn )
   MonteCarlo::SimulationProperties properties;
 
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
-  
+
   TEST_ASSERT( !properties.isAtomicRelaxationModeOn( MonteCarlo::PHOTON ) );
 
   properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setAtomicRelaxationModeOffOn )
   TEST_ASSERT( properties.isAtomicRelaxationModeOn( MonteCarlo::PHOTON ) );
 
   properties.setAtomicRelaxationModeOff( MonteCarlo::ELECTRON );
-  
+
   TEST_ASSERT( !properties.isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
 
   properties.setAtomicRelaxationModeOn( MonteCarlo::ELECTRON );

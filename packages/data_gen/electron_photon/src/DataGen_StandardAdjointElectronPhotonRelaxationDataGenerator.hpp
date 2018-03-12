@@ -28,7 +28,7 @@
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 
 namespace DataGen{
 
@@ -41,7 +41,7 @@ public:
   typedef MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LogLog>
     ElectroionizationReaction;
 
-  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog> 
+  typedef MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LogLog>
     BremsstrahlungReaction;
 
   typedef DataGen::AdjointElectronGridGenerator<BremsstrahlungReaction, Utility::LinLinLin>
@@ -60,13 +60,13 @@ public:
       const double max_electron_energy,
       std::ostream* os_log = &std::cout,
       std::ostream* os_warn = &std::cerr );
-  
+
   //! Basic Constructor
   StandardAdjointElectronPhotonRelaxationDataGenerator(
       const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>&
       forward_epr_data,
       std::ostream* os_log = &std::cout );
-  
+
   //! Destructor
   virtual ~StandardAdjointElectronPhotonRelaxationDataGenerator()
   { /* ... */ }
@@ -105,7 +105,7 @@ public:
 
   //! Set the adjoint incoherent max energy nudge value
   void setAdjointIncoherentMaxEnergyNudgeValue( const double max_energy_nudge_value );
-  
+
   //! Return the adjoint incoherent max energy nudge value
   double getAdjointIncoherentMaxEnergyNudgeValue() const;
 
@@ -190,14 +190,14 @@ public:
 
   //! Set the electron TwoDSamplingPolicy (Corrleated by default)
   void setElectronTwoDSamplingPolicy(
-                    const MonteCarlo::TwoDSamplingType two_d_sampling );
+                    const MonteCarlo::TwoDGridType two_d_sampling );
 
   //! Return the electron TwoDSamplingPolicy (Corrleated by default)
-  MonteCarlo::TwoDSamplingType getElectronTwoDSamplingPolicy() const;
+  MonteCarlo::TwoDGridType getElectronTwoDSamplingPolicy() const;
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
-  
+
   //! Return the adjoint bremsstrahlung max energy nudge value
   double getAdjointBremsstrahlungMaxEnergyNudgeValue() const;
 
@@ -358,7 +358,7 @@ private:
 
   // Set the adjoint triplet production energy distribution
   void setAdjointTripletProductionEnergyDistribution(
-         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;   
+         Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Create the Waller-Hartree incoherent adjoint cs evaluator
   void createWallerHartreeIncoherentAdjointCrossSectionEvaluator(
@@ -516,7 +516,7 @@ private:
   MonteCarlo::TwoDInterpolationType d_electron_two_d_interp;
 
   // The electron TwoDSamplingPolicy
-  MonteCarlo::TwoDSamplingType d_electron_two_d_sampling;
+  MonteCarlo::TwoDGridType d_electron_two_d_sampling;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;

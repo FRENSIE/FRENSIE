@@ -53,8 +53,7 @@ private:
 public:
 
   //! Create an coupled elastic scattering adjoint electroatomic reaction
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createCoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -65,8 +64,7 @@ public:
     const double evaluation_tol );
 
   //! Create an coupled elastic scattering adjoint electroatomic reaction
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createDecoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -76,8 +74,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering adjoint electroatomic reaction
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -88,8 +85,7 @@ public:
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering adjoint electroatomic reaction
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createCutoffElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -108,8 +104,7 @@ public:
     std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering adjoint electroatomic reaction
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createMomentPreservingElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -128,8 +123,7 @@ public:
     std::shared_ptr<AdjointElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization adjoint electroatomic reaction
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -140,8 +134,7 @@ public:
     const double evaluation_tol );
 
   //! Create the subshell electroionization adjoint electroatomic reactions
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
@@ -152,8 +145,7 @@ public:
     const double evaluation_tol );
 
   //! Create the bremsstrahlung adjoint electroatomic reaction
-  template<typename TwoDInterpPolicy = Utility::LogLogLog,
-           typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template<typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createBremsstrahlungReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,

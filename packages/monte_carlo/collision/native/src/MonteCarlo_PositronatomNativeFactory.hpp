@@ -32,8 +32,7 @@ public:
   using ThisType = PositronatomNativeFactory;
 
   //! Create a positron-atom core (using the provided atomic relaxation model)
-  template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+  template <typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createPositronatomCore(
        const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -52,8 +51,7 @@ public:
 private:
 
   //! Create the elastic reaction for a positron-atom core
-  template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+  template <typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogLog> >
   static void createElasticPositronatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,

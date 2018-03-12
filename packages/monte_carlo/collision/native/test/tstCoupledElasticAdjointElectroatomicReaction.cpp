@@ -152,7 +152,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create coupled distribution
     std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
         coupled_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
         coupled_elastic_distribution,
         energy_grid,
         cutoff_cross_section,
@@ -174,7 +174,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCoupledElasticAdjointElectroatomicReaction.cpp

@@ -52,8 +52,7 @@ public:
   using ThisType = PositronatomicReactionNativeFactory;
 
   //! Create an coupled elastic scattering positron-atomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -63,8 +62,7 @@ public:
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering positron-atomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -74,8 +72,7 @@ public:
     const double evaluation_tol );
 
   //! Create a decoupled elastic scattering positron-atomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -84,8 +81,7 @@ public:
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering positron-atomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -102,8 +98,7 @@ public:
     std::shared_ptr<PositronatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering positron-atomic reaction
-  template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -121,8 +116,7 @@ public:
 
   //! Create the subshell electroionization positron-atomic reaction
   template< typename ReactionType = PositronatomicReaction,
-            typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createSubshellPositronionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -133,8 +127,7 @@ public:
 
   //! Create the subshell electroionization positron-atomic reactions
   template< typename ReactionType = PositronatomicReaction,
-            typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createSubshellPositronionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -145,8 +138,7 @@ public:
 
   //! Create the bremsstrahlung positron-atomic reaction
   template< typename ReactionType = PositronatomicReaction,
-            typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            typename TwoDGridPolicy = Utility::UnitBaseCorrelated<Utility::LogLogLog> >
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,

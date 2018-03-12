@@ -102,19 +102,19 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     adjoint_incoherent_reaction->getCrossSection( 1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
 
   cross_section =
     adjoint_incoherent_reaction->getCrossSection( 1.0 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 5.50415974966055277, 1e-12 );
 
   cross_section =
     adjoint_incoherent_reaction->getCrossSection( 20.0 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
 
@@ -123,14 +123,14 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getCrossSection )
 TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
                    getCrossSection_efficient )
 {
-  double cross_section = 
+  double cross_section =
     adjoint_incoherent_reaction->getCrossSection( 1e-3, 0u );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
 
   cross_section =
     adjoint_incoherent_reaction->getCrossSection( 20.0, 1166 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
 
@@ -231,7 +231,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> two_d_cross_section;
   {
   two_d_cross_section.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
         data_container.getAdjointPhotonEnergyGrid(),
         data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
         data_container.getAdjointWallerHartreeIncoherentCrossSection() ) );
@@ -244,7 +244,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     cross_section[i] =
       two_d_cross_section->evaluate( incoming_energy_grid[i], 20.0 );
   }
-  
+
   // Create the scattering distribution
   std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
     scattering_distribution;
@@ -272,7 +272,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   critical_line_energies[2] = 1.0;
 
   complete_reaction->setCriticalLineEnergies(critical_line_energies);
-  
+
   adjoint_incoherent_reaction = complete_reaction;
 
   // Initialize the random number generator

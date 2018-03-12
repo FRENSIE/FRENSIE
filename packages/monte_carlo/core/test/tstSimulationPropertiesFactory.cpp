@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_ASSERT( !parsed_properties->isAtomicRelaxationModeOn( MonteCarlo::PHOTON ) );
   TEST_ASSERT( parsed_properties->isDetailedPairProductionModeOn() );
   TEST_ASSERT( parsed_properties->isPhotonuclearInteractionModeOn() );
-  
+
   // Adjoint Photon Properties
   TEST_EQUALITY_CONST( parsed_properties->getMinAdjointPhotonEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( parsed_properties->getMaxAdjointPhotonEnergy(), 10.0 );
@@ -74,7 +74,7 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_EQUALITY_CONST( parsed_properties->getCriticalAdjointPhotonLineEnergies()[0], 0.1 );
   TEST_EQUALITY_CONST( parsed_properties->getCriticalAdjointPhotonLineEnergies()[1], 1.0 );
   TEST_EQUALITY_CONST( parsed_properties->getCriticalAdjointPhotonLineEnergies()[2], 10.0 );
-  
+
   // Electron Properties
   TEST_EQUALITY_CONST( parsed_properties->getMinElectronEnergy(), 1e-2 );
   TEST_EQUALITY_CONST( parsed_properties->getMaxElectronEnergy(), 10.0 );
@@ -82,8 +82,8 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory, createProperties )
   TEST_EQUALITY_CONST( parsed_properties->getElectronEvaluationTolerance(), 1e-5 );
   TEST_EQUALITY_CONST( parsed_properties->getElectronTwoDInterpPolicy(),
                        MonteCarlo::LINLINLIN_INTERPOLATION );
-  TEST_EQUALITY_CONST( parsed_properties->getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( parsed_properties->getElectronTwoDGridPolicy(),
+                       MonteCarlo::CORRELATED_GRID );
   TEST_ASSERT( !parsed_properties->isAtomicRelaxationModeOn( MonteCarlo::ELECTRON ) );
   TEST_ASSERT( !parsed_properties->isElasticModeOn() );
   TEST_EQUALITY_CONST( parsed_properties->getElasticElectronDistributionMode(),

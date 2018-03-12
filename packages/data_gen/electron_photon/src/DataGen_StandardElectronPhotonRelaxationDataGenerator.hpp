@@ -22,7 +22,7 @@
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -36,7 +36,7 @@ class StandardElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelax
 
 public:
 
-  //! Constructor 
+  //! Constructor
   StandardElectronPhotonRelaxationDataGenerator(
      const std::shared_ptr<const Data::XSSEPRDataExtractor>& ace_epr_data,
      const std::shared_ptr<const Data::ENDLDataContainer>& endl_data_container,
@@ -114,10 +114,10 @@ public:
   MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
   //! Set the electron TwoDSamplingPolicy (LogLogLog by default)
-  void setElectronTwoDSamplingPolicy( MonteCarlo::TwoDSamplingType sampling );
+  void setElectronTwoDSamplingPolicy( MonteCarlo::TwoDGridType sampling );
 
   //! Return the electron TwoDSamplingPolicy
-  MonteCarlo::TwoDSamplingType getElectronTwoDSamplingPolicy() const;
+  MonteCarlo::TwoDGridType getElectronTwoDSamplingPolicy() const;
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -302,7 +302,7 @@ private:
                               const std::vector<double>& cross_section,
                               std::vector<double>& total_cross_section ) const;
 
-  // Calculate the elastic anglular distribution for the angle cosine
+  // Calculate the elastic angular distribution for the angle cosine
   void calculateElasticAngleCosine(
     const std::vector<double>& raw_elastic_angle,
     const std::vector<double>& raw_elastic_pdf,
@@ -329,7 +329,7 @@ private:
 
   // The ENDL data
   std::shared_ptr<const Data::ENDLDataContainer> d_endl_data_container;
- 
+
   // The log stream
   std::ostream* d_os_log;
 
@@ -359,7 +359,7 @@ private:
   MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
   // The electron TwoDSamplingPolicy (LogLogLog - default)
-  MonteCarlo::TwoDSamplingType d_two_d_sampling;
+  MonteCarlo::TwoDGridType d_two_d_sampling;
 };
 
 // The if a value is not equal to zero

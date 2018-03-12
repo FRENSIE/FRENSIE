@@ -483,7 +483,7 @@ YZIterator Direct<_TwoDInterpPolicy>::sampleBinBoundary(
 template<typename _TwoDInterpPolicy>
 inline const std::string Direct<_TwoDInterpPolicy>::name()
 {
-  return TwoDInterpPolicy::name() + " Direct";
+  return "Direct";
 }
 
 // Calculate the Y independent lower bound between bin boundaries
@@ -1096,7 +1096,7 @@ YZIterator UnitBase<_TwoDInterpPolicy>::sampleBinBoundary(
 template<typename _TwoDInterpPolicy>
 inline const std::string UnitBase<_TwoDInterpPolicy>::name()
 {
-  return TwoDInterpPolicy::name() + " Unit-Base";
+  return "Unit-Base";
 }
 
 // Calculate the Y independent lower bound between bin boundaries
@@ -2306,7 +2306,7 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleCosDetailed(
 template<typename _TwoDInterpPolicy>
 inline const std::string Correlated<_TwoDInterpPolicy>::name()
 {
-  return TwoDInterpPolicy::name() + " Correlated";
+  return "Correlated";
 }
 
 // Calculate the Y independent lower bound between bin boundaries
@@ -3509,7 +3509,7 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleCosDetailed(
 template<typename _TwoDInterpPolicy>
 inline const std::string UnitBaseCorrelated<_TwoDInterpPolicy>::name()
 {
-  return TwoDInterpPolicy::name() + " Unit-base Correlated";
+  return "Unit-base Correlated";
 }
 
 } // end Utility namespace

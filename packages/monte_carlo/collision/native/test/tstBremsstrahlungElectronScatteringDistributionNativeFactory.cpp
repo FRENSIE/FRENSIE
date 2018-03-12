@@ -39,7 +39,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_DipoleBremsstrahlung_LinLinLog )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
                                                  *data_container,
                                                  dipole_distribution );
 
@@ -70,7 +70,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_LinLinLin )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
                                                  *data_container,
                                                  dipole_distribution );
 
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_LogLogLog_direct )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::Correlated<Utility::LogLogLog> >(
                                                  *data_container,
                                                  dipole_distribution );
 
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_LinLinLin_direct )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::Correlated<Utility::LinLinLin> >(
                                                  *data_container,
                                                  dipole_distribution );
 
@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_DipoleBremsstrahlung_LinLinLog )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
                                                  *data_container,
                                                  dipole_distribution );
 
@@ -195,7 +195,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_TwoBSBremsstrahlung_LinLinLog )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
                     *data_container,
                     data_container->getAtomicNumber(),
                     twobs_distribution );
@@ -229,7 +229,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_TwoBSBremsstrahlung_LinLinLog )
 {
-  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
                     *data_container,
                     data_container->getAtomicNumber(),
                     twobs_distribution );

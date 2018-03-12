@@ -217,7 +217,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create cutoff distribution
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
         cutoff_elastic_distribution,
         data_container,
         cutoff_angle_cosine,
@@ -245,7 +245,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
+UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDecoupledElasticElectroatomicReaction.cpp

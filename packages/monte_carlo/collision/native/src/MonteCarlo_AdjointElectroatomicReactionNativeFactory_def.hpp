@@ -29,7 +29,7 @@
 namespace MonteCarlo{
 
 // Create the coupled elastic scattering adjoint electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -61,7 +61,7 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 
   // Create the coupled elastic scattering distribution
   std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
-  ElasticFactory::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCoupledElasticDistribution<TwoDGridPolicy>(
     distribution,
     energy_grid,
     cutoff_cross_section,
@@ -80,7 +80,7 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 }
 
 // Create the decoupled elastic scattering adjoint electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -120,7 +120,7 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 
   // Create the tabular cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDGridPolicy>(
     tabular_distribution,
     raw_adjoint_electroatom_data,
     Utility::ElasticElectronTraits::mu_peak,
@@ -145,7 +145,7 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 }
 
 // Create a hybrid elastic scattering adjoint electroatomic reaction
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_electroatom_data,
@@ -176,7 +176,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   unsigned mp_threshold_energy_index;
-  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDGridPolicy>(
                                 moment_preserving_cross_sections,
                                 mp_threshold_energy_index,
                                 raw_adjoint_electroatom_data,
@@ -191,7 +191,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
 
-  ElasticFactory::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createHybridElasticDistribution<TwoDGridPolicy>(
     distribution,
     energy_grid,
     cutoff_cross_section,
@@ -202,7 +202,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
 
   // Create the cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> cutoff_distribution;
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDGridPolicy>(
             cutoff_distribution,
             raw_adjoint_electroatom_data,
             cutoff_angle_cosine,
@@ -259,7 +259,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
 }
 
 // Create the cutoff elastic scattering adjoint electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -280,7 +280,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   // Create the cutoff elastic scattering distribution using the cutoff angle cosine
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDGridPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -306,7 +306,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 }
 
 // Create the moment preserving elastic scattering adjoint electroatomic reaction
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
@@ -328,7 +328,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createMomentPreservingElasticDistribution<TwoDGridPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -337,7 +337,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   unsigned threshold_energy_index;
-  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDGridPolicy>(
                                 moment_preserving_cross_sections,
                                 threshold_energy_index,
                                 raw_adjoint_electroatom_data,
@@ -359,7 +359,7 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -388,7 +388,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
       electroionization_subshell_distribution;
 
   // Create the electroionization subshell distribution
-  ElectroionizationFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElectroionizationFactory::createElectroionizationSubshellDistribution<TwoDGridPolicy>(
         raw_adjoint_electroatom_data,
         subshell,
         raw_adjoint_electroatom_data.getSubshellBindingEnergy( subshell ),
@@ -408,7 +408,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -428,7 +428,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 
   for( shell; shell != subshells.end(); ++shell )
   {
-    ThisType::createSubshellElectroionizationReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ThisType::createSubshellElectroionizationReaction<TwoDGridPolicy>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -445,7 +445,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 }
 
 // Create a bremsstrahlung electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -473,7 +473,7 @@ void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
   std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>
     bremsstrahlung_distribution;
 
-  BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDGridPolicy>(
         raw_adjoint_electroatom_data,
         raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid(),
         bremsstrahlung_distribution,

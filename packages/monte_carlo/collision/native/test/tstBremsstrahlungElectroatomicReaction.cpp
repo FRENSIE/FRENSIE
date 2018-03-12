@@ -327,7 +327,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LinLinLin> >(
             function_data ) );
 
   std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>

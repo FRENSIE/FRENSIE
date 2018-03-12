@@ -170,7 +170,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-15;
 
     // Create the distribution
-    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+    NativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
                 elastic_scattering_distribution,
                 *data_container,
                 cutoff_angle_cosine,
@@ -198,7 +198,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_distribution;
 
-    NativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+    NativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
                 cutoff_distribution,
                 *data_container,
                 cutoff_angle_cosine,

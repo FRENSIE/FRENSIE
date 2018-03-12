@@ -35,7 +35,7 @@ public:
     const unsigned atomic_number,
     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
-    const MonteCarlo::TwoDSamplingType two_d_sample,
+    const MonteCarlo::TwoDGridType two_d_sample,
     const double min_electron_energy,
     const double max_electron_energy,
     const double cutoff_angle_cosine,
@@ -85,7 +85,7 @@ private:
   MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
   // The 2D sampling type
-  MonteCarlo::TwoDSamplingType d_two_d_sample;
+  MonteCarlo::TwoDGridType d_two_d_sample;
 
   // The moment evaluator of the elastic scattering distribution
   std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> d_moments_evaluator;

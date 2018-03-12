@@ -588,7 +588,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Waller-Hartree atmoic form factor can be set
+// Check that the Waller-Hartree atomic form factor can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setWallerHartreeAtomicFormFactor )
 {
@@ -1995,7 +1995,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellBindingEnergy( 1 ),
                        1.361e-5 );
-  
+
   // Photon Tests
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(), 3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(), 3 );

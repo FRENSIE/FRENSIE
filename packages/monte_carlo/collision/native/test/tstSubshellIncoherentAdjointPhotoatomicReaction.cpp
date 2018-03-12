@@ -145,9 +145,9 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
 TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
                    getCrossSection_efficient )
 {
-  double cross_section = 
+  double cross_section =
     incoherent_adjoint_reaction->getCrossSection( 1e-3, 0u );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 3.36049064970995307e-05, 1e-12 );
 
   cross_section =
@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
 
   cross_section =
     incoherent_adjoint_reaction->getCrossSection( 20.0, 1166u );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 }
 
@@ -187,12 +187,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction, react )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  incoherent_adjoint_reaction->react( adjoint_photon, 
-                                      bank, 
+  incoherent_adjoint_reaction->react( adjoint_photon,
+                                      bank,
                                       shell_of_interaction );
 
   TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
-                          0.053789358961052636, 
+                          0.053789358961052636,
                           1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.5, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
@@ -216,7 +216,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction, react )
   TEST_FLOATING_EQUALITY( bank.top().getWeight(),
                           0.471349591314760286,
                           5e-3 );
-  
+
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
@@ -257,7 +257,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> two_d_cross_section;
   {
   two_d_cross_section.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
       data_container.getAdjointPhotonEnergyGrid(),
       data_container.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( Data::K_SUBSHELL ),
       data_container.getAdjointImpulseApproxSubshellIncoherentCrossSection( Data::K_SUBSHELL ) ) );
@@ -300,7 +300,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   critical_line_energies[2] = 1.0;
 
   subshell_incoherent_adjoint_reaction->setCriticalLineEnergies(critical_line_energies);
-  
+
   incoherent_adjoint_reaction = subshell_incoherent_adjoint_reaction;
 
   // Initialize the random number generator

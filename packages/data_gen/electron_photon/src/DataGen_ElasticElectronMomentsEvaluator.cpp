@@ -26,7 +26,7 @@ namespace DataGen{
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
-    const MonteCarlo::TwoDSamplingType two_d_sample,
+    const MonteCarlo::TwoDGridType two_d_sample,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol )
 
@@ -282,7 +282,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   // resize array to the number of legendre moments wanted
   legendre_moments.resize(n+1);
 
-  Utility::GaussKronrodIntegrator<Utility::long_float> 
+  Utility::GaussKronrodIntegrator<Utility::long_float>
     integrator( precision, 0.0, 1000 );
 
   // Turn of error and warning messages

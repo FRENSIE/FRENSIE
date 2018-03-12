@@ -144,7 +144,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   else
     energy_grid = data_container->getAdjointElectronEnergyGrid();
 
-  BremFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  BremFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
             *data_container,
             energy_grid,
             brem_distribution );

@@ -493,7 +493,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering function
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_distribution(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LinLinLin> >(
               function_data ) );
 
     // Create the scattering distributions
@@ -547,7 +547,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering function
     std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
               function_data,
               1e-6,
               eval_tol ) );

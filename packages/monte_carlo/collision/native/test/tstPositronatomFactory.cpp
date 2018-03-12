@@ -345,7 +345,7 @@ TEUCHOS_UNIT_TEST( PositronatomFactory, createPositronatomMap_hybrid )
   // Set the bremsstrahlung photon angular distribution function
   properties->setBremsstrahlungAngularDistributionFunction( MonteCarlo::DIPOLE_DISTRIBUTION );
   properties->setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  properties->setElectronTwoDSamplingPolicy( MonteCarlo::CORRELATED_SAMPLING );
+  properties->setElectronTwoDGridPolicy( MonteCarlo::CORRELATED_GRID );
   properties->setElasticElectronDistributionMode( MonteCarlo::HYBRID_DISTRIBUTION );
   properties->setElasticCutoffAngleCosine( cutoff_angle_cosine );
   properties->setElectronEvaluationTolerance( evaluation_tol );
@@ -380,7 +380,7 @@ TEUCHOS_UNIT_TEST( PositronatomFactory, createPositronatomMap_hybrid )
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::UnitBaseCorrelated<Utility::LogLogCosLog> >(
         elastic_distribution,
         *data_container,
         properties->getElasticCutoffAngleCosine(),

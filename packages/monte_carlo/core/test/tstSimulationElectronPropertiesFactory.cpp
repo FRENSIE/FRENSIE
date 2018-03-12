@@ -49,8 +49,8 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory, initializeProperties )
   TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
   TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LINLINLIN_INTERPOLATION );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::CORRELATED_GRID );
   TEST_ASSERT( !properties.isElasticModeOn() );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
                        MonteCarlo::COUPLED_DISTRIBUTION );

@@ -44,8 +44,8 @@ void PositronatomNativeFactory::createPositronatom(
   TwoDInterpolationType electron_interp =
                           properties.getElectronTwoDInterpPolicy();
 
-  TwoDSamplingType electron_sampling =
-                          properties.getElectronTwoDSamplingPolicy();
+  TwoDGridType electron_sampling =
+                          properties.getElectronTwoDGridPolicy();
 
   // Create the positron-atom core
   /*! \todo Once testing for the proper 2D interp and sampling policies is
@@ -54,25 +54,25 @@ void PositronatomNativeFactory::createPositronatom(
    */
   if( electron_interp == LOGLOGLOG_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+      ThisType::createPositronatomCore<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_SAMPLING )
+    else if( electron_sampling == CORRELATED_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LogLogLog,Utility::Correlated>(
+      ThisType::createPositronatomCore<Utility::Correlated<Utility::LogLogLog> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LogLogLog,Utility::UnitBase>(
+      ThisType::createPositronatomCore<Utility::UnitBase<Utility::LogLogLog> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
@@ -86,25 +86,25 @@ void PositronatomNativeFactory::createPositronatom(
   }
   else if( electron_interp == LINLINLIN_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+      ThisType::createPositronatomCore<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_SAMPLING )
+    else if( electron_sampling == CORRELATED_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LinLinLin,Utility::Correlated>(
+      ThisType::createPositronatomCore<Utility::Correlated<Utility::LinLinLin> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LinLinLin,Utility::UnitBase>(
+      ThisType::createPositronatomCore<Utility::UnitBase<Utility::LinLinLin> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
@@ -118,25 +118,25 @@ void PositronatomNativeFactory::createPositronatom(
   }
   else if( electron_interp == LINLINLOG_INTERPOLATION )
   {
-    if( electron_sampling == UNIT_BASE_CORRELATED_SAMPLING )
+    if( electron_sampling == UNIT_BASE_CORRELATED_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+      ThisType::createPositronatomCore<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
                               core );
     }
-    else if( electron_sampling == CORRELATED_SAMPLING )
+    else if( electron_sampling == CORRELATED_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LinLinLog,Utility::Correlated>(
+      ThisType::createPositronatomCore<Utility::Correlated<Utility::LinLinLog> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,
                               core );
     }
-    else if( electron_sampling == UNIT_BASE_SAMPLING )
+    else if( electron_sampling == UNIT_BASE_GRID )
     {
-      ThisType::createPositronatomCore<Utility::LinLinLog,Utility::UnitBase>(
+      ThisType::createPositronatomCore<Utility::UnitBase<Utility::LinLinLog> >(
                               raw_positronatom_data,
                               atomic_relaxation_model,
                               properties,

@@ -240,7 +240,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   double evaluation_tol = 1e-7;
 
   // Create the electroionization subshell distribution
-  IonizationNativeFactory::createElectroionizationSubshellDistribution<Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  IonizationNativeFactory::createElectroionizationSubshellDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
     *data_container,
     1,
     binding_energy,

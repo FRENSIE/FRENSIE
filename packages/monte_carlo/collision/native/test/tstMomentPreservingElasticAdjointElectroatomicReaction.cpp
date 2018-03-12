@@ -154,7 +154,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   unsigned threshold_index;
-  NativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+  NativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
                                 moment_preserving_cross_sections,
                                 threshold_index,
                                 data_container,
@@ -170,7 +170,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
         discrete_elastic_distribution;
 
-  NativeFactory::createMomentPreservingElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  NativeFactory::createMomentPreservingElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
         discrete_elastic_distribution,
         data_container,
         cutoff_angle_cosine,

@@ -572,7 +572,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
       data_container->getSubshellBindingEnergy( *shell );
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
         *data_container,
         *shell,
         native_first_binding_energy,
@@ -612,7 +612,7 @@ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::c
       data_container->getSubshellBindingEnergy( *shell );
 
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
         *data_container,
         *shell,
         native_last_binding_energy,

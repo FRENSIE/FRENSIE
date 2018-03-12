@@ -41,7 +41,7 @@
     <Parameter name="Electron Hash Grid Bins" type="unsigned int" value="400"/>
     <Parameter name="Electron Evaluation Tolerance" type="double" value="1e-5"/>
     <Parameter name="Electron Interpolation Policy" type="string" value="LinLinLin"/>
-    <Parameter name="Electron Sampling Policy" type="string" value="Correlated"/>
+    <Parameter name="Electron Grid Policy" type="string" value="Correlated"/>
     <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
     <Parameter name="Electron Elastic" type="bool" value="false"/>
     <Parameter name="Electron Elastic Distribution" type="string" value="Coupled"/>

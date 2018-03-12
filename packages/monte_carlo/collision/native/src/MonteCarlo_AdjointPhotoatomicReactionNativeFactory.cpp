@@ -88,17 +88,17 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
     incoherent_adjoint_reactions.resize( 1 );
 
     // Extract the cross section and slice based on max energy
-    Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>
+    Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >
       two_d_cross_section( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                            raw_adjoint_photoatom_data.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
                            raw_adjoint_photoatom_data.getAdjointWallerHartreeIncoherentCrossSection() );
 
     Teuchos::ArrayRCP<double> cross_section;
-    
+
     ThisType::reduceTwoDCrossSection( two_d_cross_section,
                                       energy_grid,
                                       cross_section );
-                                          
+
     // Create the scattering distribution
     std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>
       distribution;
@@ -142,13 +142,13 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
     while( subshell_it != raw_adjoint_photoatom_data.getSubshells().end() )
     {
       // Extract the cross section and slice based on max energy
-      Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>
+      Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >
       two_d_cross_section( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                            raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell_it ),
                            raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell_it ) );
 
       Teuchos::ArrayRCP<double> cross_section;
-    
+
       ThisType::reduceTwoDCrossSection( two_d_cross_section,
                                         energy_grid,
                                         cross_section );
@@ -156,7 +156,7 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
       // Create the subshell incoherent distribution
       std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>
         distribution;
-      
+
       IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
                                                     raw_adjoint_photoatom_data,
                                                     distribution,
@@ -313,7 +313,7 @@ void AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
 {
   // Extract the total forward cross section
   Teuchos::ArrayRCP<double> cross_section;
-  
+
   std::string model_name =
     convertIncoherentAdjointModelTypeToString( incoherent_adjoint_model );
 
@@ -424,7 +424,7 @@ void AdjointPhotoatomicReactionNativeFactory::sliceCrossSection(
   // Make sure the cross section was extracted successfully
   testPostcondition( cross_section.size() > 0 );
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

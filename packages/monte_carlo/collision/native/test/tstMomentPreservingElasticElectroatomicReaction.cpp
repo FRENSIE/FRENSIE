@@ -178,7 +178,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
 
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
         function_data ) );
 
     discrete_elastic_distribution.reset(
@@ -194,7 +194,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Moment preserving elastic cross section
     std::vector<double> moment_preserving_cross_sections;
     unsigned threshold_index;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
                                moment_preserving_cross_sections,
                                threshold_index,
                                data_container,

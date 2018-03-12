@@ -79,7 +79,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomFactory, createAdjointElectroatomMap_basic 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
         cutoff_elastic_distribution,
         *data_container,
         properties->getAdjointElasticCutoffAngleCosine(),

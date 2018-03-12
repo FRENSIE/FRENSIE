@@ -231,7 +231,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     double evaluation_tol = 1e-7;
 
     // Create the Bremsstrahlung distribution
-    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    BremsstrahlungNativeFactory::createBremsstrahlungDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
         data_container,
         data_container.getAdjointElectronEnergyGrid(),
         b_distribution,

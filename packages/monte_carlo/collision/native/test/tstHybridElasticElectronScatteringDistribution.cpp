@@ -1673,7 +1673,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
   unsigned mp_threshold_energy_index;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::LogLogCosLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<Utility::Correlated<Utility::LogLogCosLog> >(
                                moment_preserving_cross_sections,
                                mp_threshold_energy_index,
                                data_container,
@@ -1698,7 +1698,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Correlated<Utility::LogLogCosLog> >(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1735,7 +1735,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LogLogCosLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::Correlated<Utility::LogLogCosLog> >(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -1764,7 +1764,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Correlated<Utility::LinLinLin> >(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1801,7 +1801,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLin,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::Correlated<Utility::LinLinLin> >(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),
@@ -1830,7 +1830,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     {
     // Create the full continuous scattering function
     std::shared_ptr<TwoDDist> full_continuous_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Correlated<Utility::LinLinLog> >(
         data_container.getCutoffElasticAngles(),
         data_container.getCutoffElasticPDF(),
         angular_energy_grid,
@@ -1868,7 +1868,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the hybrid scattering function
   std::shared_ptr<TwoDDist> hybrid_function;
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::LinLinLog,Utility::Correlated>(
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction<Utility::Correlated<Utility::LinLinLog> >(
             cross_section_ratios,
             data_container.getCutoffElasticAngles(),
             data_container.getCutoffElasticPDF(),

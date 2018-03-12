@@ -29,7 +29,7 @@ namespace MonteCarlo{
  * requested, a electroionization reaction for each subshell will be created.
  * Otherwise a single total electroionization reaction will be created.
  */
-template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template <typename TwoDGridPolicy>
 void ElectroatomNativeFactory::createElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -57,23 +57,89 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the elastic scattering reaction
   if ( properties.isElasticModeOn() )
   {
-    if( TwoDInterpPolicy::name() == "LogLogLog" )
+    if( TwoDGridPolicy::name() == "Unit-base" )
     {
-      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,TwoDSamplePolicy>(
-                                              raw_electroatom_data,
-                                              energy_grid,
-                                              grid_searcher,
-                                              properties,
-                                              scattering_reactions );
+      if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
+      else
+      {
+        ThisType::createElasticElectroatomCore<Utility::Direct<typename TwoDGridPolicy::TwoDInterpPolicy> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
     }
-    else
+    else if( TwoDGridPolicy::name() == "Unit-base Correlated" )
     {
-      ThisType::createElasticElectroatomCore<TwoDInterpPolicy,TwoDSamplePolicy>(
-                                              raw_electroatom_data,
-                                              energy_grid,
-                                              grid_searcher,
-                                              properties,
-                                              scattering_reactions );
+      if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
+      else
+      {
+        ThisType::createElasticElectroatomCore<Utility::Correlated<typename TwoDGridPolicy::TwoDInterpPolicy> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
+    }
+    else if( TwoDGridPolicy::name() == "Correlated" )
+    {
+      if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::Correlated<Utility::LogLogCosLog> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
+      else
+      {
+        ThisType::createElasticElectroatomCore<Utility::Correlated<typename TwoDGridPolicy::TwoDInterpPolicy> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
+    }
+    else if( TwoDGridPolicy::name() == "Direct" )
+    {
+      if( TwoDGridPolicy::TwoDInterpPolicy::name() == "LogLogLog" )
+      {
+        ThisType::createElasticElectroatomCore<Utility::Direct<Utility::LogLogCosLog> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
+      else
+      {
+        ThisType::createElasticElectroatomCore<Utility::Direct<typename TwoDGridPolicy::TwoDInterpPolicy> >(
+                                                raw_electroatom_data,
+                                                energy_grid,
+                                                grid_searcher,
+                                                properties,
+                                                scattering_reactions );
+      }
     }
   }
 
@@ -83,7 +149,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,TwoDGridPolicy>(
                   raw_electroatom_data,
                   energy_grid,
                   grid_searcher,
@@ -110,7 +176,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   {
     std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
 
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,TwoDGridPolicy>(
                       raw_electroatom_data,
                       energy_grid,
                       grid_searcher,
@@ -135,7 +201,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 }
 
 // Create the elastic reaction for a electroatom core
-template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template <typename TwoDGridPolicy>
 void ElectroatomNativeFactory::createElasticElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -152,7 +218,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -165,7 +231,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -180,7 +246,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -193,7 +259,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -207,7 +273,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
       Electroatom::ReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -221,7 +287,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,

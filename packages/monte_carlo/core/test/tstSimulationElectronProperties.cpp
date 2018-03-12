@@ -17,7 +17,7 @@
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
-#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_TwoDGridType.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -32,8 +32,8 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
   TEST_EQUALITY_CONST( properties.getElectronEvaluationTolerance(), 1e-7 );
   TEST_EQUALITY_CONST( properties.getElectronTwoDInterpPolicy(),
                        MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
   TEST_ASSERT( properties.isElasticModeOn() );
   TEST_EQUALITY_CONST( properties.getElasticElectronDistributionMode(),
@@ -53,7 +53,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMinElectronEnergy )
 {
   MonteCarlo::SimulationElectronProperties properties;
-  
+
   properties.setMinElectronEnergy( 1e-2 );
 
   TEST_EQUALITY_CONST( properties.getMinElectronEnergy(), 1e-2 );
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMinElectronEnergy )
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMaxElectronEnergy )
 {
   MonteCarlo::SimulationElectronProperties properties;
-  
+
   properties.setMaxElectronEnergy( 15.0 );
 
   TEST_EQUALITY_CONST( properties.getMaxElectronEnergy(), 15.0 );
@@ -75,7 +75,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setMaxElectronEnergy )
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronEvaluationTolerance )
 {
   MonteCarlo::SimulationElectronProperties properties;
-  
+
   properties.setElectronEvaluationTolerance( 1e-4 );
 
   TEST_EQUALITY( properties.getElectronEvaluationTolerance(), 1e-4 );
@@ -126,29 +126,29 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDInterpPolicy )
 }
 
 //---------------------------------------------------------------------------//
-// Test that the electron 2D sampling policy can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDSamplingPolicy )
+// Test that the electron 2D grid policy can be set
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectronTwoDGridPolicy )
 {
   MonteCarlo::SimulationElectronProperties properties;
 
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(),
-                       MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(),
+                       MonteCarlo::UNIT_BASE_CORRELATED_GRID );
 
-  MonteCarlo::TwoDSamplingType type = MonteCarlo::CORRELATED_SAMPLING;
-  properties.setElectronTwoDSamplingPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
+  MonteCarlo::TwoDGridType type = MonteCarlo::CORRELATED_GRID;
+  properties.setElectronTwoDGridPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
 
-  type = MonteCarlo::DIRECT_SAMPLING;
-  properties.setElectronTwoDSamplingPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
+  type = MonteCarlo::DIRECT_GRID;
+  properties.setElectronTwoDGridPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
 
-  type = MonteCarlo::UNIT_BASE_SAMPLING;
-  properties.setElectronTwoDSamplingPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
+  type = MonteCarlo::UNIT_BASE_GRID;
+  properties.setElectronTwoDGridPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
 
-  type = MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING;
-  properties.setElectronTwoDSamplingPolicy( type );
-  TEST_EQUALITY_CONST( properties.getElectronTwoDSamplingPolicy(), type );
+  type = MonteCarlo::UNIT_BASE_CORRELATED_GRID;
+  properties.setElectronTwoDGridPolicy( type );
+  TEST_EQUALITY_CONST( properties.getElectronTwoDGridPolicy(), type );
 }
 
 //---------------------------------------------------------------------------//
@@ -162,7 +162,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicRelaxationModeOffOn )
   TEST_ASSERT( !properties.isAtomicRelaxationModeOn() );
 
   properties.setAtomicRelaxationModeOn();
-  
+
   TEST_ASSERT( properties.isAtomicRelaxationModeOn() );
 }
 
@@ -177,7 +177,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticModeOffOn )
   TEST_ASSERT( !properties.isElasticModeOn() );
 
   properties.setElasticModeOn();
-  
+
   TEST_ASSERT( properties.isElasticModeOn() );
 }
 
@@ -245,7 +245,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setCoupledElasticSamplingMode )
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngleCosine )
 {
   MonteCarlo::SimulationElectronProperties properties;
-  
+
   properties.setElasticCutoffAngleCosine( 0.9 );
 
   TEST_EQUALITY( properties.getElasticCutoffAngleCosine(), 0.9 );
@@ -262,7 +262,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElectroionizationModeOffOn )
   TEST_ASSERT( !properties.isElectroionizationModeOn() );
 
   properties.setElectroionizationModeOn();
-  
+
   TEST_ASSERT( properties.isElectroionizationModeOn() );
 }
 
@@ -277,7 +277,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungModeOffOn )
   TEST_ASSERT( !properties.isBremsstrahlungModeOn() );
 
   properties.setBremsstrahlungModeOn();
-  
+
   TEST_ASSERT( properties.isBremsstrahlungModeOn() );
 }
 
@@ -287,7 +287,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties,
                    setBremsstrahlungAngularDistributionFunction_Dipole )
 {
   MonteCarlo::SimulationElectronProperties properties;
-  
+
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
@@ -304,7 +304,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties,
                    setBremsstrahlungAngularDistributionFunction_Tabular )
 {
   MonteCarlo::SimulationElectronProperties properties;
-  
+
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::TABULAR_DISTRIBUTION;
 
@@ -326,7 +326,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setAtomicExcitationModeOffOn )
   TEST_ASSERT( !properties.isAtomicExcitationModeOn() );
 
   properties.setAtomicExcitationModeOn();
-  
+
   TEST_ASSERT( properties.isAtomicExcitationModeOn() );
 }
 
