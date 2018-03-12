@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_TwoDSamplingPolicy.hpp
+//! \file   Utility_TwoDGridPolicy.hpp
 //! \author Luke Kersting
 //! \brief  Policy struct declarations for sampling on 2D grids
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_TWO_D_SAMPLING_POLICY_HPP
-#define UTILITY_TWO_D_SAMPLING_POLICY_HPP
+#ifndef UTILITY_TWO_D_GRID_POLICY_HPP
+#define UTILITY_TWO_D_GRID_POLICY_HPP
 
 // Std Lib Includes
 #include <iterator>
@@ -28,13 +28,14 @@ namespace Utility{
  * interpolation should only be used when the sampled range does not change
  * between distributions (e.g. cosines).
  */
+template<typename _TwoDInterpPolicy>
 struct Direct
 {
-public:
+  //! The two-dimensional interpolation policy
+  typedef _TwoDInterpPolicy TwoDInterpPolicy;
 
   //! Calculate the Y independent lower bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateLowerBound(
@@ -43,8 +44,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Calculate the Y independent upper bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateUpperBound(
@@ -53,8 +53,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -75,8 +74,7 @@ public:
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -97,8 +95,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -118,8 +115,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -139,8 +135,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -153,8 +148,7 @@ public:
                             const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -164,8 +158,7 @@ public:
                                const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired subrange sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -180,8 +173,7 @@ public:
             const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -196,8 +188,7 @@ public:
                                     YIndepType& raw_sample );
 
  //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -214,8 +205,7 @@ public:
 private:
 
   //! Sample the bin boundary that will be used for statistical sampling
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YZIterator>
   static YZIterator sampleBinBoundary(
     const XIndepType& x_indep_value,
@@ -227,13 +217,14 @@ private:
  * interpolation method is used in evaluating the distribution and the unit-base
  * statistical method in sampling the distribution.
  */
+template<typename _TwoDInterpPolicy>
 struct UnitBase
 {
-public:
+  //! The two-dimensional interpolation policy
+  typedef _TwoDInterpPolicy TwoDInterpPolicy;
 
   //! Calculate the Y independent lower bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateLowerBound(
@@ -242,8 +233,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Calculate the Y independent upper bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateUpperBound(
@@ -252,8 +242,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -274,8 +263,7 @@ public:
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -296,8 +284,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -317,8 +304,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -338,8 +324,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -352,8 +337,7 @@ public:
                             const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -363,8 +347,7 @@ public:
                                const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired subrange sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -379,8 +362,7 @@ public:
             const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -395,8 +377,7 @@ public:
                                     YIndepType& raw_sample );
 
  //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -413,8 +394,7 @@ public:
 private:
 
   //! Sample the bin boundary that will be used for statistical sampling
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YZIterator>
   static YZIterator sampleBinBoundary(
     const XIndepType& x_indep_value,
@@ -426,13 +406,14 @@ private:
  * points interpolation method is used in evaluating the distribution and the
  * cumulative points statistical method in sampling the distribution.
  */
+template<typename _TwoDInterpPolicy>
 struct CumulativePoints
 {
-public:
+  //! The two-dimensional interpolation policy
+  typedef _TwoDInterpPolicy TwoDInterpPolicy;
 
   //! Calculate the Y independent lower bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateLowerBound(
@@ -451,8 +432,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -473,8 +453,7 @@ public:
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -495,8 +474,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -516,8 +494,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -537,8 +514,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -551,8 +527,7 @@ public:
                             const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -562,8 +537,7 @@ public:
                                const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired subrange sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -578,8 +552,7 @@ public:
             const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -594,8 +567,7 @@ public:
                                     YIndepType& raw_sample );
 
  //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -612,8 +584,7 @@ public:
 private:
 
   //! Sample the bin boundary that will be used for statistical sampling
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YZIterator>
   static YZIterator sampleBinBoundary(
     const XIndepType& x_indep_value,
@@ -628,13 +599,14 @@ private:
  * iterative method of estimating the CDF and comparing it to the sampling
  * routine.
  */
+template<typename _TwoDInterpPolicy>
 struct Correlated
 {
-public:
+  //! The two-dimensional interpolation policy
+  typedef _TwoDInterpPolicy TwoDInterpPolicy;
 
   //! Calculate the Y independent lower bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateLowerBound(
@@ -643,8 +615,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Calculate the Y independent upper bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateUpperBound(
@@ -653,8 +624,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -675,8 +645,7 @@ public:
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -697,8 +666,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -718,8 +686,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -739,8 +706,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -753,8 +719,7 @@ public:
                             const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -764,8 +729,7 @@ public:
                                const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired subrange sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -780,8 +744,7 @@ public:
             const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -796,8 +759,7 @@ public:
                                     YIndepType& raw_sample );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -817,13 +779,14 @@ public:
  * the PDF and CDF requires using an iterative method of estimating the CDF and
  * comparing it to the sampling routine.
  */
+template<typename _TwoDInterpPolicy>
 struct UnitBaseCorrelated
 {
-public:
+  //! The two-dimensional interpolation policy
+  typedef _TwoDInterpPolicy TwoDInterpPolicy;
 
   //! Calculate the Y independent lower bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateLowerBound(
@@ -832,8 +795,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Calculate the Y independent upper bound between bin boundaries
-  template<typename TwoDInterpPolicy,
-           typename YIndepType,
+  template<typename YIndepType,
            typename XIndepType,
            typename YZIterator>
   static YIndepType calculateUpperBound(
@@ -842,8 +804,7 @@ public:
                       const YZIterator& upper_bin_boundary );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -864,8 +825,7 @@ public:
                       unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the PDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename ReturnType,
@@ -886,8 +846,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -907,8 +866,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Evaluate the CDF between bin boundaries using the desired evaluation method
-  template<typename TwoDInterpPolicy,
-           typename BaseOneDDistributionType,
+  template<typename BaseOneDDistributionType,
            typename XIndepType,
            typename YIndepType,
            typename YZIterator,
@@ -928,8 +886,7 @@ public:
               unsigned max_number_of_iterations = 500u );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -942,8 +899,7 @@ public:
                             const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -953,8 +909,7 @@ public:
                                const YZIterator& upper_bin_boundary );
 
   //! Sample between bin boundaries using the desired subrange sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -969,8 +924,7 @@ public:
             const YIndepType& max_y_indep_value );
 
   //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor,
@@ -985,8 +939,7 @@ public:
                                     YIndepType& raw_sample );
 
  //! Sample between bin boundaries using the desired sampling functor
-  template<typename TwoDInterpPolicy,
-           typename XIndepType,
+  template<typename XIndepType,
            typename YIndepType,
            typename YZIterator,
            typename SampleFunctor>
@@ -1007,12 +960,12 @@ public:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_TwoDSamplingPolicy_def.hpp"
+#include "Utility_TwoDGridPolicy_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_TWO_D_SAMPLING_POLICY_HPP
+#endif // end UTILITY_TWO_D_GRID_POLICY_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_TwoDSamplingPolicy.hpp
+// end Utility_TwoDGridPolicy.hpp
 //---------------------------------------------------------------------------//

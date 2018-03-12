@@ -19,12 +19,11 @@
 namespace Utility{
 
 // Constructor
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularTwoDDistribution(
+UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularTwoDDistribution(
                           const DistributionType& distribution,
                           const double fuzzy_boundary_tol,
                           const double evaluate_relative_error_tol,
@@ -47,14 +46,13 @@ UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePol
 }
 
 // Constructor
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<template<typename T, typename... Args> class ArrayA,
          template<typename T, typename... Args> class ArrayB>
-UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularTwoDDistribution(
+UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularTwoDDistribution(
           const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
           const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
           const double fuzzy_boundary_tol,
@@ -78,8 +76,7 @@ UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePol
 }
 
 // Constructor
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
@@ -88,7 +85,7 @@ template<template<typename T, typename... Args> class ArrayA,
          template<typename T, typename... Args> class SubarrayB,
          template<typename T, typename... Args> class ArrayC,
          template<typename T, typename... Args> class SubarrayC>
-UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularTwoDDistribution(
+UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareInterpolatedFullyTabularTwoDDistribution(
         const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
         const ArrayB<SubarrayB<SecondaryIndepQuantity> >& secondary_indep_grids,
         const ArrayC<SubarrayC<DepQuantity> >& dependent_values,
@@ -119,7 +116,7 @@ UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePol
   {
     distribution[i].first = primary_indep_grid[i];
     distribution[i].second.reset(
-      new UnitAwareTabularDistribution<typename TwoDInterpPolicy::SecondaryBasePolicy,SecondaryIndependentUnit,DependentUnit>(
+      new UnitAwareTabularDistribution<typename TwoDGridPolicy::TwoDInterpPolicy::SecondaryBasePolicy,SecondaryIndependentUnit,DependentUnit>(
                                                       secondary_indep_grids[i],
                                                       dependent_values[i] ) );
   }
@@ -137,39 +134,26 @@ UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePol
 
 // Evaluate the secondary conditional CDF
 //! \todo Check why the CDFInterpPolicy (changing the z interp to Lin) is necessary
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  if ( TwoDSamplePolicy::name() == "Direct" )
-  {
-    return this->template evaluateCDFImpl<TwoDInterpPolicy>(
-                                        primary_indep_var_value,
-                                        secondary_indep_var_value,
-                                        &BaseOneDDistributionType::evaluateCDF );
-  }
-  else
-  {
-    return this->template evaluateCDFImpl<CDFInterpPolicy>(
-                                        primary_indep_var_value,
-                                        secondary_indep_var_value,
-                                        &BaseOneDDistributionType::evaluateCDF );
-  }
+  return this->evaluateCDFImpl( primary_indep_var_value,
+                                secondary_indep_var_value,
+                                &BaseOneDDistributionType::evaluateCDF );
 }
 
 // Evaluate the secondary conditional CDF
 //! \todo Check why the CDFInterpPolicy (changing the z interp to Lin) is necessary
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -177,24 +161,11 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSa
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               max_secondary_indep_var_functor ) const
 {
-  if ( TwoDSamplePolicy::name() == "Direct" )
-  {
-    return this->template evaluateCDFImpl<TwoDInterpPolicy>(
-                                        primary_indep_var_value,
-                                        secondary_indep_var_value,
-                                        min_secondary_indep_var_functor,
-                                        max_secondary_indep_var_functor,
-                                        &BaseOneDDistributionType::evaluateCDF );
-  }
-  else
-  {
-    return this->template evaluateCDFImpl<CDFInterpPolicy>(
-                                        primary_indep_var_value,
-                                        secondary_indep_var_value,
-                                        min_secondary_indep_var_functor,
-                                        max_secondary_indep_var_functor,
-                                        &BaseOneDDistributionType::evaluateCDF );
-  }
+  return this->evaluateCDFImpl( primary_indep_var_value,
+                                secondary_indep_var_value,
+                                min_secondary_indep_var_functor,
+                                max_secondary_indep_var_functor,
+                                &BaseOneDDistributionType::evaluateCDF );
 }
 
 //---------------------------------------------------------------------------//
@@ -202,12 +173,11 @@ double UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSa
 //---------------------------------------------------------------------------//
 
 // Return a random sample from the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
     const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -227,12 +197,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample from the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
             const PrimaryIndepQuantity primary_indep_var_value,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
@@ -258,12 +227,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample and record the number of trials
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             unsigned& trials ) const
   -> SecondaryIndepQuantity
@@ -284,12 +252,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample from the secondary conditional PDF at the CDF val
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const
   -> SecondaryIndepQuantity
@@ -309,12 +276,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample from the secondary conditional PDF at the CDF val
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -341,12 +307,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
@@ -366,12 +331,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
               min_secondary_indep_var_functor,
@@ -397,12 +361,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -438,12 +401,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -477,7 +439,7 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return TwoDSamplePolicy::template sampleInSubrange<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    return TwoDGridPolicy::template sampleInSubrange<PrimaryIndepQuantity,SecondaryIndepQuantity>(
                     subrange_sample_functor,
                     min_secondary_indep_var_functor,
                     max_secondary_indep_var_functor,
@@ -518,12 +480,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
 /*! \details The primary_bin_index stores the index of the bin boundary that
  * was used to generate the sample.
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             unsigned& primary_bin_index,
                             unsigned& secondary_bin_index ) const
@@ -550,12 +511,11 @@ auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamp
  * was used to generate the raw_sample. The raw_sample is the original sample
  * that was made before the scaling operation was done.
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
                             unsigned& primary_bin_index,

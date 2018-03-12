@@ -339,7 +339,7 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
     distribution_data[1].first = 1.0;
     distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
-    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -358,7 +358,7 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
-    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -377,7 +377,7 @@ TEUCHOS_UNIT_TEST( InterpolatedPartiallyTabularTwoDDistribution,
     distribution_data[1].first = 1.5;
     distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
-    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -1697,8 +1697,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the secondary distribution beyond the third bin
     distribution_data[3].first = 2.0;
     distribution_data[3].second = distribution_data[0].second;
-
-    distribution.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    
+    distribution.reset( new Utility::InterpolatedPartiallyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -1723,8 +1723,8 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     // Create the secondary distribution beyond the third bin
     primary_bins[3] = 2.0*MeV;
     secondary_dists[3] = secondary_dists[0];
-
-    unit_aware_distribution.reset( new Utility::UnitAwareInterpolatedPartiallyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists ) );
+    
+    unit_aware_distribution.reset( new Utility::UnitAwareInterpolatedPartiallyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin>,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists ) );
   }
 
   // Initialize the random number generator

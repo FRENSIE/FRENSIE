@@ -12,8 +12,7 @@
 // FRENSIE Includes
 #include "Utility_PartiallyTabularTwoDDistribution.hpp"
 #include "Utility_FullyTabularTwoDDistribution.hpp"
-#include "Utility_TwoDInterpolationPolicy.hpp"
-#include "Utility_TwoDSamplingPolicy.hpp"
+#include "Utility_TwoDGridPolicy.hpp"
 
 namespace Utility{
 
@@ -24,13 +23,13 @@ namespace Utility{
  * and differ only in the OneDDistribution base class that they operate on
  * (either the OneDDistribution or the TabularOneDDistribution respectively).
  */
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename TwoDGridPolicy, typename Distribution>
 class UnitAwareInterpolatedTabularTwoDDistributionImplBase : public Distribution{
 
 protected:
 
   // The typedef for this type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution> ThisType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDGridPolicy,Distribution> ThisType;
 
   // The parent distribution type
   typedef Distribution ParentType;
@@ -168,8 +167,7 @@ protected:
   { /* ... */ }
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
     const PrimaryIndepQuantity primary_indep_var_value,
@@ -177,8 +175,7 @@ protected:
     EvaluationMethod evaluate ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
     const PrimaryIndepQuantity primary_indep_var_value,
@@ -191,23 +188,23 @@ protected:
     unsigned max_number_of_iterations = 500 ) const;
 
   //! Evaluate the distribution using the desired CDF evaluation method
-  template<typename LocalTwoDInterpPolicy, typename EvaluationMethod>
+  template<typename EvaluationMethod>
   double evaluateCDFImpl(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const SecondaryIndepQuantity secondary_indep_var_value,
-    EvaluationMethod evaluateCDF ) const;
+                        const PrimaryIndepQuantity primary_indep_var_value,
+                        const SecondaryIndepQuantity secondary_indep_var_value,
+                        EvaluationMethod evaluateCDF ) const;
 
   //! Evaluate the distribution using the desired CDF evaluation method
-  template<typename LocalTwoDInterpPolicy, typename EvaluationMethod>
+  template<typename EvaluationMethod>
   double evaluateCDFImpl(
-    const PrimaryIndepQuantity primary_indep_var_value,
-    const SecondaryIndepQuantity secondary_indep_var_value,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-      min_secondary_indep_var_functor,
-    const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
-      max_secondary_indep_var_functor,
-    EvaluationMethod evaluateCDF,
-    unsigned max_number_of_iterations = 500 ) const;
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const SecondaryIndepQuantity secondary_indep_var_value,
+             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+             min_secondary_indep_var_functor,
+             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
+             max_secondary_indep_var_functor,
+             EvaluationMethod evaluateCDF,
+             unsigned max_number_of_iterations = 500 ) const;
 
   //! Sample from the distribution using the desired sampling functor
   template<typename SampleFunctor>
