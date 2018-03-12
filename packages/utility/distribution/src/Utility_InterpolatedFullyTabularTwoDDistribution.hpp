@@ -14,113 +14,23 @@
 
 namespace Utility{
 
-namespace {
-
-//! Helper class used to construct a cdf interpolation policy
-template<typename TwoDSamplePolicy, typename YProcessingTag, typename XProcessingTag>
-struct CDFInterpolationHelper
-{ /* ... */ };
-
-//! Helper class used to construct a LinLinLin cdf interpolation policy
-template<typename TwoDSamplePolicy>
-struct CDFInterpolationHelper<TwoDSamplePolicy,LinIndepVarProcessingTag,LinIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLinLin CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLinLog cdf interpolation policy
-template<typename TwoDSamplePolicy>
-struct CDFInterpolationHelper<TwoDSamplePolicy,LinIndepVarProcessingTag,LogIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLinLog CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogLin cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<Direct,LogIndepVarProcessingTag,LinIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LogLogLin CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogLin cdf interpolation policy
-template<typename TwoDSamplePolicy>
-struct CDFInterpolationHelper<TwoDSamplePolicy,LogIndepVarProcessingTag,LinIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogLin CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogLog cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<Direct,LogIndepVarProcessingTag,LogIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogLog CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogLog cdf interpolation policy
-template<typename TwoDSamplePolicy>
-struct CDFInterpolationHelper<TwoDSamplePolicy,LogIndepVarProcessingTag,LogIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogLog CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogCosLin cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<Direct,LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogCosLin CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogCosLin cdf interpolation policy
-template<typename TwoDSamplePolicy>
-struct CDFInterpolationHelper<TwoDSamplePolicy,LogCosIndepVarProcessingTag,LinIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogCosLin CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogCosLog cdf interpolation policy
-template<>
-struct CDFInterpolationHelper<Direct,LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogCosLog CDFInterpPolicy;
-};
-
-//! Helper class used to construct a LinLogCosLog cdf interpolation policy
-template<typename TwoDSamplePolicy>
-struct CDFInterpolationHelper<TwoDSamplePolicy,LogCosIndepVarProcessingTag,LogIndepVarProcessingTag>
-{
-  //! The cdf interpolation policy
-  typedef LinLogCosLog CDFInterpPolicy;
-};
-
-} // end local namespace
-
 /*! The unit-aware interpolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDGridPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 protected:
 
   // Typedef for this type
-  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDGridPolicy,UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
 
   // The base one-dimensional distribution type (UnitAwareTabularOneDDist)
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -139,9 +49,6 @@ protected:
 
   // Typedef for QuantityTraits<DepQuantity>
   typedef typename ParentType::DQT DQT;
-
-  // The CDF interpolation policy
-  typedef typename CDFInterpolationHelper<TwoDSamplePolicy,typename TwoDInterpPolicy::SecondIndepVarProcessingTag,typename TwoDInterpPolicy::FirstIndepVarProcessingTag>::CDFInterpPolicy CDFInterpPolicy;
 
 public:
 
@@ -294,8 +201,8 @@ public:
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy> using InterpolatedFullyTabularTwoDDistribution =
-  UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
+template<typename TwoDGridPolicy> using InterpolatedFullyTabularTwoDDistribution =
+  UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,void,void,void>;
 
 } // end Utility namespace
 

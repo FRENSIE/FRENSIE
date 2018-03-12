@@ -19,12 +19,11 @@
 namespace Utility{
 
 // Constructor
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticTwoDDistribution(
+UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticTwoDDistribution(
       const DistributionType& distribution,
       const SecondaryIndepQuantity upper_bound_conditional_indep_var,
       const double fuzzy_boundary_tol,
@@ -42,14 +41,13 @@ UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndepe
 }
 
 // Constructor
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<template<typename T, typename... Args> class ArrayA,
           template<typename T, typename... Args> class ArrayB>
-UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticTwoDDistribution(
+UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticTwoDDistribution(
       const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
       const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions,
       const SecondaryIndepQuantity upper_bound_conditional_indep_var,
@@ -73,46 +71,43 @@ UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndepe
 ////---------------------------------------------------------------------------//
 
 // Evaluate the distribution
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> DepQuantity
 {
-  return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
+  return ThisType::evaluateImpl<DepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluate );
 }
 
 // Evaluate the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
 {
-  return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
+  return this->evaluateImpl<InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       &BaseOneDDistributionType::evaluatePDF );
 }
 
 // Evaluate the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -121,7 +116,7 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
               max_secondary_indep_var_functor ) const
   -> InverseSecondaryIndepQuantity
 {
-  return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
+  return this->evaluateImpl<InverseSecondaryIndepQuantity>(
                                       primary_indep_var_value,
                                       secondary_indep_var_value,
                                       min_secondary_indep_var_functor,
@@ -130,41 +125,41 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 }
 
 // Evaluate the secondary conditional CDF
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+double UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  if ( CosSamplingPolicy::name() == "Unit-base" )
-  {
-    return this->evaluateCDFImpl<CDFInterpPolicy>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
-  }
-  else
-  {
-    return this->evaluateCDFImpl<TwoDInterpPolicy>(
-                                      primary_indep_var_value,
-                                      secondary_indep_var_value,
-                                      &BaseOneDDistributionType::evaluateCDF );
-  }
+  return this->evaluateCDFImpl( primary_indep_var_value,
+                                secondary_indep_var_value,
+                                &BaseOneDDistributionType::evaluateCDF );
+  // if ( CosGridPolicy::name() == "Unit-base" )
+  // {
+  //   return this->evaluateCDFImpl<CDFInterpPolicy>(
+  //                                     primary_indep_var_value,
+  //                                     secondary_indep_var_value,
+  //                                     &BaseOneDDistributionType::evaluateCDF );
+  // }
+  // else
+  // {
+  //   return this->evaluateCDFImpl<TwoDInterpPolicy>(
+  //                                     primary_indep_var_value,
+  //                                     secondary_indep_var_value,
+  //                                     &BaseOneDDistributionType::evaluateCDF );
+  // }
 }
 
 // Evaluate the distribution using the desired evaluation method
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-template<typename LocalTwoDInterpPolicy,
-         typename ReturnType,
+template<typename ReturnType,
          typename EvaluationMethod>
-inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
+inline ReturnType UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
                         const PrimaryIndepQuantity incoming_energy,
                         const SecondaryIndepQuantity angle_cosine,
                         EvaluationMethod evaluate ) const
@@ -196,7 +191,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
           return d_upper_bound_conditional_indep_var;
         };
 
-    return CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+    return CosGridPolicy::template evaluatePDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -247,15 +242,13 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
 }
 
 // Evaluate the distribution using the desired evaluation method
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-template<typename LocalTwoDInterpPolicy,
-         typename ReturnType,
+template<typename ReturnType,
          typename EvaluationMethod>
-inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
+inline ReturnType UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateImpl(
             const PrimaryIndepQuantity incoming_energy,
             const SecondaryIndepQuantity angle_cosine,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -278,7 +271,7 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return CosSamplingPolicy::template evaluatePDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+    return CosGridPolicy::template evaluatePDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -302,14 +295,12 @@ inline ReturnType UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePo
 }
 
 // Evaluate the CDF using the desired evaluation method
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-template<typename LocalTwoDInterpPolicy,
-         typename EvaluationMethod>
-inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateCDFImpl(
+template<typename EvaluationMethod>
+inline double UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateCDFImpl(
                         const PrimaryIndepQuantity incoming_energy,
                         const SecondaryIndepQuantity angle_cosine,
                         EvaluationMethod evaluateCDF ) const
@@ -341,7 +332,7 @@ inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy
           return d_upper_bound_conditional_indep_var;
         };
 
-    return CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    return CosGridPolicy::template evaluateCDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -365,14 +356,12 @@ inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy
 }
 
 // Evaluate the CDF using the desired evaluation method
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-template<typename LocalTwoDInterpPolicy,
-         typename EvaluationMethod>
-inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateCDFImpl(
+template<typename EvaluationMethod>
+inline double UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateCDFImpl(
             const PrimaryIndepQuantity incoming_energy,
             const SecondaryIndepQuantity angle_cosine,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -395,7 +384,7 @@ inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy
 
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return CosSamplingPolicy::template evaluateCDFCos<TwoDInterpPolicy,BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+    return CosGridPolicy::template evaluateCDFCos<BaseOneDDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity>(
         incoming_energy,
         angle_cosine,
         min_secondary_indep_var_functor,
@@ -423,12 +412,11 @@ inline double UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy
 ////---------------------------------------------------------------------------//
 
 // Return a random sample from the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -448,12 +436,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 
 
 // Return a random sample from the secondary conditional PDF
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
     const PrimaryIndepQuantity primary_indep_var_value,
     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& min_secondary_indep_var_functor,
     const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>& max_secondary_indep_var_functor ) const
@@ -463,12 +450,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 }
 
 // Return a random sample and record the number of trials
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             unsigned& trials ) const
   -> SecondaryIndepQuantity
@@ -481,12 +467,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 /*! \details The primary_bin_index stores the index of the bin boundary that
  * was used to generate the sample.
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             unsigned& primary_bin_index,
                             unsigned& secondary_bin_index ) const
@@ -513,12 +498,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
  * was used to generate the raw_sample. The raw_sample is the original sample
  * that was made before the scaling operation was done.
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndices(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SecondaryIndepQuantity& raw_sample,
                             unsigned& primary_bin_index,
@@ -539,12 +523,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 }
 
 // Return a random sample from the secondary conditional PDF at the CDF val
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const
   -> SecondaryIndepQuantity
@@ -564,12 +547,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
   -> SecondaryIndepQuantity
@@ -584,12 +566,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
                                                max_secondary_indep_var_value );
 }
 // Return a random sample from the secondary conditional PDF in the subrange
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumberInSubrange(
              const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
@@ -630,13 +611,12 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 }
 
 // Sample from the distribution using the desired sampling functor
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename SampleFunctor>
-inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleImpl(
+inline auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
@@ -652,13 +632,12 @@ inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,P
 }
 
 // Sample from the distribution using the desired sampling functor
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
 template<typename SampleFunctor>
-inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleDetailedImpl(
+inline auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleDetailedImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
@@ -677,7 +656,7 @@ inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,P
   {
     typename DistributionType::const_iterator sampled_bin_boundary;
     sample =
-      CosSamplingPolicy::template sampleCosDetailed<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
+      CosGridPolicy::template sampleCosDetailed<PrimaryIndepQuantity,SecondaryIndepQuantity>(
           sample_functor,
           primary_indep_var_value,
           lower_bin_boundary,
@@ -718,12 +697,11 @@ inline auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,P
 ////---------------------------------------------------------------------------//
 
 // Return the lower bound of the conditional distribution
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getLowerBoundOfConditionalIndepVar(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getLowerBoundOfConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -741,12 +719,11 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 }
 
 // Return the upper bound of the conditional distribution
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getUpperBoundOfConditionalIndepVar(
+auto UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::getUpperBoundOfConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -764,15 +741,14 @@ auto UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryI
 }
 
 // Test if the second independent variable is compatible with Cosine processing
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-bool UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::isSecondIndepVarCompatibleWithCosineProcessingType() const
+bool UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::isSecondIndepVarCompatibleWithCosineProcessingType() const
 {
-  if( boost::is_same<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
-      boost::is_same<typename TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value )
+  if( boost::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
+      boost::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value )
     return true;
   else
     return false;

@@ -20,27 +20,27 @@ namespace Utility{
 namespace {
 
 //! Helper class used to construct a cosine sampling policy
-template<typename TwoDSamplePolicy>
-struct CosineSamplingHelper
+template<typename TwoDGridPolicy>
+struct CosGridHelper
 {
   //! The cosine sampling policy
-  using CosSamplingPolicy = TwoDSamplePolicy;
+  using CosGridPolicy = TwoDGridPolicy;
 };
 
 //! Helper class used to construct a UnitBase cosine sampling policy
-template<>
-struct CosineSamplingHelper<UnitBase>
+template<typename TwoDInterpPolicy>
+struct CosGridHelper<UnitBase<TwoDInterpPolicy> >
 {
   //! The cosine sampling policy
-  using CosSamplingPolicy = Direct;
+  using CosGridPolicy = Direct<TwoDInterpPolicy>;
 };
 
 //! Helper class used to construct a UnitBaseCorrelated cosine sampling policy
-template<>
-struct CosineSamplingHelper<UnitBaseCorrelated>
+template<typename TwoDInterpPolicy>
+struct CosGridHelper<UnitBaseCorrelated<TwoDInterpPolicy> >
 {
   //! The cosine sampling policy
-  using CosSamplingPolicy = Correlated;
+  using CosGridPolicy = Correlated<TwoDInterpPolicy>;
 };
 
 } // end local namespace
@@ -48,12 +48,11 @@ struct CosineSamplingHelper<UnitBaseCorrelated>
 /*! The unit-aware interpolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the primary independent unit corresponds to energy
@@ -62,10 +61,10 @@ class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabula
 private:
 
   // The typedef for this type
-  typedef UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
+  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
 
   // The base one-dimensional distribution type (UnitAwareTabularOneDDist)
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -85,17 +84,14 @@ private:
   // Typedef for QuantityTraits<DepQuantity>
   typedef typename ParentType::DQT DQT;
 
-  //! The primary independent variable processing tag
-  typedef typename TwoDInterpPolicy::FirstIndepVarProcessingTag FirstIndepVarProcessingTag;
+  // The primary independent variable processing tag
+  typedef typename TwoDGridPolicy::TwoDInterpPolicy::FirstIndepVarProcessingTag FirstIndepVarProcessingTag;
 
-  //! The secondary independent quantity type
-  typedef typename TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
-
-  // The cdf interpolation policy
-  typedef typename ParentType::CDFInterpPolicy CDFInterpPolicy;
+  // The secondary independent quantity type
+  typedef typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
 
   // The cosine sampling policy
-  typedef typename CosineSamplingHelper<TwoDSamplePolicy>::CosSamplingPolicy CosSamplingPolicy;
+  typedef typename CosGridHelper<TwoDGridPolicy>::CosGridPolicy CosGridPolicy;
 
 public:
   
@@ -218,8 +214,7 @@ public:
 private:
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
                     const PrimaryIndepQuantity incoming_energy,
@@ -227,8 +222,7 @@ private:
                     EvaluationMethod evaluate ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
     const PrimaryIndepQuantity incoming_energy,
@@ -241,16 +235,14 @@ private:
     unsigned max_number_of_iterations = 500 ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename EvaluationMethod>
+  template<typename EvaluationMethod>
   double evaluateCDFImpl(
                     const PrimaryIndepQuantity incoming_energy,
                     const SecondaryIndepQuantity angle_cosine,
                     EvaluationMethod evaluateCDF ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename EvaluationMethod>
+  template<typename EvaluationMethod>
   double evaluateCDFImpl(
     const PrimaryIndepQuantity incoming_energy,
     const SecondaryIndepQuantity angle_cosine,
@@ -292,8 +284,8 @@ private:
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy> using ElasticTwoDDistribution =
-  UnitAwareElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
+template<typename TwoDGridPolicy> using ElasticTwoDDistribution =
+  UnitAwareElasticTwoDDistribution<TwoDGridPolicy,void,void,void>;
   
 } // end Utility namespace
 
