@@ -17,6 +17,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace Utility{
 
@@ -1133,7 +1134,7 @@ auto Correlated<_TwoDInterpPolicy>::calculateUpperBound(
 namespace Details{
 
 /*! The helper struct used to calculate the secondary independent value
- * 
+ *
  * Specialization of this class for different OneDDistribution classes is
  * required. Using a OneDDistribution class that does not have a specialization
  * (and is therefore assumed to be unsupported) will result in the following
@@ -1185,7 +1186,7 @@ struct CorrelatedEvaluatePDFSecondaryIndepHelper
   { BaseOneDDistributionType::thisDistTypeIsNotCompatibleWithCorrelatedEvaluation(); }
 };
 
-/*! \brief Partial specialization of the 
+/*! \brief Partial specialization of the
  * Utility::Details::CorrelatedEvaluatePDFSecondaryIndepHelper class for
  * Utility::UnitAwareTabularOneDDistribution
  */
@@ -1239,7 +1240,7 @@ template<typename TwoDInterpPolicy,
          typename YIndepType,
          typename YZIterator,
          typename EvaluationMethod,
-         typename T>  
+         typename T>
 void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDistribution<_T,_U> >::calculateSecondaryIndepValues(
                                        const EvaluationMethod& evaluate,
                                        const YIndepType& y_indep_value,
@@ -1261,7 +1262,7 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDist
       ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
     double bin_eval_1 =
       ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::evaluateCDF)( y_indep_value );
-    
+
     if ( bin_eval_0 <= bin_eval_1 )
     {
       lower_cdf_bound = bin_eval_0;
@@ -1273,7 +1274,7 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDist
       upper_cdf_bound = bin_eval_0;
     }
   }
-  
+
   double est_cdf = ThisType::estimateCDF<TwoDInterpPolicy>(
                                                     lower_cdf_bound,
                                                     upper_cdf_bound,
@@ -1287,8 +1288,8 @@ void CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDist
                                                     error_tol,
                                                     max_number_of_iterations );
 }
-  
-  
+
+
 // Estimate the interpolated CDF and the corresponding lower and upper y indep
 // values
 template<typename _T, typename _U>
@@ -1313,7 +1314,7 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDi
   double rel_error = 1.0;
   YIndepType error_norm_constant = y_indep_value;
   double tolerance = rel_error_tol;
-  
+
   /*! \detials If the secondary indep var value is zero the relative error
    *  will always zero or inf. When this is the case the error tolerance will
    *  be used instead of the relative error tolerance.
@@ -1323,42 +1324,42 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDi
     error_norm_constant = QuantityTraits<YIndepType>::one();
     tolerance = error_tol;
   }
-  
+
   // Refine the estimated cdf value until it meet the tolerance
   double estimated_cdf = 0.0;
   while ( rel_error > tolerance )
   {
     // Estimate the cdf as the midpoint of the lower and upper boundaries
     estimated_cdf = 0.5*( lower_cdf_est + upper_cdf_est );
-    
+
     // Get the sampled values at the upper and lower bin for the estimated_cdf
     y_indep_value_0 =
       ((*lower_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
     y_indep_value_1 =
       ((*upper_bin_boundary->second).*&Utility::UnitAwareTabularOneDDistribution<_T,_U>::sampleWithRandomNumber)( estimated_cdf );
-    
+
     // Interpolate using the templated TwoDInterpPolicy::YXInterpPolicy
     YIndepType est_y_indep_value =
       TwoDInterpPolicy::YXInterpPolicy::interpolate( beta,
                                                      y_indep_value_0,
                                                      y_indep_value_1 );
-    
+
     if ( y_indep_value == est_y_indep_value )
       break;
-    
+
     // Calculate the relative error between the y_indep_value and the estimate
     rel_error = (y_indep_value - est_y_indep_value )/ error_norm_constant;
-    
+
     // Make sure the relative error is positive
     rel_error = rel_error < 0 ? -rel_error : rel_error;
-    
+
     // Update the number of iterations
     ++number_of_iterations;
-    
+
     // If tolerance is met exit loop
     if ( rel_error <= tolerance )
       break;
-    
+
     // Update the estimated_cdf estimate
     if ( est_y_indep_value < y_indep_value )
     {
@@ -1370,7 +1371,7 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDi
       // Old estimated_cdf estimate is new upper cdf boundary
       upper_cdf_est = estimated_cdf;
     }
-    
+
     // Check for the max number of iterations
     if ( number_of_iterations > max_number_of_iterations )
     {
@@ -1378,7 +1379,7 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDi
       double error =
         (y_indep_value - est_y_indep_value )/QuantityTraits<YIndepType>::one();
       error = error < 0 ? -error : error;
-      
+
       // If error meets error tolerance accept estimate
       if ( error < error_tol )
         break;
@@ -1401,11 +1402,11 @@ double CorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabularOneDDi
       }
     }
   }
-  
+
   return estimated_cdf;
 }
 
-/*! \brief Base helper struct for calculating the PDF of a bivariate 
+/*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming linear interpolation with the secondary indep grid
  * The PDF for lin-lin interpolation is defined as:
  * f(x,y) = ( f_0( y_0 ) * f_1( y_1 ) )/
@@ -1428,7 +1429,7 @@ struct CorrelatedEvaluatePDFCosHelperLinBase
   }
 };
 
-/*! \brief Base helper struct for calculating the PDF of a bivariate 
+/*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming log-cos interpolation with the secondary indep grid
  *
  * The PDF for log-log interpolation is defined as:
@@ -1474,7 +1475,7 @@ struct CorrelatedEvaluatePDFCosHelperLogCosBase
 };
 
 /*! \brief Helper struct for calculating the PDF of a bivariate distribution
- * 
+ *
  * Specialization of this struct for the different interpolation types is
  * required.
  */
@@ -1497,28 +1498,28 @@ struct CorrelatedEvaluatePDFCosHelper
   }
 };
 
-/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper 
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
  * for Utility::LinLin.
  */
 template<>
 struct CorrelatedEvaluatePDFCosHelper<Utility::LinLin> : public CorrelatedEvaluatePDFCosHelperLinBase
 { /* ... */ };
 
-/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper 
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
  * for Utility::LinLog.
  */
 template<>
 struct CorrelatedEvaluatePDFCosHelper<Utility::LinLog> : public CorrelatedEvaluatePDFCosHelperLinBase
 { /* ... */ };
 
-/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper 
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
  * for Utility::LogCosLin.
  */
 template<>
 struct CorrelatedEvaluatePDFCosHelper<Utility::LogCosLin> : public CorrelatedEvaluatePDFCosHelperLogCosBase
 { /* ... */ };
 
-/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper 
+/*! \brief Specialization of Utility::Details::CorrelatedEvaluatePDFCosHelper
  * for Utility::LogCosLog.
  */
 template<>
@@ -1636,7 +1637,7 @@ ReturnType Correlated<_TwoDInterpPolicy>::evaluatePDFCos(
 
 namespace Details{
 
-/*! \brief Base helper struct for calculating the PDF of a bivariate 
+/*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming linear interpolation with the secondary indep grid
  * The PDF for lin-lin interpolation is defined as:
  * f(x,y) = ( f_0( y_0 ) * f_1( y_1 ) )/
@@ -1645,7 +1646,7 @@ namespace Details{
 struct CorrelatedEvaluatePDFHelperLinBase : public CorrelatedEvaluatePDFCosHelperLinBase
 { /* ... */ };
 
-/*! \brief Base helper struct for calculating the PDF of a bivariate 
+/*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming log interpolation with the secondary indep grid
  *
  * The PDF for log-log interpolation is defined as:
@@ -1674,7 +1675,7 @@ struct CorrelatedEvaluatePDFHelperLogBase
 };
 
 /*! \brief Helper struct for calculating the PDF of a bivariate distribution
- * 
+ *
  * Specialization of this struct for the different interpolation types is
  * required.
  */
@@ -1738,7 +1739,7 @@ struct CorrelatedEvaluatePDFHelper<Utility::LogLin> : public CorrelatedEvaluateP
 template<>
 struct CorrelatedEvaluatePDFHelper<Utility::LogCosLin> : public CorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
-  
+
 } // end Details namespace
 
 // Evaluate the PDF between bin boundaries using the desired evaluation method
@@ -2063,7 +2064,7 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDF(
                                         rel_error_tol,
                                         error_tol,
                                         max_number_of_iterations );
-      
+
       return est_cdf;
     }
   }
@@ -2394,7 +2395,7 @@ ReturnType UnitBaseCorrelated<_TwoDInterpPolicy>::evaluatePDFCos(
 namespace Details{
 
 /*! The helper struct used to calculate the secondary independent value
- * 
+ *
  * Specialization of this class for different OneDDistribution classes is
  * required.
  */
@@ -2456,7 +2457,7 @@ struct UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper
   }
 };
 
-/*! \brief Partial specialization of the 
+/*! \brief Partial specialization of the
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper class
  * for Utility::UnitAwareTabularOneDDistribution
  */
@@ -2540,7 +2541,7 @@ void UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabular
   // Get the lower and upper boundaries of the evaluated cdf
   double lower_cdf_bound, upper_cdf_bound;
   typename QuantityTraits<YIndepType>::RawType eta;
-  
+
   {
     YIndepType min_y_indep_value_with_tol =
       TwoDInterpPolicy::ZYInterpPolicy::calculateFuzzyLowerBound(
@@ -2725,11 +2726,11 @@ double UnitBaseCorrelatedEvaluatePDFSecondaryIndepHelper<Utility::UnitAwareTabul
       }
     }
   }
-  
+
   return estimated_cdf;
 }
 
-/*! \brief Base helper struct for calculating the PDF of a bivariate 
+/*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming linear interpolation with the secondary indep grid
  * The PDF for lin-lin interpolation is defined as:
  * f(x,y) = 1/L * ( L_0f_0( y_0 ) * L_1f_1( y_1 ) )/
@@ -2759,10 +2760,10 @@ struct UnitBaseCorrelatedEvaluatePDFHelperLinBase
     auto upper_product = upper_eval*upper_grid_length;
 
     return (lower_product*upper_product)/LinLin::interpolate( beta, upper_product, lower_product )/intermediate_grid_length;
-  }                                     
+  }
 };
 
-/*! \brief Base helper struct for calculating the PDF of a bivariate 
+/*! \brief Base helper struct for calculating the PDF of a bivariate
  * distribution assuming log interpolation with the secondary indep grid
  *
  * The PDF for log-log interpolation is defined as:
@@ -2806,10 +2807,10 @@ struct UnitBaseCorrelatedEvaluatePDFHelperLogBase
                                                       eta,
                                                       beta );
     }
-    
+
     auto lower_product =
       lower_eval*std::log( lower_y_indep_value/lower_y_min_indep_value );
-    
+
     auto upper_product =
       upper_eval*std::log( upper_y_indep_value/upper_y_min_indep_value );
 
@@ -2818,7 +2819,7 @@ struct UnitBaseCorrelatedEvaluatePDFHelperLogBase
 };
 
 /*! \brief Helper struct for calculating the PDF of a bivariate distribution
- * 
+ *
  * Specialization of this struct for the different interpolation types is
  * required.
  */
@@ -2848,42 +2849,42 @@ struct UnitBaseCorrelatedEvaluatePDFHelper
   }
 };
 
-/*! \brief Specialization of 
+/*! \brief Specialization of
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LinLin
  */
 template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LinLin> : public UnitBaseCorrelatedEvaluatePDFHelperLinBase
 { /* ... */ };
 
-/*! \brief Specialization of 
+/*! \brief Specialization of
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LinLog
  */
 template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LinLog> : public UnitBaseCorrelatedEvaluatePDFHelperLinBase
 { /* ... */ };
 
-/*! \brief Specialization of 
+/*! \brief Specialization of
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogLog
  */
 template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLog> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
-/*! \brief Specialization of 
+/*! \brief Specialization of
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLog
  */
 template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogCosLog> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
-/*! \brief Specialization of 
+/*! \brief Specialization of
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogLin
  */
 template<>
 struct UnitBaseCorrelatedEvaluatePDFHelper<Utility::LogLin> : public UnitBaseCorrelatedEvaluatePDFHelperLogBase
 { /* ... */ };
 
-/*! \brief Specialization of 
+/*! \brief Specialization of
  * Utility::Details::UnitBaseCorrelatedEvaluatePDFHelper for Utility::LogCosLin
  */
 template<>
