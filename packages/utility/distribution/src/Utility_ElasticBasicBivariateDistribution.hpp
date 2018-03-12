@@ -20,22 +20,21 @@ namespace Utility{
 /*! The unit-aware interpolated fully tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareElasticBasicBivariateDistribution : public UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+class UnitAwareElasticTwoDDistribution : public UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
 {
 
   // Only allow construction when the primary independent unit corresponds to energy
   RESTRICT_UNIT_TO_BOOST_DIMENSION( PrimaryIndependentUnit, energy_dimension );
 
   // The typedef for this type
-  typedef UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
+  typedef UnitAwareElasticTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
 
   // The parent distribution type
-  typedef UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
 
   // The base one-dimensional distribution type (UnitAwareTabularUnivariateDist)
   typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
@@ -55,14 +54,14 @@ class UnitAwareElasticBasicBivariateDistribution : public UnitAwareInterpolatedF
   // Typedef for QuantityTraits<DepQuantity>
   typedef typename BaseType::DQT DQT;
 
-  //! The primary independent variable processing tag
-  typedef typename TwoDInterpPolicy::FirstIndepVarProcessingTag FirstIndepVarProcessingTag;
+  // The primary independent variable processing tag
+  typedef typename TwoDGridPolicy::TwoDInterpPolicy::FirstIndepVarProcessingTag FirstIndepVarProcessingTag;
 
-  //! The secondary independent quantity type
-  typedef typename TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
-  
-  //! The distribution data const iterator
-  typedef typename BaseType::DistributionDataConstIterator DistributionDataConstIterator;
+  // The secondary independent quantity type
+  typedef typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag SecondIndepVarProcessingTag;
+
+  // The cosine sampling policy
+  typedef typename CosGridHelper<TwoDGridPolicy>::CosGridPolicy CosGridPolicy;
 
 public:
   
@@ -178,8 +177,7 @@ private:
   UnitAwareElasticBasicBivariateDistribution();
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
                     const PrimaryIndepQuantity incoming_energy,
@@ -187,8 +185,7 @@ private:
                     EvaluationMethod evaluate ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
+  template<typename ReturnType,
            typename EvaluationMethod>
   ReturnType evaluateImpl(
     const PrimaryIndepQuantity incoming_energy,
@@ -201,16 +198,14 @@ private:
     unsigned max_number_of_iterations = 500 ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename EvaluationMethod>
+  template<typename EvaluationMethod>
   double evaluateCDFImpl(
                     const PrimaryIndepQuantity incoming_energy,
                     const SecondaryIndepQuantity angle_cosine,
                     EvaluationMethod evaluateCDF ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename EvaluationMethod>
+  template<typename EvaluationMethod>
   double evaluateCDFImpl(
     const PrimaryIndepQuantity incoming_energy,
     const SecondaryIndepQuantity angle_cosine,
@@ -265,20 +260,20 @@ private:
  * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy> using ElasticBasicBivariateDistribution =
-  UnitAwareElasticBasicBivariateDistribution<TwoDInterpPolicy,TwoDSamplePolicy,void,void,void>;
+template<typename TwoDGridPolicy> using ElasticBasicBivariateDistribution =
+  UnitAwareElasticTwoDDistribution<TwoDGridPolicy,void,void,void>;
   
 } // end Utility namespace
 
-BOOST_SERIALIZATION_DISTRIBUTION5_VERSION( UnitAwareElasticBasicBivariateDistribution, 0 );
+BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareElasticBasicBivariateDistribution, 0 );
 
 #define BOOST_SERIALIZATION_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
-  BOOST_SERIALIZATION_CLASS5_EXPORT_STANDARD_KEY( UnitAwareElasticBasicBivariateDistribution, Utility ) \
+  BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY( UnitAwareElasticBasicBivariateDistribution, Utility ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
     UnitAwareElasticBasicBivariateDistribution, Utility, \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "ElasticBasicBivariateDistribution<" ) + Utility::typeName<InterpPolicy>() + "," + Utility::typeName<SamplePolicy>() + ">" ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy, typename SamplePolicy ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, SamplePolicy, void, void, void ) )
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( std::string( "ElasticBasicBivariateDistribution<" ) + Utility::typeName<GridPolicy>() + ">" ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename GridPolicy ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( GridPolicy, void, void, void ) )
 
 BOOST_SERIALIZATION_ELASTIC_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
 

@@ -19,8 +19,8 @@
 namespace Utility{
 
 // Constructor
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase(
+template<typename TwoDGridPolicy, typename Distribution>
+UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions,
@@ -40,8 +40,8 @@ UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,
 }
 
 // Set the distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::setDistribution(
+template<typename TwoDGridPolicy, typename Distribution>
+void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::setDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions )
@@ -54,8 +54,8 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 }
 
 // Set the evaluation tolerances
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::setEvaluationTolerances(
+template<typename TwoDGridPolicy, typename Distribution>
+void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::setEvaluationTolerances(
                                                const double fuzzy_boundary_tol,
                                                const double relative_error_tol,
                                                const double error_tol )
@@ -70,29 +70,29 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 }
 
 // Return the evaluation fuzzy bound tolerance
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-double UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getFuzzyBoundTolerance() const
+template<typename TwoDGridPolicy, typename Distribution>
+double UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::getFuzzyBoundTolerance() const
 {
   return d_fuzzy_boundary_tol;
 }
 
 // Return the evaluation relative error tolerance
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-double UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getRelativeErrorTolerance() const
+template<typename TwoDGridPolicy, typename Distribution>
+double UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::getRelativeErrorTolerance() const
 {
   return d_relative_error_tol;
 }
 
 // Return the evaluation error tolerance
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-double UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getErrorTolerance() const
+template<typename TwoDGridPolicy, typename Distribution>
+double UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::getErrorTolerance() const
 {
   return d_error_tol;
 }
 
 // Verify that the distribution data is valid
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::verifyValidData(
+template<typename TwoDGridPolicy, typename Distribution>
+void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::verifyValidData(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
      const std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >&
      secondary_distributions )
@@ -123,7 +123,7 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
   bad_secondary_dist =
     std::find_if( secondary_distributions.begin(),
                   secondary_distributions.end(),
-                  [](const std::shared_ptr<const BaseUnivariateDistributionType>& dist){ return !dist->template isCompatibleWithInterpType<typename TwoDInterpPolicy::SecondaryBasePolicy>(); } );
+                  [](const std::shared_ptr<const BaseUnivariateDistributionType>& dist){ return !dist->template isCompatibleWithInterpType<typename TwoDGridPolicy::TwoDInterpPolicy::SecondaryBasePolicy>(); } );
 
   TEST_FOR_EXCEPTION( bad_secondary_dist != secondary_distributions.end(),
                       Utility::BadBivariateDistributionParameter,
@@ -131,13 +131,13 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
                       "cannot be created because the secondary distribution "
                       "at index "
                       << std::distance( secondary_distributions.begin(), bad_secondary_dist ) <<
-                      " is not compatible with " << TwoDInterpPolicy::name() <<
+                      " is not compatible with " << TwoDGridPolicy::TwoDInterpPolicy::name() <<
                       " interpolation!" );
 }
 
 // Verify that the tolerances are valid
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::verifyValidTolerances(
+template<typename TwoDGridPolicy, typename Distribution>
+void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::verifyValidTolerances(
                                                const double fuzzy_boundary_tol,
                                                const double relative_error_tol,
                                                const double error_tol )
@@ -159,37 +159,35 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 }
  
 // Evaluate the distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluate(
+template<typename TwoDGridPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::evaluate(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> DepQuantity
 {
-  return this->evaluateImpl<TwoDInterpPolicy,DepQuantity>(
+  return this->evaluateImpl<DepQuantity>(
                                     primary_indep_var_value,
                                     secondary_indep_var_value,
                                     &BaseUnivariateDistributionType::evaluate);
 }
 
 // Evaluate the secondary conditional PDF
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluateSecondaryConditionalPDF(
+template<typename TwoDGridPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::evaluateSecondaryConditionalPDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
   -> InverseSecondaryIndepQuantity
 {
-  return this->evaluateImpl<TwoDInterpPolicy,InverseSecondaryIndepQuantity>(
+  return this->evaluateImpl<InverseSecondaryIndepQuantity>(
                                 primary_indep_var_value,
                                 secondary_indep_var_value,
                                 &BaseUnivariateDistributionType::evaluatePDF );
 }
 
 // Evaluate the distribution using the desired evaluation method
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-template<typename LocalTwoDInterpPolicy,
-         typename ReturnType,
-         typename EvaluationMethod>
-inline ReturnType UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluateImpl(
+template<typename TwoDGridPolicy, typename Distribution>
+template<typename ReturnType, typename EvaluationMethod>
+inline ReturnType UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::evaluateImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const
@@ -208,20 +206,17 @@ inline ReturnType UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase
                                 std::cref( *this ),
                                 std::placeholders::_1 );
 
-  return this->evaluateImpl<LocalTwoDInterpPolicy,ReturnType,EvaluationMethod>(
-              primary_indep_var_value,
-              secondary_indep_var_value,
-              min_secondary_indep_var_functor,
-              max_secondary_indep_var_functor,
-              evaluate );
+  return this->evaluateImpl<ReturnType>( primary_indep_var_value,
+                                         secondary_indep_var_value,
+                                         min_secondary_indep_var_functor,
+                                         max_secondary_indep_var_functor,
+                                         evaluate );
 }
 
 // Evaluate the distribution using the desired evaluation method
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-template<typename LocalTwoDInterpPolicy,
-         typename ReturnType,
-         typename EvaluationMethod>
-inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::evaluateImpl(
+template<typename TwoDGridPolicy, typename Distribution>
+template<typename ReturnType, typename EvaluationMethod>
+inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::evaluateImpl(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity secondary_indep_var_value,
              const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -241,7 +236,7 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
   
   if( lower_bin_boundary != upper_bin_boundary )
   {
-    return TwoDSamplePolicy::template evaluatePDF<LocalTwoDInterpPolicy,BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
+    return TwoDGridPolicy::template evaluatePDF<BaseUnivariateDistributionType,PrimaryIndepQuantity,SecondaryIndepQuantity,ReturnType>(
         primary_indep_var_value,
         secondary_indep_var_value,
         min_secondary_indep_var_functor,
@@ -274,8 +269,8 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
  * extendBeyondPrimaryIndepLimits method. Since this is a performance critical 
  * method we decided against this behavior.
  */
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleSecondaryConditional(
+template<typename TwoDGridPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::sampleSecondaryConditional(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -296,8 +291,8 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
  * been extended by calling the extendBeyondPrimaryIndepLimits method. Since
  * this is a performance critical method we decided against this behavior.
  */
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleSecondaryConditionalAndRecordTrials(
+template<typename TwoDGridPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             DistributionTraits::Counter& trials ) const
   -> SecondaryIndepQuantity
@@ -313,9 +308,9 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 }
 
 // Sample from the distribution using the desired sampling functor
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename TwoDGridPolicy, typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleDetailedImpl(
+inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::sampleDetailedImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor,
                             SecondaryIndepQuantity& raw_sample,
@@ -345,9 +340,9 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
 }
 
 // Sample from the distribution using the desired sampling functor
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename TwoDGridPolicy, typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleDetailedImpl(
+inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::sampleDetailedImpl(
             const PrimaryIndepQuantity primary_indep_var_value,
             SampleFunctor sample_functor,
             SecondaryIndepQuantity& raw_sample,
@@ -371,15 +366,14 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
   {
     DistributionDataConstIterator sampled_bin_boundary;
     
-    sample = TwoDSamplePolicy::template sampleDetailed<TwoDInterpPolicy,PrimaryIndepQuantity,SecondaryIndepQuantity>(
-          sample_functor,
-          min_secondary_indep_var_functor,
-          max_secondary_indep_var_functor,
-          primary_indep_var_value,
-          lower_bin_boundary,
-          upper_bin_boundary,
-          sampled_bin_boundary,
-          raw_sample );
+    sample = TwoDGridPolicy::sampleDetailed(  sample_functor,
+                                              min_secondary_indep_var_functor,
+                                              max_secondary_indep_var_functor,
+                                              primary_indep_var_value,
+                                              lower_bin_boundary,
+                                              upper_bin_boundary,
+                                              sampled_bin_boundary,
+                                              raw_sample );
 
     // Calculate the index of the primary bin boundary that will be used to
     // create the secondary conditional sample
@@ -410,9 +404,9 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
 }
 
 // Sample from the distribution using the desired sampling functor
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename TwoDGridPolicy, typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleImpl(
+inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::sampleImpl(
                             const PrimaryIndepQuantity primary_indep_var_value,
                             SampleFunctor sample_functor ) const
   -> SecondaryIndepQuantity
@@ -428,9 +422,9 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
 }
 
 // Sample from the distribution using the desired sampling functor
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename TwoDGridPolicy, typename Distribution>
 template<typename SampleFunctor>
-inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::sampleImpl(
+inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::sampleImpl(
             const PrimaryIndepQuantity primary_indep_var_value,
             SampleFunctor sample_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
@@ -451,8 +445,8 @@ inline auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDI
 }
 
 // Return the upper bound of the conditional distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getUpperBoundOfSecondaryConditionalIndepVar(
+template<typename TwoDGridPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::getUpperBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -472,7 +466,7 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
   }
   else
   {
-    return TwoDInterpPolicy::calculateIntermediateGridLimit(
+    return TwoDGridPolicy::TwoDInterpPolicy::calculateIntermediateGridLimit(
            Utility::get<0>( *lower_bin_boundary ),
            Utility::get<0>( *upper_bin_boundary ),
            primary_indep_var_value,
@@ -482,8 +476,8 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 }
 
 // Return the lower bound of the conditional distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::getLowerBoundOfSecondaryConditionalIndepVar(
+template<typename TwoDGridPolicy, typename Distribution>
+auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::getLowerBoundOfSecondaryConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
   -> SecondaryIndepQuantity
 {
@@ -503,7 +497,7 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
   }
   else
   {
-    return TwoDInterpPolicy::calculateIntermediateGridLimit(
+    return TwoDGridPolicy::TwoDInterpPolicy::calculateIntermediateGridLimit(
            Utility::get<0>( *lower_bin_boundary ),
            Utility::get<0>( *upper_bin_boundary ),
            primary_indep_var_value,
@@ -513,16 +507,16 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 }
 
 // Test if the distribution is continuous in the primary dimension
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
-bool UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::isPrimaryDimensionContinuous() const
+template<typename TwoDGridPolicy, typename Distribution>
+bool UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::isPrimaryDimensionContinuous() const
 {
   return true;
 }
 
 // Save the distribution to an archive
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename TwoDGridPolicy, typename Distribution>
 template<typename Archive>
-void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::save( Archive& ar, const unsigned version ) const
+void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -534,9 +528,9 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 }
 
 // Load the distribution from an archive
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy, typename Distribution>
+template<typename TwoDGridPolicy, typename Distribution>
 template<typename Archive>
-void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution>::load( Archive& ar, const unsigned version )
+void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution>::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
@@ -549,35 +543,45 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPo
 
 } // end Utility namespace
 
-#define __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, TwoDSamplePolicy, ... ) \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LinLinLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LinLogLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LinLogCosLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LinLinLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LinLogLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LinLogCosLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LogLinLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LogLogLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LogLogCosLin,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LogLinLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LogLogLog,TwoDSamplePolicy,__VA_ARGS__ > ); \
-  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<Utility::LogLogCosLog,TwoDSamplePolicy,__VA_ARGS__ > )
+#define __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, TwoDGridPolicy, ... ) \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LinLinLin>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LinLogLin>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LinLogCosLin>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LinLinLog>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LinLogLog>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LinLogCosLog>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LogLinLin>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LogLogLin>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LogLogCosLin>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LogLinLog>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LogLogLog>,__VA_ARGS__ > ); \
+  DECL_TYPE##_DISTRIBUTION_INST( BivariateDistribution<TwoDGridPolcy<Utility::LogLogCosLog>,__VA_ARGS__ > )
 
-#define ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST__( DECL_TYPE, BivariateDistribution, ... ) \
+#define ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL__( DECL_TYPE, BivariateDistribution, ... ) \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::Direct, __VA_ARGS__ ); \
+  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::UnitBase, __VA_ARGS__ )
+
+#define ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL__( DECL_TYPE, BivariateDistribution, ... ) \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::Direct, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::UnitBase, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::CumulativePoints, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::Correlated, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::UnitBaseCorrelated, __VA_ARGS__ )
 
-#define EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( BivariateDistribution, ... ) \
-  ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST__( EXTERN_EXPLICIT, BivariateDistribution, __VA_ARGS__ )
+#define EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL( BivariateDistribution, ... ) \
+  ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL__( EXTERN_EXPLICIT, BivariateDistribution, __VA_ARGS__ )
 
-#define EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( BivariateDistribution, ... ) \
-  ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST__( EXPLICIT, BivariateDistribution, __VA_ARGS__ )
+#define EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL( BivariateDistribution, ... ) \
+  ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL__( EXPLICIT, BivariateDistribution, __VA_ARGS__ )
 
-EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( Utility::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
-EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
+#define EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( BivariateDistribution, ... ) \
+  ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL__( EXTERN_EXPLICIT, BivariateDistribution, __VA_ARGS__ )
+
+#define EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( BivariateDistribution, ... ) \
+  ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL__( EXPLICIT, BivariateDistribution, __VA_ARGS__ )
+
+EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( Utility::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> );
+EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_PARTIAL( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<void,void,void> );
 
 #endif // end UTILITY_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_IMPL_BASE_DEF_HPP
 

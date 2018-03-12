@@ -26,14 +26,13 @@ namespace Utility{
  * that they operate on (either the Utility::UnivariateDistribution or the 
  * Utility::TabularUnivariateDistribution respectively).
  */
-template<typename TwoDInterpPolicy,
-         typename TwoDSamplePolicy,
+template<typename TwoDGridPolicy,
          typename Distribution>
 class UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase : public Distribution
 {
 
   // Typedef for this type
-  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDInterpPolicy,TwoDSamplePolicy,Distribution> ThisType;
+  typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution> ThisType;
   
 protected:
   
@@ -145,18 +144,14 @@ protected:
                                 const double error_tol );
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
-           typename EvaluationMethod>
+  template<typename ReturnType, typename EvaluationMethod>
   ReturnType evaluateImpl(
                         const PrimaryIndepQuantity primary_indep_var_value,
                         const SecondaryIndepQuantity secondary_indep_var_value,
                         EvaluationMethod evaluate ) const;
 
   //! Evaluate the distribution using the desired evaluation method
-  template<typename LocalTwoDInterpPolicy,
-           typename ReturnType,
-           typename EvaluationMethod>
+  template<typename ReturnType, typename EvaluationMethod>
   ReturnType evaluateImpl(
              const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity secondary_indep_var_value,
@@ -241,8 +236,8 @@ private:
   
 } // end Utility namespace
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS3( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility );
-BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility, 0 );
+BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS2( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility );
+BOOST_SERIALIZATION_CLASS2_VERSION( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility, 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes

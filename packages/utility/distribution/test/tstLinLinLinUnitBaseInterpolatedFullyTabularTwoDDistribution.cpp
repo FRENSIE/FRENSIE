@@ -61,7 +61,7 @@ ua_lower_func, ua_upper_func;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the distribution
-template<typename TwoDSamplePolicy,
+template<template<typename> class TwoDGridPolicy,
          typename BaseTabDistribution,
          typename BaseDistribution>
 void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
@@ -106,7 +106,7 @@ void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
   Utility::setQuantity( primary_bins[3], 2.0 );
   secondary_dists[3] = secondary_dists[0];
 
-  tab_dist.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,TwoDSamplePolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+  tab_dist.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDGridPolicy<Utility::LinLinLin>,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
       primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
   dist = tab_dist;
@@ -406,7 +406,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 1.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -425,7 +425,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -456,7 +456,7 @@ TEUCHOS_UNIT_TEST( InterpolatedFullyTabularTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -4208,7 +4208,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     distribution_data[3].first = 2.0;
     distribution_data[3].second = distribution_data[0].second;
 
-    tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    tab_distribution.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                             distribution_data,
                                                             1e-3,
                                                             1e-7 ) );
@@ -4243,7 +4243,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     primary_bins[3] = 2.0*MeV;
     secondary_dists[3] = secondary_dists[0];
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> ,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;
   }

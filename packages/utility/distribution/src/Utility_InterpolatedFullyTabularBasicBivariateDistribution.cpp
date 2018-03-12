@@ -24,7 +24,7 @@
 
 namespace Utility{
 
-EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST( Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, void, void, void );
+EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, void, void, void );
   
 } // end Utility namespace
 

@@ -56,7 +56,7 @@ std::shared_ptr<Utility::FullyTabularTwoDDistribution> tab_distribution;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the distribution
-template<typename TwoDSamplePolicy,
+template<template<typename> class TwoDGridPolicy,
          typename BaseTabDistribution,
          typename BaseDistribution>
 void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
@@ -95,7 +95,7 @@ void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
     Utility::setQuantity( primary_bins[1], 2.0 );
     secondary_dists[1].reset( new Utility::UnitAwareCoupledElasticDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values, moliere_eta, cutoff_ratio ) );
 
-    tab_dist.reset( new Utility::UnitAwareElasticTwoDDistribution<Utility::LinLinLin,TwoDSamplePolicy,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+    tab_dist.reset( new Utility::UnitAwareElasticTwoDDistribution<TwoDGridPolicy<Utility::LinLinLin>,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
         primary_bins, secondary_dists, cutoff, 1e-3, 1e-7 ) );
 
     dist = tab_dist;
@@ -383,7 +383,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 2.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -402,7 +402,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     distribution_data[1].first = 3.0;
     distribution_data[1].second = distribution_data[0].second;
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                          distribution_data ) );
   }
 
@@ -433,7 +433,7 @@ TEUCHOS_UNIT_TEST( ElasticTwoDDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBase>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
