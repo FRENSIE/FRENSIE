@@ -564,7 +564,6 @@ void UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
 #define ___INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL__( DECL_TYPE, BivariateDistribution, ... ) \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::Direct, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::UnitBase, __VA_ARGS__ ); \
-  __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::CumulativePoints, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::Correlated, __VA_ARGS__ ); \
   __INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, BivariateDistribution, Utility::UnitBaseCorrelated, __VA_ARGS__ )
 

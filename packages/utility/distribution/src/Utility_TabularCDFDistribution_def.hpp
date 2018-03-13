@@ -894,7 +894,7 @@ void UnitAwareTabularCDFDistribution<InterpolationPolicy,IndependentUnit,Depende
   typename std::vector<InputDepQuantity>::const_iterator bad_dependent_value =
     std::find_if( dependent_values.begin(),
                   dependent_values.end(),
-                  [](const InputDepQuantity& element){ return element < InputDQT::zero() || InputDQT::isnaninf( element ) || !InterpolationPolicy::isDepVarInValidRange( element ); } );
+                  [](const InputDepQuantity& element){ return element < InputDQT::zero() || InputDQT::isnaninf( element ); } );
 
   TEST_FOR_EXCEPTION( bad_dependent_value != dependent_values.end(),
                       Utility::StringConversionException,

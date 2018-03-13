@@ -2,19 +2,11 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_dist)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-ADD_EXECUTABLE(tstElasticElectronTraits
-  tstElasticElectronTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElasticElectronTraits utility_dist)
-ADD_TEST(ElasticElectronTraits_test tstElasticElectronTraits )
-SET_PROPERTY(TEST ElasticElectronTraits_test PROPERTY LABELS utility_dist electron)
+FRENSIE_ADD_TEST_EXECUTABLE(ElasticElectronTraits DEPENDS tstElasticElectronTraits.cpp)
+FRENSIE_ADD_TEST(ElasticElectronTraits)
 
-ADD_EXECUTABLE(tstCoupledElasticDistribution
-  tstCoupledElasticDistribution.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCoupledElasticDistribution utility_dist)
-ADD_TEST(CoupledElasticDistribution_test tstCoupledElasticDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_coupled_elastic_distributions.xml")
-SET_PROPERTY(TEST CoupledElasticDistribution_test PROPERTY LABELS utility_dist)
+FRENSIE_ADD_TEST_EXECUTABLE(CoupledElasticDistribution DEPENDS tstCoupledElasticDistribution.cpp)
+FRENSIE_ADD_TEST(CoupledElasticDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(DeltaDistribution DEPENDS tstDeltaDistribution.cpp)
 FRENSIE_ADD_TEST(DeltaDistribution)
@@ -49,19 +41,11 @@ FRENSIE_ADD_TEST(PowerDistribution)
 FRENSIE_ADD_TEST_EXECUTABLE(TabularDistribution DEPENDS tstTabularDistribution.cpp)
 FRENSIE_ADD_TEST(TabularDistribution)
 
-ADD_EXECUTABLE(tstTabularCDFDistribution
-  tstTabularCDFDistribution.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTabularCDFDistribution utility_dist)
-ADD_TEST(TabularCDFDistribution_test tstTabularCDFDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_cdf_distributions.xml")
-SET_PROPERTY(TEST TabularCDFDistribution_test PROPERTY LABELS utility_dist)
+FRENSIE_ADD_TEST_EXECUTABLE(TabularCDFDistribution DEPENDS tstTabularCDFDistribution.cpp)
+FRENSIE_ADD_TEST(TabularCDFDistribution)
 
-ADD_EXECUTABLE(tstCosineTabularCDFDistribution
-  tstCosineTabularCDFDistribution.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCosineTabularCDFDistribution utility_dist)
-ADD_TEST(CosineTabularCDFDistribution_test tstCosineTabularCDFDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_cosine_tabular_cdf_distributions.xml")
-SET_PROPERTY(TEST CosineTabularCDFDistribution_test PROPERTY LABELS utility_dist)
+FRENSIE_ADD_TEST_EXECUTABLE(CosineTabularCDFDistribution DEPENDS tstCosineTabularCDFDistribution.cpp)
+FRENSIE_ADD_TEST(CosineTabularCDFDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(UniformDistribution DEPENDS tstUniformDistribution.cpp)
 FRENSIE_ADD_TEST(UniformDistribution)

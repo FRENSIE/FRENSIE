@@ -48,6 +48,16 @@ struct CosGridHelper<UnitBaseCorrelated<TwoDInterpPolicy> >
   
 } // end Details namespace
 
+// Default constructor
+template<typename TwoDGridPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::UnitAwareElasticBasicBivariateDistribution()
+{
+  BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
+}
+
 // Constructor
 template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
@@ -808,7 +818,6 @@ void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 #define ___ELASTIC_BASIC_BIVARIATE_DIST__( DECL_TYPE, ... ) \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::Direct, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::UnitBase, __VA_ARGS__ ); \
-  __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::CumulativePoints, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::Correlated, __VA_ARGS__ ); \
   __ELASTIC_BASIC_BIVARIATE_DIST_WITH_SAMPLE_POLICY__( DECL_TYPE, Utility::UnitBaseCorrelated, __VA_ARGS__ )
 
