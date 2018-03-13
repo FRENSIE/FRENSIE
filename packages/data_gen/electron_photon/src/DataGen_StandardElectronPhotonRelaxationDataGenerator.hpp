@@ -113,11 +113,11 @@ public:
   //! Return the electron TwoDInterpPolicy
   MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron TwoDSamplingPolicy (LogLogLog by default)
-  void setElectronTwoDSamplingPolicy( MonteCarlo::TwoDGridType sampling );
+  //! Set the electron TwoDGridPolicy (Unit-base Correlated by default)
+  void setElectronTwoDGridPolicy( MonteCarlo::TwoDGridType grid );
 
-  //! Return the electron TwoDSamplingPolicy
-  MonteCarlo::TwoDGridType getElectronTwoDSamplingPolicy() const;
+  //! Return the electron TwoDGridPolicy
+  MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
@@ -131,6 +131,7 @@ public:
     const double tabular_evaluation_tol = 1e-7,
     const unsigned number_of_moment_preserving_angles = 1,
     const MonteCarlo::TwoDInterpolationType two_d_interp = MonteCarlo::LOGLOGLOG_INTERPOLATION,
+    const MonteCarlo::TwoDGridType two_d_grid = MonteCarlo::CORRELATED_GRID,
     std::ostream& os_log = std::cout );
 
   //! Repopulate the electron moment preserving data
@@ -358,8 +359,8 @@ private:
   // The electron TwoDInterpPolicy (LogLogLog - default)
   MonteCarlo::TwoDInterpolationType d_two_d_interp;
 
-  // The electron TwoDSamplingPolicy (LogLogLog - default)
-  MonteCarlo::TwoDGridType d_two_d_sampling;
+  // The electron TwoDGridPolicy (LogLogLog - default)
+  MonteCarlo::TwoDGridType d_two_d_grid;
 };
 
 // The if a value is not equal to zero

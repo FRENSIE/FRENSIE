@@ -188,12 +188,12 @@ public:
   //! Return the electron TwoDInterpPolicy (LogLogLog by default)
   MonteCarlo::TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
-  //! Set the electron TwoDSamplingPolicy (Corrleated by default)
-  void setElectronTwoDSamplingPolicy(
-                    const MonteCarlo::TwoDGridType two_d_sampling );
+  //! Set the electron TwoDGridPolicy (Unit-base Correlated by default)
+  void setElectronTwoDGridPolicy(
+                    const MonteCarlo::TwoDGridType two_d_grid );
 
-  //! Return the electron TwoDSamplingPolicy (Corrleated by default)
-  MonteCarlo::TwoDGridType getElectronTwoDSamplingPolicy() const;
+  //! Return the electron TwoDGridPolicy (Unit-base Correlated by default)
+  MonteCarlo::TwoDGridType getElectronTwoDGridPolicy() const;
 
   //! Set the adjoint bremsstrahlung max energy nudge value
   void setAdjointBremsstrahlungMaxEnergyNudgeValue( const double max_energy_nudge_value );
@@ -515,8 +515,8 @@ private:
   // The electron TwoDInterpPolicy
   MonteCarlo::TwoDInterpolationType d_electron_two_d_interp;
 
-  // The electron TwoDSamplingPolicy
-  MonteCarlo::TwoDGridType d_electron_two_d_sampling;
+  // The electron TwoDGridPolicy
+  MonteCarlo::TwoDGridType d_electron_two_d_grid;
 
   // The adjoint bremsstrahlung max energy nudge value
   double d_adjoint_bremsstrahlung_max_energy_nudge_value;

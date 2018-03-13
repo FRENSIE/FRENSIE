@@ -24,7 +24,7 @@ StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronD
     const unsigned atomic_number,
     const std::shared_ptr<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
-    const MonteCarlo::TwoDGridType two_d_sample,
+    const MonteCarlo::TwoDGridType two_d_grid,
     const double min_electron_energy,
     const double max_electron_energy,
     const double cutoff_angle_cosine,
@@ -32,7 +32,7 @@ StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronD
   : MomentPreservingElectronDataGenerator( atomic_number ),
     d_native_eedl_data( native_eedl_data ),
     d_two_d_interp( two_d_interp ),
-    d_two_d_sample( two_d_sample ),
+    d_two_d_grid( two_d_grid ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
@@ -58,7 +58,7 @@ StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronD
     new DataGen::ElasticElectronMomentsEvaluator(
                                             *d_native_eedl_data,
                                             d_two_d_interp,
-                                            d_two_d_sample,
+                                            d_two_d_grid,
                                             d_cutoff_angle_cosine,
                                             d_tabular_evaluation_tol ) );
 

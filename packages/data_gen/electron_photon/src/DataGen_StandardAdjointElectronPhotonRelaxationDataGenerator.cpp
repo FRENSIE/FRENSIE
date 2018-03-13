@@ -73,7 +73,7 @@ StandardAdjointElectronPhotonRelaxationDataGenerator::StandardAdjointElectronPho
     d_adjoint_electron_distance_tol( 1e-8 ),
     d_tabular_evaluation_tol( 1e-8 ),
     d_electron_two_d_interp( MonteCarlo::LOGLOGLOG_INTERPOLATION ),
-    d_electron_two_d_sampling( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING ),
+    d_electron_two_d_grid( MonteCarlo::UNIT_BASE_CORRELATED_GRID ),
     d_adjoint_bremsstrahlung_max_energy_nudge_value( 0.2 ),
     d_adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value( 1e-7 ),
     d_adjoint_bremsstrahlung_evaluation_tol( 1e-6 ),
@@ -536,17 +536,17 @@ MonteCarlo::TwoDInterpolationType StandardAdjointElectronPhotonRelaxationDataGen
   return d_electron_two_d_interp;
 }
 
-// Set the electron TwoDSamplingPolicy (Unit-base Correlated by default)
-void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDSamplingPolicy(
-                    const MonteCarlo::TwoDGridType two_d_sampling )
+// Set the electron TwoDGridPolicy (Unit-base Correlated by default)
+void StandardAdjointElectronPhotonRelaxationDataGenerator::setElectronTwoDGridPolicy(
+                    const MonteCarlo::TwoDGridType two_d_grid )
 {
-  d_electron_two_d_sampling = two_d_sampling;
+  d_electron_two_d_grid = two_d_grid;
 }
 
-// Return the electron TwoDSamplingPolicy (Unit-base Correlated by default)
-MonteCarlo::TwoDGridType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDSamplingPolicy() const
+// Return the electron TwoDGridPolicy (Unit-base Correlated by default)
+MonteCarlo::TwoDGridType StandardAdjointElectronPhotonRelaxationDataGenerator::getElectronTwoDGridPolicy() const
 {
-  return d_electron_two_d_sampling;
+  return d_electron_two_d_grid;
 }
 
 // Set the adjoint electron grid convergence tolerance
@@ -712,9 +712,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setTableData(
   data_container.setElectronTwoDInterpPolicy( interp );
   }
   {
-  std::string sampling =
-    MonteCarlo::convertTwoDGridTypeToString( d_electron_two_d_sampling );
-  data_container.setElectronTwoDSamplingPolicy( sampling );
+  std::string grid =
+    MonteCarlo::convertTwoDGridTypeToString( d_electron_two_d_grid );
+  data_container.setElectronTwoDGridPolicy( grid );
   }
 }
 
@@ -2043,7 +2043,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
 
     if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
@@ -2053,7 +2053,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
     else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LinLinLin,Utility::Correlated>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LinLinLin> >(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
@@ -2063,7 +2063,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
     }
     else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
     {
-      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::LogLogCosLog,Utility::Correlated>(
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
         cutoff_distribution,
         d_forward_epr_data->getCutoffElasticAngles(),
         d_forward_epr_data->getCutoffElasticPDF(),
@@ -2371,7 +2371,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointAtomicEx
   std::vector<double> adjoint_excitation_cross_section(
     adjoint_excitation_energy_gain.size() );
 
-  // calculate the adjoint icoming energy grid from the forward incoming energy grid and energy loss
+  // calculate the adjoint incoming energy grid from the forward incoming energy grid and energy loss
   for ( int i = 0; i < adjoint_excitation_energy_grid.size(); ++i )
   {
     // Evaluate the cross section at the forward energy
@@ -2431,7 +2431,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2441,7 +2441,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2451,7 +2451,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<BremsstrahlungReaction,Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2498,7 +2498,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
 
   if( d_electron_two_d_interp == MonteCarlo::LINLINLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2508,7 +2508,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
   else if( d_electron_two_d_interp == MonteCarlo::LINLINLIN_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,
@@ -2518,7 +2518,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointElectroi
   }
   else if( d_electron_two_d_interp == MonteCarlo::LOGLOGLOG_INTERPOLATION )
   {
-    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+    MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<ElectroionizationReaction,Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
         *d_forward_epr_data,
         forward_electron_energy_grid,
         forward_grid_searcher,

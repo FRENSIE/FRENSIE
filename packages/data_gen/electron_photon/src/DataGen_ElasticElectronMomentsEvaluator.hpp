@@ -44,7 +44,7 @@ public:
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const MonteCarlo::TwoDInterpolationType two_d_interp,
-    const MonteCarlo::TwoDGridType two_d_sample,
+    const MonteCarlo::TwoDGridType two_d_grid,
     const double cutoff_angle_cosine,
     const double tabular_evaluation_tol );
 

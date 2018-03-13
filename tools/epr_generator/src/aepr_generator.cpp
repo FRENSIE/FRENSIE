@@ -73,9 +73,9 @@ int main( int argc, char** argv )
   std::string electron_two_d_interp = "Log-Log-Log";
   MonteCarlo::TwoDInterpolationType electron_interp =
                                         MonteCarlo::LOGLOGLOG_INTERPOLATION;
-  std::string electron_two_d_sampling = "Unit-base Correlated";
-  MonteCarlo::TwoDGridType electron_sampling =
-                                        MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING;
+  std::string electron_two_d_grid = "Unit-base Correlated";
+  MonteCarlo::TwoDGridType electron_grid =
+                                        MonteCarlo::UNIT_BASE_CORRELATED_GRID;
   double adjoint_electron_grid_convergence_tol = 0.001;
   double adjoint_electron_grid_absolute_diff_tol = 1e-16;
   double adjoint_electron_grid_distance_tol = 1e-8;
@@ -213,9 +213,9 @@ int main( int argc, char** argv )
   aepr_generator_clp.setOption( "electron_interp_policy",
                                 &electron_two_d_interp,
                                 "The electron 2D interpolation policy" );
-  aepr_generator_clp.setOption( "electron_sampling_policy",
-                                &electron_two_d_sampling,
-                                "The electron 2D sampling policy" );
+  aepr_generator_clp.setOption( "electron_grid_policy",
+                                &electron_two_d_grid,
+                                "The electron 2D grid policy" );
   aepr_generator_clp.setOption( "adjoint_electron_grid_convergence_tol",
                                 &adjoint_electron_grid_convergence_tol,
                                 "Adjoint electron grid convergence "
@@ -522,11 +522,11 @@ int main( int argc, char** argv )
       MonteCarlo::convertStringToTwoDInterpolationType( electron_two_d_interp );
   }
 
-  // 17.) The electron TwoDSamplingPolicy
-  if( !Data::isTwoDSamplingPolicyValid( electron_two_d_sampling ) )
+  // 17.) The electron TwoDGridPolicy
+  if( !Data::isTwoDGridPolicyValid( electron_two_d_grid ) )
   {
     std::cerr << Utility::BoldRed( "Error: " )
-              << "the electron 2D sampling policy is not valid!"
+              << "the electron 2D grid policy is not valid!"
               << std::endl;
 
     aepr_generator_clp.printHelpMessage( argv[0], *out );
@@ -535,8 +535,8 @@ int main( int argc, char** argv )
   }
   else
   {
-    electron_sampling =
-      MonteCarlo::convertStringToTwoDGridType( electron_two_d_sampling );
+    electron_grid =
+      MonteCarlo::convertStringToTwoDGridType( electron_two_d_grid );
   }
 
   // 18.) The cutoff angle cosine must be in the valid range
@@ -945,7 +945,7 @@ int main( int argc, char** argv )
     generator.setAdjointElectroionizationDistanceTolerance( adjoint_electroionization_grid_distance_tol );
     generator.setTabularEvaluationTolerance( electron_tabular_evaluation_tol );
     generator.setElectronTwoDInterpPolicy( electron_interp );
-    generator.setElectronTwoDSamplingPolicy( electron_sampling );
+    generator.setElectronTwoDGridPolicy( electron_grid );
 
     // Populate the new data container
     try{

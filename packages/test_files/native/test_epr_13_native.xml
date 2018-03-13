@@ -50126,7 +50126,7 @@
 		<item>9.69554407951665254e-01</item>
 	</impulse_approx_total_cross_section>
 	<electron_two_d_interp>Log-Log-Log</electron_two_d_interp>
-	<electron_two_d_sampling>Unit-base Correlated</electron_two_d_sampling>
+	<electron_two_d_grid>Unit-base Correlated</electron_two_d_grid>
 	<angular_energy_grid>
 		<count>16</count>
 		<item_version>0</item_version>

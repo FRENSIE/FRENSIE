@@ -283,14 +283,14 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.13373119562157392e+01, 1e-12 );
 
-  // Test that the absorption cross section can be reaturned
+  // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
@@ -354,7 +354,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 
   // Test that the triplet production cross section can be returned
@@ -667,7 +667,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-15 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
 
   // Test that the absorption cross section can be returned
@@ -844,11 +844,11 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 1.79084209057610761E+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 21.3391619464462181, 1e-12 );
 
   // Test that the absorption cross section can be returned
@@ -871,25 +871,25 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   cross_section = atom->getReactionCrossSection(
 		      8.82900086220703151e-02,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		     1e-3,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.198065568410027426, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		     20.0,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0402322921484711687, 1e-12 );
 
   // Test that the coherent cross section can be returned
@@ -962,7 +962,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
-  
+
   // Test that the Doppler data is not present
   MonteCarlo::ParticleBank bank;
 
@@ -1069,7 +1069,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
 
   cross_section = atom->getReactionCrossSection(
@@ -1447,7 +1447,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
 
   TEST_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
 
-  // Test that the absorption cross section can be reaturned
+  // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );

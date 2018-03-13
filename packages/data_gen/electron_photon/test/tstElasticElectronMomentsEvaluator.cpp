@@ -30,7 +30,7 @@ class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomen
 public:
   TestElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container )
-    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, MonteCarlo::CORRELATED_SAMPLING, -1.0, 1e-7 )
+    : ElasticElectronMomentsEvaluator( data_container, MonteCarlo::LINLINLOG_INTERPOLATION, MonteCarlo::CORRELATED_GRID, -1.0, 1e-7 )
   { /* ... */ }
 
   TestElasticElectronMomentsEvaluator(
@@ -1145,7 +1145,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   full_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *pb_data,
                                     MonteCarlo::LINLINLOG_INTERPOLATION,
-                                    MonteCarlo::CORRELATED_SAMPLING,
+                                    MonteCarlo::CORRELATED_GRID,
                                     -1.0,
                                     1e-7 ) );
 
@@ -1245,7 +1245,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     coupled_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::LinLinLog,Utility::Correlated>(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<Utility::Correlated<Utility::LinLinLog> >(
         coupled_distribution,
         cutoff_cross_section,
         total_cross_section,
@@ -1283,7 +1283,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   pb_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   MonteCarlo::LINLINLOG_INTERPOLATION,
-                                                  MonteCarlo::CORRELATED_SAMPLING,
+                                                  MonteCarlo::CORRELATED_GRID,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol ) );
 
@@ -1291,7 +1291,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   pb_lin_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator( *pb_data,
                                                   MonteCarlo::LINLINLIN_INTERPOLATION,
-                                                  MonteCarlo::CORRELATED_SAMPLING,
+                                                  MonteCarlo::CORRELATED_GRID,
                                                   cutoff_angle_cosine,
                                                   tabular_evaluation_tol ) );
   }

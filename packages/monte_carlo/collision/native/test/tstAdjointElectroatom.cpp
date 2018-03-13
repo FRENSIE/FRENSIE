@@ -92,7 +92,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, getTemperature )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the total cross section can be returned (brem and exciation only)
+// Check that the total cross section can be returned (brem and excitation only)
 TEUCHOS_UNIT_TEST( AdjointElectroatom, getTotalCrossSection )
 {
   double cross_section = electroatom->getTotalCrossSection( 1e-5 );

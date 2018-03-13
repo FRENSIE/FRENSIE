@@ -459,7 +459,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   generator_h->setTabularEvaluationTolerance( 1e-4 );
   generator_h->setElectronTwoDInterpPolicy( MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  generator_h->setElectronTwoDSamplingPolicy( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  generator_h->setElectronTwoDGridPolicy( MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   generator_h->setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
   generator_h->setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 1e-7 );
   generator_h->setAdjointBremsstrahlungEvaluationTolerance( 1e-3 );
@@ -991,7 +991,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   // Check the electron data
   TEST_EQUALITY_CONST( generator_h->getElectronTwoDInterpPolicy(), MonteCarlo::LOGLOGLOG_INTERPOLATION );
-  TEST_EQUALITY_CONST( generator_h->getElectronTwoDSamplingPolicy(), MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING );
+  TEST_EQUALITY_CONST( generator_h->getElectronTwoDGridPolicy(), MonteCarlo::UNIT_BASE_CORRELATED_GRID );
   TEST_EQUALITY_CONST( generator_h->getAdjointElectronGridConvergenceTolerance(), 0.5 );
   TEST_EQUALITY_CONST( generator_h->getAdjointElectronAbsoluteDifferenceTolerance(), 1e-16 );
   TEST_EQUALITY_CONST( generator_h->getAdjointElectronDistanceTolerance(), 1e-9 );
