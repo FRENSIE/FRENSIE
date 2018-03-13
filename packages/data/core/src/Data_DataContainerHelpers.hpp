@@ -25,7 +25,7 @@
 
 //! Macro for use with the boost serialization library
 #define DATA_MAKE_NVP_DEFAULT( archive, data_field_base_name ) \
-  DATA_MAKE_NVP( archive, d_, data_field_base_name ) 
+  DATA_MAKE_NVP( archive, d_, data_field_base_name )
 
 namespace Data{
 
@@ -67,8 +67,8 @@ namespace Data{
   // Test if the TwoDInterpPolicy is valid
   bool isTwoDInterpPolicyValid( const std::string value );
 
-  // Test if the TwoDSamplingPolicy is valid
-  bool isTwoDSamplingPolicyValid( const std::string value );
+  // Test if the TwoDGridPolicy is valid
+  bool isTwoDGridPolicyValid( const std::string value );
 
   // Test if the InterpPolicy is valid
   bool isInterpPolicyValid( const std::string value );

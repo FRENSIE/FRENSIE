@@ -331,8 +331,8 @@ public:
   //! Return the electron TwoDInterpPolicy
   const std::string& getElectronTwoDInterpPolicy() const;
 
-  //! Return the electron TwoDSamplingPolicy
-  const std::string& getElectronTwoDSamplingPolicy() const;
+  //! Return the electron TwoDGridPolicy
+  const std::string& getElectronTwoDGridPolicy() const;
 
   //! Return the elastic angular energy grid
   const std::vector<double>& getAdjointElasticAngularEnergyGrid() const;
@@ -812,8 +812,8 @@ protected:
   //! Set the electron TwoDInterpPolicy
   void setElectronTwoDInterpPolicy( const std::string& electron_two_d_interp );
 
-  //! Set the electron TwoDSamplingPolicy
-  void setElectronTwoDSamplingPolicy( const std::string& electron_two_d_sampling );
+  //! Set the electron TwoDGridPolicy
+  void setElectronTwoDGridPolicy( const std::string& electron_two_d_grid );
 
   //! Set the elastic angular energy grid
   void setAdjointElasticAngularEnergyGrid(
@@ -1268,8 +1268,8 @@ private:
   // The electron TwoDInterpPolicy
   std::string d_electron_two_d_interp;
 
-  // The electron TwoDSamplingPolicy
-  std::string d_electron_two_d_sampling;
+  // The electron TwoDGridPolicy
+  std::string d_electron_two_d_grid;
 
   // The elastic angular energy grid (MeV)
   std::vector<double> d_adjoint_angular_energy_grid;

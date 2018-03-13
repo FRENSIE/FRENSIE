@@ -642,7 +642,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   std::vector<double> cross_section( 2 );
   cross_section[0] = 1e-12;
   cross_section[1] = 2.0;
-  
+
   epr_data_container.setTripletProductionCrossSection( cross_section );
 
   TEST_COMPARE_ARRAYS( epr_data_container.getTripletProductionCrossSection(),
@@ -761,15 +761,15 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron TwoDSamplingPolicy can be set
+// Check that the electron TwoDGridPolicy can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectronTwoDSamplingPolicy )
+                   setElectronTwoDGridPolicy )
 {
-  std::string sampling = "Unit-base Correlated";
-  epr_data_container.setElectronTwoDSamplingPolicy( sampling );
+  std::string grid = "Unit-base Correlated";
+  epr_data_container.setElectronTwoDGridPolicy( grid );
 
-  TEST_EQUALITY_CONST( sampling,
-                       epr_data_container.getElectronTwoDSamplingPolicy() );
+  TEST_EQUALITY_CONST( grid,
+                       epr_data_container.getElectronTwoDGridPolicy() );
 }
 
 //---------------------------------------------------------------------------//

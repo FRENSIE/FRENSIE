@@ -52,8 +52,8 @@ bool isTwoDInterpPolicyValid( const std::string value )
     return false;
 }
 
-// Test if the TwoDSamplingPolicy is valid
-bool isTwoDSamplingPolicyValid( const std::string value )
+// Test if the TwoDGridPolicy is valid
+bool isTwoDGridPolicyValid( const std::string value )
 {
   if ( value == "Unit-base Correlated" || value == "Correlated" ||
        value == "Unit-base" || value == "Direct" )

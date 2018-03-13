@@ -625,14 +625,14 @@ AdjointElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() cons
   return d_electron_two_d_interp;
 }
 
-// Return the electron TwoDSamplingPolicy
-/*! The TwoDSamplingPolicy used on the forward cross sections to generate the
+// Return the electron TwoDGridPolicy
+/*! The TwoDGridPolicy used on the forward cross sections to generate the
  *  adjoint distribution data.
  */
 const std::string&
-AdjointElectronPhotonRelaxationDataContainer::getElectronTwoDSamplingPolicy() const
+AdjointElectronPhotonRelaxationDataContainer::getElectronTwoDGridPolicy() const
 {
-  return d_electron_two_d_sampling;
+  return d_electron_two_d_grid;
 }
 
 // Return the elastic angular energy grid
@@ -1940,17 +1940,17 @@ void AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
   d_electron_two_d_interp = electron_two_d_interp;
 }
 
-// Set the electron TwoDSamplingPolicy
-/*! The TwoDSamplingPolicy used on the forward cross sections to generate the
+// Set the electron TwoDGridPolicy
+/*! The TwoDGridPolicy used on the forward cross sections to generate the
  *  adjoint distribution data.
  */
-void AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy(
-    const std::string& electron_two_d_sampling )
+void AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDGridPolicy(
+    const std::string& electron_two_d_grid )
 {
   // Make sure the string is valid
-  testPrecondition( isTwoDSamplingPolicyValid( electron_two_d_sampling ) );
+  testPrecondition( isTwoDGridPolicyValid( electron_two_d_grid ) );
 
-  d_electron_two_d_sampling = electron_two_d_sampling;
+  d_electron_two_d_grid = electron_two_d_grid;
 }
 
 // Set the elastic angular energy grid

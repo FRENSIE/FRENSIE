@@ -112,10 +112,10 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_photon_bremsstrahlung_pdf );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_bremsstrahlung_photon_cross_section_threshold_index );
-  
+
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );
@@ -155,7 +155,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
 {
   // Notes
   DATA_MAKE_NVP_DEFAULT( ar, notes );
-  
+
   // Basic Table Data
   DATA_MAKE_NVP_DEFAULT( ar, atomic_number );
   DATA_MAKE_NVP_DEFAULT( ar, min_photon_energy );
@@ -242,7 +242,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
 
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );

@@ -46,7 +46,7 @@ const std::string& ElectronPhotonRelaxationDataContainer::getNotes() const
 {
   return d_notes;
 }
-  
+
 //---------------------------------------------------------------------------//
 // GET TABLE DATA
 //---------------------------------------------------------------------------//
@@ -501,11 +501,11 @@ ElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() const
   return d_electron_two_d_interp;
 }
 
-// Return the electron TwoDSamplingPolicy
+// Return the electron TwoDGridPolicy
 const std::string&
-ElectronPhotonRelaxationDataContainer::getElectronTwoDSamplingPolicy() const
+ElectronPhotonRelaxationDataContainer::getElectronTwoDGridPolicy() const
 {
-  return d_electron_two_d_sampling;
+  return d_electron_two_d_grid;
 }
 
 // Return the elastic angular energy grid
@@ -947,7 +947,7 @@ void ElectronPhotonRelaxationDataContainer::setPhotonThresholdEnergyNudgeFactor(
 {
   // Make sure the nudge factor is valid
   testPrecondition( nudge_factor >= 1.0 );
-  
+
   d_photon_threshold_energy_nudge_factor = nudge_factor;
 }
 
@@ -1257,7 +1257,7 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFac
   d_waller_hartree_squared_atomic_form_factor_squared_momentum_grid =
     squared_momentum_grid;
 }
-  
+
 // Return the Waller-Hartree squared atomic form factor
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeSquaredAtomicFormFactor(
                         const std::vector<double>& squared_atomic_form_factor )
@@ -1540,14 +1540,14 @@ void ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
   d_electron_two_d_interp = electron_two_d_interp;
 }
 
-// Set the electron TwoDSamplingPolicy
-void ElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy(
-    const std::string& electron_two_d_sampling )
+// Set the electron TwoDGridPolicy
+void ElectronPhotonRelaxationDataContainer::setElectronTwoDGridPolicy(
+    const std::string& electron_two_d_grid )
 {
   // Make sure the string is valid
-  testPrecondition( isTwoDSamplingPolicyValid( electron_two_d_sampling ) );
+  testPrecondition( isTwoDGridPolicyValid( electron_two_d_grid ) );
 
-  d_electron_two_d_sampling = electron_two_d_sampling;
+  d_electron_two_d_grid = electron_two_d_grid;
 }
 
 // Set the elastic angular energy grid

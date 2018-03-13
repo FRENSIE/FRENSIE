@@ -1291,15 +1291,15 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron TwoDSamplingPolicy can be set
+// Check that the electron TwoDGridPolicy can be set
 TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setElectronTwoDSamplingPolicy )
+                   setElectronTwoDGridPolicy )
 {
-  std::string sampling = "Direct";
-  epr_data_container.setElectronTwoDSamplingPolicy( sampling );
+  std::string grid = "Direct";
+  epr_data_container.setElectronTwoDGridPolicy( grid );
 
-  TEST_EQUALITY_CONST( sampling,
-                       epr_data_container.getElectronTwoDSamplingPolicy() );
+  TEST_EQUALITY_CONST( grid,
+                       epr_data_container.getElectronTwoDGridPolicy() );
 }
 
 //---------------------------------------------------------------------------//
