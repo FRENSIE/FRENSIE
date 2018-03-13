@@ -26,7 +26,7 @@
 #define _FUNC_NEW_NAME_3_ARGS( func_base_name, arg_1, arg_2, arg_3 ) create ## arg_1 ## arg_2 ## arg_3 ## func_base_name
 
 // Get the name of a function that has 2 template parameters
-#define _FUNC_NAME_2_ARGS( func_base_name, arg_1, arg_2 ) MonteCarlo::create ## func_base_name<arg_1,arg_2>
+#define _FUNC_NAME_2_ARGS( func_base_name, arg_1, arg_2 ) MonteCarlo::create ## func_base_name<arg_2<arg_1>>
 
 %{
 #define _FUNC_NEW_NAME_2_ARGS( func_base_name, arg_1, arg_2 ) create ## arg_1 ## arg_2 ## func_base_name
