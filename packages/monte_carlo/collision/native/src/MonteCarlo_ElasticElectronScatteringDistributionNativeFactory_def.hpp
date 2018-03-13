@@ -735,42 +735,6 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 //       new const Utility::TabularDistribution<Utility::LogLog>( energy_grid, cross_section_ratio ) );
 // }
 
-// Create the ratio of the cutoff to the moment preserving cross section
-template<typename TwoDGridPolicy>
-void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios(
-    const Teuchos::ArrayRCP<const double> raw_energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
-    const std::shared_ptr<TwoDDist>& cutoff_scattering_function,
-    const double cutoff_angle_cosine,
-    std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios )
-{
-  // Calculate the ratio of the cutoff to the moment preserving cross section
-  std::vector<double> cross_section_ratio( raw_energy_grid.size() );
-  std::vector<double> energy_grid( raw_energy_grid.size() );
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
-  {
-    // Get the energy
-    energy_grid[n] = raw_energy_grid[n];
-
-    // Get the cutoff cdf value at the angle cosine cutoff
-    double cutoff_cdf =
-            cutoff_scattering_function->evaluateSecondaryConditionalCDF(
-                                                        energy_grid[n],
-                                                        cutoff_angle_cosine );
-
-    // Get the reduced cutoff cross section
-    double reduced_cross_section = cutoff_cross_section[n]*cutoff_cdf;
-
-    // Get the ratio of the cutoff to the moment preserving cross section
-    cross_section_ratio[n] =
-      reduced_cross_section/(reduced_cross_section + moment_preserving_cross_section[n] );
-  }
-    // Create cross section ratios
-    cross_section_ratios.reset(
-      new const Utility::TabularDistribution<Utility::LogLog>( energy_grid, cross_section_ratio ) );
-}
-
 // Create the hybrid elastic scattering functions
 template<typename TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(

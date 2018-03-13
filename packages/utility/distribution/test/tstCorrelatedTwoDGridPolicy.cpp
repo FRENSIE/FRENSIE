@@ -105,8 +105,10 @@ TEUCHOS_UNIT_TEST( Correlated,
                    name )
 {
   std::string name = Utility::Correlated<Utility::LinLinLin>::name();
+  TEST_ASSERT( name == "Correlated" );
 
-  TEST_ASSERT( name == "LinLinLin Correlated" );
+  name = Utility::Correlated<Utility::LinLinLin>::TwoDInterpPolicy::name();
+  TEST_ASSERT( name == "LinLinLin" );
 }
 
 //---------------------------------------------------------------------------//

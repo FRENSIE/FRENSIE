@@ -312,22 +312,22 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( cdf, 0.0, 1e-12 );
 
   cdf = unit_base_ionization_dist->evaluateCDF( 9.12175e-2, 4.275e-4 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9030213872906114e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9027352769884525e-01, 1e-12 );
 
   cdf = unit_base_ionization_dist->evaluateCDF( 1e-1, 1e-2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9964169418960402e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9964164141314171e-01, 1e-12 );
 
   cdf = unit_base_ionization_dist->evaluateCDF( 1.0, 1.33136131511529e-1 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9997873853576236e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9997873846254492e-01, 1e-12 );
 
   cdf = unit_base_ionization_dist->evaluateCDF( 1.0, 9.7163E-02 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9996847362592778e-01, 1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9996847346527229e-01, 1e-12 );
 
   cdf = unit_base_ionization_dist->evaluateCDF( 1e5, 1.752970e2 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999998501226084e-01, 1e-10 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 9.9999998501226084e-01, 1e-12 );
 
   cdf = unit_base_ionization_dist->evaluateCDF( 1e5, 5e4 );
-  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-10 );
+  UTILITY_TEST_FLOATING_EQUALITY( cdf, 1.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

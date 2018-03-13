@@ -2142,7 +2142,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
-  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLog>(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Correlated<Utility::LinLinLog> >(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -2164,7 +2164,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
 
-  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LinLinLin>(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Direct<Utility::LinLinLin> >(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -2236,7 +2236,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     moment_preserving_cross_sections.end() );
 
   std::shared_ptr<TwoDDist> cutoff_scattering_function;
-  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::LogLogCosLog>(
+  TestElasticElectronScatteringDistributionNativeFactory::createScatteringFunction<Utility::Correlated<Utility::LogLogCosLog> >(
     data_container->getCutoffElasticAngles(),
     data_container->getCutoffElasticPDF(),
     data_container->getElasticAngularEnergyGrid(),
@@ -2245,7 +2245,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
     evaluation_tol );
 
   std::shared_ptr<const Utility::OneDDistribution> cross_section_ratios;
-  TestElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios<Utility::LogLogCosLog>(
+  TestElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios(
     energy_grid,
     cutoff_cross_section,
     mp_cross_section,

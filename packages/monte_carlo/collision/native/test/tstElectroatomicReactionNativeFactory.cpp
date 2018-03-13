@@ -430,7 +430,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::UnitBaseCorrelated<Utility::LinLinLog> >(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -485,7 +485,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -525,7 +525,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LogLogLog,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::Correlated<Utility::LogLogLog> >(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -674,7 +674,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   std::vector<std::shared_ptr<MonteCarlo::ElectroatomicReaction> > reactions;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<MonteCarlo::ElectroatomicReaction,Utility::Correlated<Utility::LinLinLin> >(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -729,7 +729,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
                                *data_container,
                                energy_grid,
                                grid_searcher,
@@ -769,7 +769,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 {
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::LinLinLin,Utility::Correlated>(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<MonteCarlo::ElectroatomicReaction,Utility::Correlated<Utility::LinLinLin> >(
                                *data_container,
                                energy_grid,
                                grid_searcher,

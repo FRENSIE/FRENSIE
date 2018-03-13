@@ -319,7 +319,6 @@ protected:
     std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios );
 
   //! Create the cutoff to moment preserving cross section ratios
-  template<typename TwoDGridPolicy = Utility::Correlated<Utility::LogLogCosLog> >
   static void createHybridCrossSectionRatios(
     const Teuchos::ArrayRCP<const double> energy_grid,
     const Teuchos::ArrayRCP<const double> cutoff_cross_section,

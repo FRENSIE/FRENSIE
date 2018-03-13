@@ -105,9 +105,10 @@ TEUCHOS_UNIT_TEST( UnitBaseCorrelated,
                    name )
 {
   std::string name = Utility::UnitBaseCorrelated<Utility::LinLinLin>::name();
-std::cout << std::setprecision(16) << std::scientific << "name = \t" << name << std::endl;
+  TEST_ASSERT( name == "Unit-base Correlated" );
 
-  TEST_ASSERT( name == "LinLinLin Unit-base Correlated" );
+  name = Utility::UnitBaseCorrelated<Utility::LinLinLin>::TwoDInterpPolicy::name();
+  TEST_ASSERT( name == "LinLinLin" );
 }
 
 //---------------------------------------------------------------------------//

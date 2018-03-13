@@ -75,8 +75,10 @@ TEUCHOS_UNIT_TEST( Direct,
                    name )
 {
   std::string name = Utility::Direct<Utility::LinLinLin>::name();
+  TEST_ASSERT( name == "Direct" );
 
-  TEST_ASSERT( name == "LinLinLin Direct" );
+  name = Utility::Direct<Utility::LinLinLin>::TwoDInterpPolicy::name();
+  TEST_ASSERT( name == "LinLinLin" );
 }
 
 //---------------------------------------------------------------------------//
