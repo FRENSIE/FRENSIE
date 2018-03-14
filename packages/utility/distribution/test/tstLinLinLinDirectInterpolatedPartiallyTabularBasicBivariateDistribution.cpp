@@ -17,8 +17,6 @@
 #include <boost/units/io.hpp>
 
 // FRENSIE Includes
-#include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_DynamicOutputFormatter.hpp"
 #include "Utility_InterpolatedPartiallyTabularBasicBivariateDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
@@ -28,6 +26,10 @@
 #include "Utility_UnitTestHarnessWithMain.hpp"
 #include "ArchiveTestHelpers.hpp"
 
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
 using boost::units::quantity;
 using Utility::Units::MegaElectronVolt;
 using Utility::Units::MeV;
@@ -35,6 +37,14 @@ using Utility::Units::Barn;
 using Utility::Units::barn;
 using Utility::Units::barns;
 namespace cgs = boost::units::cgs;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -115,48 +125,48 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the conditional distribution can be returned
 FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
-                   getLowerBoundOfConditionalIndepVar )
+                   getLowerBoundOfSecondaryConditionalIndepVar )
 {
   // Before the first bin - no extension
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar(-1.0),
                        0.0 );
 
   // Before the first bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar(-1.0),
                        0.0 );
 
   distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 0.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 0.0 ),
                        0.0 );
 
   // In the second bin
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 0.5 ),
-                       0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 0.5 ),
+                       1.25 );
 
   // On the third bin boundary
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 1.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.0 ),
                        2.5 );
 
   // In the third bin
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 1.5 ),
-                       0.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.5 ),
+                       1.25 );
 
   // On the upper bin boundary
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 2.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 2.0 ),
                        0.0 );
 
   // Beyond the third bin - no extension
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0 ),
                        0.0 );
 
   // Beyond the third bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0 ),
                        0.0 );
 
   distribution->limitToPrimaryIndepLimits();
@@ -166,48 +176,48 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
 // Check that the lower bound of the unit-aware conditional distribution can be
 // returned
 FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
-                   getLowerBoundOfConditionalIndepVar )
+                   getLowerBoundOfSecondaryConditionalIndepVar )
 {
   // Before the first bin - no extension
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( -1.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Before the first bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( -1.0*MeV ),
                        0.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 0.0*MeV ),
                        0.0*cgs::centimeter );
 
   // In the second bin
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 0.5*MeV ),
-                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 0.5*MeV ),
+                       1.25*cgs::centimeter );
 
   // On the third bin boundary
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.0*MeV ),
                        2.5*cgs::centimeter );
 
   // In the third bin
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 1.5*MeV ),
-                       0.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.5*MeV ),
+                       1.25*cgs::centimeter );
 
   // On the upper bin boundary
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 2.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 2.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Beyond the third bin - no extension
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Beyond the third bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 3.0*MeV ),
                        0.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
@@ -216,48 +226,48 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the conditional distribution can be returned
 FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
-                   getUpperBoundOfConditionalIndepVar )
+                   getUpperBoundOfSecondaryConditionalIndepVar )
 {
   // Before the first bin - no extension
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0),
                        0.0 );
 
   // Before the first bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar(-1.0),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0),
                        10.0 );
 
   distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 0.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.0 ),
                        10.0 );
 
   // In the second bin
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 0.5 ),
-                       10.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.5 ),
+                       8.75 );
 
   // On the third bin boundary
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 1.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.0 ),
                        7.5 );
 
   // In the third bin
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 1.5 ),
-                       10.0 );
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.5 ),
+                       8.75 );
 
   // On the upper bin boundary
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 2.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 2.0 ),
                        10.0 );
 
   // Beyond the third bin - no extension
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 3.0 ),
                        0.0 );
 
   // Beyond the third bin - with extension
   distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfConditionalIndepVar( 3.0 ),
+  FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 3.0 ),
                        10.0 );
 
   distribution->limitToPrimaryIndepLimits();
@@ -267,48 +277,48 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
 // Check that the upper bound of the unit-aware conditional distribution can be
 // returned
 FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
-                   getUpperBoundOfConditionalIndepVar )
+                   getUpperBoundOfSecondaryConditionalIndepVar )
 {
   // Before the first bin - no extension
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( -1.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Before the first bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( -1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( -1.0*MeV ),
                        10.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
 
   // On the second bin boundary
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.0*MeV ),
                        10.0*cgs::centimeter );
 
   // In the second bin
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 0.5*MeV ),
-                       10.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.5*MeV ),
+                       8.75*cgs::centimeter );
 
   // On the third bin boundary
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.0*MeV ),
                        7.5*cgs::centimeter );
 
   // In the third bin
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 1.5*MeV ),
-                       10.0*cgs::centimeter );
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.5*MeV ),
+                       8.75*cgs::centimeter );
 
   // On the upper bin boundary
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 2.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 2.0*MeV ),
                        10.0*cgs::centimeter );
 
   // Beyond the third bin - no extension
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 3.0*MeV ),
                        0.0*cgs::centimeter );
 
   // Beyond the third bin - with extension
   unit_aware_distribution->extendBeyondPrimaryIndepLimits();
 
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfConditionalIndepVar( 3.0*MeV ),
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 3.0*MeV ),
                        10.0*cgs::centimeter );
 
   unit_aware_distribution->limitToPrimaryIndepLimits();
@@ -326,57 +336,63 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
   std::shared_ptr<Utility::PartiallyTabularBasicBivariateDistribution> test_dist;
 
   {
-    Utility::PartiallyTabularBasicBivariateDistribution::DistributionType
-      distribution_data( 2 );
+    std::vector<double> primary_grid( 2 );
+    std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
+      secondary_dists( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    primary_grid[0] = 0.0;
+    secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
 
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 1.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    primary_grid[1] = 1.0;
+    secondary_dists[1].reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     test_dist.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
-                                                         distribution_data ) );
+                                                        primary_grid,
+                                                        secondary_dists ) );
   }
 
   FRENSIE_CHECK( !distribution->hasSamePrimaryBounds( *test_dist ) );
 
   // Create a test distribution with different lower bound, same upper bound
   {
-    Utility::PartiallyTabularBasicBivariateDistribution::DistributionType
-      distribution_data( 2 );
+    std::vector<double> primary_grid( 2 );
+    std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
+      secondary_dists( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 1.0;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    primary_grid[0] = 1.0;
+    secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
 
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 2.0;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    primary_grid[1] = 2.0;
+    secondary_dists[1].reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     test_dist.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
-                                                         distribution_data ) );
+                                                       primary_grid,
+                                                       secondary_dists ) );
   }
 
   FRENSIE_CHECK( !distribution->hasSamePrimaryBounds( *test_dist ) );
 
   // Create a test distribution with different bounds
   {
-    Utility::PartiallyTabularBasicBivariateDistribution::DistributionType
-      distribution_data( 2 );
+    std::vector<double> primary_grid( 2 );
+    std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
+      secondary_dists( 2 );
 
     // Create the secondary distribution in the first bin
-    distribution_data[0].first = 0.5;
-    distribution_data[0].second.reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
+    primary_grid[0] = 0.5;
+    secondary_dists[0].reset( new Utility::UniformDistribution( 0.0, 10.0, 0.1 ) );
 
     // Create the secondary distribution in the second bin
-    distribution_data[1].first = 1.5;
-    distribution_data[1].second.reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
+    primary_grid[1] = 1.5;
+    secondary_dists[1].reset( new Utility::ExponentialDistribution( 1.0, 1.0, 0.0, 10.0 ) );
 
     test_dist.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
-                                                         distribution_data ) );
+                                                    primary_grid,
+                                                    secondary_dists ) );
   }
 
   FRENSIE_CHECK( !distribution->hasSamePrimaryBounds( *test_dist ) );
@@ -751,7 +767,7 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    sampleSecondaryConditional )
 {
   // Before the first bin - no extension
-  TEST_THROW( distribution->sampleSecondaryConditional( -1.0 ),
+  FRENSIE_CHECK_THROW( distribution->sampleSecondaryConditional( -1.0 ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -929,7 +945,7 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // After the third bin - no extension
-  TEST_THROW( distribution->sampleSecondaryConditional( 3.0 ),
+  FRENSIE_CHECK_THROW( distribution->sampleSecondaryConditional( 3.0 ),
               std::logic_error );
 
   // After the third bin - with extension
@@ -965,7 +981,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
                    sampleSecondaryConditional )
 {
    // Before the first bin - no extension
-  TEST_THROW( unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV ),
+  FRENSIE_CHECK_THROW( unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV ),
               std::logic_error );
 
   // Before the first bin - with extension
@@ -1144,7 +1160,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // After the third bin - no extension
-  TEST_THROW( unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV ),
+  FRENSIE_CHECK_THROW( unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV ),
               std::logic_error );
 
   // After the third bin - with extension
@@ -1179,10 +1195,10 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
-  unsigned trials = 0u;
+  Utility::DistributionTraits::Counter trials = 0u;
 
   // Before the first bin - no extension
-  TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
+  FRENSIE_CHECK_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
               std::logic_error );
   FRENSIE_CHECK_EQUAL( trials, 0u );
 
@@ -1395,7 +1411,7 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // After the third bin - no extension
-  TEST_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials ),
+  FRENSIE_CHECK_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials ),
               std::logic_error );
 
   // After the third bin - with extension
@@ -1434,10 +1450,10 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
 FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
-  unsigned trials = 0u;
+  Utility::DistributionTraits::Counter trials = 0u;
 
   // Before the first bin - no extension
-  TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),
+  FRENSIE_CHECK_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),
               std::logic_error );
   FRENSIE_CHECK_EQUAL( trials, 0u );
 
@@ -1650,7 +1666,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
   FRENSIE_CHECK_EQUAL( trials, 3u );
 
   // After the third bin - no extension
-  TEST_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials ),
+  FRENSIE_CHECK_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials ),
               std::logic_error );
 
   // After the third bin - with extension
@@ -1685,6 +1701,308 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedPartiallyTabularBasicBivariateDistribution,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_LinLinLin_direct_interpolated_partially_tabular_basic_bivariate_dist" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some distributions
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    auto concrete_dist = std::dynamic_pointer_cast<Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::Direct<Utility::LinLinLin> > >( distribution );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "base_dist", distribution ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::Direct<Utility::LinLinLin> > > concrete_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
+
+  concrete_dist->extendBeyondPrimaryIndepLimits();
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, 10.0 ), exp( -10.0 ) );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 1.0 ),
+                          1.83939720585721167e-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 2.5 ),
+                          5.410424993119490E-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 5.0 ),
+                          5.033689734995430E-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 7.5 ),
+                          5.002765421850740E-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 9.0 ),
+                          6.170490204333980E-05,
+                          1e-15 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 2.5 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 7.5 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 8.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5, 1.0 ), 0.05 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5, 2.5 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5, 5.0 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5, 7.5 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5, 9.0 ), 0.05 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 11.0 ), 0.0 );
+
+  std::shared_ptr<Utility::PartiallyTabularBasicBivariateDistribution>
+    base_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist ) );
+
+  base_dist->extendBeyondPrimaryIndepLimits();
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, 10.0 ), exp( -10.0 ) );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 1.0 ),
+                          1.83939720585721167e-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 2.5 ),
+                          5.410424993119490E-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 5.0 ),
+                          5.033689734995430E-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 7.5 ),
+                          5.002765421850740E-01,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 9.0 ),
+                          6.170490204333980E-05,
+                          1e-15 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 2.5 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 7.5 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 8.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5, 1.0 ), 0.05 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5, 2.5 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5, 5.0 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5, 7.5 ), 0.55 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5, 9.0 ), 0.05 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 11.0 ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_LinLinLin_direct_interpolated_partially_tabular_basic_bivariate_dist" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some distributions
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    auto concrete_dist = std::dynamic_pointer_cast<Utility::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::Direct<Utility::LinLinLin>,MegaElectronVolt,cgs::length,Barn> >( unit_aware_distribution );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "base_dist", unit_aware_distribution ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<Utility::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility::Direct<Utility::LinLinLin>,MegaElectronVolt,cgs::length,Barn> > concrete_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
+
+  concrete_dist->extendBeyondPrimaryIndepLimits();
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, 10.0*cgs::centimeter ), exp( -10.0 )*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 1.0*cgs::centimeter ),
+                          1.83939720585721167e-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 2.5*cgs::centimeter ),
+                          5.410424993119490E-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+                          5.033689734995430E-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 7.5*cgs::centimeter ),
+                          5.002765421850740E-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 9.0*cgs::centimeter ),
+                          6.170490204333980E-05*barns,
+                          1e-15 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.05*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5*MeV, 2.5*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5*MeV, 5.0*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5*MeV, 7.5*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.05*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  std::shared_ptr<Utility::UnitAwarePartiallyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> >
+    base_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist ) );
+
+  base_dist->extendBeyondPrimaryIndepLimits();
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, 10.0*cgs::centimeter ), exp( -10.0 )*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 1.0*cgs::centimeter ),
+                          1.83939720585721167e-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 2.5*cgs::centimeter ),
+                          5.410424993119490E-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+                          5.033689734995430E-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 7.5*cgs::centimeter ),
+                          5.002765421850740E-01*barns,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 9.0*cgs::centimeter ),
+                          6.170490204333980E-05*barns,
+                          1e-15 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.05*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5*MeV, 2.5*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5*MeV, 5.0*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5*MeV, 7.5*cgs::centimeter ), 0.55*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.05*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.1*barns );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+}
+
+//---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
@@ -1714,15 +2032,15 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     secondary_dists[3] = secondary_dists[0];
 
     distribution.reset( new Utility::InterpolatedPartiallyTabularBasicBivariateDistribution<Utility::Direct<Utility::LinLinLin> >(
-                                                               primary_grid,
-                                                               secondary_dist )
+                                                           primary_grid,
+                                                           secondary_dists ) );
   }
 
   // Create the unit-aware two-dimensional distribution
   {
     std::vector<quantity<MegaElectronVolt> > primary_bins( 4 );
 
-    std::vector<std::shared_ptr<const Utility::UnitAwareOneDDistribution<cgs::length,Barn> > > secondary_dists( 4 );
+    std::vector<std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<cgs::length,Barn> > > secondary_dists( 4 );
 
     // Create the secondary distribution in the first bin
     primary_bins[0] = 0.0*MeV;

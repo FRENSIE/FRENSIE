@@ -46,6 +46,9 @@ public:
 
   //! The base univariate distribution type
   typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
+
+  // Default constructor
+  UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution();
   
   //! Constructor
   UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution(
@@ -64,9 +67,6 @@ public:
   void toStream( std::ostream& os ) const override;
 
 private:
-
-  // Default constructor
-  UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution();
 
   // Save the distribution to an archive
   template<typename Archive>

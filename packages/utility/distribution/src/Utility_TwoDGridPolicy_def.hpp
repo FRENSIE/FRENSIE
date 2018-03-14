@@ -276,7 +276,7 @@ YIndepType Direct<_TwoDInterpPolicy>::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Direct::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Direct<TwoDInterpPolicy>::sampleDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -311,7 +311,7 @@ YIndepType Direct<_TwoDInterpPolicy>::sampleCos(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Direct::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Direct<TwoDInterpPolicy>::sampleCosDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -811,7 +811,7 @@ YIndepType UnitBase<_TwoDInterpPolicy>::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return UnitBase::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return UnitBase<TwoDInterpPolicy>::sampleDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -848,7 +848,7 @@ YIndepType UnitBase<_TwoDInterpPolicy>::sampleCos(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return UnitBase::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return UnitBase<TwoDInterpPolicy>::sampleCosDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
@@ -2090,7 +2090,7 @@ YIndepType Correlated<_TwoDInterpPolicy>::sample(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Correlated::sampleDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated<TwoDInterpPolicy>::sampleDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             min_y_indep_functor,
             max_y_indep_functor,
@@ -2120,7 +2120,7 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleCos(
   YIndepType dummy_raw_sample;
   YZIterator dummy_sampled_bin_boundary;
 
-  return Correlated::sampleCosDetailed<TwoDInterpPolicy,XIndepType,YIndepType,YZIterator,SampleFunctor>(
+  return Correlated<TwoDInterpPolicy>::sampleCosDetailed<XIndepType,YIndepType,YZIterator,SampleFunctor>(
             sample_functor,
             x_indep_value,
             lower_bin_boundary,
