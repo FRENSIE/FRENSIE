@@ -115,7 +115,7 @@ void AdjointElectronPhotonRelaxationDataContainer::save( Archive& ar,
   
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );
@@ -242,7 +242,7 @@ void AdjointElectronPhotonRelaxationDataContainer::load( Archive& ar,
 
   // Electron Data
   DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_interp );
-  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_sampling );
+  DATA_MAKE_NVP_DEFAULT( ar, electron_two_d_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_angular_energy_grid );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_angles );
   DATA_MAKE_NVP_DEFAULT( ar, adjoint_cutoff_elastic_pdf );

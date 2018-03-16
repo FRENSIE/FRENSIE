@@ -91,51 +91,6 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron energy grid can be set
-FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
-                   setElectronEnergyGrid )
-{
-  std::vector<double> electron_energy_grid( 3 );
-  electron_energy_grid[0] = 1e-3;
-  electron_energy_grid[1] = 1.0;
-  electron_energy_grid[2] = 20.0;
-
-  mp_data_container.setElectronEnergyGrid( electron_energy_grid );
-
-  FRENSIE_CHECK_EQUAL( mp_data_container.getElectronEnergyGrid(),
-                       electron_energy_grid );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving (MP) moment preserving electron cross section can be set
-FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
-                   setMomentPreservingMomentPreservingCrossSection )
-{
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
-
-  mp_data_container.setMomentPreservingMomentPreservingCrossSection(
-                        cross_section );
-
-  FRENSIE_CHECK_EQUAL(
-            mp_data_container.getMomentPreservingMomentPreservingCrossSection(),
-            cross_section );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving moment preserving cs threshold index can be set
-FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
-		        setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex )
-{
-  mp_data_container.setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex( 0 );
-
-  FRENSIE_CHECK_EQUAL( mp_data_container.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
-                       0 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
                    export_importData_ascii )
@@ -193,31 +148,7 @@ FRENSIE_UNIT_TEST( MomentPreservingElectronDataContainer,
   mp_data_container.saveToFile( test_xml_file_name, true );
 
   const Data::MomentPreservingElectronDataContainer
-    mp_data_container_copy( test_xml_file_name,
-			     Utility::ArchivableObject::XML_ARCHIVE );
-
-  FRENSIE_CHECK_EQUAL( mp_data_container_copy.getAtomicNumber(), 1 );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getElasticAngularEnergyGrid().front(),
-    1.0 );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  FRENSIE_CHECK_EQUAL(
-    mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  FRENSIE_CHECK_EQUALn(
-    mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the data can be packed into a string and unpacked from a string
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
-                   pack_unpackDataFromString )
-{
-  std::string packed_data = mp_data_container.packDataInString();
-
-  Data::MomentPreservingElectronVolatileDataContainer mp_data_container_copy;
-
-  mp_data_container_copy.unpackDataFromString( packed_data );
+    mp_data_container_copy( test_xml_file_name );
 
   FRENSIE_CHECK_EQUAL( mp_data_container_copy.getAtomicNumber(), 1 );
   FRENSIE_CHECK_EQUAL(

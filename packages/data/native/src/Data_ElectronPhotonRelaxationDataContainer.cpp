@@ -517,11 +517,11 @@ ElectronPhotonRelaxationDataContainer::getElectronTwoDInterpPolicy() const
   return d_electron_two_d_interp;
 }
 
-// Return the electron TwoDSamplingPolicy
+// Return the electron TwoDGridPolicy
 const std::string&
-ElectronPhotonRelaxationDataContainer::getElectronTwoDSamplingPolicy() const
+ElectronPhotonRelaxationDataContainer::getElectronTwoDGridPolicy() const
 {
-  return d_electron_two_d_sampling;
+  return d_electron_two_d_grid;
 }
 
 // Return the elastic angular energy grid
@@ -1556,14 +1556,14 @@ void ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy(
   d_electron_two_d_interp = electron_two_d_interp;
 }
 
-// Set the electron TwoDSamplingPolicy
-void ElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy(
-    const std::string& electron_two_d_sampling )
+// Set the electron TwoDGridPolicy
+void ElectronPhotonRelaxationDataContainer::setElectronTwoDGridPolicy(
+    const std::string& electron_two_d_grid )
 {
   // Make sure the string is valid
-  testPrecondition( isTwoDSamplingPolicyValid( electron_two_d_sampling ) );
+  testPrecondition( isTwoDGridPolicyValid( electron_two_d_grid ) );
 
-  d_electron_two_d_sampling = electron_two_d_sampling;
+  d_electron_two_d_grid = electron_two_d_grid;
 }
 
 // Set the elastic angular energy grid

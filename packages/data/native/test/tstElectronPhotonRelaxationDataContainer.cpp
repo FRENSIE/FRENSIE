@@ -119,7 +119,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the electron total elastic integrated cross section mode can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    ElectronTotalElasticIntegratedCrossSectionModeOnOff )
 {
   epr_data_container.setElectronTotalElasticIntegratedCrossSectionModeOnOff( true );
@@ -152,7 +152,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the electron tabular tol can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectronTabularEvaluationTolerance )
 {
   epr_data_container.setElectronTabularEvaluationTolerance( 1e-3 );
@@ -213,7 +213,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setSubshells )
 //---------------------------------------------------------------------------//
 // Check that the subshell occupancies can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellOccupancy )
+                   setSubshellOccupancy )
 {
   epr_data_container.setSubshellOccupancy( 1, 1.0 );
 
@@ -223,25 +223,25 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energies can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellBindingEnergy )
+                   setSubshellBindingEnergy )
 {
   epr_data_container.setSubshellBindingEnergy( 1, 1.361e-5 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getSubshellBindingEnergy( 1 ),
-		       1.361e-5 );
+                       1.361e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of subshell relaxation transitions can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellRelaxationTransitions )
+                   setSubshellRelaxationTransitions )
 {
   FRENSIE_CHECK( !epr_data_container.hasRelaxationData() );
 
   epr_data_container.setSubshellRelaxationTransitions( 1, 1 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getSubshellRelaxationTransitions(1),
-		       1 );
+                       1 );
   FRENSIE_CHECK( epr_data_container.hasRelaxationData() );
   FRENSIE_CHECK( epr_data_container.hasSubshellRelaxationData( 1 ) );
 }
@@ -249,7 +249,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the relaxation vacancies for a subshell can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellRelaxationVacancies )
+                   setSubshellRelaxationVacancies )
 {
   std::vector<std::pair<unsigned,unsigned> > vacancies( 1 );
   vacancies[0].first = 1u;
@@ -257,14 +257,16 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   epr_data_container.setSubshellRelaxationVacancies( 1, vacancies );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getSubshellRelaxationVacancies( 1 ),
-                       vacancies );
+  FRENSIE_CHECK_EQUAL(
+                        epr_data_container.getSubshellRelaxationVacancies( 1 ),
+                        vacancies );
+
 }
 
 //---------------------------------------------------------------------------//
 // Check that the relaxation particle energies for a subshell can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellRelaxationEnergies )
+                   setSubshellRelaxationEnergies )
 {
   std::vector<double> energies( 1 );
   energies[0] = 1e-6;
@@ -272,14 +274,14 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setSubshellRelaxationParticleEnergies( 1, energies );
 
   FRENSIE_CHECK_EQUAL(
-		 epr_data_container.getSubshellRelaxationParticleEnergies( 1 ),
-		 energies );
+                 epr_data_container.getSubshellRelaxationParticleEnergies( 1 ),
+                 energies );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the relaxation probabilities for a subshell can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellRelaxationProbabilities )
+                   setSubshellRelaxationProbabilities )
 {
   std::vector<double> probabilities( 1 );
   probabilities[0] = 1.0;
@@ -287,14 +289,14 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setSubshellRelaxationProbabilities( 1, probabilities );
 
   FRENSIE_CHECK_EQUAL(
-		    epr_data_container.getSubshellRelaxationProbabilities( 1 ),
-		    probabilities );
+                    epr_data_container.getSubshellRelaxationProbabilities( 1 ),
+                    probabilities );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Compton profile momentum grid can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setComptonProfileMomentumGrid )
+                   setComptonProfileMomentumGrid )
 {
   std::vector<double> compton_profile_momentum_grid( 3 );
   compton_profile_momentum_grid[0] = -1.0;
@@ -305,13 +307,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                                             1, compton_profile_momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getComptonProfileMomentumGrid( 1 ),
-		       compton_profile_momentum_grid );
+                       compton_profile_momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Compton profile for a subshell can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setComptonProfile )
+                   setComptonProfile )
 {
   std::vector<double> compton_profile( 3 );
   compton_profile[0] = 1e-12;
@@ -321,13 +323,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setComptonProfile( 1, compton_profile );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getComptonProfile( 1 ),
-		       compton_profile );
+                       compton_profile );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the occupation number momentum grid can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setOccupationNumberMomentumGrid )
+                   setOccupationNumberMomentumGrid )
 {
   std::vector<double> momentum_grid( 3 );
   momentum_grid[0] = -1.0;
@@ -337,13 +339,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setOccupationNumberMomentumGrid( 1, momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getOccupationNumberMomentumGrid( 1 ),
-		       momentum_grid );
+                       momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the occupation number for a subshell can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setOccupationNumber )
+                   setOccupationNumber )
 {
   std::vector<double> occupation_number( 3 );
   occupation_number[0] = 0.0;
@@ -353,13 +355,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setOccupationNumber( 1, occupation_number );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getOccupationNumber( 1 ),
-		       occupation_number );
+                       occupation_number );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree scattering function momentum grid can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeScatteringFunctionMomentumGrid )
+                   setWallerHartreeScatteringFunctionMomentumGrid )
 {
   std::vector<double> momentum_grid( 4 );
   momentum_grid[0] = 1e-30;
@@ -371,13 +373,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                                                                momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeScatteringFunctionMomentumGrid(),
-		       momentum_grid );
+                       momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree scattering function can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeScatteringFunction )
+                   setWallerHartreeScatteringFunction )
 {
   std::vector<double> scattering_function( 4 );
   scattering_function[0] = 1e-30;
@@ -388,13 +390,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeScatteringFunction( scattering_function );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeScatteringFunction(),
-		       scattering_function );
+                       scattering_function );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree atomic form factor momentum grid can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeAtomicFormFactorMomentumGrid )
+                   setWallerHartreeAtomicFormFactorMomentumGrid )
 {
   std::vector<double> momentum_grid( 4 );
   momentum_grid[0] = 0.0;
@@ -406,13 +408,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                                                                momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeAtomicFormFactorMomentumGrid(),
-		       momentum_grid );
+                       momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree atomic form factor can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeAtomicFormFactor )
+                   setWallerHartreeAtomicFormFactor )
 {
   std::vector<double> form_factor( 4 );
   form_factor[0] = 1.0;
@@ -423,13 +425,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeAtomicFormFactor( form_factor );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeAtomicFormFactor(),
-		       form_factor );
+                       form_factor );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree atomic form factor momentum grid can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid )
+                   setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid )
 {
   std::vector<double> squared_momentum_grid( 4 );
   squared_momentum_grid[0] = 0.0;
@@ -441,13 +443,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                                                        squared_momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(),
-		       squared_momentum_grid );
+                       squared_momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree atomic form factor can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeSquaredAtomicFormFactor )
+                   setWallerHartreeSquaredAtomicFormFactor )
 {
   std::vector<double> squared_form_factor( 4 );
   squared_form_factor[0] = 1.0;
@@ -458,13 +460,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeSquaredAtomicFormFactor( squared_form_factor );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeSquaredAtomicFormFactor(),
-		       squared_form_factor );
+                       squared_form_factor );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the photon energy grid can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setPhotonEnergyGrid )
+                   setPhotonEnergyGrid )
 {
   std::vector<double> photon_energy_grid( 3 );
   photon_energy_grid[0] = 1e-3;
@@ -474,13 +476,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setPhotonEnergyGrid( photon_energy_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getPhotonEnergyGrid(),
-		       photon_energy_grid );
+                       photon_energy_grid );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the average heating numbers can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setAveragePhotonHeatingNumbers )
+                   setAveragePhotonHeatingNumbers )
 {
   std::vector<double> heating_numbers( 3 );
   heating_numbers[0] = 1e-6;
@@ -490,13 +492,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setAveragePhotonHeatingNumbers( heating_numbers );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getAveragePhotonHeatingNumbers(),
-		       heating_numbers );
+                       heating_numbers );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree incoherent cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeIncoherentCrossSection )
+                   setWallerHartreeIncoherentCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -506,24 +508,24 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeIncoherentCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeIncoherentCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree incoherent cs threshold index can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeIncoherentCrossSectionThresholdEnergyIndex )
+                   setWallerHartreeIncoherentCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setWallerHartreeIncoherentCrossSectionThresholdEnergyIndex( 0 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the impulse approx. incoherent cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setImpulseApproxIncoherentCrossSection )
+                   setImpulseApproxIncoherentCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -533,24 +535,24 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setImpulseApproxIncoherentCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getImpulseApproxIncoherentCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the impulse approx. incoherent cs threshold index can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setImpulseApproxIncoherentCrossSectionThresholdEnergyIndex )
+                   setImpulseApproxIncoherentCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setImpulseApproxIncoherentCrossSectionThresholdEnergyIndex( 0 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the impulse approx. subshell incoherent cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setImpulseApproxSubshellIncoherentCrossSection )
+                   setImpulseApproxSubshellIncoherentCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -560,24 +562,24 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setImpulseApproxSubshellIncoherentCrossSection( 1, cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getImpulseApproxSubshellIncoherentCrossSection( 1 ),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the impulse approx. subshell incoh. cs threshold index can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex )
+                   setImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1, 0 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1 ),
-		       0 );
+                       0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree coherent cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeCoherentCrossSection )
+                   setWallerHartreeCoherentCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -587,24 +589,24 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeCoherentCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeCoherentCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree coherent cs threshold energy index can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeCoherentCrossSectionThresholdEnergyIndex )
+                   setWallerHartreeCoherentCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setWallerHartreeCoherentCrossSectionThresholdEnergyIndex( 0 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex(),
-		       0 );
+                       0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the pair production cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setPairProductionCrossSection )
+                   setPairProductionCrossSection )
 {
   std::vector<double> cross_section( 2 );
   cross_section[0] = 1e-6;
@@ -613,18 +615,18 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setPairProductionCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getPairProductionCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the pair production cross section threshold index can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setPairProductionCrossSectionThresholdEnergyIndex )
+                   setPairProductionCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setPairProductionCrossSectionThresholdEnergyIndex( 1 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getPairProductionCrossSectionThresholdEnergyIndex(),
-		       1 );
+                       1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -635,7 +637,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   std::vector<double> cross_section( 2 );
   cross_section[0] = 1e-12;
   cross_section[1] = 2.0;
-  
+
   epr_data_container.setTripletProductionCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getTripletProductionCrossSection(),
@@ -650,13 +652,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setTripletProductionCrossSectionThresholdEnergyIndex( 1 );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getTripletProductionCrossSectionThresholdEnergyIndex(),
-		       1 );
+                       1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the photoelectric effect cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setPhotoelectricCrossSection )
+                   setPhotoelectricCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -666,24 +668,24 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setPhotoelectricCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getPhotoelectricCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the photoelectric effect cs threshold energy index can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setPhotoelectricCrossSectionThresholdEnergyIndex )
+                   setPhotoelectricCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setPhotoelectricCrossSectionThresholdEnergyIndex( 0u );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getPhotoelectricCrossSectionThresholdEnergyIndex(),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshell photoelectric effect cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellPhotoelectricCrossSection )
+                   setSubshellPhotoelectricCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -693,24 +695,24 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setSubshellPhotoelectricCrossSection( 1, cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getSubshellPhotoelectricCrossSection( 1 ),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshell photoelectric effect cs threshold index can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setSubshellPhotoelectricCrossSectionThresholdEnergyIndex )
+                   setSubshellPhotoelectricCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 1, 0u );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 1 ),
-		       0u );
+                       0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree total cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeTotalCrossSection )
+                   setWallerHartreeTotalCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -720,13 +722,13 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeTotalCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeTotalCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the impulse approx. total cross section can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setImpulseApproxTotalCrossSection )
+                   setImpulseApproxTotalCrossSection )
 {
   std::vector<double> cross_section( 3 );
   cross_section[0] = 1e-6;
@@ -736,14 +738,14 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setImpulseApproxTotalCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getImpulseApproxTotalCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // ELECTRON TESTS
 //---------------------------------------------------------------------------//
 // Check that the electron TwoDInterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectronTwoDInterpPolicy )
 {
   std::string interp = "Lin-Lin-Lin";
@@ -754,15 +756,15 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron TwoDSamplingPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setElectronTwoDSamplingPolicy )
+// Check that the electron TwoDGridPolicy can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setElectronTwoDGridPolicy )
 {
-  std::string sampling = "Unit-base Correlated";
-  epr_data_container.setElectronTwoDSamplingPolicy( sampling );
+  std::string grid = "Unit-base Correlated";
+  epr_data_container.setElectronTwoDGridPolicy( grid );
 
-  FRENSIE_CHECK_EQUAL( sampling,
-                       epr_data_container.getElectronTwoDSamplingPolicy() );
+  FRENSIE_CHECK_EQUAL( grid,
+                       epr_data_container.getElectronTwoDGridPolicy() );
 }
 
 //---------------------------------------------------------------------------//
@@ -782,7 +784,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff elastic InterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setCutoffElasticInterpPolicy )
 {
   std::string interp = "Lin-Lin";
@@ -870,12 +872,12 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                        pdf );
 }
 
-//---------------------------------------------------------------------------//
-// Check that the screened Rutherford elastic normalization constant can be set
-FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setScreenedRutherfordNormalizationConstant )
-{
-  FRENSIE_CHECK( !epr_data_container.hasScreenedRutherfordData() );
+////---------------------------------------------------------------------------//
+//// Check that the screened Rutherford elastic normalization constant can be set
+//FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+//                   setScreenedRutherfordNormalizationConstant )
+//{
+//  FRENSIE_CHECK( !epr_data_container.hasScreenedRutherfordData() );
 
 //  std::vector<double> norm( 3 );
 //  norm[0] = 100;
@@ -884,27 +886,27 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //  epr_data_container.setScreenedRutherfordNormalizationConstant( norm );
 
-  // FRENSIE_CHECK_EQUAL( epr_data_container.getScreenedRutherfordNormalizationConstant(),
-  //                      norm );
+//  FRENSIE_CHECK_EQUAL( epr_data_container.getScreenedRutherfordNormalizationConstant(),
+//                       norm );
 
-  // FRENSIE_CHECK( epr_data_container.hasScreenedRutherfordData() );
-}
+//  FRENSIE_CHECK( epr_data_container.hasScreenedRutherfordData() );
+//}
 
-//---------------------------------------------------------------------------//
-// Check that Moliere's screening constant can be set
-FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-                   setMoliereScreeningConstant )
-{
-  std::vector<double> eta( 3 );
-  eta[0] = 100;
-  eta[1] = 0.0;
-  eta[2] = 0.90;
+////---------------------------------------------------------------------------//
+//// Check that Moliere's screening constant can be set
+//FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+//                   setMoliereScreeningConstant )
+//{
+//  std::vector<double> eta( 3 );
+//  eta[0] = 100;
+//  eta[1] = 0.0;
+//  eta[2] = 0.90;
 
 //  epr_data_container.setMoliereScreeningConstant( eta );
 
-  // FRENSIE_CHECK_EQUAL( epr_data_container.getMoliereScreeningConstant(),
-  //                      eta );
-}
+//  FRENSIE_CHECK_EQUAL( epr_data_container.getMoliereScreeningConstant(),
+//                       eta );
+//}
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving elastic discrete angles can be set
@@ -924,11 +926,11 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container.getMomentPreservingElasticDiscreteAngles(1.0),
                        discrete_angles );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.hasMomentPreservingData() );
+  FRENSIE_CHECK( epr_data_container.hasMomentPreservingData() );
 
   epr_data_container.clearMomentPreservingData();
 
-  FRENSIE_CHECK_EQUAL( !epr_data_container.hasMomentPreservingData() );
+  FRENSIE_CHECK( !epr_data_container.hasMomentPreservingData() );
 
   epr_data_container.setMomentPreservingElasticDiscreteAngles( 1.0,
                                                             discrete_angles );
@@ -952,7 +954,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving elastic discrete angles can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setMomentPreservingCrossSectionReduction )
 {
   FRENSIE_CHECK( epr_data_container.hasMomentPreservingData() );
@@ -962,7 +964,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   epr_data_container.setMomentPreservingCrossSectionReduction( reductions );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getMomentPreservingCrossSectionReduction(),
+  FRENSIE_CHECK_EQUAL( epr_data_container.getMomentPreservingCrossSectionReduction(),
                        reductions );
 }
 
@@ -987,7 +989,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the electroionization Recoil InterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectroionizationRecoilInterpPolicy )
 {
   std::string interp = "Lin-Lin";
@@ -1110,7 +1112,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung photon InterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setBremsstrahlungPhotonInterpPolicy )
 {
   std::string interp = "Lin-Lin";
@@ -1217,7 +1219,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation energy loss InterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setAtomicExcitationEnergyLossInterpPolicy )
 {
   std::string interp = "Lin-Lin";
@@ -1262,7 +1264,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the electron cross section InterpPolicy can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setElectronCrossSectionInterpPolicy )
 {
   std::string interp = "Lin-Lin";
@@ -1274,7 +1276,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the total electron electron cross section can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setTotalElectronCrossSection )
 {
   std::vector<double> cross_section( 3 );
@@ -1285,7 +1287,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   epr_data_container.setTotalElectronCrossSection(
                         cross_section );
 
-  TEST_COMPARE_ARRAYS(
+  FRENSIE_CHECK_EQUAL(
             epr_data_container.getTotalElectronCrossSection(),
             cross_section );
 }

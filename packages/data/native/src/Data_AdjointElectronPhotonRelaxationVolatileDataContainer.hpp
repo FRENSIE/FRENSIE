@@ -118,7 +118,7 @@ public:
 
   // Electron functions
   using AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy;
-  using AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy;
+  using AdjointElectronPhotonRelaxationDataContainer::setElectronTwoDGridPolicy;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointElasticAngularEnergyGrid;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointCutoffElasticAnglesAtEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setAdjointCutoffElasticPDFAtEnergy;

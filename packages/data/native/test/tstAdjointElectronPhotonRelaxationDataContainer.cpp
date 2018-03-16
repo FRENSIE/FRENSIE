@@ -88,7 +88,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setMaxElectronE
 
 //---------------------------------------------------------------------------//
 // Check that the grid convergence tolerance can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setGridConvergenceTolerance )
 {
   epr_data_container.setGridConvergenceTolerance( 0.001 );
@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the grid absolute difference tolerance can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setGridAbsoluteDifferenceTolerance )
 {
   epr_data_container.setGridAbsoluteDifferenceTolerance( 1e-42 );
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the grid distance tolerance can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setGridDistanceTolerance )
 {
   epr_data_container.setGridDistanceTolerance( 1e-15 );
@@ -262,36 +262,159 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid convergence tolerance can be set
+// Check that the adjoint_electron_grid_convergence_tol can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridConvergenceTolerance )
+                   setAdjointElectronGridConvergenceTolerance )
 {
   epr_data_container.setAdjointElectronGridConvergenceTolerance( 1e-3 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridConvergenceTolerance(),
-                       0.001 );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectronGridConvergenceTolerance(),
+                       1e-3 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid absolute difference tolerance can be set
+// Check that the adjoint_electron_absolute_diff_tol can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridAbsoluteDifferenceTolerance )
+                   setAdjointElectronAbsoluteDifferenceTolerance )
 {
   epr_data_container.setAdjointElectronAbsoluteDifferenceTolerance( 1e-3 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridAbsoluteDifferenceTolerance(),
-                       1e-42 );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectronAbsoluteDifferenceTolerance(),
+                       1e-3 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the grid distance tolerance can be set
+// Check that the adjoint_electron_distance_tol can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setGridDistanceTolerance )
+                   setAdjointElectronDistanceTolerance )
 {
   epr_data_container.setAdjointElectronDistanceTolerance( 1e-3 );
 
-  FRENSIE_CHECK_EQUAL( epr_data_container.getGridDistanceTolerance(),
-                       1e-15 );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectronDistanceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron tabular tol can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setElectronTabularEvaluationTolerance )
+{
+  epr_data_container.setElectronTabularEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getElectronTabularEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_max_energy_nudge_value can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungMaxEnergyNudgeValue )
+{
+  epr_data_container.setAdjointBremsstrahlungMaxEnergyNudgeValue( 0.2 );
+
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container.getAdjointBremsstrahlungMaxEnergyNudgeValue(),
+    0.2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_energy_to_outgoing_energy_nudge_value can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue )
+{
+  epr_data_container.setAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue( 0.2 );
+
+  FRENSIE_CHECK_EQUAL(
+    epr_data_container.getAdjointBremsstrahlungEnergyToOutgoingEnergyNudgeValue(),
+    0.2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_evaluation_tolerance can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungEvaluationTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointBremsstrahlungEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_convergence_tolerance can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungGridConvergenceTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungGridConvergenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointBremsstrahlungGridConvergenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_absolute_diff_tol can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungAbsoluteDifferenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointBremsstrahlungAbsoluteDifferenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_bremsstrahlung_distance_tol can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointBremsstrahlungDistanceTolerance )
+{
+  epr_data_container.setAdjointBremsstrahlungDistanceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointBremsstrahlungDistanceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_evaluation_tolerance can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationEvaluationTolerance )
+{
+  epr_data_container.setAdjointElectroionizationEvaluationTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectroionizationEvaluationTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_convergence_tolerance can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationGridConvergenceTolerance )
+{
+  epr_data_container.setAdjointElectroionizationGridConvergenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectroionizationGridConvergenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_absolute_diff_tol can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setAdjointElectroionizationAbsoluteDifferenceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectroionizationAbsoluteDifferenceTolerance(),
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the adjoint_electroionization_distance_tol can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointElectroionizationDistanceTolerance )
+{
+  epr_data_container.setAdjointElectroionizationDistanceTolerance( 1e-3 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointElectroionizationDistanceTolerance(),
+                       1e-3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -313,7 +436,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setSubshells )
 //---------------------------------------------------------------------------//
 // Check that the subshell occupancies can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		   setSubshellOccupancy )
+                   setSubshellOccupancy )
 {
   epr_data_container.setSubshellOccupancy( 1, 1.0 );
 
@@ -323,7 +446,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energies can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		   setSubshellBindingEnergy )
+                   setSubshellBindingEnergy )
 {
   epr_data_container.setSubshellBindingEnergy( 1, 1.361e-5 );
 
@@ -334,7 +457,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the number of subshell relaxation transitions can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		   hasAdjointRelaxationData )
+                   hasAdjointRelaxationData )
 {
   FRENSIE_CHECK( !epr_data_container.hasAdjointRelaxationData() );
 }
@@ -352,10 +475,10 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   compton_profile_momentum_grid[2] = 1.0;
 
   epr_data_container.setComptonProfileMomentumGrid(
-					    1, compton_profile_momentum_grid );
-  
+                                            1, compton_profile_momentum_grid );
+
   FRENSIE_CHECK_EQUAL( epr_data_container.getComptonProfileMomentumGrid( 1 ),
-		       compton_profile_momentum_grid );
+                       compton_profile_momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
@@ -371,7 +494,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setComptonProfile( 1, compton_profile );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getComptonProfile( 1 ),
-		       compton_profile );
+                       compton_profile );
 }
 
 //---------------------------------------------------------------------------//
@@ -387,7 +510,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setOccupationNumberMomentumGrid( 1, momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getOccupationNumberMomentumGrid( 1 ),
-		       momentum_grid );
+                       momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
@@ -403,7 +526,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setOccupationNumber( 1, occupation_number );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getOccupationNumber( 1 ),
-		       occupation_number );
+                       occupation_number );
 }
 
 //---------------------------------------------------------------------------//
@@ -421,7 +544,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                                                                momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeScatteringFunctionMomentumGrid(),
-		       momentum_grid );
+                       momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
@@ -438,7 +561,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeScatteringFunction( scattering_function );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeScatteringFunction(),
-		       scattering_function );
+                       scattering_function );
 }
 
 //---------------------------------------------------------------------------//
@@ -456,11 +579,11 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                                                                momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeAtomicFormFactorMomentumGrid(),
-		       momentum_grid );
+                       momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Waller-Hartree atmoic form factor can be set
+// Check that the Waller-Hartree atomic form factor can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setWallerHartreeAtomicFormFactor )
 {
@@ -473,13 +596,13 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeAtomicFormFactor( form_factor );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeAtomicFormFactor(),
-		       form_factor );
+                       form_factor );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree atomic form factor momentum grid can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid )
+                   setWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid )
 {
   std::vector<double> squared_momentum_grid( 4 );
   squared_momentum_grid[0] = 0.0;
@@ -491,13 +614,13 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                                                        squared_momentum_grid );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(),
-		       squared_momentum_grid );
+                       squared_momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Waller-Hartree atomic form factor can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		   setWallerHartreeSquaredAtomicFormFactor )
+                   setWallerHartreeSquaredAtomicFormFactor )
 {
   std::vector<double> squared_form_factor( 4 );
   squared_form_factor[0] = 1.0;
@@ -508,7 +631,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeSquaredAtomicFormFactor( squared_form_factor );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeSquaredAtomicFormFactor(),
-		       squared_form_factor );
+                       squared_form_factor );
 }
 
 //---------------------------------------------------------------------------//
@@ -732,7 +855,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setAdjointWallerHartreeCoherentCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointWallerHartreeCoherentCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
@@ -876,7 +999,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setWallerHartreeTotalCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getWallerHartreeTotalCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
@@ -892,7 +1015,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   epr_data_container.setImpulseApproxTotalCrossSection( cross_section );
 
   FRENSIE_CHECK_EQUAL( epr_data_container.getImpulseApproxTotalCrossSection(),
-		       cross_section );
+                       cross_section );
 }
 
 //---------------------------------------------------------------------------//
@@ -1139,7 +1262,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung cs threshold index can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		        setAdjointBremsstrahlungPhotonCrossSectionThresholdEnergyIndex )
+                   setAdjointBremsstrahlungPhotonCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setAdjointBremsstrahlungPhotonCrossSectionThresholdEnergyIndex( 0 );
 
@@ -1152,7 +1275,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 // Electron Tests
 //---------------------------------------------------------------------------//
 // Check that the electron TwoDInterpPolicy can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setElectronTwoDInterpPolicy )
 {
   std::string interp = "Lin-Lin-Lin";
@@ -1163,15 +1286,15 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the electron TwoDSamplingPolicy can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setElectronTwoDSamplingPolicy )
+// Check that the electron TwoDGridPolicy can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setElectronTwoDGridPolicy )
 {
-  std::string sampling = "Direct";
-  epr_data_container.setElectronTwoDSamplingPolicy( sampling );
+  std::string grid = "Direct";
+  epr_data_container.setElectronTwoDGridPolicy( grid );
 
-  FRENSIE_CHECK_EQUAL( sampling,
-                       epr_data_container.getElectronTwoDSamplingPolicy() );
+  FRENSIE_CHECK_EQUAL( grid,
+                       epr_data_container.getElectronTwoDGridPolicy() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1265,6 +1388,22 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   FRENSIE_CHECK_EQUAL( map.find(1.0)->second,
                        pdf );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the moment preserving elastic discrete angles can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+                   setAdjointMomentPreservingCrossSectionReduction )
+{
+  FRENSIE_CHECK( !epr_data_container.hasAdjointMomentPreservingData() );
+
+  std::vector<double> reductions( 1 );
+  reductions[0] = 0.90;
+
+  epr_data_container.setAdjointMomentPreservingCrossSectionReduction( reductions );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointMomentPreservingCrossSectionReduction(),
+                       reductions );
 }
 
 //---------------------------------------------------------------------------//
@@ -1669,29 +1808,19 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Moment Preserving (MP) elastic electron cross section can be set
+// Check that the reduced cutoff cross section ratios can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-                   setAdjointMomentPreservingCrossSection )
+                   setReducedCutoffCrossSectionRatios )
 {
   std::vector<double> ratios( 3 );
   ratios[0] = 0.1;
   ratios[1] = 0.2;
   ratios[2] = 0.7;
 
-  FRENSIE_CHECK_EQUAL(
-            epr_data_container.getAdjointMomentPreservingCrossSection(),
-            cross_section );
-}
+  epr_data_container.setReducedCutoffCrossSectionRatios( ratios );
 
-//---------------------------------------------------------------------------//
-// Check that the Moment Preserving elastic cs threshold index can be set
-FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
-		        setAdjointMomentPreservingCrossSectionThresholdEnergyIndex )
-{
-  epr_data_container.setAdjointMomentPreservingCrossSectionThresholdEnergyIndex( 0 );
-
-  FRENSIE_CHECK_EQUAL( epr_data_container.getAdjointMomentPreservingCrossSectionThresholdEnergyIndex(),
-                       0 );
+  FRENSIE_CHECK_EQUAL( epr_data_container.getReducedCutoffCrossSectionRatios(),
+                       ratios );
 }
 
 //---------------------------------------------------------------------------//
@@ -1789,7 +1918,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation electron cross section can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setForwardInelasticElectronCrossSection )
 {
   std::vector<double> cross_section( 3 );
@@ -1799,14 +1928,14 @@ TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   epr_data_container.setForwardInelasticElectronCrossSection(  cross_section );
 
-  TEST_COMPARE_ARRAYS(
+  FRENSIE_CHECK_EQUAL(
             epr_data_container.getForwardInelasticElectronCrossSection(),
             cross_section );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation cs threshold index can be set
-TEUCHOS_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    setForwardInelasticElectronCrossSectionThresholdEnergyIndex )
 {
   epr_data_container.setForwardInelasticElectronCrossSectionThresholdEnergyIndex( 0 );
@@ -1859,7 +1988,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getSubshellBindingEnergy( 1 ),
                        1.361e-5 );
-  
+
   // Photon Tests
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(), 3 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getComptonProfile( 1 ).size(), 3 );

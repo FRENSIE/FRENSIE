@@ -36,9 +36,9 @@ std::shared_ptr<Data::XSSEPRDataExtractor> pb_erp14_xss_data_extractor;
 // Check that the XSSEPRDataExtractor can extract the atomic number
 FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractAtomicNumber )
 {
-  TEST_EQUALITY_CONST( b_xss_data_extractor->extractAtomicNumber(), 5 );
-  TEST_EQUALITY_CONST( pb_xss_data_extractor->extractAtomicNumber(), 82 );
-  TEST_EQUALITY_CONST( pb_erp14_xss_data_extractor->extractAtomicNumber(), 82 );
+  FRENSIE_CHECK_EQUAL( b_xss_data_extractor->extractAtomicNumber(), 5 );
+  FRENSIE_CHECK_EQUAL( pb_xss_data_extractor->extractAtomicNumber(), 82 );
+  FRENSIE_CHECK_EQUAL( pb_erp14_xss_data_extractor->extractAtomicNumber(), 82 );
 }
 
 //---------------------------------------------------------------------------//
@@ -46,9 +46,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractAtomicNumber )
 // is present
 FRENSIE_UNIT_TEST( XSSEPRDataExtractor, hasOldFluorescenceData )
 {
-  TEST_ASSERT( !b_xss_data_extractor->hasOldFluorescenceData() );
-  TEST_ASSERT( pb_xss_data_extractor->hasOldFluorescenceData() );
-  TEST_ASSERT( pb_erp14_xss_data_extractor->hasOldFluorescenceData() );
+  FRENSIE_CHECK( !b_xss_data_extractor->hasOldFluorescenceData() );
+  FRENSIE_CHECK( pb_xss_data_extractor->hasOldFluorescenceData() );
+  FRENSIE_CHECK( pb_erp14_xss_data_extractor->hasOldFluorescenceData() );
 }
 
 //---------------------------------------------------------------------------//
@@ -56,18 +56,18 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, hasOldFluorescenceData )
 // present
 FRENSIE_UNIT_TEST( XSSEPRDataExtractor, hasFluorescenceData )
 {
-  TEST_ASSERT( !b_xss_data_extractor->hasFluorescenceData() );
-  TEST_ASSERT( pb_xss_data_extractor->hasFluorescenceData() );
-  TEST_ASSERT( pb_erp14_xss_data_extractor->hasFluorescenceData() );
+  FRENSIE_CHECK( !b_xss_data_extractor->hasFluorescenceData() );
+  FRENSIE_CHECK( pb_xss_data_extractor->hasFluorescenceData() );
+  FRENSIE_CHECK( pb_erp14_xss_data_extractor->hasFluorescenceData() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the XSSEPRDataExtractor can check if the file is version eprdata14
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, isEPRVersion14 )
+FRENSIE_UNIT_TEST( XSSEPRDataExtractor, isEPRVersion14 )
 {
-  TEST_ASSERT( !b_xss_data_extractor->isEPRVersion14() );
-  TEST_ASSERT( !pb_xss_data_extractor->isEPRVersion14() );
-  TEST_ASSERT( pb_erp14_xss_data_extractor->isEPRVersion14() );
+  FRENSIE_CHECK( !b_xss_data_extractor->isEPRVersion14() );
+  FRENSIE_CHECK( !pb_xss_data_extractor->isEPRVersion14() );
+  FRENSIE_CHECK( pb_erp14_xss_data_extractor->isEPRVersion14() );
 }
 
 //---------------------------------------------------------------------------//
@@ -83,15 +83,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractESZGBlock )
 
   eszg_block = pb_xss_data_extractor->extractESZGBlock();
 
-  TEST_EQUALITY_CONST( eszg_block.size(), 15880 );
-  TEST_EQUALITY_CONST( eszg_block.front(), -1.381551055796E+01 );
-  TEST_EQUALITY_CONST( eszg_block.back(), 3.718032834377E+00 );
+  FRENSIE_CHECK_EQUAL( eszg_block.size(), 15880 );
+  FRENSIE_CHECK_EQUAL( eszg_block.front(), -1.381551055796E+01 );
+  FRENSIE_CHECK_EQUAL( eszg_block.back(), 3.718032834377E+00 );
 
   eszg_block = pb_erp14_xss_data_extractor->extractESZGBlock();
 
-  TEST_EQUALITY_CONST( eszg_block.size(), 15880 );
-  TEST_EQUALITY_CONST( eszg_block.front(), -1.381551055796E+01 );
-  TEST_EQUALITY_CONST( eszg_block.back(), 3.718032834377E+00 );
+  FRENSIE_CHECK_EQUAL( eszg_block.size(), 15880 );
+  FRENSIE_CHECK_EQUAL( eszg_block.front(), -1.381551055796E+01 );
+  FRENSIE_CHECK_EQUAL( eszg_block.back(), 3.718032834377E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -107,15 +107,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractPhotonEnergyGrid )
 
   photon_energy_grid = pb_xss_data_extractor->extractPhotonEnergyGrid();
 
-  TEST_EQUALITY_CONST( photon_energy_grid.size(), 3176 );
-  TEST_EQUALITY_CONST( photon_energy_grid.front(), -1.381551055796E+01 );
-  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.151292546497E+01 );
+  FRENSIE_CHECK_EQUAL( photon_energy_grid.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( photon_energy_grid.front(), -1.381551055796E+01 );
+  FRENSIE_CHECK_EQUAL( photon_energy_grid.back(), 1.151292546497E+01 );
 
   photon_energy_grid = pb_erp14_xss_data_extractor->extractPhotonEnergyGrid();
 
-  TEST_EQUALITY_CONST( photon_energy_grid.size(), 3176 );
-  TEST_EQUALITY_CONST( photon_energy_grid.front(), -1.381551055796E+01 );
-  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.151292546497E+01 );
+  FRENSIE_CHECK_EQUAL( photon_energy_grid.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( photon_energy_grid.front(), -1.381551055796E+01 );
+  FRENSIE_CHECK_EQUAL( photon_energy_grid.back(), 1.151292546497E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -131,15 +131,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractIncoherentCrossSection )
 
   incoherent_cs = pb_xss_data_extractor->extractIncoherentCrossSection();
 
-  TEST_EQUALITY_CONST( incoherent_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( incoherent_cs.front(), -1.338724079720E+01 );
-  TEST_EQUALITY_CONST( incoherent_cs.back(), -6.573285045032E+00 );
+  FRENSIE_CHECK_EQUAL( incoherent_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( incoherent_cs.front(), -1.338724079720E+01 );
+  FRENSIE_CHECK_EQUAL( incoherent_cs.back(), -6.573285045032E+00 );
 
   incoherent_cs = pb_erp14_xss_data_extractor->extractIncoherentCrossSection();
 
-  TEST_EQUALITY_CONST( incoherent_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( incoherent_cs.front(), -1.338724079720E+01 );
-  TEST_EQUALITY_CONST( incoherent_cs.back(), -6.573285045032E+00 );
+  FRENSIE_CHECK_EQUAL( incoherent_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( incoherent_cs.front(), -1.338724079720E+01 );
+  FRENSIE_CHECK_EQUAL( incoherent_cs.back(), -6.573285045032E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -155,15 +155,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractCoherentCrossSection )
 
   coherent_cs = pb_xss_data_extractor->extractCoherentCrossSection();
 
-  TEST_EQUALITY_CONST( coherent_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( coherent_cs.front(), -5.071403810640E+00 );
-  TEST_EQUALITY_CONST( coherent_cs.back(), -2.309498238246E+01 );
+  FRENSIE_CHECK_EQUAL( coherent_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( coherent_cs.front(), -5.071403810640E+00 );
+  FRENSIE_CHECK_EQUAL( coherent_cs.back(), -2.309498238246E+01 );
 
   coherent_cs = pb_erp14_xss_data_extractor->extractCoherentCrossSection();
 
-  TEST_EQUALITY_CONST( coherent_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( coherent_cs.front(), -5.071403810640E+00 );
-  TEST_EQUALITY_CONST( coherent_cs.back(), -2.309498238246E+01 );
+  FRENSIE_CHECK_EQUAL( coherent_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( coherent_cs.front(), -5.071403810640E+00 );
+  FRENSIE_CHECK_EQUAL( coherent_cs.back(), -2.309498238246E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -179,15 +179,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractPhotoelectricCrossSection )
 
   photoelectric_cs = pb_xss_data_extractor->extractPhotoelectricCrossSection();
 
-  TEST_EQUALITY_CONST( photoelectric_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( photoelectric_cs.front(), 0.0 );
-  TEST_EQUALITY_CONST( photoelectric_cs.back(), -1.115947249407E+01 );
+  FRENSIE_CHECK_EQUAL( photoelectric_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( photoelectric_cs.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( photoelectric_cs.back(), -1.115947249407E+01 );
 
   photoelectric_cs = pb_erp14_xss_data_extractor->extractPhotoelectricCrossSection();
 
-  TEST_EQUALITY_CONST( photoelectric_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( photoelectric_cs.front(), 0.0 );
-  TEST_EQUALITY_CONST( photoelectric_cs.back(), -1.115947249407E+01 );
+  FRENSIE_CHECK_EQUAL( photoelectric_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( photoelectric_cs.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( photoelectric_cs.back(), -1.115947249407E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -204,16 +204,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractPairProductionCrossSection )
   pair_production_cs =
     pb_xss_data_extractor->extractPairProductionCrossSection();
 
-  TEST_EQUALITY_CONST( pair_production_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( pair_production_cs.front(), 0.0 );
-  TEST_EQUALITY_CONST( pair_production_cs.back(), 3.718032834377E+00 );
+  FRENSIE_CHECK_EQUAL( pair_production_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( pair_production_cs.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( pair_production_cs.back(), 3.718032834377E+00 );
 
   pair_production_cs =
     pb_erp14_xss_data_extractor->extractPairProductionCrossSection();
 
-  TEST_EQUALITY_CONST( pair_production_cs.size(), 3176 );
-  TEST_EQUALITY_CONST( pair_production_cs.front(), 0.0 );
-  TEST_EQUALITY_CONST( pair_production_cs.back(), 3.718032834377E+00 );
+  FRENSIE_CHECK_EQUAL( pair_production_cs.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( pair_production_cs.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( pair_production_cs.back(), 3.718032834377E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -229,15 +229,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractJINCEBlock )
 
   jince_block = pb_xss_data_extractor->extractJINCEBlock();
 
-  TEST_EQUALITY_CONST( jince_block.size(), 282 );
-  TEST_EQUALITY_CONST( jince_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( jince_block.back(), 8.200000000000E+01 );
+  FRENSIE_CHECK_EQUAL( jince_block.size(), 282 );
+  FRENSIE_CHECK_EQUAL( jince_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( jince_block.back(), 8.200000000000E+01 );
 
   jince_block = pb_erp14_xss_data_extractor->extractJINCEBlock();
 
-  TEST_EQUALITY_CONST( jince_block.size(), 282 );
-  TEST_EQUALITY_CONST( jince_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( jince_block.back(), 8.200000000000E+01 );
+  FRENSIE_CHECK_EQUAL( jince_block.size(), 282 );
+  FRENSIE_CHECK_EQUAL( jince_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( jince_block.back(), 8.200000000000E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -253,15 +253,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractJCOHEBlock )
 
   jcohe_block = pb_xss_data_extractor->extractJCOHEBlock();
 
-  TEST_EQUALITY_CONST( jcohe_block.size(), 411 );
-  TEST_EQUALITY_CONST( jcohe_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( jcohe_block.back(), 1.158600000000E-20 );
+  FRENSIE_CHECK_EQUAL( jcohe_block.size(), 411 );
+  FRENSIE_CHECK_EQUAL( jcohe_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( jcohe_block.back(), 1.158600000000E-20 );
 
   jcohe_block = pb_erp14_xss_data_extractor->extractJCOHEBlock();
 
-  TEST_EQUALITY_CONST( jcohe_block.size(), 411 );
-  TEST_EQUALITY_CONST( jcohe_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( jcohe_block.back(), 1.158600000000E-20 );
+  FRENSIE_CHECK_EQUAL( jcohe_block.size(), 411 );
+  FRENSIE_CHECK_EQUAL( jcohe_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( jcohe_block.back(), 1.158600000000E-20 );
 }
 
 //---------------------------------------------------------------------------//
@@ -275,15 +275,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractJFLOBlock )
 
   jflo_block = pb_xss_data_extractor->extractJFLOBlock();
 
-  TEST_EQUALITY_CONST( jflo_block.size(), 24 );
-  TEST_EQUALITY_CONST( jflo_block.front(), 1.471266666670E-02 );
-  TEST_EQUALITY_CONST( jflo_block.back(), 8.762024531250E-02 );
+  FRENSIE_CHECK_EQUAL( jflo_block.size(), 24 );
+  FRENSIE_CHECK_EQUAL( jflo_block.front(), 1.471266666670E-02 );
+  FRENSIE_CHECK_EQUAL( jflo_block.back(), 8.762024531250E-02 );
 
   jflo_block = pb_erp14_xss_data_extractor->extractJFLOBlock();
 
-  TEST_EQUALITY_CONST( jflo_block.size(), 24 );
-  TEST_EQUALITY_CONST( jflo_block.front(), 1.471266666670E-02 );
-  TEST_EQUALITY_CONST( jflo_block.back(), 8.762024531250E-02 );
+  FRENSIE_CHECK_EQUAL( jflo_block.size(), 24 );
+  FRENSIE_CHECK_EQUAL( jflo_block.front(), 1.471266666670E-02 );
+  FRENSIE_CHECK_EQUAL( jflo_block.back(), 8.762024531250E-02 );
 }
 
 //---------------------------------------------------------------------------//
@@ -299,15 +299,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractLHNMBlock )
 
   lhnm_block = pb_xss_data_extractor->extractLHNMBlock();
 
-  TEST_EQUALITY_CONST( lhnm_block.size(), 3176 );
-  TEST_EQUALITY_CONST( lhnm_block.front(), 9.916958825662E-07 );
-  TEST_EQUALITY_CONST( lhnm_block.back(), 9.999864243970E+04 );
+  FRENSIE_CHECK_EQUAL( lhnm_block.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( lhnm_block.front(), 9.916958825662E-07 );
+  FRENSIE_CHECK_EQUAL( lhnm_block.back(), 9.999864243970E+04 );
 
   lhnm_block = pb_erp14_xss_data_extractor->extractLHNMBlock();
 
-  TEST_EQUALITY_CONST( lhnm_block.size(), 3176 );
-  TEST_EQUALITY_CONST( lhnm_block.front(), 9.916958825662E-07 );
-  TEST_EQUALITY_CONST( lhnm_block.back(), 9.999864243970E+04 );
+  FRENSIE_CHECK_EQUAL( lhnm_block.size(), 3176 );
+  FRENSIE_CHECK_EQUAL( lhnm_block.front(), 9.916958825662E-07 );
+  FRENSIE_CHECK_EQUAL( lhnm_block.back(), 9.999864243970E+04 );
 }
 
 //---------------------------------------------------------------------------//
@@ -323,15 +323,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractLNEPSBlock )
 
   lneps_block = pb_xss_data_extractor->extractLNEPSBlock();
 
-  TEST_EQUALITY_CONST( lneps_block.size(), 23 );
-  TEST_EQUALITY_CONST( lneps_block.front(), 2.0 );
-  TEST_EQUALITY_CONST( lneps_block.back(), 2.0 );
+  FRENSIE_CHECK_EQUAL( lneps_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lneps_block.front(), 2.0 );
+  FRENSIE_CHECK_EQUAL( lneps_block.back(), 2.0 );
 
   lneps_block = pb_erp14_xss_data_extractor->extractLNEPSBlock();
 
-  TEST_EQUALITY_CONST( lneps_block.size(), 23 );
-  TEST_EQUALITY_CONST( lneps_block.front(), 2.0 );
-  TEST_EQUALITY_CONST( lneps_block.back(), 2.0 );
+  FRENSIE_CHECK_EQUAL( lneps_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lneps_block.front(), 2.0 );
+  FRENSIE_CHECK_EQUAL( lneps_block.back(), 2.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -347,15 +347,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractLBEPSBlock )
 
   lbeps_block = pb_xss_data_extractor->extractLBEPSBlock();
 
-  TEST_EQUALITY_CONST( lbeps_block.size(), 23 );
-  TEST_EQUALITY_CONST( lbeps_block.front(), 8.800500000000E-02);
-  TEST_EQUALITY_CONST( lbeps_block.back(), 0.0 );
+  FRENSIE_CHECK_EQUAL( lbeps_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lbeps_block.front(), 8.800500000000E-02);
+  FRENSIE_CHECK_EQUAL( lbeps_block.back(), 0.0 );
 
   lbeps_block = pb_erp14_xss_data_extractor->extractLBEPSBlock();
 
-  TEST_EQUALITY_CONST( lbeps_block.size(), 23 );
-  TEST_EQUALITY_CONST( lbeps_block.front(), 8.800500000000E-02);
-  TEST_EQUALITY_CONST( lbeps_block.back(), 0.0 );
+  FRENSIE_CHECK_EQUAL( lbeps_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lbeps_block.front(), 8.800500000000E-02);
+  FRENSIE_CHECK_EQUAL( lbeps_block.back(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -371,15 +371,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractLPIPSBlock )
 
   lpips_block = pb_xss_data_extractor->extractLPIPSBlock();
 
-  TEST_EQUALITY_CONST( lpips_block.size(), 23 );
-  TEST_EQUALITY_CONST( lpips_block.front(), 2.439024390244E-02 );
-  TEST_EQUALITY_CONST( lpips_block.back(), 2.439024390244E-02 );
+  FRENSIE_CHECK_EQUAL( lpips_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lpips_block.front(), 2.439024390244E-02 );
+  FRENSIE_CHECK_EQUAL( lpips_block.back(), 2.439024390244E-02 );
 
   lpips_block = pb_erp14_xss_data_extractor->extractLPIPSBlock();
 
-  TEST_EQUALITY_CONST( lpips_block.size(), 23 );
-  TEST_EQUALITY_CONST( lpips_block.front(), 2.439024390244E-02 );
-  TEST_EQUALITY_CONST( lpips_block.back(), 1.0 );
+  FRENSIE_CHECK_EQUAL( lpips_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lpips_block.front(), 2.439024390244E-02 );
+  FRENSIE_CHECK_EQUAL( lpips_block.back(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -395,15 +395,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractLSWDBlock )
 
   lswd_block = pb_xss_data_extractor->extractLSWDBlock();
 
-  TEST_EQUALITY_CONST( lswd_block.size(), 23 );
-  TEST_EQUALITY_CONST( lswd_block.front(), 1.0 );
-  TEST_EQUALITY_CONST( lswd_block.back(), 2091.0 );
+  FRENSIE_CHECK_EQUAL( lswd_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lswd_block.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( lswd_block.back(), 2091.0 );
 
   lswd_block = pb_erp14_xss_data_extractor->extractLSWDBlock();
 
-  TEST_EQUALITY_CONST( lswd_block.size(), 23 );
-  TEST_EQUALITY_CONST( lswd_block.front(), 1.0 );
-  TEST_EQUALITY_CONST( lswd_block.back(), 2091.0 );
+  FRENSIE_CHECK_EQUAL( lswd_block.size(), 23 );
+  FRENSIE_CHECK_EQUAL( lswd_block.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( lswd_block.back(), 2091.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -419,15 +419,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSWDBlock )
 
   swd_block = pb_xss_data_extractor->extractSWDBlock();
 
-  TEST_EQUALITY_CONST( swd_block.size(), 2185 );
-  TEST_EQUALITY_CONST( swd_block.front(), 2.000000000000E+00 );
-  TEST_EQUALITY_CONST( swd_block.back(), 1.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( swd_block.size(), 2185 );
+  FRENSIE_CHECK_EQUAL( swd_block.front(), 2.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( swd_block.back(), 1.000000000000E+00 );
 
   swd_block = pb_erp14_xss_data_extractor->extractSWDBlock();
 
-  TEST_EQUALITY_CONST( swd_block.size(), 2185 );
-  TEST_EQUALITY_CONST( swd_block.front(), 2.000000000000E+00 );
-  TEST_EQUALITY_CONST( swd_block.back(), 1.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( swd_block.size(), 2185 );
+  FRENSIE_CHECK_EQUAL( swd_block.front(), 2.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( swd_block.back(), 1.000000000000E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -443,15 +443,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSUBSHBlock )
 
   subsh_block = pb_xss_data_extractor->extractSUBSHBlock();
 
-  TEST_EQUALITY_CONST( subsh_block.size(), 120 );
-  TEST_EQUALITY_CONST( subsh_block.front(), 1.0 );
-  TEST_EQUALITY_CONST( subsh_block.back(), 0.0 );
+  FRENSIE_CHECK_EQUAL( subsh_block.size(), 120 );
+  FRENSIE_CHECK_EQUAL( subsh_block.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( subsh_block.back(), 0.0 );
 
   subsh_block = pb_erp14_xss_data_extractor->extractSUBSHBlock();
 
-  TEST_EQUALITY_CONST( subsh_block.size(), 120 );
-  TEST_EQUALITY_CONST( subsh_block.front(), 1.0 );
-  TEST_EQUALITY_CONST( subsh_block.back(), 0.0 );
+  FRENSIE_CHECK_EQUAL( subsh_block.size(), 120 );
+  FRENSIE_CHECK_EQUAL( subsh_block.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( subsh_block.back(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -468,16 +468,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSubshellENDFDesignators )
   subshell_endf_designators =
     pb_xss_data_extractor->extractSubshellENDFDesignators();
 
-  TEST_EQUALITY_CONST( subshell_endf_designators.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_endf_designators.front(), 1.0 );
-  TEST_EQUALITY_CONST( subshell_endf_designators.back(), 28.0 );
+  FRENSIE_CHECK_EQUAL( subshell_endf_designators.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_endf_designators.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( subshell_endf_designators.back(), 28.0 );
 
   subshell_endf_designators =
     pb_erp14_xss_data_extractor->extractSubshellENDFDesignators();
 
-  TEST_EQUALITY_CONST( subshell_endf_designators.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_endf_designators.front(), 1.0 );
-  TEST_EQUALITY_CONST( subshell_endf_designators.back(), 28.0 );
+  FRENSIE_CHECK_EQUAL( subshell_endf_designators.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_endf_designators.front(), 1.0 );
+  FRENSIE_CHECK_EQUAL( subshell_endf_designators.back(), 28.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -494,16 +494,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSubshellOccupancies )
   subshell_occupancies =
     pb_xss_data_extractor->extractSubshellOccupancies();
 
-  TEST_EQUALITY_CONST( subshell_occupancies.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_occupancies.front(), 2.0 );
-  TEST_EQUALITY_CONST( subshell_occupancies.back(), 1.33 );
+  FRENSIE_CHECK_EQUAL( subshell_occupancies.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_occupancies.front(), 2.0 );
+  FRENSIE_CHECK_EQUAL( subshell_occupancies.back(), 1.33 );
 
   subshell_occupancies =
     pb_erp14_xss_data_extractor->extractSubshellOccupancies();
 
-  TEST_EQUALITY_CONST( subshell_occupancies.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_occupancies.front(), 2.0 );
-  TEST_EQUALITY_CONST( subshell_occupancies.back(), 1.33 );
+  FRENSIE_CHECK_EQUAL( subshell_occupancies.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_occupancies.front(), 2.0 );
+  FRENSIE_CHECK_EQUAL( subshell_occupancies.back(), 1.33 );
 }
 
 //---------------------------------------------------------------------------//
@@ -538,16 +538,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSubshellBindingEnergies )
 
   subshell_be = pb_erp14_xss_data_extractor->extractSubshellBindingEnergies();
 
-  TEST_EQUALITY_CONST( subshell_be.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_be.front(), 8.829000000000E-02 );
-  TEST_EQUALITY_CONST( subshell_be.back(), 5.290000000000E-06 );
+  FRENSIE_CHECK_EQUAL( subshell_be.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_be.front(), 8.829000000000E-02 );
+  FRENSIE_CHECK_EQUAL( subshell_be.back(), 5.290000000000E-06 );
 
-  subshell_be =
+  subshell_be_in_mev =
     pb_erp14_xss_data_extractor->extractSubshellBindingEnergiesInMeV();
 
-  TEST_EQUALITY_CONST( subshell_be.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_be.front(), 8.829000000000E-02*MeV );
-  TEST_EQUALITY_CONST( subshell_be.back(), 5.290000000000E-06*MeV );
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.front(), 8.829000000000E-02*MeV );
+  FRENSIE_CHECK_EQUAL( subshell_be_in_mev.back(), 5.290000000000E-06*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -564,16 +564,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSubshellComptonInteractionCDF )
   subshell_compton_cdf =
     pb_xss_data_extractor->extractSubshellComptonInteractionCDF();
 
-  TEST_EQUALITY_CONST( subshell_compton_cdf.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_compton_cdf.front(), 2.439024390244E-02 );
-  TEST_EQUALITY_CONST( subshell_compton_cdf.back(), 1.0 );
+  FRENSIE_CHECK_EQUAL( subshell_compton_cdf.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_compton_cdf.front(), 2.439024390244E-02 );
+  FRENSIE_CHECK_EQUAL( subshell_compton_cdf.back(), 1.0 );
 
   subshell_compton_cdf =
     pb_erp14_xss_data_extractor->extractSubshellComptonInteractionCDF();
 
-  TEST_EQUALITY_CONST( subshell_compton_cdf.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_compton_cdf.front(), 2.439024390244E-02 );
-  TEST_EQUALITY_CONST( subshell_compton_cdf.back(), 1.0 );
+  FRENSIE_CHECK_EQUAL( subshell_compton_cdf.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_compton_cdf.front(), 2.439024390244E-02 );
+  FRENSIE_CHECK_EQUAL( subshell_compton_cdf.back(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -590,16 +590,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSubshellVacancyTransitionPaths )
   subshell_transitions =
     pb_xss_data_extractor->extractSubshellVacancyTransitionPaths();
 
-  TEST_EQUALITY_CONST( subshell_transitions.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_transitions.front(), 1.890000000000E+02 );
-  TEST_EQUALITY_CONST( subshell_transitions.back(), 0.0 );
+  FRENSIE_CHECK_EQUAL( subshell_transitions.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_transitions.front(), 1.890000000000E+02 );
+  FRENSIE_CHECK_EQUAL( subshell_transitions.back(), 0.0 );
 
   subshell_transitions =
     pb_erp14_xss_data_extractor->extractSubshellVacancyTransitionPaths();
 
-  TEST_EQUALITY_CONST( subshell_transitions.size(), 24 );
-  TEST_EQUALITY_CONST( subshell_transitions.front(), 1.890000000000E+02 );
-  TEST_EQUALITY_CONST( subshell_transitions.back(), 0.0 );
+  FRENSIE_CHECK_EQUAL( subshell_transitions.size(), 24 );
+  FRENSIE_CHECK_EQUAL( subshell_transitions.front(), 1.890000000000E+02 );
+  FRENSIE_CHECK_EQUAL( subshell_transitions.back(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -615,15 +615,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractSPHELBlock )
 
   sphel_block = pb_xss_data_extractor->extractSPHELBlock();
 
-  TEST_EQUALITY_CONST( sphel_block.size(), 76224 );
-  TEST_EQUALITY_CONST( sphel_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( sphel_block.back(), -2.364731020721E+01 );
+  FRENSIE_CHECK_EQUAL( sphel_block.size(), 76224 );
+  FRENSIE_CHECK_EQUAL( sphel_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( sphel_block.back(), -2.364731020721E+01 );
 
   sphel_block = pb_erp14_xss_data_extractor->extractSPHELBlock();
 
-  TEST_EQUALITY_CONST( sphel_block.size(), 76224 );
-  TEST_EQUALITY_CONST( sphel_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( sphel_block.back(), -2.364731020721E+01 );
+  FRENSIE_CHECK_EQUAL( sphel_block.size(), 76224 );
+  FRENSIE_CHECK_EQUAL( sphel_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( sphel_block.back(), -2.364731020721E+01 );
 }
 
 //---------------------------------------------------------------------------//
@@ -637,15 +637,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractRELOBlock )
 
   relo_block = pb_xss_data_extractor->extractRELOBlock();
 
-  TEST_EQUALITY_CONST( relo_block.size(), 24 );
-  TEST_EQUALITY_CONST( relo_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( relo_block.back(), 7.764000000000E+03 );
+  FRENSIE_CHECK_EQUAL( relo_block.size(), 24 );
+  FRENSIE_CHECK_EQUAL( relo_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( relo_block.back(), 7.764000000000E+03 );
 
   relo_block = pb_erp14_xss_data_extractor->extractRELOBlock();
 
-  TEST_EQUALITY_CONST( relo_block.size(), 24 );
-  TEST_EQUALITY_CONST( relo_block.front(), 0.0 );
-  TEST_EQUALITY_CONST( relo_block.back(), 7.764000000000E+03 );
+  FRENSIE_CHECK_EQUAL( relo_block.size(), 24 );
+  FRENSIE_CHECK_EQUAL( relo_block.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( relo_block.back(), 7.764000000000E+03 );
 }
 
 //---------------------------------------------------------------------------//
@@ -659,15 +659,15 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractXPROBBlock )
 
   xprob_block = pb_xss_data_extractor->extractXPROBBlock();
 
-  TEST_EQUALITY_CONST( xprob_block.size(), 7764 );
-  TEST_EQUALITY_CONST( xprob_block.front(), 3.0 );
-  TEST_EQUALITY_CONST( xprob_block.back(), 1.0 );
+  FRENSIE_CHECK_EQUAL( xprob_block.size(), 7764 );
+  FRENSIE_CHECK_EQUAL( xprob_block.front(), 3.0 );
+  FRENSIE_CHECK_EQUAL( xprob_block.back(), 1.0 );
 
   xprob_block = pb_erp14_xss_data_extractor->extractXPROBBlock();
 
-  TEST_EQUALITY_CONST( xprob_block.size(), 7764 );
-  TEST_EQUALITY_CONST( xprob_block.front(), 3.0 );
-  TEST_EQUALITY_CONST( xprob_block.back(), 1.0 );
+  FRENSIE_CHECK_EQUAL( xprob_block.size(), 7764 );
+  FRENSIE_CHECK_EQUAL( xprob_block.front(), 3.0 );
+  FRENSIE_CHECK_EQUAL( xprob_block.back(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -683,35 +683,35 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractESZEBlock )
 
   esze_block = pb_xss_data_extractor->extractESZEBlock();
 
-  TEST_EQUALITY_CONST( esze_block.size(), 14310 );
-  TEST_EQUALITY_CONST( esze_block.front(), 1.000000000000E-05 );
-  TEST_EQUALITY_CONST( esze_block.back(), 1.822340000000E+05 );
+  FRENSIE_CHECK_EQUAL( esze_block.size(), 14310 );
+  FRENSIE_CHECK_EQUAL( esze_block.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( esze_block.back(), 1.822340000000E+05 );
 
   esze_block = pb_erp14_xss_data_extractor->extractESZEBlock();
 
-  TEST_EQUALITY_CONST( esze_block.size(), 14310 );
-  TEST_EQUALITY_CONST( esze_block.front(), 1.000000000000E-05 );
-  TEST_EQUALITY_CONST( esze_block.back(), 1.822340000000E+05 );
+  FRENSIE_CHECK_EQUAL( esze_block.size(), 14310 );
+  FRENSIE_CHECK_EQUAL( esze_block.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( esze_block.back(), 1.822340000000E+05 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the ESZE2 block can be extracted
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractESZE2Block )
+FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractESZE2Block )
 {
-  Teuchos::ArrayView<const double> esze2_block =
+  Utility::ArrayView<const double> esze2_block =
     b_xss_data_extractor->extractESZE2Block();
 
-  TEST_EQUALITY_CONST( esze2_block.size(), 0 );
+  FRENSIE_CHECK_EQUAL( esze2_block.size(), 0 );
 
   esze2_block = pb_xss_data_extractor->extractESZE2Block();
 
-  TEST_EQUALITY_CONST( esze2_block.size(), 0 );
+  FRENSIE_CHECK_EQUAL( esze2_block.size(), 0 );
 
   esze2_block = pb_erp14_xss_data_extractor->extractESZE2Block();
 
-  TEST_EQUALITY_CONST( esze2_block.size(), 954 );
-  TEST_EQUALITY_CONST( esze2_block.front(), 2.48924e+09 );
-  TEST_EQUALITY_CONST( esze2_block.back(), 2.11161e+06 );
+  FRENSIE_CHECK_EQUAL( esze2_block.size(), 954 );
+  FRENSIE_CHECK_EQUAL( esze2_block.front(), 2.48924e+09 );
+  FRENSIE_CHECK_EQUAL( esze2_block.back(), 2.11161e+06 );
 }
 
 //---------------------------------------------------------------------------//
@@ -747,16 +747,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElectronEnergyGrid )
 
   electron_energy_grid = pb_erp14_xss_data_extractor->extractElectronEnergyGrid();
 
-  TEST_EQUALITY_CONST( electron_energy_grid.size(), 477 );
-  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.000000000000E-05 );
-  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.000000000000E+05 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid.size(), 477 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid.back(), 1.000000000000E+05 );
 
   electron_energy_grid_in_mev =
-    pb_erp14_xss_data_extractor->extractElectronEnergyGrid();
+    pb_erp14_xss_data_extractor->extractElectronEnergyGridInMeV();
 
-  TEST_EQUALITY_CONST( electron_energy_grid.size(), 477 );
-  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.000000000000E-05*MeV );
-  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.000000000000E+05*MeV );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.size(), 477 );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.front(), 1.000000000000E-05*MeV );
+  FRENSIE_CHECK_EQUAL( electron_energy_grid_in_mev.back(), 1.000000000000E+05*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -794,49 +794,49 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElectronTotalCrossSection )
 
 //---------------------------------------------------------------------------//
 // Check that the electron elastic transport cross section can be extracted
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticTransportCrossSection )
+FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElasticTransportCrossSection )
 {
-  Teuchos::ArrayView<const double> elastic_cs =
+  Utility::ArrayView<const double> elastic_cs =
     b_xss_data_extractor->extractElasticTransportCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.size(), 0 );
 
   elastic_cs = pb_xss_data_extractor->extractElasticTransportCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.size(), 0 );
 
   elastic_cs = pb_erp14_xss_data_extractor->extractElasticTransportCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cs.size(), 477 );
-  TEST_EQUALITY_CONST( elastic_cs.front(), 2.489240000000E+09 );
-  TEST_EQUALITY_CONST( elastic_cs.back(), 2.87092e-06 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.size(), 477 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.front(), 2.489240000000E+09 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.back(), 2.87092e-06 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electron elastic total cross section can be extracted
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticTotalCrossSection )
+FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElasticTotalCrossSection )
 {
-  Teuchos::ArrayView<const double> elastic_cs =
+  Utility::ArrayView<const double> elastic_cs =
     b_xss_data_extractor->extractElasticTotalCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.size(), 0 );
 
   elastic_cs = pb_xss_data_extractor->extractElasticTotalCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cs.size(), 0 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.size(), 0 );
 
   elastic_cs = pb_erp14_xss_data_extractor->extractElasticTotalCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cs.size(), 477 );
-  TEST_EQUALITY_CONST( elastic_cs.front(), 2.489240000000E+09 );
-  TEST_EQUALITY_CONST( elastic_cs.back(), 2.11161e+06 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.size(), 477 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.front(), 2.489240000000E+09 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.back(), 2.11161e+06 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electron elastic cutoff cross section can be extracted
-TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticCutoffCrossSection )
+FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElasticCutoffCrossSection )
 {
-  Teuchos::ArrayView<const double> elastic_cs =
+  Utility::ArrayView<const double> elastic_cs =
     b_xss_data_extractor->extractElasticCutoffCrossSection();
 
   FRENSIE_CHECK_EQUAL( elastic_cs.size(), 349 );
@@ -845,9 +845,9 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticCutoffCrossSection )
 
   elastic_cs = pb_xss_data_extractor->extractElasticCutoffCrossSection();
 
-  TEST_EQUALITY_CONST( elastic_cs.size(), 477 );
-  TEST_EQUALITY_CONST( elastic_cs.front(), 2.489240000000E+09 );
-  TEST_EQUALITY_CONST( elastic_cs.back(), 8.830510000000E-02 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.size(), 477 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.front(), 2.489240000000E+09 );
+  FRENSIE_CHECK_EQUAL( elastic_cs.back(), 8.830510000000E-02 );
 
   elastic_cs = pb_erp14_xss_data_extractor->extractElasticCutoffCrossSection();
 
@@ -856,14 +856,14 @@ TEUCHOS_UNIT_TEST( XSSEPRDataExtractor, extractElasticCutoffCrossSection )
   FRENSIE_CHECK_EQUAL( elastic_cs.back(), 8.830510000000E-02 );
 
   auto elastic_cs_in_barns =
-    b_xss_data_extractor->extractElasticCrossSectionInBarns();
+    b_xss_data_extractor->extractElasticCutoffCrossSectionInBarns();
 
   FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.size(), 349 );
   FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.front(), 3.504710000000E+09*barns );
   FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.back(), 3.279820000000E-04*barns );
 
   elastic_cs_in_barns =
-    pb_xss_data_extractor->extractElasticCrossSectionInBarns();
+    pb_xss_data_extractor->extractElasticCutoffCrossSectionInBarns();
 
   FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.size(), 477 );
   FRENSIE_CHECK_EQUAL( elastic_cs_in_barns.front(), 2.489240000000E+09*barns );
@@ -902,16 +902,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractBremsstrahlungCrossSection )
 
   bremss_cs = pb_erp14_xss_data_extractor->extractBremsstrahlungCrossSection();
 
-  TEST_EQUALITY_CONST( bremss_cs.size(), 477 );
-  TEST_EQUALITY_CONST( bremss_cs.front(), 4.869800000000E+03 );
-  TEST_EQUALITY_CONST( bremss_cs.back(), 1.954170000000E+03 );
+  FRENSIE_CHECK_EQUAL( bremss_cs.size(), 477 );
+  FRENSIE_CHECK_EQUAL( bremss_cs.front(), 4.869800000000E+03 );
+  FRENSIE_CHECK_EQUAL( bremss_cs.back(), 1.954170000000E+03 );
 
   bremss_cs_in_barns =
     pb_erp14_xss_data_extractor->extractBremsstrahlungCrossSectionInBarns();
 
-  TEST_EQUALITY_CONST( bremss_cs.size(), 477 );
-  TEST_EQUALITY_CONST( bremss_cs.front(), 4.869800000000E+03*barns );
-  TEST_EQUALITY_CONST( bremss_cs.back(), 1.954170000000E+03*barns );
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.front(), 4.869800000000E+03*barns );
+  FRENSIE_CHECK_EQUAL( bremss_cs_in_barns.back(), 1.954170000000E+03*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -945,16 +945,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractExcitationCrossSection )
   FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.back(), 1.578610000000E+06*barns );
   excitation_cs = pb_erp14_xss_data_extractor->extractExcitationCrossSection();
 
-  TEST_EQUALITY_CONST( excitation_cs.size(), 477 );
-  TEST_EQUALITY_CONST( excitation_cs.front(), 8.757550000000E+06 );
-  TEST_EQUALITY_CONST( excitation_cs.back(), 1.578610000000E+06 );
+  FRENSIE_CHECK_EQUAL( excitation_cs.size(), 477 );
+  FRENSIE_CHECK_EQUAL( excitation_cs.front(), 8.757550000000E+06 );
+  FRENSIE_CHECK_EQUAL( excitation_cs.back(), 1.578610000000E+06 );
 
   excitation_cs_in_barns =
     pb_erp14_xss_data_extractor->extractExcitationCrossSectionInBarns();
 
-  TEST_EQUALITY_CONST( excitation_cs.size(), 477 );
-  TEST_EQUALITY_CONST( excitation_cs.front(), 8.757550000000E+06*barns );
-  TEST_EQUALITY_CONST( excitation_cs.back(), 1.578610000000E+06*barns );
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.front(), 8.757550000000E+06*barns );
+  FRENSIE_CHECK_EQUAL( excitation_cs_in_barns.back(), 1.578610000000E+06*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -992,16 +992,16 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractElectroionizationCrossSection )
   electroionization_cs =
     pb_erp14_xss_data_extractor->extractElectroionizationCrossSection();
 
-  TEST_EQUALITY_CONST( electroionization_cs.size(), 477 );
-  TEST_EQUALITY_CONST( electroionization_cs.front(), 1.310577000000E+08 );
-  TEST_EQUALITY_CONST( electroionization_cs.back(), 1.264838877900E+06 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs.size(), 477 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs.front(), 1.310577000000E+08 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs.back(), 1.264838877900E+06 );
 
   electroionization_cs_in_barns =
     pb_erp14_xss_data_extractor->extractElectroionizationCrossSectionInBarns();
 
-  TEST_EQUALITY_CONST( electroionization_cs.size(), 477 );
-  TEST_EQUALITY_CONST( electroionization_cs.front(), 1.310577000000E+08*barns );
-  TEST_EQUALITY_CONST( electroionization_cs.back(), 1.264838877900E+06*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.size(), 477 );
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.front(), 1.310577000000E+08*barns );
+  FRENSIE_CHECK_EQUAL( electroionization_cs_in_barns.back(), 1.264838877900E+06*barns );
 }
 
 //---------------------------------------------------------------------------//
@@ -1044,18 +1044,18 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor,
   electroionization_subshell_cs =
     pb_erp14_xss_data_extractor->extractElectroionizationSubshellCrossSections();
 
-  TEST_EQUALITY_CONST( electroionization_subshell_cs.size(), 11448 );
-  TEST_EQUALITY_CONST( electroionization_subshell_cs.front(), 0.0 );
-  TEST_EQUALITY_CONST( electroionization_subshell_cs.back(),
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.size(), 11448 );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.front(), 0.0 );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs.back(),
 		       1.822340000000E+05 );
 
   electroionization_subshell_cs_in_barns =
     pb_erp14_xss_data_extractor->extractElectroionizationSubshellCrossSectionsInBarns();
 
-  TEST_EQUALITY_CONST( electroionization_subshell_cs_in_barns.size(), 11448 );
-  TEST_EQUALITY_CONST( electroionization_subshell_cs_in_barns.front(),
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.size(), 11448 );
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.front(),
                        0.0*barns );
-  TEST_EQUALITY_CONST( electroionization_subshell_cs_in_barns.back(),
+  FRENSIE_CHECK_EQUAL( electroionization_subshell_cs_in_barns.back(),
 		       1.822340000000E+05*barns );
 }
 
@@ -1078,9 +1078,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractEXCITBlock )
 
   excit_block = pb_erp14_xss_data_extractor->extractEXCITBlock();
 
-  TEST_EQUALITY_CONST( excit_block.size(), 572 );
-  TEST_EQUALITY_CONST( excit_block.front(), 1.000000000000E-05 );
-  TEST_EQUALITY_CONST( excit_block.back(), 1.095330000000E-05 );
+  FRENSIE_CHECK_EQUAL( excit_block.size(), 572 );
+  FRENSIE_CHECK_EQUAL( excit_block.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( excit_block.back(), 1.095330000000E-05 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1102,9 +1102,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractELASIBlock )
 
   elasi_block = pb_erp14_xss_data_extractor->extractELASIBlock();
 
-  TEST_EQUALITY_CONST( elasi_block.size(), 42 );
-  TEST_EQUALITY_CONST( elasi_block.front(), 1.000000000000E-05 );
-  TEST_EQUALITY_CONST( elasi_block.back(), 1.384e+03 );
+  FRENSIE_CHECK_EQUAL( elasi_block.size(), 42 );
+  FRENSIE_CHECK_EQUAL( elasi_block.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( elasi_block.back(), 1.384e+03 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1126,9 +1126,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractELASBlock )
 
   elas_block = pb_erp14_xss_data_extractor->extractELASBlock();
 
-  TEST_EQUALITY_CONST( elas_block.size(), 1564 );
-  TEST_EQUALITY_CONST( elas_block.front(), -1.000000000000E+00 );
-  TEST_EQUALITY_CONST( elas_block.back(), 1.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( elas_block.size(), 1564 );
+  FRENSIE_CHECK_EQUAL( elas_block.front(), -1.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( elas_block.back(), 1.000000000000E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1150,9 +1150,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractEIONBlock )
 
   eion_block = pb_erp14_xss_data_extractor->extractEIONBlock();
 
-  TEST_EQUALITY_CONST( eion_block.size(), 14169 );
-  TEST_EQUALITY_CONST( eion_block.front(), 5.000000000000E+00 );
-  TEST_EQUALITY_CONST( eion_block.back(), 1.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( eion_block.size(), 14169 );
+  FRENSIE_CHECK_EQUAL( eion_block.front(), 5.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( eion_block.back(), 1.000000000000E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1174,9 +1174,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractBREMIBlock )
 
   bremi_block = pb_xss_data_extractor->extractBREMIBlock();
 
-  TEST_EQUALITY_CONST( bremi_block.size(), 27 );
-  TEST_EQUALITY_CONST( bremi_block.front(), 1.000000000000E-05 );
-  TEST_EQUALITY_CONST( bremi_block.back(), 6.500000000000E+02 );
+  FRENSIE_CHECK_EQUAL( bremi_block.size(), 27 );
+  FRENSIE_CHECK_EQUAL( bremi_block.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( bremi_block.back(), 6.500000000000E+02 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1198,9 +1198,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractBREMEBlock )
 
   breme_block = pb_erp14_xss_data_extractor->extractBREMEBlock();
 
-  TEST_EQUALITY_CONST( breme_block.size(), 852 );
-  TEST_EQUALITY_CONST( breme_block.front(), 1.000000000000E-07 );
-  TEST_EQUALITY_CONST( breme_block.back(), 1.000000000000E+00 );
+  FRENSIE_CHECK_EQUAL( breme_block.size(), 852 );
+  FRENSIE_CHECK_EQUAL( breme_block.front(), 1.000000000000E-07 );
+  FRENSIE_CHECK_EQUAL( breme_block.back(), 1.000000000000E+00 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1222,9 +1222,9 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractBREMLBlock )
 
   breml_block = pb_erp14_xss_data_extractor->extractBREMLBlock();
 
-  TEST_EQUALITY_CONST( breml_block.size(), 150 );
-  TEST_EQUALITY_CONST( breml_block.front(), 1.000000000000E-05 );
-  TEST_EQUALITY_CONST( breml_block.back(), 2.7325e+03 );
+  FRENSIE_CHECK_EQUAL( breml_block.size(), 150 );
+  FRENSIE_CHECK_EQUAL( breml_block.front(), 1.000000000000E-05 );
+  FRENSIE_CHECK_EQUAL( breml_block.back(), 2.7325e+03 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1233,6 +1233,7 @@ FRENSIE_UNIT_TEST( XSSEPRDataExtractor, extractBREMLBlock )
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string pb_ace_file_name, pb_ace_table_name;
+std::string pb_ace14_file_name, pb_ace14_table_name;
 std::string b_ace_file_name, b_ace_table_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()

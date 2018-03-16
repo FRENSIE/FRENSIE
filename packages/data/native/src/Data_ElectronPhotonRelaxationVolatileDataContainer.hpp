@@ -86,7 +86,7 @@ public:
 
   // Electron functions
   using ElectronPhotonRelaxationDataContainer::setElectronTwoDInterpPolicy;
-  using ElectronPhotonRelaxationDataContainer::setElectronTwoDSamplingPolicy;
+  using ElectronPhotonRelaxationDataContainer::setElectronTwoDGridPolicy;
   using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticInterpPolicy;
   using ElectronPhotonRelaxationDataContainer::setCutoffElasticAnglesAtEnergy;
