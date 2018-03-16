@@ -9,16 +9,151 @@
 #ifndef UTILITY_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 #define UTILITY_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
+// Std Lib Includes
+#include <type_traits>
+
 // FRENSIE Includes
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 BOOST_SERIALIZATION_DISTRIBUTION4_EXPORT_IMPLEMENT( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution );
 
 namespace Utility{
+
+namespace Details{
+
+//! The TwoDGridPolicy sampling functor creation helper
+template<typename TwoDGridPolicy>
+struct TwoDGridPolicySamplingFunctorCreationHelper;
+
+/*! \brief The TwoDGridPolicy sampling functor creation helper base for 
+ * uncorrelated grid policies.
+ */
+struct TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
+{
+  //! Return the basic sampling functor
+  template<typename BaseUnivariateDistributionType>
+  static inline std::function<typename BaseUnivariateDistributionType::IndepQuantity(const BaseUnivariateDistributionType&)> createBasicSamplingFunctor()
+  {
+    return std::bind<typename BaseUnivariateDistributionType::IndepQuantity>(
+                                       &BaseUnivariateDistributionType::sample,
+                                       std::placeholders::_1 );
+  }
+
+  //! Return the sampling functor with a trials counter
+  template<typename BaseUnivariateDistributionType>
+  static inline std::function<typename BaseUnivariateDistributionType::IndepQuantity(const BaseUnivariateDistributionType&)> createSamplingFunctorWithTrialsCounter(
+                                  Utility::DistributionTraits::Counter& trials,
+                                  std::function<void()>& trials_updater )
+  {
+    trials_updater = [](){};
+    
+    return std::bind<typename BaseUnivariateDistributionType::IndepQuantity>(
+                        &BaseUnivariateDistributionType::sampleAndRecordTrials,
+                        std::placeholders::_1,
+                        std::ref( trials ) );
+  }
+
+  //! Return the sampling functor that records the sampled secondary bin index
+  template<typename BaseUnivariateDistributionType>
+  static inline std::function<typename BaseUnivariateDistributionType::IndepQuantity(const BaseUnivariateDistributionType&)> createSamplingFunctorWithSecondaryBinIndex( size_t& secondary_bin_index )
+  {
+    return std::bind<typename BaseUnivariateDistributionType::IndepQuantity>(
+                      &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
+                      std::placeholders::_1,
+                      std::ref( secondary_bin_index ) );
+  }
+};
+
+/*! \brief The TwoDGridPolicy sampling functor creation helper base for 
+ * correlated grid policies.
+ */
+struct TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
+{
+  //! Return the basic sampling functor
+  template<typename BaseUnivariateDistributionType>
+  static inline std::function<typename BaseUnivariateDistributionType::IndepQuantity(const BaseUnivariateDistributionType&)> createBasicSamplingFunctor()
+  {
+    // Generate a random number
+    double random_number =
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+    return std::bind<typename BaseUnivariateDistributionType::IndepQuantity>(
+                       &BaseUnivariateDistributionType::sampleWithRandomNumber,
+                       std::placeholders::_1,
+                       random_number );
+  }
+
+  //! Return the sampling functor with a trials counter
+  template<typename BaseUnivariateDistributionType>
+  static inline std::function<typename BaseUnivariateDistributionType::IndepQuantity(const BaseUnivariateDistributionType&)> createSamplingFunctorWithTrialsCounter(
+                                  Utility::DistributionTraits::Counter& trials,
+                                  std::function<void()>& trials_updater )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "InterpolatedFullyTabularBasicBivariateDistribution",
+                                "The sampling trial counter cannot be "
+                                "accurately updated with correlated "
+                                "sampling!" );
+
+    trials_updater = [&trials](){ ++trials; };
+
+    // We can only use a single random number with correlated sampling - the
+    // trials counter has to be ignored.
+    return TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper::createBasicSamplingFunctor<BaseUnivariateDistributionType>();
+  }
+
+  //! Return the sampling functor that records the sampled secondary bin index
+  template<typename BaseUnivariateDistributionType>
+  static inline std::function<typename BaseUnivariateDistributionType::IndepQuantity(const BaseUnivariateDistributionType&)> createSamplingFunctorWithSecondaryBinIndex( size_t& secondary_bin_index )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "InterpolatedFullyTabularBasicBivariateDistribution",
+                                "The secondary bin index cannot be determined "
+                                "with correlated sampling (an index of zero "
+                                "will always be returned)!" );
+
+    secondary_bin_index = 0;
+    
+    return TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper::createBasicSamplingFunctor<BaseUnivariateDistributionType>();
+  }
+}; 
+  
+/*! \brief Partial specialization of the 
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+ * for Utility::Direct
+ */
+template<typename TwoDInterpPolicy>
+struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::Direct<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
+{ /* ... */ };
+
+/*! \brief Partial specialization of the 
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+ * for Utility::UnitBase
+ */
+template<typename TwoDInterpPolicy>
+struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::UnitBase<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
+{ /* ... */ };
+
+/*! \brief Partial specialization of the 
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+ * for Utility::Correlated
+ */
+template<typename TwoDInterpPolicy>
+struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::Correlated<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
+{ /* ... */ };
+
+/*! \brief Partial specialization of the 
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+ * for Utility::Correlated
+ */
+template<typename TwoDInterpPolicy>
+struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::UnitBaseCorrelated<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
+{ /* ... */ };
+  
+} // end Details namespace
 
 // Default constructor
 template<typename TwoDGridPolicy,
@@ -160,8 +295,7 @@ double UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolic
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  return this->template evaluateImpl<double>(
-                                primary_indep_var_value,
+  return this->evaluateCDFImpl( primary_indep_var_value,
                                 secondary_indep_var_value,
                                 &BaseUnivariateDistributionType::evaluateCDF );
 }
@@ -272,6 +406,29 @@ double UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolic
  * limits the appropriate limiting secondary distribution will be used to 
  * create the sample. The alternative to this behavior is to throw an exception
  * unless the distribution has been extended by calling the 
+ * extendBeyondPrimaryIndepLimits method. Since this is a performance critical 
+ * method we decided against this behavior.
+ */
+template<typename TwoDGridPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditional(
+                     const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
+{
+  // Create the sampling functor
+  std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
+    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createBasicSamplingFunctor<BaseUnivariateDistributionType>();
+
+  return this->sampleImpl( primary_indep_var_value, sampling_functor );
+}
+
+// Return a random sample from the secondary conditional PDF
+/*! \details If the primary value provided is outside of the primary grid 
+ * limits the appropriate limiting secondary distribution will be used to 
+ * create the sample. The alternative to this behavior is to throw an exception
+ * unless the distribution has been extended by calling the 
  * extendBeyondPrimaryIndepLimits method. Since this is a performance critical
  * method we decided against this behavior.
  */
@@ -289,14 +446,33 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
 {
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                                       &BaseUnivariateDistributionType::sample,
-                                       std::placeholders::_1 );
+    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createBasicSamplingFunctor<BaseUnivariateDistributionType>();
 
   return this->sampleImpl( primary_indep_var_value,
                            sampling_functor,
                            min_secondary_indep_var_functor,
                            max_secondary_indep_var_functor );
+}
+
+// Return a random sample and record the number of trials
+template<typename TwoDGridPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordTrials(
+                          const PrimaryIndepQuantity primary_indep_var_value,
+                          DistributionTraits::Counter& trials ) const
+  -> SecondaryIndepQuantity
+{
+  // Create the sampling functor and trials updater functor
+  std::function<void()> trials_updater;
+  
+  std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
+    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithTrialsCounter<BaseUnivariateDistributionType>( trials, trials_updater );
+
+  trials_updater();
+
+  return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
 
 // Return a random sample from the secondary conditional PDF and the index
@@ -315,10 +491,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
   
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                      &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
-                      std::placeholders::_1,
-                      std::ref( secondary_bin_index ) );
+    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -339,11 +512,9 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
   -> SecondaryIndepQuantity
 {
   // Create the sampling functor
+  // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                      &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
-                      std::placeholders::_1,
-                      std::ref( secondary_bin_index ) );
+    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -566,7 +737,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
     else
     {
       THROW_EXCEPTION( std::logic_error,
-                      "Error: Sampling beyond the primary grid boundaries "
+                      "Sampling beyond the primary grid boundaries "
                       "cannot be done unless the grid has been extended ("
                       << primary_indep_var_value << " not in ["
                       << this->getLowerBoundOfPrimaryIndepVar() << ","

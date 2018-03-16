@@ -88,8 +88,9 @@ public:
   virtual ~UnitAwareInterpolatedFullyTabularBasicBivariateDistribution()
   { /* ... */ }
 
-  using BaseType::sampleSecondaryConditional;
+  using BaseType::evaluate;
   using BaseType::evaluateSecondaryConditionalPDF;
+  using BaseType::sampleSecondaryConditional;
   using BaseType::sampleSecondaryConditionalWithRandomNumber;
   using BaseType::sampleSecondaryConditionalInSubrange;
   using BaseType::sampleSecondaryConditionalWithRandomNumberInSubrange;
@@ -128,11 +129,20 @@ public:
 
   //! Return a random sample from the secondary conditional PDF
   virtual SecondaryIndepQuantity sampleSecondaryConditional(
+           const PrimaryIndepQuantity primary_indep_var_value ) const override;
+
+  //! Return a random sample from the secondary conditional PDF
+  virtual SecondaryIndepQuantity sampleSecondaryConditional(
             const PrimaryIndepQuantity primary_indep_var_value,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
             min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
             max_secondary_indep_var_functor ) const override;
+
+  //! Return a random sample and record the number of trials
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
+                          const PrimaryIndepQuantity primary_indep_var_value,
+                          DistributionTraits::Counter& trials ) const override;
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndices(

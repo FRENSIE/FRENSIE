@@ -431,9 +431,9 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseUnivariateDistributionType::sampleWithRandomNumber,
-                             std::placeholders::_1,
-                             random_number );
+                       &BaseUnivariateDistributionType::sampleWithRandomNumber,
+                       std::placeholders::_1,
+                       random_number );
 
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
@@ -463,6 +463,11 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
                             DistributionTraits::Counter& trials ) const
   -> SecondaryIndepQuantity
 {
+  FRENSIE_LOG_TAGGED_WARNING( "ElasticBasicBivariateDistribution",
+                              "The sampling trial counter cannot be "
+                              "accurately updated since the "
+                              "Utility::TabularUnivariateDistribution::sampleWithRandomNumber "
+                              "method must be used!" );
   ++trials;
   return this->sampleSecondaryConditional( primary_indep_var_value );
 }
@@ -486,10 +491,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
-                            std::placeholders::_1,
-                            std::ref( secondary_bin_index ) );
+    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -515,10 +517,7 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
 {
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
-    sampling_functor = std::bind<SecondaryIndepQuantity>(
-                            &BaseUnivariateDistributionType::sampleAndRecordBinIndex,
-                            std::placeholders::_1,
-                            std::ref( secondary_bin_index ) );
+    sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
 
   return this->sampleDetailedImpl( primary_indep_var_value,
                                    sampling_functor,
@@ -543,9 +542,9 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseUnivariateDistributionType::sampleWithRandomNumber,
-                             std::placeholders::_1,
-                             random_number );
+                       &BaseUnivariateDistributionType::sampleWithRandomNumber,
+                       std::placeholders::_1,
+                       random_number );
 
   return this->sampleImpl( primary_indep_var_value, sampling_functor );
 }
@@ -596,19 +595,19 @@ auto UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependen
   {
     // Create the sampling functor
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseUnivariateDistributionType::sampleWithRandomNumberInSubrange,
-                             std::placeholders::_1,
-                             random_number,
-                             d_upper_bound_conditional_indep_var );
+             &BaseUnivariateDistributionType::sampleWithRandomNumberInSubrange,
+             std::placeholders::_1,
+             random_number,
+             d_upper_bound_conditional_indep_var );
   }
   else
   {
     // Create the sampling functor
     sampling_functor = std::bind<SecondaryIndepQuantity>(
-                             &BaseUnivariateDistributionType::sampleWithRandomNumberInSubrange,
-                             std::placeholders::_1,
-                             random_number,
-                             max_secondary_indep_var_value );
+             &BaseUnivariateDistributionType::sampleWithRandomNumberInSubrange,
+             std::placeholders::_1,
+             random_number,
+             max_secondary_indep_var_value );
   }
 
   return this->sampleImpl( primary_indep_var_value, sampling_functor );

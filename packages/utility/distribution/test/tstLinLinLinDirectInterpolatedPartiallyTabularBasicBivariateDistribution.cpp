@@ -145,7 +145,7 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
 
   // In the second bin
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 0.5 ),
-                       1.25 );
+                       0.0 );
 
   // On the third bin boundary
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.0 ),
@@ -153,7 +153,7 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
 
   // In the third bin
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.5 ),
-                       1.25 );
+                       0.0 );
 
   // On the upper bin boundary
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfSecondaryConditionalIndepVar( 2.0 ),
@@ -196,7 +196,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 
   // In the second bin
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 0.5*MeV ),
-                       1.25*cgs::centimeter );
+                       0.0*cgs::centimeter );
 
   // On the third bin boundary
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.0*MeV ),
@@ -204,7 +204,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 
   // In the third bin
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 1.5*MeV ),
-                       1.25*cgs::centimeter );
+                       0.0*cgs::centimeter );
 
   // On the upper bin boundary
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar( 2.0*MeV ),
@@ -246,7 +246,7 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
 
   // In the second bin
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.5 ),
-                       8.75 );
+                       10.0 );
 
   // On the third bin boundary
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.0 ),
@@ -254,7 +254,7 @@ FRENSIE_UNIT_TEST( InterpolatedPartiallyTabularBasicBivariateDistribution,
 
   // In the third bin
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.5 ),
-                       8.75 );
+                       10.0 );
 
   // On the upper bin boundary
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfSecondaryConditionalIndepVar( 2.0 ),
@@ -297,7 +297,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 
   // In the second bin
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 0.5*MeV ),
-                       8.75*cgs::centimeter );
+                       10.0*cgs::centimeter );
 
   // On the third bin boundary
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.0*MeV ),
@@ -305,7 +305,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedPartiallyTabularBasicBivariateDistributi
 
   // In the third bin
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 1.5*MeV ),
-                       8.75*cgs::centimeter );
+                       10.0*cgs::centimeter );
 
   // On the upper bin boundary
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar( 2.0*MeV ),

@@ -21,6 +21,10 @@
 
 namespace Utility{
 
+// Calculate the Y independent lower bound between bin boundaries
+/*! \details The lower bound will be the minimum of the two boundary 
+ * lower bounds.
+ */
 template<typename _TwoDInterpPolicy>
 template<typename YIndepType,
          typename XIndepType,
@@ -46,6 +50,9 @@ auto Direct<_TwoDInterpPolicy>::calculateLowerBound(
 }
 
 // Calculate the Y independent upper bound between bin boundaries
+/*! \details The upper bound will be the maximum of the two boundary
+ * upper bounds.
+ */
 template<typename _TwoDInterpPolicy>
 template<typename YIndepType,
          typename XIndepType,
@@ -964,7 +971,7 @@ YIndepType UnitBase<_TwoDInterpPolicy>::sampleInSubrange(
  * Statistical sampling does not sample the true intermediate distribution and
  * will not match the unit-base evaluated PDF and CDF distributions. The
  * expected value of a sample, however, will be a sample from the true
- * distribution.
+ * distribution. This method is an implementation of ACE law 4.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2071,7 +2078,13 @@ double Correlated<_TwoDInterpPolicy>::evaluateCDF(
 }
 
 // Sample between bin boundaries using the desired sampling functor
-//! \details A direct correlated routine is used to sample the distribution.
+/*! \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -2104,6 +2117,11 @@ YIndepType Correlated<_TwoDInterpPolicy>::sample(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details The SampleFunctor must return a Cosine variable.
  * A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2130,9 +2148,11 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleCos(
 }
 
 // Sample between bin boundaries using the desired subrange sampling functor
-/* \details The SampleFunctor must be of the form that it takes a subrange
- * sampling function from a UnivariateDistribution and the max indep variable. A
- * direct correlated routine is used to sample the distribution.
+/* \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumberInSubrange routine.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -2212,7 +2232,13 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleInSubrange(
 }
 
 // Sample between bin boundaries using the desired sampling functor
-//! \details A direct correlated routine is used to sample the distribution.
+/*! \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -2274,6 +2300,11 @@ YIndepType Correlated<_TwoDInterpPolicy>::sampleDetailed(
 // Sample between bin boundaries using the desired sampling functor
 /*! \details The SampleFunctor must return a Cosine variable.
  * A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -3225,6 +3256,12 @@ double UnitBaseCorrelated<_TwoDInterpPolicy>::evaluateCDF(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -3254,7 +3291,13 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sample(
             dummy_raw_sample );
 }
 
-//! Sample between bin boundaries using the desired sampling functor
+// Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -3280,8 +3323,11 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleCos(
 }
 
 // Sample between bin boundaries using the desired subrange sampling functor
-/* \details The SampleFunctor must be of the form that it takes a subrange
- * sampling function from a UnivariateDistribution and the max indep variable.
+/* \details A direct correlated routine is used to sample the distribution.
+ * In order for this method to calculate a sample accurately the same random
+ * number must be used to sample from the distribution on the lower and upper
+ * bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumberInSubrange routine.
  */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
@@ -3382,6 +3428,12 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleInSubrange(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,
@@ -3484,6 +3536,12 @@ YIndepType UnitBaseCorrelated<_TwoDInterpPolicy>::sampleDetailed(
 }
 
 // Sample between bin boundaries using the desired sampling functor
+/*! \details In order for this method to calculate a sample accurately the same
+ * random number must be used to sample from the distribution on the lower and
+ * upper bounds. The sample functor must therefore wrap the 
+ * Utility::TabularUnivariateDist::sampleWithRandomNumber routine or one of the
+ * similar methods that takes a random number. 
+ */
 template<typename _TwoDInterpPolicy>
 template<typename XIndepType,
          typename YIndepType,

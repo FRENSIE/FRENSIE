@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLinLinLinInterpolatedFullyTabularBasicBivariateDistribution.cpp
-//! \author Alex Robinson
-//! \brief  The interpolated fully tabular basic bivariate dist. unit tests
-//!         (LinLinLin interpolation)
+//! \file   tstLinLinLinUnitBaseInterpolatedFullyTabularBasicBivariateDistribution.cpp
+//! \author Alex Robinson, Luke Kersting
+//! \brief  The interpolated fully tabular two-dimensional dist. unit tests
+//!         (LinLinLin UnitBase interpolation)
 //!
 //---------------------------------------------------------------------------//
 
@@ -38,6 +38,9 @@ using Utility::Units::barn;
 using Utility::Units::barns;
 namespace cgs = boost::units::cgs;
 
+using UnitAwareDist = Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>;
+using UnitAwareTabDist = Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn>;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -49,15 +52,70 @@ typedef std::tuple<
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> >
-  unit_aware_distribution;
-
-std::shared_ptr<Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> >
-  unit_aware_tab_distribution;
+std::shared_ptr<UnitAwareDist> unit_aware_distribution;
+std::shared_ptr<UnitAwareTabDist> unit_aware_tab_distribution;
 
 std::shared_ptr<Utility::BasicBivariateDistribution> distribution;
-
 std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> tab_distribution;
+
+std::function<double (double)> lower_func, upper_func;
+std::function<quantity<cgs::length>(UnitAwareDist::PrimaryIndepQuantity)>
+ua_lower_func, ua_upper_func;
+
+//---------------------------------------------------------------------------//
+// Testing Functions.
+//---------------------------------------------------------------------------//
+// Initialize the distribution
+template<template<typename> class TwoDGridPolicy,
+         typename BaseTabDistribution,
+         typename BaseDistribution>
+void initialize( std::shared_ptr<BaseTabDistribution>& tab_dist,
+                 std::shared_ptr<BaseDistribution>& dist )
+{
+  std::vector<typename BaseTabDistribution::PrimaryIndepQuantity> primary_bins( 4 );
+
+  std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit> > > secondary_dists( 4 );
+
+  // Create the secondary distribution in the first bin
+  Utility::setQuantity( primary_bins[0], 0.0 );
+
+  typename BaseTabDistribution::SecondaryIndepQuantity y_min, y_max;
+  Utility::setQuantity( y_min, 0.0 );
+  Utility::setQuantity( y_max, 10.0 );
+
+  typename BaseTabDistribution::DepQuantity value;
+  Utility::setQuantity( value, 0.1 );
+
+  secondary_dists[0].reset( new Utility::UnitAwareUniformDistribution<typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( y_min, y_max, value ) );
+
+  // Create the secondary distribution in the second bin
+  Utility::setQuantity( primary_bins[1], 0.0 );
+  Utility::setQuantity( value, 1.0 );
+  secondary_dists[1].reset( new Utility::UnitAwareUniformDistribution<typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( y_min, y_max, value ) );
+
+  // Create the secondary distribution in the third bin
+  std::vector<typename BaseTabDistribution::SecondaryIndepQuantity> bin_boundaries( 3 );
+  Utility::setQuantity( bin_boundaries[0], 2.5 );
+  Utility::setQuantity( bin_boundaries[1], 5.0 );
+  Utility::setQuantity( bin_boundaries[2], 7.5 );
+
+  std::vector<typename BaseTabDistribution::DepQuantity> values( 3 );
+  Utility::setQuantity( values[0], 0.1 );
+  Utility::setQuantity( values[1], 1.0 );
+  Utility::setQuantity( values[2], 0.5 );
+
+  Utility::setQuantity( primary_bins[2], 1.0 );
+  secondary_dists[2].reset( new Utility::UnitAwareTabularDistribution<Utility::LinLin,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>( bin_boundaries, values ) );
+
+  // Create the secondary distribution beyond the third bin
+  Utility::setQuantity( primary_bins[3], 2.0 );
+  secondary_dists[3] = secondary_dists[0];
+
+  tab_dist.reset( new Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy<Utility::LinLinLin>,typename BaseTabDistribution::PrimaryIndepUnit,typename BaseTabDistribution::SecondaryIndepUnit,typename BaseTabDistribution::DepUnit>(
+      primary_bins, secondary_dists, 1e-3, 1e-7 ) );
+
+  dist = tab_dist;
+}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -354,7 +412,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
     primary_grid[1] = 1.0;
     secondary_dists[1] = secondary_dists[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                              primary_grid, secondary_dists ) );
   }
 
@@ -374,7 +432,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
     primary_grid[1] = 2.0;
     secondary_dists[1] = secondary_dists[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                              primary_grid, secondary_dists ) );
   }
 
@@ -405,7 +463,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
     secondary_grids[3] = secondary_grids[0];
     values[3] = values[0];
 
-    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin>(
+    test_dist.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
                                                                primary_grid,
                                                                secondary_grids,
                                                                values ) );
@@ -815,7 +873,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 1.25 ), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 5.0 ),
-                          0.47435897435897434,
+                          4.6153846153846156e-01,
                           1e-15 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 8.75 ), 1.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 0.5, 9.0 ), 1.0 );
@@ -833,7 +891,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 1.25 ), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 5.0 ),
-                          0.47435897435897434,
+                          4.6153846153846156e-01,
                           1e-15 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 8.75 ), 1.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 1.5, 9.0 ), 1.0 );
@@ -898,7 +956,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 1.25*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 5.0*cgs::centimeter ),
-                          0.47435897435897434,
+                          4.6153846153846156e-01,
                           1e-15 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 8.75*cgs::centimeter ), 1.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 0.5*MeV, 9.0*cgs::centimeter ), 1.0 );
@@ -916,7 +974,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 1.25*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_FLOATING_EQUALITY( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 5.0*cgs::centimeter ),
-                          0.47435897435897434,
+                          4.6153846153846156e-01,
                           1e-15 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 8.75*cgs::centimeter ), 1.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 1.5*MeV, 9.0*cgs::centimeter ), 1.0 );
@@ -967,15 +1025,12 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   
   double sample = distribution->sampleSecondaryConditional( -1.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( -1.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( -1.0 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -991,15 +1046,12 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sampleSecondaryConditional( 0.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.0 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // In the second bin
@@ -1020,24 +1072,19 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Samples from lower boundary of second bin
   sample = distribution->sampleSecondaryConditional( 0.5 );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
 
   // Samples from the upper boundary of the second bin
   sample = distribution->sampleSecondaryConditional( 0.5 );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
   sample = distribution->sampleSecondaryConditional( 0.5 );
@@ -1055,15 +1102,12 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sampleSecondaryConditional( 1.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 2.5 );
 
   sample = distribution->sampleSecondaryConditional( 1.0 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
   sample = distribution->sampleSecondaryConditional( 1.0 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-15 );
 
   // In the third bin
@@ -1084,28 +1128,22 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 
   // Samples from lower boundary of third bin
   sample = distribution->sampleSecondaryConditional( 1.5 );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = distribution->sampleSecondaryConditional( 1.5 );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 1.5 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75, 1e-14 );
 
   // On the upper bin boundary
@@ -1119,15 +1157,12 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sampleSecondaryConditional( 2.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 2.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 2.0 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   // After the third bin - no extension
@@ -1145,15 +1180,12 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = distribution->sampleSecondaryConditional( 3.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
 
   sample = distribution->sampleSecondaryConditional( 3.0 );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0 );
 
   sample = distribution->sampleSecondaryConditional( 3.0 );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-14 );
 
   tab_distribution->limitToPrimaryIndepLimits();
@@ -1182,15 +1214,12 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1206,15 +1235,12 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.0*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // In the second bin
@@ -1235,28 +1261,22 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Samples from lower boundary of second bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
 
   // Samples from the upper boundary of the second bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 0.5*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
 
   // On the third bin
@@ -1270,15 +1290,12 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.0*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-15 );
 
   // In the third bin
@@ -1299,28 +1316,22 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   // Samples from lower boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
 
   // Samples from upper boundary of third bin
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 1.5*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-14 );
 
   // On the upper bin boundary
@@ -1334,15 +1345,12 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 2.0*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   // After the third bin - no extension
@@ -1360,15 +1368,12 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
-
   FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
 
   sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
-
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-14 );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -1387,6 +1392,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
               std::logic_error );
   FRENSIE_CHECK_EQUAL( trials, 0u );
+  trials = 0u;
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
@@ -1493,7 +1499,7 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( trials, 6u );
 
   // On the third bin
-  fake_stream.resize( 6 );
+    fake_stream.resize( 6 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
@@ -1642,6 +1648,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),
               std::logic_error );
   FRENSIE_CHECK_EQUAL( trials, 0u );
+  trials = 0u;
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
@@ -3808,6 +3815,8 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 { 
+
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 7.5 ),
               std::logic_error );
@@ -3985,6 +3994,8 @@ FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
 FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalWithRandomNumberInSubrange )
 { 
+
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 7.5*cgs::centimeter ),
               std::logic_error );
@@ -4006,6 +4017,7 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
 
   // Beyond full range - check that expected range will be used
+  // Before the first bin - with extension
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 11.0*cgs::centimeter );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -4018,9 +4030,22 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
 
+  // On the second bin
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.0, 11.0*cgs::centimeter );
+
+  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.5, 11.0*cgs::centimeter );
+
+  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
+
+  sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 11.0*cgs::centimeter );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
+
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
 
-  // On the second bin  
+  // On the second bin
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 0.0*MeV, 0.0, 7.5*cgs::centimeter );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -4158,1208 +4183,6 @@ FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF can be sampled
-FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExact )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExact( -1.0 ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  double sample = tab_distribution->sampleSecondaryConditionalExact( -1.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( -1.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( -1.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  // In the second bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.4230769230769231;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 0.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
-
-  // On the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 1.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
-
-  // On the upper bin boundary
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 2.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExact( 3.0 ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExact( 3.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
-FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExact )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExact( -1.0*MeV ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( -1.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( -1.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( -1.0*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.0*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  // In the second bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.4230769230769231;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.5*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.5*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 0.5*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
-
-  // On the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.0*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.0*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // In the third bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.5*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.5*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 1.5*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
-
-  // On the upper bin boundary
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 2.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 2.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 2.0*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExact( 3.0*MeV );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF can be sampled
-FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumber )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 0.0 ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  double sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  // In the second bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5, 0.4230769230769231 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
-
-  // On the third bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 0.4230769230769231 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // In the third bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 0.4230769230769231 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75, 1e-12 );
-
-  // On the upper bin boundary
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.0 ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
-FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumber )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0*MeV, 0.0 ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0*MeV, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0*MeV, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( -1.0*MeV, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.0*MeV, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  // In the second bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5*MeV, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5*MeV, 0.4230769230769231 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 0.5*MeV, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
-
-  // On the third bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 0.4230769230769231 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.0*MeV, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // In the third bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 0.4230769230769231 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.615384615384615*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 1.5*MeV, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 8.75*cgs::centimeter, 1e-12 );
-
-  // On the upper bin boundary
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 2.0*MeV, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.0 ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 0.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumber( 3.0*MeV, 1.0-1e-15 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF can be sampled
-FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExactInSubrange )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  // Subrange
-  double sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // Full Range
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 11.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 11.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0, 11.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // In the second bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.49748743718592964;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // On the third bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.4230769230769231;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // In the third bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.49748743718592964;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // On the upper bin boundary
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF can be sampled
-FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExactInSubrange )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 7.5*cgs::centimeter ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  // Subrange
-  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // Full Range
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 11.0*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 11.0*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( -1.0*MeV, 11.0*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // In the second bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.49748743718592964;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 0.5*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // On the third bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.4230769230769231;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // In the third bin
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.49748743718592964;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 1.5*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // On the upper bin boundary
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.5;
-  fake_stream[2] = 1.0-1e-15;
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 2.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 7.5*cgs::centimeter ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactInSubrange( 3.0*MeV, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a secondary conditional PDF an be sampled
-FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumberInSubrange )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.0, 7.5 ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  std::vector<double> fake_stream( 3 );
-
-  // Subrange
-  double sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.5, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 1.0-1e-15, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // Full Range
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.0, 11.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 0.5, 11.0 );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0, 1.0-1e-15, 11.0 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 0.5, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0, 1.0-1e-15, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // In the second bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5, 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5, 0.49748743718592964, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5, 1.0-1e-15, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // On the third bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 0.4230769230769231, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0, 1.0-1e-15, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // In the third bin
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 0.49748743718592964, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041, 1e-15 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5, 1.0-1e-15, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // On the upper bin boundary
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 0.5, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0, 1.0-1e-15, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.0, 7.5 ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.0, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 0.5, 7.5 );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75 );
-
-  sample = tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0, 1.0-1e-15, 7.5 );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5, 1e-12 );
-
-  tab_distribution->limitToPrimaryIndepLimits();
-}
-
-//---------------------------------------------------------------------------//
-// Check that a unit-aware secondary conditional PDF an be sampled
-FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
-                   sampleSecondaryConditionalExactWithRandomNumberInSubrange )
-{
-  // Before the first bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 0.0, 7.5*cgs::centimeter ),
-              std::logic_error );
-
-  // Before the first bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
-  std::vector<double> fake_stream( 3 );
-
-  // Subrange
-  quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 0.0, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 0.5, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // Full Range
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 0.0, 11.0*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 0.5, 11.0*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 5.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( -1.0*MeV, 1.0-1e-15, 11.0*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-
-  // On the second bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.0, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 0.5, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // In the second bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5*MeV, 0.0, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5*MeV, 0.49748743718592964, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 0.5*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // On the third bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 0.0, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 2.5*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 0.4230769230769231, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 5.0*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // In the third bin
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 0.0, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 1.25*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 0.49748743718592964, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 4.572864321608041*cgs::centimeter, 1e-15 );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 1.5*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // On the upper bin boundary
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 0.0, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 0.5, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 2.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  // After the third bin - no extension
-  FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.0, 7.5*cgs::centimeter ),
-              std::logic_error );
-
-  // After the third bin - with extension
-  unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.0, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 0.5, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_EQUAL( sample, 3.75*cgs::centimeter );
-
-  sample = unit_aware_tab_distribution->sampleSecondaryConditionalExactWithRandomNumberInSubrange( 3.0*MeV, 1.0-1e-15, 7.5*cgs::centimeter );
-
-  FRENSIE_CHECK_FLOATING_EQUALITY( sample, 7.5*cgs::centimeter, 1e-12 );
-
-  unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the distribution can be placed in a stream
-FRENSIE_UNIT_TEST( InterpolatedFullyTabularBasicBivariateDistribution,
-                   ostream_operator )
-{
-  std::ostringstream oss;
-
-  oss << *distribution;
-
-  Utility::VariantMap dist_data =
-    Utility::fromString<Utility::VariantMap>( oss.str() );
-
-  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
-                       "InterpolatedFullyTabularBasicBivariateDistribution",
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["primary independent unit"].toString(),
-                       "void",
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["secondary independent unit"].toString(),
-                       "void",
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
-                       "void",
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
-                       Utility::LinLinLin::name(),
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["primary grid"].toType<std::vector<double> >(),
-                       std::vector<double>( {0.0, 0.0, 1.0, 2.0} ),
-                       SHOW_LHS );
-
-  Utility::VariantVector secondary_dists =
-    dist_data["secondary dists"].toVector();
-
-  FRENSIE_REQUIRE_EQUAL( secondary_dists.size(), 4, SHOW_LHS );
-
-  Utility::VariantMap secondary_dist_data = secondary_dists[0].toMap();
-
-  FRENSIE_CHECK_EQUAL( secondary_dist_data["type"].toString(),
-                       "Uniform Distribution",
-                       SHOW_LHS );
-
-  secondary_dist_data = secondary_dists[1].toMap();
-
-  FRENSIE_CHECK_EQUAL( secondary_dist_data["type"].toString(),
-                       "Uniform Distribution",
-                       SHOW_LHS );
-
-  secondary_dist_data = secondary_dists[2].toMap();
-
-  FRENSIE_CHECK_EQUAL( secondary_dist_data["type"].toString(),
-                       "Tabular Distribution",
-                       SHOW_LHS );
-
-  FRENSIE_CHECK_EQUAL( secondary_dists[0].toMap(),
-                       secondary_dists[3].toMap(),
-                       SHOW_BOTH );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be placed in a stream
-FRENSIE_UNIT_TEST( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
-                   ostream_operator )
-{
-  std::ostringstream oss;
-
-  oss << *unit_aware_distribution;
-
-  Utility::VariantMap dist_data =
-    Utility::fromString<Utility::VariantMap>( oss.str() );
-
-  FRENSIE_CHECK_EQUAL( dist_data["type"].toString(),
-                       "InterpolatedFullyTabularBasicBivariateDistribution",
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["primary independent unit"].toString(),
-                       Utility::UnitTraits<MegaElectronVolt>::name(),
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["secondary independent unit"].toString(),
-                       Utility::UnitTraits<cgs::length>::name(),
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["dependent unit"].toString(),
-                       Utility::UnitTraits<Barn>::name(),
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["interp"].toString(),
-                       Utility::LinLinLin::name(),
-                       SHOW_LHS );
-  FRENSIE_CHECK_EQUAL( dist_data["primary grid"].toType<std::vector<quantity<MegaElectronVolt> > >(),
-                       std::vector<quantity<MegaElectronVolt> >( {0.0*MeV, 0.0*MeV, 1.0*MeV, 2.0*MeV} ),
-                       SHOW_LHS );
-
-  Utility::VariantVector secondary_dists =
-    dist_data["secondary dists"].toVector();
-
-  FRENSIE_REQUIRE_EQUAL( secondary_dists.size(), 4, SHOW_LHS );
-
-  Utility::VariantMap secondary_dist_data = secondary_dists[0].toMap();
-
-  FRENSIE_CHECK_EQUAL( secondary_dist_data["type"].toString(),
-                       "Uniform Distribution",
-                       SHOW_LHS );
-
-  secondary_dist_data = secondary_dists[1].toMap();
-
-  FRENSIE_CHECK_EQUAL( secondary_dist_data["type"].toString(),
-                       "Uniform Distribution",
-                       SHOW_LHS );
-
-  secondary_dist_data = secondary_dists[2].toMap();
-
-  FRENSIE_CHECK_EQUAL( secondary_dist_data["type"].toString(),
-                       "Tabular Distribution",
-                       SHOW_LHS );
-
-  FRENSIE_CHECK_EQUAL( secondary_dists[0].toMap(),
-                       secondary_dists[3].toMap(),
-                       SHOW_BOTH );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the distribution can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedFullyTabularBasicBivariateDistribution,
                                    archive,
@@ -5371,7 +4194,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedFullyTabularBasicBivariateDistrib
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  std::string archive_base_name( "test_interpolated_fully_tabular_basic_bivariate_dist" );
+  std::string archive_base_name( "test_LinLinLin_unit_base_interpolated_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
   // Create and archive some distributions
@@ -5380,12 +4203,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedFullyTabularBasicBivariateDistrib
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    std::shared_ptr<Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin> >
-      concrete_distribution = std::dynamic_pointer_cast<Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin> >( distribution );
+    auto concrete_dist = std::dynamic_pointer_cast<Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> > >( distribution );
 
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( tab_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "intermediate_base_dist", tab_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "base_dist", distribution ) );
   }
 
   // Copy the archive ostream to an istream
@@ -5396,32 +4218,188 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedFullyTabularBasicBivariateDistrib
 
   createIArchive( archive_istream, iarchive );
 
-  std::shared_ptr<Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin> >
-    concrete_distribution;
+  std::shared_ptr<Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> > > concrete_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_distribution ) );
-  FRENSIE_CHECK_EQUAL( Utility::toString( *concrete_distribution ),
-                       Utility::toString( *distribution ),
-                       SHOW_BOTH );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
+
+  concrete_dist->extendBeyondPrimaryIndepLimits();
+  
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, 10.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.5, 1.0 ), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 1.25 ),
+                          0.7,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 5.0 ),
+                          1.0,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5, 8.75 ),
+                          0.8333333333333334,
+                          1e-15 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.5, 9.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 2.5 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 7.5 ), 0.5 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0, 8.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5, 1.0 ), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 1.5, 1.25 ),
+                          0.1,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 1.5, 5.0 ),
+                          0.4,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 1.5, 8.75 ),
+                          0.23333333333333334,
+                          1e-15 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5, 9.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 11.0 ), 0.0 );
 
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>
-    local_tab_dist;
+    intermediate_base_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "tab_distribution", local_tab_dist ) );
-  FRENSIE_CHECK_EQUAL( Utility::toString( *local_tab_dist ),
-                       Utility::toString( *tab_distribution ),
-                       SHOW_BOTH );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );
 
-  std::shared_ptr<Utility::BasicBivariateDistribution> local_dist;
+  intermediate_base_dist->extendBeyondPrimaryIndepLimits();
+  
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0, 11.0 ), 0.0 );
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", local_dist ) );
-  FRENSIE_CHECK_EQUAL( Utility::toString( *local_dist ),
-                       Utility::toString( *distribution ),
-                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0, 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0, 10.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.5, 1.0 ), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 0.5, 1.25 ),
+                          0.7,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 0.5, 5.0 ),
+                          1.0,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 0.5, 8.75 ),
+                          0.8333333333333334,
+                          1e-15 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.5, 9.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0, 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0, 2.5 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0, 7.5 ), 0.5 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0, 8.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.5, 1.0 ), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 1.5, 1.25 ),
+                          0.1,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 1.5, 5.0 ),
+                          0.4,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 1.5, 8.75 ),
+                          0.23333333333333334,
+                          1e-15 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.5, 9.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0, 11.0 ), 0.0 );
+
+  std::shared_ptr<Utility::BasicBivariateDistribution> base_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist ) );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, 0.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, 10.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.5, 1.0 ), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 1.25 ),
+                          0.7,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 5.0 ),
+                          1.0,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5, 8.75 ),
+                          0.8333333333333334,
+                          1e-15 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.5, 9.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 2.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 2.5 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 5.0 ), 1.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 7.5 ), 0.5 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0, 8.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5, 1.0 ), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 1.5, 1.25 ),
+                          0.1,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 1.5, 5.0 ),
+                          0.4,
+                          1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 1.5, 8.75 ),
+                          0.23333333333333334,
+                          1e-15 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5, 9.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 11.0 ), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 0.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 5.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 10.0 ), 0.1 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 11.0 ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the unit-aware distribution can be archived
+// Check that the distribution can be archived
 FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution,
                                    archive,
                                    TestArchives )
@@ -5432,7 +4410,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareInterpolatedFullyTabularBasicBivaria
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
   
-  std::string archive_base_name( "test_unit_aware_interpolated_fully_tabular_basic_bivariate_dist" );
+  std::string archive_base_name( "test_LinLinLin_unit_base_unit_aware_interpolated_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
   // Create and archive some distributions
@@ -5441,12 +4419,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareInterpolatedFullyTabularBasicBivaria
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    std::shared_ptr<Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::length,Barn> >
-      concrete_distribution = std::dynamic_pointer_cast<Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::length,Barn> >( unit_aware_distribution );
+    auto concrete_dist = std::dynamic_pointer_cast<Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin>,MegaElectronVolt,cgs::length,Barn> >( unit_aware_distribution );
 
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "tab_distribution", unit_aware_tab_distribution ) );
-    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "distribution", unit_aware_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_dist ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "intermediate_base_dist", unit_aware_tab_distribution ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "base_dist", unit_aware_distribution ) );
   }
 
   // Copy the archive ostream to an istream
@@ -5457,28 +4434,184 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareInterpolatedFullyTabularBasicBivaria
 
   createIArchive( archive_istream, iarchive );
 
-  std::shared_ptr<Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::length,Barn> >
-    concrete_distribution;
+  std::shared_ptr<Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin>,MegaElectronVolt,cgs::length,Barn> > concrete_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_distribution ) );
-  FRENSIE_CHECK_EQUAL( Utility::toString( *concrete_distribution ),
-                       Utility::toString( *unit_aware_distribution ),
-                       SHOW_BOTH );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_dist ) );
+
+  concrete_dist->extendBeyondPrimaryIndepLimits();
+  
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, 10.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
+                                  0.7*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+                                  1.0*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
+                                  0.8333333333333334*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 0.5*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
+                                  0.1*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
+                                  0.4*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( concrete_dist->evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
+                                  0.23333333333333334*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
   std::shared_ptr<Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> >
-    local_tab_dist;
+    intermediate_base_dist;
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "tab_distribution", local_tab_dist ) );
-  FRENSIE_CHECK_EQUAL( Utility::toString( *local_tab_dist ),
-                       Utility::toString( *unit_aware_tab_distribution ),
-                       SHOW_BOTH );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( intermediate_base_dist ) );
 
-  std::shared_ptr<Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> > local_dist;
+  intermediate_base_dist->extendBeyondPrimaryIndepLimits();
+  
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> boost::serialization::make_nvp( "distribution", local_dist ) );
-  FRENSIE_CHECK_EQUAL( Utility::toString( *local_dist ),
-                       Utility::toString( *unit_aware_distribution ),
-                       SHOW_BOTH );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0*MeV, 10.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
+                                  0.7*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+                                  1.0*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
+                                  0.8333333333333334*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 0.5*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
+                                  0.1*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
+                                  0.4*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( intermediate_base_dist->evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
+                                  0.23333333333333334*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( intermediate_base_dist->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  std::shared_ptr<Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> > base_dist;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist ) );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( -1.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, 10.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 1.25*cgs::centimeter ),
+                                  0.7*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 5.0*cgs::centimeter ),
+                                  1.0*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 0.5*MeV, 8.75*cgs::centimeter ),
+                                  0.8333333333333334*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 0.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 2.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 2.5*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 5.0*cgs::centimeter ), 1.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 7.5*cgs::centimeter ), 0.5*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.0*MeV, 8.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5*MeV, 1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 1.5*MeV, 1.25*cgs::centimeter ),
+                                  0.1*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 1.5*MeV, 5.0*cgs::centimeter ),
+                                  0.4*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( base_dist->evaluate( 1.5*MeV, 8.75*cgs::centimeter ),
+                                  0.23333333333333334*barn,
+                                  1e-15 );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 1.5*MeV, 9.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
+
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 5.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 10.0*cgs::centimeter ), 0.1*barn );
+  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0*MeV, 11.0*cgs::centimeter ), 0.0*barn );
 }
 
 //---------------------------------------------------------------------------//
@@ -5515,9 +4648,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     primary_grid[3] = 2.0;
     secondary_dists[3] = secondary_dists[0];
 
-    tab_distribution.reset(
-      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin>(
-                                             primary_grid, secondary_dists ) );
+    tab_distribution.reset( new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> >(
+                                                               primary_grid,
+                                                               secondary_dists,
+                                                               1e-3,
+                                                               1e-7 ) );
     distribution = tab_distribution;
   }
 
@@ -5549,7 +4684,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     primary_bins[3] = 2.0*MeV;
     secondary_dists[3] = secondary_dists[0];
 
-    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::LinLinLin,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists ) );
+    unit_aware_tab_distribution.reset( new Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBase<Utility::LinLinLin> ,MegaElectronVolt,cgs::length,Barn>( primary_bins, secondary_dists, 1e-3, 1e-7 ) );
 
     unit_aware_distribution = unit_aware_tab_distribution;
   }
@@ -5561,5 +4696,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstLinLinLinInterpolatedFullyTabularBasicBivariateDistribution.cpp
+// end tstLinLinLinUnitBaseInterpolatedFullyTabularBasicBivariateDistribution.cpp
 //---------------------------------------------------------------------------//

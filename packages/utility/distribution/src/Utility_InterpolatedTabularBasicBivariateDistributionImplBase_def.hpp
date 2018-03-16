@@ -466,12 +466,10 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
   }
   else
   {
-    return TwoDGridPolicy::TwoDInterpPolicy::calculateIntermediateGridLimit(
-           Utility::get<0>( *lower_bin_boundary ),
-           Utility::get<0>( *upper_bin_boundary ),
-           primary_indep_var_value,
-           Utility::get<1>( *lower_bin_boundary )->getUpperBoundOfIndepVar(),
-           Utility::get<1>( *upper_bin_boundary )->getUpperBoundOfIndepVar() );
+    return TwoDGridPolicy::template calculateUpperBound<SecondaryIndepQuantity>(
+                       primary_indep_var_value,
+                       lower_bin_boundary,
+                       upper_bin_boundary );
   }
 }
 
@@ -497,12 +495,10 @@ auto UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPoli
   }
   else
   {
-    return TwoDGridPolicy::TwoDInterpPolicy::calculateIntermediateGridLimit(
-           Utility::get<0>( *lower_bin_boundary ),
-           Utility::get<0>( *upper_bin_boundary ),
-           primary_indep_var_value,
-           Utility::get<1>( *lower_bin_boundary )->getLowerBoundOfIndepVar(),
-           Utility::get<1>( *upper_bin_boundary )->getLowerBoundOfIndepVar() );
+    return TwoDGridPolicy::template calculateLowerBound<SecondaryIndepQuantity>(
+                       primary_indep_var_value,
+                       lower_bin_boundary,
+                       upper_bin_boundary );
   }
 }
 
