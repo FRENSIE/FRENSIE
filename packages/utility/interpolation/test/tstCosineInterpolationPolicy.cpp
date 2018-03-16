@@ -35,13 +35,13 @@ FRENSIE_UNIT_TEST( LogLogCos, isIndepVarInValidRange )
 {
   FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange(
                   -std::numeric_limits<double>::max() ) );
-  FRENSIE_CHECK_EQUAL( !Utility::LogLogCos::isIndepVarInValidRange( -1.0 - 1e-10 ) );
-  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( -1.0 ) );
-  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( 0.0 ) );
-  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( 1.0 - 1e-15 ) );
-  FRENSIE_CHECK_EQUAL( Utility::LogLogCos::isIndepVarInValidRange( 1.0 ) );
-  FRENSIE_CHECK_EQUAL( !Utility::LogLogCos::isIndepVarInValidRange( 1.0 + 1e-15 ) );
-  FRENSIE_CHECK_EQUAL( !Utility::LogLogCos::isIndepVarInValidRange( std::numeric_limits<double>::max() ) );
+  FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange( -1.0 - 1e-10 ) );
+  FRENSIE_CHECK( Utility::LogLogCos::isIndepVarInValidRange( -1.0 ) );
+  FRENSIE_CHECK( Utility::LogLogCos::isIndepVarInValidRange( 0.0 ) );
+  FRENSIE_CHECK( Utility::LogLogCos::isIndepVarInValidRange( 1.0 - 1e-15 ) );
+  FRENSIE_CHECK( Utility::LogLogCos::isIndepVarInValidRange( 1.0 ) );
+  FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange( 1.0 + 1e-15 ) );
+  FRENSIE_CHECK( !Utility::LogLogCos::isIndepVarInValidRange( std::numeric_limits<double>::max() ) );
 }
 
 //---------------------------------------------------------------------------//
