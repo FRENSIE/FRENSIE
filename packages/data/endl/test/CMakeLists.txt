@@ -1,5 +1,13 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(data_endl)
 
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+FRENSIE_ADD_TEST_EXECUTABLE(ENDLPhotoatomicDataProperties DEPENDS tstENDLPhotoatomicDataProperties.cpp)
+FRENSIE_ADD_TEST(ENDLPhotoatomicDataProperties)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ENDLElectroatomicDataProperties DEPENDS tstENDLElectroatomicDataProperties.cpp)
+FRENSIE_ADD_TEST(ENDLElectroatomicDataProperties)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ENDLFileHandler DEPENDS tstENDLFileHandler.cpp)
 FRENSIE_ADD_TEST(ENDLFileHandler
   EXTRA_ARGS
