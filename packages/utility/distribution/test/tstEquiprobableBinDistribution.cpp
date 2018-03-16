@@ -2066,17 +2066,10 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, isCompatibleWithInterpType )
 FRENSIE_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
                    isCompatibleWithInterpType )
 {
-<<<<<<< HEAD
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
-=======
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  TEST_ASSERT( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
->>>>>>> f47aa02fd47c4b9721bd7a2efb833a74015c3fb4
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Check an alternative distribution that is compatible with all interp types
   std::vector<double> bin_boundaries( 4 );

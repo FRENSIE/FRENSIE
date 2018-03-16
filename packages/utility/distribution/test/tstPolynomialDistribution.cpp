@@ -397,9 +397,9 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, isContinuous )
 FRENSIE_UNIT_TEST( PolynomialDistribution, isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( !distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types
@@ -423,7 +423,7 @@ FRENSIE_UNIT_TEST( PolynomialDistribution, isCompatibleWithInterpType )
   test_dist.reset( new Utility::PolynomialDistribution( coeffs, 0.0, 1.0 ) );
 
   FRENSIE_CHECK( test_dist->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !test_dist->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !test_dist->isCompatibleWithInterpType<Utility::LogLog>() );
 }
@@ -434,9 +434,9 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution,
                    isCompatibleWithInterpType )
 {
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLin>() );
-  FRENSIE_CHECK( !unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
+  FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLog>() );
 
   // Create another distribution that is compatible with all interpolation
   // types
@@ -460,7 +460,7 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution,
   test_dist.reset( new Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( coeffs, 0.0*MeV, 1.0*MeV ) );
 
   FRENSIE_CHECK( test_dist->isCompatibleWithInterpType<Utility::LinLin>() );
-  FRENSIE_CHECK( !test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
+  FRENSIE_CHECK( test_dist->isCompatibleWithInterpType<Utility::LinLog>() );
   FRENSIE_CHECK( !test_dist->isCompatibleWithInterpType<Utility::LogLin>() );
   FRENSIE_CHECK( !test_dist->isCompatibleWithInterpType<Utility::LogLog>() );
 }

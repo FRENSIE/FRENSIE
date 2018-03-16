@@ -1767,12 +1767,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedPartiallyTabularBasicBivariateDis
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 2.0, 11.0 ), 0.0 );
 
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, -1.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 0.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 5.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 10.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 11.0 ), 0.0 );
-
-  FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 0.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 5.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( concrete_dist->evaluate( 3.0, 10.0 ), 0.1 );
@@ -1825,12 +1819,6 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InterpolatedPartiallyTabularBasicBivariateDis
   FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 5.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 10.0 ), 0.1 );
   FRENSIE_CHECK_EQUAL( base_dist->evaluate( 2.0, 11.0 ), 0.0 );
-
-  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, -1.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 0.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 5.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 10.0 ), 0.0 );
-  FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 11.0 ), 0.0 );
 
   FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( base_dist->evaluate( 3.0, 0.0 ), 0.1 );
