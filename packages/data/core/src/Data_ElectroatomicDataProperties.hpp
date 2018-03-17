@@ -39,6 +39,7 @@ public:
     ACE_FILE = 0,
     ACE_EPR_FILE,
     Native_ENDL_FILE,
+    Native_Moment_Preserving_FILE,
     Native_EPR_FILE
   };
 
