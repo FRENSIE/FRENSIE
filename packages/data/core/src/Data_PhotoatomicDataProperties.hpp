@@ -155,6 +155,11 @@ void serialize( Archive& archive,
         file_type = Data::PhotoatomicDataProperties::ACE_EPR_FILE;
         break;
       }
+      case (int)Data::PhotoatomicDataProperties::Native_ENDL_FILE:
+      {
+        file_type = Data::PhotoatomicDataProperties::Native_ENDL_FILE;
+        break;
+      }
       case (int)Data::PhotoatomicDataProperties::Native_EPR_FILE:
       {
         file_type = Data::PhotoatomicDataProperties::Native_EPR_FILE;

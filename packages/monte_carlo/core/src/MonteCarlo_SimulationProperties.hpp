@@ -9,6 +9,11 @@
 #ifndef MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
@@ -21,7 +26,10 @@
 namespace MonteCarlo{
 
 /*! The simulation properties class
- * \details This class has been designed as a mix-in class
+ *
+ * This class has been designed as a mix-in class. It can be used as the 
+ * control point for all runtime configuration options used in a Monte Carlo
+ * simulation.
  */
 class SimulationProperties : public SimulationGeneralProperties,
                              public SimulationNeutronProperties,
@@ -57,9 +65,22 @@ public:
   
   //! Return if atomic relaxation mode is on
   bool isAtomicRelaxationModeOn( const ParticleType particle ) const;
+
+private:
+
+  // Save/load the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
   
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::SimulationProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationProperties, "SimulationProperties" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationProperties );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

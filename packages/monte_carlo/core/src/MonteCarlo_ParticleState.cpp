@@ -6,9 +6,22 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_InfiniteMediumModel.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -192,9 +205,9 @@ void ParticleState::setPosition( const double x_position,
 				 const double z_position )
 {
   // Make sure the coordinates are valid
-  testPrecondition( !ST::isnaninf( x_position ) );
-  testPrecondition( !ST::isnaninf( y_position ) );
-  testPrecondition( !ST::isnaninf( z_position ) );
+  testPrecondition( !QT::isnaninf( x_position ) );
+  testPrecondition( !QT::isnaninf( y_position ) );
+  testPrecondition( !QT::isnaninf( z_position ) );
 
   const double* current_direction = d_navigator->getInternalRayDirection();
   
@@ -236,9 +249,9 @@ void ParticleState::setDirection( const double x_direction,
 				  const double z_direction )
 {
   // Make sure the direction coordinates are valid
-  testPrecondition( !ST::isnaninf( x_direction ) );
-  testPrecondition( !ST::isnaninf( y_direction ) );
-  testPrecondition( !ST::isnaninf( z_direction ) );
+  testPrecondition( !QT::isnaninf( x_direction ) );
+  testPrecondition( !QT::isnaninf( y_direction ) );
+  testPrecondition( !QT::isnaninf( z_direction ) );
   // Make sure the direction is a unit vector
   testPrecondition( Utility::isUnitVector( x_direction,
                                            y_direction,
@@ -283,7 +296,7 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
 void ParticleState::advance( double distance )
 {
   // Make sure the distance is valid
-  testPrecondition( !ST::isnaninf( distance ) );
+  testPrecondition( !QT::isnaninf( distance ) );
 
   double distance_to_surface = d_navigator->fireInternalRay();
   
@@ -327,7 +340,7 @@ void ParticleState::advance( double distance )
 void ParticleState::setSourceEnergy( const energyType energy )
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   d_source_energy = energy;
@@ -340,7 +353,7 @@ void ParticleState::setSourceEnergy( const energyType energy )
 void ParticleState::setEnergy( const ParticleState::energyType energy )
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   d_energy = energy;
@@ -606,6 +619,8 @@ void ParticleState::extractFromModel()
   // Initialize the new navigator
   d_navigator->setInternalRay( position, direction );
 }
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ParticleState );
 
 } // end MonteCarlo
 

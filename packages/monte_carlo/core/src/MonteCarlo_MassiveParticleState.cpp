@@ -6,8 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_MassiveParticleState.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_ContractException.hpp"
@@ -100,7 +113,7 @@ double MassiveParticleState::getSpeed() const
 void MassiveParticleState::setSpeed( const double speed )
 {
   // Make sure the speed is valid
-  testPrecondition( !ST::isnaninf( speed ) );
+  testPrecondition( !QT::isnaninf( speed ) );
   testPrecondition( speed > 0.0 );
   testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
 
@@ -120,6 +133,8 @@ MassiveParticleState::calculateTraversalTime( const double distance ) const
 
   return distance/d_speed;
 }
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MassiveParticleState );
 
 } // end MonteCarlo namespace
 

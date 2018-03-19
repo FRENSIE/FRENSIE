@@ -9,11 +9,14 @@
 #ifndef MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -63,12 +66,19 @@ public:
 
   //! Set the critical line energies
   void setCriticalAdjointPhotonLineEnergies(
-                        const Teuchos::Array<double>& critical_line_energies );
+                        const std::vector<double>& critical_line_energies );
 
   //! Get the critical line energies
-  const Teuchos::Array<double>& getCriticalAdjointPhotonLineEnergies() const;
+  const std::vector<double>& getCriticalAdjointPhotonLineEnergies() const;
 
 private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The absolute mimimum adjoint photon energy (MeV)
   static const double s_absolute_min_adjoint_photon_energy;
@@ -89,10 +99,26 @@ private:
   IncoherentAdjointModelType d_incoherent_adjoint_model_type;
 
   // The critical line energies
-  Teuchos::Array<double> d_critical_line_energies;
+  std::vector<double> d_critical_line_energies;
 };
 
+// Save the state to an archive
+template<typename Archive>
+void SimulationAdjointPhotonProperties::serialize( Archive& ar,
+                                                   const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_min_adjoint_photon_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_max_adjoint_photon_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_num_adjoint_photon_hash_grid_bins );
+  ar & BOOST_SERIALIZATION_NVP( d_incoherent_adjoint_model_type );
+  ar & BOOST_SERIALIZATION_NVP( d_critical_line_energies );
+}
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::SimulationAdjointPhotonProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationAdjointPhotonProperties, "SimulationAdjointPhotonProperties" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationAdjointPhotonProperties );
 
 #endif // end MONTE_CARLO_SIMULATION_ADJOINT_PHOTON_PROPERTIES_HPP
 

@@ -9,6 +9,11 @@
 #ifndef MONTE_CARLO_SIMULATION_PHOTON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_PHOTON_PROPERTIES_HPP
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
@@ -99,6 +104,13 @@ public:
 
 private:
 
+  // Save/load the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The absolute minimum photon energy (MeV)
   static const double s_absolute_min_photon_energy;
 
@@ -133,7 +145,26 @@ private:
   bool d_photonuclear_interaction_mode_on;
 };
 
+// Save/load the state to an archive
+template<typename Archive>
+void SimulationPhotonProperties::serialize( Archive& ar,
+                                            const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_min_photon_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_max_photon_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_kahn_sampling_cutoff_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_num_photon_hash_grid_bins );
+  ar & BOOST_SERIALIZATION_NVP( d_incoherent_model_type );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_relaxation_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_detailed_pair_production_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_photonuclear_interaction_mode_on );
+}
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::SimulationPhotonProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationPhotonProperties, "SimulationPhotonProperties" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationPhotonProperties );
 
 #endif // end MONTE_CARLO_SIMULATION_PHOTON_PROPERTIES_HPP
 

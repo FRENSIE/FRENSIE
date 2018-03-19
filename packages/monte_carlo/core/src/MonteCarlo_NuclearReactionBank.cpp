@@ -14,7 +14,7 @@ namespace MonteCarlo{
 
 // Constructor
 NuclearReactionBank::NuclearReactionBank(
-			 const Teuchos::Array<NuclearReactionType>& reactions )
+			 const std::vector<NuclearReactionType>& reactions )
   : d_nuclear_reaction_banks()
 {
   // Make sure there is at least on nuclear reaction of interest

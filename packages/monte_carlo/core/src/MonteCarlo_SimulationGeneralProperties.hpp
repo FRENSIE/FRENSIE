@@ -9,14 +9,19 @@
 #ifndef MONTE_CARLO_SIMULATION_GENERAL_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_GENERAL_PROPERTIES_HPP
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 
 namespace MonteCarlo{
 
 /*! The general simulation properties class
- * \todo Modify XML parser to handle all options in this class. Use this class
- * in all parts of code that require runtime configuration.
+ * 
+ * Use this class in all parts of code that require runtime configuration.
  */
 class SimulationGeneralProperties
 {
@@ -74,6 +79,13 @@ public:
 
 private:
 
+  // Save/load the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The particle mode
   ParticleModeType d_particle_mode;
 
@@ -93,9 +105,24 @@ private:
   unsigned d_number_of_batches_per_processor;
 };
 
+// Save the state to an archive
+template<typename Archive>
+void SimulationGeneralProperties::serialize( Archive& ar,
+                                               const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_particle_mode );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_histories );
+  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosing_cutoff );
+  ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
+  ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
+  ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );
+}
+
 } // end MonteCarlo namespace
 
-//---------------------------------------------------------------------------//
+BOOST_CLASS_VERSION( MonteCarlo::SimulationGeneralProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationGeneralProperties, "SimulationGeneralProperties" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationGeneralProperties );
 
 #endif // end MONTE_CARLO_SIMULATION_GENERAL_PROPERTIES_HPP
 

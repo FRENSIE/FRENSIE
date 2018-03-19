@@ -18,17 +18,16 @@
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Navigator.hpp"
 #include "Geometry_Model.hpp"
 #include "Geometry_ModuleTraits.hpp"
-#include "Utility_PrintableObject.hpp"
+#include "Utility_OStreamableObject.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -61,8 +60,8 @@ public:
 
 private:
 
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -387,6 +386,7 @@ inline const Geometry::Navigator& ParticleState::navigator() const
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleState );
 BOOST_CLASS_VERSION( MonteCarlo::ParticleState, 0 );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleState );
 
 //---------------------------------------------------------------------------//
 // Template includes

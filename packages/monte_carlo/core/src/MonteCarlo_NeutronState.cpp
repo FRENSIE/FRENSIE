@@ -6,8 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_NeutronState.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
@@ -62,16 +75,17 @@ NeutronState* NeutronState::clone() const
 }
 
 // Print the neutron state
-void NeutronState::print( std::ostream& os ) const
+void NeutronState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: Neutron" << std::endl;
 
   this->printImplementation<NeutronState>( os );
 }
 
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( NeutronState );
+
 } // end MonteCarlo namespace
 
-UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::NeutronState );
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::NeutronState );
 
 //---------------------------------------------------------------------------//

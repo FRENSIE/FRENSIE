@@ -156,6 +156,16 @@ void serialize( Archive& archive,
         file_type = Data::ElectroatomicDataProperties::ACE_EPR_FILE;
         break;
       }
+      case (int)Data::ElectroatomicDataProperties::Native_ENDL_FILE:
+      {
+        return Data::ElectroatomicDataProperties::Native_ENDL_FILE;
+        break;
+      }
+      case (int)Data::ElectroatomicDataProperties::Native_Moment_Preserving_FILE:
+      {
+        return Data::ElectroatomicDataProperties::Native_Moment_Preserving_FILE;
+        break;
+      }
       case (int)Data::ElectroatomicDataProperties::Native_EPR_FILE:
       {
         file_type = Data::ElectroatomicDataProperties::Native_EPR_FILE;

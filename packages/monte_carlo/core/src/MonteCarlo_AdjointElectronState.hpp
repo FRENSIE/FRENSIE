@@ -59,7 +59,7 @@ public:
   double getRestMassEnergy() const;
 
   //! Print the adjoint electron state
-  virtual void print( std::ostream& os ) const;
+  virtual void toStream( std::ostream& os ) const;
 
 protected:
 
@@ -94,6 +94,7 @@ private:
 BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronState,
 			 "AdjointElectronState" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::AdjointElectronState );
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_STATE_HPP
 

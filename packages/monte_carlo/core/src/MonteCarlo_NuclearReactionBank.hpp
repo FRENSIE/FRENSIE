@@ -10,17 +10,13 @@
 #define MONTE_CARLO_NUCLEAR_REACTION_BANK_HPP
 
 // Std Lib Includes
-#include <list>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/shared_ptr.hpp>
-
-// Teuchos Includes
-#include <Teuchos_Array.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
+#include "Utility_List.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_Map.hpp"
 
 namespace MonteCarlo{
 
@@ -31,7 +27,7 @@ class NuclearReactionBank : public ParticleBank
 public:
 
   //! Constructor
-  NuclearReactionBank( const Teuchos::Array<NuclearReactionType>& reactions );
+  NuclearReactionBank( const std::vector<NuclearReactionType>& reactions );
 
   //! Push a neutron to the bank
   void push( const NeutronState& neutron,
@@ -40,7 +36,7 @@ public:
 private:
 
   // The nuclear reactions of interest
-  boost::unordered_map<NuclearReactionType,std::list<boost::scoped_ptr<ParticleState> > > d_nuclear_reaction_banks;
+  std::unordered_map<NuclearReactionType,std::list<boost::scoped_ptr<ParticleState> > > d_nuclear_reaction_banks;
 };
 
 } // end MonteCarlo namespace

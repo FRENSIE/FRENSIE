@@ -20,8 +20,8 @@ class PhotonState : public MasslessParticleState
 
 private:
 
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -58,7 +58,7 @@ public:
   PhotonState* clone() const;
 
   //! Print the photon state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
@@ -77,6 +77,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::PhotonState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::PhotonState, "PhotonState" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::PhotonState );
 
 #endif // end MONTE_CARLO_PHOTON_STATE_HPP
 

@@ -6,8 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronProbeState.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -95,7 +108,7 @@ AdjointElectronProbeState* AdjointElectronProbeState::clone() const
 
 
 // Print the adjoint electron state
-void AdjointElectronProbeState::print( std::ostream& os ) const
+void AdjointElectronProbeState::toStream( std::ostream& os ) const
 {
   os << "Particle Type: ";
 
@@ -109,7 +122,11 @@ void AdjointElectronProbeState::print( std::ostream& os ) const
   this->printImplementation<AdjointElectronProbeState>( os );
 }
 
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( AdjointElectronProbeState );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointElectronProbeState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AdjointElectronProbeState.cpp

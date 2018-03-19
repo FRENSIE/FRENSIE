@@ -15,10 +15,15 @@
 
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
+#include "Utility_ToStringTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The electroatomic reaction type enum.
+/*! The electroatomic reaction type enum.
+ *
+ * When adding a new type the ToStringTraits methods and the serialization
+ * method must be updated.
+ */
 enum AdjointElectroatomicReactionType{
   TOTAL_ADJOINT_ELECTROATOMIC_REACTION = 1,
   BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION = 2,
@@ -72,24 +77,326 @@ enum AdjointElectroatomicReactionType{
   Q3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION = 50
 };
 
-//! Convert a AdjointElectroatomicReactionType enum to a string
-std::string convertAdjointElectroatomicReactionEnumToString(
-                              const AdjointElectroatomicReactionType reaction );
-
 //! Convert a Data::SubshellType enum to a AdjointElectroatomicReactionType enum
 AdjointElectroatomicReactionType
 convertSubshellEnumToElectroionizationAdjointElectroatomicReactionEnum(
-                                            const Data::SubshellType subshell );
+                                           const Data::SubshellType subshell );
 
-//! Stream operator for printing AdjointElectroatomicReactionType enums
-inline std::ostream& operator<<( std::ostream& os,
-                               const AdjointElectroatomicReactionType reaction )
+} // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::AdjointElectroatomicReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::AdjointElectroatomicReactionType>
 {
-  os << convertAdjointElectroatomicReactionEnumToString( reaction );
+  //! Convert a MonteCarlo::AdjointElectroatomicReactionType to a string
+  static std::string toString( const MonteCarlo::AdjointElectroatomicReactionType type );
+
+  //! Place the MonteCarlo::AdjointElectroatomicReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::AdjointElectroatomicReactionType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
+
+//! Stream operator for printing MonteCarlo::AdjointElectroatomicReactionType enums
+inline std::ostream& operator<<( std::ostream& os,
+                                 const MonteCarlo::AdjointElectroatomicReactionType reaction )
+{
+  os << Utility::toString( reaction );
   return os;
 }
 
-} // end MonteCarlo namespace
+} // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the MonteCarlo::AdjointElectroatomicReactionType enum
+template<typanem Archive>
+void serialize( Archive& archive,
+                MonteCarlo::AdjointElectroatomicReactionType type )
+{
+  if( Archive::is_saving::value )
+    archive & (int)type;
+  else
+  {
+    int raw_type;
+
+    archive & raw_type;
+
+    switch( raw_type )
+    {
+      case (int)MonteCarlo::TOTAL_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::TOTAL_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::POSITRON_ANNIHILATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::POSITRON_ANNIHILATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::L2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::L2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::L3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::L3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::M1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::M1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::M2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::M2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::M4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::M4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::M5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::M5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::N1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::N1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::N2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::N2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::N3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::N3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::N4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::N4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::N5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::N5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::N6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::N6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::N7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::N7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::O9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::O9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P4_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P5_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P6_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P7_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P8_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P9_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P10_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P10_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::P11_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::P11_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::Q1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::Q1_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::Q2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::Q2_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      case (int)MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION:
+      {
+        return MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
+        break;
+      }
+      default:
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Cannot convert the deserialized raw adjoint "
+                         "electroatomic reaction type to the "
+                         "corresponding electroatomic reaction type" );
+      }
+    }
+  }
+}
+
+} // end serialization namespace
+
+} // end boost namespace
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTROATOMIC_REACTION_TYPE_HPP
 
