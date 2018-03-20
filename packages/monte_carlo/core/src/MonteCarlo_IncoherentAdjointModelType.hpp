@@ -13,8 +13,9 @@
 #include <string>
 
 // FRENSIE Includes
-#inclue "Utility_ToStringTraits.hpp"
+#include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -70,7 +71,7 @@ namespace serialization{
 //! Serialize the MonteCarlo::IncoherentAdjointModelType enum
 template<typename Archive>
 void serialize( Archive& archive,
-                MonteCaro::IncoherentAdjointModelType& type,
+                MonteCarlo::IncoherentAdjointModelType& type,
                 const unsigned version )
 {
   if( Archive::is_saving::value )

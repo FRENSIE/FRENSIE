@@ -101,7 +101,7 @@ namespace std{
 
 //! Stream operator for printing AdjointPhotoatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
-				 const AdjointPhotoatomicReactionType reaction )
+				 const MonteCarlo::AdjointPhotoatomicReactionType reaction )
 {
   os << Utility::toString( reaction );
   return os;

@@ -55,7 +55,7 @@ std::string ToStringTraits<MonteCarlo::TwoDSamplingType>::toString( const MonteC
   case MonteCarlo::CUMULATIVE_POINTS_SAMPLING:
     return "Cumulative Points";
   default:
-    THROW_EXCEPTION( Utility::StringConversionException,
+    THROW_EXCEPTION( std::logic_error,
                      "TwoDSamplingType " << (unsigned)type <<
                      " cannot be converted to a string!" );
   }

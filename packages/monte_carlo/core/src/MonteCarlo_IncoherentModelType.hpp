@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -61,7 +62,7 @@ namespace std{
 inline std::ostream& operator<<( std::ostream& os,
                                  const MonteCarlo::IncoherentModelType incoherent_model )
 {
-  os << Utility::toString( os );
+  os << Utility::toString( incoherent_model );
   return os;
 }
 
@@ -77,7 +78,7 @@ void serialize( Archive& archive,
                 MonteCarlo::IncoherentModelType& type,
                 const unsigned version )
 {
-  if( Archvie::is_saving::value )
+  if( Archive::is_saving::value )
     archive & (int)type;
   else
   {

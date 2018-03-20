@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -112,7 +113,7 @@ void SimulationGeneralProperties::serialize( Archive& ar,
 {
   ar & BOOST_SERIALIZATION_NVP( d_particle_mode );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_histories );
-  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosing_cutoff );
+  ar & BOOST_SERIALIZATION_NVP( d_surface_flux_estimator_angle_cosine_cutoff );
   ar & BOOST_SERIALIZATION_NVP( d_display_warnings );
   ar & BOOST_SERIALIZATION_NVP( d_implicit_capture_mode_on );
   ar & BOOST_SERIALIZATION_NVP( d_number_of_batches_per_processor );

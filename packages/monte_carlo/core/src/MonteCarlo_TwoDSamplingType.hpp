@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -68,7 +69,7 @@ namespace serialization{
 //! Serialize the MonteCarlo::TwoDSamplingPolicy enum
 template<typename Archive>
 void serialize( Archive& archive,
-                MonteCarlo::TwoDSamplingPolicy& type,
+                MonteCarlo::TwoDSamplingType& type,
                 const unsigned version )
 {
   if( Archive::is_saving::value )
@@ -92,6 +93,7 @@ void serialize( Archive& archive,
                          "Cannot convert the deserialized raw two-d "
                          "sampling type to its corresponding enum value!" );
       }
+    }
   }
 }
 

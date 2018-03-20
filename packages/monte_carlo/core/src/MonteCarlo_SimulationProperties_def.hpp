@@ -107,7 +107,7 @@ inline double SimulationProperties::getMaxParticleEnergy<AdjointElectronState>()
 
 // Save/load the state to an archive
 template<typename Archive>
-void MonteCarlo::serialize( Archive& ar, const unsigned version )
+void SimulationProperties::serialize( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationGeneralProperties );
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationNeutronProperties );

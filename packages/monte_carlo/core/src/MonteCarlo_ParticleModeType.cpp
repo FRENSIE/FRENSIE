@@ -21,18 +21,18 @@ std::string ToStringTraits<MonteCarlo::ParticleModeType>::toString( const MonteC
 {
   switch( type )
   {
-  case NEUTRON_MODE: return "Neutron Mode";
-  case PHOTON_MODE: return "Photon Mode";
-  case ELECTRON_MODE: return "Electron Mode";
-  case NEUTRON_PHOTON_MODE: return "Neutron-Photon Mode";
-  case PHOTON_ELECTRON_MODE: return "Photon-Electron Mode";
-  case NEUTRON_PHOTON_ELECTRON_MODE: return "Neutron-Photon-Electron Mode";
-  case ADJOINT_NEUTRON_MODE: return "Adjoint Neutron Mode";
-  case ADJOINT_PHOTON_MODE: return "Adjoint Photon Mode";
-  case ADJOINT_ELECTRON_MODE: return "Adjoint Electron Mode";
+  case MonteCarlo::NEUTRON_MODE: return "Neutron Mode";
+  case MonteCarlo::PHOTON_MODE: return "Photon Mode";
+  case MonteCarlo::ELECTRON_MODE: return "Electron Mode";
+  case MonteCarlo::NEUTRON_PHOTON_MODE: return "Neutron-Photon Mode";
+  case MonteCarlo::PHOTON_ELECTRON_MODE: return "Photon-Electron Mode";
+  case MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE: return "Neutron-Photon-Electron Mode";
+  case MonteCarlo::ADJOINT_NEUTRON_MODE: return "Adjoint Neutron Mode";
+  case MonteCarlo::ADJOINT_PHOTON_MODE: return "Adjoint Photon Mode";
+  case MonteCarlo::ADJOINT_ELECTRON_MODE: return "Adjoint Electron Mode";
   default:
-    THROW_EXCEPTION( Utility::StringConversionException,
-		     "Error: unknown particle mode encountered!" );
+    THROW_EXCEPTION( std::logic_error,
+		     "Unknown particle mode encountered!" );
   }
 }
 

@@ -22,11 +22,11 @@ std::string ToStringTraits<MonteCarlo::BremsstrahlungAngularDistributionType>::t
 {
   switch( reaction )
   {
-  case DIPOLE_DISTRIBUTION:
+  case MonteCarlo::DIPOLE_DISTRIBUTION:
     return "Dipole Distribution";
-  case TABULAR_DISTRIBUTION:
+  case MonteCarlo::TABULAR_DISTRIBUTION:
     return "Tabular Distribution";
-  case TWOBS_DISTRIBUTION:
+  case MonteCarlo::TWOBS_DISTRIBUTION:
     return "2BS Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,

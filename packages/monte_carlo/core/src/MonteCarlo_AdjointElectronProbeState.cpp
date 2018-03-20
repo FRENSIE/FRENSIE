@@ -21,7 +21,6 @@
 #include "MonteCarlo_AdjointElectronProbeState.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
-#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -35,7 +34,7 @@ AdjointElectronProbeState::AdjointElectronProbeState()
 // Constructor
 AdjointElectronProbeState::AdjointElectronProbeState(
                        const ParticleState::historyNumberType history_number )
-  : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE, -1 ),
+  : AdjointElectronState( history_number, ADJOINT_ELECTRON, -1 ),
     d_active( false )
 { /* ... */ }
 
@@ -45,7 +44,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
                                       const bool increment_generation_number,
                                       const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-                          ADJOINT_ELECTRON_PROBE,
+                          ADJOINT_ELECTRON,
                           -1,
                           increment_generation_number,
                           reset_collision_number ),
@@ -58,7 +57,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
                             const bool increment_generation_number,
                             const bool reset_collision_number )
   : AdjointElectronState( existing_base_state,
-                          ADJOINT_ELECTRON_PROBE,
+                          ADJOINT_ELECTRON,
                           -1,
                           increment_generation_number,
                           reset_collision_number ),

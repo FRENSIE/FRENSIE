@@ -21,7 +21,6 @@
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
-#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{

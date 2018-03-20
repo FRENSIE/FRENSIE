@@ -491,8 +491,7 @@ TEUCHOS_UNIT_TEST( ParticleState, embed )
   particle.setPosition( 0.1, -10.0, sqrt(2.0) );
   particle.setDirection( 0.0, -1.0/sqrt(2.0), 1.0/sqrt(2.0) );
 
-  TEST_EQUALITY_CONST( particle.getCell(),
-                       Geometry::ModuleTraits::invalid_internal_cell_handle );
+  TEST_EQUALITY_CONST( particle.getCell(), 0 );
 
   // Embed the particle in a model
   std::shared_ptr<Geometry::InfiniteMediumModel>
@@ -514,8 +513,7 @@ TEUCHOS_UNIT_TEST( ParticleState, embed )
   // Extract the particle from the model
   particle.extractFromModel();
 
-  TEST_EQUALITY_CONST( particle.getCell(),
-                       Geometry::ModuleTraits::invalid_internal_cell_handle );
+  TEST_EQUALITY_CONST( particle.getCell(), 0 );
 
   // Embed the particle in a model with the cell specified
   model.reset( new Geometry::InfiniteMediumModel( 3 ) );
@@ -612,8 +610,7 @@ TEUCHOS_UNIT_TEST( ParticleState, archive )
 
   TEST_EQUALITY_CONST( loaded_particle.getSourceId(), 10 );
   TEST_EQUALITY_CONST( loaded_particle.getSourceCell(), 1 );
-  TEST_EQUALITY_CONST( loaded_particle.getCell(),
-                       Geometry::ModuleTraits::invalid_internal_cell_handle );
+  TEST_EQUALITY_CONST( loaded_particle.getCell(), 0 );
   TEST_EQUALITY_CONST( loaded_particle.getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( loaded_particle.getZPosition(), 1.0 );

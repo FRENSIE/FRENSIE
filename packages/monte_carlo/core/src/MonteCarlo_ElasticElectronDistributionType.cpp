@@ -22,15 +22,15 @@ std::string ToStringTraits<MonteCarlo::ElasticElectronDistributionType>::toStrin
 {
   switch( reaction )
   {
-  case COUPLED_DISTRIBUTION:
+  case MonteCarlo::COUPLED_DISTRIBUTION:
     return "Coupled Distribution";
-  case DECOUPLED_DISTRIBUTION:
+  case MonteCarlo::DECOUPLED_DISTRIBUTION:
     return "Decoupled Distribution";
-  case HYBRID_DISTRIBUTION:
+  case MonteCarlo::HYBRID_DISTRIBUTION:
     return "Hybrid Distribution";
-  case CUTOFF_DISTRIBUTION:
+  case MonteCarlo::CUTOFF_DISTRIBUTION:
     return "Cutoff Distribution";
-  case SCREENED_RUTHERFORD_DISTRIBUTION:
+  case MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION:
     return "Screened Rutherford Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
@@ -47,15 +47,15 @@ void ToStringTraits<MonteCarlo::ElasticElectronDistributionType>::toStream( std:
 
 // Convert a MonteCarlo::CoupledElasticSamplingMethod to a string
 std::string ToStringTraits<MonteCarlo::CoupledElasticSamplingMethod>::toString(
-                                    const CoupledElasticSamplingMethod method )
+                        const MonteCarlo::CoupledElasticSamplingMethod method )
 {
   switch( method )
   {
-  case ONE_D_UNION:
+  case MonteCarlo::ONE_D_UNION:
     return "One D Union";
-  case TWO_D_UNION:
+  case MonteCarlo::TWO_D_UNION:
     return "Two D Union";
-  case SIMPLIFIED_UNION:
+  case MonteCarlo::SIMPLIFIED_UNION:
     return "Simplified Union";
   default:
     THROW_EXCEPTION( std::logic_error,

@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{

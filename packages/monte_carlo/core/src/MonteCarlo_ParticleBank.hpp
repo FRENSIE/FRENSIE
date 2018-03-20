@@ -25,7 +25,6 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
 
 namespace MonteCarlo{
 

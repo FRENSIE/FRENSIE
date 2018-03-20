@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 

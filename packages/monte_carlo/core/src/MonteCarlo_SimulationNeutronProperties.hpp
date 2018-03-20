@@ -9,8 +9,13 @@
 #ifndef MONTE_CARLO_SIMULATION_NEUTRON_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_NEUTRON_PROPERTIES_HPP
 
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/export.hpp>
+
 // FRENSIE Includes
-#include "MonteCarlo_ParticleModeType.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -65,6 +70,13 @@ public:
   
 private:
 
+  // Save/load the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The absolute minimum neutron energy (MeV)
   static const double s_absolute_min_neutron_energy;
 
@@ -86,7 +98,22 @@ private:
   bool d_unresolved_resonance_probability_table_mode_on;
 };
 
+// Save/load the state to an archive
+template<typename Archive>
+void SimulationNeutronProperties::serialize( Archive& ar,
+                                             const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_min_neutron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_max_neutron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_free_gas_threshold );
+  ar & BOOST_SERIALIZATION_NVP( d_unresolved_resonance_probability_table_mode_on );
+}
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::SimulationNeutronProperties, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationNeutronProperties, "SimulationNeutronProperties" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationNeutronProperties );
 
 #endif // end MONTE_CARLO_SIMULATION_NEUTRON_PROPERTIES_HPP
 

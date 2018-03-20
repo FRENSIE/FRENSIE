@@ -35,7 +35,7 @@ std::string ToStringTraits<MonteCarlo::IncoherentModelType>::toString( const Mon
   case MonteCarlo::FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL:
     return "FP Doppler Broadened Impulse Model";
   default:
-    THROW_EXCEPTION( Utility::StringConversionException,
+    THROW_EXCEPTION( std::logic_error,
 		     "Unknown incoherent model encountered!" );
   }
 }

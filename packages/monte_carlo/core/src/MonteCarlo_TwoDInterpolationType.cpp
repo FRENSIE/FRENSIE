@@ -75,7 +75,7 @@ std::string ToStringTraits<MonteCarlo::TwoDInterpolationType>::toString( const M
   case MonteCarlo::LOGLOGLOG_INTERPOLATION:
     return "Log-Log-Log";
   default:
-    THROW_EXCEPTION( Utility::StringConversionException,
+    THROW_EXCEPTION( std::logic_error,
                      "TwoDInterpolationType " << (unsigned)type <<
                      " cannot be converted to a string!" );
   }

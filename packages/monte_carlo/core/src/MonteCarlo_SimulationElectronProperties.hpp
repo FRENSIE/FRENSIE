@@ -20,6 +20,7 @@
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_TwoDInterpolationType.hpp"
 #include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -233,7 +234,8 @@ private:
 
 // Save/load the state to an archive
 template<typename Archive>
-void serialize( Archive& ar, const unsigned version )
+void SimulationElectronProperties::serialize( Archive& ar,
+                                              const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_min_electron_energy );
   ar & BOOST_SERIALIZATION_NVP( d_max_electron_energy );

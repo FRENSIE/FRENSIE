@@ -24,18 +24,18 @@ std::string ToStringTraits<MonteCarlo::IncoherentAdjointModelType>::toString( co
     return "Waller-Hartree Adjoint Model" ;
   case MonteCarlo::IMPULSE_INCOHERENT_ADJOINT_MODEL:
     return "Impulse Adjoint Model";
-  case MonteCaro::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
+  case MonteCarlo::DB_IMPULSE_INCOHERENT_ADJOINT_MODEL:
     return "Doppler Broadened Impulse Adjoint Model";
   default:
   {
-    THROW_EXCEPTION( Utility::StringConversionException,
+    THROW_EXCEPTION( std::logic_error,
                      "Unkown incoherent adjoint model encountered!" );
   }
   }
 }
 
 // Place the MonteCarlo:: in a stream
-void ToStringTraits<MonteCarlo::IncoherentAdjointModelType>toStream( std::ostream& os, const MonteCarlo::IncoherentAdjointModelType type )
+void ToStringTraits<MonteCarlo::IncoherentAdjointModelType>::toStream( std::ostream& os, const MonteCarlo::IncoherentAdjointModelType type )
 {
   os << ToStringTraits<MonteCarlo::IncoherentAdjointModelType>::toString( type );
 }

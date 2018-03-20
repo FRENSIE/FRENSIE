@@ -10,160 +10,242 @@
 #include <iostream>
 #include <sstream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Test that particle type names are valid
-TEUCHOS_UNIT_TEST( ParticleType, isValidParticleTypeName )
-{
-  TEST_ASSERT( MonteCarlo::isValidParticleTypeName( "Neutron" ) );
-  TEST_ASSERT( MonteCarlo::isValidParticleTypeName( "Photon" ) );
-  TEST_ASSERT( MonteCarlo::isValidParticleTypeName( "Electron" ) );
-  TEST_ASSERT( MonteCarlo::isValidParticleTypeName( "Adjoint Neutron" ) );
-  TEST_ASSERT( MonteCarlo::isValidParticleTypeName( "Adjoint Photon" ) );
-  TEST_ASSERT( MonteCarlo::isValidParticleTypeName( "Adjoint Electron" ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a particle type name can be converted to an enum
-TEUCHOS_UNIT_TEST( ParticleType, convertParticleTypeNameToParticleTypeEnum )
-{
-  MonteCarlo::ParticleType type =
-    MonteCarlo::convertParticleTypeNameToParticleTypeEnum( "Neutron" );
-
-  TEST_EQUALITY_CONST( type, MonteCarlo::NEUTRON );
-
-  type = MonteCarlo::convertParticleTypeNameToParticleTypeEnum( "Photon" );
-
-  TEST_EQUALITY_CONST( type, MonteCarlo::PHOTON );
-
-  type = MonteCarlo::convertParticleTypeNameToParticleTypeEnum( "Electron" );
-
-  TEST_EQUALITY_CONST( type, MonteCarlo::ELECTRON );
-
-  type = MonteCarlo::convertParticleTypeNameToParticleTypeEnum( "Adjoint Neutron" );
-
-  TEST_EQUALITY_CONST( type, MonteCarlo::ADJOINT_NEUTRON );
-
-  type = MonteCarlo::convertParticleTypeNameToParticleTypeEnum( "Adjoint Photon" );
-
-  TEST_EQUALITY_CONST( type, MonteCarlo::ADJOINT_PHOTON );
-
-  type = MonteCarlo::convertParticleTypeNameToParticleTypeEnum( "Adjoint Electron" );
-
-  TEST_EQUALITY_CONST( type, MonteCarlo::ADJOINT_ELECTRON );
-}
-
-//---------------------------------------------------------------------------//
 // Check that a geometry particle type can be converted to an enum
-TEUCHOS_UNIT_TEST( ParticleType,
+FRENSIE_UNIT_TEST( ParticleType,
                    convertGeometryParticleTypeEnumToParticleTypeEnum )
 {
   MonteCarlo::ParticleType type =
     MonteCarlo::convertGeometryParticleTypeEnumToParticleTypeEnum( Geometry::NEUTRON );
 
-  TEST_EQUALITY_CONST( type, MonteCarlo::NEUTRON );
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::NEUTRON );
 
   type = MonteCarlo::convertGeometryParticleTypeEnumToParticleTypeEnum( Geometry::PHOTON );
 
-  TEST_EQUALITY_CONST( type, MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::PHOTON );
 
   type = MonteCarlo::convertGeometryParticleTypeEnumToParticleTypeEnum( Geometry::ELECTRON );
 
-  TEST_EQUALITY_CONST( type, MonteCarlo::ELECTRON );
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ELECTRON );
 
   type = MonteCarlo::convertGeometryParticleTypeEnumToParticleTypeEnum( Geometry::ADJOINT_NEUTRON );
 
-  TEST_EQUALITY_CONST( type, MonteCarlo::ADJOINT_NEUTRON );
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ADJOINT_NEUTRON );
 
   type = MonteCarlo::convertGeometryParticleTypeEnumToParticleTypeEnum( Geometry::ADJOINT_PHOTON );
 
-  TEST_EQUALITY_CONST( type, MonteCarlo::ADJOINT_PHOTON );
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ADJOINT_PHOTON );
 
   type = MonteCarlo::convertGeometryParticleTypeEnumToParticleTypeEnum( Geometry::ADJOINT_ELECTRON );
 
-  TEST_EQUALITY_CONST( type, MonteCarlo::ADJOINT_ELECTRON );
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ADJOINT_ELECTRON );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a short particle type name can be convert to a particle type enum
+FRENSIE_UNIT_TEST( ParticleType,
+                   convertShortParticleTypeNameToParticleTypeEnum )
+{
+  MonteCarlo::ParticleType type =
+    MonteCarlo::convertShortParticleTypeNameToParticleTypeEnum( "n" );
+
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::NEUTRON );
+
+  type = MonteCarlo::convertShortParticleTypeNameToParticleTypeEnum( "p" );
+
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::PHOTON );
+
+  type = MonteCarlo::convertShortParticleTypeNameToParticleTypeEnum( "e" );
+
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ELECTRON );
+
+  type = MonteCarlo::convertShortParticleTypeNameToParticleTypeEnum( "e+" );
+
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::POSITRON );
+
+  type = MonteCarlo::convertShortParticleTypeNameToParticleTypeEnum( "an" );
+
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ADJOINT_NEUTRON );
+
+  type = MonteCarlo::convertShortParticleTypeNameToParticleTypeEnum( "ap" );
+
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ADJOINT_PHOTON );
+
+  type = MonteCarlo::convertShortParticleTypeNameToParticleTypeEnum( "ae" );
+
+  FRENSIE_CHECK_EQUAL( type, MonteCarlo::ADJOINT_ELECTRON );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a particle type enum can be converted to a string
-TEUCHOS_UNIT_TEST( ParticleType, convertParticleTypeEnumToString )
+FRENSIE_UNIT_TEST( ParticleType, toString )
 {
-  std::string type = MonteCarlo::convertParticleTypeEnumToString( MonteCarlo::NEUTRON );
+  std::string type = Utility::toString( MonteCarlo::NEUTRON );
 
-  TEST_EQUALITY_CONST( type, "Neutron" );
+  FRENSIE_CHECK_EQUAL( type, "Neutron" );
 
-  type = MonteCarlo::convertParticleTypeEnumToString( MonteCarlo::PHOTON );
+  type = Utility::toString( MonteCarlo::PHOTON );
 
-  TEST_EQUALITY_CONST( type, "Photon" );
+  FRENSIE_CHECK_EQUAL( type, "Photon" );
 
-  type = MonteCarlo::convertParticleTypeEnumToString( MonteCarlo::ELECTRON );
+  type = Utility::toString( MonteCarlo::ELECTRON );
 
-  TEST_EQUALITY_CONST( type, "Electron" );
+  FRENSIE_CHECK_EQUAL( type, "Electron" );
 
-  type = MonteCarlo::convertParticleTypeEnumToString( MonteCarlo::ADJOINT_NEUTRON );
+  type = Utility::toString( MonteCarlo::ADJOINT_NEUTRON );
 
-  TEST_EQUALITY_CONST( type, "Adjoint Neutron" );
+  FRENSIE_CHECK_EQUAL( type, "Adjoint Neutron" );
 
-  type = MonteCarlo::convertParticleTypeEnumToString( MonteCarlo::ADJOINT_PHOTON );
+  type = Utility::toString( MonteCarlo::ADJOINT_PHOTON );
 
-  TEST_EQUALITY_CONST( type, "Adjoint Photon" );
+  FRENSIE_CHECK_EQUAL( type, "Adjoint Photon" );
 
-  type = MonteCarlo::convertParticleTypeEnumToString( MonteCarlo::ADJOINT_ELECTRON );
+  type = Utility::toString( MonteCarlo::ADJOINT_ELECTRON );
 
-  TEST_EQUALITY_CONST( type, "Adjoint Electron" );
+  FRENSIE_CHECK_EQUAL( type, "Adjoint Electron" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a particle type enum can be placed in a stream
-TEUCHOS_UNIT_TEST( ParticleTYpe, stream_operator )
+FRENSIE_UNIT_TEST( ParticleTYpe, stream_operator )
 {
   std::ostringstream oss;
   oss << MonteCarlo::NEUTRON;
 
-  TEST_EQUALITY_CONST( oss.str(), "Neutron" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Neutron" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::PHOTON;
 
-  TEST_EQUALITY_CONST( oss.str(), "Photon" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Photon" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::ELECTRON;
 
-  TEST_EQUALITY_CONST( oss.str(), "Electron" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Electron" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::ADJOINT_NEUTRON;
 
-  TEST_EQUALITY_CONST( oss.str(), "Adjoint Neutron" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Adjoint Neutron" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::ADJOINT_PHOTON;
 
-  TEST_EQUALITY_CONST( oss.str(), "Adjoint Photon" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Adjoint Photon" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::ADJOINT_ELECTRON;
 
-  TEST_EQUALITY_CONST( oss.str(), "Adjoint Electron" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Adjoint Electron" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a ParticleType can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleType, archive, TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_particle_type" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::ParticleType type_1 = MonteCarlo::PHOTON;
+    MonteCarlo::ParticleType type_2 = MonteCarlo::NEUTRON;
+    MonteCarlo::ParticleType type_3 = MonteCarlo::ELECTRON;
+    MonteCarlo::ParticleType type_4 = MonteCarlo::POSITRON;
+    MonteCarlo::ParticleType type_5 = MonteCarlo::ADJOINT_PHOTON;
+    MonteCarlo::ParticleType type_6 = MonteCarlo::ADJOINT_NEUTRON;
+    MonteCarlo::ParticleType type_7 = MonteCarlo::ADJOINT_ELECTRON;
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_3 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_4 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_5 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_6 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_7 ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::ParticleType type_1;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+  FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::PHOTON );
+
+  MonteCarlo::ParticleType type_2;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::NEUTRON );
+
+  MonteCarlo::ParticleType type_3;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::ELECTRON );
+
+  MonteCarlo::ParticleType type_4;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
+  FRENSIE_CHECK_EQUAL( type_4, MonteCarlo::POSITRON );
+
+  MonteCarlo::ParticleType type_5;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
+  FRENSIE_CHECK_EQUAL( type_5, MonteCarlo::ADJOINT_PHOTON );
+
+  MonteCarlo::ParticleType type_6;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_6 ) );
+  FRENSIE_CHECK_EQUAL( type_6, MonteCarlo::ADJOINT_NEUTRON );
+
+  MonteCarlo::ParticleType type_7;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_7 ) );
+  FRENSIE_CHECK_EQUAL( type_7, MonteCarlo::ADJOINT_ELECTRON );
 }
 
 //---------------------------------------------------------------------------//

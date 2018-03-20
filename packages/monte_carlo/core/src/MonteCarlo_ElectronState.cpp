@@ -22,7 +22,6 @@
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -82,7 +81,7 @@ void ElectronState::toStream( std::ostream& os ) const
   this->printImplementation<ElectronState>( os );
 }
 
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ParticleState );
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ElectronState );
 
 } // end MonteCarlo namespace
 
