@@ -146,31 +146,11 @@ void serialize( Archive& archive,
 
     switch( raw_file_type )
     {
-      case (int)Data::ElectroatomicDataProperties::ACE_FILE:
-      {
-        file_type = Data::ElectroatomicDataProperties::ACE_FILE;
-        break;
-      }
-      case (int)Data::ElectroatomicDataProperties::ACE_EPR_FILE:
-      {
-        file_type = Data::ElectroatomicDataProperties::ACE_EPR_FILE;
-        break;
-      }
-      case (int)Data::ElectroatomicDataProperties::Native_ENDL_FILE:
-      {
-        return Data::ElectroatomicDataProperties::Native_ENDL_FILE;
-        break;
-      }
-      case (int)Data::ElectroatomicDataProperties::Native_Moment_Preserving_FILE:
-      {
-        return Data::ElectroatomicDataProperties::Native_Moment_Preserving_FILE;
-        break;
-      }
-      case (int)Data::ElectroatomicDataProperties::Native_EPR_FILE:
-      {
-        file_type = Data::ElectroatomicDataProperties::Native_EPR_FILE;
-        break;
-      }
+      BOOST_SERIALIZATION_ENUM_CASE( Data::ElectroatomicDataProperties::ACE_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::ElectroatomicDataProperties::ACE_EPR_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::ElectroatomicDataProperties::Native_ENDL_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::ElectroatomicDataProperties::Native_Moment_Preserving_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::ElectroatomicDataProperties::Native_EPR_FILE, int, file_type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

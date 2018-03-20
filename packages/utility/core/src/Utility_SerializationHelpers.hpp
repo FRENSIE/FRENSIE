@@ -480,6 +480,18 @@ namespace extra_detail{ \
 #define BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ... )  \
   const auto& __guid_initializer__ = boost::archive::detail::extra_detail::init_guid<__VA_ARGS__>::g
 
+/*! Deserialize an enum within a case statement
+ *
+ * This macro can be used to help deserialize an enum value. This macro call
+ * replaces the normal case statement within a switch block for a specific
+ * enum value.
+ * \ingroup boost_serialization_helpers
+ */
+#define BOOST_SERIALIZATION_ENUM_CASE( enum_value, RawEnumType, deserialized_value ) \
+  case (RawEnumType)enum_value:                                         \
+    deserialized_value = enum_value;                                      \
+    break
+
 #endif // end UTILITY_SERIALIZATION_HELPERS_HPP
 
 //---------------------------------------------------------------------------//

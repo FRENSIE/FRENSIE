@@ -159,11 +159,7 @@ void serialize( Archive& archive,
 
     switch( raw_file_type )
     {
-      case (int)Data::AdjointNuclearDataProperties::Native_FILE:
-      {
-        file_type = Data::AdjointNuclearDataProperties::Native_FILE;
-        break;
-      }
+      BOOST_SERIALIZATION_ENUM_CASE( Data::AdjointNuclearDataProperties::Native_FILE, int, file_type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

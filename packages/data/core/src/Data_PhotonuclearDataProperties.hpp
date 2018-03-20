@@ -149,11 +149,7 @@ void serialize( Archive& archive,
 
     switch( raw_file_type )
     {
-      case (int)Data::PhotonuclearDataProperties::ACE_FILE:
-      {
-        file_type = Data::PhotonuclearDataProperties::ACE_FILE;
-        break;
-      }
+      BOOST_SERIALIZATION_ENUM_CASE( Data::PhotonuclearDataProperties::ACE_FILE, int, file_type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

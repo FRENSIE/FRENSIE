@@ -139,11 +139,7 @@ void serialize( Archive& archive,
 
     switch( raw_file_type )
     {
-      case (int)Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE:
-      {
-        file_type = Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE;
-        break;
-      }
+      BOOST_SERIALIZATION_ENUM_CASE( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, int, file_type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

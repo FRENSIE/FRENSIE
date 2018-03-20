@@ -14,11 +14,11 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace MonteCarlo{
+namespace Utility{
 
-// Convert a BremsstrahlungAngularDistributionType enum to a string
-std::string convertBremsstrahlungAngularDistributionEnumToString(
-                       const BremsstrahlungAngularDistributionType reaction )
+// Convert a MonteCarlo::BremsstrahlungAngularDistributionType to a string
+std::string ToStringTraits<MonteCarlo::BremsstrahlungAngularDistributionType>::toString(
+             const MonteCarlo::BremsstrahlungAngularDistributionType reaction )
 {
   switch( reaction )
   {
@@ -30,12 +30,18 @@ std::string convertBremsstrahlungAngularDistributionEnumToString(
     return "2BS Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the Bremsstrahlung angular "
-                     "distribution type to a string!" );
+                     "Cannot convert the Bremsstrahlung angular distribution "
+                     "type to a string!" );
   }
 }
 
-} // end MonteCarlo namespace
+// Place the MonteCarlo::BremsstrahlungAngularDistributionType in a stream
+void ToStringTraits<MonteCarlo::BremsstrahlungAngularDistributionType>::toStream( std::ostream& os, const MonteCarlo::BremsstrahlungAngularDistributionType type )
+{
+  os << ToStringTraits<MonteCarlo::BremsstrahlungAngularDistributionType>::toString( type );
+}
+
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BremsstrahlungAngularDistributionType.cpp
