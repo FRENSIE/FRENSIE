@@ -25,18 +25,18 @@ struct GaussKronrodQuadratureSetTraits
 {
   //! Valid rule
   static const bool valid_rule = false;
-  
+
   //! Gauss quadrature weights
   static const std::vector<FloatType> gauss_weights;
-  
-  //! Kronrad quadrature weights
+
+  //! Kronrod quadrature weights
   static const std::vector<FloatType> kronrod_weights;
-  
-  //! Kronrad quadrature abscissae
+
+  //! Kronrod quadrature abscissae
   static const std::vector<FloatType> kronrod_abscissae;
-  
+
 private:
-  
+
   // Initialize the gauss weight array
   static inline std::vector<FloatType> initializeGaussWeights()
   { return std::vector<FloatType>(); }

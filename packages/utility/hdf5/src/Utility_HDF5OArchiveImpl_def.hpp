@@ -123,9 +123,9 @@ inline void HDF5OArchiveImpl<Archive>::save_override(
                         const boost::serialization::nvp<T>& t )
 {
   this->save_start( t.name() );
-  
+
   this->saveIntercept(t.const_value(), typename std::conditional<IsTuple<T>::value && Utility::HDF5TypeTraits<T>::IsSpecialized::value,std::true_type,std::false_type>::type());
-  
+
   this->save_end( t.name() );
 }
 
@@ -244,22 +244,22 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save( const wchar_t& t )
 {
   THROW_HDF5_ARCHIVE_EXCEPTION( "Wide chars are not currently supported!" );
-} 
+}
 
 // Save a wide string
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save( const std::wstring& t )
 {
   THROW_HDF5_ARCHIVE_EXCEPTION( "Wide strings are not currently supported!" );
-} 
+}
 
-// Save a bost::serialization::collection_size_type
+// Save a boost::serialization::collection_size_type
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save(
                           const boost::serialization::collection_size_type& t )
 {
   size_t collection_size = t;
-  
+
   this->save( collection_size );
 }
 
@@ -367,7 +367,7 @@ void HDF5OArchiveImpl<Archive>::startHDF5Group( const char* group_name )
   d_group_stack.push_back( full_group_name.str() );
 
   this->createGroup( this->getTreeObjectPath() );
-  
+
   ++d_group_count;
 }
 
@@ -428,7 +428,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::linkTrackedObject( unsigned object )
 {
   const std::string link_path = this->getTrackedObjectsPath( object );
-  
+
   const std::string object_path = this->getTreeObjectPath();
 
   try{
@@ -448,7 +448,7 @@ void HDF5OArchiveImpl<Archive>::linkTrackedObjectReference( unsigned object_refe
   link_path << this->getTreeObjectPath()
               << "/<reference>_o"
               << object_reference;
-  
+
   const std::string object_path =
     this->getTrackedObjectsPath( object_reference );
 
@@ -469,11 +469,11 @@ void HDF5OArchiveImpl<Archive>::linkDataAndUpdateObjectCount()
 
   ++d_object_count;
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_HDF5_OARCHIVE_IMPL_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Uitlity_HDF5OArchiveImpl_def.hpp
+// end Utility_HDF5OArchiveImpl_def.hpp
 //---------------------------------------------------------------------------//

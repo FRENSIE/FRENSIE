@@ -16,13 +16,13 @@
 namespace Utility{
 
 /*! The interpolated tabular bivariate dist. base implementation class
- * 
- * Distribution must be either the 
+ *
+ * Distribution must be either the
  * Utility::PartiallyTabularBasicBivariateDistribution
- * or the Utility::FullyTabularBasicBivariateDistribution. This intermediate 
+ * or the Utility::FullyTabularBasicBivariateDistribution. This intermediate
  * base class implements methods that are required by both the branches of the
- * inheritance tree and differ only in the UnivariateDistribution base class 
- * that they operate on (either the Utility::UnivariateDistribution or the 
+ * inheritance tree and differ only in the UnivariateDistribution base class
+ * that they operate on (either the Utility::UnivariateDistribution or the
  * Utility::TabularUnivariateDistribution respectively).
  */
 template<typename TwoDGridPolicy,
@@ -32,19 +32,19 @@ class UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase : public Di
 
   // Typedef for this type
   typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,Distribution> ThisType;
-  
+
 protected:
-  
+
   //! The parent distribution type
   typedef Distribution BaseType;
 
-  //! Typedef for QuantityTrais<double>
+  //! Typedef for QuantityTraits<double>
   typedef typename BaseType::QT QT;
 
   //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename BaseType::PIQT PIQT;
 
-  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename BaseType::SIQT SIQT;
 
   //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -72,7 +72,7 @@ public:
 
   //! The base univariate distribution type
   typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
-  
+
   //! Constructor
   UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
@@ -232,7 +232,7 @@ private:
   // The evaluation error tol
   double d_error_tol;
 };
-  
+
 } // end Utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS2( UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase, Utility );

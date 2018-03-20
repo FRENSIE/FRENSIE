@@ -22,7 +22,7 @@ struct BasicFancyTextOStreamBackend<CharT>::Implementation
   //! Type of the container that holds all aggregated streams
   typedef std::vector<boost::shared_ptr<stream_type> > OStreamSequence;
 
-  //! Type of the container that holds all dynamic fomatting functions
+  //! Type of the container that holds all dynamic formatting functions
   typedef std::vector<DynamicFormattingFunction> DynamicFormattingFunctionSequence;
 
   // The output stream list
@@ -124,7 +124,7 @@ void BasicFancyTextOStreamBackend<CharT>::consume(
       if( d_impl->auto_flush )
         os_ptr->flush();
     }
-    
+
     ++os_it;
   }
 }
@@ -144,7 +144,7 @@ void BasicFancyTextOStreamBackend<CharT>::flush()
 
     if( os_ptr->good() )
       os_ptr->flush();
-    
+
     ++it;
   }
 }
@@ -164,7 +164,7 @@ template class BasicFancyTextOStreamBackend<char>;
 #ifdef BOOST_LOG_USE_WHCAR_T
 template class BasicFancyTextOStreamBackend<wchar_t>;
 #endif
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

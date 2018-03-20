@@ -48,17 +48,17 @@ ACEThermalNuclearDataProperties::ACEThermalNuclearDataProperties(
 {
   // Make sure that there is at least one zaid specified
   testPrecondition( !zaids.empty() );
-  // Make sure that the evaulation temp is valid
+  // Make sure that the evaluation temp is valid
   testPrecondition( evaluation_temp >= 0.0*Utility::Units::MeV );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
-  
+
   // Convert to the preferred path format
   d_file_path.make_preferred();
 
   // Extract the table name components
   char table_type_key;
-  
+
   ACETableName::splitTableNameIntoComponents( file_table_name,
                                               d_name,
                                               d_file_version,
@@ -162,7 +162,7 @@ void ACEThermalNuclearDataProperties::save( Archive& ar, const unsigned version 
   ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
 
   std::string raw_path = d_file_path.string();
-  
+
   ar & BOOST_SERIALIZATION_NVP( raw_path );
   ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
   ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
@@ -186,7 +186,7 @@ void ACEThermalNuclearDataProperties::load( Archive& ar, const unsigned version 
 
   d_file_path = raw_path;
   d_file_path.make_preferred();
-  
+
   ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
   ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
   ar & BOOST_SERIALIZATION_NVP( d_name );
@@ -194,7 +194,7 @@ void ACEThermalNuclearDataProperties::load( Archive& ar, const unsigned version 
 }
 
 EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACEThermalNuclearDataProperties );
-  
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ACEThermalNuclearDataProperties, Data );

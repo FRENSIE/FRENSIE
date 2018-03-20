@@ -80,7 +80,7 @@ public:
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const override;
 
-  //! Evaulate the CDF
+  //! Evaluate the CDF
   double evaluateCDF( const IndepQuantity indep_var_value ) const override;
 
   //! Return a random sample from the corresponding CDF
@@ -136,7 +136,7 @@ protected:
   template<typename InputIndepQuantity>
   static InputIndepQuantity getDefaultLocation()
   { return QuantityTraits<InputIndepQuantity>::zero(); }
-  
+
   //! Get the default constant multiplier
   template<typename InputDepQuantity>
   static InputDepQuantity getDefaultMultiplier()
@@ -147,7 +147,7 @@ private:
   // Verify that the shape parameters are valid
   static void verifyValidShapeParameters( const IndepQuantity& location,
                                           const DepQuantity& multiplier );
-  
+
   // Save the distribution to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;

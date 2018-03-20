@@ -10,7 +10,6 @@
 #include <limits>
 
 // Boost Includes
-#include <boost/serialization/array_wrapper.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
@@ -68,7 +67,7 @@ PointLocation InfiniteMediumNavigator::getPointLocation(
   else
     return POINT_OUTSIDE_CELL;
 }
-  
+
 // Get the surface normal at a point on the surface
 /*! \details An infinite medium has no surface. A normal of (0,0,1) will
  * always be returned.
@@ -101,7 +100,7 @@ auto InfiniteMediumNavigator::findCellContainingRay(
 {
   return d_cell;
 }
-  
+
 // Check if an internal ray has been set
 bool InfiniteMediumNavigator::isStateSet() const
 {
@@ -233,10 +232,10 @@ void InfiniteMediumNavigator::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
-  
+
   // Save the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cell );
-  
+
   ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
   ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
 }
@@ -247,7 +246,7 @@ void InfiniteMediumNavigator::load( Archive& ar, const unsigned version )
 {
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
-  
+
   // Load the local member data
   ar & BOOST_SERIALIZATION_NVP( d_cell );
 
@@ -255,19 +254,19 @@ void InfiniteMediumNavigator::load( Archive& ar, const unsigned version )
   // for extra safety
   if( !d_position )
     d_position = new Length[3];
-  
+
   ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
 
   // The direction array should always be initialized - this check is added
   // for extra safety
   if( !d_direction )
     d_direction = new double[3];
-  
+
   ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
 }
 
 EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumNavigator );
-  
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( InfiniteMediumNavigator, Geometry );

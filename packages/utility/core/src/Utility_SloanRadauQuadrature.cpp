@@ -249,7 +249,7 @@ std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
   // Make sure weights are valid
   if ( sum_of_weights > long_float(1) )
     FRENSIE_LOG_WARNING( "non-physical weight!" );
-  
+
   // Calculate the weight of the Mu = 1 node
   weights[weights.size()-1] = long_float(1) - sum_of_weights;
 }
@@ -343,7 +343,7 @@ void SloanRadauQuadrature::getLongRadauMoments(
   // Make sure the zeroth legendre moment is included
   testPrecondition( d_legendre_expansion_moments[0] == 1.0 );
 */
-  // Get the coefficients of Guass moments
+  // Get the coefficients of Gauss moments
   std::vector<std::vector<long_float> > coefficients;
   this->shapeTwoDArray( coefficients,
                         number_of_moments+1,

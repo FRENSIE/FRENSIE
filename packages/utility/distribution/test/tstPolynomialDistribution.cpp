@@ -429,7 +429,7 @@ FRENSIE_UNIT_TEST( PolynomialDistribution, isCompatibleWithInterpType )
 }
 
 //---------------------------------------------------------------------------//
-// Check if the unit-aware distribution is compatiblw with the interp type
+// Check if the unit-aware distribution is compatible with the interp type
 FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution,
                    isCompatibleWithInterpType )
 {
@@ -470,7 +470,7 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution,
 FRENSIE_UNIT_TEST( PolynomialDistribution, ostream_operator )
 {
   std::ostringstream oss;
-  
+
   oss << Utility::PolynomialDistribution();
 
   Utility::VariantMap dist_data =
@@ -504,7 +504,7 @@ FRENSIE_UNIT_TEST( PolynomialDistribution, ostream_operator )
 
   oss.str( "" );
   oss.clear();
-  
+
   oss << Utility::PolynomialDistribution( {0.0, 1.0, 0.0, 1.0}, 1.0, 2.0 );
 
   dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
@@ -591,7 +591,7 @@ FRENSIE_UNIT_TEST( UnitAwarePolynomialDistribution, ostream_operator )
 
   oss.str( "" );
   oss.clear();
-  
+
   oss << Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount>( {0.0, 1.0, 0.0, 1.0}, 1.0*MeV, 2.0*MeV );
 
   dist_data = Utility::fromString<Utility::VariantMap>( oss.str() );
@@ -651,7 +651,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PolynomialDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_polynomial_dist" );
   std::ostringstream archive_ostream;
 
@@ -701,7 +701,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePolynomialDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_unit_aware_polynomial_dist" );
   std::ostringstream archive_ostream;
 
@@ -710,7 +710,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePolynomialDistribution,
     std::unique_ptr<OArchive> oarchive;
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
-    
+
     Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> dist_a( {3.0, 2.0, 1.0}, 1.0*MeV, 2.0*MeV );
 
     FRENSIE_REQUIRE_NO_THROW(
@@ -720,12 +720,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePolynomialDistribution,
 
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
-  
+
   // Load the archived distributions
   std::unique_ptr<IArchive> iarchive;
 
   createIArchive( archive_istream, iarchive );
-  
+
   Utility::UnitAwarePolynomialDistribution<MegaElectronVolt,si::amount> dist_a;
 
   FRENSIE_REQUIRE_NO_THROW(
@@ -755,7 +755,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwarePolynomialDistribution,
   typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
   typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
   typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_PropertyTreeConversionFactory.hpp
-//! \author Alex Robison
+//! \author Alex Robinson
 //! \brief  Property tree conversion factory class declaration
 //!
 //---------------------------------------------------------------------------//
@@ -84,7 +84,7 @@ private:
   typedef std::map<std::string,std::string> ConverterAliasMap;
   ConverterAliasMap d_converter_aliases;
 };
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_PROPERTY_TREE_CONVERSION_FACTORY_HPP

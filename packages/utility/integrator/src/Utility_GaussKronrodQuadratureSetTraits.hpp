@@ -25,24 +25,24 @@ struct GaussKronrodQuadratureSetTraits<15,FloatType,typename boost::enable_if<Is
 {
   // Valid rule
   static const bool valid_rule = true;
-  
+
   // Gauss quadrature weights
   static const std::vector<FloatType> gauss_weights;
-  
-  // Kronrad quadrature weights
+
+  // Kronrod quadrature weights
   static const std::vector<FloatType> kronrod_weights;
-  
-  // Kronrad quadrature abscissae
+
+  // Kronrod quadrature abscissae
   static const std::vector<FloatType> kronrod_abscissae;
-  
+
 private:
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeGaussWeights();
-  
+
   // Initialize the kronrod weight array
   static std::vector<FloatType> initializeKronrodWeights();
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeKronrodAbscissae();
 };
@@ -53,24 +53,24 @@ struct GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<Is
 {
   // Valid rule
   static const bool valid_rule = true;
-  
+
   // Gauss quadrature weights
   static const std::vector<FloatType> gauss_weights;
-  
-  // Kronrad quadrature weights
+
+  // Kronrod quadrature weights
   static const std::vector<FloatType> kronrod_weights;
-  
-  // Kronrad quadrature abscissae
+
+  // Kronrod quadrature abscissae
   static const std::vector<FloatType> kronrod_abscissae;
-  
+
 private:
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeGaussWeights();
-  
+
   // Initialize the kronrod weight array
   static std::vector<FloatType> initializeKronrodWeights();
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeKronrodAbscissae();
 };
@@ -81,24 +81,24 @@ struct GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<Is
 {
   // Valid rule
   static const bool valid_rule = true;
-  
+
   // Gauss quadrature weights
   static const std::vector<FloatType> gauss_weights;
-  
-  // Kronrad quadrature weights
+
+  // Kronrod quadrature weights
   static const std::vector<FloatType> kronrod_weights;
-  
-  // Kronrad quadrature abscissae
+
+  // Kronrod quadrature abscissae
   static const std::vector<FloatType> kronrod_abscissae;
-  
+
 private:
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeGaussWeights();
-  
+
   // Initialize the kronrod weight array
   static std::vector<FloatType> initializeKronrodWeights();
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeKronrodAbscissae();
 };
@@ -109,52 +109,52 @@ struct GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<Is
 {
   // Valid rule
   static const bool valid_rule = true;
-  
+
   // Gauss quadrature weights
   static const std::vector<FloatType> gauss_weights;
-  
-  // Kronrad quadrature weights
+
+  // Kronrod quadrature weights
   static const std::vector<FloatType> kronrod_weights;
-  
-  // Kronrad quadrature abscissae
+
+  // Kronrod quadrature abscissae
   static const std::vector<FloatType> kronrod_abscissae;
-  
+
 private:
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeGaussWeights();
-  
+
   // Initialize the kronrod weight array
   static std::vector<FloatType> initializeKronrodWeights();
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeKronrodAbscissae();
 };
-  
+
 // Gauss-Kronrod quadrature set traits 51 point rule
 template<typename FloatType>
 struct GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>
 {
   // Valid rule
   static const bool valid_rule = true;
-  
+
   // Gauss quadrature weights
   static const std::vector<FloatType> gauss_weights;
-  
-  // Kronrad quadrature weights
+
+  // Kronrod quadrature weights
   static const std::vector<FloatType> kronrod_weights;
-  
-  // Kronrad quadrature abscissae
+
+  // Kronrod quadrature abscissae
   static const std::vector<FloatType> kronrod_abscissae;
-  
+
 private:
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeGaussWeights();
-  
+
   // Initialize the kronrod weight array
   static std::vector<FloatType> initializeKronrodWeights();
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeKronrodAbscissae();
 };
@@ -165,24 +165,24 @@ struct GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<Is
 {
   // Valid rule
   static const bool valid_rule = true;
-  
+
   // Gauss quadrature weights
   static const std::vector<FloatType> gauss_weights;
-  
-  // Kronrad quadrature weights
+
+  // Kronrod quadrature weights
   static const std::vector<FloatType> kronrod_weights;
-  
-  // Kronrad quadrature abscissae
+
+  // Kronrod quadrature abscissae
   static const std::vector<FloatType> kronrod_abscissae;
-  
+
 private:
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeGaussWeights();
-  
+
   // Initialize the kronrod weight array
   static std::vector<FloatType> initializeKronrodWeights();
-  
+
   // Initialize the gauss weight array
   static std::vector<FloatType> initializeKronrodAbscissae();
 };

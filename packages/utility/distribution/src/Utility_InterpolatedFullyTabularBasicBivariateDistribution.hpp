@@ -14,7 +14,7 @@
 
 namespace Utility{
 
-/*! The unit-aware inteprolated fully tabular bivariate distribution
+/*! The unit-aware interpolated fully tabular bivariate distribution
  * \ingroup bivariate_distributions
  */
 template<typename TwoDGridPolicy,
@@ -27,14 +27,14 @@ class UnitAwareInterpolatedFullyTabularBasicBivariateDistribution : public UnitA
   typedef UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase<TwoDGridPolicy,UnitAwareFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > BaseType;
 
 protected:
-  
+
   // Typedef for QuantityTraits<double>
   typedef typename BaseType::QT QT;
 
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename BaseType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename BaseType::SIQT SIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -45,12 +45,12 @@ protected:
 
   //! The distribution data const iterator
   typedef typename BaseType::DistributionDataConstIterator DistributionDataConstIterator;
-  
+
 public:
 
   //! This type
   typedef UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
-  
+
   //! The primary independent quantity type
   typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
@@ -249,13 +249,13 @@ private:
   friend class boost::serialization::access;
 };
 
-/*! \brief The interpolated fully tabular bivariate distribution 
+/*! \brief The interpolated fully tabular bivariate distribution
  * (unit-agnostic)
  * \ingroup bivariate_distributions
  */
 template<typename TwoDGridPolicy> using InterpolatedFullyTabularBasicBivariateDistribution =
 UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,void,void,void>;
-  
+
 } // end Utility namespace
 
 BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, 0 );

@@ -32,7 +32,7 @@ public:
 
   /*! The file types
    *
-   * When adding a new file type the toString and serialize methods must be 
+   * When adding a new file type the toString and serialize methods must be
    * updated.
    */
   enum FileType{
@@ -88,12 +88,12 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Data namespace
 
 namespace Utility{
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * Data::AdjointElectroatomicDataProperties::FileType
  * \ingroup to_string_traits
  */
@@ -106,12 +106,12 @@ struct ToStringTraits<Data::AdjointElectroatomicDataProperties::FileType>
   //! Place the Data::AdjointElectroatomicDataProperties::FileType in a stream
   static void toStream( std::ostream& os, const Data::AdjointElectroatomicDataProperties::FileType type );
 };
-  
+
 } // end Utility namespace
 
 namespace std{
 
-//! Stream operator for printing Datea::AdjointElectroatomicDataProperties::FileType enums
+//! Stream operator for printing Data::AdjointElectroatomicDataProperties::FileType enums
 inline std::ostream& operator<<( std::ostream& os,
                                  const Data::AdjointElectroatomicDataProperties::FileType type )
 {
@@ -119,7 +119,7 @@ inline std::ostream& operator<<( std::ostream& os,
 
   return os;
 }
-  
+
 } // end std namespace
 
 namespace boost{
@@ -156,9 +156,9 @@ void serialize( Archive& archive,
     }
   }
 }
-  
+
 } // end serialization namespace
-  
+
 } // end boost namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AdjointElectroatomicDataProperties, Data );

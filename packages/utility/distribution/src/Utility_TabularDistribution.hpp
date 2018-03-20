@@ -28,7 +28,7 @@ class UnitAwareTabularDistribution : public UnitAwareTabularUnivariateDistributi
 {
   // Typedef for base type
   typedef UnitAwareTabularUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
-  
+
   // The unnormalized cdf quantity
   typedef typename QuantityTraits<typename BaseType::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
 
@@ -186,7 +186,7 @@ protected:
   //! Get the default dependent values
   template<typename InputDepQuantity>
   static std::vector<InputDepQuantity> getDefaultDepValues()
-  { 
+  {
     return std::vector<InputDepQuantity>(2, Utility::QuantityTraits<InputDepQuantity>::one());
   }
 
@@ -238,7 +238,7 @@ private:
   template<typename Quantity>
   static void convertUnitlessValues(
 		                 const std::vector<double>& unitless_values,
-				 std::vector<Quantity>& quantitites );
+				 std::vector<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,

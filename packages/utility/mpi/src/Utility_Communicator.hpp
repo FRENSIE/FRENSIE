@@ -63,7 +63,7 @@ Communicator::Request isend( const Communicator& comm,
 template<typename T>
 Communicator::Request isend( const Communicator& comm,
                              int destination_process,
-                             int tag, 
+                             int tag,
                              const ArrayView<const T>& values );
 
 //! Prepare to receive data from another process
@@ -114,7 +114,7 @@ template<template<typename T,typename...> class STLCompliantInputSequenceContain
 void wait( STLCompliantInputSequenceContainer<Communicator::Request>& requests,
            STLCompliantOutputSequenceContainer<Communicator::Status>& statuses );
 
-/*! \brief Gather the values stored at every process into an array of values 
+/*! \brief Gather the values stored at every process into an array of values
  * from each process.
  */
 template<typename T>
@@ -122,7 +122,7 @@ void allGather( const Communicator& comm,
                 const T& input_value,
                 std::vector<T>& output_values );
 
-/*! \brief Gather the values stored at every process into an array of values 
+/*! \brief Gather the values stored at every process into an array of values
  * from each process.
  */
 template<typename T>
@@ -130,7 +130,7 @@ void allGather( const Communicator& comm,
                 const T& input_value,
                 const Utility::ArrayView<T>& output_values );
 
-/*! \brief Gather the values stored at every process into an array of values 
+/*! \brief Gather the values stored at every process into an array of values
  * from each process.
  */
 template<typename T>
@@ -138,7 +138,7 @@ void allGather( const Communicator& comm,
                 std::initializer_list<T> input_values,
                 const std::vector<T>& output_values );
 
-/*! \brief Gather the values stored at every process into an array of values 
+/*! \brief Gather the values stored at every process into an array of values
  * from each process.
  */
 template<typename T>
@@ -146,7 +146,7 @@ void allGather( const Communicator& comm,
                 std::initializer_list<T> input_values,
                 const Utility::ArrayView<T>& output_values );
 
-/*! \brief Gather the values stored at every process into an array of values 
+/*! \brief Gather the values stored at every process into an array of values
  * from each process.
  */
 template<typename T>
@@ -154,7 +154,7 @@ void allGather( const Communicator& comm,
                 const Utility::ArrayView<const T>& input_values,
                 std::vector<T>& output_values );
 
-/*! \brief Gather the values stored at every process into an array of values 
+/*! \brief Gather the values stored at every process into an array of values
  * from each process.
  */
 template<typename T>
@@ -399,7 +399,7 @@ template<typename T>
 void scatterv( const Communicator& comm,
                std::vector<T>& output_values,
                int root_process );
-  
+
 //! Scatter the values stored at the root process to all other processes
 template<typename T>
 void scatterv( const Communicator& comm,
@@ -422,7 +422,7 @@ void reduce( const Communicator& comm,
              ReduceOperation op,
              int root_process );
 
-//! Combine the values stored by each process intoa single value at the root
+//! Combine the values stored by each process into a single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
              const Utility::ArrayView<const T>& input_values,
@@ -437,14 +437,14 @@ void reduce( const Communicator& comm,
              ReduceOperation op,
              int root_process );
 
-//! Combine the values stored by each process intoa single value at the root
+//! Combine the values stored by each process into a single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
              std::initializer_list<T> input_values,
              ReduceOperation op,
              int root_process );
 
-//! Combine the values stored by each process intoa single value at the root
+//! Combine the values stored by each process into a single value at the root
 template<typename T, typename ReduceOperation>
 void reduce( const Communicator& comm,
              const Utility::ArrayView<const T>& input_values,
@@ -464,7 +464,7 @@ void scan( const Communicator& comm,
            const Utility::ArrayView<const T>& input_values,
            const Utility::ArrayView<T>& output_values,
            ReduceOperation op );
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

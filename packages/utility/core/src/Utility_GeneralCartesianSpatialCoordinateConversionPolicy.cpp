@@ -15,7 +15,7 @@ namespace Utility{
 
 // Constructor
 /*! \details The origin is the origin of the local coordinate system w.r.t. the
- * global coordinate system. The axis parameter is the z-axis of the local 
+ * global coordinate system. The axis parameter is the z-axis of the local
  * coordinate system w.r.t. the global coordinate system. It does not need to
  * be a unit vector as it will be normalized by the constructor.
  */
@@ -62,7 +62,7 @@ void GeneralCartesianSpatialCoordinateConversionPolicy::convertToCartesianSpatia
 // Convert the cartesian coordinates to the spatial coordinate system
 /*! \details The x, y and z spatial coordinates are the Cartesian coordinates
  * in the global coordinate system. They will be converted to coordinates in
- * the local coordinate system by using a rotation matric created from the
+ * the local coordinate system by using a rotation matrix created from the
  * axis vector.
  */
 void GeneralCartesianSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
@@ -88,7 +88,7 @@ void GeneralCartesianSpatialCoordinateConversionPolicy::convertFromCartesianSpat
                                primary_spatial_coord,
                                1e-15 );
 }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

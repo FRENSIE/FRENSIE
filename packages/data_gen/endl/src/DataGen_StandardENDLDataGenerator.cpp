@@ -1255,7 +1255,7 @@ void StandardENDLDataGenerator::setElectronData(
       }
       case 82021:
       {
-        // Read the sprectrum of the secondary photon from bremsstrahlung
+        // Read the spectrum of the secondary photon from bremsstrahlung
 
         // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
@@ -1389,7 +1389,7 @@ void StandardENDLDataGenerator::setScreenedRutherfordData(
     {
     /* in order to not calculate negative the screened Rutherford cross section
      * must be greater than ( cutoff_pdf*cutoff_angle ). It should also be small
-     * enough to give a negligable contribution to the overall cross section.
+     * enough to give a negligible contribution to the overall cross section.
      * This can be accomplished by setting eta slightly greater then the cutoff
      * angle.
      *//*

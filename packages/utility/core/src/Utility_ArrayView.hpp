@@ -25,9 +25,9 @@ namespace Utility{
 class Slice;
 
 /*! The array view class
- * 
+ *
  * This class was inspired by the Teuchos::ArrayView class found in
- * the Trilinos Software package 
+ * the Trilinos Software package
  * (https://trilinos.org/docs/dev/packages/teuchos/doc/html/index.html).
  * \ingroup view
  */
@@ -99,7 +99,7 @@ public:
   typename View<T*>::pointer data() const;
 };
 
-/*! The slice class 
+/*! The slice class
  *
  * Use this class when overloading the | operator to create an ArrayView
  * of a slice of an array
@@ -108,7 +108,7 @@ public:
 class Slice
 {
 public:
-  
+
   //! Constructor
   Slice( const size_t offset, const size_t extent )
     : d_offset( offset ),
@@ -131,7 +131,7 @@ public:
   Slice( Tuple<T,U>&& tuple )
     : d_offset( std::move( std::get<0>( tuple ) ) ),
       d_extent( std::move( std::get<1>( tuple ) ) )
-  { /* ... */ }                
+  { /* ... */ }
 
   //! C-array constructor
   Slice( const size_t offset_extent[2] )
@@ -273,12 +273,12 @@ struct TypeNameTraits<Utility::ArrayView<T> >
 
 /*! Partial specialization of ComparisonTraits for Utility::ArrayView
  * \ingroup view
- * \ingropu comparison_traits
+ * \ingroup comparison_traits
  */
 template<typename T>
 struct ComparisonTraits<Utility::ArrayView<T> > : public ComparisonTraits<Utility::View<T*> >
 { /* ... */ };
-  
+
 } // end Utility namespace
 
 namespace std{
@@ -296,7 +296,7 @@ struct common_type<Utility::ArrayView<const T>,Utility::ArrayView<T> >
 {
   typedef Utility::ArrayView<const T> type;
 };
-  
+
 } // end std namespace
 
 //---------------------------------------------------------------------------//

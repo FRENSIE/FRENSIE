@@ -27,20 +27,20 @@ namespace Details{
 //! The sample moment collection data extractor class
 template<size_t N, typename T, typename Enabled = void>
 struct SampleMomentCollectionDataExtractor;
-  
+
 } // end Details namespace
-  
+
 /*! The sample moment collection
  * \details This represents the empty collection. It cannot be instantiated
  * directly - only the non-empty collections can instantiate it. Note that
  * this class is a variadic template class and it designed in a very similar
- * way to the std::tuple class. The 
+ * way to the std::tuple class. The
  * Utility::Details::SampleMomentCollectionDataExtractor class is used to
  * extract the data relating to a specific moment from the collection. This
  * extractor class should never be used directly. Instead the standalone
  * getter methods should be used. Properties relating to the entire collection
- * (e.g. the collection size) and not a specific moment can be accessed 
- * direclty.
+ * (e.g. the collection size) and not a specific moment can be accessed
+ * directly.
  */
 template<typename T, size_t... Ns>
 class SampleMomentCollection;
@@ -54,18 +54,18 @@ private:
 
   // The underlying container type
   typedef std::vector<typename SampleMoment<N,T>::ValueType> ContainerType;
-  
+
 public:
-  
+
   //! The starting moment value type
   typedef typename ContainerType::value_type ValueType;
-  
+
   //! Default constructor
   SampleMomentCollection();
 
   //! Constructor
   SampleMomentCollection( const size_t i );
-  
+
   //! Constructor
   template<typename InputValueType, typename... OtherInputValueTypes>
   SampleMomentCollection( const size_t i,
@@ -156,7 +156,7 @@ getCurrentScore( SampleMomentCollection<T,Ms...>& collection, const size_t i );
 template<size_t N, typename T, size_t... Ms>
 SampleMoment<N,T> getMoment( const SampleMomentCollection<T,Ms...>& collection,
                              const size_t i );
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

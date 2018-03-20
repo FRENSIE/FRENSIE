@@ -2,7 +2,7 @@
 //!
 //! \file   tstGlobalMPISessionInit.cpp
 //! \author Alex Robinson
-//! \brief  Global MPI session initializion unit tests
+//! \brief  Global MPI session initialization unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -29,14 +29,14 @@ BOOST_AUTO_TEST_CASE( initialize_finalize )
   BOOST_CHECK( !Utility::GlobalMPISession::finalized() );
 
   std::string constructor_type = "default";
-  
+
   if( boost::unit_test::framework::master_test_suite().argc >= 2 )
   {
     std::string constructor_type_input =
       boost::unit_test::framework::master_test_suite().argv[1];
 
     std::vector<std::string> constructor_type_input_elements;
-    
+
     boost::split( constructor_type_input_elements,
                   boost::unit_test::framework::master_test_suite().argv[1],
                   boost::is_any_of( "=" ) );

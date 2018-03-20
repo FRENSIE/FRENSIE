@@ -46,7 +46,7 @@ typedef std::tuple<
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::shared_ptr<Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> > 
+std::shared_ptr<Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> >
   unit_aware_distribution;
 
 std::shared_ptr<Utility::UnitAwareFullyTabularBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> >
@@ -106,7 +106,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL(
                  distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0), 0.0 );
 
@@ -115,7 +115,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // On the second bin (first bin boundary = second bin boundary)
   FRENSIE_CHECK_EQUAL(
                  distribution->getUpperBoundOfSecondaryConditionalIndepVar(0.0), 10.0 );
-                       
+
 
   // In the second bin
   FRENSIE_CHECK_EQUAL(
@@ -140,7 +140,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL(
                   distribution->getUpperBoundOfSecondaryConditionalIndepVar(3.0), 0.0 );
 
@@ -162,9 +162,9 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar(-1.0*MeV), 0.0*cgs::centimeter );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
-  
+
   // On the second bin (first bin boundary = second bin boundary)
-  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar(0.0*MeV), 10.0*cgs::centimeter );                
+  FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar(0.0*MeV), 10.0*cgs::centimeter );
 
   // In the second bin
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar(0.5*MeV), 10.0*cgs::centimeter );
@@ -184,7 +184,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfSecondaryConditionalIndepVar(3.0*MeV), 0.0*cgs::centimeter );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -211,7 +211,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // On the second bin (first bin boundary = second bin boundary)
   FRENSIE_CHECK_EQUAL(
                   distribution->getLowerBoundOfSecondaryConditionalIndepVar(0.0), 0.0 );
-                       
+
 
   // In the second bin
   FRENSIE_CHECK_EQUAL(
@@ -233,7 +233,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // After the third bin - no extension
   FRENSIE_CHECK_EQUAL(
                   distribution->getLowerBoundOfSecondaryConditionalIndepVar(3.0), 0.0 );
-  
+
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
 
@@ -280,7 +280,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfSecondaryConditionalIndepVar(3.0*MeV), 0.0*cgs::centimeter );
 
   unit_aware_tab_distribution->limitToPrimaryIndepLimits();
@@ -303,7 +303,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check if the distribution is coninuous in the primary dimension
+// Check if the distribution is continuous in the primary dimension
 FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
                    isPrimaryDimensionContinuous )
 {
@@ -311,7 +311,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check if the unit-aware distribution is coninuous in the primary dimension
+// Check if the unit-aware distribution is continuous in the primary dimension
 FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
                    isPrimaryDimensionContinuous )
 {
@@ -371,7 +371,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
     primary_grid[1] = 3.0;
     secondary_dists[1].reset( new Utility::DeltaDistribution( 1.0 ) );
-    
+
     other_distribution.reset(
                   new Utility::HistogramFullyTabularBasicBivariateDistribution(
                                              primary_grid, secondary_dists ) );
@@ -405,7 +405,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
                    hasSamePrimaryBounds )
 {
   std::shared_ptr<Utility::UnitAwareBasicBivariateDistribution<MegaElectronVolt,cgs::length,Barn> > other_distribution;
-  
+
   {
     std::vector<quantity<MegaElectronVolt> > primary_grid( 2 );
     std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn> > > secondary_dists( 2 );
@@ -483,10 +483,10 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution, evaluate )
   FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 0.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 1.0 ), 0.0 );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 0.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluate( -1.0, 1.0 ), 0.0 );
@@ -526,7 +526,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution, evaluate )
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 0.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluate( 3.0, 1.0 ), 0.0 );
@@ -545,7 +545,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution, eva
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
@@ -585,7 +585,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution, eva
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, -1.0*cgs::centimeter ), 0.0*barn );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 0.0*cgs::centimeter ), 1.0*barn );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( 3.0*MeV, 1.0*cgs::centimeter ), 0.0*barn );
@@ -602,10 +602,10 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 1.0 ), 0.0 );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 0.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( -1.0, 1.0 ), 0.0 );
@@ -645,7 +645,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 0.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( distribution->evaluateSecondaryConditionalPDF( 3.0, 1.0 ), 0.0 );
@@ -662,10 +662,10 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 0.0/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
-  
+
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( -1.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
@@ -705,7 +705,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 0.0*cgs::centimeter ), 1.0/cgs::centimeter );
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluateSecondaryConditionalPDF( 3.0*MeV, 1.0*cgs::centimeter ), 0.0/cgs::centimeter );
@@ -725,7 +725,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 0.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( -1.0, 1.0 ), 1.0 );
@@ -765,7 +765,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, -1.0 ), 0.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 0.0 ), 1.0 );
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateSecondaryConditionalCDF( 3.0, 1.0 ), 1.0 );
@@ -785,7 +785,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, -1.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 0.0*cgs::centimeter ), 1.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( -1.0*MeV, 1.0*cgs::centimeter ), 1.0 );
@@ -822,10 +822,10 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 1.0*cgs::centimeter ), 0.0 );
-  
+
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, -1.0*cgs::centimeter ), 0.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 0.0*cgs::centimeter ), 1.0 );
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateSecondaryConditionalCDF( 3.0*MeV, 1.0*cgs::centimeter ), 1.0 );
@@ -841,10 +841,10 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( distribution->sampleSecondaryConditional( -1.0 ),
               std::logic_error );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = distribution->sampleSecondaryConditional( -1.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -940,7 +940,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = distribution->sampleSecondaryConditional( 3.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -956,10 +956,10 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV ),
               std::logic_error );
-  
+
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleSecondaryConditional( -1.0*MeV );
 
@@ -1056,7 +1056,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = unit_aware_distribution->sampleSecondaryConditional( 3.0*MeV );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -1070,7 +1070,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
   Utility::DistributionTraits::Counter trials = 0u;
-  
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials ),
               std::logic_error );
@@ -1078,7 +1078,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = distribution->sampleSecondaryConditionalAndRecordTrials( -1.0, trials );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -1190,7 +1190,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = distribution->sampleSecondaryConditionalAndRecordTrials( 3.0, trials );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -1205,15 +1205,15 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordTrials )
 {
   Utility::DistributionTraits::Counter trials = 0u;
-  
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials ),
               std::logic_error );
   FRENSIE_CHECK_EQUAL( trials, 0u );
-  
+
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample =
     unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( -1.0*MeV, trials );
 
@@ -1317,7 +1317,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   FRENSIE_CHECK_FLOATING_EQUALITY( sample, 10.0*cgs::centimeter, 1e-9 );
   FRENSIE_CHECK_EQUAL( trials, 16u );
-  
+
   // After the third bin - no extension
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -1326,7 +1326,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = unit_aware_distribution->sampleSecondaryConditionalAndRecordTrials( 3.0*MeV, trials );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -1341,7 +1341,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
   size_t primary_bin_index = 0, secondary_bin_index = 0;
-  
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0, primary_bin_index, secondary_bin_index ),
                        std::logic_error );
@@ -1350,7 +1350,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -1478,7 +1478,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -1494,7 +1494,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
                    sampleSecondaryConditionalAndRecordBinIndices )
 {
   size_t primary_bin_index = 0u, secondary_bin_index = 0u;
-  
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0*MeV, primary_bin_index, secondary_bin_index ),
               std::logic_error );
@@ -1503,7 +1503,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0*MeV, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -1631,7 +1631,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-   
+
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0*MeV, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -1648,7 +1648,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 {
   size_t primary_bin_index = 0u, secondary_bin_index = 0u;
   double raw_sample;
-  
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0, raw_sample, primary_bin_index, secondary_bin_index ),
               std::logic_error );
@@ -1657,7 +1657,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0, raw_sample, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -1801,7 +1801,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0, raw_sample, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -1819,7 +1819,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 {
   size_t primary_bin_index = 0u, secondary_bin_index = 0u;
   quantity<cgs::length> raw_sample;
-  
+
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0*MeV, raw_sample, primary_bin_index, secondary_bin_index ),
               std::logic_error );
@@ -1828,7 +1828,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( -1.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -1972,7 +1972,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-   
+
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalAndRecordBinIndices( 3.0*MeV, raw_sample, primary_bin_index, secondary_bin_index );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -1994,7 +1994,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0, 0.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -2070,10 +2070,10 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // After the third bin - no extension
   FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.5 ),
               std::logic_error );
-  
+
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0, 0.5 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -2092,7 +2092,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( -1.0*MeV, 0.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -2169,7 +2169,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumber( 3.0*MeV, 0.5 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -2185,10 +2185,10 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 1.0 ),
               std::logic_error );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = tab_distribution->sampleSecondaryConditionalInSubrange( -1.0, 1.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -2284,7 +2284,7 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = tab_distribution->sampleSecondaryConditionalInSubrange( 3.0, 1.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -2303,7 +2303,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // Before the second bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( -1.0*MeV, 1.0*cgs::centimeter );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -2399,7 +2399,7 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
 
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalInSubrange( 3.0*MeV, 1.0*cgs::centimeter );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -2415,10 +2415,10 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 1.0 ),
               std::logic_error );
-  
+
   // Before the first bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   double sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0, 0.0, 1.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -2494,10 +2494,10 @@ FRENSIE_UNIT_TEST( HistogramFullyTabularBasicBivariateDistribution,
   // After the third bin - no extension
   FRENSIE_CHECK_THROW( tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.5, 1.0 ),
               std::logic_error );
-  
+
   // After the third bin - with extension
   tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0, 0.5, 1.0 );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0 );
@@ -2513,10 +2513,10 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
   // Before the first bin - no extension
   FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 1.0*cgs::centimeter ),
               std::logic_error );
-  
+
   // Before the first bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   quantity<cgs::length> sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( -1.0*MeV, 0.0, 1.0*cgs::centimeter );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -2592,10 +2592,10 @@ FRENSIE_UNIT_TEST( UnitAwareHistogramFullyTabularBasicBivariateDistribution,
   // After the third bin - no extension
   FRENSIE_CHECK_THROW( unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.5, 1.0*cgs::centimeter ),
               std::logic_error );
-  
+
   // After the third bin - with extension
   unit_aware_tab_distribution->extendBeyondPrimaryIndepLimits();
-  
+
   sample = unit_aware_tab_distribution->sampleSecondaryConditionalWithRandomNumberInSubrange( 3.0*MeV, 0.5, 1.0*cgs::centimeter );
 
   FRENSIE_CHECK_EQUAL( sample, 0.0*cgs::centimeter );
@@ -2726,7 +2726,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( HistogramFullyTabularBasicBivariateDistributi
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_histogram_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
@@ -2787,7 +2787,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareHistogramFullyTabularBasicBivariateD
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_unit_aware_histogram_fully_tabular_basic_bivariate_dist" );
   std::ostringstream archive_ostream;
 
@@ -2853,7 +2853,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create the secondary distribution in the first bin
     primary_grid[0] = 0.0;
     secondary_dists[0].reset( new Utility::DeltaDistribution( 0.0 ) );
-    
+
 
     // Create the secondary distribution in the second bin
     primary_grid[1] = 0.0;

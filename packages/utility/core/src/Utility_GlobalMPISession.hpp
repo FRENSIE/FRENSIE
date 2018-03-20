@@ -22,13 +22,13 @@
 #include "Utility_Vector.hpp"
 
 /*! \defgroup mpi MPI
- * 
+ *
  * A custom MPI interface has been created using insights gained by using
- * both the boost::mpi library and the Teuchos::Comm library. Like the 
+ * both the boost::mpi library and the Teuchos::Comm library. Like the
  * Teuchos::Comm library, the FRENSIE MPI interface can be used whether or not
  * the external MPI libraries have been built (without having to enclose
  * interface code in preprocessor logic blocks). To accomplish this behavior
- * the FRENSIE MPI interface simply provides wrappers around various 
+ * the FRENSIE MPI interface simply provides wrappers around various
  * boost::mpi methods and classes.
  * \ingroup traits
  */
@@ -36,19 +36,19 @@
 namespace Utility{
 
 /*! The global mpi session class
- * 
+ *
  * This class is based off of the Teuchos::GlobalMPISession class and the
  * boost::mpi::environment class.
  * \ingroup mpi
  */
 class GlobalMPISession : private boost::noncopyable
 {
-  
+
 public:
 
   //! The mpi single thread support level tag
   struct SingleThreadingTag
-  { 
+  {
     operator int() const;
   };
 
@@ -57,7 +57,7 @@ public:
 
   //! The mpi funneled thread support level tag
   struct FunneledThreadingTag
-  { 
+  {
     operator int() const;
   };
 
@@ -66,7 +66,7 @@ public:
 
   //! The mpi serialized thread support level tag
   struct SerializedThreadingTag
-  { 
+  {
     operator int() const;
   };
 
@@ -75,14 +75,14 @@ public:
 
   //! The mpi multiple threading support level tag
   struct MultipleThreadingTag
-  { 
+  {
     operator int() const;
   };
 
   //! The mpi multiple threading support level tag object
   static MultipleThreadingTag MultipleThreading;
 
-  //! Detault constructor
+  //! Default constructor
   explicit GlobalMPISession( bool abort_on_exception = true );
 
   //! Constructor for single threading support level
@@ -255,7 +255,7 @@ private:
   // The MPI_COMM_WORLD size
   static int s_size;
 };
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_GLOBAL_MPI_SESSION_HPP

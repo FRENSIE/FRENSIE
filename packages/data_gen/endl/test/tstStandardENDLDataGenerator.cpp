@@ -665,7 +665,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
                        electron_incident_energy.size() );
   }
 //---------------------------------------------------------------------------//
-// CHECK ATOMIC EXCITAION DATA
+// CHECK ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
   {
   std::vector<double> energy_grid =
@@ -1673,7 +1673,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
                        electron_incident_energy.size() );
 
 //---------------------------------------------------------------------------//
-// CHECK ATOMIC EXCITAION DATA
+// CHECK ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
   energy_grid = data_container.getAtomicExcitationEnergyGrid();
 

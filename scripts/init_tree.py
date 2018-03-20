@@ -27,7 +27,7 @@ def main():
 To build dependencies move necessary tars to deps/tars.
 cd to frensie_build_tree/deps and run make all.
 
-To once all dependecies exist in frensie_build_tree/deps/install
+To once all dependencies exist in frensie_build_tree/deps/install
 cd to frensie_build_tree/build and run bash frensie.sh
 """
 

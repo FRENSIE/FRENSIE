@@ -101,7 +101,7 @@ InversePrimaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndep
 {
   return d_primary_distribution->evaluatePDF( primary_indep_var_value );
 }
-  
+
 // Evaluate the secondary conditional PDF
 template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
@@ -139,7 +139,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondarIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal() const
+SecondaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal() const
 {
   return d_secondary_distribution->sample();
 }
@@ -149,7 +149,7 @@ template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
          typename SecondaryDependentUnit>
-SecondarIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginalAndRecordTrials( DistributionTraits::Counter& trials ) const
+SecondaryIndepQuantity UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginalAndRecordTrials( DistributionTraits::Counter& trials ) const
 {
   return d_secondary_distribution->sampleAndRecordTrails( trials );
 }
@@ -349,7 +349,7 @@ bool UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDepen
   return d_primary_distribution.isTabular();
 }
 
-// Test if the distribution is condinuous in the primary dimension
+// Test if the distribution is continuous in the primary dimension
 template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
@@ -423,7 +423,7 @@ void UnitAwareSeparableBivariateDistribution<PrimaryIndependentUnit,PrimaryDepen
                     std::make_pair( "primary", *d_primary_distribution ),
                     std::make_pair( "secondary", *d_secondary_distribution ) );
 }
-  
+
 } // end Utility namespace
 
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareSeparableBivariateDistribution<void,void,void,void> );

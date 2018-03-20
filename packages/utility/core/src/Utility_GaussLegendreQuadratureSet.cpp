@@ -15,6 +15,20 @@ void getLegendrePowerExpansionCoefficients(
                            std::vector<std::vector<long_float> >& coefficients,
                            const int power )
 {
+  testPrecondition( coefficients.size() == power+1 );
+
+  // Set all the coefficients to 0
+  for ( unsigned n = 0; n < coefficients.size(); ++n )
+  {
+    testPrecondition( coefficients[n].size() == power+1 );
+
+    for ( unsigned i = 0; i < coefficients[n].size(); ++i )
+    {
+      coefficients[n][i] = 0.0;
+    }
+  }
+
+  // Set the first coefficient to 1
   coefficients[0][0] = long_float(1);
 
   if ( power > 0 )
@@ -29,13 +43,20 @@ void getLegendrePowerExpansionCoefficients(
       // Set the 1st coefficient
       coefficients[n][0] = coefficients[n-1][1]/long_float(3);
 
-      // Loop through the rest of the coefficients
-      for ( int l = 1; l <= n; ++l )
+      // Loop through the coefficients
+      for ( int l = 1; l < n-1; ++l )
       {
         coefficients[n][l] =
             l/( long_float(2)*l - long_float(1) )*coefficients[n-1][l-1] +
             ( l + long_float(1) )/
             ( long_float(2)*l + long_float(3) )*coefficients[n-1][l+1];
+      }
+
+      // Set the last two coefficients
+      for ( int l = n-1; l <= n; ++l )
+      {
+        coefficients[n][l] =
+            l/( long_float(2)*l - long_float(1) )*coefficients[n-1][l-1];
       }
     }
   }

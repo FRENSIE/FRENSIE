@@ -48,7 +48,7 @@ struct SerialCommunicatorArrayCopyHelper
   }
 };
 
-/*! \brief Specialization of SerialCommunicatorArrayCopyHelper for arithmetic 
+/*! \brief Specialization of SerialCommunicatorArrayCopyHelper for arithmetic
  * types
  * \ingroup mpi
  */
@@ -80,7 +80,7 @@ struct SingleValueSendHelper
                            const T& value )
   {
     Utility::ArrayView<const T> value_view( &value, 1 );
-    
+
     Utility::send( comm, destination_process, tag, value_view );
   }
 
@@ -91,7 +91,7 @@ struct SingleValueSendHelper
                                              const T& value )
   {
     Utility::ArrayView<const T> value_view( &value, 1 );
-    
+
     return Utility::isend( comm, destination_process, tag, value_view );
   }
 };
@@ -130,7 +130,7 @@ struct SingleValueReceiveHelper
                                               T& value )
   {
     Utility::ArrayView<T> value_view( &value, 1 );
-    
+
     return Utility::receive( comm, source_process, tag, const_cast<const Utility::ArrayView<T>&>( value_view ) );
   }
 
@@ -141,7 +141,7 @@ struct SingleValueReceiveHelper
                                                 T& value )
   {
     Utility::ArrayView<T> value_view( &value, 1 );
-    
+
     return Utility::ireceive( comm, source_process, tag, const_cast<const Utility::ArrayView<T>&>( value_view ) );
   }
 };
@@ -186,14 +186,14 @@ struct SingleValueReduceHelper
   {
     Utility::ArrayView<const T> input_value_view( &input_value, 1 );
     Utility::ArrayView<T> value_view( &value, 1 );
-    
+
     Utility::allReduce( comm,
                         const_cast<const Utility::ArrayView<const T>&>( input_value_view ),
                         const_cast<const Utility::ArrayView<T>&>( value_view ),
                         op );
   }
 
-  //! Forwrd to the correct scan method based on type T
+  //! Forward to the correct scan method based on type T
   template<typename ReduceOperation>
   static inline void scan( const Communicator& comm,
                            const T& input_value,
@@ -202,7 +202,7 @@ struct SingleValueReduceHelper
   {
     Utility::ArrayView<const T> input_value_view( &input_value, 1 );
     Utility::ArrayView<T> value_view( &value, 1 );
-    
+
     Utility::scan( comm,
                    const_cast<const Utility::ArrayView<const T>&>( input_value_view ),
                    const_cast<const Utility::ArrayView<T>&>( value_view ),
@@ -234,7 +234,7 @@ struct SingleValueReduceHelper
                                 ReduceOperation op )
   {
     Utility::ArrayView<T> input_output_value_view( &input_output_value, 1 );
-    
+
     Utility::allReduce( comm,
                         const_cast<const Utility::ArrayView<T>&>( input_output_value_view ),
                         op );
@@ -248,7 +248,7 @@ struct SingleValueReduceHelper
                              int root_process )
   {
     Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-    
+
     Utility::reduce( comm,
                      const_cast<const Utility::ArrayView<const T>&>( input_value_view ),
                      op,
@@ -270,7 +270,7 @@ struct SingleValueReduceHelper<Utility::ArrayView<T>, typename std::enable_if<!s
                                 ReduceOperation op )
   { Utility::allReduce( comm, input_value.toConst(), value, op ); }
 
-  //! Forwrd to the correct scan method based on type T
+  //! Forward to the correct scan method based on type T
   template<typename ReduceOperation>
   static inline void scan( const Communicator& comm,
                            const Utility::ArrayView<T>& input_value,
@@ -326,7 +326,7 @@ struct SingleValueReduceHelper<std::vector<T> >
   {
     // Resize the output value
     value.resize( input_value.size() );
-    
+
     Utility::allReduce( comm,
                         Utility::arrayViewOfConst( input_value ),
                         Utility::arrayView( value ),
@@ -342,7 +342,7 @@ struct SingleValueReduceHelper<std::vector<T> >
   {
     // Resize the output value
     value.resize( input_value.size() );
-    
+
     Utility::scan( comm,
                    Utility::arrayViewOfConst( input_value ),
                    Utility::arrayView( value ),
@@ -360,7 +360,7 @@ struct SingleValueReduceHelper<std::vector<T> >
     // Resize the output value if this is the root process
     if( comm.rank() == root_process )
       value.resize( input_value.size() );
-    
+
     Utility::reduce( comm,
                      Utility::arrayViewOfConst( input_value ),
                      Utility::arrayView( value ),
@@ -469,7 +469,7 @@ struct SingleValueBroadcastHelper
                                 int root_process )
   {
     Utility::ArrayView<T> value_view( &value, 1 );
-    
+
     Utility::broadcast( comm,
                         const_cast<const Utility::ArrayView<T>&>( value_view ),
                         root_process );
@@ -505,7 +505,7 @@ struct SingleValueGatherHelper
                              int root_process )
   {
     Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-    
+
     Utility::gather( comm,
                      const_cast<const Utility::ArrayView<const T>&>( input_value_view ),
                      root_process );
@@ -555,7 +555,7 @@ struct SingleValueScatterHelper
                               int root_process )
   {
     Utility::ArrayView<T> output_value_view( &output_value, 1 );
-    
+
     Utility::scatter( comm,
                       const_cast<const Utility::ArrayView<T>&>( output_value_view ),
                       root_process );
@@ -600,13 +600,13 @@ struct SingleValueScatterHelper<Utility::ArrayView<T>,typename std::enable_if<!s
                        root_process );
   }
 };
-  
+
 } // end Details namespace
-  
+
 // Send data to another process
-/*! \details The value on the calling process of the communicator will be 
+/*! \details The value on the calling process of the communicator will be
  * sent with tag to destination_process of the communicator.This operation will
- * block until the destination process receives the value. This operation can 
+ * block until the destination process receives the value. This operation can
  * only be done with communicators of size two or greater.
  * \ingroup mpi
  */
@@ -620,10 +620,10 @@ inline void send( const Communicator& comm,
 }
 
 // Send a std::initializer_list of data to another process
-/*! \details The underlying values of the initializer list on the calling 
- * process of the communicator will be sent with tag to destination_process of 
- * the communicator. This operation will block until the destination process 
- * receives the values. This operation can only be done with communicators of 
+/*! \details The underlying values of the initializer list on the calling
+ * process of the communicator will be sent with tag to destination_process of
+ * the communicator. This operation will block until the destination process
+ * receives the values. This operation can only be done with communicators of
  * size two or greater.
  * \ingroup mpi
  */
@@ -634,15 +634,15 @@ inline void send( const Communicator& comm,
                   std::initializer_list<T> values )
 {
   Utility::ArrayView<const T> init_list_view( values.begin(), values.size() );
-  
+
   Utility::send( comm, destination_process, tag, init_list_view );
 }
 
 // Send a Utility::ArrayView of data to another process
-/*! \details The underlying values of the array view on the calling 
- * process of the communicator will be sent with tag to destination_process of 
- * the communicator. This operation will block until the destination process 
- * receives the values. This operation can only be done with communicators of 
+/*! \details The underlying values of the array view on the calling
+ * process of the communicator will be sent with tag to destination_process of
+ * the communicator. This operation will block until the destination process
+ * receives the values. This operation can only be done with communicators of
  * size two or greater.
  * \ingroup mpi
  */
@@ -674,7 +674,7 @@ inline void send( const Communicator& comm,
                               << destination_process << " with tag " << tag <<
                               " successfully!" );
 }
-  
+
 // Receive data from another process
 /*! \details The value on the calling process of the communicator will be
  * received with tag from source_process of the communicator. This operation
@@ -733,10 +733,10 @@ inline Communicator::Status receive( const Communicator& comm,
 }
 
 // Send a data to another process without blocking
-/*! \details The value on the calling process of the communicator will be 
+/*! \details The value on the calling process of the communicator will be
  * sent with tag to destination_process of the communicator. This operation
- * will not block. Use the returned request to determine when the destination 
- * process has received the value. This operation can only be done with 
+ * will not block. Use the returned request to determine when the destination
+ * process has received the value. This operation can only be done with
  * communicators of size two or greater.
  * \ingroup mpi
  */
@@ -750,10 +750,10 @@ inline Communicator::Request isend( const Communicator& comm,
 }
 
 // Send an array of data to another process without blocking
-/*! \details The values on the calling process of the communicator will be 
+/*! \details The values on the calling process of the communicator will be
  * sent with tag to destination_process of the communicator. This operation
- * will not block. Use the returned request to determine when the destination 
- * process has received the values. This operation can only be done with 
+ * will not block. Use the returned request to determine when the destination
+ * process has received the values. This operation can only be done with
  * communicators of size two or greater.
  * \ingroup mpi
  */
@@ -776,7 +776,7 @@ Communicator::Request isend( const Communicator& comm,
                       "An unknown communicator type was encountered!" );
 
   Communicator::Request request;
-  
+
   try{
     request =
       mpi_comm->isend( destination_process, tag, values.data(), values.size() );
@@ -794,8 +794,8 @@ Communicator::Request isend( const Communicator& comm,
 // Prepare to receive data from another process
 /*! \details The value on the calling process of the communicator will be
  * received with tag from source_process of the communicator. This operation
- * will not block. Use the returned request to determine when the source 
- * process has sent the value. This operation can only be done with 
+ * will not block. Use the returned request to determine when the source
+ * process has sent the value. This operation can only be done with
  * communicators of size two or greater.
  * \ingroup mpi
  */
@@ -811,8 +811,8 @@ inline Communicator::Request ireceive( const Communicator& comm,
 // Prepare to receive an array of data from another process
 /*! \details The values on the calling process of the communicator will be
  * received with tag from source_process of the communicator. This operation
- * will not block. Use the returned request to determine when the source 
- * process has sent the values. This operation can only be done with 
+ * will not block. Use the returned request to determine when the source
+ * process has sent the values. This operation can only be done with
  * communicators of size two or greater.
  * \ingroup mpi
  */
@@ -852,9 +852,9 @@ Communicator::Request ireceive( const Communicator& comm,
 /*! \details The calling process of the communicator will wait until
  * source_process of the communicator has sent a message with tag. Use the
  * returned status to determine the message details before conducting
- * a receive operation. This operation will block until the source 
- * process sends a message to the calling process. This operation can only be 
- * done with communicators of size two or greater. 
+ * a receive operation. This operation will block until the source
+ * process sends a message to the calling process. This operation can only be
+ * done with communicators of size two or greater.
  * \warning When probing types that must be serialized before they can be sent
  * the returned status object will not have a count that reflects the number
  * of objects of that type that were sent. This is because the implementation
@@ -887,7 +887,7 @@ Communicator::Status probe( const Communicator& comm,
   }
 
   Communicator::Status status;
-  
+
   try{
     status = mpi_comm->probe<T>( source_process, tag );
   }
@@ -907,8 +907,8 @@ Communicator::Status probe( const Communicator& comm,
 /*! \details The calling process of the communicator will wait until
  * any process of the communicator has sent a message with tag. Use the
  * returned status to determine the message details before conducting
- * a receive operation. This operation will block until the a process sends a 
- * message with tag to the calling process. This operation can only be done 
+ * a receive operation. This operation will block until the a process sends a
+ * message with tag to the calling process. This operation can only be done
  * with communicators of size two or greater.
  * \ingroup mpi
  */
@@ -922,8 +922,8 @@ inline Communicator::Status probe( const Communicator& comm, int tag )
 /*! \details The calling process of the communicator will wait until
  * any process of the communicator has sent a message with any tag. Use the
  * returned status to determine the message details before conducting
- * a receive operation. This operation will block until the a process sends a 
- * message to the calling process. This operation can only be done with 
+ * a receive operation. This operation will block until the a process sends a
+ * message to the calling process. This operation can only be done with
  * communicators of size two or greater.
  * \ingroup mpi
  */
@@ -937,8 +937,8 @@ inline Communicator::Status probe( const Communicator& comm )
 /*! \details The calling process of the communicator will check if
  * source_process of the communicator has sent a message with tag. If the
  * returned status pointer is null, no message has been sent. If the returned
- * status pointer is not null, use it to determine the message details before 
- * conducting a receive operation. This operation will not block. This 
+ * status pointer is not null, use it to determine the message details before
+ * conducting a receive operation. This operation will not block. This
  * operation can only be  done with communicators of size two or greater.
  * \ingroup mpi
  */
@@ -967,7 +967,7 @@ Communicator::Status iprobe( const Communicator& comm,
   }
 
   Communicator::Status status;
-  
+
   try{
     status = mpi_comm->iprobe<T>( source_process, tag );
   }
@@ -988,8 +988,8 @@ Communicator::Status iprobe( const Communicator& comm,
  * any process of the communicator has sent a message with tag. If the
  * returned status pointer is null, no message has been sent to the calling
  * process. If the returned status pointer is not null, use it to determine the
- * message details before conducting a receive operation. This operation will 
- * not block. This operation can only be  done with communicators of size two 
+ * message details before conducting a receive operation. This operation will
+ * not block. This operation can only be  done with communicators of size two
  * or greater.
  * \ingroup mpi
  */
@@ -1004,8 +1004,8 @@ inline Communicator::Status iprobe( const Communicator& comm, int tag )
  * any process of the communicator has sent a message. If the
  * returned status pointer is null, no message has been sent to the calling
  * process. If the returned status pointer is not null, use it to determine the
- * message details before conducting a receive operation. This operation will 
- * not block. This operation can only be done with communicators of size two 
+ * message details before conducting a receive operation. This operation will
+ * not block. This operation can only be done with communicators of size two
  * or greater.
  * \ingroup mpi
  */
@@ -1016,8 +1016,8 @@ inline Communicator::Status iprobe( const Communicator& comm )
 }
 
 // Wait for the requests to finish
-/*! \details The calling process will wait until all of the requests have 
- * completed. The returned statuses can be used to determine the details of 
+/*! \details The calling process will wait until all of the requests have
+ * completed. The returned statuses can be used to determine the details of
  * each completed request.
  * \ingroup mpi
  */
@@ -1041,15 +1041,15 @@ void wait( STLCompliantInputSequenceContainer<Communicator::Request>& requests,
   }
 }
 
-// Gather the values stored at every process into vectors of values 
+// Gather the values stored at every process into vectors of values
 // from each process.
-/*! \details The input_value on every process of the communicator will be 
- * collected in the output_values vector on every process. The input_value 
- * associated with a process will be located at the index that is equal to the 
+/*! \details The input_value on every process of the communicator will be
+ * collected in the output_values vector on every process. The input_value
+ * associated with a process will be located at the index that is equal to the
  * process's rank. The output_values vector will be resized appropriately. This
  * operation can be done with communicators of any size.
  * \ingroup mpi
- */ 
+ */
 template<typename T>
 inline void allGather( const Communicator& comm,
                        const T& input_value,
@@ -1060,15 +1060,15 @@ inline void allGather( const Communicator& comm,
   Utility::allGather( comm, input_value_view, output_values );
 }
 
-// Gather the values stored at every process into vectors of values 
+// Gather the values stored at every process into vectors of values
 // from each process.
-/*! \details The input_value on every process of the communicator will be 
- * collected in the output_values vector on every process. The input_value 
- * associated with a process will be located at the index that is equal to the 
+/*! \details The input_value on every process of the communicator will be
+ * collected in the output_values vector on every process. The input_value
+ * associated with a process will be located at the index that is equal to the
  * process's rank. The output_values view must be sized appropriately before
  * passing it to this method. This operation can be done with communicators of any size.
  * \ingroup mpi
- */ 
+ */
 template<typename T>
 inline void allGather( const Communicator& comm,
                        const T& input_value,
@@ -1079,17 +1079,17 @@ inline void allGather( const Communicator& comm,
   Utility::allGather( comm, input_value_view, output_values );
 }
 
-// Gather the values stored at every process into an array of values 
+// Gather the values stored at every process into an array of values
 // from each process.
-/*! \details The input_values on every process of the communicator will be 
+/*! \details The input_values on every process of the communicator will be
  * collected in the output_values vector on every process. The input_values
- * may be passed in as a brace-initialized list (e.g. {1, 2, ..., 10}). The 
+ * may be passed in as a brace-initialized list (e.g. {1, 2, ..., 10}). The
  * input_values associated with a process will start at the index that is equal
- * to the process's rank multiplied by the number of input values. The 
- * output_values vector will be resized appropriately. This operation can be 
+ * to the process's rank multiplied by the number of input values. The
+ * output_values vector will be resized appropriately. This operation can be
  * done with communicators of any size.
  * \ingroup mpi
- */ 
+ */
 template<typename T>
 inline void allGather( const Communicator& comm,
                        std::initializer_list<T> input_values,
@@ -1101,13 +1101,13 @@ inline void allGather( const Communicator& comm,
   Utility::allGather( comm, input_values_view, output_values );
 }
 
-// Gather the values stored at every process into an array of values 
+// Gather the values stored at every process into an array of values
 // from each process.
 /*! \details The input_values on every process of the communicator will be
  * collected in the output_values array on every process. The input_values
- * may be passed in as a brace-initialized list (e.g. {1, 2, ..., 10}). The 
+ * may be passed in as a brace-initialized list (e.g. {1, 2, ..., 10}). The
  * input_values associated with a process will start at the index that is equal
- * to the process's rank multiplied by the number of input values. The 
+ * to the process's rank multiplied by the number of input values. The
  * output_values array must be sized appropriately before passing it in to this
  * method. This operation can be done with communicators of any size.
  * \ingroup mpi
@@ -1123,11 +1123,11 @@ inline void allGather( const Communicator& comm,
   Utility::allGather( comm, input_values_view, output_values );
 }
 
-// Gather the values stored at every process into an array of values 
+// Gather the values stored at every process into an array of values
 // from each process.
 /*! \details This method is provided to help with overload resolution.
  * \ingroup mpi
- */ 
+ */
 template<typename T>
 inline void allGather( const Communicator& comm,
                        const Utility::ArrayView<T>& input_values,
@@ -1136,16 +1136,16 @@ inline void allGather( const Communicator& comm,
   Utility::allGather( comm, input_values.toConst(), output_values );
 }
 
-// Gather the values stored at every process into an array of values 
+// Gather the values stored at every process into an array of values
 // from each process.
-/*! \details The input_values on every process of the communicator will be 
+/*! \details The input_values on every process of the communicator will be
  * collected in the output_values vector on every process. The input_values
  * associated with a process will start at the index that is equal to the
- * process's rank multiplied by the number of input values. The output_values 
- * vector will be resized appropriately. This operation can be done with 
+ * process's rank multiplied by the number of input values. The output_values
+ * vector will be resized appropriately. This operation can be done with
  * communicators of any size.
  * \ingroup mpi
- */ 
+ */
 template<typename T>
 inline void allGather( const Communicator& comm,
                        const Utility::ArrayView<const T>& input_values,
@@ -1157,7 +1157,7 @@ inline void allGather( const Communicator& comm,
   Utility::allGather( comm, input_values, Utility::arrayView(output_values) );
 }
 
-// Gather the values stored at every process into an array of values 
+// Gather the values stored at every process into an array of values
 // from each process.
 /*! \details This method is provided to help with overload resolution.
  * \ingroup mpi
@@ -1170,7 +1170,7 @@ inline void allGather( const Communicator& comm,
   Utility::allGather( comm, input_values.toConst(), output_values );
 }
 
-// Gather the values stored at every process into an array of values 
+// Gather the values stored at every process into an array of values
 // from each process.
 /*! \details The input_values on every process of the communicator will be
  * collected in the output_values array on every process. The input_values
@@ -1214,9 +1214,9 @@ void allGather( const Communicator& comm,
 // available to all processes.
 /*! \details The input_value on every process of the communicator will be
  * reduced in the output_value on every process. It is acceptable to pass
- * in std::vector and std::array types to this method. The reduce operation 
+ * in std::vector and std::array types to this method. The reduce operation
  * will be applied to each element and stored in the output_value container.
- * A std::vector output_value will be sized appropriately. This operation can 
+ * A std::vector output_value will be sized appropriately. This operation can
  * be done with communicators of any size.
  * \ingroup mpi
  */
@@ -1231,8 +1231,8 @@ inline void allReduce( const Communicator& comm,
 
 // Combine the values stored by each process into a single value
 // available to all processes.
-/*! \details The input_output_value on every process of the communicator will 
- * be reduced inline on every process. It is acceptable to pass in std::vector 
+/*! \details The input_output_value on every process of the communicator will
+ * be reduced inline on every process. It is acceptable to pass in std::vector
  * and std::array types to this method. The reduce operation will be applied to
  * each element and stored in the output_value container. This operation can be
  * done with communicators of any size.
@@ -1257,7 +1257,7 @@ inline void allReduce( const Communicator& comm,
                        const Utility::ArrayView<T>& output_values,
                        ReduceOperation op )
 { Utility::allReduce( comm, input_values.toConst(), output_values, op ); }
-  
+
 // Combine the values stored by each process into a single value
 // available to all processes.
 /*! \details The input_values on every process of the communicator will be
@@ -1283,7 +1283,7 @@ void allReduce( const Communicator& comm,
 
     TEST_FOR_EXCEPTION( output_values.size() < input_values.size(),
                         CommunicationError,
-                        comm << " could not counduct allReduce operation "
+                        comm << " could not conduct allReduce operation "
                         "because the output array is not large enough!" );
 
     try{
@@ -1304,7 +1304,7 @@ void allReduce( const Communicator& comm,
 
 // Combine the values stored by each process into a single value
 // available to all processes.
-/*! \details The input_output_values on every process of the communicator will 
+/*! \details The input_output_values on every process of the communicator will
  * be reduced inline on every process. This operation can be done
  * with communicators of any size.
  * \ingroup mpi
@@ -1350,11 +1350,11 @@ inline void allToAll( const Communicator& comm,
 }
 
 // Send data from every process to every other process
-/*! \details The input_values on every process of the communicator will 
+/*! \details The input_values on every process of the communicator will
  * be sent to every other process of the communicator. The input_values
  * associated with a process will start at the index that is equal to the
  * process's rank multiplied by number_of_input_values. The output_values
- * will be resized appropriately. This operation can be done with 
+ * will be resized appropriately. This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -1382,11 +1382,11 @@ inline void allToAll( const Communicator& comm,
 }
 
 // Send data from every process to every other process
-/*! \details The input_values on every process of the communicator will 
+/*! \details The input_values on every process of the communicator will
  * be sent to every other process of the communicator. The input_values
  * associated with a process will start at the index that is equal to the
  * process's rank multiplied by number_of_input_values. The output_values
- * must be sized appropriately before passing it to this method. This 
+ * must be sized appropriately before passing it to this method. This
  * operation can be done with communicators of any size.
  * \ingroup mpi
  */
@@ -1411,7 +1411,7 @@ void allToAll( const Communicator& comm,
         values_to_send_per_proc = input_values.size()/comm.size();
       else
         values_to_send_per_proc = 0;
-      
+
       mpi_comm->allToAll( input_values.data(), values_to_send_per_proc, output_values.data() );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
@@ -1428,8 +1428,8 @@ void allToAll( const Communicator& comm,
 }
 
 // Broadcast a value from a root process to all other processes
-/*! \details The value on the root process of the communicator will be sent 
- * to all other processes of the communicator. This operation can be done with 
+/*! \details The value on the root process of the communicator will be sent
+ * to all other processes of the communicator. This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -1440,8 +1440,8 @@ inline void broadcast( const Communicator& comm, T& value, int root_process )
 }
 
 // Broadcast a value from a root process to all other processes
-/*! \details The values on the root process of the communicator will be sent 
- * to all other processes of the communicator. This operation can be done with 
+/*! \details The values on the root process of the communicator will be sent
+ * to all other processes of the communicator. This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -1485,10 +1485,10 @@ void broadcast( const Communicator& comm,
 }
 
 // Gather the values stored at every process into a vector at the root process
-/*! \details The value on every process of the communicator will be sent 
+/*! \details The value on every process of the communicator will be sent
  * to root_process of the communicator. The output_values will be resized
- * appropriately. The value sent by a process will be located at the index in 
- * output_values that is equal to the process's rank. This operation can be 
+ * appropriately. The value sent by a process will be located at the index in
+ * output_values that is equal to the process's rank. This operation can be
  * done with communicators of any size.
  * \ingroup mpi
  */
@@ -1499,15 +1499,15 @@ inline void gather( const Communicator& comm,
                     int root_process )
 {
   Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-  
+
   Utility::gather( comm, input_value_view, output_values, root_process );
 }
 
 // Gather the values stored at every process into a vector at the root process
-/*! \details The value on every process of the communicator will be sent 
+/*! \details The value on every process of the communicator will be sent
  * to root_process of the communicator. The output_values must be sized
- * appropriately before being passed to this method. The value sent by a 
- * process will be located at the index in output_values that is equal to the 
+ * appropriately before being passed to this method. The value sent by a
+ * process will be located at the index in output_values that is equal to the
  * process's rank. This operation can be done with communicators of any size.
  * \ingroup mpi
  */
@@ -1518,12 +1518,12 @@ inline void gather( const Communicator& comm,
                     int root_process )
 {
   Utility::ArrayView<const T> input_value_view( &input_value, 1 );
-  
+
   Utility::gather( comm, input_value_view, output_values, root_process );
 }
 
 // Gather the value stored at every process into a vector at the root process
-/*! \details The value on every process of the communicator will be sent 
+/*! \details The value on every process of the communicator will be sent
  * to root_process of the communicator. This version of the gather method can
  * only be called by non-root processes (since the output values array is not
  * needed).
@@ -1540,9 +1540,9 @@ inline void gather( const Communicator& comm,
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on every process of the communicator will be sent
  * to root_process of the communicator. The input_values can be passed in
- * as a brace-initialized list (e.g. {1, 2, ..., 10}). The output_values will 
- * be resized appropriately. The values sent by a process will start at the 
- * index in output_values that is equal to the process's rank multiplied by 
+ * as a brace-initialized list (e.g. {1, 2, ..., 10}). The output_values will
+ * be resized appropriately. The values sent by a process will start at the
+ * index in output_values that is equal to the process's rank multiplied by
  * number_of_input_values. This operation can be done with communicators of any
  * size.
  * \ingroup mpi
@@ -1562,10 +1562,10 @@ inline void gather( const Communicator& comm,
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on every process of the communicator will be sent
  * to root_process of the communicator. The input_values can be passed in
- * as a brace-initialized list (e.g. {1, 2, ..., 10}). The output_values must 
- * be sized appropriately before passing it to this method. The values sent by 
- * a process will start at the index in output_values that is equal to the 
- * process's rank multiplied by number_of_input_values. This operation can be 
+ * as a brace-initialized list (e.g. {1, 2, ..., 10}). The output_values must
+ * be sized appropriately before passing it to this method. The values sent by
+ * a process will start at the index in output_values that is equal to the
+ * process's rank multiplied by number_of_input_values. This operation can be
  * done with communicators of any size.
  * \ingroup mpi
  */
@@ -1584,8 +1584,8 @@ inline void gather( const Communicator& comm,
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on every process of the communicator will be sent
  * to root_process of the communicator. The input_values can be passed in
- * as a brace-initialized list (e.g. {1, 2, ..., 10}). This version of the 
- * gather method can only be called by non-root processes (since the output 
+ * as a brace-initialized list (e.g. {1, 2, ..., 10}). This version of the
+ * gather method can only be called by non-root processes (since the output
  * values array is not needed).
  * \ingroup mpi
  */
@@ -1612,12 +1612,12 @@ inline void gather( const Communicator& comm,
 {
   Utility::gather( comm, input_values.toConst(), output_values, root_process );
 }
-  
+
 // Gather the values stored at every process into a vector at the root process
-/*! \details The values on every process of the communicator will be sent 
+/*! \details The values on every process of the communicator will be sent
  * to root_process of the communicator. The output_values will be resized
- * appropriately. The values sent by a process will start at the index in 
- * output_values that is equal to the process's rank multiplied by the 
+ * appropriately. The values sent by a process will start at the index in
+ * output_values that is equal to the process's rank multiplied by the
  * number of input values. This operation can be done with communicators of any
  * size.
  * \ingroup mpi
@@ -1649,11 +1649,11 @@ void gather( const Communicator& comm,
 }
 
 // Gather the values stored at every process into a vector at the root process
-/*! \details The values on every process of the communicator will be sent 
+/*! \details The values on every process of the communicator will be sent
  * to root_process of the communicator. The output_values must be sized
  * appropriately before passing it to this method. The values sent by a process
  * will start at the index in output_values that is equal to the process's rank
- * multiplied by the number of input values. This operation can be done with 
+ * multiplied by the number of input values. This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -1694,7 +1694,7 @@ void gather( const Communicator& comm,
                                   << root_process <<
                                   " will be ignored!" );
     }
-  
+
     Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
 }
@@ -1712,7 +1712,7 @@ inline void gather( const Communicator& comm,
 }
 
 // Gather the values stored at every process into a vector at the root process
-/*! \details The values on every process of the communicator will be sent 
+/*! \details The values on every process of the communicator will be sent
  * to root_process of the communicator. This version of the gather method can
  * only be called by non-root processes (since the output values array is not
  * needed).
@@ -1754,7 +1754,7 @@ void gathervGetSizes( const Communicator& comm,
 
 /*! Gather the values stored at every process into a vector at the root process
  * \ingroup mpi
- */  
+ */
 template<typename T>
 void gathervImpl( const Communicator& comm,
                   const Utility::ArrayView<const T>& input_values,
@@ -1765,16 +1765,16 @@ void gathervImpl( const Communicator& comm,
   if( comm.rank() == root_process )
   {
     int total_size = 0;
-    
+
     for( size_t i = 0; i < sizes.size(); ++i )
       total_size += sizes[i];
-    
+
     TEST_FOR_EXCEPTION( output_values.size() < total_size,
                         CommunicationError,
                         comm << " could not conduct gatherv operation because "
                         "the output array is not large enough!" );
   }
-  
+
   if( comm.size() > 1 )
   {
     const MPICommunicator* const mpi_comm =
@@ -1784,7 +1784,7 @@ void gathervImpl( const Communicator& comm,
                         InvalidCommunicator,
                         "An unknown communicator type was encountered!" );
 
-    try{            
+    try{
       mpi_comm->gatherv( input_values.data(), input_values.size(), output_values.data(), sizes, root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
@@ -1815,7 +1815,7 @@ void gathervImpl( const Communicator& comm,
 
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_value on this process of the communicator will be sent
- * to root_process of the communicator. The output_values will be resized 
+ * to root_process of the communicator. The output_values will be resized
  * appropriately. This operation can be done with communicators of any size.
  * \ingroup mpi
  */
@@ -1830,8 +1830,8 @@ inline void gatherv( const Communicator& comm,
 
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on this process of the communicator will be sent
- * to root_process of the communicator. The output_values must be sized 
- * appropriately before passing it to this method. This operation can be done 
+ * to root_process of the communicator. The output_values must be sized
+ * appropriately before passing it to this method. This operation can be done
  * with communicators of any size.
  * \ingroup mpi
  */
@@ -1846,7 +1846,7 @@ inline void gatherv( const Communicator& comm,
 
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on this process of the communicator will be sent
- * to root_process of the communicator. The output_values will be resized 
+ * to root_process of the communicator. The output_values will be resized
  * appropriately. This operation can be done with communicators of any size.
  * \ingroup mpi
  */
@@ -1861,8 +1861,8 @@ inline void gatherv( const Communicator& comm,
 
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on this process of the communicator will be sent
- * to root_process of the communicator. The output_values must be sized 
- * appropriately before passing it to this method. This operation can be done 
+ * to root_process of the communicator. The output_values must be sized
+ * appropriately before passing it to this method. This operation can be done
  * with communicators of any size.
  * \ingroup mpi
  */
@@ -1890,7 +1890,7 @@ inline void gatherv( const Communicator& comm,
 
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on this process of the communicator will be sent
- * to root_process of the communicator. The output_values will be resized 
+ * to root_process of the communicator. The output_values will be resized
  * appropriately. This operation can be done with communicators of any size.
  * \ingroup mpi
  */
@@ -1934,8 +1934,8 @@ inline void gatherv( const Communicator& comm,
 
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on this process of the communicator will be sent
- * to root_process of the communicator. The output_values must be sized 
- * appropriately before passing it to this method. This operation can be done 
+ * to root_process of the communicator. The output_values must be sized
+ * appropriately before passing it to this method. This operation can be done
  * with communicators of any size.
  * \ingroup mpi
  */
@@ -1957,7 +1957,7 @@ void gatherv( const Communicator& comm,
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_value on this process of the communicator will be sent
  * to root_process of the communicator. This version of the gatherv method can
- * only be called by non-root processes (since the output values are not 
+ * only be called by non-root processes (since the output values are not
  * needed)
  * \ingroup mpi
  */
@@ -1973,7 +1973,7 @@ inline void gatherv( const Communicator& comm,
 /*! \details The input_values on this process of the communicator will be sent
  * to root_process of the communicator. The input_values can be passed in as
  * a brace-initialized list (e.g. {1, 2, ..., 10}). This version of the gatherv
- * method can only be called by non-root processes (since the output values 
+ * method can only be called by non-root processes (since the output values
  * are not needed).
  * \ingroup mpi
  */
@@ -2000,7 +2000,7 @@ inline void gatherv( const Communicator& comm,
 // Gather the values stored at every process into a vector at the root process
 /*! \details The input_values on this process of the communicator will be sent
  * to root_process of the communicator. This version of the gatherv method can
- * only be called by non-root processes (since the output values are not 
+ * only be called by non-root processes (since the output values are not
  * needed).
  * \ingroup mpi
  */
@@ -2014,17 +2014,17 @@ void gatherv( const Communicator& comm,
                       "Root process " << root_process << " of " << comm <<
                       " attempted to call Utility::gatherv method reserved "
                       "for non-root processes!" );
-  
+
   Utility::gatherv( comm, input_values, Utility::ArrayView<T>(), root_process );
 }
 
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
  * sent to every other process in the communicator. The values that a process
- * receives from the root process will be from the input values array 
+ * receives from the root process will be from the input values array
  * starting at the index that is equal to the process's rank multiplied by
- * number of values sent to each process 
- * (i.e. input_values.size()/comm.size()). This operation can be done with 
+ * number of values sent to each process
+ * (i.e. input_values.size()/comm.size()). This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -2054,15 +2054,15 @@ inline void scatter( const Communicator& comm,
   Utility::ArrayView<T> output_value_view( &output_value, 1 );
 
   Utility::scatter( comm, input_values.toConst(), output_value_view, root_process );
-} 
+}
 
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
  * sent to every other process in the communicator. The values that a process
- * receives from the root process will be from the input values array 
+ * receives from the root process will be from the input values array
  * starting at the index that is equal to the process's rank multiplied by
- * number of values sent to each process 
- * (i.e. input_values.size()/comm.size()). This operation can be done with 
+ * number of values sent to each process
+ * (i.e. input_values.size()/comm.size()). This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -2080,7 +2080,7 @@ inline void scatter( const Communicator& comm,
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
  * sent to every other process in the communicator. This version of the
- * scatter method can only be called by non-root processes (since the 
+ * scatter method can only be called by non-root processes (since the
  * input values array is not needed).
  * \ingroup mpi
  */
@@ -2091,14 +2091,14 @@ void scatter( const Communicator& comm,
 {
   Details::SingleValueScatterHelper<T>::scatter( comm, output_value, root_process );
 }
-  
+
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
  * sent to every other process in the communicator. The values that a process
- * receives from the root process will be from the input values array 
+ * receives from the root process will be from the input values array
  * starting at the index that is equal to the process's rank multiplied by
- * number of values sent to each process 
- * (i.e. input_values.size()/comm.size()). This operation can be done with 
+ * number of values sent to each process
+ * (i.e. input_values.size()/comm.size()). This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -2130,10 +2130,10 @@ inline void scatter( const Communicator& comm,
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
  * sent to every other process in the communicator. The values that a process
- * receives from the root process will be from the input values array 
+ * receives from the root process will be from the input values array
  * starting at the index that is equal to the process's rank multiplied by
- * number of values sent to each process 
- * (i.e. input_values.size()/comm.size()). This operation can be done with 
+ * number of values sent to each process
+ * (i.e. input_values.size()/comm.size()). This operation can be done with
  * communicators of any size.
  * \ingroup mpi
  */
@@ -2151,7 +2151,7 @@ void scatter( const Communicator& comm,
                         "the root process because there were not enough input "
                         "values provided!" );
   }
-  
+
   if( comm.size() > 1 )
   {
     const MPICommunicator* const mpi_comm =
@@ -2174,7 +2174,7 @@ void scatter( const Communicator& comm,
                           CommunicationError,
                           "The output values array does not have "
                           "sufficient space to store the scattered values!" );
-      
+
       mpi_comm->scatter( input_values.data(), output_values.data(), number_of_values_per_proc, root_process );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
@@ -2204,7 +2204,7 @@ void scatter( const Communicator& comm,
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
  * sent to every other process in the communicator. This version of the
- * scatter method can only be called by non-root processes (since the 
+ * scatter method can only be called by non-root processes (since the
  * input values array is not needed).
  * \ingroup mpi
  */
@@ -2244,7 +2244,7 @@ inline void scattervGetSizes( const Communicator& comm,
 /*! Scatter the values stored at the root process to all other processes
  *
  * The input_values on root_process of the communicator will be
- * sent to every other process in the communicator. The range of values that a 
+ * sent to every other process in the communicator. The range of values that a
  * process receives from the root process will be determined by the sizes
  * array. This operation can be done with communicators of any size.
  * \ingroup mpi
@@ -2277,7 +2277,7 @@ void scattervImpl( const Communicator& comm,
   else
   {
     __TEST_FOR_NULL_COMM__( comm );
-    
+
     if( root_process != comm.rank() )
     {
       FRENSIE_LOG_TAGGED_WARNING( Utility::toString(comm),
@@ -2298,7 +2298,7 @@ void scattervImpl( const Communicator& comm,
     }
   }
 }
-  
+
 } // end Details namespace
 
 // Scatter the values stored at the root process to all other processes
@@ -2317,7 +2317,7 @@ inline void scatterv( const Communicator& comm,
 
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
- * sent to every other process in the communicator. The range of values that a 
+ * sent to every other process in the communicator. The range of values that a
  * process receives from the root process will be determined by the sizes
  * array. The output_values vector will be resize appropriately. This operation
  * can be done with communicators of any size.
@@ -2335,7 +2335,7 @@ void scatterv( const Communicator& comm,
   Details::scattervGetSizes( comm, sizes_copy, root_process );
 
   output_values.resize( sizes_copy[comm.rank()] );
-  
+
   Details::scattervImpl( comm, input_values, sizes_copy, Utility::arrayView(output_values), root_process );
 }
 
@@ -2355,7 +2355,7 @@ inline void scatterv( const Communicator& comm,
 
 // Scatter the values stored at the root process to all other processes
 /*! \details The input_values on root_process of the communicator will be
- * sent to every other process in the communicator. The range of values that a 
+ * sent to every other process in the communicator. The range of values that a
  * process receives from the root process will be determined by the sizes
  * array. This operation can be done with communicators of any size.
  * \ingroup mpi
@@ -2374,7 +2374,7 @@ void scatterv( const Communicator& comm,
   // Chop the array view so that is has the correct size
   if( output_values.size() >= sizes_copy[comm.rank()] )
   {
-    
+
     Details::scattervImpl( comm, input_values, sizes_copy, output_values( 0, sizes_copy[comm.rank()] ), root_process );
   }
   // The output values array does not have the correct size
@@ -2388,7 +2388,7 @@ void scatterv( const Communicator& comm,
 
 // Scatter the values stored at the root process to all other processes
 /*! \details The input values on root_process of the communicator will be
- * sent to every other process in the communicator. The output_values vector 
+ * sent to every other process in the communicator. The output_values vector
  * will be resize appropriately. This method can only be called by non-root
  * processes (since the input values are not needed).
  * \ingroup mpi
@@ -2400,7 +2400,7 @@ inline void scatterv( const Communicator& comm,
 {
   Utility::scatterv( comm, Utility::ArrayView<const T>(), std::vector<int>(), output_values, root_process );
 }
-  
+
 // Scatter the values stored at the root process to all other processes
 /*! \details The input values on root_process of the communicator will be
  * sent to every other process in the communicator. The output_values array
@@ -2417,7 +2417,7 @@ void scatterv( const Communicator& comm,
   Utility::scatterv( comm, Utility::ArrayView<const T>(), std::vector<int>(), output_values, root_process );
 }
 
-// Combine the values stored by each process intoa single value at the root
+// Combine the values stored by each process into a single value at the root
 /*! \details The input_value on every process of the communicator will be
  * reduced on root_process of the communicator. This operation can be done with
  * communicators of any size.
@@ -2433,7 +2433,7 @@ inline void reduce( const Communicator& comm,
   Details::SingleValueReduceHelper<T>::reduce( comm, input_value, output_value, op, root_process );
 }
 
-// Combine the values stored by each process intoa single value at the root
+// Combine the values stored by each process into a single value at the root
 /*! \details The input_values on every process of the communicator will be
  * reduced on root_process of the communicator. This operation can be done with
  * communicators of any size.
@@ -2449,7 +2449,7 @@ void reduce( const Communicator& comm,
   Utility::reduce( comm, Utility::ArrayView<const T>( input_values.begin(), input_values.end() ), output_values, op, root_process );
 }
 
-// Combine the values stored by each process intoa single value at the root
+// Combine the values stored by each process into a single value at the root
 /*! \details This method is provided to help with overload resolution
  * \ingroup mpi
  */
@@ -2463,7 +2463,7 @@ inline void reduce( const Communicator& comm,
   Utility::reduce( comm, input_values.toConst(), output_values, op, root_process );
 }
 
-// Combine the values stored by each process intoa single value at the root
+// Combine the values stored by each process into a single value at the root
 /*! \details The input_values on every process of the communicator will be
  * reduced on root_process of the communicator. This operation can be done with
  * communicators of any size.
@@ -2484,7 +2484,7 @@ void reduce( const Communicator& comm,
                         "the root process because the output values array is "
                         "not large enough!" );
   }
-  
+
   if( comm.size() > 1 )
   {
     const MPICommunicator* const mpi_comm =
@@ -2537,7 +2537,7 @@ void reduce( const Communicator& comm,
   Details::SingleValueReduceHelper<T>::reduce( comm, input_value, op, root_process );
 }
 
-// Combine the values stored by each process intoa single value at the root
+// Combine the values stored by each process into a single value at the root
 /*! \details The input_values on every process of the communicator will be
  * reduced on root_process of the communicator. This version of the reduce
  * method can only be called by non-root processes (since the output values
@@ -2638,7 +2638,7 @@ void scan( const Communicator& comm,
     Details::SerialCommunicatorArrayCopyHelper<T>::copyFromInputArrayToOutputArray( input_values.data(), input_values.size(), output_values.data() );
   }
 }
-  
+
 } // end Utility namespace
 
 // Explicit templateinstantiations for comm helpers
@@ -2681,7 +2681,7 @@ void scan( const Communicator& comm,
 #define __EXTERN_EXPLICIT_COMM_SEND_RECV_HELPER_INST__  \
   __EXPLICIT_COMM_HELPER_INST__( \
               __EXTERN_EXPLICIT_COMM_SEND_RECV_HELPER_TYPE_INST__ \
-                                 )                                
+                                 )
 
 #define __EXPLICIT_COMM_SEND_RECV_HELPER_INST__  \
   __EXPLICIT_COMM_HELPER_INST__( \
@@ -2976,7 +2976,7 @@ __EXTERN_EXPLICIT_COMM_REDUCE_HELPER_INST__;
                                  )
 
 __EXTERN_EXPLICIT_COMM_SCAN_HELPER_INST__;
-  
+
 #endif // end UTILITY_COMMUNICATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//

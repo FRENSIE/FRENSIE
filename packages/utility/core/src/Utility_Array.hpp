@@ -28,7 +28,7 @@
  */
 
 namespace Utility{
-  
+
 /*! Partial specialization of ToStringTraits for std::array
  * \ingroup array
  * \ingroup to_string_traits
@@ -50,11 +50,11 @@ struct TypeNameTraits<std::array<T,N> >
     return std::string("std::array<") + Utility::typeName<T>()+","+
       Utility::toString(N)+">";
   }
-};  
+};
 
 /*! Partial specialization of ComparisonTraits for std::array
  * \ingroup array
- * \ingropu comparison_traits
+ * \ingroup comparison_traits
  */
 template<typename T, size_t N>
 struct ComparisonTraits<std::array<T,N> > : public Details::ComparisonTraitsSequenceContainerHelper<std::array<T,N> >
@@ -69,9 +69,9 @@ namespace Details{
 template<typename T, size_t N>
 struct ZeroHelper<std::array<T,N> > : public STLCompliantContainerZeroHelper<std::array<T,N> >
 { /* ... */ };
-  
+
 } // end Details namespace
-  
+
 } // end Utility namespace
 
 namespace std{
@@ -88,7 +88,7 @@ inline Utility::ArrayView<T> operator|( std::array<T,N>& array,
   testPrecondition( slice.offset() < N );
   // Make sure that the slice is valid
   testPrecondition( slice.offset() + slice.extent() <= N );
-  
+
   return Utility::ArrayView<T>( array.data() + slice.offset(),
                                 slice.extent() );
 }
@@ -105,7 +105,7 @@ inline Utility::ArrayView<const T> operator|( const std::array<T,N>& array,
   testPrecondition( slice.offset() < N );
   // Make sure that the slice is valid
   testPrecondition( slice.offset() + slice.extent() <= N );
-  
+
   return Utility::ArrayView<const T>( array.data() + slice.offset(),
                                       slice.extent() );
 }

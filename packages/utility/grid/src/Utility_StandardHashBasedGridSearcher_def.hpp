@@ -33,7 +33,7 @@ namespace Utility{
 
 namespace Details{
 
-//! The standard hash-based grid seracher helper base
+//! The standard hash-based grid searcher helper base
 template<typename T>
 struct StandardHashBasedGridSearcherHelperBase
 {
@@ -71,7 +71,7 @@ struct StandardHashBasedGridSearcherHelperBase
                         "Cannot construct a standard hash-based grid "
                         "searcher because the grid has not been "
                         "initialized!" );
-    
+
     TEST_FOR_EXCEPTION( !Sort::isSortedAscending( grid->begin(), grid->end() ),
                         std::runtime_error,
                         "Cannot construct a standard hash-based grid "
@@ -110,9 +110,9 @@ struct StandardHashBasedGridSearcherHelper<T,processed_grid,typename std::enable
 private:
 
   typedef StandardHashBasedGridSearcherHelper<T,processed_grid,typename std::enable_if<std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value>::type> ThisType;
-  
+
 public:
-  
+
   //! Check if the grid is valid
   template<template<typename,typename...> class STLCompliantArray>
   static inline void verifyGridPreconditions(
@@ -142,7 +142,7 @@ public:
   {
     // Make sure the value is valid
     testPrecondition( value > 0.0 );
-    
+
     const T processed_value = ThisType::processValue( value );
 
     return processed_value >= grid_lower_bound &&
@@ -161,9 +161,9 @@ struct StandardHashBasedGridSearcherHelper<T,false,typename std::enable_if<std::
 private:
 
   typedef StandardHashBasedGridSearcherHelper<T,false,typename std::enable_if<std::is_floating_point<typename Utility::QuantityTraits<T>::RawType>::value>::type> ThisType;
-  
+
 public:
-  
+
   //! Check if the grid is valid
   template<template<typename,typename...> class STLCompliantArray>
   static inline void verifyGridPreconditions(
@@ -173,7 +173,7 @@ public:
                       const size_t hash_grid_bins )
   {
     StandardHashBasedGridSearcherHelperBase<T>::verifyGridPreconditionsImpl( grid, min_grid_value, max_grid_value, hash_grid_bins );
-    
+
     // Make sure the grid is valid
     testPrecondition( std::find_if( grid->begin(),
                                     grid->end(),
@@ -215,7 +215,7 @@ private:
   static inline bool isElementLEZero( const T& element )
   { return element <= Utility::QuantityTraits<T>::zero(); }
 };
-  
+
 } // end Details namespace
 
 // Default Constructor
@@ -334,7 +334,7 @@ template<typename STLCompliantArray,bool processed_grid>
 void StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::initializeHashGrid()
 {
   typedef typename Utility::QuantityTraits<ValueType>::RawType RawValueType;
-  
+
   // Construct the grid indices array (except for last element)
   for( size_t i = 0; i < d_hash_grid_size-1; ++i )
   {
@@ -400,7 +400,7 @@ void StandardHashBasedGridSearcher<STLCompliantArray,processed_grid>::load( Arch
 
   // Initialize the hash grid
   d_hash_grid.resize( d_hash_grid_size );
-  
+
   this->initializeHashGrid();
 }
 
@@ -410,17 +410,17 @@ namespace boost{
 namespace archive{
   class text_oarchive;
   class text_iarchive;
-  class xml_oarchive; 
-  class xml_iarchive; 
+  class xml_oarchive;
+  class xml_iarchive;
   class binary_oarchive;
-  class binary_iarchive; 
+  class binary_iarchive;
   class polymorphic_oarchive;
-  class polymorphic_iarchive; 
-}                             
+  class polymorphic_iarchive;
+}
 }
 
 namespace Utility{
-  class HDF5OArchive;    
+  class HDF5OArchive;
   class HDF5IArchive;
 
   EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardHashBasedGridSearcher<std::vector<double>,true> );
@@ -450,7 +450,7 @@ namespace Utility{
   EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<boost::archive::binary_iarchive>( boost::archive::binary_iarchive& ar, const unsigned version ) );
   EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<boost::archive::polymorphic_iarchive>( boost::archive::polymorphic_iarchive& ar, const unsigned version ) );
   EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void StandardHashBasedGridSearcher<std::vector<double>,false>::load<Utility::HDF5IArchive>( Utility::HDF5IArchive& ar, const unsigned version ) );
-} 
+}
 
 #endif // end UTILITY_STANDARD_HASH_BASED_GRID_SEARCHER_DEF_HPP
 

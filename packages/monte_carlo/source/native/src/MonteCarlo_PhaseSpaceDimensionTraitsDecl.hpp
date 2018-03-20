@@ -17,9 +17,9 @@
 /*! \defgroup phase_space_dimension_traits Phase Space Dimension Traits
  * \ingroup policy
  *
- * This traits class defines basic properties for each dimension of the 
- * particle phase space. Among the properties are very basic methods for 
- * accessing a dimension value (or weight) of MonteCarlo::PhaseSpacePoint 
+ * This traits class defines basic properties for each dimension of the
+ * particle phase space. Among the properties are very basic methods for
+ * accessing a dimension value (or weight) of MonteCarlo::PhaseSpacePoint
  * class objects.
  */
 
@@ -31,9 +31,9 @@ namespace MonteCarlo{
 template<typename T, PhaseSpaceDimension dimension>
 struct UndefinedPhaseSpaceDimensionTraits
 {
-  //! This type should be used as the defalut value of typedefs
+  //! This type should be used as the default value of typedefs
   struct DesiredTypeIsMissingSpecialization{};
-  
+
   //! This function should not compile if there is any attempt to instantiate
   static inline double notDefined() { return T::desired_dimension_is_missing_specialization(); }
 };
@@ -62,7 +62,7 @@ struct PhaseSpaceDimensionTraits
   {
     UndefinedPhaseSpaceDimensionTraits<DimensionValueType,dimension>::notDefined();
   }
-  
+
   //! Get the coordinate value
   static inline DimensionValueType getCoordinate( const PhaseSpacePoint& point )
   {
@@ -130,8 +130,8 @@ inline void setCoordinateWeight( PhaseSpacePoint& point,
                                  const typename PhaseSpaceDimensionTraits<dimension>::DimensionWeightType coord_weight )
 {
   PhaseSpaceDimensionTraits<dimension>::setCoordinateWeight( point, coord_weight );
-}  
-  
+}
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP

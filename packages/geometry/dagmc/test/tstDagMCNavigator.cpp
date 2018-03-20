@@ -47,7 +47,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getPointLocation )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   std::shared_ptr<Geometry::Navigator::Ray> ray( new Geometry::Navigator::Ray(
                                                          -40.0*cgs::centimeter,
@@ -85,7 +85,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getSurfaceNormal )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray (on cell 53)
   Geometry::Navigator::Ray ray( -40.0*cgs::centimeter,
                                 -40.0*cgs::centimeter,
@@ -111,7 +111,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, getBoundaryCell )
 {
   std::shared_ptr<Geometry::DagMCNavigator>
     navigator( model->createNavigatorAdvanced() );
-  
+
   FRENSIE_CHECK_EQUAL( navigator->getBoundaryCell( 53, 242 ), 54 );
   FRENSIE_CHECK_EQUAL( navigator->getBoundaryCell( 54, 248 ), 55 );
 }
@@ -125,7 +125,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay_cache )
 
   // Initialize the start cell cache
   Geometry::Navigator::CellIdSet found_cell_cache;
-  
+
   // Initialize the ray
   std::shared_ptr<Geometry::Navigator::Ray> ray(
                            new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
@@ -139,7 +139,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay_cache )
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
-  // Initailize a new ray
+  // Initialize a new ray
   ray.reset( new Geometry::Navigator::Ray( -39.0*cgs::centimeter,
                                            -39.0*cgs::centimeter,
                                            59.0*cgs::centimeter,
@@ -150,7 +150,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay_cache )
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
-  // Initailize a new ray
+  // Initialize a new ray
   ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
                                            -40.0*cgs::centimeter,
                                            61.0*cgs::centimeter,
@@ -185,7 +185,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   std::shared_ptr<Geometry::Navigator::Ray> ray(
                            new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
@@ -199,7 +199,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, findCellContainingRay )
 
   FRENSIE_CHECK_EQUAL( cell, 53 );
 
-  // Initailize a new ray
+  // Initialize a new ray
   ray.reset( new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
                                            -40.0*cgs::centimeter,
                                            61.0*cgs::centimeter,
@@ -228,7 +228,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, setState_unknown_cell )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   FRENSIE_CHECK( !navigator->isStateSet() );
 
   std::shared_ptr<Geometry::Navigator::Ray> ray(
@@ -271,7 +271,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, setState_known_cell )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Set the internal ray but do not cache its starting cell
   std::shared_ptr<Geometry::Navigator::Ray> ray(
                            new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
@@ -280,7 +280,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, setState_known_cell )
                                                          0.0, 0.0, 1.0 ) );
 
   FRENSIE_CHECK( !navigator->isStateSet() );
-  
+
   navigator->setState( ray->getPosition(),
                              ray->getDirection(),
                              53 );
@@ -317,7 +317,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, fireRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   Geometry::Navigator::Ray ray( -40.0*cgs::centimeter,
                                 -40.0*cgs::centimeter,
@@ -344,7 +344,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceBySubstep )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   navigator->setState( -40.0*cgs::centimeter,
                        -40.0*cgs::centimeter,
@@ -377,7 +377,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceToCellBoundary_basic )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   navigator->setState( -40.0*cgs::centimeter,
                        -40.0*cgs::centimeter,
@@ -405,7 +405,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceToCellBoundary_advanced )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   navigator->setState( -40.0*cgs::centimeter,
                        -40.0*cgs::centimeter,
@@ -440,7 +440,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, changeDirection )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   std::shared_ptr<Geometry::Navigator::Ray> ray(
                            new Geometry::Navigator::Ray( -40.0*cgs::centimeter,
                                                          -40.0*cgs::centimeter,
@@ -469,7 +469,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   navigator->setState( -40.0*cgs::centimeter,
                        -40.0*cgs::centimeter,
@@ -543,7 +543,7 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
 {
   std::shared_ptr<Geometry::Navigator> navigator =
     model->createNavigator();
-  
+
   // Initialize the ray
   navigator->setState( -40.0*cgs::centimeter,
                        -40.0*cgs::centimeter,
@@ -665,7 +665,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCNavigator, archive, TestArchives )
   if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
   {
     std::unique_ptr<std::ofstream> ofstream;
-    
+
     if( archive_name.find( ".bin" ) < archive_name.size() )
     {
       ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
@@ -699,13 +699,13 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
-  
+
   local_properties.setFacetTolerance( 1e-3 );
   local_properties.setTerminationCellPropertyName( "graveyard" );
   local_properties.setMaterialPropertyName( "mat" );
   local_properties.setDensityPropertyName( "rho" );
   local_properties.setEstimatorPropertyName( "tally" );
-  
+
   std::shared_ptr<Geometry::DagMCModel> tmp_model =
     Geometry::DagMCModel::getInstance();
 

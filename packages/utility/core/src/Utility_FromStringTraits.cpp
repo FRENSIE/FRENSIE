@@ -25,16 +25,16 @@ std::string FromStringTraits<std::string>::extractString(
                                                     const std::string& delims )
 {
   std::string obj;
-    
+
   if( delims.size() > 0 )
   {
     bool done = false;
-    
+
     while( !done )
     {
       char string_element;
       is.get( string_element );
-      
+
       if( (delims.size() == 0 || delims == Details::white_space_delims ) && is.eof() )
       {
         done = true;
@@ -51,21 +51,21 @@ std::string FromStringTraits<std::string>::extractString(
                          "Unable to get the string element (one or more "
                          "error flags have been set)!" );
       }
-      
+
       if( delims.find( string_element ) < delims.size() )
       {
         done = true;
-        
+
         // Put the deliminator back in the stream so that it can be
         // parsed correctly later
         if( delims != Details::white_space_delims )
           is.putback( string_element );
       }
-      
+
       if( !done )
         obj.push_back( string_element );
     }
-    
+
     // Trim the extracted string (unless the string is only whitespace)
     if( obj.find_first_not_of( " " ) < obj.size() )
       boost::algorithm::trim( obj );
@@ -73,7 +73,7 @@ std::string FromStringTraits<std::string>::extractString(
   // No deliminators have been specified - use the default extraction method
   else
     std::getline( is, obj );
-  
+
   return obj;
 }
 
@@ -84,9 +84,9 @@ std::string FromStringTraits<std::string>::extractElementString(
 {
   // Check if a sub-container is present
   bool sub_container_present = false;
-  
+
   std::string sub_container_string;
-  
+
   while( true )
   {
     char string_element;
@@ -97,12 +97,12 @@ std::string FromStringTraits<std::string>::extractElementString(
                         Utility::StringConversionException,
                         "Unable to get the string element (EOF reached "
                         "unexpectedly)!" );
-    
+
     TEST_FOR_EXCEPTION( !is,
                         Utility::StringConversionException,
                         "Unable to get the string element (one or more "
                         "error flags have been set)!" );
-    
+
     if( string_element == container_start_char )
     {
       sub_container_present = true;
@@ -111,7 +111,7 @@ std::string FromStringTraits<std::string>::extractElementString(
     else
     {
       bool white_space_element = false;
-      
+
       for( size_t i = 0; i < Details::white_space_delims.size(); ++i )
       {
         if( string_element == Details::white_space_delims[i] )
@@ -125,7 +125,7 @@ std::string FromStringTraits<std::string>::extractElementString(
         break;
     }
   }
-  
+
   // Restore the stream
   if( !sub_container_present )
   {
@@ -134,11 +134,11 @@ std::string FromStringTraits<std::string>::extractElementString(
       is.putback( sub_container_string.back() );
       sub_container_string.pop_back();
     }
-    
+
     // Extract a string from the stream
     return FromStringTraits<std::string>::extractString( is, delims );
   }
-    
+
   // Continue reading until the numer of start deliminators equals the
   // number of end deliminators
   else
@@ -146,30 +146,30 @@ std::string FromStringTraits<std::string>::extractElementString(
     // Count the number of '{' and '}' characters that occur
     size_t num_start_delim_chars = 1;
     size_t num_end_delim_chars = 0;
-    
+
     while( num_start_delim_chars != num_end_delim_chars )
     {
       char string_element;
       is.get( string_element );
-      
+
       TEST_FOR_EXCEPTION( is.eof(),
                           Utility::StringConversionException,
                           "Unable to get the string element (EOF reached "
                           "unexpectedly)!" );
-      
+
       TEST_FOR_EXCEPTION( !is,
                           Utility::StringConversionException,
                           "Unable to get the string element (one or more "
                           "error flags have been set)!" );
-      
+
       if( string_element == container_start_char )
         ++num_start_delim_chars;
       if( string_element == container_end_char )
         ++num_end_delim_chars;
-      
+
       sub_container_string.push_back( string_element );
     }
-    
+
     return sub_container_string;
   }
 }
@@ -197,16 +197,16 @@ bool moveInputStreamToNextElement( std::istream& is,
 {
   // Search for the specified element deliminator
   char delim;
-  
+
   while( true )
   {
     is.get( delim );
 
-    // Another element must be deserialized
+    // Another element must be de-serialized
     if( delim == elem_delim )
       return false;
-    
-    // All elements have been deserialized
+
+    // All elements have been de-serialized
     else if( delim == end_delim )
       return true;
 
@@ -240,7 +240,7 @@ bool doesInputStreamContainAnotherElement( std::istream& is,
   char element;
 
   bool another_element_present;
-  
+
   while( true )
   {
     is.get( element );
@@ -301,7 +301,7 @@ inline void expandPiKeywordInSubstring( const std::string::size_type start,
 {
   // Convert to lower case
   boost::algorithm::to_lower( substring );
-  
+
   std::string::size_type pi_pos = substring.find( "pi", start );
 
   TEST_FOR_EXCEPTION( substring.find( "pi", pi_pos+2 ) < true_end,
@@ -355,7 +355,7 @@ inline void expandPiKeywordInSubstring( const std::string::size_type start,
     substring.replace( start, true_end - start + 1, oss.str() );
   }
 }
-  
+
 } // end Details namespace
 
 // Expand pi keyword in string
@@ -366,7 +366,7 @@ void expandPiKeywords( std::string& obj_rep )
 
   do{
     // This is either the first loop or the string has changed because
-    // an occurance of the pi keyword has been replaced.
+    // an occurrence of the pi keyword has been replaced.
     if( orig_string_size != obj_rep.size() )
     {
       // Find the start of an element
@@ -387,11 +387,11 @@ void expandPiKeywords( std::string& obj_rep )
 
     // Find the end of an element
     elem_end_pos = obj_rep.find_first_of( container_element_delims, elem_start_pos );
-    
+
     if( elem_end_pos > obj_rep.size() )
       elem_end_pos = obj_rep.size();
 
-    
+
     Details::expandPiKeywordInSubstring( elem_start_pos,
                                          elem_end_pos - 1,
                                          obj_rep );
@@ -403,7 +403,7 @@ auto FromStringTraits<LogRecordType>::fromString(
                                      const std::string& obj_rep ) -> ReturnType
 {
   std::string trimmed_obj_rep = boost::algorithm::trim_copy( obj_rep );
-  
+
   if( trimmed_obj_rep == FRENSIE_LOG_ERROR_MSG_BASIC )
     return ERROR_RECORD;
   else if( trimmed_obj_rep == FRENSIE_LOG_WARNING_MSG_BASIC )
@@ -428,7 +428,7 @@ void FromStringTraits<LogRecordType>::fromStream( std::istream& is,
                                                   const std::string& delim )
 {
   std::string delim_copy = delim;
-  
+
   std::string obj_rep =
     BaseType::extractEnumValueNameFromStream( is, delim_copy );
 
@@ -444,9 +444,9 @@ void FromStringTraits<LogRecordType>::fromStream( std::istream& is,
     obj_rep += obj_rep_end;
   }
 
-  obj = FromStringTraits<LogRecordType>::fromString( obj_rep );      
+  obj = FromStringTraits<LogRecordType>::fromString( obj_rep );
 }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

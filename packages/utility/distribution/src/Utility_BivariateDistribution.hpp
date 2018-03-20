@@ -14,7 +14,7 @@
 
 namespace Utility{
 
-/*! The uniit-aware bivariate distribution
+/*! The unit-aware bivariate distribution
  * \ingroup bivariate_distributions
  */
 template<typename PrimaryIndependentUnit,
@@ -103,7 +103,7 @@ public:
   virtual InversePrimaryIndepQuantity evaluatePrimaryConditionalPDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
-  
+
   //! Return a random sample from the primary marginal PDF
   virtual PrimaryIndepQuantity samplePrimaryMarginal() const = 0;
 
@@ -148,7 +148,7 @@ public:
   virtual bool isSecondaryDimensionContinuous() const = 0;
 
   //! Test if the distribution has the same secondary bounds
-  bool hasSameSecodaryBounds( const UnitAwareBivariateDistribution& distribution ) const;
+  bool hasSameSecondaryBounds( const UnitAwareBivariateDistribution& distribution ) const;
 
 private:
 

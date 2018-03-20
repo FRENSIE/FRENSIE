@@ -62,7 +62,7 @@ bool GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::isIndepVarInVa
 }
 
 // Test if the dependent value is in a valid range
-template<typename IndependentUnit, typename DependentUnit, typename T> 
+template<typename IndependentUnit, typename DependentUnit, typename T>
 bool GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::isDepVarInValidRange(
                                              const DepQuantity& dep_var ) const
 {
@@ -145,7 +145,7 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolate(
 }
 
 // Interpolate between two processed points
-/*! \details See the section of the ENDF manual on Interpolation Types and 
+/*! \details See the section of the ENDF manual on Interpolation Types and
  * find the definition of the "B" value for the Gamow interpolation scheme.
  */
 template<typename IndependentUnit, typename DependentUnit, typename T>
@@ -169,7 +169,7 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolatePro
   // Recover the processed indep variables
   IndepQuantity indep_var_0 =
     this->recoverProcessedIndepVar( processed_indep_var_0 );
-  
+
   IndepQuantity indep_var =
     this->recoverProcessedIndepVar( processed_indep_var );
 
@@ -181,7 +181,7 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolatePro
   return a_value*exp(-b_value/sqrt(processed_indep_var));
 }
 
-// Interpolate between two points and return the processed valu
+// Interpolate between two points and return the processed value
 template<typename IndependentUnit, typename DependentUnit, typename T>
 T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateAndProcess(
                                             const IndepQuantity indep_var_0,
@@ -198,7 +198,7 @@ T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateAndPro
 }
 
 // Interpolate between two processed points and return the processed value
-/*! \details See the section of the ENDF manual on Interpolation Types and 
+/*! \details See the section of the ENDF manual on Interpolation Types and
  * find the definition of the "B" value for the Gamow interpolation scheme.
  */
 template<typename IndependentUnit, typename DependentUnit, typename T>
@@ -213,7 +213,7 @@ T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateProces
                                                      processed_dep_var_0,
                                                      b_value ) );
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_GAMOW_INTERPOLATOR_DEF_HPP

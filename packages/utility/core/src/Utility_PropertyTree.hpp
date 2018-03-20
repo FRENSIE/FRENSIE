@@ -30,9 +30,9 @@
  * The property tree is an associative container type provided by boost with
  * support for exporting to and importing from JSON, XML, INI and INFO file
  * types. Unlike the default property tree provided by boost, which uses
- * std::string for both the key and value types, the property tree defined 
+ * std::string for both the key and value types, the property tree defined
  * here uses std::string for the key type and Utility::Variant for the
- * value type. This is becuase the Utility::Variant class provides more 
+ * value type. This is because the Utility::Variant class provides more
  * advanced string parsing capabilities than the std::iostream classes do.
  */
 
@@ -69,8 +69,8 @@ public:
  * support for normal comment syntax. Users can instead use this comment node
  * key to create comments that will be ignored by our custom property tree
  * conversion methods. This also means that developers must ensure that
- * new property tree conversion methods ignore any node that is assigned 
- * to this key. 
+ * new property tree conversion methods ignore any node that is assigned
+ * to this key.
  * \ingroup ptree
  */
 #define PTREE_COMMENT_NODE_KEY "comment"
@@ -91,7 +91,7 @@ bool doesPropertyTreeStoreJSONArray( const Utility::PropertyTree& ptree );
  *
  * Any type that can be converted to a Utility::Variant can also be converted
  * to a Utility::PropertyTree. Specialize this class with the type of interest
- * if a custom conversion is required (e.g. object string conversion is not 
+ * if a custom conversion is required (e.g. object string conversion is not
  * possible so child nodes must be populated).
  * \ingroup ptree_traits
  */
@@ -100,62 +100,62 @@ struct ToPropertyTreeTraits
 {
   //! Data is inlined by default
   typedef std::true_type InlineDefault;
-  
+
   //! Convert an object of type T to a Utility::PropertyTree
   static PropertyTree toPropertyTree(
                                const T& obj,
                                const bool inline_data = InlineDefault::value );
 };
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::array
+/*! Utility::ToPropertyTreeTraits class specialization for std::array
  * \ingroup ptree_traits
  */
 template<typename T, size_t N>
 struct ToPropertyTreeTraits<std::array<T,N> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::vector
+/*! Utility::ToPropertyTreeTraits class specialization for std::vector
  * \ingroup ptree_traits
  */
 template<typename T>
 struct ToPropertyTreeTraits<std::vector<T> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::deque
+/*! Utility::ToPropertyTreeTraits class specialization for std::deque
  * \ingroup ptree_traits
  */
 template<typename T>
 struct ToPropertyTreeTraits<std::deque<T> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::list
+/*! Utility::ToPropertyTreeTraits class specialization for std::list
  * \ingroup ptree_traits
  */
 template<typename T>
 struct ToPropertyTreeTraits<std::list<T> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::forward_list
+/*! Utility::ToPropertyTreeTraits class specialization for std::forward_list
  * \ingroup ptree_traits
  */
 template<typename T>
 struct ToPropertyTreeTraits<std::forward_list<T> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::set
+/*! Utility::ToPropertyTreeTraits class specialization for std::set
  * \ingroup ptree_traits
  */
 template<typename T>
 struct ToPropertyTreeTraits<std::set<T> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::unordered_set
+/*! Utility::ToPropertyTreeTraits class specialization for std::unordered_set
  * \ingroup ptree_traits
  */
 template<typename T>
 struct ToPropertyTreeTraits<std::unordered_set<T> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::map
+/*! Utility::ToPropertyTreeTraits class specialization for std::map
  * \ingroup ptree_traits
  */
 template<typename Key, typename T>
 struct ToPropertyTreeTraits<std::map<Key,T> >;
 
-/*! Utility::ToPropetyTreeTraits class specialization for std::unordered_map
+/*! Utility::ToPropertyTreeTraits class specialization for std::unordered_map
  * \ingroup ptree_traits
  */
 template<typename Key, typename T>
@@ -164,8 +164,8 @@ struct ToPropertyTreeTraits<std::unordered_map<Key,T> >;
 /*! Traits class used to convert from a Utility::PropertyTree
  *
  * Any type that a Utility::Variant can be converted to can also be created
- * from a Utility::PropertyTree. Specialize this class with the type of 
- * interest if a custom conversion is required (e.g. object string conversion 
+ * from a Utility::PropertyTree. Specialize this class with the type of
+ * interest if a custom conversion is required (e.g. object string conversion
  * is not possible so child nodes must be parsed).
  * \ingroup ptree_traits
  */
@@ -174,7 +174,7 @@ struct FromPropertyTreeTraits
 {
   //! The type that a property tree will be converted to (usually T)
   typedef typename Utility::FromStringTraits<T>::ReturnType ReturnType;
-  
+
   //! Convert the property tree to an object of type T
   template<template<typename,typename...> class STLCompliantSequenceContainer>
   static ReturnType fromPropertyTree(
@@ -284,7 +284,7 @@ fromPropertyTree( const Utility::PropertyTree& ptree,
 template<template<typename,typename...> class STLCompliantSequenceContainer>
 void logUnusedChildrenOfPropertyTree(
                  STLCompliantSequenceContainer<std::string>& unused_children );
-  
+
 /*! Specialization of Utility::ToStringTraits for Utility::PropertyTree
  * \ingroup ptree
  * \ingroup to_string_traits
@@ -312,12 +312,12 @@ struct FromStringTraits<PropertyTree>
   //! Convert the string to a PropertyTree object
   static ReturnType fromString( const std::string& obj_rep );
 
-  //! Extract a ProperyTree from a stream
+  //! Extract a PropertyTree from a stream
   static void fromStream( std::istream& is,
                           PropertyTree& obj,
                           const std::string& delims = std::string() );
 };
-  
+
 } // end Utility namespace
 
 namespace boost {
@@ -330,9 +330,9 @@ namespace property_tree {
  */
 template<typename T>
 struct translator_between<Utility::Variant,T>;
-  
+
 } // end property_tree namespace
-  
+
 } // end boost namespace
 
 namespace std{
@@ -358,11 +358,11 @@ inline std::istream& operator>>( istream& is,
 
   return is;
 }
-  
+
 } // end std namespace
 
 //---------------------------------------------------------------------------//
-// Template Inludes
+// Template Includes
 //---------------------------------------------------------------------------//
 
 #include "Utility_PropertyTree_def.hpp"

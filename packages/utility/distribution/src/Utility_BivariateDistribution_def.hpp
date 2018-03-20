@@ -15,7 +15,7 @@ namespace Utility{
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-bool UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSameSecodaryBounds( const UnitAwareBivariateDistribution& distribution ) const
+bool UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSameSecondaryBounds( const UnitAwareBivariateDistribution& distribution ) const
 {
   return
     (RelativeErrorComparisonPolicy::compare(
@@ -35,7 +35,7 @@ bool UnitAwareBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentU
                                distribution.getLowerBoundOfSecondaryIndepVar(),
                                1e-9 ));
 }
-  
+
 } // end Utility namespace
 
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareBivariateDistribution<void,void,void> );

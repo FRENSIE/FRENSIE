@@ -58,9 +58,9 @@ bool RootModel::isInitialized() const
 // Initialize the root geometry manager
 /*! \details Valid root initialization verbosity levels are (from lowest to
  * highest) kPrint, kInfo, kWarning, kError, kSysError, kFatal. After
- * initialization the verbosity level will be set to kWarning. Some basic 
- * verification of the geometry will be done during initialization. Each cell 
- * will be checked for a non-zero id that is not repeated by any other cell 
+ * initialization the verbosity level will be set to kWarning. Some basic
+ * verification of the geometry will be done during initialization. Each cell
+ * will be checked for a non-zero id that is not repeated by any other cell
  * (unique id).
  */
 void RootModel::initialize( const RootModelProperties& model_properties,
@@ -73,7 +73,7 @@ void RootModel::initialize( const RootModelProperties& model_properties,
   {
     // Cache the model properties
     d_model_properties.reset( new RootModelProperties( model_properties ) );
-    
+
     FRENSIE_LOG_ROOT_NOTIFICATION( "Loading model "
                                    << d_model_properties->getModelFileName() <<
                                    " ..." );
@@ -126,13 +126,13 @@ void RootModel::loadRootGeometry( const int root_init_verbosity )
   EXCEPTION_CATCH_RETHROW( InvalidRootGeometry,
                            "Root could not import file "
                            << d_model_properties->getModelFileName() << "!" );
-  
+
   // Make sure the import was successful
   TEST_FOR_EXCEPTION( d_manager == NULL,
                       InvalidRootGeometry,
                       "Root could not import file "
                       << d_model_properties->getModelFileName() << "!" );
-  
+
   // Lock the geometry so no other geometries can be imported
   TGeoManager::LockGeometry();
 
@@ -142,7 +142,7 @@ void RootModel::loadRootGeometry( const int root_init_verbosity )
 
   if( max_threads == 0 )
     max_threads = 1;
-  
+
   d_manager->SetMaxThreads( max_threads );
 
   // Tell Root to suppress all message below the warning level after this point
@@ -162,7 +162,7 @@ void RootModel::createCellIdToUniqueIdMap()
   {
     TObject* object = volume_it->Next();
     TGeoVolume* cell = dynamic_cast<TGeoVolume*>( object );
-    
+
     TEST_FOR_EXCEPTION( cell->GetUniqueID() == 0,
                         InvalidRootGeometry,
                         "Root contains a cell which has not been "
@@ -171,18 +171,18 @@ void RootModel::createCellIdToUniqueIdMap()
     TEST_FOR_EXCEPTION( cell->GetUniqueID() == Model::invalidCellHandle(),
                         InvalidRootGeometry,
                         "Root contains a cell that has a reserved id ("
-                        << Model::invalidCellHandle() << 
+                        << Model::invalidCellHandle() <<
                         ") in the input file!" );
-    
+
     TEST_FOR_EXCEPTION( d_cell_id_uid_map.find( cell->GetUniqueID() ) !=
                         d_cell_id_uid_map.end(),
                         InvalidRootGeometry,
                         "Root contains cells with the same id ("
                         << cell->GetUniqueID() << ") in the input file!" );
-    
+
     d_cell_id_uid_map[cell->GetUniqueID()] =
       d_manager->GetUID( cell->GetName() );
-  }    
+  }
 }
 
 // Validate the model
@@ -190,7 +190,7 @@ void RootModel::validateModel() const
 {
   // Verify that at least one termination cell is present
   size_t num_termination_cells = 0;
-  
+
   CellIdUidMap::const_iterator cell_it, cell_end;
   cell_it = d_cell_id_uid_map.begin();
   cell_end = d_cell_id_uid_map.end();
@@ -352,7 +352,7 @@ void RootModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
         mat_name != d_model_properties->getTerminalMaterialName() )
     {
       double raw_density = mat->GetDensity();
-      
+
       TEST_FOR_EXCEPTION( raw_density == 0.0,
                           InvalidRootGeometry,
                           "Root cell " << cell->GetUniqueID() <<
@@ -362,7 +362,7 @@ void RootModel::getCellDensities( CellIdDensityMap& cell_id_density_map ) const
       // Convert 1/b-cm to 1/cm^3
       if( raw_density > 0.0 )
         raw_density *= 1e24;
-      
+
       cell_id_density_map[cell->GetUniqueID()] =
         Density::from_value( raw_density );
     }
@@ -433,7 +433,7 @@ auto RootModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volum
 
   // Get the volume of the cell
   TGeoVolume* volume_ptr = this->getVolumePtr( cell_id );
-  
+
   Volume volume = Volume::from_value( volume_ptr->Capacity() );
 
   // Subtract of the daughter cell volumes
@@ -471,7 +471,7 @@ RootNavigator* RootModel::createNavigatorAdvanced() const
 {
   // Make sure that root has been initialized
   testPrecondition( this->isInitialized() );
-  
+
   return new RootNavigator( RootModel::getInstance() );
 }
 
@@ -516,7 +516,7 @@ void RootModel::handleRootError( int level,
     {
       // if( gSystem )
       //   gSystem->StackTrace();
-      
+
       THROW_EXCEPTION( InvalidRootGeometry,
                        "Request to abort from Root!" );
     }
@@ -564,7 +564,7 @@ void RootModel::load( Archive& ar, const unsigned version )
 
 EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModel );
 
-} // end Geoemtry namespace
+} // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( RootModel, Geometry );
 

@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_DirectionalCoordinateSystemTraitsDecl.hpp
 //! \author Alex Robinson
-//! \brief  Directiona coordinate system traits declaration
+//! \brief  Directional coordinate system traits declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -89,7 +89,7 @@ struct DirectionalCoordinateSystemTraits
     (void)UndefinedDirectionalCoordinateSystemTraits<double,coord_system>::notDefined();
   }
 };
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_DIRECTIONAL_COORDINATE_SYSTEM_TRAITS_DECL_HPP

@@ -36,7 +36,7 @@ RootNavigator::RootNavigator()
     d_internal_ray_set( false ),
     d_navigator( NULL )
 { /* ... */ }
-  
+
 // Constructor
 RootNavigator::RootNavigator( const std::shared_ptr<const RootModel>& root_model )
   : d_root_model( root_model ),
@@ -110,13 +110,13 @@ void RootNavigator::getSurfaceNormal( const InternalSurfaceHandle,
                                       double normal[3] ) const
 {
   TGeoNode* node = this->findNodeContainingRay( position, direction );
-  
-  // Note: This is basically a reimplementation of the
+
+  // Note: This is basically a re-implementation of the
   // TGeoNavigator::GetNormalFast method but because we want to preserve our
-  // internal ray state this reimplementation is necessary
+  // internal ray state this re-implementation is necessary
   double local_position[3];
   node->MasterToLocal( Utility::reinterpretAsRaw(position), local_position );
-  
+
   double local_direction[3];
   node->MasterToLocal( direction, local_direction );
 
@@ -255,8 +255,8 @@ void RootNavigator::setState( const Length x_position,
                           y_direction,
                           z_direction );
 }
-                      
-                       
+
+
 // Initialize (or reset) an internal Root ray
 /*! \details Root will not use the cell to speed up its lookup.
  */
@@ -325,7 +325,7 @@ bool RootNavigator::advanceToCellBoundary( double* surface_normal )
 {
   // Make sure that the internal ray is set
   testPrecondition( this->isStateSet() );
-  
+
   TGeoNode* next_node = d_navigator->Step();
 
   // Compute the surface normal at the boundary
@@ -392,7 +392,7 @@ void RootNavigator::freeInternalRay()
   if( d_navigator )
   {
     d_root_model->getManager()->RemoveNavigator( d_navigator );
-  
+
     d_navigator = NULL;
   }
 }
@@ -441,17 +441,17 @@ void RootNavigator::load( Archive& ar, const unsigned version )
     InternalCellHandle current_cell;
     Length current_position[3];
     double current_direction[3];
-    
+
     ar & BOOST_SERIALIZATION_NVP( current_cell );
     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( Utility::reinterpretAsRaw(current_position), 3 ) );
     ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
-    
+
     dynamic_cast<Navigator*>(this)->setState( current_position, current_direction, current_cell );
   }
 }
 
 EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootNavigator );
-  
+
 } // end Geometry namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( RootNavigator, Geometry );

@@ -37,8 +37,8 @@ constexpr size_t incrementRightShift( const size_t right_shift )
 template<typename T, typename Enabled = void>
 struct ZeroHelper;
 
-/*! STL compliant containre zero helper implementation 
- * 
+/*! STL compliant container zero helper implementation
+ *
  * A partial specialization of ZeroHelper must be made for the container type
  * and it should inherit from this struct.
  * \ingroup comparison_traits
@@ -92,7 +92,7 @@ bool compareImpl( const T& left_value,
                   const ExtraDataType& extra_data,
                   const ComparisonHeaderGenerator header_generator =
                   &Utility::Details::createComparisonHeaderImpl<ComparisonPolicy,RightShift,T,ExtraDataType> );
-  
+
 } // end Details namespace
 
 } // end Utility namespace

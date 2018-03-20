@@ -43,7 +43,7 @@ UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynom
   this->verifyValidDistributionData( d_coefficients,
                                      min_indep_limit,
                                      max_indep_limit );
-  
+
   this->initializeDistribution( IndepQuantity( min_indep_limit ),
 				IndepQuantity( max_indep_limit ) );
 
@@ -405,7 +405,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::verifyValid
   TEST_FOR_EXCEPTION( non_zero_coefficient == coefficients.end(),
                       Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "
-                      "because all coeffients are zero!" );
+                      "because all coefficients are zero!" );
 
   std::vector<double>::const_iterator bad_coefficient =
     std::find_if( coefficients.begin(),
@@ -427,7 +427,7 @@ void UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::verifyValid
                       Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "
                       "because the lower limits is negative!" );
-  
+
   TEST_FOR_EXCEPTION( max_indep_limit <= min_indep_limit,
                       Utility::BadUnivariateDistributionParameter,
                       "The polynomial distribution cannot be constructed "

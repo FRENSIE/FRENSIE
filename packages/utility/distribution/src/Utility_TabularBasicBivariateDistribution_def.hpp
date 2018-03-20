@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP 
+#ifndef UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 #define UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
 
 // Std Lib Includes
@@ -43,7 +43,7 @@ UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndep
 /*! \details The default behavior of this class when evaluating the
  * the distribution outside of the primary independent variable limits is
  * to return zero. After calling this function that behavior will instead
- * be to use the appropriate limiting secondary distribution for all 
+ * be to use the appropriate limiting secondary distribution for all
  * primary values beyond the defined primary limits.
  */
 template<typename PrimaryIndependentUnit,
@@ -74,8 +74,8 @@ void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,Secondary
 // Check if the distribution is being extended beyond the primary limits
 /*! \details The default behavior of this class when evaluating the
  * the distribution outside of the primary independent variable limits is
- * to return zero. When the limits have been extended that behavior will 
- * instead be to use the appropriate limiting secondary distribution for all 
+ * to return zero. When the limits have been extended that behavior will
+ * instead be to use the appropriate limiting secondary distribution for all
  * primary values beyond the defined primary limits.
  */
 template<typename PrimaryIndependentUnit,
@@ -135,7 +135,7 @@ void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,Secondary
 }
 
 // Find the bin boundaries
-/*! \details The lower and upper boundary will only be equal when the 
+/*! \details The lower and upper boundary will only be equal when the
  * primary_independent_var_value is outside of the primary grid limits.
  */
 template<typename PrimaryIndependentUnit,
@@ -170,8 +170,8 @@ inline void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,Se
   {
     lower_bin_boundary = d_distribution.begin();
     upper_bin_boundary = d_distribution.end();
-    
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+
+    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>(
 					       lower_bin_boundary,
                                                upper_bin_boundary,
 					       primary_independent_var_value );
@@ -199,7 +199,7 @@ template<typename PrimaryIndependentUnit,
 bool UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseUnivariateDistribution>::areSecondaryDistributionsContinuous() const
 {
   bool all_continuous = true;
-  
+
   for( size_t i = 0; i < d_distribution.size(); ++i )
   {
     if( !Utility::get<1>(d_distribution[i])->isContinuous() )
@@ -254,7 +254,7 @@ void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,Secondary
      secondary_distributions )
 {
   d_distribution.resize( primary_indep_grid.size() );
-  
+
   for( size_t i = 0; i < primary_indep_grid.size(); ++i )
   {
     Utility::get<0>( d_distribution[i] ) = primary_indep_grid[i];
@@ -338,8 +338,8 @@ void UnitAwareTabularBasicBivariateDistribution<PrimaryIndependentUnit,Secondary
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularBasicBivariateDistribution<void,void,void,Utility::UnitAwareUnivariateDistribution> );
 EXTERN_EXPLICIT_DISTRIBUTION_INST( UnitAwareTabularBasicBivariateDistribution<void,void,void,Utility::UnitAwareTabularUnivariateDistribution> );
 
-#endif // end UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP 
-  
+#endif // end UTILITY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_DEF_HPP
+
 //---------------------------------------------------------------------------//
 // end Utility_TabularBasicBivariateDistribution_def.hpp
 //---------------------------------------------------------------------------//

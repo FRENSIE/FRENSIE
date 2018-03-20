@@ -28,7 +28,7 @@ namespace archive{
 namespace detail{
 
 template<class Archive> class interface_iarchive;
-  
+
 } // end detail namespace
 } // end archive namespace
 } // end boost namespace
@@ -42,9 +42,9 @@ template<typename Archive>
 class HDF5IArchiveImpl : public boost::archive::detail::common_iarchive<Archive>,
                          public Utility::HDF5CommonArchive
 {
-  
+
 public:
-  
+
   //! Load opaque object
   void load_binary( void* address, std::size_t count );
 
@@ -117,11 +117,11 @@ protected:
 
   //! Load a wide char
   void load( wchar_t& t );
-  
+
   //! Load a wide string
   void load( std::wstring& t );
 
-  //! Load a bost::serialization::collection_size_type
+  //! Load a boost::serialization::collection_size_type
   void load( boost::serialization::collection_size_type& t );
 
   //! Load a boost::serialization::item_version_type attribute
@@ -141,7 +141,7 @@ private:
   void loadIntercept( T& t, std::false_type is_fast_serializable_tuple );
 
   // Intercept a type that is about to be loaded using load_override
-  
+
   // Load implementation
   template<typename T>
   void loadImpl( T* data, size_t count );
@@ -162,7 +162,7 @@ private:
   // The object count
   std::size_t d_object_count;
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

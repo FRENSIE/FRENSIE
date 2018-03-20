@@ -2,7 +2,7 @@ FRENSIE_INITIALIZE_PACKAGE_TESTS(utility_core BOOST_TEST_LIB ${BOOST_TEST_LIBRAR
 
 ##---------------------------------------------------------------------------##
 # Before the FRENSIE unit test framework can be used we must test all of the
-# dependecies using another test framework. These first tests will all use
+# dependencies using another test framework. These first tests will all use
 # the Boost unit test framework.
 ##---------------------------------------------------------------------------##
 FRENSIE_ADD_TEST_EXECUTABLE(Assertion DEPENDS tstAssertion.cpp BOOST_TEST)

@@ -201,7 +201,7 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   // Test for special condition (alpha = 0.0)
   // Note: alpha = 0.0 can only occur when beta = 0.0. The S(alpha,beta)
   // function has an integrable singularity at alpha = 0.0. As alpha
-  // aproaches 0.0, the integration gkq_set will likely fail - use the
+  // approaches 0.0, the integration gkq_set will likely fail - use the
   // approximate form for S(alpha,beta) when this occurs
   if( alpha >= alpha_min && alpha <= alpha_max )
   {

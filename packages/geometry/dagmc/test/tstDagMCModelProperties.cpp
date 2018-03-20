@@ -155,7 +155,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setEstimatorPropertyName )
 FRENSIE_UNIT_TEST( DagMCModelProperties, getPropertyNames )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
-  
+
   std::vector<std::string> property_names;
 
   properties.getPropertyNames( property_names );
@@ -199,7 +199,7 @@ FRENSIE_UNIT_TEST( DagMCModelProperties, setSurfaceFluxName )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cell pusle height name can be set
+// Check that the cell pulse height name can be set
 FRENSIE_UNIT_TEST( DagMCModelProperties, setCellPulseHeightName )
 {
   Geometry::DagMCModelProperties properties( "test.sat" );
@@ -451,7 +451,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModelProperties,
     std::unique_ptr<OArchive> oarchive;
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
-    
+
     Geometry::DagMCModelProperties properties( "dummy.sat" );
     properties.setFacetTolerance( 1e-4 );
     properties.setTerminationCellPropertyName( "graveyard" );
@@ -470,7 +470,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModelProperties,
     properties.setAdjointPhotonName( "agamma" );
     properties.setAdjointNeutronName("aneutral" );
     properties.setAdjointElectronName( "anegatron" );
-    
+
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( properties ) );
   }
 

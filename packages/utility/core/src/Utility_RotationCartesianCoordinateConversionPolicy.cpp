@@ -16,8 +16,8 @@ namespace Utility{
 // Constructor
 /*! \details The axis parameter is the z-axis of the local coordinate system
  * w.r.t. the global coordinate system. It does not need to be a unit vector
- * as it will be normalized by the constructor. 
- */ 
+ * as it will be normalized by the constructor.
+ */
 RotationCartesianCoordinateConversionPolicy::RotationCartesianCoordinateConversionPolicy( const double axis[3] )
   : d_axis{ axis[0], axis[1], axis[2] }
 {
@@ -57,7 +57,7 @@ void RotationCartesianCoordinateConversionPolicy::convertToCartesianSpatialCoord
 // Convert the cartesian coordinates to the spatial coordinate system
 /*! \details The x, y and z spatial coordinates are the Cartesian coordinates
  * in the global coordinate system. They will be converted to coordinates in
- * the local coordinate system by using a rotation matric created from the
+ * the local coordinate system by using a rotation matrix created from the
  * axis vector.
  */
 void RotationCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates(
@@ -84,8 +84,8 @@ void RotationCartesianCoordinateConversionPolicy::convertFromCartesianSpatialCoo
 }
 
 // Convert the directional coordinates to cartesian coordinates
-/*! \details The primary, secondary and tertiary directional coordinates are 
- * the Cartesian coordinates in the local coordinate system. They will be 
+/*! \details The primary, secondary and tertiary directional coordinates are
+ * the Cartesian coordinates in the local coordinate system. They will be
  * converted to coordinates in the global coordinate system by using a rotation
  * matrix created from the axis vector
  */
@@ -113,12 +113,12 @@ void RotationCartesianCoordinateConversionPolicy::convertToCartesianDirectionalC
                                    y_directional_coord,
                                    z_directional_coord,
                                    1e-15 );
-}  
+}
 
 // Convert the cartesian coordinates to the directional coordinate system
-/*! \details The x, y and z directional coordinates are the Cartesian 
- * coordinates in the global coordinate system. They will be converted to 
- * coordinates in the local coordinate system by using a rotation matric 
+/*! \details The x, y and z directional coordinates are the Cartesian
+ * coordinates in the global coordinate system. They will be converted to
+ * coordinates in the local coordinate system by using a rotation matrix
  * created from the axis vector.
  */
 void RotationCartesianCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates(
@@ -146,7 +146,7 @@ void RotationCartesianCoordinateConversionPolicy::convertFromCartesianDirectiona
                                    tertiary_directional_coord,
                                    1e-15 );
 }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

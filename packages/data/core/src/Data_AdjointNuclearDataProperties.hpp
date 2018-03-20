@@ -105,12 +105,12 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Data namespace
 
 namespace Utility{
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * Data::AdjointNuclearDataProperties::FileType
  * \ingroup to_string_traits
  */
@@ -123,12 +123,12 @@ struct ToStringTraits<Data::AdjointNuclearDataProperties::FileType>
   //! Place the Data::AdjointNuclearDataProperties::FileType in a stream
   static void toStream( std::ostream& os, const Data::AdjointNuclearDataProperties::FileType type );
 };
-  
+
 } // end Utility namespace
 
 namespace std{
 
-//! Stream operator for printing Datea::AdjointNuclearDataProperties::FileType enums
+//! Stream operator for printing Data::AdjointNuclearDataProperties::FileType enums
 inline std::ostream& operator<<( std::ostream& os,
                                  const Data::AdjointNuclearDataProperties::FileType type )
 {
@@ -136,7 +136,7 @@ inline std::ostream& operator<<( std::ostream& os,
 
   return os;
 }
-  
+
 } // end std namespace
 
 namespace boost{
@@ -173,9 +173,9 @@ void serialize( Archive& archive,
     }
   }
 }
-  
+
 } // end serialization namespace
-  
+
 } // end boost namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AdjointNuclearDataProperties, Data );

@@ -121,27 +121,27 @@ FRENSIE_UNIT_TEST( GaussLegendreQuadratureSet,
                    getLegendrePowerExpansionCoefficients )
 {
   int power = 9;
-  std::vector<std::vector<Utility::long_float> > coefs( power+1 );
+  std::vector<std::vector<Utility::long_float> > coeffs( power+1 );
 
   for( int i = 0; i <= power; ++i )
-    coefs[i].resize( power+1 );
+    coeffs[i].resize( power+1 );
 
-  Utility::getLegendrePowerExpansionCoefficients( coefs, power );
+  Utility::getLegendrePowerExpansionCoefficients( coeffs, power );
 
-  FRENSIE_CHECK_EQUAL( coefs[power][0].convert_to<double>(), 0.0);
-  FRENSIE_CHECK_FLOATING_EQUALITY( coefs[power][1].convert_to<double>(),
+  FRENSIE_CHECK_EQUAL( coeffs[power][0].convert_to<double>(), 0.0);
+  FRENSIE_CHECK_FLOATING_EQUALITY( coeffs[power][1].convert_to<double>(),
                           3315.0/12155.0, 1e-15);
-  FRENSIE_CHECK_EQUAL( coefs[power][2].convert_to<double>(), 0.0);
-  FRENSIE_CHECK_FLOATING_EQUALITY( coefs[power][3].convert_to<double>(),
+  FRENSIE_CHECK_EQUAL( coeffs[power][2].convert_to<double>(), 0.0);
+  FRENSIE_CHECK_FLOATING_EQUALITY( coeffs[power][3].convert_to<double>(),
                           4760.0/12155.0, 1e-15);
-  FRENSIE_CHECK_EQUAL( coefs[power][4].convert_to<double>(), 0.0);
-  FRENSIE_CHECK_FLOATING_EQUALITY( coefs[power][5].convert_to<double>(),
+  FRENSIE_CHECK_EQUAL( coeffs[power][4].convert_to<double>(), 0.0);
+  FRENSIE_CHECK_FLOATING_EQUALITY( coeffs[power][5].convert_to<double>(),
                           2992.0/12155.0, 1e-15);
-  FRENSIE_CHECK_EQUAL( coefs[power][6].convert_to<double>(), 0.0);
-  FRENSIE_CHECK_FLOATING_EQUALITY( coefs[power][7].convert_to<double>(),
+  FRENSIE_CHECK_EQUAL( coeffs[power][6].convert_to<double>(), 0.0);
+  FRENSIE_CHECK_FLOATING_EQUALITY( coeffs[power][7].convert_to<double>(),
                           960.0/12155.0, 1e-15);
-  FRENSIE_CHECK_EQUAL( coefs[power][8].convert_to<double>(), 0.0);
-  FRENSIE_CHECK_FLOATING_EQUALITY( coefs[power][9].convert_to<double>(),
+  FRENSIE_CHECK_EQUAL( coeffs[power][8].convert_to<double>(), 0.0);
+  FRENSIE_CHECK_FLOATING_EQUALITY( coeffs[power][9].convert_to<double>(),
                           128.0/12155.0, 1e-15);
 }
 

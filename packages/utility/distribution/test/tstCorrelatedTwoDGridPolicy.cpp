@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstCorrelatedTwoDGridPolicy.cpp
-//! \author Luke Kerting
+//! \author Luke Kersting
 //! \brief  The Correlated two-dimensional grid policy unit tests
 //!
 //---------------------------------------------------------------------------//
@@ -254,7 +254,7 @@ FRENSIE_UNIT_TEST( Correlated, evaluatePDF )
 // Check that the unit-aware distribution can be evaluated
 FRENSIE_UNIT_TEST( UnitAwareCorrelated, evaluatePDF )
 {
-  std::function<ZDepType(XIndepType,YIndepType)> evaluate = 
+  std::function<ZDepType(XIndepType,YIndepType)> evaluate =
   [](XIndepType x_value, YIndepType y_value)
   {
     return Utility::Correlated<Utility::LinLinLin>::evaluatePDF<Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>,XIndepType,YIndepType,ZDepType>(
@@ -325,7 +325,7 @@ FRENSIE_UNIT_TEST( UnitAwareCorrelated, evaluatePDF )
 // Check that the distribution can be evaluated
 FRENSIE_UNIT_TEST( Correlated, evaluateCDF )
 {
-  std::function<double(double,double)> evaluate = 
+  std::function<double(double,double)> evaluate =
   [](double x_value, double y_value)
   {
     return Utility::Correlated<Utility::LinLinLin>::evaluateCDF<Utility::TabularUnivariateDistribution,double,double>(
@@ -388,7 +388,7 @@ FRENSIE_UNIT_TEST( Correlated, evaluateCDF )
 // Check that the unit-aware distribution can be evaluated
 FRENSIE_UNIT_TEST( UnitAwareCorrelated, evaluateCDF )
 {
-  std::function<double(XIndepType,YIndepType)> evaluate = 
+  std::function<double(XIndepType,YIndepType)> evaluate =
   [](XIndepType x_value, YIndepType y_value)
   {
     return Utility::Correlated<Utility::LinLinLin>::evaluateCDF<Utility::UnitAwareTabularUnivariateDistribution<cgs::length,Barn>,XIndepType,YIndepType>(

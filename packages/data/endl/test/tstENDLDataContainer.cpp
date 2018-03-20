@@ -1976,7 +1976,7 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// TEST ATOMIC EXCITAION ELECTRON DATA
+// TEST ATOMIC EXCITATION ELECTRON DATA
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation cross section energy grid can be set
 FRENSIE_UNIT_TEST( ENDLDataContainer,

@@ -41,7 +41,7 @@ public:
                                 const double primary_grid_point ) const
   {
     secondary_grid.resize( 3 );
-    
+
     secondary_grid[0] = 1.0;
     secondary_grid[1] = 10.0;
     secondary_grid[2] = 20.0;
@@ -102,7 +102,7 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, set_verbose_mode )
 }
 
 //---------------------------------------------------------------------------//
-// Check if exceptions/warnigs on dirty convergence can be set
+// Check if exceptions/warnings on dirty convergence can be set
 FRENSIE_UNIT_TEST( TwoDGridGenerator, dirty_convergence_handling )
 {
   TestTwoDGridGenerator<Utility::LinLinLin> generator;
@@ -170,9 +170,9 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateInPlace_linlinlin )
     primary_grid[0] = 0.0;
     primary_grid[1] = 10.0;
     primary_grid[2] = 20.0;
-    
+
     linlinlin_generator.generateInPlace( primary_grid, xPlusy );
-    
+
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
   }
 
@@ -235,7 +235,7 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateInPlace_loglinlin )
   primary_grid[0] = 1e-3;
   primary_grid[1] = 10.0;
   primary_grid[2] = 20.0;
-  
+
   loglinlin_generator.generateInPlace( primary_grid, x2Plusy2 );
 
   FRENSIE_CHECK_EQUAL( primary_grid.size(), 78 );
@@ -245,7 +245,7 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateInPlace_loglinlin )
   primary_grid[0] = 1e-3;
   primary_grid[1] = 10.0;
   primary_grid[2] = 20.0;
-  
+
   Normal normal( 10.0 );
 
   loglinlin_generator.setAbsoluteDifferenceTolerance( 1e-90 );
@@ -260,13 +260,13 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateInPlace_logloglog )
 {
   TestTwoDGridGenerator<Utility::LogLogLog> logloglog_generator;
   logloglog_generator.throwExceptionOnDirtyConvergence();
-  
+
   // Generate a grid for the xTimesy function
   std::vector<double> primary_grid( 3 );
   primary_grid[0] = 1e-3;
   primary_grid[1] = 10.0;
   primary_grid[2] = 20.0;
-  
+
   logloglog_generator.setAbsoluteDifferenceTolerance( 1e-90 );
   logloglog_generator.generateInPlace( primary_grid, xTimesy );
 
@@ -300,25 +300,25 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluateInPlace_linlinlin )
 
     std::vector<std::vector<double> >
       secondary_grids, evaluated_function;
-    
+
     linlinlin_generator.generateAndEvaluateInPlace( primary_grid,
                                                     secondary_grids,
                                                     evaluated_function,
                                                     xPlusy );
-    
+
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[2].size(), 3 );
   }
-  
+
   // Generate a grid using the std::vector
   {
     std::vector<double> primary_grid( 3 );
@@ -335,12 +335,12 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluateInPlace_linlinlin )
                                                     xPlusy );
 
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[1].size(), 3 );
@@ -363,12 +363,12 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluateInPlace_linlinlin )
                                                     xPlusy );
 
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function.front().size(), 3 );
     evaluated_function.pop_front();
@@ -391,14 +391,14 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluateInPlace_linlinlin )
                                                     secondary_grids,
                                                     evaluated_function,
                                                     xPlusy );
-    
+
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[1].size(), 3 );
@@ -419,11 +419,11 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generate_linlinlin )
     initial_primary_grid[0] = 0.0;
     initial_primary_grid[1] = 10.0;
     initial_primary_grid[2] = 20.0;
-    
+
     linlinlin_generator.generate( primary_grid,
                                   initial_primary_grid,
                                   xPlusy );
-    
+
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
   }
 
@@ -501,26 +501,26 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluate )
 
     std::vector<std::vector<double> >
       secondary_grids, evaluated_function;
-    
+
     linlinlin_generator.generateAndEvaluate( primary_grid,
                                              secondary_grids,
                                              evaluated_function,
                                              initial_primary_grid,
                                              xPlusy );
-    
+
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[2].size(), 3 );
   }
-  
+
   // Generate a grid using the std::vector
   {
     std::vector<double> primary_grid, initial_primary_grid( 3 );
@@ -538,12 +538,12 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluate )
                                              xPlusy );
 
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[1].size(), 3 );
@@ -567,12 +567,12 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluate )
                                              xPlusy );
 
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function.front().size(), 3 );
     evaluated_function.pop_front();
@@ -587,7 +587,7 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluate )
     initial_primary_grid.push_back( 0.0 );
     initial_primary_grid.push_back( 10.0 );
     initial_primary_grid.push_back( 20.0 );
-    
+
     std::vector<std::deque<double> > secondary_grids;
     std::deque<std::list<double> > evaluated_function;
 
@@ -596,14 +596,14 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluate )
                                              evaluated_function,
                                              initial_primary_grid,
                                              xPlusy );
-    
+
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[1].size(), 3 );
@@ -617,7 +617,7 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluate )
     initial_primary_grid.push_back( 0.0 );
     initial_primary_grid.push_back( 10.0 );
     initial_primary_grid.push_back( 20.0 );
-    
+
     std::vector<std::deque<double> > secondary_grids;
     std::deque<std::list<double> > evaluated_function;
 
@@ -626,14 +626,14 @@ FRENSIE_UNIT_TEST( TwoDGridGenerator, generateAndEvaluate )
                                              evaluated_function,
                                              initial_primary_grid,
                                              xPlusy );
-    
+
     FRENSIE_CHECK_EQUAL( primary_grid.size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( secondary_grids.size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[1].size(), 3 );
     FRENSIE_CHECK_EQUAL( secondary_grids[2].size(), 3 );
-    
+
     FRENSIE_CHECK_EQUAL( evaluated_function.size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[0].size(), 3 );
     FRENSIE_CHECK_EQUAL( evaluated_function[1].size(), 3 );

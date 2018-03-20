@@ -95,12 +95,12 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Data namespace
 
 namespace Utility{
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * Data::PhotonuclearDataProperties::FileType
  * \ingroup to_string_traits
  */
@@ -113,12 +113,12 @@ struct ToStringTraits<Data::PhotonuclearDataProperties::FileType>
   //! Place the Data::PhotonuclearDataProperties::FileType in a stream
   static void toStream( std::ostream& os, const Data::PhotonuclearDataProperties::FileType type );
 };
-  
+
 } // end Utility namespace
 
 namespace std{
 
-//! Stream operator for printing Datea::PhotonuclearDataProperties::FileType enums
+//! Stream operator for printing Data::PhotonuclearDataProperties::FileType enums
 inline std::ostream& operator<<( std::ostream& os,
                                  const Data::PhotonuclearDataProperties::FileType type )
 {
@@ -126,7 +126,7 @@ inline std::ostream& operator<<( std::ostream& os,
 
   return os;
 }
-  
+
 } // end std namespace
 
 namespace boost{
@@ -163,9 +163,9 @@ void serialize( Archive& archive,
     }
   }
 }
-  
+
 } // end serialization namespace
-  
+
 } // end boost namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( PhotonuclearDataProperties, Data );

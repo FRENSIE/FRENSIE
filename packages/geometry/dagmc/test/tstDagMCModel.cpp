@@ -92,7 +92,7 @@ FRENSIE_UNIT_TEST( DagMCModel, getMaterialIds )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   Geometry::Model::MaterialIdSet material_ids;
 
   FRENSIE_CHECK_NO_THROW( model->getMaterialIds( material_ids ) );
@@ -181,7 +181,7 @@ FRENSIE_UNIT_TEST( DagMCModel, getCells )
   FRENSIE_CHECK( cells.count( 189 ) );
 
   cells.clear();
-  
+
   // Get all cells except the termination cell
   model->getCells( cells, true, false );
 
@@ -189,8 +189,8 @@ FRENSIE_UNIT_TEST( DagMCModel, getCells )
   FRENSIE_CHECK( !cells.count( 188 ) );
 
   cells.clear();
-  
-  // Get all cells exept the void cells
+
+  // Get all cells except the void cells
   model->getCells( cells, false, true );
 
   FRENSIE_CHECK_EQUAL( cells.size(), 55 );
@@ -472,7 +472,7 @@ FRENSIE_UNIT_TEST( DagMCModel, doesCellExist )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   FRENSIE_CHECK( !model->doesCellExist( 0 ) );
   FRENSIE_CHECK( model->doesCellExist( 1 ) );
   FRENSIE_CHECK( !model->doesCellExist( 2 ) );
@@ -544,7 +544,7 @@ FRENSIE_UNIT_TEST( DagMCModel, isTerminationCell )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   FRENSIE_CHECK( !model->isTerminationCell( 1 ) );
   FRENSIE_CHECK( !model->isTerminationCell( 3 ) );
   FRENSIE_CHECK( !model->isTerminationCell( 5 ) );
@@ -609,7 +609,7 @@ FRENSIE_UNIT_TEST( DagMCModel, isVoidCell )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   FRENSIE_CHECK( !model->isVoidCell( 1 ) );
   FRENSIE_CHECK( !model->isVoidCell( 3 ) );
   FRENSIE_CHECK( !model->isVoidCell( 5 ) );
@@ -674,7 +674,7 @@ FRENSIE_UNIT_TEST( DagMCModel, getCellVolume )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   // Get the volume of cell 53
   Geometry::Model::Volume cell_volume = model->getCellVolume( 53 );
 
@@ -751,7 +751,7 @@ FRENSIE_UNIT_TEST( DagMCModel, doesSurfaceExist )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   FRENSIE_CHECK( !model->doesSurfaceExist( 0 ) );
   FRENSIE_CHECK( model->doesSurfaceExist( 1 ) );
   FRENSIE_CHECK( !model->doesSurfaceExist( 2 ) );
@@ -772,7 +772,7 @@ FRENSIE_UNIT_TEST( DagMCModel, getSurfaceArea )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   // Get the surface area of surface 242
   Geometry::AdvancedModel::Area surface_area = model->getSurfaceArea( 242 );
 
@@ -787,7 +787,7 @@ FRENSIE_UNIT_TEST( DagMCModel, isReflectingSurface )
 {
   std::shared_ptr<Geometry::DagMCModel> model =
     Geometry::DagMCModel::getInstance();
-  
+
   FRENSIE_CHECK( model->isReflectingSurface( 408 ) );
   FRENSIE_CHECK( !model->isReflectingSurface( 1 ) );
 }
@@ -842,7 +842,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModel, archive, TestArchives )
   if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
   {
     std::unique_ptr<std::ofstream> ofstream;
-    
+
     if( archive_name.find( ".bin" ) < archive_name.size() )
     {
       ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
@@ -876,7 +876,7 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::DagMCModelProperties local_properties( test_dagmc_geom_file_name );
-  
+
   local_properties.setFacetTolerance( 1e-3 );
   local_properties.setTerminationCellPropertyName( "graveyard" );
   local_properties.setMaterialPropertyName( "mat" );
