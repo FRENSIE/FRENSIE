@@ -18,22 +18,19 @@
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Navigator.hpp"
 #include "Geometry_Model.hpp"
-#include "Geometry_ModuleTraits.hpp"
-#include "Utility_PrintableObject.hpp"
+#include "Utility_OStreamableObject.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The particle state class
-class ParticleState : public Utility::PrintableObject
+class ParticleState : public Utility::OStreamableObject
 {
 
 public:
@@ -61,8 +58,8 @@ public:
 
 private:
 
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -102,19 +99,19 @@ public:
   ParticleType getParticleType() const;
 
   //! Return the id of the source that created the particle (history)
-  MonteCarlo::ModuleTraits::InternalROIHandle getSourceId() const;
+  size_t getSourceId() const;
 
   //! Set the id of the source that created the particle (history)
-  void setSourceId( const MonteCarlo::ModuleTraits::InternalROIHandle id );
+  void setSourceId( const size_t id );
 
   //! Return the cell handle for the cell where the particle (history) started
-  Geometry::ModuleTraits::InternalCellHandle getSourceCell() const;
+  Geometry::Model::InternalCellHandle getSourceCell() const;
 
   //! Set the cell where the particle (history) started
-  void setSourceCell( const Geometry::ModuleTraits::InternalCellHandle cell );
+  void setSourceCell( const Geometry::Model::InternalCellHandle cell );
 
   //! Return the cell handle for the cell containing the particle
-  Geometry::ModuleTraits::InternalCellHandle getCell() const;
+  Geometry::Model::InternalCellHandle getCell() const;
 
   //! Return the x position of the particle
   double getXPosition() const;
@@ -240,7 +237,7 @@ public:
 
   //! Embed the particle in the desired model
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
-                     const Geometry::ModuleTraits::InternalCellHandle cell );
+                     const Geometry::Model::InternalCellHandle cell );
 
   //! Embed the particle in the desired model at the desired position
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
@@ -251,7 +248,7 @@ public:
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model,
                      const double position[3],
                      const double direction[3],
-                     const Geometry::ModuleTraits::InternalCellHandle cell );
+                     const Geometry::Model::InternalCellHandle cell );
 
   //! Extract the particle from the model
   void extractFromModel();
@@ -299,7 +296,7 @@ private:
   ParticleType d_particle_type;
 
   // The source id
-  MonteCarlo::ModuleTraits::InternalROIHandle d_source_id;
+  size_t d_source_id;
 
   // Source (starting) energy of the particle (history) (MeV)
   energyType d_source_energy;
@@ -329,7 +326,7 @@ private:
   weightType d_weight;
 
   // The source (starting) cell of the particle (history)
-  Geometry::ModuleTraits::InternalCellHandle d_source_cell;
+  Geometry::Model::InternalCellHandle d_source_cell;
 
   // Lost particle boolean
   bool d_lost;
@@ -387,6 +384,7 @@ inline const Geometry::Navigator& ParticleState::navigator() const
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleState );
 BOOST_CLASS_VERSION( MonteCarlo::ParticleState, 0 );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleState );
 
 //---------------------------------------------------------------------------//
 // Template includes

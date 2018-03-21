@@ -14,69 +14,63 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace MonteCarlo{
+namespace Utility{
 
-// Convert a ElasticElectronDistributionType enum to a string
-std::string convertElasticElectronDistributionTypeToString(
-                      const ElasticElectronDistributionType reaction )
+// Convert a MonteCarlo::ElasticElectronDistributionType to a string
+std::string ToStringTraits<MonteCarlo::ElasticElectronDistributionType>::toString(
+                   const MonteCarlo::ElasticElectronDistributionType reaction )
 {
   switch( reaction )
   {
-  case COUPLED_DISTRIBUTION:
+  case MonteCarlo::COUPLED_DISTRIBUTION:
     return "Coupled Distribution";
-  case DECOUPLED_DISTRIBUTION:
+  case MonteCarlo::DECOUPLED_DISTRIBUTION:
     return "Decoupled Distribution";
-  case HYBRID_DISTRIBUTION:
+  case MonteCarlo::HYBRID_DISTRIBUTION:
     return "Hybrid Distribution";
-  case CUTOFF_DISTRIBUTION:
+  case MonteCarlo::CUTOFF_DISTRIBUTION:
     return "Cutoff Distribution";
-  case SCREENED_RUTHERFORD_DISTRIBUTION:
+  case MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION:
     return "Screened Rutherford Distribution";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the Elastic electron "
+                     "Cannot convert the Elastic electron "
                      "distribution type to a string!" );
   }
 }
 
-// Convert a CoupledElasticSamplingMethod enum to a string
-std::string convertCoupledElasticSamplingMethodToString(
-                      const CoupledElasticSamplingMethod method )
+// Place the MonteCarlo::ElasticElectronDistributionType in a stream
+void ToStringTraits<MonteCarlo::ElasticElectronDistributionType>::toStream( std::ostream& os, const MonteCarlo::ElasticElectronDistributionType type )
+{
+  os << ToStringTraits<MonteCarlo::ElasticElectronDistributionType>::toString( type );
+}
+
+// Convert a MonteCarlo::CoupledElasticSamplingMethod to a string
+std::string ToStringTraits<MonteCarlo::CoupledElasticSamplingMethod>::toString(
+                        const MonteCarlo::CoupledElasticSamplingMethod method )
 {
   switch( method )
   {
-  case ONE_D_UNION:
+  case MonteCarlo::ONE_D_UNION:
     return "One D Union";
-  case TWO_D_UNION:
+  case MonteCarlo::TWO_D_UNION:
     return "Two D Union";
-  case SIMPLIFIED_UNION:
+  case MonteCarlo::SIMPLIFIED_UNION:
     return "Simplified Union";
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the coupled elastic "
+                     "Cannot convert the coupled elastic "
                      "electron sampling method to a string!" );
   }
 }
 
-// Convert a string to a CoupledElasticSamplingMethod
-CoupledElasticSamplingMethod convertStringToCoupledElasticSamplingMethod(
-                      const std::string raw_method )
+// Place the MonteCarlo::CoupledElasticSamplingMethod in a stream
+void ToStringTraits<MonteCarlo::CoupledElasticSamplingMethod>::toStream( std::ostream& os, const MonteCarlo::CoupledElasticSamplingMethod type )
 {
-  if( raw_method == "One D Union" )
-    return ONE_D_UNION;
-  else if( raw_method == "Two D Union" )
-    return TWO_D_UNION;
-  else if( raw_method == "Simplified Union" )
-    return SIMPLIFIED_UNION;
-  else
-  {
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the string to a "
-                     "Coupled Elastic electron sampling method!" );
-  }
+  os << ToStringTraits<MonteCarlo::CoupledElasticSamplingMethod>::toString( type );
 }
 
-} // end MonteCarlo namespace
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElasticElectronDistributionType.cpp

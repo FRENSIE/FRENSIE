@@ -16,10 +16,15 @@
 
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
+#include "Utility_ToStringTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The adjoint photoatomic reaction type enum
+/*! The adjoint photoatomic reaction type enum
+ *
+ * When adding a new type the ToStringTraits methods and the serialization
+ * method must be updated.
+ */
 enum AdjointPhotoatomicReactionType{
   TOTAL_ADJOINT_PHOTOATOMIC_REACTION = 1,
   TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION = 2,
@@ -67,24 +72,42 @@ enum AdjointPhotoatomicReactionType{
   TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION = 45
 };
 
-//! Convert a AdjointPhotoatomicReactionType enum to a string
-std::string convertAdjointPhotoatomicReactionEnumToString(
-			       const AdjointPhotoatomicReactionType reaction );
-
 //! Convert a Data::SubshellType enum to a Incoherent AdjointPhotoatomicReactionType enum
 AdjointPhotoatomicReactionType
 convertSubshellEnumToIncoherentAdjointPhotoatomicReactionEnum(
 					   const Data::SubshellType subshell );
 
+} // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::AdjointPhotoatomicReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::AdjointPhotoatomicReactionType>
+{
+  //! Convert a MonteCarlo::AdjointElectroatomicReactionType to a string
+  static std::string toString( const MonteCarlo::AdjointPhotoatomicReactionType type );
+
+  //! Place the MonteCarlo::AdjointElectroatomicReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::AdjointPhotoatomicReactionType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
+
 //! Stream operator for printing AdjointPhotoatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
-				 const AdjointPhotoatomicReactionType reaction )
+				 const MonteCarlo::AdjointPhotoatomicReactionType reaction )
 {
-  os << convertAdjointPhotoatomicReactionEnumToString( reaction );
+  os << Utility::toString( reaction );
   return os;
 }
 
-} // end MonteCarlo namespace
+} // end std namespace
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTOATOMIC_REACTION_TYPE_HPP
 

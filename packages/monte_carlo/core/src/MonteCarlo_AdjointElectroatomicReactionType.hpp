@@ -15,10 +15,15 @@
 
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
+#include "Utility_ToStringTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The electroatomic reaction type enum.
+/*! The electroatomic reaction type enum.
+ *
+ * When adding a new type the ToStringTraits methods and the serialization
+ * method must be updated.
+ */
 enum AdjointElectroatomicReactionType{
   TOTAL_ADJOINT_ELECTROATOMIC_REACTION = 1,
   BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION = 2,
@@ -72,24 +77,42 @@ enum AdjointElectroatomicReactionType{
   Q3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION = 50
 };
 
-//! Convert a AdjointElectroatomicReactionType enum to a string
-std::string convertAdjointElectroatomicReactionEnumToString(
-                              const AdjointElectroatomicReactionType reaction );
-
 //! Convert a Data::SubshellType enum to a AdjointElectroatomicReactionType enum
 AdjointElectroatomicReactionType
 convertSubshellEnumToElectroionizationAdjointElectroatomicReactionEnum(
-                                            const Data::SubshellType subshell );
+                                           const Data::SubshellType subshell );
 
-//! Stream operator for printing AdjointElectroatomicReactionType enums
-inline std::ostream& operator<<( std::ostream& os,
-                               const AdjointElectroatomicReactionType reaction )
+} // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::AdjointElectroatomicReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::AdjointElectroatomicReactionType>
 {
-  os << convertAdjointElectroatomicReactionEnumToString( reaction );
+  //! Convert a MonteCarlo::AdjointElectroatomicReactionType to a string
+  static std::string toString( const MonteCarlo::AdjointElectroatomicReactionType type );
+
+  //! Place the MonteCarlo::AdjointElectroatomicReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::AdjointElectroatomicReactionType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
+
+//! Stream operator for printing MonteCarlo::AdjointElectroatomicReactionType enums
+inline std::ostream& operator<<( std::ostream& os,
+                                 const MonteCarlo::AdjointElectroatomicReactionType reaction )
+{
+  os << Utility::toString( reaction );
   return os;
 }
 
-} // end MonteCarlo namespace
+} // end std namespace
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTROATOMIC_REACTION_TYPE_HPP
 

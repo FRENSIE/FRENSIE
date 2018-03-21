@@ -105,6 +105,18 @@ inline double SimulationProperties::getMaxParticleEnergy<AdjointElectronState>()
   return this->getMaxAdjointElectronEnergy();
 }
 
+// Save/load the state to an archive
+template<typename Archive>
+void SimulationProperties::serialize( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationGeneralProperties );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationNeutronProperties );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationPhotonProperties );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationAdjointPhotonProperties );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationElectronProperties );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( SimulationAdjointElectronProperties );
+}
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_SIMULATION_PROPERTIES_DEF_HPP

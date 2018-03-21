@@ -6,8 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -242,8 +255,11 @@ unsigned SimulationAdjointElectronProperties::getNumberOfAdjointElectronHashGrid
   return d_num_adjoint_electron_hash_grid_bins;
 }
 
-
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( SimulationAdjointElectronProperties );
+  
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationAdjointElectronProperties );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationAdjointElectronProperties.cpp

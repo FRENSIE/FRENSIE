@@ -15,10 +15,15 @@
 
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
+#include "Utility_ToStringTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The electroatomic reaction type enum.
+/*! The electroatomic reaction type enum.
+ *
+ * When adding a new type the ToStringTraits methods and the serialization
+ * method must be updated.
+ */
 enum ElectroatomicReactionType{
   TOTAL_ELECTROATOMIC_REACTION = 1,
   TOTAL_ABSORPTION_ELECTROATOMIC_REACTION = 2,
@@ -73,23 +78,41 @@ enum ElectroatomicReactionType{
   Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION = 51
 };
 
-//! Convert a ElectroatomicReactionType enum to a string
-std::string convertElectroatomicReactionEnumToString(
-                                    const ElectroatomicReactionType reaction );
-
 //! Convert a Data::SubshellType enum to a ElectroatomicReactionType enum
 ElectroatomicReactionType convertSubshellEnumToElectroionizationElectroatomicReactionEnum(
                                     const Data::SubshellType subshell );
 
+} // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for
+ * MonteCarlo::ElectroatomicReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::ElectroatomicReactionType>
+{
+  //! Convert a MonteCarlo::ElectroatomicReactionType to a string
+  static std::string toString( const MonteCarlo::ElectroatomicReactionType type );
+
+  //! Place the MonteCarlo::ElectroatomicReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::ElectroatomicReactionType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
+
 //! Stream operator for printing ElectroatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
-                                    const ElectroatomicReactionType reaction )
+                                 const MonteCarlo::ElectroatomicReactionType reaction )
 {
-  os << convertElectroatomicReactionEnumToString( reaction );
+  os << Utility::toString( reaction );
   return os;
 }
-
-} // end MonteCarlo namespace
+  
+} // end std namespace
 
 #endif // end MONTE_CARLO_ELECTROATOMIC_REACTION_TYPE_HPP
 

@@ -140,11 +140,7 @@ void serialize( Archive& archive,
 
     switch( raw_file_type )
     {
-      case (int)Data::AdjointPhotonuclearDataProperties::Native_FILE:
-      {
-        file_type = Data::AdjointPhotonuclearDataProperties::Native_FILE;
-        break;
-      }
+      BOOST_SERIALIZATION_ENUM_CASE( Data::AdjointPhotonuclearDataProperties::Native_FILE, int, file_type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

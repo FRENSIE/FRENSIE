@@ -145,21 +145,10 @@ void serialize( Archive& archive,
 
     switch( raw_file_type )
     {
-      case (int)Data::PhotoatomicDataProperties::ACE_FILE:
-      {
-        file_type = Data::PhotoatomicDataProperties::ACE_FILE;
-        break;
-      }
-      case (int)Data::PhotoatomicDataProperties::ACE_EPR_FILE:
-      {
-        file_type = Data::PhotoatomicDataProperties::ACE_EPR_FILE;
-        break;
-      }
-      case (int)Data::PhotoatomicDataProperties::Native_EPR_FILE:
-      {
-        file_type = Data::PhotoatomicDataProperties::Native_EPR_FILE;
-        break;
-      }
+      BOOST_SERIALIZATION_ENUM_CASE( Data::PhotoatomicDataProperties::ACE_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::PhotoatomicDataProperties::ACE_EPR_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::PhotoatomicDataProperties::Native_ENDL_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::PhotoatomicDataProperties::Native_EPR_FILE, int, file_type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

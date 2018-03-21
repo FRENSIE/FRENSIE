@@ -13,6 +13,11 @@
 #include <string>
 #include <iostream>
 
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+
 namespace MonteCarlo{
 
 //! The two d Sampling types
@@ -24,21 +29,77 @@ enum TwoDSamplingType{
   CUMULATIVE_POINTS_SAMPLING = 5
 };
 
-//! Convert the TwoDSamplingType to a string
-std::string convertTwoDSamplingTypeToString( const TwoDSamplingType type );
+} // end MonteCarlo namespace
 
-//! Convert string to TwoDSamplingType
-TwoDSamplingType convertStringToTwoDSamplingType( const std::string raw_policy );
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::TwoDSamplingType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::TwoDSamplingType>
+{
+  //! Convert a MonteCarlo::TwoDSamplingType to a string
+  static std::string toString( const MonteCarlo::TwoDSamplingType type );
+
+  //! Place the MonteCarlo::TwoDSamplingType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::TwoDSamplingType type );
+};
+  
+} // end Utility namespace
+
+namespace std{
 
 //! Stream operator for printing TwoDSamplingType enums
 inline std::ostream& operator<<( std::ostream& os,
-                                 const TwoDSamplingType type )
+                                 const MonteCarlo::TwoDSamplingType type )
 {
-  os << convertTwoDSamplingTypeToString( type );
+  os << Utility::toString( type );
 
   return os;
 }
-} // end MonteCarlo namespace
+
+} // end std namespace
+
+namespace boost{
+
+namespace serialization{
+
+//! Serialize the MonteCarlo::TwoDSamplingPolicy enum
+template<typename Archive>
+void serialize( Archive& archive,
+                MonteCarlo::TwoDSamplingType& type,
+                const unsigned version )
+{
+  if( Archive::is_saving::value )
+    archive & (int)type;
+  else
+  {
+    int raw_type;
+
+    archive & raw_type;
+
+    switch( raw_type )
+    {
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::CORRELATED_SAMPLING, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::UNIT_BASE_CORRELATED_SAMPLING, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::DIRECT_SAMPLING, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::UNIT_BASE_SAMPLING, int, type );
+      BOOST_SERIALIZATION_ENUM_CASE( MonteCarlo::CUMULATIVE_POINTS_SAMPLING, int, type );
+      default:
+      {
+        THROW_EXCEPTION( std::logic_error,
+                         "Cannot convert the deserialized raw two-d "
+                         "sampling type to its corresponding enum value!" );
+      }
+    }
+  }
+}
+
+} // end serialization namespace
+
+} // end boost namespace
 
 #endif // end MONTECARLO_TWO_D_SAMPLING_TYPE_HPP
 

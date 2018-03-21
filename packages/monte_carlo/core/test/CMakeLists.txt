@@ -1,9 +1,9 @@
-ADD_EXECUTABLE(tstParticleType
-  tstParticleType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleType monte_carlo_core)
-ADD_TEST(ParticleType_test tstParticleType)
-SET_PROPERTY(TEST ParticleType_test PROPERTY LABELS monte_carlo_core)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_core)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleType DEPENDS tstParticleType.cpp)
+FRENSIE_ADD_TEST(ParticleType)
 
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp
@@ -260,3 +260,4 @@ TARGET_LINK_LIBRARIES(tstMonteCarloHDF5FileHandler monte_carlo_core)
 ADD_TEST(MonteCarloHDF5FileHandler_test tstMonteCarloHDF5FileHandler)
 SET_PROPERTY(TEST MonteCarloHDF5FileHandler_test PROPERTY LABELS monte_carlo_core )
 
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_core)

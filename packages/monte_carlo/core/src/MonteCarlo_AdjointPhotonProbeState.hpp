@@ -66,7 +66,7 @@ public:
   AdjointPhotonProbeState* clone() const;
 
   //! Print the adjoint photon state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
@@ -90,6 +90,7 @@ private:
 BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonProbeState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonProbeState,
 			 "AdjointPhotonProbeState" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::AdjointPhotonProbeState );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
 

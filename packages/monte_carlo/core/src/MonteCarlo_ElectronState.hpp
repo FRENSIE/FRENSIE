@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_MassiveParticleState.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -20,8 +21,8 @@ class ElectronState : public MonteCarlo::MassiveParticleState
 
 private:
 
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -61,7 +62,7 @@ public:
   ElectronState* clone() const;
 
   //! Print the electron state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
@@ -80,6 +81,7 @@ private:
 
 BOOST_CLASS_VERSION( MonteCarlo::ElectronState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::ElectronState, "ElectronState" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ElectronState );
 
 #endif // end MonteCarlo_ELECTRON_STATE_HPP
 

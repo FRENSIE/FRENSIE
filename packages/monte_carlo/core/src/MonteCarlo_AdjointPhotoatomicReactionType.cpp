@@ -14,107 +14,6 @@
 
 namespace MonteCarlo{
 
-// Convert a AdjointPhotoatomicReactionType enum to a string
-std::string convertAdjointPhotoatomicReactionEnumToString(
-                                const AdjointPhotoatomicReactionType reaction )
-{
-  switch( reaction )
-  {
-  case TOTAL_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Total Adjoint Photoatomic Reaction";
-  case TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Total Incoherent Adjoint Photoatomic Reaction";
-  case K_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "K Subshell Incoherent Adjoint Photoatomic Reaction";
-  case L1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "L1 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case L2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "L2 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case L3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "L3 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case M1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "M1 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case M2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "M2 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case M3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "M3 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case M4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "M4 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case M5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "M5 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case N1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "N1 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case N2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "N2 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case N3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "N3 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case N4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "N4 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case N5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "N5 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case N6_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "N6 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case N7_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "N7 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O1 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O2 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O3 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O4 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O5 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O6_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O6 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O7_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O7 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O8_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O8 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case O9_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "O9 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P1 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P2 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P3 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P4 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P5 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P6_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P6 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P7_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P7 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P8_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P8 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P9_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P9 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P10_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P10 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case P11_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "P11 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case Q1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Q1 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case Q2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Q2 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case Q3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Q3 Subshell Incoherent Adjoint Photoatomic Reaction";
-  case COHERENT_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Coherent Adjoint Photoatomic Reaction";
-  case PAIR_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Pair Production Photoatomic Reaction";
-  case TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION:
-    return "Triplet Production Photoatomic Reaction";
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the adjoint photoatomic reaction "
-                     "type to a string!" );
-  }
-}
-
 // Convert a Data::SubshellType enum to a Incoherent AdjointPhotoatomicReactionType enum
 AdjointPhotoatomicReactionType
 convertSubshellEnumToIncoherentAdjointPhotoatomicReactionEnum(
@@ -202,13 +101,126 @@ convertSubshellEnumToIncoherentAdjointPhotoatomicReactionEnum(
     return Q3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: the requested subshell does not have a "
+                     "The requested subshell does not have a "
                      "corresponding subshell incoherent adjoint photoatomic "
                      "reaction!" );
   }
 }
 
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+// Convert a MonteCarlo::AdjointElectroatomicReactionType to a string
+std::string ToStringTraits<MonteCarlo::AdjointPhotoatomicReactionType>::toString(
+                    const MonteCarlo::AdjointPhotoatomicReactionType reaction )
+{
+  switch( reaction )
+  {
+  case MonteCarlo::TOTAL_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Total Adjoint Photoatomic Reaction";
+  case MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Total Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::K_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "K Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::L1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "L1 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::L2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "L2 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::L3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "L3 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::M1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "M1 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::M2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "M2 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::M3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "M3 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::M4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "M4 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::M5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "M5 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::N1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "N1 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::N2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "N2 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::N3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "N3 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::N4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "N4 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::N5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "N5 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::N6_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "N6 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::N7_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "N7 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O1 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O2 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O3 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O4 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O5 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O6_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O6 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O7_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O7 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O8_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O8 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::O9_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "O9 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P1 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P2 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P3 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P4_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P4 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P5_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P5 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P6_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P6 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P7_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P7 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P8_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P8 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P9_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P9 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P10_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P10 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::P11_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "P11 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::Q1_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Q1 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::Q2_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Q2 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::Q3_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Q3 Subshell Incoherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::COHERENT_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Coherent Adjoint Photoatomic Reaction";
+  case MonteCarlo::PAIR_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Pair Production Photoatomic Reaction";
+  case MonteCarlo::TRIPLET_PRODUCTION_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Triplet Production Photoatomic Reaction";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "Cannot convert the adjoint photoatomic reaction "
+                     "type to a string!" );
+  }
+}
+
+// Place the MonteCarlo::AdjointElectroatomicReactionType in a stream
+void ToStringTraits<MonteCarlo::AdjointPhotoatomicReactionType>::toStream(
+                        std::ostream& os,
+                        const MonteCarlo::AdjointPhotoatomicReactionType type )
+{
+  os << ToStringTraits<MonteCarlo::AdjointPhotoatomicReactionType>::toString( type );
+}
+  
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AdjointPhotoatomicReactionType.cpp

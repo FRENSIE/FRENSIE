@@ -6,8 +6,21 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -106,7 +119,7 @@ IncoherentAdjointModelType SimulationAdjointPhotonProperties::getIncoherentAdjoi
  * the critical line energies as the line energies may become invalid!
  */
 void SimulationAdjointPhotonProperties::setCriticalAdjointPhotonLineEnergies(
-                         const Teuchos::Array<double>& critical_line_energies )
+                         const std::vector<double>& critical_line_energies )
 {
   // Make sure there is at least one energy
   testPrecondition( critical_line_energies.size() > 0 );
@@ -124,13 +137,17 @@ void SimulationAdjointPhotonProperties::setCriticalAdjointPhotonLineEnergies(
 }
 
 // Get the critical line energies
-const Teuchos::Array<double>&
+const std::vector<double>&
 SimulationAdjointPhotonProperties::getCriticalAdjointPhotonLineEnergies() const
 {
   return d_critical_line_energies;
 }
 
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( SimulationAdjointPhotonProperties );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::SimulationAdjointPhotonProperties );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationAdjointPhotonProperties.cpp

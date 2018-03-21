@@ -13,73 +13,6 @@
 
 namespace MonteCarlo{
 
-// Test if the particle type name is valid
-bool isValidParticleTypeName( const std::string& particle_type_name )
-{
-  return particle_type_name.compare( "Photon" ) == 0 ||
-    particle_type_name.compare( "Neutron" ) == 0 ||
-    particle_type_name.compare( "Electron" ) == 0 ||
-    particle_type_name.compare( "Positron" ) == 0 ||
-    particle_type_name.compare( "Adjoint Photon" ) == 0 ||
-    particle_type_name.compare( "Adjoint Neutron" ) == 0 ||
-    particle_type_name.compare( "Adjoint Electron" ) == 0;
-}
-
-// Convert shorthand particle type name to verbose particle type name
-/*! \details These shorthand names should correspond to the names that would
- * be encountered in DagMC.
- */
-std::string convertShortParticleTypeNameToVerboseParticleTypeName(
-				 const std::string& short_particle_type_name )
-{
-  if( short_particle_type_name == "n" )
-    return "Neutron";
-  else if( short_particle_type_name == "p" )
-    return "Photon";
-  else if( short_particle_type_name == "e" )
-    return "Electron";
-  else if( short_particle_type_name == "e+" )
-    return "Positron";
-  else if( short_particle_type_name == "an" )
-    return "Adjoint Neutron";
-  else if( short_particle_type_name == "ap" )
-    return "Adjoint Photon";
-  else if( short_particle_type_name == "ae" )
-    return "Adjoint Electron";
-  else
-  {
-    THROW_EXCEPTION( std::runtime_error,
-                     "Error: the short particle type name ("
-                     << short_particle_type_name << ") is not valid!" );
-  }
-}
-
-// Convert the particle type name to a ParticleType enum
-ParticleType convertParticleTypeNameToParticleTypeEnum(
-					const std::string& particle_type_name )
-{
-  if( particle_type_name.compare( "Photon" ) == 0 )
-    return PHOTON;
-  else if( particle_type_name.compare( "Neutron" ) == 0 )
-    return NEUTRON;
-  else if( particle_type_name.compare( "Electron" ) == 0 )
-    return ELECTRON;
-  else if( particle_type_name.compare( "Positron" ) == 0 )
-    return POSITRON;
-  else if( particle_type_name.compare( "Adjoint Photon" ) == 0 )
-    return ADJOINT_PHOTON;
-  else if( particle_type_name.compare( "Adjoint Neutron" ) == 0 )
-    return ADJOINT_NEUTRON;
-  else if( particle_type_name.compare( "Adjoint Electron" ) == 0 )
-    return ADJOINT_ELECTRON;
-  else
-  {
-    THROW_EXCEPTION( std::runtime_error,
-                     "Particle type name " << particle_type_name << " is not "
-                     "supported!" );
-  }
-}
-
 // Convert the geometry particle type enum to a ParticleType enum
 ParticleType convertGeometryParticleTypeEnumToParticleTypeEnum(
                                    const Geometry::ParticleType particle_type )
@@ -98,27 +31,67 @@ ParticleType convertGeometryParticleTypeEnumToParticleTypeEnum(
                      " is not supported!" );
   }
 }
-
-// Convert the ParticleType enum to a string
-std::string convertParticleTypeEnumToString( const ParticleType particle_type )
+  
+// Convert shorthand particle type name to particle type
+/*! \details These shorthand names should correspond to the names that would
+ * be encountered in DagMC.
+ */
+ParticleType convertShortParticleTypeNameToParticleTypeEnum(
+				  const std::string& short_particle_type_name )
 {
-  switch( particle_type )
+  if( short_particle_type_name == "n" )
+    return NEUTRON;
+  else if( short_particle_type_name == "p" )
+    return PHOTON;
+  else if( short_particle_type_name == "e" )
+    return ELECTRON;
+  else if( short_particle_type_name == "e+" )
+    return POSITRON;
+  else if( short_particle_type_name == "an" )
+    return ADJOINT_NEUTRON;
+  else if( short_particle_type_name == "ap" )
+    return ADJOINT_PHOTON;
+  else if( short_particle_type_name == "ae" )
+    return ADJOINT_ELECTRON;
+  else
   {
-  case PHOTON: return "Photon";
-  case NEUTRON: return "Neutron";
-  case ELECTRON: return "Electron";
-  case POSITRON: return "Positron";
-  case ADJOINT_PHOTON: return "Adjoint Photon";
-  case ADJOINT_NEUTRON: return "Adjoint Neutron";
-  case ADJOINT_ELECTRON: return "Adjoint Electron";
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "The particle type " << (int)particle_type << " is not "
-                     "supported!" );
+    THROW_EXCEPTION( std::runtime_error,
+                     "The short particle type name ("
+                     << short_particle_type_name << ") is not valid!" );
   }
 }
 
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+// Convert a MonteCarlo::ParticleType to a string
+std::string ToStringTraits<MonteCarlo::ParticleType>::toString( const MonteCarlo::ParticleType type )
+{
+  switch( type )
+  {
+  case MonteCarlo::PHOTON: return "Photon";
+  case MonteCarlo::NEUTRON: return "Neutron";
+  case MonteCarlo::ELECTRON: return "Electron";
+  case MonteCarlo::POSITRON: return "Positron";
+  case MonteCarlo::ADJOINT_PHOTON: return "Adjoint Photon";
+  case MonteCarlo::ADJOINT_NEUTRON: return "Adjoint Neutron";
+  case MonteCarlo::ADJOINT_ELECTRON: return "Adjoint Electron";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "The particle type " << (int)type << " cannot be "
+                     "converted to a string!" );
+
+  }
+}
+
+// Place the MonteCarlo::ParticleType in a stream
+void ToStringTraits<MonteCarlo::ParticleType>::toStream( std::ostream& os, const MonteCarlo::ParticleType type )
+{
+  os << ToStringTraits<MonteCarlo::ParticleType>::toString( type );
+}
+  
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleType.cpp

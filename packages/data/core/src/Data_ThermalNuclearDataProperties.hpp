@@ -167,16 +167,8 @@ void serialize( Archive& archive,
 
     switch( raw_file_type )
     {
-      case (int)Data::ThermalNuclearDataProperties::STANDARD_ACE_FILE:
-      {
-        file_type = Data::ThermalNuclearDataProperties::STANDARD_ACE_FILE;
-        break;
-      }
-      case (int)Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE:
-      {
-        file_type = Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE;
-        break;
-      }
+      BOOST_SERIALIZATION_ENUM_CASE( Data::ThermalNuclearDataProperties::STANDARD_ACE_FILE, int, file_type );
+      BOOST_SERIALIZATION_ENUM_CASE( Data::ThermalNuclearDataProperties::MCNP6_ACE_FILE, int, file_type );
       default:
       {
         THROW_EXCEPTION( std::logic_error,

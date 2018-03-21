@@ -67,7 +67,7 @@ public:
   AdjointElectronProbeState* clone() const;
 
   //! Print the adjoint electron state
-  void print( std::ostream& os ) const;
+  void toStream( std::ostream& os ) const;
 
 private:
 
@@ -91,6 +91,7 @@ private:
 BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronProbeState, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronProbeState,
 			 "AdjointElectronProbeState" );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::AdjointElectronProbeState );
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP
 

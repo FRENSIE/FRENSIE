@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -20,8 +21,8 @@ class MasslessParticleState : public ParticleState
 
 private:
 
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -67,6 +68,7 @@ private:
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::MasslessParticleState );
 BOOST_CLASS_VERSION( MonteCarlo::MasslessParticleState, 0 );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::MasslessParticleState );
 
 #endif // end MONTE_CARLO_MASSLESS_PARTICLE_STATE_HPP
 
