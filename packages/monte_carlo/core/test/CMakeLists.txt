@@ -43,12 +43,8 @@ FRENSIE_ADD_TEST(ElectronState)
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronState DEPENDS tstAdjointElectronState.cpp)
 FRENSIE_ADD_TEST(AdjointElectronState)
 
-ADD_EXECUTABLE(tstAdjointElectronProbeState
-  tstAdjointElectronProbeState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronProbeState monte_carlo_core)
-ADD_TEST(AdjointElectronProbeState_test tstAdjointElectronProbeState)
-SET_PROPERTY(TEST AdjointElectronProbeState_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronProbeState DEPENDS tstAdjointElectronProbeState.cpp)
+FRENSIE_ADD_TEST(AdjointElectronProbeState)
 
 ADD_EXECUTABLE(tstPositronState
   tstPositronState.cpp
