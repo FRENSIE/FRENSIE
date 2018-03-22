@@ -9,14 +9,6 @@
 // Std Lib Includes
 #include <iostream>
 
-// Boost Includes
-#include <boost/shared_ptr.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"

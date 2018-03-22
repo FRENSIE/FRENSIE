@@ -34,19 +34,11 @@ FRENSIE_ADD_TEST(AdjointPhotonState)
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonProbeState DEPENDS tstAdjointPhotonProbeState.cpp)
 FRENSIE_ADD_TEST(AdjointPhotonProbeState)
 
-ADD_EXECUTABLE(tstNeutronState
-  tstNeutronState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstNeutronState monte_carlo_core)
-ADD_TEST(NeutronState_test tstNeutronState)
-SET_PROPERTY(TEST NeutronState_test PROPERTY LABELS neutron)
+FRENSIE_ADD_TEST_EXECUTABLE(NeutronState DEPENDS tstNeutronState.cpp)
+FRENSIE_ADD_TEST(NeutronState)
 
-ADD_EXECUTABLE(tstElectronState
-  tstElectronState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectronState monte_carlo_core)
-ADD_TEST(ElectronState_test tstElectronState)
-SET_PROPERTY(TEST ElectronState_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectronState DEPENDS tstElectronState.cpp)
+FRENSIE_ADD_TEST(ElectronState)
 
 ADD_EXECUTABLE(tstAdjointElectronState
   tstAdjointElectronState.cpp
