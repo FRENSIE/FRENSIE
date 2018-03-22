@@ -791,6 +791,17 @@ bool DagMCModel::isReflectingSurface( const InternalSurfaceHandle surface_id ) c
 }
 
 // Create a raw, heap-allocated navigator
+DagMCNavigator* DagMCModel::createNavigatorAdvanced(
+    const Navigator::AdvanceCompleteCallback& advance_complete_callback ) const
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( this->isInitialized() );
+  
+  return new DagMCNavigator( DagMCModel::getInstance(),
+                             advance_complete_callback );
+}
+
+// Create a raw, heap-allocated navigator
 DagMCNavigator* DagMCModel::createNavigatorAdvanced() const
 {
   // Make sure DagMC has been initialized

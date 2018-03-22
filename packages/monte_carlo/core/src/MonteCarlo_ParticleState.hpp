@@ -232,6 +232,9 @@ public:
   //! Set the particle as gone
   void setAsGone();
 
+  //! Check if the particle state is still valid
+  operator bool() const;
+
   //! Embed the particle in the desired model
   void embedInModel( const std::shared_ptr<const Geometry::Model>& model );
 
@@ -275,6 +278,12 @@ private:
 
   //! Assignment operator
   ParticleState& operator=( const ParticleState& state );
+
+  // Increase the particle time due to a traversal
+  void increaseParticleTime( const Geometry::Navigator::Length distance_traversed );
+
+  // Create the navigator AdvanceComplete callback method
+  Geometry::Navigator::AdvanceCompleteCallback createAdvanceCompleteCallback();
 
   // Save the state to an archive
   template<typename Archive>
@@ -368,7 +377,12 @@ inline ParticleState::energyType ParticleState::getEnergy() const
   return d_energy;
 }
 
-// the navigator used by the particle
+// Get the navigator used by the particle
+/*! \details Do not call setOnAdvanceCompleteMethod or 
+ * clearOnAdvanceCompleteMethod on the returned navigator. A callback is set 
+ * by the particle state to ensure that the particle time is updated after an 
+ * advance method is called.
+ */
 inline Geometry::Navigator& ParticleState::navigator()
 {
   return *d_navigator;

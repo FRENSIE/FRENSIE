@@ -43,6 +43,8 @@ FRENSIE_UNIT_TEST( RootModel, iarchive )
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( model ) );
 
+  iarchive.reset();
+
   // Get all cells
   Geometry::Model::CellIdSet cells;
   

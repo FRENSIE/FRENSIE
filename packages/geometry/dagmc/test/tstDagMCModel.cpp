@@ -803,6 +803,10 @@ FRENSIE_UNIT_TEST( DagMCModel, createNavigatorAdvanced )
                                             model->createNavigatorAdvanced() );
 
   FRENSIE_CHECK( navigator.get() != NULL );
+
+  navigator.reset( model->createNavigatorAdvanced( [](const Geometry::Navigator::Length distance){ std::cout << "advanced " << distance << std::endl; } ) );
+
+  FRENSIE_CHECK( navigator.get() != NULL );
 }
 
 //---------------------------------------------------------------------------//
@@ -816,6 +820,8 @@ FRENSIE_UNIT_TEST( DagMCModel, createNavigator )
     model->createNavigator();
 
   FRENSIE_CHECK( navigator.get() != NULL );
+
+  navigator = model->createNavigator( [](const Geometry::Navigator::Length distance){ std::cout << "advanced " << distance << std::endl; } );
 }
 
 //---------------------------------------------------------------------------//
@@ -838,6 +844,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCModel, archive, TestArchives )
   auto model = Geometry::DagMCModel::getInstance();
 
   FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "model", model ) );
+
+  oarchive.reset();
 
   if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
   {

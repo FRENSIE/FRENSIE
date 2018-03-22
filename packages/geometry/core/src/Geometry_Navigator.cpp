@@ -14,6 +14,20 @@
 
 namespace Geometry{
 
+// Constructor
+/*! \details The advance callback will be called immediately after an advance
+ * has occurred.
+ */
+Navigator::Navigator( const AdvanceCompleteCallback& advance_complete_callback )
+
+  : d_on_advance_complete( advance_complete_callback )
+{ /* ... */ }
+
+// Copy constructor
+Navigator::Navigator( const Navigator& other )
+  : d_on_advance_complete( other.d_on_advance_complete )
+{ /* ... */ }
+
 // The invalid cell handle
 auto Navigator::invalidCellHandle() -> InternalCellHandle
 {
@@ -25,7 +39,7 @@ auto Navigator::invalidSurfaceHandle() -> InternalSurfaceHandle
 {
   return 0;
 }
-  
+
 } // end Geometry namespace
 
 //---------------------------------------------------------------------------//

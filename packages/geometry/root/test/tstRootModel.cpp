@@ -269,6 +269,10 @@ FRENSIE_UNIT_TEST( RootModel, createNavigatorAdvanced )
                Geometry::RootModel::getInstance()->createNavigatorAdvanced() );
 
   FRENSIE_CHECK( navigator.get() != NULL );
+
+  navigator.reset( Geometry::RootModel::getInstance()->createNavigatorAdvanced( [](const Geometry::Navigator::Length distance){ std::cout << "advanced " << distance << std::endl; } ) );
+
+  FRENSIE_CHECK( navigator.get() != NULL );
 }
 
 //---------------------------------------------------------------------------//
@@ -278,6 +282,10 @@ FRENSIE_UNIT_TEST( RootModel, createNavigator )
   std::shared_ptr<Geometry::Navigator> navigator =
     Geometry::RootModel::getInstance()->createNavigator();
 
+  FRENSIE_CHECK( navigator.get() != NULL );
+
+  navigator =
+    Geometry::RootModel::getInstance()->createNavigator( [](const Geometry::Navigator::Length distance){ std::cout << "advanced " << distance << std::endl; } );
   FRENSIE_CHECK( navigator.get() != NULL );
 }
 
@@ -301,6 +309,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( RootModel, archive, TestArchives )
   auto model = Geometry::RootModel::getInstance();
 
   FRENSIE_REQUIRE_NO_THROW( (*oarchive) << boost::serialization::make_nvp( "model", model ) );
+
+  oarchive.reset();
 
   if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
   {

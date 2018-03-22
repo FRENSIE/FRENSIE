@@ -49,7 +49,7 @@ ParticleState::ParticleState()
     d_lost( false ),
     d_gone( false ),
     d_model( new Geometry::InfiniteMediumModel( d_source_cell ) ),
-    d_navigator( d_model->createNavigatorAdvanced() )
+    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) )
 { /* ... */ }
 
 // Constructor
@@ -73,12 +73,14 @@ ParticleState::ParticleState(
     d_lost( false ),
     d_gone( false ),
     d_model( new Geometry::InfiniteMediumModel( d_source_cell ) ),
-    d_navigator( d_model->createNavigatorAdvanced() )
+    d_navigator( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) )
 { /* ... */ }
 
 // Copy constructor
 /*! \details When copied, the new particle is assumed to not be lost and
- * not be gone.
+ * not be gone (i.e. the lost and gone states will never be copied). The
+ * newly created particle will also be embedded in the same model as the
+ * copied particle.
  */
 ParticleState::ParticleState( const ParticleState& existing_base_state,
 			      const ParticleType new_type,
@@ -101,7 +103,7 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_lost( false ),
     d_gone( false ),
     d_model( existing_base_state.d_model ),
-    d_navigator( existing_base_state.d_navigator->clone() )
+    d_navigator( existing_base_state.d_navigator->clone( this->createAdvanceCompleteCallback() ) )
 {
   // Increment the generation number if requested
   if( increment_generation_number )
@@ -290,10 +292,20 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
 }
 
 // Advance the particle along its direction by the requested distance
+/*! \details If the particle has been embedded in geometry model the
+ * particle's navigator will be used to move through the model as the
+ * requested distance is traversed. All boundary crossing info will be lost.
+ * If an exception occurs due to a navigator tracking error the particle
+ * state will be set to lost. If the model boundary is reached, movement
+ * of the particle will be stopped and the state will be set to gone. Be sure 
+ * to check that the particle state is still valid after calling this method.
+ */
 void ParticleState::advance( double raw_distance )
 {
   // Make sure the distance is valid
   testPrecondition( !QT::isnaninf( raw_distance ) );
+  testPrecondition( !this->isLost() );
+  testPrecondition( !this->isGone() );
 
   Geometry::Navigator::Length distance =
     Geometry::Navigator::Length::from_value( raw_distance );
@@ -302,9 +314,6 @@ void ParticleState::advance( double raw_distance )
   
   while( distance > distance_to_surface )
   {
-    // Increase the particle time
-    d_time += this->calculateTraversalTime( distance_to_surface.value() );
-    
     // Try to advance the particle to the next cell boundary. If the
     // advance fails, the particle is lost.
     try{
@@ -328,17 +337,28 @@ void ParticleState::advance( double raw_distance )
     distance -= distance_to_surface;
 
     // Determine the distance to the next surface
-    distance_to_surface = d_navigator->fireRay();
+    if( !d_model->isTerminationCell( this->getCell() ) )
+      distance_to_surface = d_navigator->fireRay();
+    
+    // The particle has exited the model
+    else
+    {
+      d_gone = true;
+      return;
+    }
   }
 
   // Travel any remaining distance
   if( distance > 0.0*boost::units::cgs::centimeter )
   {
     d_navigator->advanceBySubstep( distance );
-
-    // Compute the time to traverse the distance
-    d_time += this->calculateTraversalTime( distance.value() );
   }
+}
+
+// Increase the particle time due to a traversal
+void ParticleState::increaseParticleTime( const Geometry::Navigator::Length distance_traversed )
+{
+  d_time += this->calculateTraversalTime( distance_traversed.value() );
 }
 
 // Set the source (starting) energy of the particle (history) (MeV)
@@ -395,6 +415,11 @@ ParticleState::timeType ParticleState::getTime() const
 }
 
 // Set the time state of the particle
+/*! \details This is not the recommended way to update the particle time.
+ * As the particle position is advanced, either through the advance method
+ * or through the particle navigator advance methods, the time will be
+ * automatically updated using the traversal distance and the particle speed.
+ */
 void ParticleState::setTime( const ParticleState::timeType time )
 {
   d_time = time;
@@ -499,6 +524,14 @@ void ParticleState::setAsGone()
   d_gone = true;
 }
 
+// Check if the particle state is still valid
+/*! \details This will return false if the particle is lost or gone.
+ */
+ParticleState::operator bool() const
+{
+  return !(this->isLost() || this->isGone());
+}
+
 // Embed the particle in the desired model
 void ParticleState::embedInModel(
                           const std::shared_ptr<const Geometry::Model>& model )
@@ -551,7 +584,7 @@ void ParticleState::embedInModel(
   testPrecondition( model.get() );
   
   // Create the new navigator
-  d_navigator.reset( model->createNavigatorAdvanced() );
+  d_navigator.reset( model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) );
   
   // Cache the new model
   d_model = model;
@@ -563,7 +596,7 @@ void ParticleState::embedInModel(
   }
   catch( const std::exception& exception )
   {
-    FRENSIE_LOG_WARNING( "Attempt to embed particle into geometry model "
+    FRENSIE_LOG_WARNING( "Attempt to embed particle in geometry model "
                          << model->getName() << " failed! \n"
                          << exception.what() );                     
     d_lost = true;
@@ -584,7 +617,7 @@ void ParticleState::embedInModel(
   testPrecondition( model.get() );
   
   // Create the new navigator
-  d_navigator.reset( model->createNavigatorAdvanced() );
+  d_navigator.reset( model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) );
 
   // Cache the new model
   d_model = model;
@@ -596,7 +629,7 @@ void ParticleState::embedInModel(
   }
   catch( const std::exception& exception )
   {
-    FRENSIE_LOG_WARNING( "Attempt to embed particle into geometry model "
+    FRENSIE_LOG_WARNING( "Attempt to embed particle in geometry model "
                          << model->getName() << " failed! \n"
                          << exception.what() );
     
@@ -625,10 +658,26 @@ void ParticleState::extractFromModel()
   d_model.reset( new Geometry::InfiniteMediumModel( d_source_cell ) );
 
   // Create the dummy navigator
-  d_navigator.reset( d_model->createNavigatorAdvanced() );
+  d_navigator.reset( d_model->createNavigatorAdvanced( this->createAdvanceCompleteCallback() ) );
 
   // Initialize the new navigator
   d_navigator->setState( position, direction );
+}
+
+// Create the navigator AdvanceComplete callback method
+// Note: We must "bind" the navigator to the particle state so that if we
+//       change the navigator state, the particle state also gets changed. 
+//       Specifically, changes to the navigator's position must result in
+//       a change to the particle's time based on the distance traveled and
+//       the particle speed. Any navigator that the particle creates must use
+//       the callback returned from this method to "bind" the navigator to the
+//       particle state.
+Geometry::Navigator::AdvanceCompleteCallback
+ParticleState::createAdvanceCompleteCallback()
+{
+  return std::bind<void>( &ParticleState::increaseParticleTime,
+                          std::ref(*this),
+                          std::placeholders::_1 );
 }
 
 EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ParticleState );

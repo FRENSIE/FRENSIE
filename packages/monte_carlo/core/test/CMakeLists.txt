@@ -1,15 +1,29 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_core)
 
+ADD_SUBDIRECTORY(test_files)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleType DEPENDS tstParticleType.cpp)
 FRENSIE_ADD_TEST(ParticleType)
 
-ADD_EXECUTABLE(tstParticleState
-  tstParticleState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleState monte_carlo_core)
-ADD_TEST(ParticleState_test tstParticleState)
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleState DEPENDS tstParticleState.cpp)
+FRENSIE_ADD_TEST(ParticleState)
+
+IF(FRENSIE_ENABLE_ROOT)
+  FRENSIE_ADD_TEST_EXECUTABLE(RootParticleState
+    DEPENDS tstRootParticleState.cpp
+    LIB_DEPENDS geometry_root)
+  FRENSIE_ADD_TEST(RootParticleState
+    EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  FRENSIE_ADD_TEST_EXECUTABLE(DagMCParticleState
+    DEPENDS tstDagMCParticleState.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(DagMCParticleState
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+ENDIF()
 
 ADD_EXECUTABLE(tstPhotonState
   tstPhotonState.cpp

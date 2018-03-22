@@ -37,9 +37,9 @@ FRENSIE_ADD_TEST_EXECUTABLE(DagMCNavigator DEPENDS tstDagMCNavigator.cpp)
 FRENSIE_ADD_TEST(DagMCNavigator
   EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
 
-FRENSIE_ADD_TEST_EXECUTABLE(DagMCNavigatorIArchive DEPENDS tstDagMCNavigatorIArchive.cpp)
-FRENSIE_ADD_TEST(DagMCNavigatorIArchive
-  EXTRA_ARGS --test_archive_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_navigator_archive.xml)
+# FRENSIE_ADD_TEST_EXECUTABLE(DagMCNavigatorIArchive DEPENDS tstDagMCNavigatorIArchive.cpp)
+# FRENSIE_ADD_TEST(DagMCNavigatorIArchive
+#   EXTRA_ARGS --test_archive_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_navigator_archive.xml)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   FRENSIE_ADD_TEST_EXECUTABLE(SharedParallelDagMCNavigator DEPENDS tstSharedParallelDagMCNavigator.cpp)

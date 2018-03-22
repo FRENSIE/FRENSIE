@@ -20,7 +20,6 @@
 #include "Geometry_DagMCSurfaceHandler.hpp"
 #include "Geometry_DagMCRay.hpp"
 #include "Geometry_Navigator.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
 
@@ -33,12 +32,15 @@ class DagMCNavigator : public Navigator
 
 public:
 
-  //! Constructor
-  DagMCNavigator( const std::shared_ptr<const DagMCModel>& dagmc_model );
-
   //! The reflecting surface map type
   typedef boost::bimap<InternalSurfaceHandle,moab::EntityHandle>
   ReflectingSurfaceIdHandleMap;
+
+  //! Constructor
+  DagMCNavigator(
+          const std::shared_ptr<const DagMCModel>& dagmc_model,
+          const Navigator::AdvanceCompleteCallback& advance_complete_callback =
+          Navigator::AdvanceCompleteCallback() );
 
   //! Destructor
   ~DagMCNavigator()
@@ -93,6 +95,9 @@ public:
                  const double z_direction,
                  const InternalCellHandle current_cell ) override;
 
+  //! Initialize (or reset) the state (base overloads)
+  using Navigator::setState;
+
   //! Get the internal DagMC ray position
   const Length* getPosition() const override;
 
@@ -105,19 +110,28 @@ public:
   //! Get the distance from the internal DagMC ray pos. to the nearest boundary
   Length fireRay( InternalSurfaceHandle* surface_hit ) override;
 
-  //! Advance the internal DagMC ray to the next boundary
-  bool advanceToCellBoundary( double* surface_normal ) override;
-
-  //! Advance the internal DagMC ray a substep
-  void advanceBySubstep( const Length substep_distance ) override;
-
   //! Change the internal ray direction (without changing its location)
   void changeDirection( const double x_direction,
                         const double y_direction,
                         const double z_direction ) override;
 
   //! Clone the navigator
+  DagMCNavigator* clone( const AdvanceCompleteCallback& advance_complete_callback ) const override;
+  
+  //! Clone the navigator
   DagMCNavigator* clone() const override;
+
+protected:
+
+  //! Copy constructor
+  DagMCNavigator( const DagMCNavigator& other );
+
+  //! Advance the internal DagMC ray to the next boundary
+  bool advanceToCellBoundaryImpl( double* surface_normal,
+                                  Length& distance_traveled ) override;
+
+  //! Advance the internal DagMC ray a substep
+  void advanceBySubstepImpl( const Length substep_distance ) override;
 
 private:
 
@@ -180,19 +194,6 @@ private:
                  const double z_direction,
                  const moab::EntityHandle current_cell_handle );
 
-  // Save the model to an archive
-  template<typename Archive>
-  void save( Archive& ar, const unsigned version ) const;
-
-  // Load the model from an archive
-  template<typename Archive>
-  void load( Archive& ar, const unsigned version );
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
-  // Declare the boost serialization access object as a friend
-  friend class boost::serialization::access;
-
   // The boundary tolerance
   static const double s_boundary_tol;
 
@@ -217,10 +218,6 @@ public:
 };
   
 } // end Geometry namespace
-
-BOOST_SERIALIZATION_CLASS_VERSION( DagMCNavigator, Geometry, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCNavigator, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCNavigator );
 
 #endif // end GEOMETRY_DAGMC_NAVIGATOR_HPP
 

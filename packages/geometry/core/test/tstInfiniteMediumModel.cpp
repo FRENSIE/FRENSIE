@@ -185,6 +185,10 @@ FRENSIE_UNIT_TEST( InfiniteMediumModel, createNavigatorAdvanced )
                                              model.createNavigatorAdvanced() );
 
   FRENSIE_CHECK( navigator.get() != NULL );
+
+  navigator.reset( model.createNavigatorAdvanced( [](const Geometry::Navigator::Length distance){ std::cout << "advanced " << distance << std::endl; } ) );
+
+  FRENSIE_CHECK( navigator.get() != NULL );
 }
 
 //---------------------------------------------------------------------------//
@@ -194,6 +198,10 @@ FRENSIE_UNIT_TEST( InfiniteMediumModel, createNavigator )
   Geometry::InfiniteMediumModel model;
   
   std::shared_ptr<Geometry::Navigator> navigator = model.createNavigator();
+
+  FRENSIE_CHECK( navigator.get() != NULL );
+
+  navigator = model.createNavigator( [](const Geometry::Navigator::Length distance){ std::cout << "advanced " << distance << std::endl; } );
 
   FRENSIE_CHECK( navigator.get() != NULL );
 }

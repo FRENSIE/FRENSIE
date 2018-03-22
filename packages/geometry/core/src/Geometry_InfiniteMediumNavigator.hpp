@@ -22,7 +22,10 @@ class InfiniteMediumNavigator : public Navigator
 public:
 
   //! Constructor
-  InfiniteMediumNavigator( const InternalCellHandle infinite_medium_cell_id );
+  InfiniteMediumNavigator(
+          const InternalCellHandle infinite_medium_cell_id,
+          const Navigator::AdvanceCompleteCallback& advance_complete_callback =
+          Navigator::AdvanceCompleteCallback() );
 
   //! Destructor
   ~InfiniteMediumNavigator();
@@ -70,6 +73,9 @@ public:
                  const double z_direction,
                  const InternalCellHandle start_cell ) override;
 
+  //! Set the internal ray state (base class overloads)
+  using Navigator::setState;
+
   //! Get the internal ray position
   const Length* getPosition() const override;
 
@@ -82,37 +88,33 @@ public:
   //! Fire the internal ray through the geometry
   Length fireRay( InternalSurfaceHandle* surface_hit ) override;
 
-  //! Advance the internal ray to the cell boundary
-  bool advanceToCellBoundary( double* surface_normal ) override;
-
-  //! Advance the internal ray by a substep (less than distance to boundary)
-  void advanceBySubstep( const Length step_size ) override;
-
   //! Change the internal ray direction
   void changeDirection( const double x_direction,
                         const double y_direction,
                         const double z_direction ) override;
 
   //! Clone the navigator
+  InfiniteMediumNavigator* clone( const AdvanceCompleteCallback& advance_complete_callback ) const override;
+
+  //! Clone the navigator
   InfiniteMediumNavigator* clone() const override;
+
+protected:
+
+  //! Copy constructor
+  InfiniteMediumNavigator( const InfiniteMediumNavigator& other );
+
+  //! Advance the internal ray to the cell boundary
+  bool advanceToCellBoundaryImpl( double* surface_normal,
+                                  Length& distance_traveled ) override;
+
+  //! Advance the internal ray by a substep (less than distance to boundary)
+  void advanceBySubstepImpl( const Length step_size ) override;
 
 private:
 
   // Default constructor
   InfiniteMediumNavigator();
-
-  // Save the model to an archive
-  template<typename Archive>
-  void save( Archive& ar, const unsigned version ) const;
-
-  // Load the model from an archive
-  template<typename Archive>
-  void load( Archive& ar, const unsigned version );
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
-  // Declare the boost serialization access object as a friend
-  friend class boost::serialization::access;
 
   // The infinite medium cell id
   InternalCellHandle d_cell;
@@ -125,10 +127,6 @@ private:
 };
 
 } // end Geometry namespace
-
-BOOST_SERIALIZATION_CLASS_VERSION( InfiniteMediumNavigator, Geometry, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( InfiniteMediumNavigator, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumNavigator );
 
 #endif // end GEOMETRY_INFINITE_MEDIUM_NAVIGATOR_HPP
 

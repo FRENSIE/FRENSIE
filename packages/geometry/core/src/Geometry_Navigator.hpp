@@ -10,11 +10,9 @@
 #define GEOMETRY_NAVIGATOR_HPP
 
 // Std Lib Includes
-#include <set>
+#include <functional>
 #include <sstream>
 
-// Boost Includes
-#include <boost/serialization/split_member.hpp>
 #include <boost/units/systems/cgs/length.hpp>
 #include <boost/units/systems/cgs/volume.hpp>
 
@@ -22,6 +20,7 @@
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Ray.hpp"
 #include "Utility_ArrayView.hpp"
+#include "Utility_Set.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
@@ -54,10 +53,13 @@ public:
 
   //! The cell id set
   typedef std::set<InternalCellHandle> CellIdSet;
+
+  //! The advance callback
+  typedef std::function<void(const Length)> AdvanceCompleteCallback;
   
   //! Constructor
-  Navigator()
-  { /* ... */ }
+  Navigator( const AdvanceCompleteCallback& advance_complete_callback =
+             AdvanceCompleteCallback() );
 
   //! Destructor
   virtual ~Navigator()
@@ -230,6 +232,13 @@ public:
    * A std::runtime_error (or class derived from it) must be thrown if a ray 
    * tracing error occurs.
    */
+  Length fireRay( InternalSurfaceHandle& surface_hit );
+
+  /*! Fire the internal ray through the geometry
+   *
+   * A std::runtime_error (or class derived from it) must be thrown if a ray 
+   * tracing error occurs.
+   */
   Length fireRay();
 
   /*! Advance the internal ray to the cell boundary
@@ -237,7 +246,7 @@ public:
    * If a reflecting surface is hit "true" will be returned. Passing NULL
    * to this function must be allowed.
    */
-  virtual bool advanceToCellBoundary( double* surface_normal ) = 0;
+  bool advanceToCellBoundary( double* surface_normal );
 
   /*! Advance the internal ray to the cell boundary
    *
@@ -247,7 +256,7 @@ public:
   bool advanceToCellBoundary();
 
   //! Advance the internal ray by a substep (less than distance to boundary)
-  virtual void advanceBySubstep( const Length step_size ) = 0;
+  void advanceBySubstep( const Length step_size );
 
   //! Change the internal ray direction
   virtual void changeDirection( const double x_direction,
@@ -267,30 +276,34 @@ public:
    *
    * The returned pointer must be heap allocated.
    */
+  virtual Navigator* clone( const AdvanceCompleteCallback& advance_complete_callback ) const = 0;
+  
+  /*! Clone the navigator
+   *
+   * The returned pointer must be heap allocated.
+   */
   virtual Navigator* clone() const = 0;
 
 protected:
+
+  //! Copy constructor
+  Navigator( const Navigator& other );
 
   // Convert an array to a string
   template<typename T>
   static std::string arrayToString( const T* data );
 
+  //! Advance the internal ray to the cell boundary implementation
+  virtual bool advanceToCellBoundaryImpl( double* surface_normal,
+                                          Length& distance_traveled ) = 0;
+
+  //! Advance the internal ray by a substep (less than distance to boundary) implementation
+  virtual void advanceBySubstepImpl( const Length step_size ) = 0;
+
 private:
 
-  // Save the navigator to an archive
-  template<typename Archive>
-  void save( Archive& ar, const unsigned version ) const
-  { /* ... */ }
-
-  // Load the navigator from an archive
-  template<typename Archive>
-  void load( Archive& ar, const unsigned version )
-  { /* ... */ }
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
-  // Declare the boost serialization access object as a friend
-  friend class boost::serialization::access;
+  // The onAdvanceComplete method
+  AdvanceCompleteCallback d_on_advance_complete;
 };
 
 // Get the location of a cell w.r.t. a given cell
@@ -361,15 +374,43 @@ inline void Navigator::setState( const Ray& ray,
 }
 
 // Fire the internal ray through the geometry
+inline auto Navigator::fireRay( InternalSurfaceHandle& surface_hit ) -> Length
+{
+  return this->fireRay( &surface_hit );
+}
+
+// Fire the internal ray through the geometry
 inline auto Navigator::fireRay() -> Length
 {
   return this->fireRay( NULL );
 }
 
 // Advance the internal ray to the cell boundary
+inline bool Navigator::advanceToCellBoundary( double* surface_normal )
+{
+  Length distance_traveled;
+  const bool reflection = this->advanceToCellBoundaryImpl( surface_normal,
+                                                           distance_traveled );
+
+  if( d_on_advance_complete )
+    d_on_advance_complete( distance_traveled );
+
+  return reflection;
+}
+
+// Advance the internal ray to the cell boundary
 inline bool Navigator::advanceToCellBoundary()
 {
   return this->advanceToCellBoundary( NULL );
+}
+
+// Advance the internal ray by a substep (less than distance to boundary)
+inline void Navigator::advanceBySubstep( const Length step_size )
+{
+  this->advanceBySubstepImpl( step_size );
+
+  if( d_on_advance_complete )
+    d_on_advance_complete( step_size );
 }
 
 // Change the internal ray direction
@@ -386,9 +427,6 @@ inline std::string Navigator::arrayToString( const T* data )
 }
   
 } // end Geometry namespace
-
-BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Navigator, Geometry );
-BOOST_SERIALIZATION_CLASS_VERSION( Navigator, Geometry, 0 );
 
 #endif // end GEOMETRY_NAVIGATOR_HPP
 

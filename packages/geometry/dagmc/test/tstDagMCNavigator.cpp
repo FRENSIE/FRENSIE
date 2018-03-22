@@ -16,21 +16,12 @@
 #include "Geometry_DagMCModel.hpp"
 #include "Utility_Array.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
-#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Types
 //---------------------------------------------------------------------------//
 
 namespace cgs = boost::units::cgs;
-
-typedef std::tuple<
-  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
-  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
-  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
-  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
-  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
-  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -435,6 +426,33 @@ FRENSIE_UNIT_TEST( DagMCNavigator, advanceToCellBoundary_advanced )
 }
 
 //---------------------------------------------------------------------------//
+// Check that an internal ray can be advanced by a substep
+FRENSIE_UNIT_TEST( DagMCNavigator, advance_with_callback )
+{
+  Geometry::Navigator::Length distance_traveled = 0.0*cgs::centimeter;
+  
+  std::shared_ptr<Geometry::Navigator> navigator =
+    model->createNavigator( [&distance_traveled](const Geometry::Navigator::Length distance){ distance_traveled += distance; } );
+  
+  // Initialize the ray
+  navigator->setState( -40.0*cgs::centimeter,
+                       -40.0*cgs::centimeter,
+                       59.0*cgs::centimeter,
+                       0.0, 0.0, 1.0,
+                       53 );
+
+  navigator->advanceBySubstep( 0.959999084*cgs::centimeter );
+
+  FRENSIE_CHECK_EQUAL( distance_traveled, 0.959999084*cgs::centimeter );
+
+  navigator->advanceToCellBoundary();
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( distance_traveled,
+                                   1.959999084472656250*cgs::centimeter,
+                                   1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the internal ray direction can be changed
 FRENSIE_UNIT_TEST( DagMCNavigator, changeDirection )
 {
@@ -608,13 +626,20 @@ FRENSIE_UNIT_TEST( DagMCNavigator, ray_trace_with_reflection )
 // Check that the ray can be cloned
 FRENSIE_UNIT_TEST( DagMCNavigator, clone )
 {
-  std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
+  size_t number_of_advances = 0;
+  
+  std::shared_ptr<Geometry::Navigator> navigator =
+    model->createNavigator( [&number_of_advances](const Geometry::Navigator::Length){ ++number_of_advances; } );
 
   // Initialize the ray
   navigator->setState( -40.0*cgs::centimeter,
                        -40.0*cgs::centimeter,
                        108.0*cgs::centimeter,
                        0.0, 0.0, 1.0 );
+
+  Geometry::Navigator::Length distance_to_boundary = navigator->fireRay();
+
+  navigator->advanceBySubstep( 0.1*distance_to_boundary );
 
   // Clone the ray
   std::shared_ptr<Geometry::Navigator> navigator_clone( navigator->clone() );
@@ -633,51 +658,81 @@ FRENSIE_UNIT_TEST( DagMCNavigator, clone )
                        navigator->getDirection()[2] );
   FRENSIE_CHECK_EQUAL( navigator_clone->getCurrentCell(),
                        navigator->getCurrentCell() );
+
+  navigator_clone->advanceBySubstep( 0.1*distance_to_boundary );
+
+  // The callback should've been copied during the clone
+  FRENSIE_CHECK_EQUAL( number_of_advances, 2 );
+
+  navigator_clone.reset( navigator->clone( [](const Geometry::Navigator::Length distance){ std::cout << "advanced " << distance << std::endl; } ) );
+
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[0],
+                       navigator->getPosition()[0] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[1],
+                       navigator->getPosition()[1] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getPosition()[2],
+                       navigator->getPosition()[2] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[0],
+                       navigator->getDirection()[0] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[1],
+                       navigator->getDirection()[1] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getDirection()[2],
+                       navigator->getDirection()[2] );
+  FRENSIE_CHECK_EQUAL( navigator_clone->getCurrentCell(),
+                       navigator->getCurrentCell() );
+
+  navigator_clone->advanceBySubstep( 0.1*distance_to_boundary );
+
+  // A new callback was set so the number of advances counter should be
+  // unmodified
+  FRENSIE_CHECK_EQUAL( number_of_advances, 2 );
 }
 
-//---------------------------------------------------------------------------//
-// Check that a navigator can be archived
-FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCNavigator, archive, TestArchives )
-{
-  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
-  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+// //---------------------------------------------------------------------------//
+// // Check that a navigator can be archived
+// FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( DagMCNavigator, archive, TestArchives )
+// {
+//   FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+//   FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
-  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
-  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+//   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+//   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  std::string archive_name( "test_dagmc_navigator" );
-  std::ostringstream archive_ostream;
+//   std::string archive_name( "test_dagmc_navigator" );
+//   std::ostringstream archive_ostream;
 
-  std::unique_ptr<OArchive> oarchive;
+//   std::unique_ptr<OArchive> oarchive;
 
-  createOArchive( archive_name, archive_ostream, oarchive );
+//   createOArchive( archive_name, archive_ostream, oarchive );
 
-  std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
+//   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
 
-  // Initialize the ray
-  navigator->setState( -40.0*cgs::centimeter,
-                       -40.0*cgs::centimeter,
-                       108.0*cgs::centimeter,
-                       0.0, 0.0, 1.0 );
+//   // Initialize the ray
+//   navigator->setState( -40.0*cgs::centimeter,
+//                        -40.0*cgs::centimeter,
+//                        108.0*cgs::centimeter,
+//                        0.0, 0.0, 1.0 );
 
-  FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( navigator ) );
+//   FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( navigator ) );
 
-  if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
-  {
-    std::unique_ptr<std::ofstream> ofstream;
+//   oarchive.reset();
+
+//   if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
+//   {
+//     std::unique_ptr<std::ofstream> ofstream;
     
-    if( archive_name.find( ".bin" ) < archive_name.size() )
-    {
-      ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
-    }
-    else
-    {
-      ofstream.reset( new std::ofstream( archive_name ) );
-    }
+//     if( archive_name.find( ".bin" ) < archive_name.size() )
+//     {
+//       ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );
+//     }
+//     else
+//     {
+//       ofstream.reset( new std::ofstream( archive_name ) );
+//     }
 
-    (*ofstream) << archive_ostream.str();
-  }
-}
+//     (*ofstream) << archive_ostream.str();
+//   }
+// }
 
 //---------------------------------------------------------------------------//
 // Custom setup
@@ -691,9 +746,9 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
   ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_cad_file",
                                         test_dagmc_geom_file_name, "",
                                         "Test CAD file name" );
-  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "cache_test_archive",
-                                        cache_test_archive, false,
-                                        "Cache the test archive" );
+  // ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "cache_test_archive",
+  //                                       cache_test_archive, false,
+  //                                       "Cache the test archive" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
