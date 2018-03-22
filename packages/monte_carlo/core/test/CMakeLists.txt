@@ -46,12 +46,8 @@ FRENSIE_ADD_TEST(AdjointElectronState)
 FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronProbeState DEPENDS tstAdjointElectronProbeState.cpp)
 FRENSIE_ADD_TEST(AdjointElectronProbeState)
 
-ADD_EXECUTABLE(tstPositronState
-  tstPositronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronState monte_carlo_core)
-ADD_TEST(PositronState_test tstPositronState)
-SET_PROPERTY(TEST PositronState_test PROPERTY LABELS positron)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronState DEPENDS tstPositronState.cpp)
+FRENSIE_ADD_TEST(PositronState)
 
 ADD_EXECUTABLE(tstParticleBank
   tstParticleBank.cpp
