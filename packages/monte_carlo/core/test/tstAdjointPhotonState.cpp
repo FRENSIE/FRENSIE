@@ -267,7 +267,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AdjointPhotonState, archive, TestArchives )
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  std::string archive_base_name( "test_photon_state" );
+  std::string archive_base_name( "test_adjoint_photon_state" );
   std::ostringstream archive_ostream;
 
   {
