@@ -28,12 +28,8 @@ ENDIF()
 FRENSIE_ADD_TEST_EXECUTABLE(PhotonState DEPENDS tstPhotonState.cpp)
 FRENSIE_ADD_TEST(PhotonState)
 
-ADD_EXECUTABLE(tstAdjointPhotonState
-  tstAdjointPhotonState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonState monte_carlo_core)
-ADD_TEST(AdjointPhotonState_test tstAdjointPhotonState)
-SET_PROPERTY(TEST AdjointPhotonState_test PROPERTY LABELS photon adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonState DEPENDS tstAdjointPhotonState.cpp)
+FRENSIE_ADD_TEST(AdjointPhotonState)
 
 ADD_EXECUTABLE(tstAdjointPhotonProbeState
   tstAdjointPhotonProbeState.cpp
