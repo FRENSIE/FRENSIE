@@ -25,12 +25,8 @@ IF(FRENSIE_ENABLE_DAGMC)
     EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
 ENDIF()
 
-ADD_EXECUTABLE(tstPhotonState
-  tstPhotonState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhotonState monte_carlo_core)
-ADD_TEST(PhotonState_test tstPhotonState)
-SET_PROPERTY(TEST PhotonState_test PROPERTY LABELS photon)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonState DEPENDS tstPhotonState.cpp)
+FRENSIE_ADD_TEST(PhotonState)
 
 ADD_EXECUTABLE(tstAdjointPhotonState
   tstAdjointPhotonState.cpp
