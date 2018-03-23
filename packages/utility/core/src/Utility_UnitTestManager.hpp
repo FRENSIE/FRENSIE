@@ -40,7 +40,7 @@ public:
   //! The initializer
   class Initializer
   {
-    
+
   public:
 
     //! Constructor
@@ -51,7 +51,7 @@ public:
 
     //! Finalize the unit test manager
     void finalizeUnitTestManager( size_t& checkpoint );
-    
+
     //! Destructor
     virtual ~Initializer()
     { /* ... */ }
@@ -71,13 +71,13 @@ public:
 
     //! Get the start checkpoint for the custom manager initialization method
     virtual size_t getCustomUnitTestManagerInitializationCheckpoint() const;
-    
+
     //! Custom manager initialization method
     virtual void customUnitTestManagerInitialization( size_t& checkpoint );
 
     //! Get the start checkpoint for the manager finalization method
     virtual size_t getCustomUnitTestManagerFinalizationCheckpoint() const;
-    
+
     //! Custom manager finalization method
     virtual void customUnitTestManagerFinalization( size_t& checkpoint );
 
@@ -128,7 +128,7 @@ public:
   int getNumberOfPassedChecks() const;
 
   //! Return the number of unexpected exceptions
-  int getNumberOfUnexpectedExceptions() const;  
+  int getNumberOfUnexpectedExceptions() const;
 
 protected:
 
@@ -299,7 +299,7 @@ private:
   // Check if the unit test should be run
   bool shouldUnitTestBeRun( const UnitTest& unit_test );
 
-  // Run the registered unit tets
+  // Run the registered unit tests
   bool runUnitTests( std::ostringstream& log );
 
   // Run a single unit tests
@@ -335,7 +335,7 @@ private:
                                     const double finalization_time,
                                     const bool local_success,
                                     const bool global_success );
-  
+
   // Summarize failed tests
   void summarizeFailedTests(
                          const std::vector<std::string>& global_failed_tests,
@@ -420,7 +420,7 @@ private:
       Utility::logLastCheckpoint<RIGHT_SHIFT>( CHECKPOINT_LINE_NUMBER, LOG_STREAM ); \
     }                                                                   \
   }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_UNIT_TEST_MANAGER_HPP

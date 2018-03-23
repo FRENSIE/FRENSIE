@@ -208,17 +208,17 @@ FRENSIE_UNIT_TEST( PropertyTree, doesPropertyTreeStoreJSONArray )
     ptree.put( "inline array", std::vector<int>({-1, 0, 1}) );
 
     Utility::PropertyTree level_1_ptree;
-    
+
     Utility::PropertyTree json_array_element;
 
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -229,7 +229,7 @@ FRENSIE_UNIT_TEST( PropertyTree, doesPropertyTreeStoreJSONArray )
   FRENSIE_CHECK( !Utility::doesPropertyTreeStoreJSONArray( ptree ) );
   FRENSIE_CHECK( !Utility::doesPropertyTreeStoreJSONArray( ptree.get_child( "inline array" ) ) );
   FRENSIE_CHECK( Utility::doesPropertyTreeStoreJSONArray( ptree.get_child( "json array" ) ) );
-               
+
   FRENSIE_CHECK_NO_THROW( boost::property_tree::write_json( "test_arrays.json", ptree ) );
 }
 
@@ -249,7 +249,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toPropertyTree_basic_values )
   ptree = Utility::toPropertyTree( false );
 
   FRENSIE_CHECK_EQUAL( ptree.data().toBool(), false );
-    
+
 
   // Convert a short
   ptree = Utility::toPropertyTree( (short)-1, true );
@@ -274,7 +274,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toPropertyTree_basic_values )
   FRENSIE_CHECK_EQUAL( ptree.data().toUnsignedShort(), (unsigned short)10 );
 
   ptree = Utility::toPropertyTree( (unsigned short)65535 );
-  
+
   FRENSIE_CHECK_EQUAL( ptree.data().toUnsignedShort(), (unsigned short)65535 );
 
   // Convert an int
@@ -351,7 +351,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toPropertyTree_basic_values )
   ptree = Utility::toPropertyTree( 10ull, false );
 
   FRENSIE_CHECK_EQUAL( ptree.data().toUnsignedLongLong(), 10ull );
-  
+
   ptree = Utility::toPropertyTree( 10000000000ull );
 
   FRENSIE_CHECK_EQUAL( ptree.data().toUnsignedLongLong(), 10000000000ull );
@@ -734,15 +734,15 @@ FRENSIE_UNIT_TEST( PropertyTree, toPropertyTree_sequence_container_values )
     FRENSIE_CHECK_EQUAL( it->second.size(), 3 );
 
     Utility::PropertyTree::const_iterator child_it = it->second.begin();
-    
+
     FRENSIE_CHECK_EQUAL( child_it->second.data().toDouble(), -1.0 );
 
     ++child_it;
-    
+
     FRENSIE_CHECK_EQUAL( child_it->second.data().toDouble(), 0.0 );
 
     ++child_it;
-    
+
     FRENSIE_CHECK_EQUAL( child_it->second.data().toDouble(), 1.0 );
 
     ++it;
@@ -750,11 +750,11 @@ FRENSIE_UNIT_TEST( PropertyTree, toPropertyTree_sequence_container_values )
     FRENSIE_CHECK_EQUAL( it->second.size(), 2 );
 
     child_it = it->second.begin();
-    
+
     FRENSIE_CHECK_EQUAL( child_it->second.data().toDouble(), -1.0 );
 
     ++child_it;
-    
+
     FRENSIE_CHECK_EQUAL( child_it->second.data().toDouble(), 1.0 );
   }
 
@@ -862,7 +862,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toPropertyTree_associative_container_values )
     FRENSIE_CHECK_EQUAL( it->second.data().toDouble(), 0.0 );
 
     ++it;
-    
+
     FRENSIE_CHECK_EQUAL( it->second.data().toDouble(), 1.0 );
   }
 
@@ -988,7 +988,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toPropertyTree_associative_container_values )
     FRENSIE_CHECK_EQUAL( it->second.data().toDouble(), 0.0 );
 
     ++it;
-    
+
     FRENSIE_CHECK_EQUAL( it->second.data().toDouble(), 1.0 );
   }
 
@@ -1069,17 +1069,17 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
     ptree.put( "inline array", std::vector<int>({-1, 0, 1}) );
 
     Utility::PropertyTree level_1_ptree;
-    
+
     Utility::PropertyTree json_array_element;
 
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -1095,7 +1095,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::vector<double> >( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::vector<std::string> >( ptree, unused_children ),
-              Utility::PropertyTreeConversionException );              
+              Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::VariantVector>( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
 
@@ -1105,7 +1105,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::vector<std::string> >( ptree.get_child( "value" ), unused_children ),
               Utility::PropertyTreeConversionException );
-  
+
   Utility::VariantVector vector =
     Utility::fromPropertyTree<Utility::VariantVector>( ptree.get_child( "value" ), unused_children );
 
@@ -1136,7 +1136,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
   FRENSIE_CHECK_EQUAL( string_vector[0], "-1" );
   FRENSIE_CHECK_EQUAL( string_vector[1], "0" );
   FRENSIE_CHECK_EQUAL( string_vector[2], "1" );
-  
+
   vector = Utility::fromPropertyTree<Utility::VariantVector>( ptree.get_child( "inline array" ) );
 
   FRENSIE_CHECK_EQUAL( vector.size(), 3 );
@@ -1178,7 +1178,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::deque<double> >( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::deque<std::string> >( ptree, unused_children ),
-              Utility::PropertyTreeConversionException );              
+              Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::VariantDeque>( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
 
@@ -1253,7 +1253,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::list<double> >( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::list<std::string> >( ptree, unused_children ),
-              Utility::PropertyTreeConversionException );              
+              Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::VariantList>( ptree ),
               Utility::PropertyTreeConversionException );
 
@@ -1328,7 +1328,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::forward_list<double> >( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::forward_list<std::string> >( ptree, unused_children ),
-              Utility::PropertyTreeConversionException );              
+              Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<Utility::VariantForwardList>( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
 
@@ -1395,7 +1395,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::set<double> >( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::set<std::string> >( ptree, unused_children ),
-              Utility::PropertyTreeConversionException );              
+              Utility::PropertyTreeConversionException );
 
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::set<int> >( ptree.get_child( "value" ), unused_children ),
               Utility::PropertyTreeConversionException );
@@ -1455,7 +1455,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_sequence_container )
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::unordered_set<double> >( ptree, unused_children ),
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::unordered_set<std::string> >( ptree, unused_children ),
-              Utility::PropertyTreeConversionException );              
+              Utility::PropertyTreeConversionException );
 
   FRENSIE_CHECK_THROW( Utility::fromPropertyTree<std::unordered_set<int> >( ptree.get_child( "value" ), unused_children ),
               Utility::PropertyTreeConversionException );
@@ -1568,7 +1568,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_associative_container )
               Utility::PropertyTreeConversionException );
   FRENSIE_CHECK_THROW( (Utility::fromPropertyTree<std::map<std::string,double> >( ptree )),
               Utility::PropertyTreeConversionException );
-  
+
   std::map<int,std::vector<int> > int_vector_int_map =
     Utility::fromPropertyTree<std::map<int,std::vector<int> > >( ptree );
 
@@ -1648,7 +1648,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_associative_container )
 
   // Create a property tree with nested trees
   ptree.clear();
-  
+
   ptree.put_child( "-1", Utility::toPropertyTree( std::map<int,int>({std::make_pair(-1,-1),std::make_pair(0,0)}), false ) );
   ptree.put_child( "0", Utility::toPropertyTree( std::map<int,int>({std::make_pair(-1,-1),std::make_pair(1,1)}), true ) );
   ptree.put_child( "1", Utility::toPropertyTree( std::map<int,int>({std::make_pair(0,0),std::make_pair(1,1)}), false ) );
@@ -1657,7 +1657,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_associative_container )
     Utility::fromPropertyTree<decltype(int_int_int_map_map)>( ptree );
 
   FRENSIE_CHECK_EQUAL( int_int_int_map_map.size(), 3 );
-  
+
   FRENSIE_CHECK_EQUAL( int_int_int_map_map.count( -1 ), 1 );
   FRENSIE_CHECK_EQUAL( int_int_int_map_map[-1].size(), 2 );
   FRENSIE_CHECK_EQUAL( int_int_int_map_map[-1].count( -1 ), 1 );
@@ -1687,7 +1687,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_associative_container )
   int_int_int_map_map = Utility::fromPropertyTree<decltype(int_int_int_map_map)>( ptree );
 
   FRENSIE_CHECK_EQUAL( int_int_int_map_map.size(), 3 );
-  
+
   FRENSIE_CHECK_EQUAL( int_int_int_map_map.count( -1 ), 1 );
   FRENSIE_CHECK_EQUAL( int_int_int_map_map[-1].size(), 2 );
   FRENSIE_CHECK_EQUAL( int_int_int_map_map[-1].count( -1 ), 1 );
@@ -1724,17 +1724,17 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_VariantMap )
     ptree.put( "inline array", std::vector<int>({-1, 0, 1}) );
 
     Utility::PropertyTree level_1_ptree;
-    
+
     Utility::PropertyTree json_array_element;
 
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -1754,10 +1754,10 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_VariantMap )
 
   // Convert the nodes to a VariantMap
   std::vector<std::string> unused_children;
-  
+
   Utility::VariantMap map =
     Utility::fromPropertyTree<Utility::VariantMap>( ptree, unused_children );
-  
+
   FRENSIE_CHECK_EQUAL( map.size(), 4 );
   FRENSIE_CHECK_EQUAL( unused_children.size(), 0 );
   FRENSIE_CHECK_EQUAL( map["inline array"].toVector().size(), 3 );
@@ -1783,7 +1783,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_VariantMap )
   FRENSIE_CHECK_EQUAL( (map["repeated_value"].toVector()[7].toType<std::pair<std::string,Utility::Variant> >().second.compactify().toString()), "{test,string,array}" );
   FRENSIE_CHECK_EQUAL( (map["repeated_value"].toVector()[8].toType<std::pair<std::string,std::string> >().first), "level 2 string" );
   FRENSIE_CHECK_EQUAL( (map["repeated_value"].toVector()[8].toType<std::pair<std::string,std::string> >().second), "test string" );
-  
+
   // Reorder the ptree contents
   ptree.clear();
 
@@ -1794,17 +1794,17 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_VariantMap )
     ptree.put( "inline array", std::vector<int>({-1, 0, 1}) );
 
     Utility::PropertyTree level_1_ptree;
-    
+
     Utility::PropertyTree json_array_element;
 
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -1856,17 +1856,17 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_VariantMap )
   // Construct level 1 nodes
   {
     Utility::PropertyTree level_1_ptree;
-    
+
     Utility::PropertyTree json_array_element;
 
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -1929,19 +1929,19 @@ FRENSIE_UNIT_TEST( PropertyTree, fromPropertyTree_VariantMap )
 
     ptree.add_child( "child tree", level_1_ptree );
     ptree.add_child( "repeated_value", level_1_ptree );
-    
+
     level_1_ptree.clear();
-    
+
     Utility::PropertyTree json_array_element;
 
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -2003,11 +2003,11 @@ FRENSIE_UNIT_TEST( PropertyTree, toString )
   ptree.add( "repeated_value", std::vector<double>({-1.0, 0.0, 1.0}) );
 
   FRENSIE_CHECK_EQUAL( Utility::toString( ptree ), "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\"}" );
-  
+
   ptree.put( "inline array", std::vector<int>({-1, 0, 1}) );
 
   FRENSIE_CHECK_EQUAL( Utility::toString( ptree ), "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\"}" );
-  
+
   // Construct level 1 nodes
   {
     Utility::PropertyTree level_1_ptree;
@@ -2027,11 +2027,11 @@ FRENSIE_UNIT_TEST( PropertyTree, toString )
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -2051,7 +2051,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toStream )
   std::ostringstream oss;
 
   Utility::toStream( oss, ptree );
-  
+
   FRENSIE_CHECK_EQUAL( boost::algorithm::trim_copy(oss.str()), "{}" );
 
   oss.str( "" );
@@ -2074,7 +2074,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toStream )
 
   oss.str( "" );
   oss.clear();
-  
+
   ptree.put( "inline array", std::vector<int>({-1, 0, 1}) );
 
   Utility::toStream( oss, ptree );
@@ -2083,7 +2083,7 @@ FRENSIE_UNIT_TEST( PropertyTree, toStream )
 
   oss.str( "" );
   oss.clear();
-  
+
   // Construct level 1 nodes
   {
     Utility::PropertyTree level_1_ptree;
@@ -2108,11 +2108,11 @@ FRENSIE_UNIT_TEST( PropertyTree, toStream )
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -2134,7 +2134,7 @@ FRENSIE_UNIT_TEST( PropertyTree, ostream_operator )
   std::ostringstream oss;
 
   oss << ptree;
-  
+
   FRENSIE_CHECK_EQUAL( boost::algorithm::trim_copy(oss.str()), "{}" );
 
   oss.str( "" );
@@ -2157,7 +2157,7 @@ FRENSIE_UNIT_TEST( PropertyTree, ostream_operator )
 
   oss.str( "" );
   oss.clear();
-  
+
   ptree.put( "inline array", std::vector<int>({-1, 0, 1}) );
 
   oss << ptree;
@@ -2166,7 +2166,7 @@ FRENSIE_UNIT_TEST( PropertyTree, ostream_operator )
 
   oss.str( "" );
   oss.clear();
-  
+
   // Construct level 1 nodes
   {
     Utility::PropertyTree level_1_ptree;
@@ -2191,11 +2191,11 @@ FRENSIE_UNIT_TEST( PropertyTree, ostream_operator )
     json_array_element.put( "", -1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 0 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
-    
+
     json_array_element.put( "", 1 );
 
     level_1_ptree.push_back( std::make_pair( "", json_array_element ) );
@@ -2237,7 +2237,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromString )
   FRENSIE_CHECK_EQUAL( map["repeated_value"].toVector()[3].toDouble(), 1.0 );
 
   ptree = Utility::fromString<Utility::PropertyTree>( "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\"}" );
-  
+
   map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   FRENSIE_CHECK_EQUAL( map.size(), 2 );
@@ -2252,7 +2252,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromString )
   FRENSIE_CHECK_EQUAL( map["inline array"].toVector()[2].toInt(), 1 );
 
   ptree = Utility::fromString<Utility::PropertyTree>( "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\",\"child tree\":{\"level 2 string\":\"test string\",\"level 2 inline array\":\"{test, string, array}\"}}" );
-  
+
   map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   FRENSIE_CHECK_EQUAL( map.size(), 3 );
@@ -2297,7 +2297,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromString )
 FRENSIE_UNIT_TEST( PropertyTree, fromStream )
 {
   Utility::PropertyTree ptree;
-  
+
   std::istringstream iss( "{}" );
 
   Utility::fromStream( iss, ptree );
@@ -2332,7 +2332,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromStream )
   iss.str( "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\"}" );
 
   Utility::fromStream( iss, ptree );
-  
+
   map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   FRENSIE_CHECK_EQUAL( map.size(), 2 );
@@ -2350,7 +2350,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromStream )
   iss.clear();
 
   Utility::fromStream( iss, ptree );
-  
+
   map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   FRENSIE_CHECK_EQUAL( map.size(), 3 );
@@ -2398,7 +2398,7 @@ FRENSIE_UNIT_TEST( PropertyTree, fromStream )
 FRENSIE_UNIT_TEST( PropertyTree, istream_operator )
 {
   Utility::PropertyTree ptree;
-  
+
   std::istringstream iss( "{}" );
 
   iss >> ptree;
@@ -2433,7 +2433,7 @@ FRENSIE_UNIT_TEST( PropertyTree, istream_operator )
   iss.str( "{\"repeated_value\":\"true\",\"repeated_value\":\"{-1.000000000000000000e+00, 0.000000000000000000e+00, 1.000000000000000000e+00}\",\"inline array\":\"{-1, 0, 1}\"}" );
 
   iss >> ptree;
-  
+
   map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   FRENSIE_CHECK_EQUAL( map.size(), 2 );
@@ -2451,7 +2451,7 @@ FRENSIE_UNIT_TEST( PropertyTree, istream_operator )
   iss.clear();
 
   iss >> ptree;
-  
+
   map = Utility::fromPropertyTree<Utility::VariantMap>( ptree );
 
   FRENSIE_CHECK_EQUAL( map.size(), 3 );

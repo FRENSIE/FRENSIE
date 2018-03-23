@@ -249,7 +249,7 @@ TYPE_NAME_TRAITS_QUICK_DECL( X3Functor );
 TYPE_NAME_TRAITS_QUICK_DECL( X3FunctorParameter );
 TYPE_NAME_TRAITS_QUICK_DECL( X3FunctorLong );
 TYPE_NAME_TRAITS_QUICK_DECL( X3FunctorBoost );
-  
+
 } // end Utility namespace
 
 typedef std::tuple<X2Functor,X3Functor> TestFunctors;
@@ -396,13 +396,13 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that quadrature integrand values can be evaulated at abscissa
+// Check that quadrature integrand values can be evaluated at abscissa
 FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             calculateQuadratureIntegrandValuesAtAbscissa,
                             TestFunctors )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
 
   double half_length = 0.5;
@@ -435,7 +435,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             TestFunctors )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
 
   Utility::BinTraits<double> bin, bin_1, bin_2;
@@ -568,7 +568,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the error can be rescaled
+// Check that the error can be re-scaled
 FRENSIE_UNIT_TEST( GaussKronrodIntegrator,
                    rescaleAbsoluteError )
 {
@@ -1248,7 +1248,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             TestFunctors )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   Utility::GaussKronrodIntegrator<double> gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
@@ -1334,7 +1334,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             TestFunctorsLong )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   Utility::GaussKronrodIntegrator<long double> gk_integrator( 1e-12 );
 
   long double result, absolute_error, tol;
@@ -1433,7 +1433,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             TestFunctorsBoost )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   Utility::GaussKronrodIntegrator<long_float> gk_integrator( 1e-12 );
 
   long_float result, absolute_error, tol;
@@ -1531,7 +1531,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             TestFunctorsParameter )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   Utility::GaussKronrodIntegrator<double> gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
@@ -1670,7 +1670,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             TestFunctors )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   Functor functor_instance;
 
   std::vector<double> points_of_interest( 3 );
@@ -1700,7 +1700,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( GaussKronrodIntegrator,
                             TestFunctorsBoost )
 {
   FETCH_TEMPLATE_PARAM( 0, Functor );
-  
+
   Utility::GaussKronrodIntegrator<long_float> gk_integrator( 1e-20, 0.0, 2 );
 
   long_float result, absolute_error, tol;

@@ -37,7 +37,7 @@ FRENSIE_UNIT_TEST( InterpolationType,
 {
   Utility::InterpolationType type =
     Utility::convertENDFInterpolationTypeToInterpolationType( 1u );
-  
+
   FRENSIE_CHECK_EQUAL( type, Utility::HISTOGRAM_INTERPOLATION );
 
   type = Utility::convertENDFInterpolationTypeToInterpolationType( 2u );
@@ -65,12 +65,12 @@ FRENSIE_UNIT_TEST( InterpolationType,
 }
 
 //---------------------------------------------------------------------------//
-// Check that an interpolatio ntype can be converted to a string
+// Check that an interpolation type can be converted to a string
 FRENSIE_UNIT_TEST( InterpolationType, toString )
 {
-  std::string type_string = 
+  std::string type_string =
     Utility::toString( Utility::HISTOGRAM_INTERPOLATION );
-  
+
   FRENSIE_CHECK_EQUAL( type_string, "Histogram" );
 
   type_string = Utility::toString( Utility::LINLIN_INTERPOLATION );

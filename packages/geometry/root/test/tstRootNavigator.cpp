@@ -36,7 +36,7 @@ bool cache_test_archive;
 FRENSIE_UNIT_TEST( RootNavigator, getPointLocation )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
-  
+
   // Initialize the ray
   std::shared_ptr<Geometry::Navigator::Ray>
     ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
@@ -179,7 +179,7 @@ FRENSIE_UNIT_TEST( RootNavigator, getSurfaceNormal )
   FRENSIE_CHECK_FLOATING_EQUALITY( normal[0], -1.0, 1e-15 );
   FRENSIE_CHECK_SMALL( normal[1], 1e-15 );
   FRENSIE_CHECK_SMALL( normal[2], 1e-15 );
-  
+
   ray.reset( new Geometry::Navigator::Ray( 2.5*cgs::centimeter,
                                            0.0*cgs::centimeter,
                                            0.0*cgs::centimeter,
@@ -211,7 +211,7 @@ FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay_cache )
 
   // Initialize the found cell cache
   Geometry::Navigator::CellIdSet found_cell_cache;
-  
+
   // Initialize the ray
   std::shared_ptr<Geometry::Navigator::Ray>
     ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
@@ -257,7 +257,7 @@ FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay_cache )
 FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
-  
+
   // Initialize the ray
   std::shared_ptr<Geometry::Navigator::Ray>
     ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
@@ -298,7 +298,7 @@ FRENSIE_UNIT_TEST( RootNavigator, findCellContainingRay )
 FRENSIE_UNIT_TEST( RootNavigator, setState )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
-  
+
   std::shared_ptr<Geometry::Navigator::Ray>
     ray( new Geometry::Navigator::Ray( 0.0*cgs::centimeter,
                                        0.0*cgs::centimeter,
@@ -306,7 +306,7 @@ FRENSIE_UNIT_TEST( RootNavigator, setState )
                                        0.0, 0.0, 1.0 ) );
 
   FRENSIE_CHECK( !navigator->isStateSet() );
-  
+
   navigator->setState( *ray );
 
   FRENSIE_CHECK( navigator->isStateSet() );
@@ -355,7 +355,7 @@ FRENSIE_UNIT_TEST( RootNavigator, setState )
                                            0.0*cgs::centimeter,
                                            2.5*cgs::centimeter,
                                            0.0, 0.0, 1.0 ) );
-  
+
   Geometry::Navigator::InternalCellHandle cell =
     navigator->findCellContainingRay( *ray );
 
@@ -379,7 +379,7 @@ FRENSIE_UNIT_TEST( RootNavigator, setState )
 FRENSIE_UNIT_TEST( RootNavigator, fireRay )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
-  
+
   // Initialize the ray
   navigator->setState( 0.0*cgs::centimeter,
                              0.0*cgs::centimeter,
@@ -400,8 +400,8 @@ FRENSIE_UNIT_TEST( RootNavigator, fireRay )
 FRENSIE_UNIT_TEST( RootNavigator, changeDirection )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
-  
-  // Initailize the ray
+
+  // Initialize the ray
   navigator->setState( 0.0*cgs::centimeter,
                              0.0*cgs::centimeter,
                              0.0*cgs::centimeter,
@@ -429,7 +429,7 @@ FRENSIE_UNIT_TEST( RootNavigator, changeDirection )
 FRENSIE_UNIT_TEST( RootNavigator, ray_trace )
 {
   std::shared_ptr<Geometry::Navigator> navigator = model->createNavigator();
-  
+
   // Initialize the ray
   navigator->setState( 0.0*cgs::centimeter,
                              0.0*cgs::centimeter,
@@ -450,7 +450,7 @@ FRENSIE_UNIT_TEST( RootNavigator, ray_trace )
                                    1e-9 );
 
   double surface_normal[3];
-  
+
   // Advance the ray to the cell boundary
   navigator->advanceToCellBoundary( surface_normal );
 
@@ -684,7 +684,7 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::RootModelProperties local_properties( test_root_geom_file_name );
-  
+
   std::shared_ptr<Geometry::RootModel> tmp_model =
     Geometry::RootModel::getInstance();
 

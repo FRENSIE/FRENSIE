@@ -49,7 +49,7 @@ protected:
   //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef QuantityTraits<typename BaseType::PrimaryIndepQuantity> PIQT;
 
-  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef QuantityTraits<typename BaseType::SecondaryIndepQuantity> SIQT;
 
   //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -169,7 +169,7 @@ private:
   // Extend beyond primary limits
   bool d_extend_beyond_primary_limits;
 };
-  
+
 } // end Utility namespace
 
 #define BOOST_SERIALIZATION_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_ASSUME_ABSTRACT() \

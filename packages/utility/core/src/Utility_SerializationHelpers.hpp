@@ -23,14 +23,14 @@
 namespace Utility{
 namespace Details{
 
-/*!  \brief Indirection layer for assigning a std::string guid instead of a 
+/*!  \brief Indirection layer for assigning a std::string guid instead of a
  * const char*
  * \ingroup boost_serialization_helpers
  */
 template<typename T>
 struct GuidStringWrapper
 { /* ... */ };
-  
+
 } // end Detail namespace
 } // end Utility namespace
 
@@ -83,7 +83,7 @@ namespace serialization{                            \
     ClassName, Namespace, Version, \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T ),        \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T ) )
-  
+
 /*! Declare the version of a class with two template parameters
  *
  * This macro must be called from the global namespace.
@@ -131,7 +131,7 @@ namespace serialization{                            \
 /*! Declare that a template class is abstract
  *
  * In order to serialize base class pointers we need to register the base class
- * as an abstract base class with the boost::serialization extended RTTI 
+ * as an abstract base class with the boost::serialization extended RTTI
  * system. Calling this macro handles the registration.
  * \ingroup boost_serialization_helpers
  */
@@ -260,7 +260,7 @@ namespace ext{                                                          \
 
 /*! Define the template class GUID registration method
  *
- * A standard GUID will be generated using the ClassName and the 
+ * A standard GUID will be generated using the ClassName and the
  * Utility::typeName method for the template parameters.
  * \ingroup boost_serialization_helpers
  */
@@ -275,7 +275,7 @@ namespace ext{                                                          \
  *
  * This macro must be called from the global namespace. The GUID or key must be
  * declared for a concrete class type when support for serializing instances of
- * it through a base class pointer is required. The GUID declared will be used 
+ * it through a base class pointer is required. The GUID declared will be used
  * by the boost::serialization extended RTTI system.
  * \ingroup boost_serialization_helpers
  */
@@ -292,10 +292,10 @@ namespace ext{                                                          \
 
 /*! Declare the GUID (key) of a template class
  *
- * This macro must be called from the global namespace. The GUID will be 
- * generated from the class name and the template parameters. The GUID or key 
- * must be declared for a concrete class type when support for serializing 
- * instances of it through a base class pointer is required. The GUID declared 
+ * This macro must be called from the global namespace. The GUID will be
+ * generated from the class name and the template parameters. The GUID or key
+ * must be declared for a concrete class type when support for serializing
+ * instances of it through a base class pointer is required. The GUID declared
  * will be used by the boost::serialization extended RTTI system.
  * \ingroup boost_serialization_helpers
  */
@@ -308,9 +308,9 @@ namespace ext{                                                          \
     ClassName, Namespace, \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPackDecl ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( TemplateParamPack ) )
-                      
+
 /*! Declare the GUID (key) of a class with no template parameters
- * 
+ *
  * This macro must be called from the global namespace.
  * \ingroup boost_serialization_helpers
  */
@@ -374,8 +374,8 @@ namespace ext{                                                          \
 
 /*! Register the class GUID
  *
- * The BOOST_SERIALIZATION_CLASSN_EXPORT_STANDARD_KEY macros simply declare the GUID 
- * associated with a class type while this macro actually registers the GUID 
+ * The BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY macros simply declare the GUID
+ * associated with a class type while this macro actually registers the GUID
  * with the boost::serialization extended RTTI system.
  * \ingroup boost_serialization_helpers
  */
@@ -400,17 +400,17 @@ namespace extra_detail{ \
 
 /*! Register the GUID of a class with no template parameters
  *
- * This macro must be called after calling the 
+ * This macro must be called after calling the
  * BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY macro. It is recommended
  * that the call be made in the .cpp file associated with the class definition.
  * \ingroup boost_serialization_helpers
  */
 #define BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ClassName, Namespace ) \
   BOOST_CLASS_EXPORT_IMPLEMENT( Namespace::ClassName )
-  
+
 /*! Register the GUID of a class with a single template parameter
  *
- * This macro must be called after calling the 
+ * This macro must be called after calling the
  * BOOST_SERIALIZATION_CLASS1_EXPORT_STANDARD_KEY.
  * \ingroup boost_serialization_helpers
  */
@@ -422,7 +422,7 @@ namespace extra_detail{ \
 
 /*! Register the GUID of a class with two template parameters
  *
- * This macro must be called after calling the 
+ * This macro must be called after calling the
  * BOOST_SERIALIZATION_CLASS2_EXPORT_STANDARD_KEY.
  * \ingroup boost_serialization_helpers
  */
@@ -434,7 +434,7 @@ namespace extra_detail{ \
 
 /*! Register the GUID of a class with three template parameters
  *
- * This macro must be called after calling the 
+ * This macro must be called after calling the
  * BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY.
  * \ingroup boost_serialization_helpers
  */
@@ -446,7 +446,7 @@ namespace extra_detail{ \
 
 /*! Register the GUID of a class with four template parameters
  *
- * This macro must be called after calling the 
+ * This macro must be called after calling the
  * BOOST_SERIALIZATION_CLASS4_EXPORT_STANDARD_KEY.
  * \ingroup boost_serialization_helpers
  */
@@ -458,7 +458,7 @@ namespace extra_detail{ \
 
 /*! Register the GUID of a class with five template parameters
  *
- * This macro must be called after calling the 
+ * This macro must be called after calling the
  * BOOST_SERIALIZATION_CLASS5_EXPORT_STANDARD_KEY.
  * \ingroup boost_serialization_helpers
  */
@@ -472,8 +472,8 @@ namespace extra_detail{ \
  *
  * This macro must be called from the constructors of a template class
  * to finalize the GUID registration process. Because the classes are templates
- * the GUID registration singleton that is used in the registration process 
- * won't get instantiated until the first instance of the template class has 
+ * the GUID registration singleton that is used in the registration process
+ * won't get instantiated until the first instance of the template class has
  * been created.
  * \ingroup boost_serialization_helpers
  */

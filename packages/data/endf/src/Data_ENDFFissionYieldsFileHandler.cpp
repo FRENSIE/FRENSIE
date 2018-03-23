@@ -74,7 +74,7 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
     // Skip the upper header block
     skipEndfFissionYieldsFirstHeader( d_file_id );
 
-    // The Indepedent Yields are given first.
+    // The Independent Yields are given first.
     // Read the header block
     readEndfFissionYieldsHeader( d_file_id, &d_zaid , &d_number_energies_independent );
 
@@ -225,7 +225,7 @@ ENDFFissionYieldsFileHandler::getYieldFissionProductsIndependentYields() const
   return Utility::arrayViewOfConst(d_yield_independent);
 }
 
-// Get the standard deviation for the yields of the fission products for the indepedent yields
+// Get the standard deviation for the yields of the fission products for the independent yields
 Utility::ArrayView<const std::vector<double> >
 ENDFFissionYieldsFileHandler::getStdYieldFissionProductsIndependentYields() const
 {

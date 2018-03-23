@@ -480,7 +480,7 @@ struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,t
 
 /*! ConstIterator partial specialization for std::set iterator types
  *
- * The iterator and const_iterator types are the same with std::set. In 
+ * The iterator and const_iterator types are the same with std::set. In
  * addition, the std::map const_iterator types are the same as the
  * std::set iterator and const_iterator types. This partial specialization
  * will be invoked when using a std::map const_iterator type.
@@ -496,9 +496,9 @@ struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,type
 /*! ConstIterator partial specialization for std::set reverse_iterator types
  *
  * The reverse_iterator and const_reverse_iterator types are the same with
- * std::set. In addition, the std::map const_reverse_iterator types are the 
+ * std::set. In addition, the std::map const_reverse_iterator types are the
  * same as the std::set reverse_iterator and const_reverse_iterator types. This
- * partial specialization will be invoked when using a std::map 
+ * partial specialization will be invoked when using a std::map
  * const_reverse_iterator type.
  * \ingroup iterator_type_traits
  */
@@ -513,7 +513,7 @@ namespace Details{
 
 /*! Helper class for removing cv qualifiers from pair member types
  *
- * This helper class is required when dealing with the value_type of 
+ * This helper class is required when dealing with the value_type of
  * std::map iterators. A std::map with key type Key and mapped type T will
  * have an associated iterator value_type of std::pair<const Key,T>. In order
  * to reconstruct the map type that is associated with the iterator value_type,
@@ -544,7 +544,7 @@ struct RemovePairMemberCV<std::pair<InputT1,InputT2> >
 template<typename InputT1, typename InputT2>
 struct RemovePairMemberCV<const std::pair<InputT1,InputT2> > : public RemovePairMemberCV<std::pair<InputT1,InputT2> >
 { /* ... */ };
-  
+
 } // end Details namespace
 
 /*! ConstIterator partial specialization for std::map iterator types
@@ -629,7 +629,7 @@ struct InterceptUnhashableType<T,typename std::enable_if<Utility::IsHashable<T>:
   typedef type T2;
 };
 
-/*! \brief Specialization of InterceptUnhashableType for unhashable types that 
+/*! \brief Specialization of InterceptUnhashableType for unhashable types that
  * are not a std::pair
  * \ingroup iterator_type_traits
  */
@@ -650,7 +650,7 @@ struct InterceptUnhashableType<const std::pair<InputT1,InputT2> >
   typedef const typename InterceptUnhashableType<std::pair<InputT1,InputT2> >::type type;
   typedef typename InterceptUnhashableType<std::pair<InputT1,InputT2> >::T1 T1;
   typedef typename InterceptUnhashableType<std::pair<InputT1,InputT2> >::T2 T2;
-}; 
+};
 
 /*! \brief Specialization of InterceptUnhashableType for std::pair types with
  * an unhashable first type
@@ -681,7 +681,7 @@ struct InterceptUnhashableType<std::pair<InputT1,InputT2>, typename std::enable_
   typedef typename std::remove_cv<InputT1>::type T1;
   typedef InputT2 T2;
 };
-  
+
 } // end Details namespace
 
 /*! ConstIterator partial specialization for std::unordered_set iterator types
@@ -728,7 +728,7 @@ struct ConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,type
  * \ingroup iterator_type_traits
  */
 template<typename Iterator>
-struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::iterator>::value>::type> 
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::iterator>::value>::type>
 {
   //! The std::unordered_map iterator type
   typedef typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::iterator type;
@@ -738,12 +738,12 @@ struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,t
  * \ingroup iterator_type_traits
  */
 template<typename Iterator>
-struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::const_iterator>::value>::type> 
+struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::const_iterator>::value>::type>
 {
   //! The std::unordered_map iterator type
   typedef typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::iterator type;
 };
- 
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

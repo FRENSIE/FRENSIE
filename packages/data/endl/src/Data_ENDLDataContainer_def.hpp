@@ -312,7 +312,7 @@ void ENDLDataContainer::save( Archive& ar,
     d_bremsstrahlung_average_electron_energy );
 
 //---------------------------------------------------------------------------//
-// ATOMIC EXCITAION DATA
+// ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
     "atomic_excitation_energy_grid",
@@ -615,7 +615,7 @@ void ENDLDataContainer::load( Archive& ar,
     d_bremsstrahlung_average_electron_energy );
 
 //---------------------------------------------------------------------------//
-// ATOMIC EXCITAION DATA
+// ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
     "atomic_excitation_energy_grid",

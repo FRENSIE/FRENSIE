@@ -16,13 +16,13 @@ namespace Utility{
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<15,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::gauss_weights =
   GaussKronrodQuadratureSetTraits<15,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights();
-  
-// Kronrad quadrature weights
+
+// Kronrod quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<15,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_weights =
   GaussKronrodQuadratureSetTraits<15,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights();
 
-// Kronrad quadrature abscissae
+// Kronrod quadrature abscissae
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<15,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_abscissae =
   GaussKronrodQuadratureSetTraits<15,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodAbscissae();
@@ -36,7 +36,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<15,FloatType,typename boo
   gauss_weights[1] = (FloatType)0.279705391489276667901467771423780L;
   gauss_weights[2] = (FloatType)0.381830050505118944950369775488975L;
   gauss_weights[3] = (FloatType)0.417959183673469387755102040816327L;
-  
+
   return gauss_weights;
 }
 
@@ -53,7 +53,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<15,FloatType,typename boo
   kronrod_weights[5] = (FloatType)0.190350578064785409913256402421014L;
   kronrod_weights[6] = (FloatType)0.204432940075298892414161999234649L;
   kronrod_weights[7] = (FloatType)0.209482141084727828012999174891714L;
-  
+
   return kronrod_weights;
 }
 
@@ -70,22 +70,22 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<15,FloatType,typename boo
   kronrod_abscissae[5] = (FloatType)0.405845151377397166906606412076961L;
   kronrod_abscissae[6] = (FloatType)0.207784955007898467600689403773245L;
   kronrod_abscissae[7] = (FloatType)0.000000000000000000000000000000000L;
-  
+
   return kronrod_abscissae;
 }
-  
+
 /******************* 21 point rule *******************/
 // Gauss quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::gauss_weights =
   GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights();
 
-// Kronrad quadrature weights
+// Kronrod quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_weights =
   GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights();
 
-// Kronrad quadrature abscissae
+// Kronrod quadrature abscissae
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_abscissae =
   GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodAbscissae();
@@ -100,10 +100,10 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<21,FloatType,typename boo
   gauss_weights[2] = (FloatType)0.219086362515982043995534934228163L;
   gauss_weights[3] = (FloatType)0.269266719309996355091226921569469L;
   gauss_weights[4] = (FloatType)0.295524224714752870173892994651338L;
-  
+
   return gauss_weights;
 }
-  
+
 // Initialize the kronrod weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<21,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights()
@@ -120,7 +120,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<21,FloatType,typename boo
   kronrod_weights[8] = (FloatType)0.142775938577060080797094273138717L;
   kronrod_weights[9] = (FloatType)0.147739104901338491374841515972068L;
   kronrod_weights[10] = (FloatType)0.149445554002916905664936468389821L;
-  
+
   return kronrod_weights;
 }
 
@@ -140,7 +140,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<21,FloatType,typename boo
   kronrod_abscissae[8] = (FloatType)0.294392862701460198131126603103866L;
   kronrod_abscissae[9] = (FloatType)0.148874338981631210884826001129720L;
   kronrod_abscissae[10] = (FloatType)0.000000000000000000000000000000000L;
-  
+
   return kronrod_abscissae;
 }
 
@@ -150,16 +150,16 @@ template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::gauss_weights =
   GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights();
 
-// Kronrad quadrature weights
+// Kronrod quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_weights =
   GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights();
 
-// Kronrad quadrature abscissae
+// Kronrod quadrature abscissae
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_abscissae =
   GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodAbscissae();
-  
+
 // Initialize the gauss weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights()
@@ -173,10 +173,10 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boo
   gauss_weights[5] = (FloatType)0.186161000015562211026800561866423L;
   gauss_weights[6] = (FloatType)0.198431485327111576456118326443839L;
   gauss_weights[7] = (FloatType)0.202578241925561272880620199967519L;
-  
+
   return gauss_weights;
 }
-  
+
 // Initialize the kronrod weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights()
@@ -198,10 +198,10 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boo
   kronrod_weights[13] = (FloatType)0.099173598721791959332393173484603L;
   kronrod_weights[14] = (FloatType)0.100769845523875595044946662617570L;
   kronrod_weights[15] = (FloatType)0.101330007014791549017374792767493L;
-  
+
   return kronrod_weights;
 }
-  
+
 // Initialize the gauss weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodAbscissae()
@@ -223,26 +223,26 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<31,FloatType,typename boo
   kronrod_abscissae[13] = (FloatType)0.201194093997434522300628303394596L;
   kronrod_abscissae[14] = (FloatType)0.101142066918717499027074231447392L;
   kronrod_abscissae[15] = (FloatType)0.000000000000000000000000000000000L;
-  
+
   return kronrod_abscissae;
 }
-  
+
 /******************* 41 point rule *******************/
 // Gauss quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::gauss_weights =
   GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights();
-  
-// Kronrad quadrature weights
+
+// Kronrod quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_weights =
   GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights();
-  
-// Kronrad quadrature abscissae
+
+// Kronrod quadrature abscissae
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_abscissae =
   GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodAbscissae();
-  
+
 // Initialize the gauss weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<41,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights()
@@ -258,7 +258,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<41,FloatType,typename boo
   gauss_weights[7] = (FloatType)0.142096109318382051329298325067165L;
   gauss_weights[8] = (FloatType)0.149172986472603746787828737001969L;
   gauss_weights[9] = (FloatType)0.152753387130725850698084331955098L;
-  
+
   return gauss_weights;
 }
 
@@ -318,7 +318,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<41,FloatType,typename boo
   kronrod_abscissae[18] = (FloatType)0.152605465240922675505220241022678L;
   kronrod_abscissae[19] = (FloatType)0.076526521133497333754640409398838L;
   kronrod_abscissae[20] = (FloatType)0.000000000000000000000000000000000L;
-  
+
   return kronrod_abscissae;
 }
 
@@ -328,16 +328,16 @@ template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::gauss_weights =
   GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights();
 
-// Kronrad quadrature weights
+// Kronrod quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_weights =
   GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights();
 
-// Kronrad quadrature abscissae
+// Kronrod quadrature abscissae
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_abscissae =
   GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodAbscissae();
-  
+
 // Initialize the gauss weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights()
@@ -356,10 +356,10 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boo
   gauss_weights[10] = (FloatType)0.119455763535784772228178126512901L;
   gauss_weights[11] = (FloatType)0.122242442990310041688959518945852L;
   gauss_weights[12] = (FloatType)0.123176053726715451203902873079050L;
-  
+
   return gauss_weights;
 }
-  
+
 // Initialize the kronrod weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights()
@@ -391,7 +391,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boo
   kronrod_weights[23] = (FloatType)0.061128509717053048305859030416293L;
   kronrod_weights[24] = (FloatType)0.061471189871425316661544131965264L;
   kronrod_weights[25] = (FloatType)0.061580818067832935078759824240066L;
-  
+
   return kronrod_weights;
 }
 
@@ -426,7 +426,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<51,FloatType,typename boo
   kronrod_abscissae[23] = (FloatType)0.122864692610710396387359818808037L;
   kronrod_abscissae[24] = (FloatType)0.061544483005685078886546392366797L;
   kronrod_abscissae[25] = (FloatType)0.000000000000000000000000000000000L;
-  
+
   return kronrod_abscissae;
 }
 
@@ -436,16 +436,16 @@ template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::gauss_weights =
   GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights();
 
-// Kronrad quadrature weights
+// Kronrod quadrature weights
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_weights =
   GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodWeights();
-  
-// Kronrad quadrature abscissae
+
+// Kronrod quadrature abscissae
 template<typename FloatType>
 const std::vector<FloatType> GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::kronrod_abscissae =
   GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeKronrodAbscissae();
-  
+
 // Initialize the gauss weight array
 template<typename FloatType>
 std::vector<FloatType> GaussKronrodQuadratureSetTraits<61,FloatType,typename boost::enable_if<IsFloatingPoint<FloatType> >::type>::initializeGaussWeights()
@@ -466,7 +466,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<61,FloatType,typename boo
   gauss_weights[12] = (FloatType)0.099593420586795267062780282103569L;
   gauss_weights[13] = (FloatType)0.101762389748405504596428952168554L;
   gauss_weights[14] = (FloatType)0.102852652893558840341285636705415L;
-  
+
   return gauss_weights;
 }
 
@@ -506,7 +506,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<61,FloatType,typename boo
   kronrod_weights[28] = (FloatType)0.051221547849258772170656282604944L;
   kronrod_weights[29] = (FloatType)0.051426128537459025933862879215781L;
   kronrod_weights[30] = (FloatType)0.051494729429451567558340433647099L;
-  
+
   return kronrod_weights;
 }
 
@@ -546,7 +546,7 @@ std::vector<FloatType> GaussKronrodQuadratureSetTraits<61,FloatType,typename boo
   kronrod_abscissae[28] = (FloatType)0.102806937966737030147096751318001L;
   kronrod_abscissae[29] = (FloatType)0.051471842555317695833025213166723L;
   kronrod_abscissae[30] = (FloatType)0.000000000000000000000000000000000L;
-  
+
   return kronrod_abscissae;
 }
 

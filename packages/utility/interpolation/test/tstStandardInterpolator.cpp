@@ -276,7 +276,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLin,
 }
 
 //---------------------------------------------------------------------------//
-// Check that inerpolation between two points can be done
+// Check that interpolation between two points can be done
 FRENSIE_UNIT_TEST( StandardInterpolator_LinLin, interpolate )
 {
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
@@ -816,7 +816,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLog, interpolateProcessed )
                                                  processed_slope );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 0.5, 1e-15 );
-  
+
   processed_x = interpolator->processIndepVar( 0.1 );
 
   y = interpolator->interpolateProcessed( processed_x0,
@@ -859,7 +859,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLog, interpolateProcessed )
                                         processed_slope );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 0.5*barns, 1e-15 );
-  
+
   processed_e = interpolator->processIndepVar( 0.1*MeV );
 
   cs = interpolator->interpolateProcessed( processed_e0,
@@ -958,7 +958,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LinLog,
                                                            processed_slope );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 0.5, 1e-15 );
-  
+
   processed_x = interpolator->processIndepVar( 0.1 );
 
   y = interpolator->interpolateProcessedAndProcess( processed_x0,
@@ -1002,14 +1002,14 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLog,
                                                   processed_slope );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, 0.5, 1e-15 );
-  
+
   processed_e = interpolator->processIndepVar( 0.1*MeV );
 
   processed_cs = interpolator->interpolateProcessedAndProcess(processed_e0,
                                                               processed_e,
                                                               processed_cs0,
                                                               processed_slope);
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, 0.0, 1e-15 );
 
   processed_e = interpolator->processIndepVar( 10.0*MeV );
@@ -1018,7 +1018,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LinLog,
                                                               processed_e,
                                                               processed_cs0,
                                                               processed_slope);
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, 1.0, 1e-15 );
 }
 
@@ -1111,7 +1111,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin, processIndepVar )
 {
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
     Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
-  
+
   FRENSIE_CHECK_EQUAL( -1.0, interpolator->processIndepVar( -1.0 ) );
   FRENSIE_CHECK_EQUAL( 0.0, interpolator->processIndepVar( 0.0 ) );
   FRENSIE_CHECK_EQUAL( 1.0, interpolator->processIndepVar( 1.0 ) );
@@ -1211,9 +1211,9 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin, interpolate )
   double y0 = 0.1, y1 = 10.0;
 
   double y = interpolator->interpolate( x0, x1, x, y0, y1 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1.0, 1e-15 );
-  
+
   x = 0.0;
 
   y = interpolator->interpolate( x0, x1, x, y0, y1 );
@@ -1238,7 +1238,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLin, interpolate )
   quantity<Barn,double> cs0 = 0.1*barn, cs1 = 10.0*barns;
 
   quantity<Barn,double> cs = interpolator->interpolate( e0, e1, e, cs0, cs1 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 1.0*barn, 1e-15 );
 
   e = 0.0*MeV;
@@ -1352,11 +1352,11 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLin, interpolateAndProcess )
   double processed_y = interpolator->interpolateAndProcess( x0, x1, x, y0, y1);
 
   FRENSIE_CHECK_SMALL( processed_y, 1e-15 );
-  
+
   x = 0.0;
 
   processed_y = interpolator->interpolateAndProcess( x0, x1, x, y0, y1 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_y, std::log( 0.1 ), 1e-15 );
 
   x = 1.0;
@@ -1379,19 +1379,19 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLin,
 
   double processed_cs =
     interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
-  
+
   FRENSIE_CHECK_SMALL( processed_cs, 1e-15 );
-  
+
   e = 0.0*MeV;
 
   processed_cs = interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, std::log( 0.1 ), 1e-15 );
-  
+
   e = 1.0*MeV;
 
   processed_cs = interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, std::log( 10.0 ), 1e-15 );
 }
 
@@ -1463,7 +1463,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator,
                                                              processed_slope );
 
   FRENSIE_CHECK_SMALL( processed_cs, 1e-15 );
-  
+
   processed_e = interpolator->processIndepVar( 0.0*MeV );
 
   processed_cs = interpolator->interpolateProcessedAndProcess(processed_e0,
@@ -1515,9 +1515,9 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog, isIndepVarInValidRange )
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange(
 				       -std::numeric_limits<double>::max() ) );
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange( 0.0 ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
 					std::numeric_limits<double>::min() ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
 					std::numeric_limits<double>::max() ) );
 }
 
@@ -1532,9 +1532,9 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog,
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange(
                                    -std::numeric_limits<double>::max()*MeV ) );
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange( 0.0*MeV ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
 				    std::numeric_limits<double>::min()*MeV ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
                                     std::numeric_limits<double>::max()*MeV ) );
 }
 
@@ -1548,9 +1548,9 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog, isDepVarInValidRange )
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange(
 				       -std::numeric_limits<double>::max() ) );
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange( 0.0 ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 					std::numeric_limits<double>::min() ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 					std::numeric_limits<double>::max() ) );
 }
 
@@ -1564,9 +1564,9 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog, isDepVarInValidRange )
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange(
 				 -std::numeric_limits<double>::max()*barns ) );
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange( 0.0*barn ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 				  std::numeric_limits<double>::min()*barn ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 				  std::numeric_limits<double>::max()*barns ) );
 }
 
@@ -1734,9 +1734,9 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog, interpolateProcessed )
                                                  processed_x,
                                                  processed_y0,
                                                  processed_slope );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 100.0, 1e-15 );
-  
+
   processed_x = interpolator->processIndepVar( 0.1 );
 
   y = interpolator->interpolateProcessed( processed_x0,
@@ -1752,7 +1752,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog, interpolateProcessed )
                                           processed_x,
                                           processed_y0,
                                           processed_slope );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1000.0, 1e-15 );
 }
 
@@ -1777,9 +1777,9 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog, interpolateProcessed )
                                         processed_e,
                                         processed_cs0,
                                         processed_slope );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 100.0*barns, 1e-15 );
-  
+
   processed_e = interpolator->processIndepVar( 0.1*MeV );
 
   cs = interpolator->interpolateProcessed( processed_e0,
@@ -1795,7 +1795,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog, interpolateProcessed )
                                            processed_e,
                                            processed_cs0,
                                            processed_slope );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 1000.0*barns, 1e-15 );
 }
 
@@ -1879,7 +1879,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog,
                                                              processed_slope );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_y, std::log( 100.0 ), 1e-15 );
-  
+
   processed_x = interpolator->processIndepVar( 0.1 );
 
   processed_y = interpolator->interpolateProcessedAndProcess( processed_x0,
@@ -1895,7 +1895,7 @@ FRENSIE_UNIT_TEST( StandardInterpolator_LogLog,
                                                               processed_x,
                                                               processed_y0,
                                                               processed_slope);
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_y, std::log( 1000.0 ), 1e-15 );
 }
 
@@ -1923,7 +1923,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog,
                                                              processed_slope );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, std::log( 100.0 ), 1e-15 );
-  
+
   processed_e = interpolator->processIndepVar( 0.1*MeV );
 
   processed_cs = interpolator->interpolateProcessedAndProcess(processed_e0,
@@ -1939,7 +1939,7 @@ FRENSIE_UNIT_TEST( StandardUnitAwareInterpolator_LogLog,
                                                               processed_e,
                                                               processed_cs0,
                                                               processed_slope);
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, std::log( 1000.0 ), 1e-15 );
 }
 

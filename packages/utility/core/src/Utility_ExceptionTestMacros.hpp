@@ -22,9 +22,9 @@
  *
  * This macro is based off of the Teuchos_TestForException macro. This macro
  * should be used anywhere that the failure of a specified conditions
- * warrants the throwing of an exception. Do not put "Error: " in the msg. 
+ * warrants the throwing of an exception. Do not put "Error: " in the msg.
  * This will be added for you.
- * \ingroup execption_macros
+ * \ingroup exception_macros
  */
 #define TEST_FOR_EXCEPTION(throw_exception_test, Exception, msg)	\
 {									\
@@ -49,7 +49,7 @@
 /*! Throw an exception always
  *
  * This macros should be used in conditional execution blocks that should never
- * be reached (e.g. default case statement). Do not put "Error: " in the msg. 
+ * be reached (e.g. default case statement). Do not put "Error: " in the msg.
  * This will be added for you.
  * \ingroup exception_macros
  */

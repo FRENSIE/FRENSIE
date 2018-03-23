@@ -104,7 +104,7 @@ typedef std::vector<ExtrapolatedBinTraits<T>> BinArray;
 		  T upper_limit,
 		  T& result,
 		  T& absolute_error,
-		  size_t& number_of_function_evals ) const;
+		  size_t& number_of_function_eval ) const;
 */
   //! Integrate the function adaptively with BinQueue
   template<int Points, typename FunctorType = double, typename Functor>

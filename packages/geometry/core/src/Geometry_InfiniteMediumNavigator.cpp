@@ -77,7 +77,7 @@ PointLocation InfiniteMediumNavigator::getPointLocation(
   else
     return POINT_OUTSIDE_CELL;
 }
-  
+
 // Get the surface normal at a point on the surface
 /*! \details An infinite medium has no surface. A normal of (0,0,1) will
  * always be returned.
@@ -110,7 +110,7 @@ auto InfiniteMediumNavigator::findCellContainingRay(
 {
   return d_cell;
 }
-  
+
 // Check if an internal ray has been set
 bool InfiniteMediumNavigator::isStateSet() const
 {

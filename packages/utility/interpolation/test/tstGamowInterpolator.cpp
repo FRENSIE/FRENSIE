@@ -47,7 +47,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, getExothermicInstance )
 
 //---------------------------------------------------------------------------//
 // Check that an instance of the interpolator can be retrieved
-FRENSIE_UNIT_TEST( GamowUnitAwareInterplator, getExothermicInstance )
+FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, getExothermicInstance )
 {
   std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > exothermic_instance =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
@@ -70,7 +70,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, getInterpolationType )
 // Check that the interpolation type can be returned
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, getInterpolationType )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   FRENSIE_CHECK_EQUAL( interpolator->getInterpolationType(),
@@ -87,9 +87,9 @@ FRENSIE_UNIT_TEST( GamowInterpolator, isIndepVarInValidRange )
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange(
 				       -std::numeric_limits<double>::max() ) );
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange( 0.0 ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
 					std::numeric_limits<double>::min() ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
 					std::numeric_limits<double>::max() ) );
 
   interpolator.reset( new Utility::GamowInterpolator<double>( 1.0 ) );
@@ -98,7 +98,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, isIndepVarInValidRange )
 				       -std::numeric_limits<double>::max() ) );
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange( 1.0 ) );
   FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 1.0+ 1e-12 ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
 					std::numeric_limits<double>::max() ) );
 }
 
@@ -106,7 +106,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, isIndepVarInValidRange )
 // Check that the interpolation type can be returned
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, isIndepVarInValidRange )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange(
@@ -114,7 +114,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, isIndepVarInValidRange )
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange( 0.0*MeV ) );
   FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
                                     std::numeric_limits<double>::min()*MeV ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
                                     std::numeric_limits<double>::max()*MeV ) );
 
   interpolator.reset( new Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>( 1.0*MeV ) );
@@ -123,7 +123,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, isIndepVarInValidRange )
                                    -std::numeric_limits<double>::max()*MeV ) );
   FRENSIE_CHECK( !interpolator->isIndepVarInValidRange( 1.0*MeV ) );
   FRENSIE_CHECK( interpolator->isIndepVarInValidRange( (1.0+1e-12)*MeV ) );
-  FRENSIE_CHECK( interpolator->isIndepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isIndepVarInValidRange(
                                     std::numeric_limits<double>::max()*MeV ) );
 }
 
@@ -137,9 +137,9 @@ FRENSIE_UNIT_TEST( GamowInterpolator, isDepVarInValidRange )
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange(
 				       -std::numeric_limits<double>::max() ) );
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange( 0.0 ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 					std::numeric_limits<double>::min() ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 					std::numeric_limits<double>::max() ) );
 }
 
@@ -147,15 +147,15 @@ FRENSIE_UNIT_TEST( GamowInterpolator, isDepVarInValidRange )
 // Check that the validity of a dependent variable can be tested
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, isDepVarInValidRange )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange(
 				 -std::numeric_limits<double>::max()*barns ) );
   FRENSIE_CHECK( !interpolator->isDepVarInValidRange( 0.0*barn ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 				  std::numeric_limits<double>::min()*barn ) );
-  FRENSIE_CHECK( interpolator->isDepVarInValidRange( 
+  FRENSIE_CHECK( interpolator->isDepVarInValidRange(
 				  std::numeric_limits<double>::max()*barns ) );
 }
 
@@ -179,7 +179,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, processIndepVar )
 // Check that an independent variable can be processed
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, processIndepVar )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   FRENSIE_CHECK_FLOATING_EQUALITY(
@@ -215,7 +215,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, processDepVar )
 // Check that a dependent variable can be processed
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, processDepVar )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   FRENSIE_CHECK_FLOATING_EQUALITY( 0.1, interpolator->processDepVar( 0.1*barn ), 1e-15);
@@ -251,7 +251,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator,recoverProcessedIndepVar )
 // Check that a processed independent variable can be recovered
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, recoverProcessedIndepVar )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   FRENSIE_CHECK_FLOATING_EQUALITY(
@@ -291,7 +291,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, recoverProcessedDepVar )
 // Check that a processed dependent variable can be recovered
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, recoverProcessedDepVar )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   FRENSIE_CHECK_FLOATING_EQUALITY(
@@ -358,7 +358,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolate )
 // Check that interpolation between two points can be done
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolate )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   quantity<MegaElectronVolt,double> e0 = 0.1*MeV, e1 = 10.0*MeV, e = 1.0*MeV;
@@ -421,9 +421,9 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessed )
                                                  processed_x,
                                                  processed_y0,
                                                  b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1093.9254005049686, 1e-12 );
-  
+
   processed_x = interpolator->processIndepVar( 0.1 );
 
   y = interpolator->interpolateProcessed( processed_x0,
@@ -439,7 +439,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessed )
                                           processed_x,
                                           processed_y0,
                                           b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1000.0, 1e-12 );
 
   interpolator.reset( new Utility::GamowInterpolator<double>( 0.05 ) );
@@ -450,7 +450,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessed )
 
   b_value = std::log( (1000.0*10.0)/(10.0*0.1) )/
     ( 1.0/sqrt(processed_x0) - 1.0/sqrt(processed_x1) );
-  
+
   y = interpolator->interpolateProcessed( processed_x0,
                                           processed_x,
                                           processed_y0,
@@ -473,7 +473,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessed )
                                           processed_x,
                                           processed_y0,
                                           b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( y, 1000.0, 1e-12 );
 }
 
@@ -481,7 +481,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessed )
 // Check that interpolation between two processed points can be done
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateProcessed )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   double processed_e0 = interpolator->processIndepVar( 0.1*MeV );
@@ -498,9 +498,9 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateProcessed )
                                         processed_e,
                                         processed_cs0,
                                         b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 1093.9254005049686*barns, 1e-12 );
-  
+
   processed_e = interpolator->processIndepVar( 0.1*MeV );
 
   cs = interpolator->interpolateProcessed( processed_e0,
@@ -516,7 +516,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateProcessed )
                                            processed_e,
                                            processed_cs0,
                                            b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 1000.0*barns, 1e-12 );
 
   interpolator.reset( new Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>( 0.05*MeV ) );
@@ -524,7 +524,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateProcessed )
   processed_e0 = interpolator->processIndepVar( 0.1*MeV );
   processed_e1 = interpolator->processIndepVar( 10.0*MeV );
   processed_e = interpolator->processIndepVar( 1.0*MeV );
-  
+
   b_value = std::log( (1000.0*10.0)/(10.0*0.1) )/
     ( 1.0/sqrt(processed_e0) - 1.0/sqrt(processed_e1) );
 
@@ -532,7 +532,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateProcessed )
                                            processed_e,
                                            processed_cs0,
                                            b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 2077.3469921631245*barns, 1e-12 );
 
   processed_e = interpolator->processIndepVar( 0.1*MeV );
@@ -550,7 +550,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateProcessed )
                                            processed_e,
                                            processed_cs0,
                                            b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( cs, 1000.0*barns, 1e-12 );
 }
 
@@ -606,7 +606,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateAndProcess )
 // Check that interpolation between two points can be done
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateAndProcess )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   quantity<MegaElectronVolt,double> e0 = 0.1*MeV, e1 = 10.0*MeV, e = 1.0*MeV;
@@ -653,7 +653,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator, interpolateAndProcess )
 //---------------------------------------------------------------------------//
 // Check that interpolation between two processed points can be done
 FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessedAndProcess )
-{ 
+{
   std::shared_ptr<const Utility::Interpolator<double> > interpolator =
     Utility::GamowInterpolator<double>::getExothermicInstance();
 
@@ -671,9 +671,9 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessedAndProcess )
                                                                   processed_x,
                                                                   processed_y0,
                                                                   b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_y, 1093.9254005049686, 1e-12 );
-  
+
   processed_x = interpolator->processIndepVar( 0.1 );
 
   processed_y = interpolator->interpolateProcessedAndProcess( processed_x0,
@@ -689,7 +689,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessedAndProcess )
                                                               processed_x,
                                                               processed_y0,
                                                               b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_y, 1000.0, 1e-12 );
 
   interpolator.reset( new Utility::GamowInterpolator<double>( 0.05 ) );
@@ -700,7 +700,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessedAndProcess )
 
   b_value = std::log( (1000.0*10.0)/(10.0*0.1) )/
     ( 1.0/sqrt(processed_x0) - 1.0/sqrt(processed_x1) );
-  
+
   processed_y = interpolator->interpolateProcessedAndProcess( processed_x0,
                                                               processed_x,
                                                               processed_y0,
@@ -723,7 +723,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessedAndProcess )
                                                               processed_x,
                                                               processed_y0,
                                                               b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_y, 1000.0, 1e-12 );
 }
 
@@ -732,7 +732,7 @@ FRENSIE_UNIT_TEST( GamowInterpolator, interpolateProcessedAndProcess )
 FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator,
                    interpolateProcessedAndProcess )
 {
-  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator = 
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
     Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>::getExothermicInstance();
 
   double processed_e0 = interpolator->processIndepVar( 0.1*MeV );
@@ -749,9 +749,9 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator,
                                                                  processed_e,
                                                                  processed_cs0,
                                                                  b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, 1093.9254005049686, 1e-12 );
-  
+
   processed_e = interpolator->processIndepVar( 0.1*MeV );
 
   processed_cs = interpolator->interpolateProcessedAndProcess( processed_e0,
@@ -767,7 +767,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator,
                                                                processed_e,
                                                                processed_cs0,
                                                                b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, 1000.0, 1e-12 );
 
   interpolator.reset( new Utility::GamowUnitAwareInterpolator<MegaElectronVolt,Barn,double>( 0.05*MeV ) );
@@ -775,7 +775,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator,
   processed_e0 = interpolator->processIndepVar( 0.1*MeV );
   processed_e1 = interpolator->processIndepVar( 10.0*MeV );
   processed_e = interpolator->processIndepVar( 1.0*MeV );
-  
+
   b_value = std::log( (1000.0*10.0)/(10.0*0.1) )/
     ( 1.0/sqrt(processed_e0) - 1.0/sqrt(processed_e1) );
 
@@ -783,7 +783,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator,
                                                                processed_e,
                                                                processed_cs0,
                                                                b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, 2077.3469921631245, 1e-12 );
 
   processed_e = interpolator->processIndepVar( 0.1*MeV );
@@ -801,7 +801,7 @@ FRENSIE_UNIT_TEST( GamowUnitAwareInterpolator,
                                                                processed_e,
                                                                processed_cs0,
                                                                b_value );
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( processed_cs, 1000.0, 1e-12 );
 }
 

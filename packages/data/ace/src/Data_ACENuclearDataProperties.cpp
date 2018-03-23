@@ -45,7 +45,7 @@ ACENuclearDataProperties::ACENuclearDataProperties(
 {
   // Make sure that the atomic weight ratio is valid
   testPrecondition( atomic_weight_ratio >= 0.0 );
-  // Make sure that the evaulation temp is valid
+  // Make sure that the evaluation temp is valid
   testPrecondition( evaluation_temp >= 0.0*Utility::Units::MeV );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
@@ -66,7 +66,7 @@ ACENuclearDataProperties::ACENuclearDataProperties(
     d_file_path( other.d_file_path ),
     d_file_start_line( other.d_file_start_line ),
     d_file_table_name( other.d_file_table_name )
-{ 
+{
   // Convert to the preferred path format
   d_file_path.make_preferred();
 }
@@ -143,7 +143,7 @@ void ACENuclearDataProperties::save( Archive& ar, const unsigned version ) const
   ar & BOOST_SERIALIZATION_NVP( d_evaluation_temp );
 
   std::string raw_path = d_file_path.string();
-  
+
   ar & BOOST_SERIALIZATION_NVP( raw_path );
   ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
   ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
@@ -165,13 +165,13 @@ void ACENuclearDataProperties::load( Archive& ar, const unsigned version )
 
   d_file_path = raw_path;
   d_file_path.make_preferred();
-  
+
   ar & BOOST_SERIALIZATION_NVP( d_file_start_line );
   ar & BOOST_SERIALIZATION_NVP( d_file_table_name );
 }
 
 EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ACENuclearDataProperties );
-  
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( ACENuclearDataProperties, Data );

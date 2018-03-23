@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstHistogramInterpolator.cpp
-//! \author Alex RObinson
+//! \author Alex Robinson
 //! \brief  The historgram interpolator unit tests
 //!
 //---------------------------------------------------------------------------//
@@ -277,7 +277,7 @@ FRENSIE_UNIT_TEST( HistogramUnitAwareInterpolator, interpolate )
   FRENSIE_CHECK_EQUAL( cs, 5.0*barns );
 
   e = 1.0*MeV;
-  
+
   cs = interpolator->interpolate( e0, e1, e, cs0, cs1 );
 
   FRENSIE_CHECK_EQUAL( cs, 5.0*barns );
@@ -419,7 +419,7 @@ FRENSIE_UNIT_TEST( HistogramUnitAwareInterpolator, interpolateAndProcess )
   FRENSIE_CHECK_EQUAL( processed_cs, 5.0 );
 
   e = 1.0*MeV;
-  
+
   processed_cs = interpolator->interpolateAndProcess( e0, e1, e, cs0, cs1 );
 
   FRENSIE_CHECK_EQUAL( processed_cs, 5.0 );

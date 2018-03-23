@@ -205,7 +205,7 @@ void ENDLFileHandler::mapThreeColumnTable(
       indep.second.push_back( column_two[i] );
       dep.second.push_back( column_three[i] );
     }
-    // Continue inserting idep and dep variables for this energy bin
+    // Continue inserting indep and dep variables for this energy bin
     else
     {
       indep.second.push_back( column_two[i] );

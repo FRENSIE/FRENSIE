@@ -694,7 +694,7 @@ BOOST_AUTO_TEST_CASE( formatStandardErrorKeywords,
     Utility::DynamicOutputFormatter formatter( "My Error: this is a test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;31;49mMy Error: \E[0mthis is a test!" );
@@ -709,9 +709,9 @@ BOOST_AUTO_TEST_CASE( formatStandardErrorKeywords,
     Utility::DynamicOutputFormatter formatter( " error: this is a test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
-                       " error: this is a test!" );  
+                       " error: this is a test!" );
   }
 
   // Check that the "Error" keyword will not be formatted
@@ -719,7 +719,7 @@ BOOST_AUTO_TEST_CASE( formatStandardErrorKeywords,
     Utility::DynamicOutputFormatter formatter( "This is an Error test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is an Error test!" );
   }
@@ -729,7 +729,7 @@ BOOST_AUTO_TEST_CASE( formatStandardErrorKeywords,
     Utility::DynamicOutputFormatter formatter( "This is an error test!" );
 
     formatter.formatStandardErrorKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is an error test!" );
   }
@@ -760,7 +760,7 @@ BOOST_AUTO_TEST_CASE( formatExtraErrorKeywords,
     Utility::DynamicOutputFormatter formatter( "Error: this is a test!" );
 
     formatter.formatExtraErrorKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;31;49mError:\E[0m this is a test!" );
@@ -782,7 +782,7 @@ BOOST_AUTO_TEST_CASE( formatExtraErrorKeywords,
 #else
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        " error: this is a test!" );
-#endif    
+#endif
   }
 
   // Check that the "Error" keyword will not be formatted
@@ -790,7 +790,7 @@ BOOST_AUTO_TEST_CASE( formatExtraErrorKeywords,
     Utility::DynamicOutputFormatter formatter( "This is an Error test!" );
 
     formatter.formatExtraErrorKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is an Error test!" );
   }
@@ -800,17 +800,17 @@ BOOST_AUTO_TEST_CASE( formatExtraErrorKeywords,
     Utility::DynamicOutputFormatter formatter( "This is an error test!" );
 
     formatter.formatExtraErrorKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is an error test!" );
   }
 
-  // Check that multiple occurances can be formatted
+  // Check that multiple occurrences can be formatted
   {
     Utility::DynamicOutputFormatter formatter( "Error: this is an error test!" );
 
     formatter.formatExtraErrorKeywords();
-    
+
 #ifdef TTY_FORMATTING_SUPPORTED
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "\E[1;31;49mError:\E[0m this is an error test!" );
@@ -846,7 +846,7 @@ BOOST_AUTO_TEST_CASE( formatStandardWarningKeywords,
     Utility::DynamicOutputFormatter formatter( "This is a Warning test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is a Warning test!" );
   }
@@ -856,7 +856,7 @@ BOOST_AUTO_TEST_CASE( formatStandardWarningKeywords,
     Utility::DynamicOutputFormatter formatter( "This is a warning test!" );
 
     formatter.formatStandardWarningKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is a warning test!" );
   }
@@ -917,7 +917,7 @@ BOOST_AUTO_TEST_CASE( formatStandardNoteKeywords,
     Utility::DynamicOutputFormatter formatter( "This is a Note test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is a Note test!" );
   }
@@ -927,7 +927,7 @@ BOOST_AUTO_TEST_CASE( formatStandardNoteKeywords,
     Utility::DynamicOutputFormatter formatter( "This is a note test!" );
 
     formatter.formatStandardNoteKeywords();
-    
+
     BOOST_CHECK_EQUAL( formatter.getFormattedOutput(),
                        "This is a note test!" );
   }
@@ -1524,7 +1524,7 @@ BOOST_AUTO_TEST_CASE( formatStandardFilenameKeywords,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the standard pass keywords can be formatted 
+// Check that the standard pass keywords can be formatted
 BOOST_AUTO_TEST_CASE( formatStandardPassKeywords,
                       * boost::unit_test::depends_on( "formatKeyword" ) )
 {
@@ -2268,7 +2268,7 @@ BOOST_AUTO_TEST_CASE( toStream,
     formatter.boldRedKeyword( "is" );
     formatter.boldCyanKeyword( "a" );
     formatter.boldMagentaKeyword( "test" );
-    
+
     formatter.toStream( oss_raw, false );
     formatter.toStream( oss, true );
 

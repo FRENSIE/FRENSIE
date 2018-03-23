@@ -28,7 +28,7 @@ class DataUnitTestWrapper
 
 public:
 
-  //! Constuctor
+  //! Constructor
   template<typename DataTableCreator>
   DataUnitTestWrapper( const std::string& table_name,
                        const DataTableCreator& data_table_creator );
@@ -49,7 +49,7 @@ private:
   std::vector<std::shared_ptr<Utility::UnitTest> > d_instantiated_tests;
 };
 
-// Constuctor
+// Constructor
 template<typename UnitTestType>
 template<typename DataTableCreator>
 DataUnitTestWrapper<UnitTestType>::DataUnitTestWrapper(
@@ -66,7 +66,7 @@ DataUnitTestWrapper<UnitTestType>::DataUnitTestWrapper(
 
   // Create a unit test for each row
   d_instantiated_tests.resize( row_names.size() );
-  
+
   for( size_t i = 0; i < row_names.size(); ++i )
   {
     d_instantiated_tests[i].reset(
@@ -80,7 +80,7 @@ inline size_t DataUnitTestWrapper<UnitTestType>::getNumberOfTests() const
 {
   return d_instantiated_tests.size();
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_DATA_UNIT_TEST_WRAPPER_HPP

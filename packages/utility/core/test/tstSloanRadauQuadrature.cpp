@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstSloanRadauquadrature->cpp
+//! \file   tstSloanRadauQuadrature.cpp
 //! \author Luke Kersting
 //! \brief  Sloan implentation of Gauss-Radau quadrature unit tests.
 //!
@@ -607,7 +607,7 @@ FRENSIE_UNIT_TEST( SloanRadauQuadrature, getRadauNodesAndWeights )
 }
 
 //---------------------------------------------------------------------------//
-// Varify function matches original algorithm
+// Verify function matches original algorithm
 FRENSIE_UNIT_TEST( SloanRadauQuadrature, AlgorithmMatch)
 {
   double tol = 1e-15;
@@ -966,5 +966,5 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
-// end tstSloanRadauquadrature->cpp
+// end tstSloanRadauQuadrature.cpp
 //---------------------------------------------------------------------------//

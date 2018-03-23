@@ -34,7 +34,7 @@ namespace Data{
  * sixth lines contain the zaids and atomic weight ratios of the isotopes
  * corresponding to the particular element or molecule represented in the
  * table. If the table corresponds to an isotope, no data is given in these
- * lines. The seventh and eighth lines contain the NXS array. The nineth
+ * lines. The seventh and eighth lines contain the NXS array. The ninth
  * through twelfth lines contain the JXS array. All remaining lines in the
  * table contain the XSS array. The contents of each of these arrays depends
  * on the type of table (i.e. continuous energy neutron, continuous energy

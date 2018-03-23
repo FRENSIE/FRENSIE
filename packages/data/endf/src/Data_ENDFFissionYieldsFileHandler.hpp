@@ -24,7 +24,7 @@ namespace Data{
  * included in the file. The primary header end with a line number of 99999. No
  * information is taken from this section. The file is then broken into 2 halfs.
  * The first half includes the independent(prompt) yields and the second half
- * includes the cumulative(total) yields. The first part of the indepedent yields
+ * includes the cumulative(total) yields. The first part of the independent yields
  * includes a 2 line header for the independent yields. The information that was
  * parsed from this section is the ZAID number and the number of energy group the
  * yields are given at. The next section includes a one line header block for the
@@ -68,7 +68,7 @@ public:
   //! Get the yields of the fission products for the independent yields
   Utility::ArrayView<const std::vector<double> > getYieldFissionProductsIndependentYields() const;
 
-  //! Get the standard deviation for the yields of the fission products for the indepedent yields
+  //! Get the standard deviation for the yields of the fission products for the independent yields
   Utility::ArrayView<const std::vector<double> > getStdYieldFissionProductsIndependentYields() const;
 
   //! Get the energies for the cumulative yields

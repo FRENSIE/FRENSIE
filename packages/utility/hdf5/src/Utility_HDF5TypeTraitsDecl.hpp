@@ -40,7 +40,7 @@ namespace Utility{
  * functions in the templated base unspecialized struct are designed not to
  * compile (giving a nice compile-time error message) and therefore
  * specializations must be written for each type to be written to HDF5
- * \note The defualt defined specializations are provided for int, uint and
+ * \note The default defined specializations are provided for int, uint and
  * double. The tuple structs will also provide their own specializations.
  * \ingroup hdf5_type_traits
  */
@@ -61,7 +61,7 @@ struct HDF5TypeTraits
 
   //! Check if the type uses a custom internal type
   typedef std::false_type UsesCustomInternalType;
-  
+
   //! Returns the HDF5 data type object corresponding to the type
   static inline const H5::DataType& dataType()
   { return UndefinedTraits<T>::notDefined(); }
@@ -69,7 +69,7 @@ struct HDF5TypeTraits
   /*! Initialize internal data
    *
    * If necessary new memory will be allocated for the internal type data.
-   * Always call freeInternalData once the returned pointer is no longer 
+   * Always call freeInternalData once the returned pointer is no longer
    * needed.
    */
   static inline InternalType* initializeInternalData(
@@ -78,7 +78,7 @@ struct HDF5TypeTraits
   { (void)UndefinedTraits<T>::notDefined(); return NULL; }
 
   /*! Convert external type data to internal type data
-   * 
+   *
    * The memory for the InternalType data must already be allocated.
    */
   static inline void convertExternalDataToInternalData(
@@ -86,9 +86,9 @@ struct HDF5TypeTraits
                                            const size_t size,
                                            InternalType* converted_data )
   { (void)UndefinedTraits<T>::notDefined(); }
-  
+
   /*! Convert internal type data to external type data
-   * 
+   *
    * The memory for the ExternalType data must already be allocated.
    */
   static inline void convertInternalDataToExternalData(

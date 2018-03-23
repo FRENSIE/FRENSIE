@@ -40,7 +40,7 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
     if( this->doesGroupAttributeExist( this->getPropertiesDir(), this->getSignatureAttributeName() ) )
     {
       std::string archive_signature;
-      
+
       try{
         this->readFromGroupAttribute( this->getPropertiesDir(),
                                       this->getSignatureAttributeName(),
@@ -65,7 +65,7 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
     if( this->doesGroupAttributeExist( this->getPropertiesDir(), this->getVersionAttributeName() ) )
     {
       unsigned version = std::numeric_limits<unsigned>::max();
-      
+
       try{
         this->readFromGroupAttribute( this->getPropertiesDir(),
                                       this->getVersionAttributeName(),
@@ -76,7 +76,7 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
                                          "retrieved from hdf5 archive "
                                          << this->getFilename() << "!" );
 
-      TEST_FOR_ARCHIVE_EXCEPTION( 
+      TEST_FOR_ARCHIVE_EXCEPTION(
                       version != boost::archive::BOOST_ARCHIVE_VERSION(),
                       boost::archive::archive_exception::unsupported_version );
     }
@@ -248,7 +248,7 @@ inline void HDF5IArchiveImpl<Archive>::load( std::wstring& t )
   THROW_HDF5_ARCHIVE_EXCEPTION( "Wide strings are not currently supported!" );
 }
 
-// Load a bost::serialization::collection_size_type
+// Load a boost::serialization::collection_size_type
 template<typename Archive>
 inline void HDF5IArchiveImpl<Archive>::load( boost::serialization::collection_size_type& t )
 {
@@ -264,7 +264,7 @@ inline void HDF5IArchiveImpl<Archive>::load( boost::serialization::item_version_
 {
   unsigned version;
   this->load(version);
-  
+
   t = boost::serialization::item_version_type(version);
 }
 
@@ -339,7 +339,7 @@ inline void HDF5IArchiveImpl<Archive>::updateObjectCount()
 {
   ++d_object_count;
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_HDF5_IARCHIVE_IMPL_DEF_HPP

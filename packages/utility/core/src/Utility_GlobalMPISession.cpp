@@ -103,7 +103,7 @@ template<typename ThreadingSupportLevelTag>
 struct ThreadingSupportLevelTagTraits
 { /* ... */ };
 
-/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for
  * GlobalMPISession::SingleThreadingTag
  * \ingroup mpi
  * \ingroup traits
@@ -112,7 +112,7 @@ template<>
 struct ThreadingSupportLevelTagTraits<GlobalMPISession::SingleThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::single>
 { /* ... */ };
 
-/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for
  * GlobalMPISession::FunneledThreadingTag
  * \ingroup mpi
  * \ingroup traits
@@ -121,7 +121,7 @@ template<>
 struct ThreadingSupportLevelTagTraits<GlobalMPISession::FunneledThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::funneled>
 { /* ... */ };
 
-/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for
  * GlobalMPISession::SerializedThreadingTag
  * \ingroup mpi
  * \ingroup traits
@@ -130,7 +130,7 @@ template<>
 struct ThreadingSupportLevelTagTraits<GlobalMPISession::SerializedThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::serialized>
 { /* ... */ };
 
-/*! \brief Specialization of ThreadingSupportLevelTagTraits for 
+/*! \brief Specialization of ThreadingSupportLevelTagTraits for
  * GlobalMPISession::MultipleThreadingTag
  * \ingroup mpi
  * \ingroup traits
@@ -138,7 +138,7 @@ struct ThreadingSupportLevelTagTraits<GlobalMPISession::SerializedThreadingTag> 
 template<>
 struct ThreadingSupportLevelTagTraits<GlobalMPISession::MultipleThreadingTag> : public std::integral_constant<boost::mpi::threading::level,boost::mpi::threading::multiple>
 { /* ... */ };
-  
+
 #endif // end HAVE_FRENSIE_MPI
 
 // Initialize static member data
@@ -154,9 +154,9 @@ GlobalMPISession::SingleThreadingTag::operator int() const
 {
 #ifdef HAVE_FRENSIE_MPI
   return boost::mpi::threading::single;
-#else 
+#else
   return 0;
-#endif 
+#endif
 }
 
 // Convert a GlobalMPISession::FunneledThreadingTag to an int
@@ -164,9 +164,9 @@ GlobalMPISession::FunneledThreadingTag::operator int() const
 {
 #ifdef HAVE_FRENSIE_MPI
   return boost::mpi::threading::funneled;
-#else 
+#else
   return 0;
-#endif 
+#endif
 }
 
 // Convert a GlobalMPISession::SerializedThreadingTag to an int
@@ -174,9 +174,9 @@ GlobalMPISession::SerializedThreadingTag::operator int() const
 {
 #ifdef HAVE_FRENSIE_MPI
   return boost::mpi::threading::serialized;
-#else 
+#else
   return 0;
-#endif 
+#endif
 }
 
 // Convert a GlobalMPISession::MultipleThreadingTag to an int
@@ -184,9 +184,9 @@ GlobalMPISession::MultipleThreadingTag::operator int() const
 {
 #ifdef HAVE_FRENSIE_MPI
   return boost::mpi::threading::multiple;
-#else 
+#else
   return 0;
-#endif 
+#endif
 }
 
 /*! The output stream cache
@@ -217,7 +217,7 @@ public:
   void cacheStreamBuffer( boost::shared_ptr<std::ostream> os )
   {
 #ifdef HAVE_FRENSIE_MPI
-    StreamBufferCache::iterator it = 
+    StreamBufferCache::iterator it =
       d_stream_buffer_cache.find( os.get() );
 
     if( it == d_stream_buffer_cache.end() )
@@ -232,7 +232,7 @@ public:
   void restoreStreamBuffer( boost::shared_ptr<std::ostream> os )
   {
 #ifdef HAVE_FRENSIE_MPI
-    StreamBufferCache::iterator it = 
+    StreamBufferCache::iterator it =
       d_stream_buffer_cache.find( os.get() );
 
     if( it != d_stream_buffer_cache.end() )
@@ -240,7 +240,7 @@ public:
       os->rdbuf( it->second );
 
       d_stream_buffer_cache.erase( it );
-      
+
       d_streams.remove( os );
     }
 #endif
@@ -261,7 +261,7 @@ public:
 
       if( buffer_cache_it != d_stream_buffer_cache.end() )
         (*list_it)->rdbuf( buffer_cache_it->second );
-      
+
       ++list_it;
     }
 
@@ -288,7 +288,7 @@ private:
  *
  * This class simply wraps the boost::mpi::environment object and provides
  * some additional constructors to help with initialization. It MPI has not
- * been configured for use this class is empty but the constructors can 
+ * been configured for use this class is empty but the constructors can
  * still be used (dummy initialization).
  * \ingroup mpi
  */
@@ -297,12 +297,12 @@ class GlobalMPISession::GlobalMPISessionImpl
 
 public:
 
-  //! Detault constructor
+  //! Default constructor
   GlobalMPISessionImpl( bool abort_on_exception = true )
 #ifdef HAVE_FRENSIE_MPI
     : d_environment( abort_on_exception )
 #endif
-  { 
+  {
     this->initializeWorldComm();
   }
 
@@ -373,7 +373,7 @@ public:
     else
     {
       boost::mpi::gather( GlobalMPISessionImpl::getWorldComm(), local_value, root );
-      
+
       return std::vector<T>();
     }
 #else
@@ -405,7 +405,7 @@ private:
 #ifdef HAVE_FRENSIE_MPI
   // The world communicator
   static std::unique_ptr<boost::mpi::communicator> s_world_comm;
-  
+
   // The boost mpi environment
   boost::mpi::environment d_environment;
 #endif
@@ -419,10 +419,10 @@ OutputStreamCache GlobalMPISession::GlobalMPISessionImpl::s_ostream_cache;
   std::unique_ptr<boost::mpi::communicator> GlobalMPISession::GlobalMPISessionImpl::s_world_comm;
 #endif // end HAVE_FRENSIE_MPI
 
-// Detault constructor
+// Default constructor
 GlobalMPISession::GlobalMPISession( bool abort_on_exception )
   : d_impl( new GlobalMPISession::GlobalMPISessionImpl( abort_on_exception ) )
-{ 
+{
   this->initializeRankAndSize();
 }
 
@@ -504,7 +504,7 @@ GlobalMPISession::GlobalMPISession( int& argc, char**& argv,
 
 // Destructor
 GlobalMPISession::~GlobalMPISession()
-{ 
+{
   s_rank = 0;
   s_size = 1;
 }
@@ -540,8 +540,8 @@ bool GlobalMPISession::isMPIUsed()
 
 // Create a timer
 /*! \details If MPI has been configured for use with FRENSIE (HAVE_FRENSIE_MPI
- * is defined) and MPI has been initialized, a Utility::MPITimer object will 
- * be created. Otherwise, an OpenMP timer will be created 
+ * is defined) and MPI has been initialized, a Utility::MPITimer object will
+ * be created. Otherwise, an OpenMP timer will be created
  * (see Utility::GlobalOpenMPSession::createTimer).
  */
 std::shared_ptr<Timer> GlobalMPISession::createTimer()
@@ -622,7 +622,7 @@ int GlobalMPISession::collectivesTag()
 
 // Get the tag value used for collective operations (mirror boost::mpi interface)
 /*! \details If MPI has been configured for use with FRENSIE (HAVE_FRENSIE_MPI
- * is defined) return the tag value that is reserved for collective ops. 
+ * is defined) return the tag value that is reserved for collective ops.
  * Otherwise, return 1.
  */
 int GlobalMPISession::collectives_tag()
@@ -662,11 +662,11 @@ int GlobalMPISession::threadLevel()
  * can be returned are:
  * <ul>
  *  <li>boost::mpi::MPI_THREAD_SINGLE == only one thread will execute,</li>
- *  <li>boost::mpi::MPI_THREAD_FUNNELED == only main thread will do MPI 
+ *  <li>boost::mpi::MPI_THREAD_FUNNELED == only main thread will do MPI
  *       calls,</li>
  *  <li>boost::mpi::MPI_THREAD_SERIALIZED == only one thread at a time will
  *       do MPI calls,</li>
- *  <li>boost::mpi::MPI_THREAD_MULTIPLE == multiple threads may do MPI 
+ *  <li>boost::mpi::MPI_THREAD_MULTIPLE == multiple threads may do MPI
  *       calls.</li>
  * </ul>
  * Othersise, return 0.
@@ -718,7 +718,7 @@ void GlobalMPISession::initializeOutputStream(
       if( GlobalMPISession::rank() != root_process && os.get() )
       {
         GlobalMPISessionImpl::getOutputStreamCache().cacheStreamBuffer( os );
-        
+
         os->rdbuf( NULL );
       }
     }
@@ -742,7 +742,7 @@ void GlobalMPISession::restoreOutputStream(
 void GlobalMPISession::restoreOutputStreams()
 {
 #ifdef HAVE_FRENSIE_MPI
-  
+
   if( GlobalMPISession::initialized() && !GlobalMPISession::finalized() )
   {
     GlobalMPISessionImpl::getOutputStreamCache().restoreStreamBuffers();
@@ -780,7 +780,7 @@ void GlobalMPISession::initializeLogs(
 // Initialize error log
 /*! \details If MPI has been configured for use with FRENSIE (HAVE_FRENSIE_MPI
  * is defined) and MPI has been initialized but not finalized, this method
- * can be used to limit error logging to a single process. The type of 
+ * can be used to limit error logging to a single process. The type of
  * error logging (synchronous or asynchronous) can also be specified.
  */
 void GlobalMPISession::initializeErrorLog( boost::shared_ptr<std::ostream> log_sink,
@@ -806,7 +806,7 @@ void GlobalMPISession::initializeErrorLog( boost::shared_ptr<std::ostream> log_s
 // Initialize warning log
 /*! \details If MPI has been configured for use with FRENSIE (HAVE_FRENSIE_MPI
  * is defined) and MPI has been initialized but not finalized, this method
- * can be used to limit warning logging to a single process. The type of 
+ * can be used to limit warning logging to a single process. The type of
  * warning logging (synchronous or asynchronous) can also be specified.
  */
 void GlobalMPISession::initializeWarningLog(
@@ -833,7 +833,7 @@ void GlobalMPISession::initializeWarningLog(
 // Initialize notification log
 /*! \details If MPI has been configured for use with FRENSIE (HAVE_FRENSIE_MPI
  * is defined) and MPI has been initialized but not finalized, this method
- * can be used to limit notification logging to a single process. The type of 
+ * can be used to limit notification logging to a single process. The type of
  * notification logging (synchronous or asynchronous) can also be specified.
  */
 void GlobalMPISession::initializeNotificationLog(
@@ -958,7 +958,7 @@ std::vector<bool> GlobalMPISession::gatherData( const int root,
   // Note: std::vector<bool> doesn't seem to work with the boost::mpi package.
   //       We will convert the bools to ints, gather the ints, and then convert
   //       back to bools.
-  std::vector<int> converted_data = 
+  std::vector<int> converted_data =
     GlobalMPISessionImpl::gatherValues( root, (int)local_data );
 
   std::vector<bool> data( converted_data.size() );
@@ -990,7 +990,7 @@ std::vector<double> GlobalMPISession::gatherData( const int root,
 {
   return GlobalMPISessionImpl::gatherValues( root, local_data );
 }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

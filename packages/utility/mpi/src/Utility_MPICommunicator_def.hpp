@@ -19,9 +19,9 @@ namespace Utility{
 
 /*! The mpi communicator status implementation class
  *
- * The status class does not expose the raw MPI error code because the error 
- * code is not used to indicate errors. All of the wrapped mpi methods that 
- * return a MPICommunicatorStatus will throw a std::exception to indicate that 
+ * The status class does not expose the raw MPI error code because the error
+ * code is not used to indicate errors. All of the wrapped mpi methods that
+ * return a MPICommunicatorStatus will throw a std::exception to indicate that
  * an  error has occurred.
  * \ingroup mpi
  */
@@ -112,7 +112,7 @@ template<typename ReduceOp>
 struct ReduceOpConversionHelper
 {
   typedef ReduceOp BoostReduceOp;
-  
+
   static inline const ReduceOp& convertToBoostReduceOp( const ReduceOp& op )
   { return op; }
 };
@@ -124,7 +124,7 @@ template<typename T>
 struct ReduceOpConversionHelper<Utility::maximum<T> >
 {
   typedef boost::mpi::maximum<typename Utility::maximum<T>::InputType> BoostReduceOp;
-  
+
   static inline BoostReduceOp convertToBoostReduceOp( const Utility::maximum<T>& op )
   { return BoostReduceOp(); }
 };
@@ -136,7 +136,7 @@ template<typename T>
 struct ReduceOpConversionHelper<Utility::minimum<T> >
 {
   typedef boost::mpi::minimum<typename Utility::minimum<T>::InputType> BoostReduceOp;
-  
+
   static inline BoostReduceOp convertToBoostReduceOp( const Utility::minimum<T>& op )
   { return BoostReduceOp(); }
 };
@@ -148,7 +148,7 @@ template<typename T>
 struct ReduceOpConversionHelper<Utility::bitwiseAnd<T> >
 {
   typedef boost::mpi::bitwise_and<typename Utility::bitwiseAnd<T>::InputType> BoostReduceOp;
-  
+
   static inline BoostReduceOp convertToBoostReduceOp( const Utility::bitwiseAnd<T>& op )
   { return BoostReduceOp(); }
 };
@@ -160,7 +160,7 @@ template<typename T>
 struct ReduceOpConversionHelper<Utility::bitwiseOr<T> >
 {
   typedef boost::mpi::bitwise_or<typename Utility::bitwiseOr<T>::InputType> BoostReduceOp;
-  
+
   static inline BoostReduceOp convertToBoostReduceOp( const Utility::bitwiseOr<T>& op )
   { return BoostReduceOp(); }
 };
@@ -172,7 +172,7 @@ template<typename T>
 struct ReduceOpConversionHelper<Utility::bitwiseXor<T> >
 {
   typedef boost::mpi::bitwise_xor<typename Utility::bitwiseXor<T>::InputType> BoostReduceOp;
-  
+
   static inline BoostReduceOp convertToBoostReduceOp( const Utility::bitwiseXor<T>& op )
   { return BoostReduceOp(); }
 };
@@ -184,13 +184,13 @@ template<typename T>
 struct ReduceOpConversionHelper<Utility::logicalXor<T> >
 {
   typedef boost::mpi::logical_xor<typename Utility::logicalXor<T>::InputType> BoostReduceOp;
-  
+
   static inline BoostReduceOp convertToBoostReduceOp( const Utility::logicalXor<T>& op )
   { return BoostReduceOp(); }
 };
-  
+
 } // end Details namespace
-  
+
 #endif // end HAVE_FRENSIE_MPI
 
 template<typename T>
@@ -262,7 +262,7 @@ void MPICommunicator::send( int MPI_ENABLED_PARAMETER(dest),
 {
   MPI_ENABLED_LINE( d_comm.send( dest, tag, values, number_of_values ) );
 }
-  
+
 // Receive a message from another process (blocking)
 template<typename T>
 Communicator::Status MPICommunicator::recv(
@@ -346,7 +346,7 @@ inline Communicator::Status MPICommunicator::iprobe( int source, int tag ) const
   return Communicator::Status();
 #endif // end HAVE_FRENSIE_MPI
 }
-  
+
 // Gather the array of values stored at every process into vectors of
 // values from each process.
 template<typename T>
@@ -471,7 +471,7 @@ void MPICommunicator::scatterv(
   MPI_ENABLED_LINE( boost::mpi::scatterv( d_comm, input_values, sizes, output_values, root_process ) );
 }
 
-// Combine the values stored by each process intoa single value at the root
+// Combine the values stored by each process into a single value at the root
 template<typename T, typename ReduceOperation>
 void MPICommunicator::reduce( const T* MPI_ENABLED_PARAMETER(input_values),
                               int MPI_ENABLED_PARAMETER(number_of_input_values),

@@ -286,7 +286,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sample )
   fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64;
   // Eighth bin
   fake_stream[14] = 14.0/64; fake_stream[15] = 15.0/64;
-  // Nineth bin
+  // Ninth bin
   fake_stream[16] = 16.0/64; fake_stream[17] = 17.0/64;
   // Tenth bin
   fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64;
@@ -326,7 +326,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sample )
   fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64;
   // Twenty-eighth bin
   fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64;
-  // Twenty-nineth bin
+  // Twenty-ninth bin
   fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64;
   // Thirtieth bin
   fake_stream[58] = 58.0/64; fake_stream[59] = 59.0/64;
@@ -394,7 +394,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sample )
   sample = distribution->sample();
   FRENSIE_CHECK_EQUAL( sample, -8.5 );
 
-  // Nineth bin
+  // Ninth bin
   sample = distribution->sample();
   FRENSIE_CHECK_EQUAL( sample, -8.0 );
 
@@ -534,7 +534,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sample )
   sample = distribution->sample();
   FRENSIE_CHECK_EQUAL( sample, 11.5 );
 
-  // Twenty-nineth bin
+  // Twenty-ninth bin
   sample = distribution->sample();
   FRENSIE_CHECK_EQUAL( sample, 12.0 );
 
@@ -638,7 +638,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64;
   // Eighth bin
   fake_stream[14] = 14.0/64; fake_stream[15] = 15.0/64;
-  // Nineth bin
+  // Ninth bin
   fake_stream[16] = 16.0/64; fake_stream[17] = 17.0/64;
   // Tenth bin
   fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64;
@@ -678,7 +678,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64;
   // Twenty-eighth bin
   fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64;
-  // Twenty-nineth bin
+  // Twenty-ninth bin
   fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64;
   // Thirtieth bin
   fake_stream[58] = 58.0/64; fake_stream[59] = 59.0/64;
@@ -764,7 +764,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   FRENSIE_CHECK_EQUAL( sample, -8.5 );
   FRENSIE_CHECK_EQUAL( 16.0/trials, 1.0 );
 
-  // Nineth bin
+  // Ninth bin
   sample = distribution->sampleAndRecordTrials( trials );
   FRENSIE_CHECK_EQUAL( sample, -8.0 );
   FRENSIE_CHECK_EQUAL( 17.0/trials, 1.0 );
@@ -944,7 +944,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
   FRENSIE_CHECK_EQUAL( sample, 11.5 );
   FRENSIE_CHECK_EQUAL( 56.0/trials, 1.0 );
 
-  // Twenty-nineth bin
+  // Twenty-ninth bin
   sample = distribution->sampleAndRecordTrials( trials );
   FRENSIE_CHECK_EQUAL( sample, 12.0 );
   FRENSIE_CHECK_EQUAL( 57.0/trials, 1.0 );
@@ -1070,7 +1070,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   fake_stream[12] = 12.0/64; fake_stream[13] = 13.0/64;
   // Eighth bin
   fake_stream[14] = 14.0/64; fake_stream[15] = 15.0/64;
-  // Nineth bin
+  // Ninth bin
   fake_stream[16] = 16.0/64; fake_stream[17] = 17.0/64;
   // Tenth bin
   fake_stream[18] = 18.0/64; fake_stream[19] = 19.0/64;
@@ -1110,7 +1110,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   fake_stream[52] = 52.0/64; fake_stream[53] = 53.0/64;
   // Twenty-eighth bin
   fake_stream[54] = 54.0/64; fake_stream[55] = 55.0/64;
-  // Twenty-nineth bin
+  // Twenty-ninth bin
   fake_stream[56] = 56.0/64; fake_stream[57] = 57.0/64;
   // Thirtieth bin
   fake_stream[58] = 58.0/64; fake_stream[59] = 59.0/64;
@@ -1196,7 +1196,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   FRENSIE_CHECK_EQUAL( sample, -8.5 );
   FRENSIE_CHECK_EQUAL( bin_index, 7 );
 
-  // Nineth bin
+  // Ninth bin
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   FRENSIE_CHECK_EQUAL( sample, -8.0 );
   FRENSIE_CHECK_EQUAL( bin_index, 8 );
@@ -1376,7 +1376,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
   FRENSIE_CHECK_EQUAL( sample, 11.5 );
   FRENSIE_CHECK_EQUAL( bin_index, 27 );
 
-  // Twenty-nineth bin
+  // Twenty-ninth bin
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   FRENSIE_CHECK_EQUAL( sample, 12.0 );
   FRENSIE_CHECK_EQUAL( bin_index, 28 );
@@ -1541,7 +1541,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   sample = tab_distribution->sampleWithRandomNumber( 15.0/64 );
   FRENSIE_CHECK_EQUAL( sample, -8.5 );
 
-  // Nineth bin
+  // Ninth bin
   sample = tab_distribution->sampleWithRandomNumber( 16.0/64 );
   FRENSIE_CHECK_EQUAL( sample, -8.0 );
 
@@ -1681,7 +1681,7 @@ FRENSIE_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
   sample = tab_distribution->sampleWithRandomNumber( 55.0/64 );
   FRENSIE_CHECK_EQUAL( sample, 11.5 );
 
-  // Twenty-nineth bin
+  // Twenty-ninth bin
   sample = tab_distribution->sampleWithRandomNumber( 56.0/64 );
   FRENSIE_CHECK_EQUAL( sample, 12.0 );
 
@@ -2199,7 +2199,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EquiprobableBinDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_equiprobable_bin_dist" );
   std::ostringstream archive_ostream;
 
@@ -2208,7 +2208,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( EquiprobableBinDistribution,
     std::unique_ptr<OArchive> oarchive;
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
-    
+
     std::vector<double> bin_boundaries( {-16.0, -15.0, -14.0, -13.0, -12.0, -11.0, -10.0, -9.0, -8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -0.5, 0.0, 0.5, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0} );
 
     Utility::EquiprobableBinDistribution distribution_a( bin_boundaries );
@@ -2369,7 +2369,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareEquiprobableBinDistribution,
 
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
-  
+
   std::string archive_base_name( "test_unit_aware_equiprobable_bin_dist" );
   std::ostringstream archive_ostream;
 
@@ -2378,7 +2378,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareEquiprobableBinDistribution,
     std::unique_ptr<OArchive> oarchive;
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
-    
+
     std::vector<quantity<KiloElectronVolt> > bin_boundaries( 5 );
     bin_boundaries[0] = 0.0*keV;
     bin_boundaries[1] = 1e2*keV;
@@ -2398,7 +2398,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareEquiprobableBinDistribution,
 
   // Copy the archive ostream to an istream
   std::istringstream archive_istream( archive_ostream.str() );
-  
+
   // Load the archived distributions
   std::unique_ptr<IArchive> iarchive;
 
@@ -2466,7 +2466,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareEquiprobableBinDistribution,
   typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
   typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
   typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
   typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
 

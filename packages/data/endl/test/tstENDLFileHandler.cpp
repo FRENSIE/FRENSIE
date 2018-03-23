@@ -345,7 +345,7 @@ FRENSIE_UNIT_TEST( ENDLFileHandler, constructor )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the ENDLFileHandler can open a file after being contructed
+// Check that the ENDLFileHandler can open a file after being constructed
 FRENSIE_UNIT_TEST( ENDLFileHandler, openENDLFile )
 {
   Data::ENDLFileHandler endl_file_handler;

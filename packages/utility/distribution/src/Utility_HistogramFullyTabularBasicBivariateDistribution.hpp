@@ -31,7 +31,7 @@ class UnitAwareHistogramFullyTabularBasicBivariateDistribution : public UnitAwar
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename BaseType::PIQT PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename BaseType::SIQT SIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -39,12 +39,12 @@ class UnitAwareHistogramFullyTabularBasicBivariateDistribution : public UnitAwar
 
   // Typedef for QuantityTraits<DepQuantity>
   typedef typename BaseType::DQT DQT;
-  
+
 public:
 
   //! This type
   typedef UnitAwareHistogramFullyTabularBasicBivariateDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ThisType;
-  
+
   //! The primary independent quantity type
   typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
@@ -59,7 +59,7 @@ public:
 
   //! The base univariate distribution type
   typedef typename BaseType::BaseUnivariateDistributionType BaseUnivariateDistributionType;
-  
+
   //! Constructor
   UnitAwareHistogramFullyTabularBasicBivariateDistribution(
      const std::vector<PrimaryIndepQuantity>& primary_indep_grid,
@@ -123,7 +123,7 @@ private:
  * \ingroup bivariate_distributions
  */
 typedef UnitAwareHistogramFullyTabularBasicBivariateDistribution<void,void,void> HistogramFullyTabularBasicBivariateDistribution;
-  
+
 } // end Utility namespace
 
 BOOST_SERIALIZATION_DISTRIBUTION3_VERSION( UnitAwareHistogramFullyTabularBasicBivariateDistribution, 0 );

@@ -37,7 +37,7 @@ class UnitAwareSeparableBivariateDistribution : public UnitAwareBivariateDistrib
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef QuantityTraits<typename BaseType::PrimaryIndepQuantity> PIQT;
 
-  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  // Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef QuantityTraits<typename BaseType::SecondaryIndepQuantity> SIQT;
 
   // Typedef for QuantityTraits<InversePrimaryIndepQuantity>
@@ -109,7 +109,7 @@ public:
   InversePrimaryIndepQuantity evaluatePrimaryConditionalPDF(
        const PrimaryIndepQuantity primary_indep_var_value,
        const SecondaryIndepQuantity secondary_indep_var_value ) const override;
-  
+
   //! Evaluate the secondary conditional PDF
   InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
        const PrimaryIndepQuantity primary_indep_var_value,
@@ -178,7 +178,7 @@ public:
   //! Test if the distribution is tabular in the primary dimension
   bool isPrimaryDimensionTabular() const override;
 
-  //! Test if the distribution is condinuous in the primary dimension
+  //! Test if the distribution is continuous in the primary dimension
   bool isPrimaryDimensionContinuous() const override;
 
   //! Test if the distribution is tabular in the secondary dimension
@@ -216,7 +216,7 @@ private:
  * \ingroup bivariate_distributions
  */
 typedef UnitAwareSeparableBivariateDistribution<void,void,void,void> SeparableBivariateDistribution;
-  
+
 } // end Utility namespace
 
 BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareSeparableBivariateDistribution, 0 );

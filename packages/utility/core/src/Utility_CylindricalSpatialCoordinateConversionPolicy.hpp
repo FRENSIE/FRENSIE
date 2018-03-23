@@ -25,7 +25,7 @@ class CylindricalSpatialCoordinateConversionPolicy : public SpatialCoordinateCon
 
 protected:
 
-  //! The locl coordinate system traits
+  //! The local coordinate system traits
   typedef SpatialCoordinateSystemTraits<CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM> LocalCSTraits;
 
 public:
@@ -117,7 +117,7 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianPo
                     z_spatial_coord_in );
   testPrecondition( GlobalCSTraits::tertiarySpatialDimensionUpperBound() >=
                     z_spatial_coord_in );
-  
+
   // Compute the radius
   r_spatial_coord = sqrt( x_spatial_coord*x_spatial_coord +
                           y_spatial_coord*y_spatial_coord );
@@ -169,7 +169,7 @@ inline void CylindricalSpatialCoordinateConversionPolicy::convertToCartesianPosi
   // Make sure that the z coordinate is valid
   testPrecondition( z_spatial_coord_in >= LocalCSTraits::tertiarySpatialDimensionLowerBound() );
   testPrecondition( z_spatial_coord_in <= LocalCSTraits::tertiarySpatialDimensionUpperBound() );
-  
+
   // Compute the x coordinate
   x_spatial_coord = r_spatial_coord*cos(theta_spatial_coord);
 
@@ -225,7 +225,7 @@ inline bool CylindricalSpatialCoordinateConversionPolicy::isTertiarySpatialCoord
   return coordinate >= LocalCSTraits::tertiarySpatialDimensionLowerBound() &&
     coordinate <= LocalCSTraits::tertiarySpatialDimensionUpperBound();
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_CYLINDRICAL_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP

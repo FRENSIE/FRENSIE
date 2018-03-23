@@ -51,7 +51,7 @@ double normalizeVectorAndReturnMagnitude( double& x_component,
 }
 
 // Clear the vector of rounding errors
-/*! \details This method will check if any components are within 
+/*! \details This method will check if any components are within
  * +/- tol*magnitude of 0.0. If so, they will be set to zero. These types
  * of rounding errors typically occur after rotations.
  */
@@ -78,7 +78,7 @@ void clearVectorOfRoundingErrors( double& x_component,
 }
 
 // Clear the unit vector of rounding errors
-/*! \details This method will check if any components are within 
+/*! \details This method will check if any components are within
  * +/- tol of 0.0. If so, they will be set to zero. These types
  * of rounding errors typically occur after rotations.
  */
@@ -89,7 +89,7 @@ void clearUnitVectorOfRoundingErrors( double& x_component,
 {
   // Make sure that the unit vectors is valid
   testPrecondition( isUnitVector( x_component, y_component, z_component ) );
-  
+
   // Check the x-component
   if( fabs( x_component ) < tol )
     x_component = 0.0;
@@ -170,7 +170,7 @@ void reflectUnitVector( const double unit_vector[3],
  *         v*w/sqrt(1-w*w), u/sqrt(1-w*w) , v;
  *         -sqrt(1-w*w)   , 0             , w]
  * LO_g = [x_O, y_O, z_O]
- * If w ~ 1 then sqrt(1-w*w) ~ 0 and we must assume that the spherical 
+ * If w ~ 1 then sqrt(1-w*w) ~ 0 and we must assume that the spherical
  * coordinates of the local z-axis w.r.t. the global coordinate system are
  * measure w.r.t. the y-axis. For this special case R_lg has the following
  * form:
@@ -179,7 +179,7 @@ void reflectUnitVector( const double unit_vector[3],
  *                 -u/sqrt(1-v*v), -v*w/sqrt(1-v*v) , w]
  * If the origin of the local coordinate system is different than the origin
  * of the global coordinate system, the local origin's coordinates must be
- * added to the global coordinates returned from this method 
+ * added to the global coordinates returned from this method
  * (e.g. x = global_x_coordinate + x_O);
  */
 void convertLocalVectorToGlobalVector(
@@ -201,10 +201,10 @@ void convertLocalVectorToGlobalVector(
 
   // Calculate the polar angle sine
   double polar_angle_sine = sqrt( std::max(0.0, 1.0 - w*w) );
-  
+
   if( polar_angle_sine > 1e-10 )
   {
-    global_x_coordinate = u*local_z_coordinate + 
+    global_x_coordinate = u*local_z_coordinate +
       (u*w*local_x_coordinate - v*local_y_coordinate)/polar_angle_sine;
 
     global_y_coordinate = v*local_z_coordinate +
@@ -214,13 +214,13 @@ void convertLocalVectorToGlobalVector(
       polar_angle_sine*local_x_coordinate;
   }
   // Special case: polar_angle_sine ~ 0.0 (z ~ 1.0)
-  //               Assume spherical coordinats are w.r.t. y-axis instead of
+  //               Assume spherical coordinates are w.r.t. y-axis instead of
   //               z-axis
   else
   {
     // Recompute the polar angle sine
     polar_angle_sine = sqrt( std::max(0.0, 1.0 - v*v) );
-    
+
     global_x_coordinate = u*local_z_coordinate +
       (w*local_x_coordinate - u*v*local_y_coordinate)/polar_angle_sine;
 
@@ -236,9 +236,9 @@ void convertLocalVectorToGlobalVector(
 /*! \details The transformation can be represented with the following equation:
  * V_l = R_gl*(V_g - LO_g), where R_gl is the rotation matrix representing
  * a rotation of the global coordinate system to the local coordinate system
- * and LO_g is the local origin w.r.t. the global coordinate system. Note that 
+ * and LO_g is the local origin w.r.t. the global coordinate system. Note that
  * the local z-axis unit vector w.r.t. the global coordinate system is (u,v,w).
- * R_gl = [u*w/sqrt(1-w*w), v*w/sqrt(1-w*w), -sqrt(1-w*w); 
+ * R_gl = [u*w/sqrt(1-w*w), v*w/sqrt(1-w*w), -sqrt(1-w*w);
  *         -v/sqrt(1-w*w) , u/sqrt(1-w*w)  , 0;
  *         u              , v              , w]
  * LO_g = [x_O, y_O, z_O]
@@ -251,7 +251,7 @@ void convertLocalVectorToGlobalVector(
  *                 u               , v           , w]
  * If the origin of the local coordinate system is different than the origin
  * of the global coordinate system, the shifted coordinates must be passed
- * into this method (e.g. global_x_coordinate = x - x_O). 
+ * into this method (e.g. global_x_coordinate = x - x_O).
  */
 void convertGlobalVectorToLocalVector(
               const double global_x_coordinate,
@@ -272,10 +272,10 @@ void convertGlobalVectorToLocalVector(
 
   // Calculate the polar angle sine
   double polar_angle_sine = sqrt( std::max(0.0, 1.0 - w*w) );
-  
+
   if( polar_angle_sine > 1e-10 )
   {
-    local_x_coordinate = -polar_angle_sine*global_z_coordinate + 
+    local_x_coordinate = -polar_angle_sine*global_z_coordinate +
       (u*w*global_x_coordinate + v*w*global_y_coordinate)/polar_angle_sine;
 
     local_y_coordinate =
@@ -285,7 +285,7 @@ void convertGlobalVectorToLocalVector(
       u*global_x_coordinate + v*global_y_coordinate + w*global_z_coordinate;
   }
   // Special case: polar_angle_sine ~ 0.0 (z ~ 1.0)
-  //               Assume spherical coordinats are w.r.t. y-axis instead of
+  //               Assume spherical coordinates are w.r.t. y-axis instead of
   //               z-axis
   else
   {
@@ -299,10 +299,10 @@ void convertGlobalVectorToLocalVector(
       (u*v*global_x_coordinate + w*v*global_z_coordinate)/polar_angle_sine;
 
     local_z_coordinate = u*global_x_coordinate + v*global_y_coordinate +
-      w*global_z_coordinate;      
+      w*global_z_coordinate;
   }
 }
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

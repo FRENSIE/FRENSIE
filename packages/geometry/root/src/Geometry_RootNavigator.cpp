@@ -24,7 +24,7 @@ RootNavigator::RootNavigator()
     d_internal_ray_set( false ),
     d_navigator( NULL )
 { /* ... */ }
-  
+
 // Constructor
 RootNavigator::RootNavigator(
           const std::shared_ptr<const RootModel>& root_model,
@@ -116,13 +116,13 @@ void RootNavigator::getSurfaceNormal( const InternalSurfaceHandle,
                                       double normal[3] ) const
 {
   TGeoNode* node = this->findNodeContainingRay( position, direction );
-  
-  // Note: This is basically a reimplementation of the
+
+  // Note: This is basically a re-implementation of the
   // TGeoNavigator::GetNormalFast method but because we want to preserve our
-  // internal ray state this reimplementation is necessary
+  // internal ray state this re-implementation is necessary
   double local_position[3];
   node->MasterToLocal( Utility::reinterpretAsRaw(position), local_position );
-  
+
   double local_direction[3];
   node->MasterToLocal( direction, local_direction );
 
@@ -261,8 +261,8 @@ void RootNavigator::setState( const Length x_position,
                           y_direction,
                           z_direction );
 }
-                      
-                       
+
+
 // Initialize (or reset) an internal Root ray
 /*! \details Root will not use the cell to speed up its lookup.
  */
@@ -334,7 +334,7 @@ bool RootNavigator::advanceToCellBoundaryImpl( double* surface_normal,
   testPrecondition( this->isStateSet() );
 
   Utility::setQuantity( distance_traveled, d_navigator->GetStep() );
-  
+
   TGeoNode* next_node = d_navigator->Step();
 
   // Compute the surface normal at the boundary
@@ -408,7 +408,7 @@ void RootNavigator::freeInternalRay()
   if( d_navigator )
   {
     d_root_model->getManager()->RemoveNavigator( d_navigator );
-  
+
     d_navigator = NULL;
   }
 }

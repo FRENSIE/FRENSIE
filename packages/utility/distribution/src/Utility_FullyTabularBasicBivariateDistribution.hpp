@@ -38,7 +38,7 @@ protected:
   //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef QuantityTraits<typename BaseType::PrimaryIndepQuantity> PIQT;
 
-  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef QuantityTraits<typename BaseType::SecondaryIndepQuantity> SIQT;
 
   //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -204,7 +204,7 @@ private:
  * \ingroup bivariate_distributions
  */
 typedef UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> FullyTabularBasicBivariateDistribution;
-  
+
 } // end utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_DISTRIBUTION3( UnitAwareFullyTabularBasicBivariateDistribution );

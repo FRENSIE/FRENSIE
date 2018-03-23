@@ -19,8 +19,8 @@ namespace Exponentiation{
 // Recursive exponentiation algorithm
 /*! \details Recursively evaluates the function x^y. This algorithm is a
  * modified version of the one found in "Algorithms" by Desgupta et al. Care
- * must be taken with integer types since overflow is possible with large 
- * exponents and/or base values. In some cases the overflow is desired 
+ * must be taken with integer types since overflow is possible with large
+ * exponents and/or base values. In some cases the overflow is desired
  * (i.e. 2^64 or 2^32 modular exponentiation).
  */
 template<typename BaseScalarType, typename ExponentOrdinalType>
@@ -55,7 +55,7 @@ template<size_t N, typename BaseScalarType>
 typename QuantityTraits<BaseScalarType>::template GetQuantityToPowerType<N>::type
 recursive( const BaseScalarType x )
 {
-  // Recursive exponentiation hase been implemented by the rpow method for
+  // Recursive exponentiation has been implemented by the rpow method for
   // the special case of positive integer powers
   return QuantityTraits<BaseScalarType>::template rpow<N,1>( x );
 }

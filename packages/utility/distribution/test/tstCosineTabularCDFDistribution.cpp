@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstTabularCDFDistribution.cpp
-//! \author Luke Kerting
+//! \author Luke Kersting
 //! \brief  TabularCDF distribution unit tests.
 //!
 //---------------------------------------------------------------------------//
@@ -146,7 +146,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->evaluate( 0.0 ), 0.0 );
@@ -169,7 +169,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluate( -1.001*cgs::dimensionless() ),
@@ -200,7 +200,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->evaluatePDF( 0.0 ), 0.0 );
@@ -223,7 +223,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->evaluatePDF( -1.001*cgs::dimensionless() ), 0.0/cgs::dimensionless() );
@@ -246,7 +246,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   FRENSIE_CHECK_EQUAL( tab_distribution->evaluateCDF( -1.001 ), 0.0 );
@@ -273,7 +273,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_tab_distribution->evaluateCDF( -1.001*cgs::dimensionless() ),
@@ -320,7 +320,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -379,7 +379,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -438,7 +438,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -507,7 +507,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -579,7 +579,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -646,7 +646,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -714,7 +714,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
@@ -745,7 +745,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   quantity<cgs::dimensionless> sample =
@@ -777,7 +777,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -832,7 +832,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   std::vector<double> fake_stream( 2 );
@@ -888,7 +888,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( tab_distribution );
 
   double sample =
@@ -917,7 +917,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_tab_distribution );
 
   quantity<cgs::dimensionless> sample =
@@ -952,7 +952,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->getUpperBoundOfIndepVar(),0.999999 );
@@ -970,7 +970,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getUpperBoundOfIndepVar(),
@@ -990,7 +990,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->getLowerBoundOfIndepVar(), -1.0 );
@@ -1008,7 +1008,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getLowerBoundOfIndepVar(),
@@ -1027,7 +1027,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK_EQUAL( distribution->getDistributionType(),
@@ -1046,7 +1046,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK_EQUAL( unit_aware_distribution->getDistributionType(),
@@ -1065,7 +1065,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK( distribution->isTabular() );
@@ -1082,7 +1082,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK( unit_aware_distribution->isTabular() );
@@ -1099,7 +1099,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK( distribution->isContinuous() );
@@ -1116,7 +1116,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK( unit_aware_distribution->isContinuous() );
@@ -1133,7 +1133,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( TabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( distribution );
 
   FRENSIE_CHECK( distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
@@ -1214,7 +1214,7 @@ FRENSIE_UNIT_TEST_TEMPLATE( UnitAwareTabularCDFDistribution,
                             InterpTypes )
 {
   FETCH_TEMPLATE_PARAM( 0, InterpolationPolicy );
-  
+
   initialize<InterpolationPolicy>( unit_aware_distribution );
 
   FRENSIE_CHECK( unit_aware_distribution->isCompatibleWithInterpType<Utility::LogLogCos>() );
@@ -1303,7 +1303,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareTabularCDFDistribution,
   typedef typename std::remove_pointer<RawDepUnitA>::type DepUnitA;
   typedef typename std::remove_pointer<RawIndepUnitB>::type IndepUnitB;
   typedef typename std::remove_pointer<RawDepUnitB>::type DepUnitB;
-  
+
   typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
 
   typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
@@ -1435,7 +1435,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( TabularCDFDistribution,
   std::shared_ptr<Utility::UnivariateDistribution> base_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist_b ) );
-  
+
   downcast_base_dist =
     dynamic_cast<Utility::TabularUnivariateDistribution*>( base_dist_b.get() );
 
@@ -1521,7 +1521,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( UnitAwareTabularCDFDistribution,
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<void,si::amount> > base_dist_b;
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( base_dist_b ) );
-  
+
   downcast_base_dist =
     dynamic_cast<Utility::UnitAwareTabularUnivariateDistribution<void,si::amount>*>( base_dist_b.get() );
 

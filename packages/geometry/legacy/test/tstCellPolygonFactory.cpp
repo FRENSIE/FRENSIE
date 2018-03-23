@@ -593,7 +593,7 @@ void createSurface13PolygonCorners(
 			      3, 9, 13 );
   polygon_corners.push_back( corner_8 );
 
-  // Nineth point at (1,1,-2)
+  // Ninth point at (1,1,-2)
   IntersectionPoint corner_9( 1.0, 1.0, -2.0,
 			      2, 8, 13 );
   polygon_corners.push_back( corner_9 );

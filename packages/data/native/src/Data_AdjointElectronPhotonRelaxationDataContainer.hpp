@@ -127,13 +127,13 @@ public:
   //! Return the number of discrete moment preserving angles
   unsigned getNumberOfAdjointMomentPreservingAngles() const;
 
-  //! Reutrn the adjoint electron grid convergence tolerance
+  //! Return the adjoint electron grid convergence tolerance
   double getAdjointElectronGridConvergenceTolerance() const;
 
-  //! Reutrn the adjoint electron absolute diff tolerance
+  //! Return the adjoint electron absolute diff tolerance
   double getAdjointElectronAbsoluteDifferenceTolerance() const;
 
-  //! Reutrn the adjoint electron distance tolerance
+  //! Return the adjoint electron distance tolerance
   double getAdjointElectronDistanceTolerance() const;
 
   //! Return the electron FullyTabularTwoDDistribution evaluation tolerance
@@ -151,10 +151,10 @@ public:
   //! Return the adjoint bremsstrahlung grid convergence tolerance
   double getAdjointBremsstrahlungGridConvergenceTolerance() const;
 
-  //! Reutrn the adjoint bremsstrahlung absolute difference tolerance
+  //! Return the adjoint bremsstrahlung absolute difference tolerance
   double getAdjointBremsstrahlungAbsoluteDifferenceTolerance() const;
 
-  //! Reutrn the adjoint bremsstrahlung distance tolerance
+  //! Return the adjoint bremsstrahlung distance tolerance
   double getAdjointBremsstrahlungDistanceTolerance() const;
 
   //! Return the adjoint electroionization cross section evaluation tolerance
@@ -163,10 +163,10 @@ public:
   //! Return the adjoint electroionization grid convergence tolerance
   double getAdjointElectroionizationGridConvergenceTolerance() const;
 
-  //! Reutrn the adjoint electroionization absolute difference tolerance
+  //! Return the adjoint electroionization absolute difference tolerance
   double getAdjointElectroionizationAbsoluteDifferenceTolerance() const;
 
-  //! Reutrn the adjoint electroionization distance tolerance
+  //! Return the adjoint electroionization distance tolerance
   double getAdjointElectroionizationDistanceTolerance() const;
 
 //---------------------------------------------------------------------------//
@@ -738,13 +738,13 @@ protected:
   void setWallerHartreeTotalCrossSection(
                               const std::vector<double>& total_cross_section );
 
-  //! Set the (forward) impulse apprx. total cross section
+  //! Set the (forward) impulse approx. total cross section
   void setImpulseApproxTotalCrossSection(
                               const std::vector<double>& total_cross_section );
 
   //! Set the adjoint pair production energy distribution grid
   void setAdjointPairProductionEnergyDistributionGrid(
-          const std::vector<double>& ajoint_pair_production_energy_dist_grid );
+          const std::vector<double>& adjoint_pair_production_energy_dist_grid );
 
   //! Set the adjoint pair production energy distribution
   void setAdjointPairProductionEnergyDistribution(
@@ -762,7 +762,7 @@ protected:
 
   //! Set the adjoint triplet production energy distribution grid
   void setAdjointTripletProductionEnergyDistributionGrid(
-          const std::vector<double>& ajoint_triplet_production_energy_dist_grid );
+          const std::vector<double>& adjoint_triplet_production_energy_dist_grid );
 
   //! Set the adjoint triplet production energy distribution
   void setAdjointTripletProductionEnergyDistribution(
@@ -1075,7 +1075,7 @@ private:
   double d_adjoint_incoherent_grid_absolute_diff_tol;
 
   // The adjoint incoherent grid distance tol
-  double d_adjoint_incoherent_grid_distance_tol;  
+  double d_adjoint_incoherent_grid_distance_tol;
 
 //---------------------------------------------------------------------------//
 // ELECTRON TABLE DATA
@@ -1216,7 +1216,7 @@ private:
   std::vector<std::vector<double> >
   d_adjoint_waller_hatree_total_cross_section;
 
-  // The adjoint impulse approx. total max energ grid (MeV)
+  // The adjoint impulse approx. total max energy grid (MeV)
   std::vector<std::vector<double> >
   d_adjoint_impulse_approx_total_max_energy_grid;
 

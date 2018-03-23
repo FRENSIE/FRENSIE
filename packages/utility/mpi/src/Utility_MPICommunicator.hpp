@@ -18,7 +18,7 @@ namespace Utility{
 /*! The mpi communicator class
  *
  * This type of communicator cannot be constructed directly. Use the
- * Utility::Communicator::getDefault() method. If MPI has been 
+ * Utility::Communicator::getDefault() method. If MPI has been
  * configured for use and has been initialized successfully, the MPI world
  * communicator will be returned.
  * \ingroup mpi
@@ -27,7 +27,7 @@ class MPICommunicator : public Communicator
 {
 
 public:
-  
+
   //! Destructor
   ~MPICommunicator()
   { /* ... */ }
@@ -55,7 +55,7 @@ public:
 
   //! Check if this communicator is identical to another
   bool isIdentical( const Communicator& comm ) const override;
-  
+
   /*! \brief Split the communicator into multiple, disjoint communicators each
    * of which is based on a particular color
    */
@@ -95,7 +95,7 @@ public:
   //! Determine if a message is available to be received
   template<typename T>
   Communicator::Status iprobe( int source, int tag ) const;
-  
+
   /*! \brief Gather the array of values stored at every process into vectors of
    * values from each process.
    */
@@ -181,7 +181,7 @@ public:
                  int number_of_output_values,
                  int root_process ) const;
 
-  //! Combine the values stored by each process intoa single value at the root
+  //! Combine the values stored by each process into a single value at the root
   template<typename T, typename ReduceOperation>
   void reduce( const T* input_values,
                int number_of_input_values,
@@ -212,7 +212,7 @@ private:
   boost::mpi::communicator d_comm;
 #endif // end HAVE_FRENSIE_MPI
 };
-  
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_PropertyTreeConverter.hpp
-//! \author Alex Robison
+//! \author Alex Robinson
 //! \brief  The property tree converter class
 //!
 //---------------------------------------------------------------------------//
@@ -75,7 +75,7 @@ inline void PropertyTreeConverter<T>::convert(
 {
   return std::unique_ptr<T>( this->convertImpl( ptree, unused_children ) );
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_PROPERTY_TREE_CONVERBER_HPP

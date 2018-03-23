@@ -965,7 +965,7 @@ private:
   std::map<unsigned,std::vector<double> >
   d_impulse_approx_subshell_incoherent_cross_sections;
 
-  // The impulse approx. subshell incoherent photon cross section thes. indices
+  // The impulse approx. subshell incoherent photon cross section thresh. indices
   std::map<unsigned,unsigned>
   d_impulse_approx_subshell_incoherent_cross_section_threshold_indices;
 

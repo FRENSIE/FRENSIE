@@ -28,7 +28,7 @@
 
 namespace Utility{
 
-//! The view class 
+//! The view class
 template<typename Iterator>
 class View
 {
@@ -71,7 +71,7 @@ public:
 
   //! Copy constructor
   View( const View<Iterator>& other_view );
-  
+
   //! Const view copy constructor
   template<typename OtherIterator>
   View( const View<OtherIterator>& other_view );
@@ -225,7 +225,7 @@ struct ToStringTraits<Utility::View<std::string::const_iterator> >
   }
 };
 
-/*! \brief Partial specialization of ToStringTraits for 
+/*! \brief Partial specialization of ToStringTraits for
  * Utility::View<std::string::iterator>
  * \ingroup view
  * \ingroup to_string_traits
@@ -245,12 +245,12 @@ std::ostream& operator<<( std::ostream& os, const Utility::View<T>& view )
 
 /*! Partial specialization of ComparisonTraits for Utility::View
  * \ingroup view
- * \ingropu comparison_traits
+ * \ingroup comparison_traits
  */
 template<typename T>
 struct ComparisonTraits<Utility::View<T> > : public Details::ComparisonTraitsSequenceContainerHelper<Utility::View<T> >
 { /* ... */ };
-  
+
 } // end Utility namespace
 
 namespace std{
@@ -286,7 +286,7 @@ inline void swap( Utility::View<T>& lhs, Utility::View<T>& rhs )
 template<typename T>
 inline void swap( Utility::View<const T>& lhs, Utility::View<const T>& rhs )
 { lhs.swap( rhs ); }
-  
+
 } // end std namespace
 
 //---------------------------------------------------------------------------//

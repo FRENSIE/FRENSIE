@@ -35,7 +35,7 @@ namespace Details{
 
 // 9 = tab (\t), 10 = new line (\n), 32 = white space
 extern const std::string white_space_delims;
-  
+
 } // end Details namespace
 
 /*! Partial specialization for reference type
@@ -53,7 +53,7 @@ struct FromStringTraits<std::string>
 {
   //! The type that a string will be converted to
   typedef std::string ReturnType;
-  
+
   //! Return the string
   static inline ReturnType fromString( const std::string& obj_rep )
   { return obj_rep; }
@@ -134,7 +134,7 @@ protected:
     obj = fromStringFunc( obj_rep );
   }
 };
-  
+
 } // end Details namespace
 
 /*! Specialization of FromStringTraits for Utility::LogRecordType
@@ -142,7 +142,7 @@ protected:
  * This specialization is not specified with the LogRecordType enum because
  * many of the other FromStringTraits specializations indirectly depend on the
  * enum (e.g. through the exception test macros). Declaring this specialization
- * here prevents any circular dependecies.
+ * here prevents any circular dependencies.
  * \ingroup from_string_traits
  */
 template<>
@@ -183,7 +183,7 @@ protected:
                         Utility::StringConversionException,
                         "Cannot convert an empty string to an integral "
                         "type!" );
-    
+
     // Check for unsupported characters
     TEST_FOR_EXCEPTION( trimmed_obj_rep.find_first_not_of( valid_chars ) <
                         trimmed_obj_rep.size(),
@@ -194,9 +194,9 @@ protected:
                         "\")!" );
 
     std::istringstream iss( trimmed_obj_rep );
-      
+
     ReturnType obj;
-    
+
     iss >> obj;
 
     // An error has occurred
@@ -233,12 +233,12 @@ protected:
     {
       std::string unused_characters;
       iss >> unused_characters;
-      
+
       THROW_EXCEPTION( Utility::StringConversionException,
                        "Unused characters (\"" << unused_characters << "\") "
                        "in string after conversion to integral type!" );
     }
-    
+
     return obj;
   }
 
@@ -247,13 +247,13 @@ protected:
                                      T& obj,
                                      const std::string& valid_chars,
                                      const std::string& delim )
-  { 
+  {
     if( delim.size() > 0 )
     {
       std::string obj_rep;
-      
+
       Utility::fromStream( is, obj_rep, delim );
-      
+
       obj = FromStringTraitsIntegralTypeHelper<T>::fromStringImpl( obj_rep, valid_chars );
     }
     // Use white space characters as the delimators
@@ -268,7 +268,7 @@ protected:
       obj = FromStringTraitsIntegralTypeHelper<T>::fromStringImpl( obj_rep, valid_chars );
     }
   }
-  
+
 private:
 
   template<typename U>
@@ -285,7 +285,7 @@ struct FromStringTraitsSingleByteIntegralTypeHelper
   typedef typename FromStringTraitsIntegralTypeHelper<T>::ReturnType ReturnType;
 
 protected:
-    
+
   //! Attempt to extract the type from the string
   static inline ReturnType fromStringImpl( const std::string& obj_rep,
                                            const std::string& valid_chars )
@@ -301,7 +301,7 @@ protected:
     // Single element string
     else if( obj_rep.size() == 1 )
       return static_cast<ReturnType>( obj_rep.front() );
-    // Special case: multiple element string 
+    // Special case: multiple element string
     else
     {
       std::string trimmed_string = boost::algorithm::trim_copy( obj_rep );
@@ -316,9 +316,9 @@ protected:
       else
       {
         typename boost::promote<ReturnType>::type tmp_value;
-        
+
         try{
-          tmp_value = 
+          tmp_value =
             FromStringTraitsIntegralTypeHelper<typename boost::promote<ReturnType>::type>::fromStringImpl( trimmed_string, valid_chars );
         }
         EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
@@ -332,7 +332,7 @@ protected:
                             "\" > max==\""
                             << std::numeric_limits<ReturnType>::max() <<
                             "\")!" );
-        
+
         TEST_FOR_EXCEPTION( tmp_value < std::numeric_limits<T>::min(),
                             Utility::StringConversionException,
                             "Unable to convert the string to an integral type "
@@ -355,7 +355,7 @@ protected:
     if( delims.size() > 0 )
     {
       std::string tmp_string;
-      
+
       FromStringTraits<std::string>::fromStream( is, tmp_string, delims );
 
       obj = FromStringTraitsSingleByteIntegralTypeHelper<T>::fromStringImpl( tmp_string, valid_chars );
@@ -383,7 +383,7 @@ struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value && 
 {
   //! The type that a string will be converted to
   typedef typename Details::FromStringTraitsSingleByteIntegralTypeHelper<T>::ReturnType ReturnType;
-  
+
   //! Convert the string to an object of type T
   static inline ReturnType fromString( const std::string& obj_rep )
   { return Details::FromStringTraitsSingleByteIntegralTypeHelper<T>::fromStringImpl( obj_rep, "-0123456789" ); }
@@ -406,7 +406,7 @@ struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value && 
 {
   //! The type that a string will be converted to
   typedef typename Details::FromStringTraitsSingleByteIntegralTypeHelper<T>::ReturnType ReturnType;
-  
+
   //! Convert the string to an object of type T
   static inline ReturnType fromString( const std::string& obj_rep )
   { return Details::FromStringTraitsSingleByteIntegralTypeHelper<T>::fromStringImpl( obj_rep, "0123456789" ); }
@@ -416,11 +416,11 @@ struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value && 
                                  T& obj,
                                  const std::string& delim = std::string() )
   { Details::FromStringTraitsSingleByteIntegralTypeHelper<T>::fromStreamImpl( is, obj, "0123456789", delim ); }
-}; 
+};
 
 /*! Specialization of FromStringTraits for bool
  *
- * The following special keywords are allowed in strings when converting to 
+ * The following special keywords are allowed in strings when converting to
  * bool: true and false. The special keywords are case insensitive.
  * \ingroup from_string_traits
  */
@@ -429,7 +429,7 @@ struct FromStringTraits<bool>
 {
   //! The type that a string will be converted to
   typedef bool ReturnType;
-  
+
   //! Convert the string to a boolean
   static inline ReturnType fromString( const std::string& obj_rep )
   {
@@ -481,7 +481,7 @@ struct FromStringTraits<bool>
 /*! Specialization of FromStringTraits for floating point types
  *
  * The following special keywords are allowed in strings when converting to
- * floating point types: pi, inf*, -inf*. These keywords are case insenstive.
+ * floating point types: pi, inf*, -inf*. These keywords are case insensitive.
  * A valid string with the 'pi' keyword must have one of the following formats:
  * 'n*pi/d', '-pi' or '-pi/d', where n and d are integers and/or floating point
  * values. The wildcard character after the inf keywords indicates that any
@@ -526,7 +526,7 @@ struct FromStringTraits<T,typename std::enable_if<std::is_floating_point<T>::val
                                   Utility::StringConversionException,
                                   "Unable to replace the pi keywords!" );
     }
-    
+
     // Check for unsupported characters
     TEST_FOR_EXCEPTION( trimmed_obj_rep.find_first_not_of( "+-0123456789e." ) <
                         trimmed_obj_rep.size(),
@@ -537,9 +537,9 @@ struct FromStringTraits<T,typename std::enable_if<std::is_floating_point<T>::val
                         "\") are present!" );
 
     std::istringstream iss( trimmed_obj_rep );
-    
+
     ReturnType obj;
-    
+
     iss >> obj;
 
     // An error has occurred
@@ -555,12 +555,12 @@ struct FromStringTraits<T,typename std::enable_if<std::is_floating_point<T>::val
     {
       std::string unused_characters;
       iss >> unused_characters;
-      
+
       THROW_EXCEPTION( Utility::StringConversionException,
                        "Unused characters (\"" << unused_characters << "\") "
                        "in string after conversion to floating point type!" );
     }
-    
+
     return obj;
   }
 
@@ -572,9 +572,9 @@ struct FromStringTraits<T,typename std::enable_if<std::is_floating_point<T>::val
     if( delim.size() > 0 )
     {
       std::string obj_rep;
-      
+
       Utility::fromStream( is, obj_rep, delim );
-      
+
       obj = FromStringTraits<T>::fromString( obj_rep );
     }
     // Use white space characters as the deliminators
@@ -600,7 +600,7 @@ struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value && 
 {
   //! The type that a string will be converted to
   typedef typename Details::FromStringTraitsIntegralTypeHelper<T>::ReturnType ReturnType;
-  
+
   //! Convert the string to an object of type T
   static inline ReturnType fromString( const std::string& obj_rep )
   { return Details::FromStringTraitsIntegralTypeHelper<T>::fromStringImpl( obj_rep, "-0123456789" ); }
@@ -612,7 +612,7 @@ struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value && 
   { Details::FromStringTraitsIntegralTypeHelper<T>::fromStreamImpl( is, obj, "-0123456789", delim ); }
 };
 
-/*! \brief Partial specialization of FromStringTraits for unsigned integral 
+/*! \brief Partial specialization of FromStringTraits for unsigned integral
  * types (except for single byte unsigned integral types).
  * \ingroup from_string_traits
  */
@@ -621,7 +621,7 @@ struct FromStringTraits<T,typename std::enable_if<std::is_integral<T>::value && 
 {
   //! The type that a string will be converted to
   typedef typename Details::FromStringTraitsIntegralTypeHelper<T>::ReturnType ReturnType;
-  
+
   //! Convert the string to an object of type T
   static inline ReturnType fromString( const std::string& obj_rep )
   { return Details::FromStringTraitsIntegralTypeHelper<T>::fromStringImpl( obj_rep, "0123456789" ); }
@@ -645,7 +645,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
 {
   //! The type that a string will be converted to
   typedef ReturnContainerType ReturnType;
-  
+
   //! Convert the string to the required container type
   template<typename ElementInsertionMemberFunction>
   static inline ReturnType fromStringImpl( const std::string& obj_rep,
@@ -667,7 +667,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
                                      ElementInsertionMemberFunction insert_element )
   {
     obj.clear();
-    
+
     try{
       // Initialize the input stream
       Utility::initializeInputStream( is, container_start_char );
@@ -692,13 +692,13 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper
         EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                                  "Element " << element_index << " was not "
                                  "successfully extracted from the stream!" );
-        
+
         // Check if the stream is still valid
         TEST_FOR_EXCEPTION( is.eof(),
                             Utility::StringConversionException,
                             "Unable to get element " << element_index <<
                             " (EOF reached unexpectedly)!" );
-        
+
         TEST_FOR_EXCEPTION( !is,
                             Utility::StringConversionException,
                             "Unable to get element " << element_index <<
@@ -731,12 +731,12 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
 {
   //! The type that a string will be converted to
   typedef ReturnContainerType ReturnType;
-  
+
   //! Convert the string to the required container type
   template<typename ElementInsertionMemberFunction>
   static inline ReturnType fromStringImpl( const std::string& obj_rep,
                                            ElementInsertionMemberFunction insert_element )
-  {    
+  {
     ReturnType container;
 
     std::istringstream iss( obj_rep );
@@ -753,17 +753,17 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
                                      ElementInsertionMemberFunction insert_element )
   {
     obj.clear();
-    
+
     // Extract the entire string
     std::string obj_rep;
-    
+
     try{
       Utility::fromStream( is, obj_rep, container_element_delims );
     }
     EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                              "Could not extract the object string from the "
                              "stream!" );
-    
+
     // Expand repeat keywords
     try{
       Utility::expandRepeatKeywords<ContainerValueType>( obj_rep );
@@ -771,7 +771,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::StringConversionException,
                                 "Unable to expand the repeat keywords!" );
-    
+
     // Expand interval keywords
     try{
       Utility::expandIntervalKeywords<ContainerValueType>( obj_rep );
@@ -779,11 +779,11 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::StringConversionException,
                                 "Unable to expand the interval keywords!" );
-    
+
     // Create a new stream from the extracted and potentially modified
     // object representation
     std::istringstream iss( obj_rep );
-    
+
     try{
       // Initialize the input stream
       Utility::initializeInputStream( iss, container_start_char );
@@ -791,24 +791,24 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
     EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
                                 Utility::StringConversionException,
                                 "Could not initialize the stream!" );
-    
+
     if( Utility::doesInputStreamContainAnotherElement( iss, container_end_char, true ) )
     {
       // Extract each element of the container
       bool done = false;
       size_t element_index = 0;
-      
+
       while( !done )
       {
         ContainerValueType element;
-        
+
         try{
           Utility::fromStream( iss, element, container_element_delims );
         }
         EXCEPTION_CATCH_RETHROW( Utility::StringConversionException,
                                  "Element " << element_index << " was not "
                                  "successfully extracted from the stream!" );
-        
+
         // Check if the stream is still valid
         TEST_FOR_EXCEPTION( iss.eof(),
                             Utility::StringConversionException,
@@ -823,7 +823,7 @@ struct FromStringTraitsSTLCompliantContainerBaseHelper<STLCompliantContainer,Con
         // The element has been successfully extracted
         (obj.*insert_element)( element );
         ++element_index;
-        
+
         // Position the stream at the start of the next element (or end)
         try{
           done = Utility::moveInputStreamToNextElement( iss, next_container_element_char, container_end_char );
@@ -919,7 +919,7 @@ inline void fromStream( std::istream& is, T& obj, const std::string& delims )
 
 namespace Details{
 
-// Replace occurances of interval keyword within a substring
+// Replace occurrences of interval keyword within a substring
 template<typename T>
 inline void expandIntervalKeywordInSubstring( const std::string& left_element,
                                               std::string& middle_element,
@@ -1028,7 +1028,7 @@ inline void expandIntervalKeywordInSubstring( const std::string& left_element,
       }
     }
     // Log increments
-    else 
+    else
     {
       TEST_FOR_EXCEPTION( left_value <= 0,
 			  std::runtime_error,
@@ -1171,13 +1171,13 @@ void expandRepeatKeywords( std::string& obj_rep )
     // We want the 'r' to be case insensitive
     boost::algorithm::to_lower( array_elements[i] );
 
-    std::string::size_type op_pos = 
+    std::string::size_type op_pos =
       array_elements[i].find_first_of( 'r' );
 
     if( op_pos < array_elements[i].size() )
     {
       T repeated_value;
-      
+
       try{
         repeated_value =
           Utility::fromString<T>( array_elements[i].substr( 0, op_pos ) );
@@ -1194,7 +1194,7 @@ void expandRepeatKeywords( std::string& obj_rep )
         std::string number_of_repeats_string =
           array_elements[i].substr( op_pos+1,
                                     array_elements[i].size() - op_pos - 1 );
-        
+
         number_of_repeats =
           Utility::fromString<size_t>( number_of_repeats_string );
       }
@@ -1210,7 +1210,7 @@ void expandRepeatKeywords( std::string& obj_rep )
                           "operator!" );
 
       std::string repeated_value_string = Utility::toString( repeated_value );
- 
+
       // Replace the element string with the expansion
       if( i > 0 )
       {
@@ -1219,12 +1219,12 @@ void expandRepeatKeywords( std::string& obj_rep )
       }
       else
         array_elements[i] = repeated_value_string;
-      
+
       for( size_t j = 1; j < number_of_repeats; ++j )
       {
         array_elements[i] += next_container_element_char;
         array_elements[i] += " ";
-        
+
 	array_elements[i] += repeated_value_string;
       }
     }
@@ -1243,7 +1243,7 @@ void expandRepeatKeywords( std::string& obj_rep )
   obj_rep += container_end_char;
 }
 
-/*! \brief Partial specialization of FromStringTraits for 
+/*! \brief Partial specialization of FromStringTraits for
  * std::complex types.
  * \ingroup from_string_traits
  */
@@ -1278,7 +1278,7 @@ struct FromStringTraits<std::complex<T> >
     std::vector<T> components;
 
     Details::FromStringTraitsSTLCompliantContainerPushBackHelper<std::vector<T> >::fromStream( is, components, delim );
-    
+
     // There must only be two and only two components
     TEST_FOR_EXCEPTION( components.size() != 2,
                         Utility::StringConversionException,
@@ -1291,21 +1291,21 @@ struct FromStringTraits<std::complex<T> >
   }
 };
 
-/*! \brief Partial specialization of FromStringTraits for 
+/*! \brief Partial specialization of FromStringTraits for
  * boost::unit::quantity types.
  * \ingroup from_string_traits
  */
 template<typename Unit, typename T>
 struct FromStringTraits<boost::units::quantity<Unit,T> >
 {
-  
+
 private:
 
   // This type
   typedef FromStringTraits<boost::units::quantity<Unit,T> > ThisType;
 
 public:
-  
+
   //! The type that a string will be converted to
   typedef boost::units::quantity<Unit,T> ReturnType;
 
@@ -1315,7 +1315,7 @@ public:
     std::string trimmed_obj_rep = boost::algorithm::trim_copy( obj_rep );
 
     size_t container_end_loc = trimmed_obj_rep.find_first_of( Utility::container_end_char );
-    
+
     size_t space_loc;
 
     // The type T can be a container (e.g. std::complex) - don't count white
@@ -1335,12 +1335,12 @@ public:
     std::string unit_rep =
       trimmed_obj_rep.substr( space_loc+1,
                               trimmed_obj_rep.size()-space_loc-1 );
-    
+
     // Check that the unit matches
     ThisType::verifyExtractedUnit( unit_rep );
-    
+
     T raw_value;
-    
+
     try{
       raw_value = FromStringTraits<T>::fromString( value_rep );
     }
@@ -1367,16 +1367,16 @@ public:
 
     // Extract the unit
     std::string unit_rep;
-    
+
     if( delim.size() > 0 )
       Utility::fromStream( is, unit_rep, delim );
     else
     {
       // Extract the unit
       std::string unit_rep_element;
-      
+
       size_t num_elements = ThisType::getExpectedNumberOfElementsInUnit();
-  
+
       for( size_t i = 0; i < num_elements; ++i )
       {
         // This loop will take care of consecutive white space characters
@@ -1384,14 +1384,14 @@ public:
           Utility::fromStream( is, unit_rep_element, Details::white_space_delims );
 
         unit_rep += unit_rep_element;
-      
+
         if( i < num_elements - 1 )
           unit_rep += ' ';
 
         unit_rep_element.clear();
       }
     }
-    
+
     // Check that the extracted unit is correct
     ThisType::verifyExtractedUnit( unit_rep );
 
@@ -1405,13 +1405,13 @@ private:
   {
     char stream_char;
     bool done = false;
-      
+
     while( !done )
     {
       stream_char = is.peek();
-      
+
       done = true;
-            
+
       for( size_t i = 0; i < Details::white_space_delims.size(); ++i )
       {
         if( stream_char == Details::white_space_delims[i] )
@@ -1435,7 +1435,7 @@ private:
                         ") do not match the extracted units ("
                         << unit_rep << ")!" );
   }
-  
+
   // Get the number of expected spaces in the quantity string
   static size_t getExpectedNumberOfElementsInUnit()
   {
@@ -1445,14 +1445,14 @@ private:
 
     std::string unit_string =
       Utility::UnitTraits<Unit>::symbol();
-    
+
     std::vector<std::string> unit_string_elements;
     boost::split( unit_string_elements, unit_string, boost::is_any_of( " " ) );
-    
+
     return unit_string_elements.size();
   }
 };
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_FROM_STRING_TRAITS_HPP

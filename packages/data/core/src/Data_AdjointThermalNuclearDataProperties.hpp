@@ -86,7 +86,7 @@ public:
 
   //! Get the nuclear data file major version
   virtual unsigned fileMajorVersion() const;
-  
+
   //! Get the nuclear data file version
   virtual unsigned fileVersion() const = 0;
 
@@ -113,12 +113,12 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Data namespace
 
 namespace Utility{
 
-/*! \brief Specialization of Utility::ToStringTraits for 
+/*! \brief Specialization of Utility::ToStringTraits for
  * Data::AdjointThermalNuclearDataProperties::FileType
  * \ingroup to_string_traits
  */
@@ -131,12 +131,12 @@ struct ToStringTraits<Data::AdjointThermalNuclearDataProperties::FileType>
   //! Place the Data::AdjointThermalNuclearDataProperties::FileType in a stream
   static void toStream( std::ostream& os, const Data::AdjointThermalNuclearDataProperties::FileType type );
 };
-  
+
 } // end Utility namespace
 
 namespace std{
 
-//! Stream operator for printing Datea::AdjointThermalNuclearDataProperties::FileType enums
+//! Stream operator for printing Data::AdjointThermalNuclearDataProperties::FileType enums
 inline std::ostream& operator<<( std::ostream& os,
                                  const Data::AdjointThermalNuclearDataProperties::FileType type )
 {
@@ -144,7 +144,7 @@ inline std::ostream& operator<<( std::ostream& os,
 
   return os;
 }
-  
+
 } // end std namespace
 
 namespace boost{
@@ -177,9 +177,9 @@ void serialize( Archive& archive,
     }
   }
 }
-  
+
 } // end serialization namespace
-  
+
 } // end boost namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AdjointThermalNuclearDataProperties, Data );

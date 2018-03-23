@@ -33,7 +33,7 @@ struct ParticleModeTypeTraits<NEUTRON_MODE>
   { return (type == NEUTRON ? true : false); }
 };
 
-/*! Specialization of ParticleModeTypeTrais for PHOTON_MODE
+/*! Specialization of ParticleModeTypeTraits for PHOTON_MODE
  * \ingroup particle_mode_type_traits
  */
 template<>
@@ -103,7 +103,7 @@ struct ParticleModeTypeTraits<NEUTRON_PHOTON_ELECTRON_MODE>
   { return (type == NEUTRON || type == PHOTON || type == ELECTRON ? true : false); }
 };
 
-/*! Specialization of ParticleModeTypeTrais for ADJOINT_PHOTON_MODE
+/*! Specialization of ParticleModeTypeTraits for ADJOINT_PHOTON_MODE
  * \ingroup particle_mode_type_traits
  */
 template<>
@@ -130,7 +130,7 @@ struct ParticleModeTypeTraits<ADJOINT_ELECTRON_MODE>
   static inline bool isParticleTypeCompatible( const ParticleType type )
   { return (type == ADJOINT_ELECTRON ? true : false); }
 };
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PARTICLE_MODE_TYPE_TRAITS_HPP

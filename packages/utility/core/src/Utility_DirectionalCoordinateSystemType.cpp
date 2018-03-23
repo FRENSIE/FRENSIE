@@ -13,7 +13,7 @@
 
 namespace Utility{
 
-// Stream operator for printing dirctional coordinate system type enums
+// Stream operator for printing directional coordinate system type enums
 std::ostream& operator<<( std::ostream& os,
                           const DirectionalCoordinateSystemType coord_system )
 {

@@ -27,7 +27,7 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isTa
 // Test if the distribution is compatible with the interpolation type
 /*! \details Some higher-level classes use the output of the UnivariateDistribution
  * methods to do interpolations. This method can be used to check that the
- * requested interpolation policy can be safetly used with the distribution's
+ * requested interpolation policy can be safely used with the distribution's
  * output.
  */
 template<typename IndependentUnit, typename DependentUnit>
@@ -49,7 +49,7 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isCo
 }
 
 // Test if interpolation can ever be used
-/*! \details This can be used as an override if intepolation should never
+/*! \details This can be used as an override if interpolation should never
  * be used with a particular distribution (e.g. Utility::DeltaDistribution).
  * In general, only continuous distributions should be used with an
  * interpolation scheme.
@@ -73,7 +73,7 @@ inline bool UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit>::isIn
 {
   return true;
 }
-  
+
 // Test if the independent variable is compatible with Log processing
 /*! \details It may be necessary to override this default behavior
  * (e.g. Utility::TabularDistribution).

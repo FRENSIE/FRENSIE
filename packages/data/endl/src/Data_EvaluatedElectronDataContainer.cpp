@@ -368,7 +368,7 @@ ENDLDataContainer::getBremsstrahlungAverageElectronEnergy() const
 }
 
 //---------------------------------------------------------------------------//
-// GET ATOMIC EXCITAION DATA
+// GET ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
 
 // Return the atomic excitation electron energy grid
@@ -841,7 +841,7 @@ void ENDLDataContainer::setBremsstrahlungAverageElectronEnergy(
 }
 
 //---------------------------------------------------------------------------//
-// SET ATOMIC EXCITAION DATA
+// SET ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
 
 // Set the atomic excitation electron energy grid

@@ -175,7 +175,7 @@ public:
   using ENDLDataContainer::setBremsstrahlungAverageElectronIncidentEnergy;
   using ENDLDataContainer::setBremsstrahlungAverageElectronEnergy;
 //---------------------------------------------------------------------------//
-// SET ATOMIC EXCITAION DATA
+// SET ATOMIC EXCITATION DATA
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setAtomicExcitationEnergyGrid;
   using ENDLDataContainer::setAtomicExcitationCrossSection;

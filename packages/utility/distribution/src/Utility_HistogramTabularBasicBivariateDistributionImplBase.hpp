@@ -23,7 +23,7 @@ class UnitAwareHistogramTabularBasicBivariateDistributionImplBase : public Distr
 
   // Typedef for this type
   typedef UnitAwareHistogramTabularBasicBivariateDistributionImplBase<Distribution> ThisType;
-  
+
 protected:
 
   //! The parent distribution type
@@ -35,7 +35,7 @@ protected:
   //! Typedef for QuantityTraits<PrimaryIndepQuantity>
   typedef typename BaseType::PIQT PIQT;
 
-  //! Typddef for QuantityTraits<SecondaryIndepQuantity>
+  //! Typedef for QuantityTraits<SecondaryIndepQuantity>
   typedef typename BaseType::SIQT SIQT;
 
   //! Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
@@ -145,7 +145,7 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS1( UnitAwareHistogramTabularBasicBivariateDistributionImplBase, Utility );

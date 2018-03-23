@@ -25,13 +25,13 @@ enum DirectionalCoordinateSystemType
   SPHERICAL_DIRECTIONAL_COORDINATE_SYSTEM
 };
 
-//! Stream operator for printing dirctional coordinate system type enums
+//! Stream operator for printing directional coordinate system type enums
 std::ostream& operator<<( std::ostream& os,
                           const DirectionalCoordinateSystemType coord_system );
 
 } // end Utility namespace
 
-#endif // end UTILITY_DIRCTIONAL_COORDINATE_SYSTEM_TYPE_HPP
+#endif // end UTILITY_DIRECTIONAL_COORDINATE_SYSTEM_TYPE_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_DirectionalCoordinateSystemType.hpp
