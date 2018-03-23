@@ -16,121 +16,6 @@
 
 namespace MonteCarlo{
 
-// Convert a PositronatomicReactionType enum to a string
-std::string convertPositronatomicReactionEnumToString(
-                       const PositronatomicReactionType reaction )
-{
-  switch( reaction )
-  {
-  case TOTAL_POSITRONATOMIC_REACTION:
-    return "Total Positron-atomic Reaction";
-  case TOTAL_ABSORPTION_POSITRONATOMIC_REACTION:
-    return "Total Absorption Positron-atomic Reaction";
-  case COUPLED_ELASTIC_POSITRONATOMIC_REACTION:
-    return "Coupled Elastic Positron-atomic Reaction";
-  case HYBRID_ELASTIC_POSITRONATOMIC_REACTION:
-    return "Hybrid Elastic Positron-atomic Reaction";
-  case DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION:
-    return "Decoupled Elastic Positron-atomic Reaction";
-  case CUTOFF_ELASTIC_POSITRONATOMIC_REACTION:
-    return "Cutoff Elastic Positron-atomic Reaction";
-  case SCREENED_RUTHERFORD_ELASTIC_POSITRONATOMIC_REACTION:
-    return "Screened Rutherford Elastic Positron-atomic Reaction";
-  case MOMENT_PRESERVING_ELASTIC_POSITRONATOMIC_REACTION:
-    return "Moment Preserving Elastic Positron-atomic Reaction";
-  case BREMSSTRAHLUNG_POSITRONATOMIC_REACTION:
-    return "Bremsstrahlung Positron-atomic Reaction";
-  case POSITRON_ANNIHILATION_POSITRONATOMIC_REACTION:
-    return "Positron Annihilation Positron-atomic Reaction";
-  case ATOMIC_EXCITATION_POSITRONATOMIC_REACTION:
-    return "Atomic Excitation Positron-atomic Reaction";
-  case TOTAL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "Total Positron-ionization Positron-atomic Reaction";
-  case K_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "K Subshell Positron-ionization Positron-atomic Reaction";
-  case L1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "L1 Subshell Positron-ionization Positron-atomic Reaction";
-  case L2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "L2 Subshell Positron-ionization Positron-atomic Reaction";
-  case L3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "L3 Subshell Positron-ionization Positron-atomic Reaction";
-  case M1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "M1 Subshell Positron-ionization Positron-atomic Reaction";
-  case M2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "M2 Subshell Positron-ionization Positron-atomic Reaction";
-  case M3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "M3 Subshell Positron-ionization Positron-atomic Reaction";
-  case M4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "M4 Subshell Positron-ionization Positron-atomic Reaction";
-  case M5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "M5 Subshell Positron-ionization Positron-atomic Reaction";
-  case N1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "N1 Subshell Positron-ionization Positron-atomic Reaction";
-  case N2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "N2 Subshell Positron-ionization Positron-atomic Reaction";
-  case N3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "N3 Subshell Positron-ionization Positron-atomic Reaction";
-  case N4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "N4 Subshell Positron-ionization Positron-atomic Reaction";
-  case N5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "N5 Subshell Positron-ionization Positron-atomic Reaction";
-  case N6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "N6 Subshell Positron-ionization Positron-atomic Reaction";
-  case N7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "N7 Subshell Positron-ionization Positron-atomic Reaction";
-  case O1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O1 Subshell Positron-ionization Positron-atomic Reaction";
-  case O2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O2 Subshell Positron-ionization Positron-atomic Reaction";
-  case O3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O3 Subshell Positron-ionization Positron-atomic Reaction";
-  case O4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O4 Subshell Positron-ionization Positron-atomic Reaction";
-  case O5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O5 Subshell Positron-ionization Positron-atomic Reaction";
-  case O6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O6 Subshell Positron-ionization Positron-atomic Reaction";
-  case O7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O7 Subshell Positron-ionization Positron-atomic Reaction";
-  case O8_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O8 Subshell Positron-ionization Positron-atomic Reaction";
-  case O9_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "O9 Subshell Positron-ionization Positron-atomic Reaction";
-  case P1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P1 Subshell Positron-ionization Positron-atomic Reaction";
-  case P2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P2 Subshell Positron-ionization Positron-atomic Reaction";
-  case P3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P3 Subshell Positron-ionization Positron-atomic Reaction";
-  case P4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P4 Subshell Positron-ionization Positron-atomic Reaction";
-  case P5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P5 Subshell Positron-ionization Positron-atomic Reaction";
-  case P6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P6 Subshell Positron-ionization Positron-atomic Reaction";
-  case P7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P7 Subshell Positron-ionization Positron-atomic Reaction";
-  case P8_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P8 Subshell Positron-ionization Positron-atomic Reaction";
-  case P9_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P9 Subshell Positron-ionization Positron-atomic Reaction";
-  case P10_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P10 Subshell Positron-ionization Positron-atomic Reaction";
-  case P11_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "P11 Subshell Positron-ionization Positron-atomic Reaction";
-  case Q1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "Q1 Subshell Positron-ionization Positron-atomic Reaction";
-  case Q2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "Q2 Subshell Positron-ionization Positron-atomic Reaction";
-  case Q3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
-    return "Q3 Subshell Positron-ionization Positron-atomic Reaction";
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: cannot convert the Positron-atomic reaction type "
-                     "to a string!" );
-  }
-}
-
 // Convert a Data::SubshellType enum to a PositronatomicReactionType enum
 PositronatomicReactionType convertSubshellEnumToPositronionizationPositronatomicReactionEnum(
                                             const Data::SubshellType subshell )
@@ -178,12 +63,136 @@ PositronatomicReactionType convertSubshellEnumToPositronionizationPositronatomic
   case Data::Q3_SUBSHELL: return Q3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-             "Error: the invalid shell does not have a corresponding "
+             "The invalid shell does not have a corresponding "
              "Positron-ionization Positron-atomic reaction!" );
   }
 }
 
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+// Convert a MonteCarlo::PositronatomicReactionType to a string
+std::string ToStringTraits<MonteCarlo::PositronatomicReactionType>::toString( const MonteCarlo::PositronatomicReactionType reaction )
+{
+  switch( reaction )
+  {
+  case MonteCarlo::TOTAL_POSITRONATOMIC_REACTION:
+    return "Total Positron-atomic Reaction";
+  case MonteCarlo::TOTAL_ABSORPTION_POSITRONATOMIC_REACTION:
+    return "Total Absorption Positron-atomic Reaction";
+  case MonteCarlo::COUPLED_ELASTIC_POSITRONATOMIC_REACTION:
+    return "Coupled Elastic Positron-atomic Reaction";
+  case MonteCarlo::HYBRID_ELASTIC_POSITRONATOMIC_REACTION:
+    return "Hybrid Elastic Positron-atomic Reaction";
+  case MonteCarlo::DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION:
+    return "Decoupled Elastic Positron-atomic Reaction";
+  case MonteCarlo::CUTOFF_ELASTIC_POSITRONATOMIC_REACTION:
+    return "Cutoff Elastic Positron-atomic Reaction";
+  case MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_POSITRONATOMIC_REACTION:
+    return "Screened Rutherford Elastic Positron-atomic Reaction";
+  case MonteCarlo::MOMENT_PRESERVING_ELASTIC_POSITRONATOMIC_REACTION:
+    return "Moment Preserving Elastic Positron-atomic Reaction";
+  case MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION:
+    return "Bremsstrahlung Positron-atomic Reaction";
+  case MonteCarlo::POSITRON_ANNIHILATION_POSITRONATOMIC_REACTION:
+    return "Positron Annihilation Positron-atomic Reaction";
+  case MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION:
+    return "Atomic Excitation Positron-atomic Reaction";
+  case MonteCarlo::TOTAL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "Total Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::K_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "K Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::L1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "L1 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::L2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "L2 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::L3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "L3 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::M1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "M1 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::M2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "M2 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::M3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "M3 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::M4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "M4 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::M5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "M5 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::N1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "N1 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::N2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "N2 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::N3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "N3 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::N4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "N4 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::N5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "N5 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::N6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "N6 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::N7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "N7 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O1 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O2 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O3 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O4 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O5 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O6 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O7 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O8_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O8 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::O9_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "O9 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P1 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P2 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P3 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P4 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P5 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P6 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P7 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P8_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P8 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P9_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P9 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P10_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P10 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::P11_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "P11 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::Q1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "Q1 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::Q2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "Q2 Subshell Positron-ionization Positron-atomic Reaction";
+  case MonteCarlo::Q3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION:
+    return "Q3 Subshell Positron-ionization Positron-atomic Reaction";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "Cannot convert the Positron-atomic reaction type "
+                     "to a string!" );
+  }
+}
+
+// Place the MonteCarlo::PositronatomicReactionType in a stream
+void ToStringTraits<MonteCarlo::PositronatomicReactionType>::toStream( std::ostream& os, const MonteCarlo::PositronatomicReactionType type )
+{
+  os << ToStringTraits<MonteCarlo::PositronatomicReactionType>::toString( type );
+}
+  
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PositronatomicReactionType.cpp

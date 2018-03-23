@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
+#include "Utility_ToStringTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -108,10 +109,6 @@ enum PhotoatomicReactionType{
   HEATING_PHOTOATOMIC_REACTION = 86
 };
 
-//! Convert a PhotoatomicReactionType enum to a string
-std::string convertPhotoatomicReactionEnumToString(
-				      const PhotoatomicReactionType reaction );
-
 //! Convert a Data::SubshellType enum to a Photoelectric PhotoatomicReactionType enum
 PhotoatomicReactionType
 convertSubshellEnumToPhotoelectricPhotoatomicReactionEnum(
@@ -122,15 +119,37 @@ PhotoatomicReactionType
 convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
 						 const Data::SubshellType subshell );
 
+} // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for 
+ * MonteCarlo::PhotoatomicReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::PhotoatomicReactionType>
+{
+  //! Convert a MonteCarlo::PhotoatomicReactionType to a string
+  static std::string toString( const MonteCarlo::PhotoatomicReactionType type );
+
+  //! Place the MonteCarlo::PhotoatomicReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::PhotoatomicReactionType type );
+};
+
+} // end Utility namespace
+
+namespace std{
+
 //! Stream operator for printing PhotoatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
-				 const PhotoatomicReactionType reaction )
+				 const MonteCarlo::PhotoatomicReactionType reaction )
 {
-  os << convertPhotoatomicReactionEnumToString( reaction );
+  os << Utility::toString( reaction );
   return os;
 }
-
-} // end MonteCarlo namespace
+  
+} // end std namespace
 
 #endif // end MONTE_CARLO_PHOTOATOMIC_REACTION_TYPE_HPP
 

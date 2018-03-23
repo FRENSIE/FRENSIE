@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_PARTICLE_TYPE_HPP
 #define MONTE_CARLO_PARTICLE_TYPE_HPP
 
-// HDF5 Includes
-#include <H5Cpp.h>
-
 // FRENSIE Includes
 #include "Geometry_ParticleType.hpp"
 #include "Utility_ToStringTraits.hpp"
