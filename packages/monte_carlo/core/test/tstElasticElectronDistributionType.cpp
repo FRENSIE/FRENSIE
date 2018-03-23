@@ -10,149 +10,180 @@
 #include <iostream>
 #include <sstream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the elastic electron distribution types can be converted to int
-TEUCHOS_UNIT_TEST( ElasticElectronDistributionType, convert_to_int )
+FRENSIE_UNIT_TEST( ElasticElectronDistributionType, convert_to_int )
 {
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::COUPLED_DISTRIBUTION, 1 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::DECOUPLED_DISTRIBUTION, 2 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::HYBRID_DISTRIBUTION, 3 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::CUTOFF_DISTRIBUTION, 4 );
-  TEST_EQUALITY_CONST( (unsigned)MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION, 5 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::COUPLED_DISTRIBUTION, 1 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::DECOUPLED_DISTRIBUTION, 2 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::HYBRID_DISTRIBUTION, 3 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::CUTOFF_DISTRIBUTION, 4 );
+  FRENSIE_CHECK_EQUAL( (unsigned)MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION, 5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an elastic electron distribution type can be converted to a string
-TEUCHOS_UNIT_TEST( ElasticElectronDistributionType,
-                   convertElasticElectronDistributionTypeToString )
+FRENSIE_UNIT_TEST( ElasticElectronDistributionType, toString )
 {
   std::string type_string =
-    MonteCarlo::convertElasticElectronDistributionTypeToString( MonteCarlo::COUPLED_DISTRIBUTION );
+    Utility::toString( MonteCarlo::COUPLED_DISTRIBUTION );
   
-  TEST_EQUALITY_CONST( type_string, "Coupled Distribution" );
+  FRENSIE_CHECK_EQUAL( type_string, "Coupled Distribution" );
 
   type_string =
-    MonteCarlo::convertElasticElectronDistributionTypeToString( MonteCarlo::DECOUPLED_DISTRIBUTION );
+    Utility::toString( MonteCarlo::DECOUPLED_DISTRIBUTION );
 
-  TEST_EQUALITY_CONST( type_string, "Decoupled Distribution" );
-
-  type_string =
-    MonteCarlo::convertElasticElectronDistributionTypeToString( MonteCarlo::HYBRID_DISTRIBUTION );
-
-  TEST_EQUALITY_CONST( type_string, "Hybrid Distribution" );
+  FRENSIE_CHECK_EQUAL( type_string, "Decoupled Distribution" );
 
   type_string =
-    MonteCarlo::convertElasticElectronDistributionTypeToString( MonteCarlo::CUTOFF_DISTRIBUTION );
+    Utility::toString( MonteCarlo::HYBRID_DISTRIBUTION );
 
-  TEST_EQUALITY_CONST( type_string, "Cutoff Distribution" );
+  FRENSIE_CHECK_EQUAL( type_string, "Hybrid Distribution" );
 
   type_string =
-    MonteCarlo::convertElasticElectronDistributionTypeToString( MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION );
+    Utility::toString( MonteCarlo::CUTOFF_DISTRIBUTION );
 
-  TEST_EQUALITY_CONST( type_string, "Screened Rutherford Distribution" );
+  FRENSIE_CHECK_EQUAL( type_string, "Cutoff Distribution" );
+
+  type_string =
+    Utility::toString( MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION );
+
+  FRENSIE_CHECK_EQUAL( type_string, "Screened Rutherford Distribution" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a coupled elastic electron sampling method can be converted to a string
-TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
-                   convertCoupledElasticSamplingMethodToString )
+FRENSIE_UNIT_TEST( CoupledElasticSamplingMethod, toString )
 {
-  std::string type_string =
-    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::ONE_D_UNION );
+  std::string type_string = Utility::toString( MonteCarlo::ONE_D_UNION );
   
-  TEST_EQUALITY_CONST( type_string, "One D Union" );
+  FRENSIE_CHECK_EQUAL( type_string, "One D Union" );
 
-  type_string =
-    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::TWO_D_UNION );
+  type_string = Utility::toString( MonteCarlo::TWO_D_UNION );
 
-  TEST_EQUALITY_CONST( type_string, "Two D Union" );
+  FRENSIE_CHECK_EQUAL( type_string, "Two D Union" );
 
-  type_string =
-    MonteCarlo::convertCoupledElasticSamplingMethodToString( MonteCarlo::SIMPLIFIED_UNION );
+  type_string = Utility::toString( MonteCarlo::SIMPLIFIED_UNION );
 
-  TEST_EQUALITY_CONST( type_string, "Simplified Union" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a coupled elastic electron sampling method can be converted to a string
-TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod,
-                   convertStringToCoupledElasticSamplingMethod )
-{
-  MonteCarlo::CoupledElasticSamplingMethod method =
-    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "One D Union" );
-  
-  TEST_EQUALITY_CONST( method, MonteCarlo::ONE_D_UNION );
-
-  method =
-    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "Two D Union" );
-
-  TEST_EQUALITY_CONST( method, MonteCarlo::TWO_D_UNION );
-
-  method =
-    MonteCarlo::convertStringToCoupledElasticSamplingMethod( "Simplified Union" );
-
-  TEST_EQUALITY_CONST( method, MonteCarlo::SIMPLIFIED_UNION );
+  FRENSIE_CHECK_EQUAL( type_string, "Simplified Union" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an elastic electron distribution type can be sent to a stream
-TEUCHOS_UNIT_TEST( ElasticElectronDistributionType, stream_operator )
+FRENSIE_UNIT_TEST( ElasticElectronDistributionType, stream_operator )
 {
   std::stringstream ss;
 
   ss << MonteCarlo::COUPLED_DISTRIBUTION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Coupled Distribution" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Coupled Distribution" );
 
   ss.str( "" );
   ss << MonteCarlo::DECOUPLED_DISTRIBUTION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Decoupled Distribution" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Decoupled Distribution" );
 
   ss.str( "" );
   ss << MonteCarlo::HYBRID_DISTRIBUTION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Hybrid Distribution" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Hybrid Distribution" );
 
   ss.str( "" );
   ss << MonteCarlo::CUTOFF_DISTRIBUTION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Cutoff Distribution" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Cutoff Distribution" );
 
   ss.str( "" );
   ss << MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Screened Rutherford Distribution" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Screened Rutherford Distribution" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an elastic electron distribution type can be sent to a stream
-TEUCHOS_UNIT_TEST( CoupledElasticSamplingMethod, stream_operator )
+FRENSIE_UNIT_TEST( CoupledElasticSamplingMethod, stream_operator )
 {
   std::stringstream ss;
 
   ss << MonteCarlo::ONE_D_UNION;
 
-  TEST_EQUALITY_CONST( ss.str(), "One D Union" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "One D Union" );
 
   ss.str( "" );
   ss << MonteCarlo::TWO_D_UNION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Two D Union" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Two D Union" );
 
   ss.str( "" );
   ss << MonteCarlo::SIMPLIFIED_UNION;
 
-  TEST_EQUALITY_CONST( ss.str(), "Simplified Union" );
+  FRENSIE_CHECK_EQUAL( ss.str(), "Simplified Union" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an elastic electron distribution type can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticElectronDistributionType,
+                                   archive,
+                                   TestArchives )
+{
+  // FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  // FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  // typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  // typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  // std::string archive_base_name( "test_elastic_electron_dist_type" );
+  // std::ostringstream archive_ostream;
+
+  // {
+  //   std::unique_ptr<OArchive> oarchive;
+
+  //   createOArchive( archive_base_name, archive_ostream, oarchive );
+
+  //   MonteCarlo::ElasticElectronDistributionType type_1 =
+  //     MonteCarlo::COUPLED_DISTRIBUTION;
+
+  //   MonteCarlo::ElasticElectronDistributionType type_2 =
+  //     MonteCarlo::DECOUPLED_DISTRIBUTION;
+
+  //   MonteCarlo::
+  // }
+
+  // // Copy the archive ostream to an istream
+  // std::istringstream archive_istream( archive_ostream.str() );
+
+  // // Load the archived distributions
+  // std::unique_ptr<IArchive> iarchive;
+
+  // createIArchive( archive_istream, iarchive );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a coupled elastic electron sampling method type can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticSamplingMethod,
+                                   archive,
+                                   TestArchives )
+{
+
 }
 
 //---------------------------------------------------------------------------//
