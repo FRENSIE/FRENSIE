@@ -10,7 +10,7 @@
 #define PYFRENSIE_NUMPY_TYPE_TRAITS_HPP
 
 // Trilinos Includes
-#include <numpy_include.hpp>
+#include <numpy_include.h>
 
 // FRENSIE Includes
 #include "PyFrensie_NumPyTypeTraitsDecl.hpp"

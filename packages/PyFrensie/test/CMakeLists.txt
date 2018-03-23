@@ -2,13 +2,13 @@
 ADD_SUBDIRECTORY(test_files)
 
 # Configure the PyTrilinos utilities (used for setting up unit files)
-CONFIGURE_FILE(${PYTRILINOS_UTIL_DIR_PATH}/CMakeCacheVariables.py.in
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CMakeCacheVariables.py.in
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeCacheVariables.py)
 
-CONFIGURE_FILE(${PYTRILINOS_UTIL_DIR_PATH}/MakefileVariables.py.in
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/MakefileVariables.py.in
   ${CMAKE_CURRENT_BINARY_DIR}/MakefileVariables.py)
 
-CONFIGURE_FILE(${PYTRILINOS_UTIL_DIR_PATH}/copyWithCMakeSubstitutions.py.in
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/copyWithCMakeSubstitutions.py.in
   ${CMAKE_CURRENT_BINARY_DIR}/copyWithCMakeSubstitutions.py)
 
 # Include the PyFrensieMakeTest macro

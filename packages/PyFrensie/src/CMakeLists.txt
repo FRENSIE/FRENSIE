@@ -24,7 +24,6 @@ INSTALL(FILES ${HEADERS}
 # Set up the include paths
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${PYTRILINOS_SRC_DIR_PATH})
 
 # Initialize the package and module lists
 SET(PyFrensie_PACKAGES "")
@@ -36,7 +35,7 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
 #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
-SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist ${TEUCHOS_CORE} ${PYTRILINOS})
+SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist)
 
 # # Add the DataGen package
 # SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} DataGen)
