@@ -2,24 +2,17 @@
 //!
 //! \file   PyFrensie_Array.i
 //! \author Alex Robinson
-//! \brief  ArrayRCP output typemaps
+//! \brief  vector output typemaps
 //!
 //---------------------------------------------------------------------------//
 
-// The PyFrensie_Array.i is a SWIG interface file that provides SWIG
-// directives to handle Teuchos::ArrayRCP and std::vector output types. This
-// class is not wrapped, but instead typemaps are defined so that the python
-// user can use NumPy arrays instead. Unfortunately, the Teuchos_Array.i
-// interface file only provides the output typemaps for Teuchos::Array and
-// Teuchos::ArrayView. The typemaps in this file will mimic the typemaps
-// in Teuchos_Array.i
+// The PyFrensie_Array.i is a SWIG interface file that provides SWIG directives
+// to handle std::vector output types. This class is not wrapped, but instead
+// typemaps are defined so that the python user can use NumPy arrays instead.
 
 %{
 // Std Lib Includes
 #include <vector>
-
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
@@ -28,17 +21,8 @@
 // Include the std::vector class
 %include <std_vector.i>
 
-// Include Teuchos::Array and Teuchos::ArrayView support
-#define TEUCHOSCORE_LIB_DLL_EXPORT
-%include <Teuchos_Array.i>
-#undef TEUCHOSCORE_LIB_DLL_EXPORT
-
-// Import the Teuchos::ArrayRCP class
-%import <Teuchos_ArrayRCP.hpp>
-
 // This macro takes a C++ data type (TYPE) and a corresponding NumPy typecode
 // (TYPECODE) and define all of the output typemaps needed to handle
-// Teuchos::ArrayRCP<TYPE> -> numpy.array( ..., dtype=TYPECODE ) and
 // std::vector<TYPE> -> numpy.array( ..., dtype=TYPECODE )
 %define %array_typemaps(TYPE, TYPECODE)
 
@@ -51,38 +35,6 @@
 }
 
 %typemap(out) const std::vector<TYPE>&
-{
-  $result = PyFrensie::convertToPython( $1 );
-  
-  if( !$result )
-    SWIG_fail;
-}
-
-%typemap(out) Teuchos::ArrayRCP<TYPE>
-{
-  $result = PyFrensie::convertToPython( $1 );
-  
-  if( !$result )
-    SWIG_fail;
-}
-
-%typemap(out) const Teuchos::ArrayRCP<TYPE>&
-{
-  $result = PyFrensie::convertToPython( $1 );
-  
-  if( !$result )
-    SWIG_fail;
-}
-
-%typemap(out) Teuchos::ArrayRCP<const TYPE>
-{
-  $result = PyFrensie::convertToPython( $1 );
-  
-  if( !$result )
-    SWIG_fail;
-}
-
-%typemap(out) const Teuchos::ArrayRCP<const TYPE>&
 {
   $result = PyFrensie::convertToPython( $1 );
 

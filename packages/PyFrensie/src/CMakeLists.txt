@@ -34,57 +34,57 @@ SET(PyFrensie_MODULES "")
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Utility)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
 #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
 SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist ${TEUCHOS_CORE} ${PYTRILINOS})
 
-# Add the DataGen package
-SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} DataGen)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.__init__)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ElectronPhoton)
-SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon ${TEUCHOS_CORE} ${PYTRILINOS})
+# # Add the DataGen package
+# SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} DataGen)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.__init__)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ElectronPhoton)
+# SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon ${TEUCHOS_CORE} ${PYTRILINOS})
 
-# Add the Data package
-SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.__init__)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ENDL)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
-SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_endl data_native ${TEUCHOS_CORE} ${PYTRILINOS})
+# # Add the Data package
+# SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.__init__)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ENDL)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
+# SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_endl data_native ${TEUCHOS_CORE} ${PYTRILINOS})
 
-# Add the Geometry package
-SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.__init__)
+# # Add the Geometry package
+# SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.__init__)
 
-SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core geometry_factory ${TEUCHOS_CORE} ${PYTRILINOS})
-SET(PyFrensie_Geometry_PACKAGES "")
+# SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core geometry_factory ${TEUCHOS_CORE} ${PYTRILINOS})
+# SET(PyFrensie_Geometry_PACKAGES "")
 
-# IF(FRENSIE_ENABLE_DAGMC)
-#   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
-#   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
-#   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc)
-# ENDIF()
+# # IF(FRENSIE_ENABLE_DAGMC)
+# #   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
+# #   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
+# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc)
+# # ENDIF()
 
-# IF(FRENSIE_ENABLE_ROOT)
-#   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
-#   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
-#   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root)
-# ENDIF()
+# # IF(FRENSIE_ENABLE_ROOT)
+# #   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
+# #   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
+# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root)
+# # ENDIF()
 
-SET(PyFrensie_Geometry_ALL "__all__ = [")
-FOREACH(PACKAGE ${PyFrensie_Geometry_PACKAGES})
-  SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}'${PACKAGE}',\n          ")
-ENDFOREACH()
-SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}]")
+# SET(PyFrensie_Geometry_ALL "__all__ = [")
+# FOREACH(PACKAGE ${PyFrensie_Geometry_PACKAGES})
+#   SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}'${PACKAGE}',\n          ")
+# ENDFOREACH()
+# SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}]")
 
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
-  ${CMAKE_CURRENT_BINARY_DIR}/Geometry_Config.i)
+# CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
+#   ${CMAKE_CURRENT_BINARY_DIR}/Geometry_Config.i)
 
-# Add the MonteCarlo package
-SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.__init__)
-SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
-SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_native ${TEUCHOS_CORE} ${PYTRILINOS})
+# # Add the MonteCarlo package
+# SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.__init__)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
+# SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_native ${TEUCHOS_CORE} ${PYTRILINOS})
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)
@@ -125,7 +125,7 @@ FOREACH(MODULE ${PyFrensie_MODULES})
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Utility/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Utility)
 
-  # The DataGen package must be compiled before the Data package or 
+  # The DataGen package must be compiled before the Data package or
   ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/DataGen")
     SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${DATA_GEN_PACKAGE_LINK_LIBRARIES})
 
@@ -189,11 +189,11 @@ FOREACH(MODULE ${PyFrensie_MODULES})
     # Install the generated files
     INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
       DESTINATION ${PyFrensie_INSTALL_DIR}/MonteCarlo)
-    INSTALL(FILES 
+    INSTALL(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/MonteCarlo/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/MonteCarlo/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/MonteCarlo)
-    
+
   ENDIF()
 
 ENDFOREACH(MODULE)
