@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
+#include "Utility_ToStringTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -73,23 +74,41 @@ enum PositronatomicReactionType{
   Q3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION = 51
 };
 
-//! Convert a PositronatomicReactionType enum to a string
-std::string convertPositronatomicReactionEnumToString(
-                                    const PositronatomicReactionType reaction );
-
 //! Convert a Data::SubshellType enum to a PositronatomicReactionType enum
 PositronatomicReactionType convertSubshellEnumToPositronionizationPositronatomicReactionEnum(
                                     const Data::SubshellType subshell );
 
+} // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for
+ * MonteCarlo::PositronatomicReactionType
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::PositronatomicReactionType>
+{
+  //! Convert a MonteCarlo::PositronatomicReactionType to a string
+  static std::string toString( const MonteCarlo::PositronatomicReactionType type );
+
+  //! Place the MonteCarlo::PositronatomicReactionType in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::PositronatomicReactionType type );
+};
+
+} // end Utility namespace
+
+namespace std{
+
 //! Stream operator for printing PositronatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
-                                    const PositronatomicReactionType reaction )
+                                 const MonteCarlo::PositronatomicReactionType reaction )
 {
-  os << convertPositronatomicReactionEnumToString( reaction );
+  os << Utility::toString( reaction );
   return os;
 }
-
-} // end MonteCarlo namespace
+  
+} // end std namespace
 
 #endif // end MONTE_CARLO_POSITRONATOMIC_REACTION_TYPE_HPP
 
