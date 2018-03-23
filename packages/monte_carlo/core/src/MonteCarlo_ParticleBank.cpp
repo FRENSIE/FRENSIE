@@ -10,10 +10,20 @@
 #include <algorithm>
 
 // Boost Includes
-#include <boost/bind.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -88,17 +98,17 @@ bool ParticleBank::isSorted( const CompareFunctionType& compare_function )
 {
   return std::is_sorted( d_particle_states.begin(),
 			 d_particle_states.end(),
-			 boost::bind<bool>(compare_function,
-					   boost::bind<const ParticleState&>(ParticleBank::dereference, _1),
-					   boost::bind<const ParticleState&>(ParticleBank::dereference, _2) ) );
+			 std::bind<bool>(compare_function,
+					   std::bind<const ParticleState&>(ParticleBank::dereference, std::placeholders::_1),
+					   std::bind<const ParticleState&>(ParticleBank::dereference, std::placeholders::_2) ) );
 }
 
 // Sort the particle states
 bool ParticleBank::sort( const CompareFunctionType& compare_function )
 {
-  d_particle_states.sort( boost::bind<bool>(compare_function,
-					    boost::bind<const ParticleState&>(ParticleBank::dereference, _1),
-					    boost::bind<const ParticleState&>(ParticleBank::dereference, _2) ) );
+  d_particle_states.sort( std::bind<bool>(compare_function,
+					    std::bind<const ParticleState&>(ParticleBank::dereference, std::placeholders::_1),
+					    std::bind<const ParticleState&>(ParticleBank::dereference, std::placeholders::_2) ) );
 }
 
 // Merge the bank with another bank
@@ -113,9 +123,9 @@ void ParticleBank::merge( ParticleBank& other_bank,
   testPrecondition( other_bank.isSorted( compare_function ) );
 
   d_particle_states.merge( other_bank.d_particle_states,
-			   boost::bind<bool>(compare_function,
-					     boost::bind<const ParticleState&>(ParticleBank::dereference, _1),
-					     boost::bind<const ParticleState&>(ParticleBank::dereference, _2) ) );
+			   std::bind<bool>(compare_function,
+					     std::bind<const ParticleState&>(ParticleBank::dereference, std::placeholders::_1),
+					     std::bind<const ParticleState&>(ParticleBank::dereference, std::placeholders::_2) ) );
 }
 
 // Splice the bank with another bank
@@ -127,6 +137,8 @@ void ParticleBank::splice( ParticleBank& other_bank )
   d_particle_states.splice( d_particle_states.end(),
 			    other_bank.d_particle_states );
 }
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ParticleBank );
 
 } // end MonteCarlo namespace
 
