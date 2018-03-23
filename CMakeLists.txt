@@ -162,9 +162,7 @@ ENDIF()
 ##---------------------------------------------------------------------------##
 # SWIG will be used to generate the Python interfaces. If SWIG is located
 # in a non-standard location set the SWIG_PREFIX variable.
-IF(FRENSIE_ENABLE_PYTHON)
-  ENABLE_SWIG_SUPPORT()
-ENDIF()
+ENABLE_SWIG_SUPPORT()
 
 ##---------------------------------------------------------------------------##
 ## Configure HDF5 Support

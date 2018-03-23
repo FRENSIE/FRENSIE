@@ -35,10 +35,8 @@ INCLUDE_DIRECTORIES(data/core/src data/ace/src data/endf/src data/endl/src data/
 ADD_SUBDIRECTORY(monte_carlo)
 INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/native/src)
 
-ADD_SUBDIRECTORY(data_gen)
-INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
+# ADD_SUBDIRECTORY(data_gen)
+# INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
 
-IF(FRENSIE_ENABLE_PYTHON)
-  ADD_SUBDIRECTORY(PyFrensie)
-ENDIF()
+ADD_SUBDIRECTORY(PyFrensie)
 
