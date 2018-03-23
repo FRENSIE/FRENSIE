@@ -176,7 +176,7 @@ inline bool isValidDictionary( PyObject* py_obj )
     return false;
 }
 
-// Create a Python (NumPy) object from a Teuchos::Array<T> object
+// Create a Python (NumPy) object from a STLCompliantArray object
 template<typename STLCompliantArray>
 inline PyObject* convertArrayToPython( const STLCompliantArray& obj )
 {

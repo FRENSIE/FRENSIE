@@ -20,14 +20,10 @@
 #include <unordered_map>
 #include <type_traits>
 
-// Trilinos Includes
-#include <PyTrilinos_Teuchos_Util.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "PyFrensie_NumPyTypeTraits.hpp"
 #include "PyFrensie_PythonTypeTraitsDecl.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace PyFrensie{
 
@@ -337,79 +333,19 @@ struct PythonTypeTraits<std::vector<T> >
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
- * Teuchos::Array
+ * Utility::ArrayView
  * \ingroup python_type_traits
  */
 template<typename T>
-struct PythonTypeTraits<Teuchos::Array<T> >
+struct PythonTypeTraits<Utility::ArrayView<T> >
 {
   //! Create a Python (NumPy) object from a Teuchos::Array<T> object
-  static inline PyObject* convertToPython( const Teuchos::Array<T>& obj )
+  static inline PyObject* convertToPython( const Utility::ArrayView<T>& obj )
   { return Details::convertArrayToPython( obj ); }
 
   //! Create a Teuchos::Array<T> object from a Python object
-  static inline Teuchos::Array<T> convertFromPython( PyObject* py_obj )
-  { return Details::convertPythonToArray<Teuchos::Array<T> >( py_obj ); }
-
-  //! Check if a Python object can be converted to the desired type
-  static inline bool isConvertable( PyObject* py_obj )
-  { return Details::isValidNumPyArray<T>( py_obj ); }
-};
-
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
- * Teuchos::ArrayRCP
- * \ingroup python_type_traits
- */
-template<typename T>
-struct PythonTypeTraits<Teuchos::ArrayRCP<T> >
-{
-  //! Create a Python (NumPy) object from a Teuchos::Array<T> object
-  static inline PyObject* convertToPython( const Teuchos::ArrayRCP<T>& obj )
-  { return Details::convertArrayToPython( obj ); }
-
-  //! Create a Teuchos::Array<T> object from a Python object
-  static inline Teuchos::ArrayRCP<T> convertFromPython( PyObject* py_obj )
-  { return Details::convertPythonToArray<Teuchos::ArrayRCP<T> >( py_obj ); }
-
-  //! Check if a Python object can be converted to the desired type
-  static inline bool isConvertable( PyObject* py_obj )
-  { return Details::isValidNumPyArray<T>( py_obj ); }
-};
-
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
- * Teuchos::ArrayRCP of const
- * \ingroup python_type_traits
- */
-template<typename T>
-struct PythonTypeTraits<Teuchos::ArrayRCP<const T> >
-{
-  //! Create a Python (NumPy) object from a Teuchos::Array<T> object
-  static inline PyObject* convertToPython( const Teuchos::ArrayRCP<const T>& obj )
-  { return Details::convertArrayToPython( obj ); }
-
-  //! Create a Teuchos::Array<T> object from a Python object
-  static inline Teuchos::ArrayRCP<const T> convertFromPython( PyObject* py_obj )
-  { return Details::convertPythonToArray<Teuchos::ArrayRCP<T> >( py_obj ).getConst(); }
-
-  //! Check if a Python object can be converted to the desired type
-  static inline bool isConvertable( PyObject* py_obj )
-  { return Details::isValidNumPyArray<T>( py_obj ); }
-};
-
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
- * Teuchos::ArrayView
- * \ingroup python_type_traits
- */
-template<typename T>
-struct PythonTypeTraits<Teuchos::ArrayView<T> >
-{
-  //! Create a Python (NumPy) object from a Teuchos::Array<T> object
-  static inline PyObject* convertToPython( const Teuchos::ArrayView<T>& obj )
-  { return Details::convertArrayToPython( obj ); }
-
-  //! Create a Teuchos::Array<T> object from a Python object
-  static inline Teuchos::ArrayView<T> convertFromPython( PyObject* py_obj )
-  { return Teuchos::ArrayView<T>(); }
+  static inline Utility::ArrayView<T> convertFromPython( PyObject* py_obj )
+  { return Utility::ArrayView<T>(); }
 
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
@@ -417,19 +353,19 @@ struct PythonTypeTraits<Teuchos::ArrayView<T> >
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
- * Teuchos::ArrayView of const
+ * Utility::ArrayView of const
  * \ingroup python_type_traits
  */
 template<typename T>
-struct PythonTypeTraits<Teuchos::ArrayView<const T> >
+struct PythonTypeTraits<Utility::ArrayView<const T> >
 {
   //! Create a Python (NumPy) object from a Teuchos::Array<T> object
-  static inline PyObject* convertToPython( const Teuchos::ArrayView<const T>& obj )
+  static inline PyObject* convertToPython( const Utility::ArrayView<const T>& obj )
   { return Details::convertArrayToPython( obj ); }
 
   //! Create a Teuchos::Array<T> object from a Python object
-  static inline Teuchos::ArrayView<const T> convertFromPython( PyObject* py_obj )
-  { return Teuchos::ArrayView<const T>(); }
+  static inline Utility::ArrayView<const T> convertFromPython( PyObject* py_obj )
+  { return Utility::ArrayView<const T>(); }
 
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
