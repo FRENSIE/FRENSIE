@@ -9,19 +9,6 @@
 // Std Lib Includes
 #include <limits>
 
-<<<<<<< HEAD
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
-=======
->>>>>>> 90a0443bcfaca0e6662be6eda75b527cd4120f59
 // FRENSIE Includes
 #include "Geometry_InfiniteMediumNavigator.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
