@@ -27,7 +27,8 @@
 namespace Geometry{
 
 // Constructor
-InfiniteMediumModel::InfiniteMediumModel( const InternalCellHandle cell )
+InfiniteMediumModel::InfiniteMediumModel(
+                           const InternalCellHandle cell )
   : Model(),
     d_cell( cell )
 { /* ... */ }
@@ -116,6 +117,13 @@ auto InfiniteMediumModel::getCellVolume(
 }
 
 // Create a raw, heap-allocated navigator
+InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced(
+    const Navigator::AdvanceCompleteCallback& advance_complete_callback ) const
+{
+  return new InfiniteMediumNavigator( d_cell, advance_complete_callback );
+}
+
+// Create a raw, heap-allocated navigator (no callback)
 InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced() const
 {
   return new InfiniteMediumNavigator( d_cell );

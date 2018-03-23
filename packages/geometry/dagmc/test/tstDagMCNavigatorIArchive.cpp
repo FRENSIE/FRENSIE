@@ -43,6 +43,8 @@ FRENSIE_UNIT_TEST( DagMCNavigator, iarchive )
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( navigator ) );
 
+  iarchive.reset();
+
   FRENSIE_CHECK_EQUAL( navigator->getCurrentCell(), 82 );
   FRENSIE_CHECK_EQUAL( navigator->getPosition()[0], -40.0*cgs::centimeter );
   FRENSIE_CHECK_EQUAL( navigator->getPosition()[1], -40.0*cgs::centimeter );

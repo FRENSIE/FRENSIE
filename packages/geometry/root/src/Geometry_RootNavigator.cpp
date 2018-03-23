@@ -6,21 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
 #include "Geometry_RootNavigator.hpp"
 #include "Geometry_RootModel.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ContractException.hpp"
@@ -38,11 +26,29 @@ RootNavigator::RootNavigator()
 { /* ... */ }
 
 // Constructor
-RootNavigator::RootNavigator( const std::shared_ptr<const RootModel>& root_model )
-  : d_root_model( root_model ),
+RootNavigator::RootNavigator(
+          const std::shared_ptr<const RootModel>& root_model,
+          const Navigator::AdvanceCompleteCallback& advance_complete_callback )
+  : Navigator( advance_complete_callback ),
+    d_root_model( root_model ),
     d_internal_ray_set( false ),
     d_navigator( RootNavigator::createInternalRay( d_root_model->getManager() ) )
 { /* ... */ }
+
+// Copy constructor
+RootNavigator::RootNavigator( const RootNavigator& other )
+  : Navigator( other ),
+    d_root_model( other.d_root_model ),
+    d_internal_ray_set( other.d_internal_ray_set ),
+    d_navigator( RootNavigator::createInternalRay( d_root_model->getManager() ) )
+{
+  if( other.d_internal_ray_set )
+  {
+    this->setState( other.getPosition(),
+                    other.getDirection(),
+                    other.getCurrentCell() );
+  }
+}
 
 // Destructor
 RootNavigator::~RootNavigator()
@@ -321,10 +327,13 @@ auto RootNavigator::fireRay( InternalSurfaceHandle* surface_hit ) -> Length
 /*! \details Reflecting surfaces cannot be set in Root geometries so this
  * method will always return false.
  */
-bool RootNavigator::advanceToCellBoundary( double* surface_normal )
+bool RootNavigator::advanceToCellBoundaryImpl( double* surface_normal,
+                                               Length& distance_traveled )
 {
   // Make sure that the internal ray is set
   testPrecondition( this->isStateSet() );
+
+  Utility::setQuantity( distance_traveled, d_navigator->GetStep() );
 
   TGeoNode* next_node = d_navigator->Step();
 
@@ -336,7 +345,7 @@ bool RootNavigator::advanceToCellBoundary( double* surface_normal )
 }
 
 // Advance the internal Root ray a substep
-void RootNavigator::advanceBySubstep( const Length substep_distance )
+void RootNavigator::advanceBySubstepImpl( const Length substep_distance )
 {
   // Make sure that the internal ray is set
   testPrecondition( this->isStateSet() );
@@ -368,16 +377,23 @@ void RootNavigator::changeDirection( const double x_direction,
 }
 
 // Clone the navigator
-RootNavigator* RootNavigator::clone() const
+RootNavigator* RootNavigator::clone( const AdvanceCompleteCallback& advance_complete_callback ) const
 {
   // Copy the geometry data
-  RootNavigator* clone = new RootNavigator( d_root_model );
+  RootNavigator* clone = new RootNavigator( d_root_model,
+                                            advance_complete_callback );
 
   // Copy the position, direction and cell
-  dynamic_cast<Navigator*>( clone )->setState( this->getPosition(),
-                                               this->getDirection(),
-                                               this->getCurrentCell() );
+  clone->setState( this->getPosition(),
+                   this->getDirection(),
+                   this->getCurrentCell() );
   return clone;
+}
+
+// Clone the navigator
+RootNavigator* RootNavigator::clone() const
+{
+  return new RootNavigator( *this );
 }
 
 // Create internal ray
@@ -397,64 +413,60 @@ void RootNavigator::freeInternalRay()
   }
 }
 
-// Save the model to an archive
-template<typename Archive>
-void RootNavigator::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+// // Save the model to an archive
+// template<typename Archive>
+// void RootNavigator::save( Archive& ar, const unsigned version ) const
+// {
+//   // Save the base class first
+//   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
 
-  // Save the local data
-  ar & BOOST_SERIALIZATION_NVP( d_root_model );
-  ar & BOOST_SERIALIZATION_NVP( d_internal_ray_set );
+//   // Save the local data
+//   ar & BOOST_SERIALIZATION_NVP( d_root_model );
+//   ar & BOOST_SERIALIZATION_NVP( d_internal_ray_set );
 
-  if( d_internal_ray_set )
-  {
-    InternalCellHandle current_cell = this->getCurrentCell();
+//   if( d_internal_ray_set )
+//   {
+//     InternalCellHandle current_cell = this->getCurrentCell();
 
-    ar & BOOST_SERIALIZATION_NVP( current_cell );
-    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(d_navigator->GetCurrentPoint()), 3 ) );
-    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( const_cast<double*>(this->getDirection()), 3 ) );
-  }
-}
+//     ar & BOOST_SERIALIZATION_NVP( current_cell );
+//     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(d_navigator->GetCurrentPoint()), 3 ) );
+//     ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( const_cast<double*>(this->getDirection()), 3 ) );
+//   }
+// }
 
-// Load the model from an archive
-template<typename Archive>
-void RootNavigator::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+// // Load the model from an archive
+// template<typename Archive>
+// void RootNavigator::load( Archive& ar, const unsigned version )
+// {
+//   // Load the base class first
+//   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
 
-  // Load the local data
-  ar & BOOST_SERIALIZATION_NVP( d_root_model );
-  ar & BOOST_SERIALIZATION_NVP( d_internal_ray_set );
+//   // Load the local data
+//   ar & BOOST_SERIALIZATION_NVP( d_root_model );
+//   ar & BOOST_SERIALIZATION_NVP( d_internal_ray_set );
 
-  // Create a new internal ray
-  if( d_navigator )
-    this->freeInternalRay();
+//   // Create a new internal ray
+//   if( d_navigator )
+//     this->freeInternalRay();
 
-  d_navigator = this->createInternalRay( d_root_model->getManager() );
+//   d_navigator = this->createInternalRay( d_root_model->getManager() );
 
-  // Set the internal ray state (if one was archived)
-  if( d_internal_ray_set )
-  {
-    InternalCellHandle current_cell;
-    Length current_position[3];
-    double current_direction[3];
+//   // Set the internal ray state (if one was archived)
+//   if( d_internal_ray_set )
+//   {
+//     InternalCellHandle current_cell;
+//     Length current_position[3];
+//     double current_direction[3];
 
-    ar & BOOST_SERIALIZATION_NVP( current_cell );
-    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( Utility::reinterpretAsRaw(current_position), 3 ) );
-    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
+//     ar & BOOST_SERIALIZATION_NVP( current_cell );
+//     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( Utility::reinterpretAsRaw(current_position), 3 ) );
+//     ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
 
-    dynamic_cast<Navigator*>(this)->setState( current_position, current_direction, current_cell );
-  }
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootNavigator );
+//     dynamic_cast<Navigator*>(this)->setState( current_position, current_direction, current_cell );
+//   }
+// }
 
 } // end Geometry namespace
-
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( RootNavigator, Geometry );
 
 //---------------------------------------------------------------------------//
 // end Geometry_RootNavigator.cpp

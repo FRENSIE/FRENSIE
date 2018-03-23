@@ -113,6 +113,9 @@ public:
   bool isReflectingSurface( const InternalSurfaceHandle surface_id ) const override;
 
   //! Create a raw, heap-allocated navigator
+  DagMCNavigator* createNavigatorAdvanced( const Navigator::AdvanceCompleteCallback& advance_complete_callback ) const override;
+
+  //! Create a raw, heap-allocated navigator
   DagMCNavigator* createNavigatorAdvanced() const override;
   
 

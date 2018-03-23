@@ -170,6 +170,16 @@ private:
   SimulateParticleFunctionMap d_simulate_particle_function_map;
 };
 
+//! Log lost particle details
+#define LOG_LOST_PARTICLE_DETAILS( particle )   \
+  FRENSIE_LOG_TAGGED_WARNING(                                           \
+                   "Lost Particle",                                     \
+                   "history " << particle.getHistoryNumber() <<         \
+                   ", generation " << particle.getGenerationNumber() ); \
+                                                                        \
+  FRENSIE_LOG_TAGGED_NOTIFICATION( "Lost Particle State Dump",          \
+                                   particle )
+
 //! Macro for catching a lost particle and breaking a loop
 #define CATCH_LOST_PARTICLE_AND_BREAK( particle )			\
   catch( std::runtime_error& exception )				\
@@ -178,13 +188,7 @@ private:
                                                                         \
     FRENSIE_LOG_NESTED_ERROR( exception.what() );                       \
                                                                         \
-    FRENSIE_LOG_TAGGED_WARNING(                                         \
-                   "Lost Particle",                                     \
-                   "history " << particle.getHistoryNumber() <<         \
-                   ", generation " << particle.getGenerationNumber() ); \
-                                                                        \
-    FRENSIE_LOG_TAGGED_NOTIFICATION( "Lost Particle State Dump",        \
-                                     particle );                        \
+    LOG_LOST_PARTICLE_DETAILS( particle );                              \
                                                                         \
     break;								\
   }
@@ -197,12 +201,7 @@ private:
                                                                         \
     FRENSIE_LOG_NESTED_ERROR( exception.what() );                       \
                                                                         \
-    FRENSIE_LOG_TAGGED_WARNING(                                         \
-                       "Lost Source Particle",                          \
-                       "history " << particle.getHistoryNumber() );     \
-                                                                        \
-    FRENSIE_LOG_TAGGED_NOTIFICATION( "Lost Source Particle State Dump", \
-                                     particle );                        \
+    LOG_LOST_PARTICLE_DETAILS( bank.top() )                             \
                                                                         \
     bank.pop();								\
                                                                         \

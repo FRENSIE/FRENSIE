@@ -98,6 +98,11 @@ public:
   Volume getCellVolume( const InternalCellHandle cell_id ) const override;
 
   //! Create a raw, heap-allocated navigator
+  RootNavigator* createNavigatorAdvanced(
+                                    const Navigator::AdvanceCompleteCallback&
+                                    advance_complete_callback ) const override;
+  
+  //! Create a raw, heap-allocated navigator
   RootNavigator* createNavigatorAdvanced() const override;
 
 private:

@@ -467,6 +467,17 @@ auto RootModel::getCellVolume( const InternalCellHandle cell_id ) const -> Volum
 }
 
 // Create a raw, heap-allocated navigator
+RootNavigator* RootModel::createNavigatorAdvanced(
+    const Navigator::AdvanceCompleteCallback& advance_complete_callback ) const
+{
+  // Make sure that root has been initialized
+  testPrecondition( this->isInitialized() );
+  
+  return new RootNavigator( RootModel::getInstance(),
+                            advance_complete_callback );
+}
+
+// Create a raw, heap-allocated navigator
 RootNavigator* RootModel::createNavigatorAdvanced() const
 {
   // Make sure that root has been initialized

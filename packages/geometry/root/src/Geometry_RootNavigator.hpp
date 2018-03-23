@@ -18,7 +18,6 @@
 
 // FRENSIE Includes
 #include "Geometry_Navigator.hpp"
-#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Geometry{
 
@@ -37,7 +36,10 @@ class RootNavigator : public Navigator
 public:
 
   //! Constructor
-  RootNavigator( const std::shared_ptr<const RootModel>& root_model );
+  RootNavigator(
+          const std::shared_ptr<const RootModel>& root_model,
+          const Navigator::AdvanceCompleteCallback& advance_complete_callback =
+          Navigator::AdvanceCompleteCallback() );
 
   //! Destructor
   ~RootNavigator();
@@ -86,6 +88,9 @@ public:
                  const double z_direction,
                  const InternalCellHandle current_cell ) override;
 
+  //! Initialize (or reset) the state (base overloads)
+  using Navigator::setState;
+
   //! Get the internal Root ray position
   const Length* getPosition() const override;
 
@@ -98,19 +103,28 @@ public:
   //! Get the distance from the internal Root ray pos. to the nearest boundary
   Length fireRay( InternalSurfaceHandle* surface_hit ) override;
 
-  //! Advance the internal Root ray to the next boundary
-  bool advanceToCellBoundary( double* surface_normal ) override;
-
-  //! Advance the internal Root ray a substep
-  void advanceBySubstep( const Length substep_distance ) override;
-
   //! Change the internal ray direction (without changing its location)
   void changeDirection( const double x_direction,
                         const double y_direction,
                         const double z_direction ) override;
 
   //! Clone the navigator
+  RootNavigator* clone( const AdvanceCompleteCallback& advance_complete_callback ) const override;
+
+  //! Clone the navigator
   RootNavigator* clone() const override;
+
+protected:
+
+  //! Copy constructor
+  RootNavigator( const RootNavigator& other );
+
+  //! Advance the internal Root ray to the next boundary
+  bool advanceToCellBoundaryImpl( double* surface_normal,
+                                  Length& distance_traveled ) override;
+
+  //! Advance the internal Root ray a substep
+  void advanceBySubstepImpl( const Length substep_distance ) override;
 
 private:
 
@@ -133,19 +147,6 @@ private:
   
   // Free internal ray
   void freeInternalRay();
-
-  // Save the model to an archive
-  template<typename Archive>
-  void save( Archive& ar, const unsigned version ) const;
-
-  // Load the model from an archive
-  template<typename Archive>
-  void load( Archive& ar, const unsigned version );
-
-  BOOST_SERIALIZATION_SPLIT_MEMBER();
-
-  // Declare the boost serialization access object as a friend
-  friend class boost::serialization::access;
 
   // The tolerance used to determine the location of points within cells
   static const double s_tol;
@@ -170,10 +171,6 @@ inline void RootNavigator::deepCopy( T* copy_array, const T* orig_array )
 }
   
 } // end Geometry namespace
-
-BOOST_SERIALIZATION_CLASS_VERSION( RootNavigator, Geometry, 0 );
-BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootNavigator, Geometry );
-EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootNavigator );
 
 #endif // end GEOMETRY_ROOT_NAVIGATOR_HPP
 

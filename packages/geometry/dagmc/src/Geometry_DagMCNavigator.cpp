@@ -9,21 +9,9 @@
 // Std Lib Includes
 #include <sstream>
 
-// Boost Includes
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/xml_oarchive.hpp>
-#include <boost/archive/xml_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/polymorphic_oarchive.hpp>
-#include <boost/archive/polymorphic_iarchive.hpp>
-
 // FRENSIE Includes
 #include "Geometry_DagMCNavigator.hpp"
 #include "Geometry_DagMCModel.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
@@ -41,14 +29,25 @@ DagMCNavigator::DagMCNavigator()
   
 // Constructor
 DagMCNavigator::DagMCNavigator(
-                         const std::shared_ptr<const DagMCModel>& dagmc_model )
-  : d_dagmc_model( dagmc_model ),
+          const std::shared_ptr<const DagMCModel>& dagmc_model,
+          const Navigator::AdvanceCompleteCallback& advance_complete_callback )
+  : Navigator( advance_complete_callback ),
+    d_dagmc_model( dagmc_model ),
     d_internal_ray()
 {
   // Make sure that the dagmc instance is valid
   testPrecondition( dagmc_model.get() );
   testPrecondition( dagmc_model->isInitialized() );
 }
+
+// Copy constructor
+/*! \details This constructor should only be used by the clone method.
+ */
+DagMCNavigator::DagMCNavigator( const DagMCNavigator& other )
+  : Navigator( other ),
+    d_dagmc_model( other.d_dagmc_model ),
+    d_internal_ray( other.d_internal_ray )
+{ /* ... */ }
 
 // Get the point location w.r.t. a given cell
 /*! \details This function will only return if a point is inside of or
@@ -328,7 +327,8 @@ auto DagMCNavigator::fireRay( InternalSurfaceHandle* surface_hit ) -> Length
  * was encountered. If the surface normal at the intersection point is
  * required an array can be passed to the method.
  */
-bool DagMCNavigator::advanceToCellBoundary( double* surface_normal )
+bool DagMCNavigator::advanceToCellBoundaryImpl( double* surface_normal,
+                                                Length& distance_traveled )
 {
   // Make sure that the ray is set
   testPrecondition( this->isStateSet() );
@@ -339,6 +339,9 @@ bool DagMCNavigator::advanceToCellBoundary( double* surface_normal )
 
   moab::EntityHandle intersection_surface =
     d_internal_ray.getIntersectionSurface();
+
+  distance_traveled =
+    Length::from_value( d_internal_ray.getDistanceToIntersectionSurface() );
 
   // Reflect the ray if a reflecting surface is encountered
   if( this->isReflectingSurfaceHandle(d_internal_ray.getIntersectionSurface()))
@@ -404,7 +407,7 @@ bool DagMCNavigator::advanceToCellBoundary( double* surface_normal )
 /*! \details The substep distance must be less than the distance to the
  * intersection surface.
  */
-void DagMCNavigator::advanceBySubstep( const Length substep_distance )
+void DagMCNavigator::advanceBySubstepImpl( const Length substep_distance )
 {
   // Make sure that the ray is set
   testPrecondition( this->isStateSet() );
@@ -675,77 +678,80 @@ void DagMCNavigator::setState( const Length x_position,
   Navigator::fireRay();
 }
 
-// Clone the navigator
-DagMCNavigator* DagMCNavigator::clone() const
+//! Clone the navigator
+DagMCNavigator* DagMCNavigator::clone( const AdvanceCompleteCallback& advance_complete_callback ) const
 {
   // Copy the geometry data
-  DagMCNavigator* clone = new DagMCNavigator( d_dagmc_model );
+  DagMCNavigator* clone = new DagMCNavigator( d_dagmc_model,
+                                              advance_complete_callback );
 
   // Copy the current position and direction
-  dynamic_cast<Navigator*>( clone )->setState( this->getPosition(),
-                                               this->getDirection(),
-                                               this->getCurrentCell() );
+  clone->setState( this->getPosition(),
+                   this->getDirection(),
+                   this->getCurrentCell() );
 
   return clone;
 }
 
-// Save the model to an archive
-template<typename Archive>
-void DagMCNavigator::save( Archive& ar, const unsigned version ) const
+// Clone the navigator
+DagMCNavigator* DagMCNavigator::clone() const
 {
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+  return new DagMCNavigator( *this );
+}
 
-  // Save the local data
-  ar & BOOST_SERIALIZATION_NVP( d_dagmc_model );
+// // Save the model to an archive
+// template<typename Archive>
+// void DagMCNavigator::save( Archive& ar, const unsigned version ) const
+// {
+//   // Save the base class first
+//   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
 
-  const bool internal_ray_set = this->isStateSet();
+//   // Save the local data
+//   ar & BOOST_SERIALIZATION_NVP( d_dagmc_model );
 
-  ar & BOOST_SERIALIZATION_NVP( internal_ray_set );
+//   const bool internal_ray_set = this->isStateSet();
+
+//   ar & BOOST_SERIALIZATION_NVP( internal_ray_set );
   
-  if( internal_ray_set )
-  {
-    InternalCellHandle current_cell = this->getCurrentCell();
+//   if( internal_ray_set )
+//   {
+//     InternalCellHandle current_cell = this->getCurrentCell();
 
-    ar & BOOST_SERIALIZATION_NVP( current_cell );
-    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(Utility::reinterpretAsRaw(this->getPosition())), 3 ) );
-    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( const_cast<double*>(this->getDirection()), 3 ) );
-  }
-}
+//     ar & BOOST_SERIALIZATION_NVP( current_cell );
+//     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( const_cast<double*>(Utility::reinterpretAsRaw(this->getPosition())), 3 ) );
+//     ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( const_cast<double*>(this->getDirection()), 3 ) );
+//   }
+// }
 
-// Load the model from an archive
-template<typename Archive>
-void DagMCNavigator::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+// // Load the model from an archive
+// template<typename Archive>
+// void DagMCNavigator::load( Archive& ar, const unsigned version )
+// {
+//   // Load the base class first
+//   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
 
-  // Load the local data
-  ar & BOOST_SERIALIZATION_NVP( d_dagmc_model );
+//   // Load the local data
+//   ar & BOOST_SERIALIZATION_NVP( d_dagmc_model );
 
-  bool internal_ray_set;
+//   bool internal_ray_set;
 
-  ar & BOOST_SERIALIZATION_NVP( internal_ray_set );
+//   ar & BOOST_SERIALIZATION_NVP( internal_ray_set );
 
-  if( internal_ray_set )
-  {
-    InternalCellHandle current_cell;
-    Length current_position[3];
-    double current_direction[3];
+//   if( internal_ray_set )
+//   {
+//     InternalCellHandle current_cell;
+//     Length current_position[3];
+//     double current_direction[3];
 
-    ar & BOOST_SERIALIZATION_NVP( current_cell );
-    ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( Utility::reinterpretAsRaw(current_position), 3 ) );
-    ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
+//     ar & BOOST_SERIALIZATION_NVP( current_cell );
+//     ar & boost::serialization::make_nvp( "current_position", boost::serialization::make_array<double>( Utility::reinterpretAsRaw(current_position), 3 ) );
+//     ar & boost::serialization::make_nvp( "current_direction", boost::serialization::make_array<double>( current_direction, 3 ) );
     
-    dynamic_cast<Navigator*>(this)->setState( current_position, current_direction, current_cell );
-  }
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCNavigator );
+//     dynamic_cast<Navigator*>(this)->setState( current_position, current_direction, current_cell );
+//   }
+// }
   
 } // end Geometry namespace
-
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( DagMCNavigator, Geometry );
 
 //---------------------------------------------------------------------------//
 // end Geometry_DagMCNavigator.cpp

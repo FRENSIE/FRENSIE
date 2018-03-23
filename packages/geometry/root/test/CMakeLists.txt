@@ -18,9 +18,9 @@ FRENSIE_ADD_TEST_EXECUTABLE(RootNavigator DEPENDS tstRootNavigator.cpp)
 FRENSIE_ADD_TEST(RootNavigator
   EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
 
-FRENSIE_ADD_TEST_EXECUTABLE(RootNavigatorIArchive DEPENDS tstRootNavigatorIArchive.cpp)
-FRENSIE_ADD_TEST(RootNavigatorIArchive
-  EXTRA_ARGS --test_archive_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_navigator_archive.xml)
+# FRENSIE_ADD_TEST_EXECUTABLE(RootNavigatorIArchive DEPENDS tstRootNavigatorIArchive.cpp)
+# FRENSIE_ADD_TEST(RootNavigatorIArchive
+#   EXTRA_ARGS --test_archive_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_navigator_archive.xml)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   FRENSIE_ADD_TEST_EXECUTABLE(SharedParallelRootNavigator DEPENDS tstSharedParallelRootNavigator.cpp)

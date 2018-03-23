@@ -36,7 +36,7 @@ public:
 private:
 
   // The nuclear reactions of interest
-  std::unordered_map<NuclearReactionType,std::list<boost::scoped_ptr<ParticleState> > > d_nuclear_reaction_banks;
+  std::unordered_map<NuclearReactionType,std::list<boost::scoped_ptr<ParticleState> >, std::hash<int> > d_nuclear_reaction_banks;
 };
 
 } // end MonteCarlo namespace

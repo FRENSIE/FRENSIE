@@ -1,78 +1,56 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_core)
 
+ADD_SUBDIRECTORY(test_files)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleType DEPENDS tstParticleType.cpp)
 FRENSIE_ADD_TEST(ParticleType)
 
-ADD_EXECUTABLE(tstParticleState
-  tstParticleState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleState monte_carlo_core)
-ADD_TEST(ParticleState_test tstParticleState)
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleState DEPENDS tstParticleState.cpp)
+FRENSIE_ADD_TEST(ParticleState)
 
-ADD_EXECUTABLE(tstPhotonState
-  tstPhotonState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhotonState monte_carlo_core)
-ADD_TEST(PhotonState_test tstPhotonState)
-SET_PROPERTY(TEST PhotonState_test PROPERTY LABELS photon)
+IF(FRENSIE_ENABLE_ROOT)
+  FRENSIE_ADD_TEST_EXECUTABLE(RootParticleState
+    DEPENDS tstRootParticleState.cpp
+    LIB_DEPENDS geometry_root)
+  FRENSIE_ADD_TEST(RootParticleState
+    EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
+ENDIF()
 
-ADD_EXECUTABLE(tstAdjointPhotonState
-  tstAdjointPhotonState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonState monte_carlo_core)
-ADD_TEST(AdjointPhotonState_test tstAdjointPhotonState)
-SET_PROPERTY(TEST AdjointPhotonState_test PROPERTY LABELS photon adjoint)
+IF(FRENSIE_ENABLE_DAGMC)
+  FRENSIE_ADD_TEST_EXECUTABLE(DagMCParticleState
+    DEPENDS tstDagMCParticleState.cpp
+    LIB_DEPENDS geometry_dagmc)
+  FRENSIE_ADD_TEST(DagMCParticleState
+    EXTRA_ARGS --test_cad_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+ENDIF()
 
-ADD_EXECUTABLE(tstAdjointPhotonProbeState
-  tstAdjointPhotonProbeState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonProbeState monte_carlo_core)
-ADD_TEST(AdjointPhotonProbeState_test tstAdjointPhotonProbeState)
-SET_PROPERTY(TEST AdjointPhotonProbeState_test PROPERTY LABELS photon adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonState DEPENDS tstPhotonState.cpp)
+FRENSIE_ADD_TEST(PhotonState)
 
-ADD_EXECUTABLE(tstNeutronState
-  tstNeutronState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstNeutronState monte_carlo_core)
-ADD_TEST(NeutronState_test tstNeutronState)
-SET_PROPERTY(TEST NeutronState_test PROPERTY LABELS neutron)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonState DEPENDS tstAdjointPhotonState.cpp)
+FRENSIE_ADD_TEST(AdjointPhotonState)
 
-ADD_EXECUTABLE(tstElectronState
-  tstElectronState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectronState monte_carlo_core)
-ADD_TEST(ElectronState_test tstElectronState)
-SET_PROPERTY(TEST ElectronState_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonProbeState DEPENDS tstAdjointPhotonProbeState.cpp)
+FRENSIE_ADD_TEST(AdjointPhotonProbeState)
 
-ADD_EXECUTABLE(tstAdjointElectronState
-  tstAdjointElectronState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronState monte_carlo_core)
-ADD_TEST(AdjointElectronState_test tstAdjointElectronState)
+FRENSIE_ADD_TEST_EXECUTABLE(NeutronState DEPENDS tstNeutronState.cpp)
+FRENSIE_ADD_TEST(NeutronState)
 
-SET_PROPERTY(TEST AdjointElectronState_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectronState DEPENDS tstElectronState.cpp)
+FRENSIE_ADD_TEST(ElectronState)
 
-ADD_EXECUTABLE(tstAdjointElectronProbeState
-  tstAdjointElectronProbeState.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronProbeState monte_carlo_core)
-ADD_TEST(AdjointElectronProbeState_test tstAdjointElectronProbeState)
-SET_PROPERTY(TEST AdjointElectronProbeState_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronState DEPENDS tstAdjointElectronState.cpp)
+FRENSIE_ADD_TEST(AdjointElectronState)
 
-ADD_EXECUTABLE(tstPositronState
-  tstPositronState.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronState monte_carlo_core)
-ADD_TEST(PositronState_test tstPositronState)
-SET_PROPERTY(TEST PositronState_test PROPERTY LABELS positron)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronProbeState DEPENDS tstAdjointElectronProbeState.cpp)
+FRENSIE_ADD_TEST(AdjointElectronProbeState)
 
-ADD_EXECUTABLE(tstParticleBank
-  tstParticleBank.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
-ADD_TEST(ParticleBank_test tstParticleBank)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronState DEPENDS tstPositronState.cpp)
+FRENSIE_ADD_TEST(PositronState)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleBank DEPENDS tstParticleBank.cpp)
+FRENSIE_ADD_TEST(ParticleBank)
 
 ADD_EXECUTABLE(tstPhotoatomicReactionTypeHelpers
   tstPhotoatomicReactionTypeHelpers.cpp

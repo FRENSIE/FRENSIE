@@ -16,15 +16,14 @@
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
-#include <boost/serialization/list.hpp>
-#include <boost/serialization/singleton.hpp>
-#include <boost/serialization/extended_type_info.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_List.hpp"
 
 namespace MonteCarlo{
 
@@ -122,6 +121,7 @@ inline const ParticleState& ParticleBank::dereference(
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleBank, 0 );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleBank );
 
 //---------------------------------------------------------------------------//
 // Template Includes

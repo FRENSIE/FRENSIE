@@ -22,8 +22,6 @@
 // FRENSIE Includes
 #include "Geometry_InfiniteMediumNavigator.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_HDF5IArchive.hpp"
-#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -35,8 +33,10 @@ InfiniteMediumNavigator::InfiniteMediumNavigator()
 
 // Constructor
 InfiniteMediumNavigator::InfiniteMediumNavigator(
-                             const InternalCellHandle infinite_medium_cell_id )
-  : d_cell( infinite_medium_cell_id ),
+          const InternalCellHandle infinite_medium_cell_id,
+          const Navigator::AdvanceCompleteCallback& advance_complete_callback )
+  : Navigator( advance_complete_callback ),
+    d_cell( infinite_medium_cell_id ),
     d_position( new Length[3] ),
     d_direction( new double[3] )
 {
@@ -47,6 +47,26 @@ InfiniteMediumNavigator::InfiniteMediumNavigator(
   d_direction[0] = 0.0;
   d_direction[1] = 0.0;
   d_direction[2] = 1.0;
+}
+
+// Copy constructor
+/*! \details This constructor should only be used within the clone method. The
+ * Navigator::AdvanceCompleteCallback will also be copied
+ */
+InfiniteMediumNavigator::InfiniteMediumNavigator(
+                                         const InfiniteMediumNavigator& other )
+  : Navigator( other ),
+    d_cell( other.d_cell ),
+    d_position( new Length[3] ),
+    d_direction( new double[3] )
+{
+  d_position[0] = other.d_position[0];
+  d_position[1] = other.d_position[1];
+  d_position[2] = other.d_position[2];
+
+  d_direction[0] = other.d_direction[0];
+  d_direction[1] = other.d_direction[1];
+  d_direction[2] = other.d_direction[2];
 }
 
 // Destructor
@@ -176,7 +196,8 @@ auto InfiniteMediumNavigator::fireRay(
  * (the position will be at infinity). An infinite medium has no surface so
  * the surface normal will always be set to the internal ray direction.
  */
-bool InfiniteMediumNavigator::advanceToCellBoundary( double* surface_normal )
+bool InfiniteMediumNavigator::advanceToCellBoundaryImpl( double* surface_normal,
+                                                         Length& distance_traveled )
 {
   // Move the ray position to infinity
   d_position[0] = Utility::QuantityTraits<Length>::inf();
@@ -191,12 +212,15 @@ bool InfiniteMediumNavigator::advanceToCellBoundary( double* surface_normal )
     surface_normal[2] = d_direction[2];
   }
 
+  // The distance traveled is infinite
+  distance_traveled = Utility::QuantityTraits<Length>::inf();
+
   // There are no reflecting surface
   return false;
 }
 
 // Advance the internal ray by a substep (less than distance to boundary)
-void InfiniteMediumNavigator::advanceBySubstep( const Length step_size )
+void InfiniteMediumNavigator::advanceBySubstepImpl( const Length step_size )
 {
   d_position[0] += d_direction[0]*step_size;
   d_position[1] += d_direction[1]*step_size;
@@ -217,59 +241,64 @@ void InfiniteMediumNavigator::changeDirection( const double x_direction,
 }
 
 // Clone the navigator
+InfiniteMediumNavigator* InfiniteMediumNavigator::clone(
+               const AdvanceCompleteCallback& advance_complete_callback ) const
+{
+  InfiniteMediumNavigator* cloned_navigator =
+    new InfiniteMediumNavigator( this->getCurrentCell(),
+                                 advance_complete_callback );
+
+  cloned_navigator->setState( this->getPosition(), this->getDirection() );
+
+  return cloned_navigator;
+}
+
+// Clone the navigator
 InfiniteMediumNavigator* InfiniteMediumNavigator::clone() const
 {
-  InfiniteMediumNavigator* clone = new InfiniteMediumNavigator( d_cell );
-
-  dynamic_cast<Navigator*>( clone )->setState( this->getPosition(),
-                                               this->getDirection() );
-  return clone;
+  return new InfiniteMediumNavigator( *this );
 }
 
-// Save the model to an archive
-template<typename Archive>
-void InfiniteMediumNavigator::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+// // Save the model to an archive
+// template<typename Archive>
+// void InfiniteMediumNavigator::save( Archive& ar, const unsigned version ) const
+// {
+//   // Save the base class first
+//   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
 
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_cell );
+//   // Save the local member data
+//   ar & BOOST_SERIALIZATION_NVP( d_cell );
 
-  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
-  ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
-}
+//   ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
+//   ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
+// }
 
-// Load the model from an archive
-template<typename Archive>
-void InfiniteMediumNavigator::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
+// // Load the model from an archive
+// template<typename Archive>
+// void InfiniteMediumNavigator::load( Archive& ar, const unsigned version )
+// {
+//   // Load the base class first
+//   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Navigator );
 
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_cell );
+//   // Load the local member data
+//   ar & BOOST_SERIALIZATION_NVP( d_cell );
 
-  // The position array should always be initialized - this check is added
-  // for extra safety
-  if( !d_position )
-    d_position = new Length[3];
+//   // The position array should always be initialized - this check is added
+//   // for extra safety
+//   if( !d_position )
+//     d_position = new Length[3];
 
-  ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
+//   ar & boost::serialization::make_nvp( "d_position", boost::serialization::make_array<Length>( d_position, 3 ) );
 
-  // The direction array should always be initialized - this check is added
-  // for extra safety
-  if( !d_direction )
-    d_direction = new double[3];
+//   // The direction array should always be initialized - this check is added
+//   // for extra safety
+//   if( !d_direction )
+//     d_direction = new double[3];
 
-  ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
-}
-
-EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumNavigator );
+//   ar & boost::serialization::make_nvp( "d_direction", boost::serialization::make_array<double>( d_direction, 3 ) );
+// }
 
 } // end Geometry namespace
-
-BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( InfiniteMediumNavigator, Geometry );
 
 //---------------------------------------------------------------------------//
 // end Geometry_InfiniteMediumNavigator.cpp

@@ -155,10 +155,16 @@ public:
   static InternalEstimatorHandle invalidEstimatorHandle();
 
   //! Create a raw, heap-allocated navigator
-  virtual Geometry::Navigator* createNavigatorAdvanced() const = 0;
+  virtual Geometry::Navigator* createNavigatorAdvanced(
+        const Navigator::AdvanceCompleteCallback& advance_complete_callback ) const = 0;
+
+  //! Create a raw, heap-allocated navigator
+  virtual Geometry::Navigator* createNavigatorAdvanced() const;
   
   //! Create a navigator
-  std::shared_ptr<Geometry::Navigator> createNavigator() const;
+  std::shared_ptr<Geometry::Navigator> createNavigator(
+          const Navigator::AdvanceCompleteCallback& advance_complete_callback =
+          Navigator::AdvanceCompleteCallback() ) const;
 
 private:
 
@@ -184,11 +190,18 @@ inline bool Model::isAdvanced() const
   return false;
 }
 
+// Create a raw, heap-allocated navigator
+inline Geometry::Navigator* Model::createNavigatorAdvanced() const
+{
+  return this->createNavigatorAdvanced( Navigator::AdvanceCompleteCallback() );
+}
+
 // Create a navigator
-inline std::shared_ptr<Geometry::Navigator> Model::createNavigator() const
+inline std::shared_ptr<Geometry::Navigator> Model::createNavigator(
+             const Navigator::AdvanceCompleteCallback& advance_callback ) const
 {
   return std::shared_ptr<Geometry::Navigator>(
-                                             this->createNavigatorAdvanced() );
+                           this->createNavigatorAdvanced( advance_callback ) );
 }
   
 } // end Geometry namespace
