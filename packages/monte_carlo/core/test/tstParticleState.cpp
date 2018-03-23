@@ -492,7 +492,11 @@ FRENSIE_UNIT_TEST( ParticleState, embedInModel )
   std::shared_ptr<Geometry::InfiniteMediumModel>
     model( new Geometry::InfiniteMediumModel( 2 ) );
 
+  FRENSIE_CHECK( !particle.isEmbeddedInModel( *model ) );
+  
   particle.embedInModel( model );
+
+  FRENSIE_CHECK( particle.isEmbeddedInModel( *model ) );
 
   // Verify that the particle position and direction are unchanged
   FRENSIE_CHECK_EQUAL( particle.getXPosition(), 0.1 );
@@ -507,6 +511,8 @@ FRENSIE_UNIT_TEST( ParticleState, embedInModel )
 
   // Extract the particle from the model
   particle.extractFromModel();
+
+  FRENSIE_CHECK( !particle.isEmbeddedInModel( *model ) );
 
   FRENSIE_CHECK_EQUAL( particle.getCell(), 0 );
 

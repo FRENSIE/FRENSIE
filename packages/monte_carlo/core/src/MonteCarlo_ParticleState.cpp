@@ -664,6 +664,15 @@ void ParticleState::extractFromModel()
   d_navigator->setState( position, direction );
 }
 
+// Check if a particle is embedded in the model of interest
+/*! \details This check is currently done using a simple memory comparison
+ * between the cached model and the model of interest.
+ */
+bool ParticleState::isEmbeddedInModel( const Geometry::Model& model )
+{
+  return d_model.get() == &model;
+}
+
 // Create the navigator AdvanceComplete callback method
 // Note: We must "bind" the navigator to the particle state so that if we
 //       change the navigator state, the particle state also gets changed. 

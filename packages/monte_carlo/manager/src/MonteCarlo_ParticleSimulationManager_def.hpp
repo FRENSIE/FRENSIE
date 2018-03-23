@@ -222,19 +222,39 @@ void ParticleSimulationManager<mode>::simulateParticle(
   // Resolve the particle state
   State& particle = dynamic_cast<State&>( unresolved_particle );
 
-  // Account for particles that were created by the source
-  if( particle.getSourceEnergy() == particle.getEnergy() &&
-      particle.getSourceTime() == particle.getTime() )
+  // Embed the particle in the model
+  if( !particle.isEmbeddedInModel( *d_model ) )
   {
-    EMI::updateObserversFromParticleEnteringCellEvent(
-                                            bank.top(), bank.top().getCell() );
+    particle.embedInModel( d_model );
+
+    // Check if the the particle was successfully embedded in the model
+    if( !particle )
+    {
+      if( particle.isLost() )
+      {
+        LOG_LOST_PARTICLE_DETAILS( particle );
+      }
+
+      return;
+    }
+  }
+
+  // Account for particles that were created by the source
+  if( particle.getGenerationNumber() == 0 )
+  {
+    if( particle.getSourceEnergy() == particle.getEnergy() &&
+        particle.getSourceTime() == particle.getTime() )
+    {
+      EMI::updateObserversFromParticleEnteringCellEvent(
+                                                particle, particle.getCell() );
+    }
   }
 
   // Check if the particle energy is below the cutoff
   if( particle.getEnergy() < d_properties->getMinParticleEnergy<State>() )
     particle.setAsGone();
-
-  while( !particle.isLost() && !particle.isGone() )
+  
+  while( particle )
   {
     // Simulate a particle track of random optical path length
     this->simulateParticleTrack( particle, CMI::sampleOpticalPathLength() );
@@ -297,9 +317,7 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
       }
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
-      // Update the remaining subtrack mfp
-      remaining_track_op -= op_to_surface_hit;
-
+      // The particle has exited the geometry
       if( d_model->isTerminationCell( particle.getCell() ) )
       {
         // Update the global observers: particle subtrack ending global event
@@ -308,7 +326,12 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
   						      track_start_point,
   						      particle.getPosition() );
         particle.setAsGone();
+
+        break;
       }
+
+      // Update the remaining subtrack mfp
+      remaining_track_op -= op_to_surface_hit;
     }
 
     // A collision occurs in this cell
@@ -390,7 +413,7 @@ void ParticleSimulateManager<mode>::advanceParticleToCollisionSite(
     remaining_subtrack_op/cell_total_macro_cross_section;
 
   // Advance the particle
-  particle.advance( distance_to_collision );
+  particle.navigator().advanceBySubstep( distance_to_collision );
 
   // Update the observers: particle subtrack ending in cell event
   EMI::updateObserversFromParticleSubtrackEndingInCellEvent(

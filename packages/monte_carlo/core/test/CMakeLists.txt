@@ -49,11 +49,8 @@ FRENSIE_ADD_TEST(AdjointElectronProbeState)
 FRENSIE_ADD_TEST_EXECUTABLE(PositronState DEPENDS tstPositronState.cpp)
 FRENSIE_ADD_TEST(PositronState)
 
-ADD_EXECUTABLE(tstParticleBank
-  tstParticleBank.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
-ADD_TEST(ParticleBank_test tstParticleBank)
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleBank DEPENDS tstParticleBank.cpp)
+FRENSIE_ADD_TEST(ParticleBank)
 
 ADD_EXECUTABLE(tstPhotoatomicReactionTypeHelpers
   tstPhotoatomicReactionTypeHelpers.cpp

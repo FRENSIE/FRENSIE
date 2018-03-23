@@ -256,6 +256,9 @@ public:
   //! Extract the particle from the model
   void extractFromModel();
 
+  //! Check if a particle is embedded in the model of interest
+  bool isEmbeddedInModel( const Geometry::Model& model );
+
   //! Get the navigator used by the particle
   Geometry::Navigator& navigator();
 
