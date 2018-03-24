@@ -6,20 +6,10 @@ EXECUTE_PROCESS(COMMAND ${SWIG_EXECUTABLE} -python -external-runtime
 LIST(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_RUNTIME})
 
 # Set the PyTrilinos package headers and sources
-SET(HEADERS "")
-SET(SOURCES "")
-
-LIST(APPEND HEADERS
-  PyFrensie_NumPyTypeTraitsDecl.hpp
-  PyFrensie_NumPyTypeTraits.hpp
-  PyFrensie_PythonTypeTraitsDecl.hpp
-  PyFrensie_PythonTypeTraits.hpp
-  PyFrensie_PythonTypeTraits_def.hpp
-  PyFrensie_DistributionHelpers.hpp)
-
-INSTALL(FILES ${HEADERS}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+FRENSIE_SETUP_PACKAGE(pyfrensie
+  MPI_LIBRARIES ${MPI_CXX_LIBRARIES}
+  NON_MPI_LIBRARIES ${Boost_LIBRARIES} ${PYTHON_LIBRARIES}
+  SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})
 
 # Set up the include paths
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
@@ -35,13 +25,13 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
 #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
-SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist)
+SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist pyfrensie)
 
 # # Add the DataGen package
 # SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} DataGen)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.__init__)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} DataGen.ElectronPhoton)
-# SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon ${TEUCHOS_CORE} ${PYTRILINOS})
+# SET(DATA_GEN_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_gen_electron_photon pyfrensie)
 
 # # Add the Data package
 # SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
@@ -49,7 +39,7 @@ SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ENDL)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
-# SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_endl data_native ${TEUCHOS_CORE} ${PYTRILINOS})
+# SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_endl data_native pyfrensie)
 
 # # Add the Geometry package
 # SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
@@ -61,13 +51,13 @@ SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist
 # # IF(FRENSIE_ENABLE_DAGMC)
 # #   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
 # #   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
-# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc)
+# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc pyfrensie)
 # # ENDIF()
 
 # # IF(FRENSIE_ENABLE_ROOT)
 # #   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
 # #   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
-# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root)
+# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root pyfrensie)
 # # ENDIF()
 
 # SET(PyFrensie_Geometry_ALL "__all__ = [")
@@ -83,7 +73,7 @@ SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist
 # SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.__init__)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
-# SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_native ${TEUCHOS_CORE} ${PYTRILINOS})
+# SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_native pyfrensie)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)

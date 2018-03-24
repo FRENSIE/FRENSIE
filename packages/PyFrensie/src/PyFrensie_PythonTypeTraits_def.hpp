@@ -17,7 +17,7 @@ namespace Details{
 template<typename T>
 inline bool isValidNumPyArray( PyObject* py_obj )
 {
-  if( PyArray_Check( py_obj ) || PySequence_Check( py_obj ) )
+  if( py_obj && (PyArray_Check( py_obj ) || PySequence_Check( py_obj )) )
   {
     PyObject* py_array = PyArray_CheckFromAny(
                                       py_obj,
@@ -48,7 +48,7 @@ inline PyArrayObject* getNumPyArray( PyObject* py_obj )
   PyObject* py_array;
 
   // Make sure the Python object is a NumPy array
-  if( PyArray_Check( py_obj ) || PySequence_Check( py_obj ) )
+  if( py_obj && (PyArray_Check( py_obj ) || PySequence_Check( py_obj )) )
   {
     py_array = PyArray_CheckFromAny( py_obj,
                                      NULL,

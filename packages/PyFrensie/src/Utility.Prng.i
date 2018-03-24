@@ -29,13 +29,18 @@ Prng.RandomNumberGenerator proxy class.
 // Std Lib Includes
 #include <sstream>
 
+#define NO_IMPORT_ARRAY
+#include "numpy_include.h"
+
 // Frensie Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 %}
 
-// Include the Teuchos::ArrayRCP support
+// Include the vector support
 %include "PyFrensie_Array.i"
+
+%include "numpy.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -200,6 +205,9 @@ that the original random number stream state will be reset as well.
 %typemap(typecheck, precedence=1050) (const std::vector<double>&) {
   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
 }
+// %typemap(typecheck, precedence=1050) (const std::vector<double>&) {
+//   $1 = ($input && PySequence_Check($input)) ? 1 : 0;
+// }
 
 // Include the RandomNumberGenerator
 %include "Utility_RandomNumberGenerator.hpp"
