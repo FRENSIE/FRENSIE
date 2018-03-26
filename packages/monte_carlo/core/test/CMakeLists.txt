@@ -94,12 +94,8 @@ FRENSIE_ADD_TEST(SimulationGeneralProperties)
 FRENSIE_ADD_TEST_EXECUTABLE(SimulationNeutronProperties DEPENDS tstSimulationNeutronProperties.cpp)
 FRENSIE_ADD_TEST(SimulationNeutronProperties)
 
-ADD_EXECUTABLE(tstSimulationPhotonProperties
-  tstSimulationPhotonProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationPhotonProperties monte_carlo_core)
-ADD_TEST(SimulationPhotonProperties_test tstSimulationPhotonProperties)
-SET_PROPERTY(TEST SimulationPhotonProperties_test PROPERTY LABELS photon)
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationPhotonProperties DEPENDS tstSimulationPhotonProperties.cpp)
+FRENSIE_ADD_TEST(SimulationPhotonProperties)
 
 ADD_EXECUTABLE(tstSimulationAdjointPhotonProperties
   tstSimulationAdjointPhotonProperties.cpp
