@@ -178,7 +178,7 @@ input parameter are the following:
 
   incident_energy = 1.0 (MeV)
   nuclear_temperature = 1.0 (MeV)
-  restruction_energy = 0.0 (MeV)
+  restriction_energy = 0.0 (MeV)
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
@@ -249,7 +249,7 @@ input parameter are the following:
 
   incident_energy = 1.0 (MeV)
   nuclear_temperature = 1.0 (MeV)
-  restruction_energy = 0.0 (MeV)
+  restriction_energy = 0.0 (MeV)
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
@@ -481,7 +481,7 @@ input parameter are the following:
   incident_energy = 1.0 (MeV)
   a_parameter = 1.0 (MeV)
   b_parameter = 1.0 (MeV^-1)
-  restruction_energy = 0.0 (MeV)
+  restriction_energy = 0.0 (MeV)
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values

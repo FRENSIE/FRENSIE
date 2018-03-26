@@ -168,52 +168,6 @@ DIST_NAME( DISTRIBUTION, PARAMS )::sampleWithRandomNumberInSubrange;
 //---------------------------------------------------------------------------//
 %define %extend_distribution_interface_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
-// %feature("autodoc",
-// "toParameterList(RENAMED_DISTRIBUTION self, const std::string & parameter_name, PyObject * python_parameter_list)
-
-// The python ParameterList only supports native python and numpy array
-// types. To add a python RENAMED_DISTRIBUTION to a python ParameterList, only
-// this function can be used. The dictionary methods cannot be used to add a
-// python RENAMED_DISTRIBUTION to a python ParameterList. Once a python
-// RENAMED_DISTRIBUTION object has been added to the python ParameterList, you
-// will not be able to call print or str will it. Be careful when calling the
-// ParameterList set method after a python RENAMED_DISTRIBUTION has been added as
-// it returns a ParameterList object which python will try (and fail) to print.
-// Calls to set should be done like this:
-
-//   PyFrensie.Utility.initFrensiePrng()
-
-//   u = PyFrensie.Utility.RENAMED_DISTRIBUTION( ... )
-
-//   p = PyTrilinos.Teuchos.ParameterList()
-
-//   u.toParameterList( 'my_dist', p )
-
-//   dummy = p.set( 'my_double', 1.0 )
-
-// You can use the XMLParameterListWriter to write the ParameterList to an
-// XML file like this (continued from the previous example):
-
-//   writer = PyTrilinos.Teuchos.XMLParameterListWriter()
-
-//   xml_obj = writer.toXML( p )
-
-//   xml_file = open( 'my_list', 'w' )
-//   xml_file.write( xml_obj.toString() )
-//   xml_file.close()
-// " )
-// DIST_NAME( DISTRIBUTION, PARAMS )::toParameterList;
-
-// %feature("autodoc",
-// "fromParameterList(RENAMED_DISTRIBUTION self, const std::string & parameter_name, PyObject * python_parameter_list)
-
-// The python ParameterList only supports native python and numpy array types. To
-// get a python RENAMED_DISTRIBUTION from a python ParameterList, only this
-// function can be used. The dictionary methods cannot be used to get a python
-// RENAMED_DISTRIBUTION from a python ParameterList.
-// " )
-// DIST_NAME( DISTRIBUTION, PARAMS )::fromParameterList;
-
 %feature("autodoc",
 "__str__(RENAMED_DISTRIBUTION self) -> string
 

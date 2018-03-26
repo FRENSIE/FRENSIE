@@ -106,28 +106,6 @@ class DeltaDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.DeltaDistribution isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.DeltaDistribution isEqual method"
-    #     other_dist = Distribution.DeltaDistribution( 1.0 )
-    #     self.assertTrue(not self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.DeltaDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('delta_dist', plist)
-    #     self.assertTrue(plist.isParameter('delta_dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.DeltaDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('delta_dist', plist)
-    #     new_dist = Distribution.DeltaDistribution()
-    #     new_dist.fromParameterList('delta_dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.DeltaDistribution ==,!= methods"
         diff_dist = Distribution.DeltaDistribution( 1.0 )
@@ -150,7 +128,7 @@ class DiscreteDistributionTestCase(unittest.TestCase):
         self.assertTrue(isinstance(self.cdf_dist, Distribution.DiscreteDistribution))
 
     def testEvaluate(self):
-        "*Test Utility.Distribution.DiscreteDistribtuion evaluate method"
+        "*Test Utility.Distribution.DiscreteDistribution evaluate method"
         self.assertTrue(self.dist.evaluate( -1.0 ) == 0.0)
         self.assertTrue(self.dist.evaluate( 0.0 ) != 0.0)
         self.assertTrue(self.dist.evaluate( 0.5 ) == 0.0)
@@ -271,28 +249,6 @@ class DiscreteDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.isTabular())
         self.assertTrue(self.cdf_dist.isTabular())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.DiscreteDistribution isEqual method"
-    #     other_dist = Distribution.DiscreteDistribution( [0.0], [1.0] )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.DiscreteDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('discrete_dist', plist)
-    #     self.assertTrue(plist.isParameter('discrete_dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.DiscreteDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('discrete_dist', plist)
-    #     new_dist = Distribution.DiscreteDistribution()
-    #     new_dist.fromParameterList('discrete_dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.DiscreteDistribution ==,!= methods"
         diff_dist = Distribution.DiscreteDistribution( [0.0], [1.0] )
@@ -380,28 +336,6 @@ class EquiprobableBinDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.EquiprobableBinDistribution isContinuous method"
         self.assertTrue(self.dist.isContinuous())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.EquiprobableBinDistribution isEqual method"
-    #     other_dist = Distribution.EquiprobableBinDistribution( [0.0, 1.0] )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.EquiprobableBinDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.EquiprobableBinDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.EquiprobableBinDistribution()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.EquiprobableBinDistribution ==,!= methods"
         diff_dist = Distribution.EquiprobableBinDistribution( [0.0,1.0] )
@@ -463,28 +397,6 @@ class EvaporationDistributionTestCase(unittest.TestCase):
         lower_bound = self.dist.getLowerBoundOfIndepVar()
         self.assertTrue(lower_bound == 0.0)
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.EvaporationDistribution isEqual method"
-    #     other_dist = Distribution.EvaporationDistribution( 1.0, 1.0, 0.5 )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.EvaporationDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.EvaporationDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.EvaporationDistribution()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.EvaporationDistribution ==,!= methods"
         diff_dist = Distribution.EvaporationDistribution( 1.0, 1.0, 0.5 )
@@ -543,28 +455,6 @@ class ExponentialDistributionTestCase(unittest.TestCase):
     def testIsTabular(self):
         "*Test Utility.Distribution.ExponentialDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
-
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.ExponentialDistribution isEqual method"
-    #     other_dist = Distribution.ExponentialDistribution( 2.0, 3.0 )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.ExponentialDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.ExponentialDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.ExponentialDistribution()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.ExponentialDistribution ==,!= methods"
@@ -689,28 +579,6 @@ class HistogramDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.HistogramDistribution isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.HistogramDistribution isEqual method"
-    #     other_dist = Distribution.HistogramDistribution( [0.0, 1.0], [1.0] )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.HistogramDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.HistogramDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.HistogramDistribution()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.HistogramDistribution ==,!= methods"
         diff_dist = Distribution.HistogramDistribution( [0.0, 1.0], [1.0] )
@@ -772,28 +640,6 @@ class MaxwellFissionDistributionTestCase(unittest.TestCase):
         lower_bound = self.dist.getLowerBoundOfIndepVar()
         self.assertTrue(lower_bound == 0.0)
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.MaxwellFissionDistribution isEqual method"
-    #     other_dist = Distribution.MaxwellFissionDistribution( 1.0, 1.0, 0.5 )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.MaxwellFissionDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.MaxwellFissionDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.MaxwellFissionDistribution()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.MaxwellFissionDistribution ==,!= methods"
         diff_dist = Distribution.MaxwellFissionDistribution( 1.0, 1.0, 0.5 )
@@ -854,28 +700,6 @@ class NormalDistributionTestCase(unittest.TestCase):
     def testIsTabular(self):
         "*Test Utility.Distribution.NormalDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
-
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.NormalDistribution isEqual method"
-    #     other_dist = Distribution.NormalDistribution( 1.0, 0.5 )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.NormalDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.NormalDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.NormalDistribution()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.NormalDistribution ==,!= methods"
@@ -940,28 +764,6 @@ class PolynomialDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.PolynomialDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.PolynomialDistribution isEqual method"
-    #     other_dist = Distribution.PolynomialDistribution( [1.0, 2.0, 3.0], 0.0, 1.0 )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.PolynomialDistribution toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.PolynomialDistribution fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.PolynomialDistribution()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.PolynomialDistribution ==,!= methods"
         diff_dist = Distribution.PolynomialDistribution( [1.0, 2.0, 3.0], 0.0, 1.0 )
@@ -1024,28 +826,6 @@ class PowerDistribution_1TestCase(unittest.TestCase):
         "*Test Utility.Distribution.PowerDistribution_1 isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.PowerDistribution_1 isEqual method"
-    #     other_dist = Distribution.PowerDistribution_1( 1.0, 2.0 )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.PowerDistribution_1 toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.PowerDistribution_1 fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.PowerDistribution_1()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.PowerDistribution_1 ==,!= methods"
         diff_dist = Distribution.PowerDistribution_1( 1.0, 2.0 )
@@ -1107,28 +887,6 @@ class PowerDistribution_2TestCase(unittest.TestCase):
     def testIsTabular(self):
         "*Test Utility.Distribution.PowerDistribution_2 isTabular method"
         self.assertFalse(self.dist.isTabular())
-
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.PowerDistribution_2 isEqual method"
-    #     other_dist = Distribution.PowerDistribution_2( 1.0, 2.0 )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.PowerDistribution_2 toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.PowerDistribution_2 fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.PowerDistribution_2()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.PowerDistribution_2 ==,!= methods"
@@ -1226,28 +984,6 @@ class TabularDistribution_LinLinTestCase(unittest.TestCase):
         "*Test Utility.Distribution.TabularDistribution_LinLin isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.TabularDistribution_LinLin isEqual method"
-    #     other_dist = Distribution.TabularDistribution_LinLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.TabularDistribution_LinLin toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.TabularDistribution_LinLin fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.TabularDistribution_LinLin()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LinLin ==,!= methods"
         diff_dist = Distribution.TabularDistribution_LinLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
@@ -1343,28 +1079,6 @@ class TabularDistribution_LinLogTestCase(unittest.TestCase):
     def testIsTabular(self):
         "*Test Utility.Distribution.TabularDistribution_LinLog isTabular method"
         self.assertTrue(self.dist.isTabular())
-
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.TabularDistribution_LinLog isEqual method"
-    #     other_dist = Distribution.TabularDistribution_LinLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-    # def testToParameterList(self):
-    #     "*Test Utility.Distribution.TabularDistribution_LinLog toParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     self.assertTrue(plist.isParameter('dist'))
-    #     dummy = plist.set('extra_double', 1.0)
-    #     self.assertTrue(plist.isParameter('extra_double'))
-
-    # def testFromParameterList(self):
-    #     "*Test Utility.Distribution.TabularDistribution_LinLog fromParameterList method"
-    #     plist = ParameterList()
-    #     self.dist.toParameterList('dist', plist)
-    #     new_dist = Distribution.TabularDistribution_LinLog()
-    #     new_dist.fromParameterList('dist', plist)
-    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LinLog ==,!= methods"
@@ -1462,28 +1176,6 @@ class TabularDistribution_LogLinTestCase(unittest.TestCase):
         "*Test Utility.Distribution.TabularDistribution_LogLin isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-#     def testIsEqual(self):
-#         "*Test Utility.Distribution.TabularDistribution_LogLin isEqual method"
-#         other_dist = Distribution.TabularDistribution_LogLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-#         self.assertFalse(self.dist.isEqual(other_dist))
-#         self.assertTrue(self.dist.isEqual(self.dist))
-
-#     def testToParameterList(self):
-#         "*Test Utility.Distribution.TabularDistribution_LogLin toParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         self.assertTrue(plist.isParameter('dist'))
-#         dummy = plist.set('extra_double', 1.0)
-#         self.assertTrue(plist.isParameter('extra_double'))
-
-#     def testFromParameterList(self):
-#         "*Test Utility.Distribution.TabularDistribution_LogLin fromParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         new_dist = Distribution.TabularDistribution_LogLin()
-#         new_dist.fromParameterList('dist', plist)
-#         self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LogLin ==,!= methods"
         diff_dist = Distribution.TabularDistribution_LogLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
@@ -1580,32 +1272,402 @@ class TabularDistribution_LogLogTestCase(unittest.TestCase):
         "*Test Utility.Distribution.TabularDistribution_LogLog isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    # def testIsEqual(self):
-    #     "*Test Utility.Distribution.TabularDistribution_LogLog isEqual method"
-    #     other_dist = Distribution.TabularDistribution_LogLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-    #     self.assertFalse(self.dist.isEqual(other_dist))
-    #     self.assertTrue(self.dist.isEqual(self.dist))
-
-#     def testToParameterList(self):
-#         "*Test Utility.Distribution.TabularDistribution_LogLog toParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         self.assertTrue(plist.isParameter('dist'))
-#         dummy = plist.set('extra_double', 1.0)
-#         self.assertTrue(plist.isParameter('extra_double'))
-
-#     def testFromParameterList(self):
-#         "*Test Utility.Distribution.TabularDistribution_LogLog fromParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         new_dist = Distribution.TabularDistribution_LogLog()
-#         new_dist.fromParameterList('dist', plist)
-#         self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LogLog ==,!= methods"
         diff_dist = Distribution.TabularDistribution_LogLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
         same_dist = Distribution.TabularDistribution_LogLog( [1.0,2.0,3.0], [1.0,2.0,3.0] )
+        self.assertTrue(self.dist != diff_dist)
+        self.assertTrue(self.dist == same_dist)
+
+#-----------------------------------------------------------------------------#
+# Test the Tabular CDF Distribution LinLin
+class TabularCDFDistribution_LinLinTestCase(unittest.TestCase):
+    "TestCase class for Utility.Distribution.TabularCDFDistribution_LinLin class"
+
+    def setUp(self):
+        self.dist = Distribution.TabularCDFDistribution_LinLin( [1e-3, 1e-2, 1e-1, 1.0], [0.0, 1e-1, 1.0, 1e2] )
+
+    def testConstructor(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin constructor"
+        self.assertTrue(isinstance(self.dist, Distribution.TabularCDFDistribution_LinLin))
+
+    def testEvaluate(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin evaluate method"
+        self.assertTrue(self.dist.evaluate( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1.0 ) == 0.0)
+
+    def testEvaluatePDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin evaluatePDF method"
+        self.assertTrue(self.dist.evaluatePDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
+
+    def testEvaluateCDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin evaluateCDF method"
+        self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-2 ) == 9.8901207583744611e-06)
+        self.assertTrue(self.dist.evaluateCDF( 1e-1 ) == 1.0978034041795651e-03)
+        self.assertTrue(self.dist.evaluateCDF( 1.0 ) == 1.0)
+
+    def testSample(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin sample method"
+        sample = self.dist.sample()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+
+    def testSampleAndRecordTrials(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin sampleAndRecordTrials method"
+        trials = 0
+        sample,trials = self.dist.sampleAndRecordTrials( trials )
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(trials == 1)
+
+    def testSampleAndRecordBinIndex(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin sampleAndRecordBinIndex method"
+        sample,bin_index = self.dist.sampleAndRecordBinIndex()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(bin_index == 0 or bin_index == 1 or bin_index == 2)
+
+    def testSampleWithRandomNumber(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin sampleWithRandomNumber method"
+        sample = self.dist.sampleWithRandomNumber( 0.0 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumber( 1.0 - 1e-15 )
+        self.assertAlmostEqual( sample, 1.0, delta=1e-15 )
+
+    def testSampleInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin sampleInSubrange method"
+        sample = self.dist.sampleInSubrange( 0.5 )
+        self.assertTrue(sample >= 1e-3 and sample <= 0.5)
+
+    def testSampleWithRandomNumberInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin sampleWithRandomNumberInSubrange method"
+        sample = self.dist.sampleWithRandomNumberInSubrange( 0.0, 0.5 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumberInSubrange( 1.0 - 1e-15, 0.5 )
+        self.assertAlmostEqual( sample, 0.5, delta=1e-15 )
+
+    def testGetUpperBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin getUpperBoundOfIndepVar method"
+        upper_bound = self.dist.getUpperBoundOfIndepVar()
+        self.assertTrue(upper_bound == 1.0)
+
+    def testGetLowerBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin getLowerBoundOfIndepVar method"
+        lower_bound = self.dist.getLowerBoundOfIndepVar()
+        self.assertTrue(lower_bound == 1e-3)
+
+    def testIsContinuous(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin isContinuous method"
+        self.assertTrue(self.dist.isContinuous())
+
+    def testIsTabular(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin isTabular method"
+        self.assertTrue(self.dist.isTabular())
+
+    def testEquality(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLin ==,!= methods"
+        diff_dist = Distribution.TabularCDFDistribution_LinLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+        same_dist = Distribution.TabularCDFDistribution_LinLin( [1e-3,1e-2,1e-1,1.0], [0.0,1e-1,1.0,1e2] )
+        self.assertTrue(self.dist != diff_dist)
+        self.assertTrue(self.dist == same_dist)
+
+#-----------------------------------------------------------------------------#
+# Test the Tabular CDF Distribution LinLog
+class TabularCDFDistribution_LinLogTestCase(unittest.TestCase):
+    "TestCase class for Utility.Distribution.TabularCDFDistribution_LinLog class"
+
+    def setUp(self):
+        self.dist = Distribution.TabularCDFDistribution_LinLog( [1e-3, 1e-2, 1e-1, 1.0], [0.0, 1e-1, 1.0, 1e2] )
+
+    def testConstructor(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog constructor"
+        self.assertTrue(isinstance(self.dist, Distribution.TabularCDFDistribution_LinLog))
+
+    def testEvaluate(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog evaluate method"
+        self.assertTrue(self.dist.evaluate( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1.0 ) == 0.0)
+
+    def testEvaluatePDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog evaluatePDF method"
+        self.assertTrue(self.dist.evaluatePDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
+
+    def testEvaluateCDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog evaluateCDF method"
+        self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-2 ) == 9.8901207583744611e-06)
+        self.assertTrue(self.dist.evaluateCDF( 1e-1 ) == 1.0978034041795651e-03)
+        self.assertTrue(self.dist.evaluateCDF( 1.0 ) == 1.0)
+
+    def testSample(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog sample method"
+        sample = self.dist.sample()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+
+    def testSampleAndRecordTrials(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog sampleAndRecordTrials method"
+        trials = 0
+        sample,trials = self.dist.sampleAndRecordTrials( trials )
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(trials == 1)
+
+    def testSampleAndRecordBinIndex(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog sampleAndRecordBinIndex method"
+        sample,bin_index = self.dist.sampleAndRecordBinIndex()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(bin_index == 0 or bin_index == 1 or bin_index == 2)
+
+    def testSampleWithRandomNumber(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog sampleWithRandomNumber method"
+        sample = self.dist.sampleWithRandomNumber( 0.0 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumber( 1.0 - 1e-15 )
+        self.assertAlmostEqual( sample, 1.0, delta=1e-12 )
+
+    def testSampleInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog sampleInSubrange method"
+        sample = self.dist.sampleInSubrange( 0.5 )
+        self.assertTrue(sample >= 1e-3 and sample <= 0.5)
+
+    def testSampleWithRandomNumberInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog sampleWithRandomNumberInSubrange method"
+        sample = self.dist.sampleWithRandomNumberInSubrange( 0.0, 0.5 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumberInSubrange( 1.0 - 1e-15, 0.5 )
+        self.assertAlmostEqual( sample, 0.5, delta=1e-12 )
+
+    def testGetUpperBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog getUpperBoundOfIndepVar method"
+        upper_bound = self.dist.getUpperBoundOfIndepVar()
+        self.assertTrue(upper_bound == 1.0)
+
+    def testGetLowerBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog getLowerBoundOfIndepVar method"
+        lower_bound = self.dist.getLowerBoundOfIndepVar()
+        self.assertTrue(lower_bound == 1e-3)
+
+    def testIsContinuous(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog isContinuous method"
+        self.assertTrue(self.dist.isContinuous())
+
+    def testIsTabular(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog isTabular method"
+        self.assertTrue(self.dist.isTabular())
+
+    def testEquality(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LinLog ==,!= methods"
+        diff_dist = Distribution.TabularCDFDistribution_LinLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+        same_dist = Distribution.TabularCDFDistribution_LinLog( [1e-3,1e-2,1e-1,1.0], [0.0,1e-1,1.0,1e2] )
+        self.assertTrue(self.dist != diff_dist)
+        self.assertTrue(self.dist == same_dist)
+
+#-----------------------------------------------------------------------------#
+# Test the Tabular CDF Distribution LogLin
+class TabularCDFDistribution_LogLinTestCase(unittest.TestCase):
+    "TestCase class for Utility.Distribution.TabularCDFDistribution_LogLin class"
+
+    def setUp(self):
+        self.dist = Distribution.TabularCDFDistribution_LogLin( [1e-3, 1e-2, 1e-1, 1.0], [0.0, 1e-1, 1.0, 1e2] )
+
+    def testConstructor(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin constructor"
+        self.assertTrue(isinstance(self.dist, Distribution.TabularCDFDistribution_LogLin))
+
+    def testEvaluate(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin evaluate method"
+        self.assertTrue(self.dist.evaluate( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1.0 ) == 0.0)
+
+    def testEvaluatePDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin evaluatePDF method"
+        self.assertTrue(self.dist.evaluatePDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
+
+    def testEvaluateCDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin evaluateCDF method"
+        self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-2 ) == 9.8901207583744611e-06)
+        self.assertTrue(self.dist.evaluateCDF( 1e-1 ) == 1.0978034041795651e-03)
+        self.assertTrue(self.dist.evaluateCDF( 1.0 ) == 1.0)
+
+    def testSample(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin sample method"
+        sample = self.dist.sample()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+
+    def testSampleAndRecordTrials(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin sampleAndRecordTrials method"
+        trials = 0
+        sample,trials = self.dist.sampleAndRecordTrials( trials )
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(trials == 1)
+
+    def testSampleAndRecordBinIndex(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin sampleAndRecordBinIndex method"
+        sample,bin_index = self.dist.sampleAndRecordBinIndex()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(bin_index == 0 or bin_index == 1 or bin_index == 2)
+
+    def testSampleWithRandomNumber(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin sampleWithRandomNumber method"
+        sample = self.dist.sampleWithRandomNumber( 0.0 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumber( 1.0 - 1e-15 )
+        self.assertAlmostEqual( sample, 1.0, delta=1e-15 )
+
+    def testSampleInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin sampleInSubrange method"
+        sample = self.dist.sampleInSubrange( 0.5 )
+        self.assertTrue(sample >= 1e-3 and sample <= 0.5)
+
+    def testSampleWithRandomNumberInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin sampleWithRandomNumberInSubrange method"
+        sample = self.dist.sampleWithRandomNumberInSubrange( 0.0, 0.5 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumberInSubrange( 1.0 - 1e-15, 0.5 )
+        self.assertAlmostEqual( sample, 0.5, delta=1e-15 )
+
+    def testGetUpperBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin getUpperBoundOfIndepVar method"
+        upper_bound = self.dist.getUpperBoundOfIndepVar()
+        self.assertTrue(upper_bound == 1.0)
+
+    def testGetLowerBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin getLowerBoundOfIndepVar method"
+        lower_bound = self.dist.getLowerBoundOfIndepVar()
+        self.assertTrue(lower_bound == 1e-3)
+
+    def testIsContinuous(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin isContinuous method"
+        self.assertTrue(self.dist.isContinuous())
+
+    def testIsTabular(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin isTabular method"
+        self.assertTrue(self.dist.isTabular())
+
+    def testEquality(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLin ==,!= methods"
+        diff_dist = Distribution.TabularCDFDistribution_LogLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+        same_dist = Distribution.TabularCDFDistribution_LogLin( [1e-3,1e-2,1e-1,1.0], [0.0,1e-1,1.0,1e2] )
+        self.assertTrue(self.dist != diff_dist)
+        self.assertTrue(self.dist == same_dist)
+
+#-----------------------------------------------------------------------------#
+# Test the Tabular CDF Distribution LogLog
+class TabularCDFDistribution_LogLogTestCase(unittest.TestCase):
+    "TestCase class for Utility.Distribution.TabularCDFDistribution_LogLog class"
+
+    def setUp(self):
+        self.dist = Distribution.TabularCDFDistribution_LogLog( [1e-3, 1e-2, 1e-1, 1.0], [0.0, 1e-1, 1.0, 1e2] )
+
+    def testConstructor(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog constructor"
+        self.assertTrue(isinstance(self.dist, Distribution.TabularCDFDistribution_LogLog))
+
+    def testEvaluate(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog evaluate method"
+        self.assertTrue(self.dist.evaluate( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluate( 1.0 ) == 0.0)
+
+    def testEvaluatePDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog evaluatePDF method"
+        self.assertTrue(self.dist.evaluatePDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-2 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1e-1 ) == 0.0)
+        self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
+
+    def testEvaluateCDF(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog evaluateCDF method"
+        self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-3 ) == 0.0)
+        self.assertTrue(self.dist.evaluateCDF( 1e-2 ) == 9.8901207583744611e-06)
+        self.assertTrue(self.dist.evaluateCDF( 1e-1 ) == 1.0978034041795651e-03)
+        self.assertTrue(self.dist.evaluateCDF( 1.0 ) == 1.0)
+
+    def testSample(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog sample method"
+        sample = self.dist.sample()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+
+    def testSampleAndRecordTrials(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog sampleAndRecordTrials method"
+        trials = 0
+        sample,trials = self.dist.sampleAndRecordTrials( trials )
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(trials == 1)
+
+    def testSampleAndRecordBinIndex(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog sampleAndRecordBinIndex method"
+        sample,bin_index = self.dist.sampleAndRecordBinIndex()
+        self.assertTrue(sample >= 1e-3 and sample <= 1.0)
+        self.assertTrue(bin_index == 0 or bin_index == 1 or bin_index == 2)
+
+    def testSampleWithRandomNumber(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog sampleWithRandomNumber method"
+        sample = self.dist.sampleWithRandomNumber( 0.0 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumber( 1.0 - 1e-15 )
+        self.assertAlmostEqual( sample, 1.0, delta=1e-15 )
+
+    def testSampleInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog sampleInSubrange method"
+        sample = self.dist.sampleInSubrange( 0.5 )
+        self.assertTrue(sample >= 1e-3 and sample <= 0.5)
+
+    def testSampleWithRandomNumberInSubrange(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog sampleWithRandomNumberInSubrange method"
+        sample = self.dist.sampleWithRandomNumberInSubrange( 0.0, 0.5 )
+        self.assertTrue(sample == 1e-3)
+        sample = self.dist.sampleWithRandomNumberInSubrange( 1.0 - 1e-15, 0.5 )
+        self.assertAlmostEqual( sample, 0.5, delta=1e-15 )
+
+    def testGetUpperBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog getUpperBoundOfIndepVar method"
+        upper_bound = self.dist.getUpperBoundOfIndepVar()
+        self.assertTrue(upper_bound == 1.0)
+
+    def testGetLowerBoundOfIndepVar(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog getLowerBoundOfIndepVar method"
+        lower_bound = self.dist.getLowerBoundOfIndepVar()
+        self.assertTrue(lower_bound == 1e-3)
+
+    def testIsContinuous(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog isContinuous method"
+        self.assertTrue(self.dist.isContinuous())
+
+    def testIsTabular(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog isTabular method"
+        self.assertTrue(self.dist.isTabular())
+
+    def testEquality(self):
+        "*Test Utility.Distribution.TabularCDFDistribution_LogLog ==,!= methods"
+        diff_dist = Distribution.TabularCDFDistribution_LogLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+        same_dist = Distribution.TabularCDFDistribution_LogLog( [1e-3,1e-2,1e-1,1.0], [0.0,1e-1,1.0,1e2] )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
@@ -1692,28 +1754,6 @@ class UniformDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.UniformDistribution isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-#     def testIsEqual(self):
-#         "*Test Utility.Distribution.UniformDistribution isEqual method"
-#         other_dist = Distribution.UniformDistribution( -0.5, 0.5 )
-#         self.assertFalse(self.dist.isEqual(other_dist))
-#         self.assertTrue(self.dist.isEqual(self.dist))
-
-#     def testToParameterList(self):
-#         "*Test Utility.Distribution.UniformDistribution toParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         self.assertTrue(plist.isParameter('dist'))
-#         dummy = plist.set('extra_double', 1.0)
-#         self.assertTrue(plist.isParameter('extra_double'))
-
-#     def testFromParameterList(self):
-#         "*Test Utility.Distribution.UniformDistribution fromParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         new_dist = Distribution.UniformDistribution()
-#         new_dist.fromParameterList('dist', plist)
-#         self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.UniformDistribution ==,!= methods"
         diff_dist = Distribution.UniformDistribution( -0.5, 0.5 )
@@ -1775,28 +1815,6 @@ class WattDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.WattDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-#     def testIsEqual(self):
-#         "*Test Utility.Distribution.WattDistribution isEqual method"
-#         other_dist = Distribution.WattDistribution( 1.0, 1.0, 1.0, 0.5 )
-#         self.assertFalse(self.dist.isEqual(other_dist))
-#         self.assertTrue(self.dist.isEqual(self.dist))
-
-#     def testToParameterList(self):
-#         "*Test Utility.Distribution.WattDistribution toParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         self.assertTrue(plist.isParameter('dist'))
-#         dummy = plist.set('extra_double', 1.0)
-#         self.assertTrue(plist.isParameter('extra_double'))
-
-#     def testFromParameterList(self):
-#         "*Test Utility.Distribution.WattDistribution fromParameterList method"
-#         plist = ParameterList()
-#         self.dist.toParameterList('dist', plist)
-#         new_dist = Distribution.WattDistribution()
-#         new_dist.fromParameterList('dist', plist)
-#         self.assertTrue(self.dist.isEqual(new_dist))
-
     def testEquality(self):
         "*Test Utility.Distribution.WattDistribution ==,!= methods"
         diff_dist = Distribution.WattDistribution( 1.0, 1.0, 1.0, 0.5 )
@@ -1831,6 +1849,10 @@ if __name__ == "__main__":
     suite.addTest(unittest.makeSuite(TabularDistribution_LinLogTestCase))
     suite.addTest(unittest.makeSuite(TabularDistribution_LogLinTestCase))
     suite.addTest(unittest.makeSuite(TabularDistribution_LogLogTestCase))
+    suite.addTest(unittest.makeSuite(TabularCDFDistribution_LinLinTestCase))
+    suite.addTest(unittest.makeSuite(TabularCDFDistribution_LinLogTestCase))
+    suite.addTest(unittest.makeSuite(TabularCDFDistribution_LogLinTestCase))
+    suite.addTest(unittest.makeSuite(TabularCDFDistribution_LogLogTestCase))
     suite.addTest(unittest.makeSuite(UniformDistributionTestCase))
     suite.addTest(unittest.makeSuite(WattDistributionTestCase))
 
