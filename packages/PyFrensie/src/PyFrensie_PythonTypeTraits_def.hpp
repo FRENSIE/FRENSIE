@@ -17,6 +17,8 @@ namespace Details{
 template<typename T>
 inline bool isValidNumPyArray( PyObject* py_obj )
 {
+  bool is_valid = false;
+  
   if( py_obj && (PyArray_Check( py_obj ) || PySequence_Check( py_obj )) )
   {
     PyObject* py_array = PyArray_CheckFromAny(
@@ -30,79 +32,137 @@ inline bool isValidNumPyArray( PyObject* py_obj )
     if( py_array )
     {
       if( PyArray_TYPE((PyArrayObject*) py_array) == numpyTypecode( T() ) )
-        return true;
+        is_valid = true;
       else
-        return false;
+        is_valid = false;
+
+      Py_DECREF( py_array );
     }
     else
-      return false;
+      is_valid = false;
   }
   else
-    return false;
+    is_valid = false;
+
+  return is_valid;
 }
 
 // Get the NumPy array object
 template<typename T>
-inline PyArrayObject* getNumPyArray( PyObject* py_obj )
+inline PyArrayObject* getNumPyArray( PyObject* py_obj,
+                                     int* is_new_object )
 {
-  PyObject* py_array;
+  PyArrayObject* py_array = NULL;
+
+  int typecode = numpyTypecode( T() );
 
   // Make sure the Python object is a NumPy array
-  if( py_obj && (PyArray_Check( py_obj ) || PySequence_Check( py_obj )) )
+  if( py_obj && PyArray_Check( py_obj ) &&
+      (typecode == NPY_NOTYPE ||
+       PyArray_EquivTypenums(PyArray_TYPE((PyArrayObject*)py_obj), typecode)) )
   {
-    py_array = PyArray_CheckFromAny( py_obj,
-                                     NULL,
-                                     1,
-                                     1,
-                                     NPY_ARRAY_DEFAULT | NPY_ARRAY_NOTSWAPPED,
-                                     NULL );
-
-    if( !py_array )
-    {
-      PyErr_Format( PyExc_ValueError,
-                    "The input object is not a valid NumPy array!" );
-    }
+    py_array = (PyArrayObject*)py_obj;
   }
   else
   {
-    PyErr_Format( PyExc_ValueError,
-                  "The input object is not a NumPy array!" );
+    PyObject* new_py_obj =
+      PyArray_FROMANY( py_obj, typecode, 0, 0, NPY_ARRAY_DEFAULT );
+
+    // An exception will be thrown if the conversion fails (no need to check
+    // (for a NULL return)
+    py_array = (PyArrayObject*)new_py_obj;
+
+    *is_new_object = 1;
   }
 
-  // Make sure the NumPy array has the correct type
-  if( PyArray_TYPE((PyArrayObject*) py_array) != numpyTypecode( T() ) )
-  {
-    PyErr_Format( PyExc_ValueError,
-                  "The input array and output array types do not match!" );
-  }
-
-  return (PyArrayObject*)py_array;
+  return py_array;
 }
 
+// Get the type code string (useful for exception messages)
+const char* typecodeString( int typecode );
+
+// Get the PyObject type string (useful for exception messages)_
+const char* pytypeString( PyObject* py_obj );
+
+// Get the NumPy array object without performing a type conversion
+template<typename T>
+PyArrayObject* getNumPyArrayWithoutConversion( PyObject* py_obj )
+{
+  PyArrayObject* py_array = NULL;
+
+  int typecode = numpyTypecode( T() );
+
+  if( py_obj && PyArray_Check( py_obj ) &&
+      (typecode == NPY_NOTYPE ||
+       PyArray_EquivTypenums(PyArray_TYPE((PyArrayObject*)py_obj), typecode)) )
+  {
+    py_array = (PyArrayObject*)py_obj;
+  }
+  else if( PyArray_Check( py_obj ) )
+  {
+    const char* desired_type = typecodeString(typecode);
+    const char* actual_type = typecodeString(PyArray_TYPE((PyArrayObject*)py_obj));
+    PyErr_Format(PyExc_TypeError,
+                 "Array of type '%s' required but array of type '%s' given",
+                 desired_type, actual_type);
+    py_array = NULL;
+  }
+  else
+  {
+    const char* desired_type = typecodeString(typecode);
+    const char* actual_type = pytypeString(py_obj);
+    PyErr_Format(PyExc_TypeError,
+                 "Array of type '%s' required but a '%s' was given",
+                 desired_type,
+                 actual_type);
+    py_array = NULL;
+  }
+
+  return py_array;
+}
+
+template<typename... Types>
+struct IsValidTupleElementHelper;
+
+template<typename T, typename... Types>
+struct IsValidTupleElementHelper<T,Types...>
+{
+  template<size_t element_index>
+  static inline bool areElementsConvertable( PyObject* py_obj )
+  {
+    PyObject* py_obj_element = PyTuple_GetItem( py_obj, element_index );
+    
+    if( !PythonTypeTraits<T>::isConvertable( py_obj_element  ) )
+      return false;
+
+    return IsValidTupleElementHelper<Types...>::areElementsConvertable<element_index+1>( py_obj );
+  }
+};
+
+template<typename T>
+struct IsValidTupleElementHelper<T>
+{
+  template<size_t element_index>
+  static inline bool areElementsConvertable( PyObject* py_obj )
+  {
+    PyObject* py_obj_element = PyTuple_GetItem( py_obj, element_index );
+    
+    if( !PythonTypeTraits<T>::isConvertable( py_obj_element ) )
+      return false;
+
+    return true;
+  }
+};
+
 // Check if the PyObject is a valid tuple
-template<typename T1, typename T2, typename T3>
+template<typename... Types>
 inline bool isValidTuple( PyObject* py_obj )
 {
   if( PyTuple_Check( py_obj ) )
   {
-    if( PyTuple_Size( py_obj ) == 3 )
+    if( PyTuple_Size( py_obj ) == Utility::TupleSize<std::tuple<Types...> >::value )
     {
-      PyObject* element = PyTuple_GetItem( py_obj, 0 );
-      
-      if( !PythonTypeTraits<T1>::isConvertable( element ) )
-        return false;
-      
-      element = PyTuple_GetItem( py_obj, 1 );
-      
-      if( !PythonTypeTraits<T2>::isConvertable( element ) )
-        return false;
-      
-      element = PyTuple_GetItem( py_obj, 2 );
-      
-      if( !PythonTypeTraits<T3>::isConvertable( element ) )
-        return false;
-      
-      return true;
+      return IsValidTupleElementHelper<Types...>::areElementsConvertable<0>( py_obj );
     }
     else
       return false;
@@ -206,9 +266,35 @@ template<typename STLCompliantArray>
 inline STLCompliantArray convertPythonToArray( PyObject* py_obj )
 {
   // An exception will be thrown if this fails
-  PyArrayObject* py_array =
-    Details::getNumPyArray<typename STLCompliantArray::value_type>( py_obj );
+  int is_new_array = 0;
   
+  PyArrayObject* py_array =
+    Details::getNumPyArray<typename STLCompliantArray::value_type>( py_obj, &is_new_array );
+  
+  typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
+  
+  typename STLCompliantArray::value_type* data =
+    (typename STLCompliantArray::value_type*)PyArray_DATA(py_array);
+  
+  STLCompliantArray output_array( length );
+  
+  for( typename STLCompliantArray::size_type i = 0; i < length; ++i )
+    output_array[i] = *(data++);
+
+  if( is_new_array )
+    Py_DECREF(py_array);
+  
+  return output_array;
+}
+
+// Create an array object from a Python object without a type conversion
+template<typename STLCompliantArray>
+STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj )
+{
+  // An exception will be thrown if this fails
+  PyArrayObject* py_array =
+    Details::getNumPyArrayWithoutConversion<typename STLCompliantArray::value_type>( py_obj );
+
   typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
   
   typename STLCompliantArray::value_type* data =
@@ -273,65 +359,111 @@ inline STLCompliantSet convertPythonToSet( PyObject* py_obj )
     PySet_Add( py_obj, PySet_Pop( tmp_py_obj ) );
   }
 
+  // Delete the temporary set
+  Py_DECREF( tmp_py_obj );
+  
   return output_set;
 }
 
-// Create a Python (tuple) object from a std::tuple object
-template<typename T1, typename T2, typename T3>
-inline PyObject* convertTupleToPython( const std::tuple<T1,T2,T3>& obj )
+template<typename... Types>
+struct ConvertTupleElementsToPythonHelper;
+
+template<typename T, typename... Types>
+struct ConvertTupleElementsToPythonHelper<T,Types...>
 {
-  PyObject* py_tuple = PyTuple_New( 3 );
-
-  int return_value = PyTuple_SetItem(
-        py_tuple, 0, PythonTypeTraits<T1>::convertToPython(std::get<0>(obj)) );
-    
-  if( return_value != 0 )
+  template<size_t element_index, typename... TupleTypes>
+  static inline void convert( const std::tuple<TupleTypes...>& obj,
+                              PyObject* py_tuple )
   {
-    PyErr_Format( PyExc_RuntimeError,
-                  "Could not set the first element of the tuple!" );
+    int return_value = PyTuple_SetItem(
+          py_tuple,
+          element_index,
+          PythonTypeTraits<T>::convertToPython(std::get<element_index>(obj)) );
+
+    if( return_value != 0 )
+    {
+      PyErr_Format( PyExc_RuntimeError,
+                    "Could not set element %i of the tuple!",
+                    element_index );
+    }
+
+    ConvertTupleElementsToPythonHelper<Types...>::template convert<element_index+1>( obj, py_tuple );
   }
+};
 
-  return_value = PyTuple_SetItem(
-        py_tuple, 1, PythonTypeTraits<T2>::convertToPython(std::get<1>(obj)) );
-
-  if( return_value != 0 )
+template<typename T>
+struct ConvertTupleElementsToPythonHelper<T>
+{
+  template<size_t element_index, typename... TupleTypes>
+  static inline void convert( const std::tuple<TupleTypes...>& obj,
+                              PyObject* py_tuple )
   {
-    PyErr_Format( PyExc_RuntimeError,
-                  "Could not set the second element of the tuple!" );
-  }
+    int return_value = PyTuple_SetItem(
+          py_tuple,
+          element_index,
+          PythonTypeTraits<T>::convertToPython(std::get<element_index>(obj)) );
 
-  return_value = PyTuple_SetItem(
-        py_tuple, 2, PythonTypeTraits<T3>::convertToPython(std::get<2>(obj)) );
-
-  if( return_value != 0 )
-  {
-    PyErr_Format( PyExc_RuntimeError,
-                  "Could not set the third element of the tuple!" );
+    if( return_value != 0 )
+    {
+      PyErr_Format( PyExc_RuntimeError,
+                    "Could not set element %i of the tuple!",
+                    element_index );
+    }
   }
+};
+
+// Create a Python (tuple) object from a std::tuple object
+template<typename... Types>
+inline PyObject* convertTupleToPython( const std::tuple<Types...>& obj )
+{
+  PyObject* py_tuple =
+    PyTuple_New( Utility::TupleSize<std::tuple<Types...> >::value );
+
+  ConvertTupleElementsToPythonHelper<Types...>::convert<0>( obj, py_tuple );
   
   return py_tuple;
 }
 
-//! Create a std::tuple object from a Python object
-template<typename T1, typename T2, typename T3>
-inline std::tuple<T1,T2,T3> convertPythonToTuple3( PyObject* py_obj )
+template<typename... Types>
+struct ConvertPythonToTupleElementsHelper;
+
+template<typename T, typename... Types>
+struct ConvertPythonToTupleElementsHelper<T,Types...>
 {
-  std::tuple<T1,T2,T3> output_tuple;
+  template<size_t element_index, typename... TupleTypes>
+  static inline void convert( PyObject* py_obj,
+                              std::tuple<TupleTypes...>& tuple )
+  {
+    PyObject* element = PyTuple_GetItem( py_obj, element_index );
 
-  PyObject* element = PyTuple_GetItem( py_obj, 0 );
+    std::get<element_index>( tuple ) =
+      PythonTypeTraits<T>::convertFromPython( element );
 
-  std::get<0>( output_tuple ) =
-    PythonTypeTraits<T1>::convertFromPython( element );
+    ConvertPythonToTupleElementsHelper<Types...>::template convert<element_index+1>( py_obj, tuple );
+  }
+};
 
-  element = PyTuple_GetItem( py_obj, 1 );
-  
-  std::get<1>( output_tuple ) =
-    PythonTypeTraits<T2>::convertFromPython( element );
+template<typename T>
+struct ConvertPythonToTupleElementsHelper<T>
+{
+  template<size_t element_index, typename... TupleTypes>
+  static inline void convert( PyObject* py_obj,
+                              std::tuple<TupleTypes...>& tuple )
+  {
+    PyObject* element = PyTuple_GetItem( py_obj, element_index );
 
-  element = PyTuple_GetItem( py_obj, 2 );
-  
-  std::get<2>( output_tuple ) =
-    PythonTypeTraits<T3>::convertFromPython( element );
+    std::get<element_index>( tuple ) =
+      PythonTypeTraits<T>::convertFromPython( element );
+  }
+};
+
+//! Create a std::tuple object from a Python object
+template<typename... Types>
+inline std::tuple<Types...> convertPythonToTuple( PyObject* py_obj )
+{
+  std::tuple<Types...> output_tuple;
+
+  ConvertPythonToTupleElementsHelper<Types...>::convert<0>( py_obj, output_tuple );
   
   return output_tuple;
 }

@@ -11,7 +11,6 @@
 
 // Std Lib Includes
 #include <utility>
-#include <tuple>
 #include <string>
 #include <vector>
 #include <set>
@@ -23,7 +22,7 @@
 // FRENSIE Includes
 #include "PyFrensie_NumPyTypeTraits.hpp"
 #include "PyFrensie_PythonTypeTraitsDecl.hpp"
-#include "Utility_ArrayView.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace PyFrensie{
 
@@ -37,8 +36,12 @@ bool isValidNumPyArray( PyObject* py_obj );
 template<typename T>
 PyArrayObject* getNumPyArray( PyObject* py_obj );
 
+// Get the NumPy array object without performing a type conversion
+template<typename T>
+PyArrayObject* getNumPyArrayWithoutConversion( PyObject* py_obj );
+
 // Check if the PyObject is a valid tuple
-template<typename T1, typename T2, typename T3>
+template<typename... Types>
 bool isValidTuple( PyObject* py_obj );
 
 // Check if the PyObject is a valid set
@@ -57,6 +60,10 @@ PyObject* convertArrayToPython( const STLCompliantArray& obj );
 template<typename STLCompliantArray>
 STLCompliantArray convertPythonToArray( PyObject* py_obj );
 
+// Create an array object from a Python object without a type conversion
+template<typename STLCompliantArray>
+STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj );
+
 // Create a Python (set) object from a set object
 template<typename STLCompliantSet>
 PyObject* convertSetToPython( const STLCompliantSet& obj );
@@ -66,12 +73,12 @@ template<typename STLCompliantSet>
 STLCompliantSet convertPythonToSet( PyObject* py_obj );
 
 // Create a Python (tuple) object from a std::tuple object
-template<typename T1, typename T2, typename T3>
-PyObject* convertTupleToPython( const std::tuple<T1,T2,T3>& obj );
+template<typename... Types>
+PyObject* convertTupleToPython( const std::tuple<Types...>& obj );
 
 //! Create a std::tuple object from a Python object
-template<typename T1, typename T2, typename T3>
-std::tuple<T1,T2,T3> convertPythonToTuple3( PyObject* py_obj );
+template<typename... Types>
+std::tuple<Types...> convertPythonToTuple( PyObject* py_obj );
 
 // Create a Python (dictionary) object from a map object
 template<typename STLCompliantMap>
@@ -332,63 +339,23 @@ struct PythonTypeTraits<std::vector<T> >
   { return Details::isValidNumPyArray<T>( py_obj ); }
 };
 
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
- * Utility::ArrayView
- * \ingroup python_type_traits
- */
-template<typename T>
-struct PythonTypeTraits<Utility::ArrayView<T> >
-{
-  //! Create a Python (NumPy) object from a Teuchos::Array<T> object
-  static inline PyObject* convertToPython( const Utility::ArrayView<T>& obj )
-  { return Details::convertArrayToPython( obj ); }
-
-  //! Create a Teuchos::Array<T> object from a Python object
-  static inline Utility::ArrayView<T> convertFromPython( PyObject* py_obj )
-  { return Utility::ArrayView<T>(); }
-
-  //! Check if a Python object can be converted to the desired type
-  static inline bool isConvertable( PyObject* py_obj )
-  { return false; }
-};
-
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
- * Utility::ArrayView of const
- * \ingroup python_type_traits
- */
-template<typename T>
-struct PythonTypeTraits<Utility::ArrayView<const T> >
-{
-  //! Create a Python (NumPy) object from a Teuchos::Array<T> object
-  static inline PyObject* convertToPython( const Utility::ArrayView<const T>& obj )
-  { return Details::convertArrayToPython( obj ); }
-
-  //! Create a Teuchos::Array<T> object from a Python object
-  static inline Utility::ArrayView<const T> convertFromPython( PyObject* py_obj )
-  { return Utility::ArrayView<const T>(); }
-
-  //! Check if a Python object can be converted to the desired type
-  static inline bool isConvertable( PyObject* py_obj )
-  { return false; }
-};
-
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
- * std::tuple<T1,T2,T3>
+ * std::tuple
  */
-template<typename T1, typename T2, typename T3>
-struct PythonTypeTraits<std::tuple<T1,T2,T3> >
+template<typename... Types>
+struct PythonTypeTraits<std::tuple<Types...> >
 {
   //! Create a Python (tuple) object from a std::tuple<T1,T2,T3> object
-  static inline PyObject* convertToPython( const std::tuple<T1,T2,T3>& obj )
+  static inline PyObject* convertToPython( const std::tuple<Types...>& obj )
   { return Details::convertTupleToPython( obj ); }
 
   //! Create a std::tuple<T1,T2,T3> object from a Python object
-  static inline std::tuple<T1,T2,T3> convertFromPython( PyObject* py_obj )
-  { return Details::convertPythonToTuple3<T1,T2,T3>( py_obj ); }
+  static inline std::tuple<Types...> convertFromPython( PyObject* py_obj )
+  { return Details::convertPythonToTuple<Types...>( py_obj ); }
 
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
-  { return Details::isValidTuple<T1,T2,T3>( py_obj ); }
+  { return Details::isValidTuple<Types...>( py_obj ); }
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 

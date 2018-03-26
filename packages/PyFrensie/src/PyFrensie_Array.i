@@ -33,77 +33,61 @@
 // pointer to construct the ArrayView.  If the conversion creates a
 // new PyArrayObject, then we have to be sure to decrement its
 // reference count once the ArrayView has been used.
-%typemap(in) Utility::ArrayView< const TYPE >
+%typemap(in) Utility::ArrayView< const TYPE > (int is_new = 0,
+                                               PyArrayObject* np_array = NULL)
 {
-  $result = PyFrensie::convertToPython( $1 );
+  np_array = Details::getNumPyArray<TYPE>( $input, &is_new );
 
-  if (!$result)
+  if( !np_array )
     SWIG_fail;
   
-  if (!npArray)
-    SWIG_fail;
-  
-  $1 = Utility::arrayView( (TYPE*) array_data(npArray), array_size(npArray, 0));
+  $1 = Utility::arrayView( (TYPE*)PyArray_DATA(np_array), PyArray_DIM(np_array, 0) );
+}
+
+%typemap(freearg) Utility::ArrayView< const TYPE >
+{
+  if( is_new$argnum )
+    Py_DECREF(np_array$argnum)
 }
 
 // // If an ArrayView argument has a non-const TYPE, then the default
 // // behavior is to assume that the array is input/output.  Therefore
 // // the input python argument must be a NumPy array.
-// %typemap(in) Utility::ArrayView< TYPE >
-// {
-//   PyArrayObject * npArray = obj_to_array_no_conversion($input, TYPECODE);
-//   if (!npArray) SWIG_fail;
-//   $1 = Utility::arrayView( (TYPE*) array_data(npArray), array_size(npArray, 0));
-// }
-// PyArrayObject* obj_to_array_no_conversion(PyObject* input,
-//                                             int        typecode)
-//   {
-//     PyArrayObject* ary = NULL;
-//     if (is_array(input) && (typecode == NPY_NOTYPE ||
-//                             PyArray_EquivTypenums(array_type(input), typecode)))
-//     {
-//       ary = (PyArrayObject*) input;
-//     }
-//     else if is_array(input)
-//     {
-//       const char* desired_type = typecode_string(typecode);
-//       const char* actual_type  = typecode_string(array_type(input));
-//       PyErr_Format(PyExc_TypeError,
-//                    "Array of type '%s' required.  Array of type '%s' given",
-//                    desired_type, actual_type);
-//       ary = NULL;
-//     }
-//     else
-//     {
-//       const char* desired_type = typecode_string(typecode);
-//       const char* actual_type  = pytype_string(input);
-//       PyErr_Format(PyExc_TypeError,
-//                    "Array of type '%s' required.  A '%s' was given",
-//                    desired_type,
-//                    actual_type);
-//       ary = NULL;
-//     }
-//     return ary;
-//   }
+%typemap(in) Utility::ArrayView< TYPE >
+{
+  PyArrayObject* np_array =
+    Details::getNumPyArrayWithoutConversion<TYPE>( $input );
+
+  if (!np_array)
+    SWIG_fail;
+  
+  $1 = Utility::arrayView( (TYPE*)PyArray_DATA(np_array), PyArray_DIM(np_array, 0) );
+}
 
 // If an ArrayView is output, with either a const or non-const TYPE,
 // convert the underlying data to a NumPy array of correct type.
 %typemap(out) Utility::ArrayView< TYPE >
 {
-  $result = PyFrensie::convertToPython( $1 );
-
-  if (!$result)
+  npy_intp dims[1] = { $1.size() };
+  
+  $result = PyArray_SimpleNewFromData( 1, dims, TYPECODE, (void*)$1.data() );
+  
+  if( !$result )
     SWIG_fail;
 }
 
 %typemap(out) Utility::ArrayView< const TYPE >
 {
-  $result = PyFrensie::convertToPython( $1 );
+  npy_intp dims[1] = { $1.size() };
   
-  if (!$result)
+  $result = PyArray_SimpleNewFromData( 1, dims, TYPECODE, (void*)$1.data() );
+  
+  if( !$result )
     SWIG_fail;
 }
 
+// The supplied std_vector.i interface file does not provide support for
+// NumPy arrays - these output typemaps do.
 %typemap(out) std::vector<TYPE>
 {
   $result = PyFrensie::convertToPython( $1 );
