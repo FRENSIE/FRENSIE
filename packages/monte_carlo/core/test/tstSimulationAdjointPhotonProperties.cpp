@@ -115,7 +115,7 @@ FRENSIE_UNIT_TEST( SimulationAdjointPhotonProperties,
 
 //---------------------------------------------------------------------------//
 // Check that the properties can be archived
-FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationAdjointPhotonProperties,
                                    archive,
                                    TestArchives )
 {
@@ -125,7 +125,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  std::string archive_base_name( "test_simulation_general_props" );
+  std::string archive_base_name( "test_simulation_adjoint_photon_props" );
   std::ostringstream archive_ostream;
 
   {
