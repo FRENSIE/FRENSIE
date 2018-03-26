@@ -79,12 +79,8 @@ FRENSIE_ADD_TEST(BremsstrahlungAngularDistributionType)
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeType DEPENDS tstParticleModeType.cpp)
 FRENSIE_ADD_TEST(ParticleModeType)
 
-ADD_EXECUTABLE(tstParticleModeTypeTraits
-  tstParticleModeTypeTraits.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleModeTypeTraits monte_carlo_core)
-ADD_TEST(ParticleModeTypeTraits_test tstParticleModeTypeTraits)
-SET_PROPERTY(TEST ParticleModeTypeTraits_test PROPERTY LABELS monte_carlo_core)
+FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeTypeTraits DEPENDS tstParticleModeTypeTraits.cpp)
+FRENSIE_ADD_TEST(ParticleModeTypeTraits)
 
 ADD_EXECUTABLE(tstSimulationGeneralProperties
   tstSimulationGeneralProperties.cpp
