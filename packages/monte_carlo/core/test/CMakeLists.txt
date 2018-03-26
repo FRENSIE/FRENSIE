@@ -55,6 +55,9 @@ FRENSIE_ADD_TEST(ParticleBank)
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionTypeHelpers DEPENDS tstPhotoatomicReactionTypeHelpers.cpp)
 FRENSIE_ADD_TEST(PhotoatomicReactionTypeHelpers)
 
+FRENSIE_ADD_TEST_EXECUTABLE(IncoherentModelTypeHelpers DEPENDS tstIncoherentModelTypeHelpers.cpp)
+FRENSIE_ADD_TEST(IncoherentModelTypeHelpers)
+
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointModelTypeHelpers DEPENDS tstIncoherentAdjointModelTypeHelpers.cpp)
 FRENSIE_ADD_TEST(IncoherentAdjointModelTypeHelpers)
 
