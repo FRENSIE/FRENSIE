@@ -19,7 +19,7 @@
 
 
 //---------------------------------------------------------------------------//
-// Helper macro for setting up a basic OneDDistribution class python interface
+// Helper macro for setting up a basic UnivariateDistribution class python interface
 //---------------------------------------------------------------------------//
 %define %electron_distribution_interface_setup( DISTRIBUTION )
 

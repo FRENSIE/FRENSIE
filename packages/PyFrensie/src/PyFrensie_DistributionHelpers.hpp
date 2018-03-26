@@ -17,7 +17,7 @@
 
 namespace PyFrensie{
 
-// //! Add the OneDDistribution to the ParameterList object
+// //! Add the UnivariateDistribution to the ParameterList object
 // template<typename Distribution>
 // bool addDistToParameterList( const std::string& name,
 //                              const Distribution& distribution,
@@ -62,7 +62,7 @@ namespace PyFrensie{
 //   return success;
 // }
 
-// //! Load the OneDDistribution from the ParameterList object
+// //! Load the UnivariateDistribution from the ParameterList object
 // template<typename Distribution>
 // void getDistFromParameterList( const std::string& name,
 //                                PyObject* python_parameter_list,

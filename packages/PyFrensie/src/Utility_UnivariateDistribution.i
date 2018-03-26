@@ -1,17 +1,21 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_OneDDistribution.i
+//! \file   Utility_UnivariateDistribution.i
 //! \author Alex Robinson
-//! \brief  The OneDDistribution class interface file
+//! \brief  The UnivariateDistribution class interface file
 //!
 //---------------------------------------------------------------------------//
 
 %{
+#define NO_IMPORT_ARRAY
+#include "numpy_include.h"
+
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
+#include "Utility_DistributionSerializationHelpers.hpp"
 #include "Utility_DistributionTraits.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
@@ -39,6 +43,12 @@ using namespace Utility;
 // Include typemaps support
 %include <typemaps.i>
 
+// Include macros to find initialized numpy
+%include "numpy.i"
+
+// Include the distribution serialization helpers
+%include "Utility_DistributionSerializationHelpers.hpp"
+
 // Import the explicit template instantiation helpers
 %import "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
@@ -46,25 +56,26 @@ using namespace Utility;
 %import "Utility_DistributionTraits.hpp"
 
 // Include the 1D distribution helpers
-%include "Utility_OneDDistributionHelpers.i"
+%include "Utility_UnivariateDistributionHelpers.i"
 
 // Add a few general typemaps
+typedef unsigned int size_t;
 %apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
 %apply unsigned& OUTPUT { unsigned& sampled_bin_index };
 
-%typemap(in) const Teuchos::Array<double>& (Teuchos::Array<double> temp)
+%typemap(in) const std::vector<double>& (std::vector<double> temp)
 {
-  temp = PyFrensie::convertFromPython<Teuchos::Array<double> >( $input );
+  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
 
   $1 = &temp;
 }
 
 // The typecheck precedence, which is used by SWIG to determine which
 // overloaded method should be called, should be set to
-// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the Teuchos::Array<double>&. You will
+// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the std::vector<double>&. You will
 // get a Python error when calling the overloaded method in Python without this
 // typecheck
-%typemap(typecheck, precedence=1050) (const Teuchos::Array<double>&) {
+%typemap(typecheck, precedence=1050) (const std::vector<double>&) {
   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
 }
 
@@ -82,22 +93,22 @@ using namespace Utility;
 %ignore *::fromUnitlessDistribution;
 
 //---------------------------------------------------------------------------//
-// Add support for the OneDDistribution
+// Add support for the UnivariateDistribution
 //---------------------------------------------------------------------------//
-// Import the OneDDistribution
-%import "Utility_OneDDistribution.hpp"
+// Import the UnivariateDistribution
+%import "Utility_UnivariateDistribution.hpp"
 
 // Basic distribution interface setup
-%basic_distribution_interface_setup( OneDDistribution )
+%basic_distribution_interface_setup( UnivariateDistribution )
 
 //---------------------------------------------------------------------------//
-// Add support for the TabularOneDDistribution
+// Add support for the TabularUnivariateDistribution
 //---------------------------------------------------------------------------//
-// Import the TabularOneDDistribution
-%import "Utility_TabularOneDDistribution.hpp"
+// Import the TabularUnivariateDistribution
+%import "Utility_TabularUnivariateDistribution.hpp"
 
 // Basic tabular distribution interface setup
-%basic_tab_distribution_interface_setup( TabularOneDDistribution )
+%basic_tab_distribution_interface_setup( TabularUnivariateDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the DeltaDistribution
@@ -367,11 +378,17 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 //---------------------------------------------------------------------------//
 // Add support for the TabularDistribution
 //---------------------------------------------------------------------------//
+// // Ignore the static methods
+// %ignore Utility::UnitAwareTabularDistribution<Utility::LinLin, void,void>::typeName( const bool verbose_name, const bool use_template_params = false, const std::string& delim = std::string() );
+
 // Import the Tabular Distribution
 %import "Utility_TabularDistribution.hpp"
 
 // There are many tabular distributions - use this macro to set up each
 %define %tabular_distribution_interface_setup( INTERP )
+
+// Ignore the static methods
+%ignore Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::typeName( const bool verbose_name, const bool use_template_params = false, const std::string& delim = std::string() );
 
 // Add a more detailed docstring for the constructor
 %feature("docstring")
@@ -396,6 +413,9 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 
 // There are many tabular cdf distributions - use this macro to set up each
 %define %tabular_cdf_distribution_interface_setup( INTERP )
+
+// Ignore the static methods
+%ignore Utility::UnitAwareTabularCDFDistribution<Utility::INTERP,void,void>::typeName( const bool verbose_name, const bool use_template_params = false, const std::string& delim = std::string() );
 
 // Add a more detailed docstring for the constructor
 %feature("docstring")
@@ -477,7 +497,7 @@ input parameter are the following:
 //---------------------------------------------------------------------------//
 // Add support for the CoupledElasticDistribution
 //---------------------------------------------------------------------------//
-// Import the Coupled Elastic OneDDistribution
+// Import the Coupled Elastic UnivariateDistribution
 %import "Utility_CoupledElasticDistribution.hpp"
 
 // There are many Coupled Elastic One D distributions - use this macro to set up each
@@ -496,6 +516,6 @@ Utility::UnitAwareCoupledElasticDistribution<Utility::INTERP,void,void>::UnitAwa
 %coupled_elastic_distribution_interface_setup( LinLin )
 %coupled_elastic_distribution_interface_setup( LinLog )
 //---------------------------------------------------------------------------//
-// end Utility_OneDDistribution.i
+// end Utility_UnivariateDistribution.i
 //---------------------------------------------------------------------------//
 

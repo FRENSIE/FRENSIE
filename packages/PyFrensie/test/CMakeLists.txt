@@ -29,10 +29,10 @@ PyFrensie_MAKE_TEST(tstUtility.Prng)
 ADD_TEST(PyFrensie.Utility.Prng_test ${PYTHON_EXECUTABLE} tstUtility.Prng.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Prng_test PROPERTY LABELS pyfrensie)
 
-# # Add the Utility.Distribution unit tests
-# PyFrensie_MAKE_TEST(tstUtility.Distribution.OneDDistribution)
-# ADD_TEST(PyFrensie.Utility.Distribution.OneDDistribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.OneDDistribution.py)
-# SET_PROPERTY(TEST PyFrensie.Utility.Distribution.OneDDistribution_test PROPERTY LABELS pyfrensie)
+# Add the Utility.Distribution unit tests
+PyFrensie_MAKE_TEST(tstUtility.Distribution.UnivariateDistribution)
+ADD_TEST(PyFrensie.Utility.Distribution.UnivariateDistribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.UnivariateDistribution.py)
+SET_PROPERTY(TEST PyFrensie.Utility.Distribution.UnivariateDistribution_test PROPERTY LABELS pyfrensie)
 
 # # Add the Data.ACE.ACEFileHandler unit tests
 # PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)

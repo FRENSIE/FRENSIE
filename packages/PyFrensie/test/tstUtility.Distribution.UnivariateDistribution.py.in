@@ -1,17 +1,17 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Utility.Distribution.OneDDistribution class unit tests
-#  \file   tstUtility.Distribution.OneDDistribution.py
+## Utility.Distribution.UnivariateDistribution class unit tests
+#  \file   tstUtility.Distribution.UnivariateDistribution.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Utility.Distribution.OneDDistribution classes
+#  \brief  Unit tests for the Utility.Distribution.UnivariateDistribution classes
 #-----------------------------------------------------------------------------#
 
 # System imports
-import numpy
 import sys
 import unittest
 from optparse import *
-from PyTrilinos.Teuchos import ParameterList
+import numpy
+# from PyTrilinos.Teuchos import ParameterList
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -106,27 +106,27 @@ class DeltaDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.DeltaDistribution isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.DeltaDistribution isEqual method"
-        other_dist = Distribution.DeltaDistribution( 1.0 )
-        self.assertTrue(not self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.DeltaDistribution isEqual method"
+    #     other_dist = Distribution.DeltaDistribution( 1.0 )
+    #     self.assertTrue(not self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.DeltaDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('delta_dist', plist)
-        self.assertTrue(plist.isParameter('delta_dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.DeltaDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('delta_dist', plist)
+    #     self.assertTrue(plist.isParameter('delta_dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.DeltaDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('delta_dist', plist)
-        new_dist = Distribution.DeltaDistribution()
-        new_dist.fromParameterList('delta_dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.DeltaDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('delta_dist', plist)
+    #     new_dist = Distribution.DeltaDistribution()
+    #     new_dist.fromParameterList('delta_dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.DeltaDistribution ==,!= methods"
@@ -271,27 +271,27 @@ class DiscreteDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.isTabular())
         self.assertTrue(self.cdf_dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.DiscreteDistribution isEqual method"
-        other_dist = Distribution.DiscreteDistribution( [0.0], [1.0] )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.DiscreteDistribution isEqual method"
+    #     other_dist = Distribution.DiscreteDistribution( [0.0], [1.0] )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.DiscreteDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('discrete_dist', plist)
-        self.assertTrue(plist.isParameter('discrete_dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.DiscreteDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('discrete_dist', plist)
+    #     self.assertTrue(plist.isParameter('discrete_dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.DiscreteDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('discrete_dist', plist)
-        new_dist = Distribution.DiscreteDistribution()
-        new_dist.fromParameterList('discrete_dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.DiscreteDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('discrete_dist', plist)
+    #     new_dist = Distribution.DiscreteDistribution()
+    #     new_dist.fromParameterList('discrete_dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.DiscreteDistribution ==,!= methods"
@@ -380,27 +380,27 @@ class EquiprobableBinDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.EquiprobableBinDistribution isContinuous method"
         self.assertTrue(self.dist.isContinuous())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.EquiprobableBinDistribution isEqual method"
-        other_dist = Distribution.EquiprobableBinDistribution( [0.0, 1.0] )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.EquiprobableBinDistribution isEqual method"
+    #     other_dist = Distribution.EquiprobableBinDistribution( [0.0, 1.0] )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.EquiprobableBinDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.EquiprobableBinDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.EquiprobableBinDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.EquiprobableBinDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.EquiprobableBinDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.EquiprobableBinDistribution()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.EquiprobableBinDistribution ==,!= methods"
@@ -463,27 +463,27 @@ class EvaporationDistributionTestCase(unittest.TestCase):
         lower_bound = self.dist.getLowerBoundOfIndepVar()
         self.assertTrue(lower_bound == 0.0)
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.EvaporationDistribution isEqual method"
-        other_dist = Distribution.EvaporationDistribution( 1.0, 1.0, 0.5 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.EvaporationDistribution isEqual method"
+    #     other_dist = Distribution.EvaporationDistribution( 1.0, 1.0, 0.5 )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.EvaporationDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.EvaporationDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.EvaporationDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.EvaporationDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.EvaporationDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.EvaporationDistribution()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.EvaporationDistribution ==,!= methods"
@@ -509,7 +509,7 @@ class ExponentialDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluate( -1.0 ) == 0.0)
         self.assertTrue(self.dist.evaluate( 1.0 ) != 0.0)
 
-    def testEvaluate(self):
+    def testEvaluatePDF(self):
         "*Test Utility.Distribution.ExponentialDistribution evaluatePDF method"
         self.assertTrue(self.dist.evaluatePDF( -1.0 ) == 0.0)
         self.assertTrue(self.dist.evaluatePDF( 1.0 ) != 0.0)
@@ -544,27 +544,27 @@ class ExponentialDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.ExponentialDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.ExponentialDistribution isEqual method"
-        other_dist = Distribution.ExponentialDistribution( 2.0, 3.0 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.ExponentialDistribution isEqual method"
+    #     other_dist = Distribution.ExponentialDistribution( 2.0, 3.0 )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.ExponentialDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.ExponentialDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.ExponentialDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.ExponentialDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.ExponentialDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.ExponentialDistribution()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.ExponentialDistribution ==,!= methods"
@@ -689,27 +689,27 @@ class HistogramDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.HistogramDistribution isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.HistogramDistribution isEqual method"
-        other_dist = Distribution.HistogramDistribution( [0.0, 1.0], [1.0] )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.HistogramDistribution isEqual method"
+    #     other_dist = Distribution.HistogramDistribution( [0.0, 1.0], [1.0] )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.HistogramDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.HistogramDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.HistogramDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.HistogramDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.HistogramDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.HistogramDistribution()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.HistogramDistribution ==,!= methods"
@@ -772,27 +772,27 @@ class MaxwellFissionDistributionTestCase(unittest.TestCase):
         lower_bound = self.dist.getLowerBoundOfIndepVar()
         self.assertTrue(lower_bound == 0.0)
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.MaxwellFissionDistribution isEqual method"
-        other_dist = Distribution.MaxwellFissionDistribution( 1.0, 1.0, 0.5 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.MaxwellFissionDistribution isEqual method"
+    #     other_dist = Distribution.MaxwellFissionDistribution( 1.0, 1.0, 0.5 )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.MaxwellFissionDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.MaxwellFissionDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.MaxwellFissionDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.MaxwellFissionDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.MaxwellFissionDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.MaxwellFissionDistribution()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.MaxwellFissionDistribution ==,!= methods"
@@ -855,27 +855,27 @@ class NormalDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.NormalDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.NormalDistribution isEqual method"
-        other_dist = Distribution.NormalDistribution( 1.0, 0.5 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.NormalDistribution isEqual method"
+    #     other_dist = Distribution.NormalDistribution( 1.0, 0.5 )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.NormalDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.NormalDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.NormalDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.NormalDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.NormalDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.NormalDistribution()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.NormalDistribution ==,!= methods"
@@ -940,27 +940,27 @@ class PolynomialDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.PolynomialDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.PolynomialDistribution isEqual method"
-        other_dist = Distribution.PolynomialDistribution( [1.0, 2.0, 3.0], 0.0, 1.0 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.PolynomialDistribution isEqual method"
+    #     other_dist = Distribution.PolynomialDistribution( [1.0, 2.0, 3.0], 0.0, 1.0 )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.PolynomialDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.PolynomialDistribution toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.PolynomialDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.PolynomialDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.PolynomialDistribution fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.PolynomialDistribution()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.PolynomialDistribution ==,!= methods"
@@ -1024,27 +1024,27 @@ class PowerDistribution_1TestCase(unittest.TestCase):
         "*Test Utility.Distribution.PowerDistribution_1 isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.PowerDistribution_1 isEqual method"
-        other_dist = Distribution.PowerDistribution_1( 1.0, 2.0 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.PowerDistribution_1 isEqual method"
+    #     other_dist = Distribution.PowerDistribution_1( 1.0, 2.0 )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.PowerDistribution_1 toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.PowerDistribution_1 toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.PowerDistribution_1 fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.PowerDistribution_1()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.PowerDistribution_1 fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.PowerDistribution_1()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.PowerDistribution_1 ==,!= methods"
@@ -1108,27 +1108,27 @@ class PowerDistribution_2TestCase(unittest.TestCase):
         "*Test Utility.Distribution.PowerDistribution_2 isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.PowerDistribution_2 isEqual method"
-        other_dist = Distribution.PowerDistribution_2( 1.0, 2.0 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.PowerDistribution_2 isEqual method"
+    #     other_dist = Distribution.PowerDistribution_2( 1.0, 2.0 )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.PowerDistribution_2 toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.PowerDistribution_2 toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.PowerDistribution_2 fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.PowerDistribution_2()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.PowerDistribution_2 fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.PowerDistribution_2()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.PowerDistribution_2 ==,!= methods"
@@ -1226,27 +1226,27 @@ class TabularDistribution_LinLinTestCase(unittest.TestCase):
         "*Test Utility.Distribution.TabularDistribution_LinLin isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.TabularDistribution_LinLin isEqual method"
-        other_dist = Distribution.TabularDistribution_LinLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.TabularDistribution_LinLin isEqual method"
+    #     other_dist = Distribution.TabularDistribution_LinLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LinLin toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.TabularDistribution_LinLin toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LinLin fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.TabularDistribution_LinLin()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.TabularDistribution_LinLin fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.TabularDistribution_LinLin()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LinLin ==,!= methods"
@@ -1344,27 +1344,27 @@ class TabularDistribution_LinLogTestCase(unittest.TestCase):
         "*Test Utility.Distribution.TabularDistribution_LinLog isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.TabularDistribution_LinLog isEqual method"
-        other_dist = Distribution.TabularDistribution_LinLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.TabularDistribution_LinLog isEqual method"
+    #     other_dist = Distribution.TabularDistribution_LinLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LinLog toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+    # def testToParameterList(self):
+    #     "*Test Utility.Distribution.TabularDistribution_LinLog toParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     self.assertTrue(plist.isParameter('dist'))
+    #     dummy = plist.set('extra_double', 1.0)
+    #     self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LinLog fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.TabularDistribution_LinLog()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+    # def testFromParameterList(self):
+    #     "*Test Utility.Distribution.TabularDistribution_LinLog fromParameterList method"
+    #     plist = ParameterList()
+    #     self.dist.toParameterList('dist', plist)
+    #     new_dist = Distribution.TabularDistribution_LinLog()
+    #     new_dist.fromParameterList('dist', plist)
+    #     self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LinLog ==,!= methods"
@@ -1462,27 +1462,27 @@ class TabularDistribution_LogLinTestCase(unittest.TestCase):
         "*Test Utility.Distribution.TabularDistribution_LogLin isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.TabularDistribution_LogLin isEqual method"
-        other_dist = Distribution.TabularDistribution_LogLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+#     def testIsEqual(self):
+#         "*Test Utility.Distribution.TabularDistribution_LogLin isEqual method"
+#         other_dist = Distribution.TabularDistribution_LogLin( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+#         self.assertFalse(self.dist.isEqual(other_dist))
+#         self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LogLin toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+#     def testToParameterList(self):
+#         "*Test Utility.Distribution.TabularDistribution_LogLin toParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         self.assertTrue(plist.isParameter('dist'))
+#         dummy = plist.set('extra_double', 1.0)
+#         self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LogLin fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.TabularDistribution_LogLin()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+#     def testFromParameterList(self):
+#         "*Test Utility.Distribution.TabularDistribution_LogLin fromParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         new_dist = Distribution.TabularDistribution_LogLin()
+#         new_dist.fromParameterList('dist', plist)
+#         self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LogLin ==,!= methods"
@@ -1580,27 +1580,27 @@ class TabularDistribution_LogLogTestCase(unittest.TestCase):
         "*Test Utility.Distribution.TabularDistribution_LogLog isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.TabularDistribution_LogLog isEqual method"
-        other_dist = Distribution.TabularDistribution_LogLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+    # def testIsEqual(self):
+    #     "*Test Utility.Distribution.TabularDistribution_LogLog isEqual method"
+    #     other_dist = Distribution.TabularDistribution_LogLog( [2.0,3.0,4.0], [1.0,1.0,1.0] )
+    #     self.assertFalse(self.dist.isEqual(other_dist))
+    #     self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LogLog toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+#     def testToParameterList(self):
+#         "*Test Utility.Distribution.TabularDistribution_LogLog toParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         self.assertTrue(plist.isParameter('dist'))
+#         dummy = plist.set('extra_double', 1.0)
+#         self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.TabularDistribution_LogLog fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.TabularDistribution_LogLog()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+#     def testFromParameterList(self):
+#         "*Test Utility.Distribution.TabularDistribution_LogLog fromParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         new_dist = Distribution.TabularDistribution_LogLog()
+#         new_dist.fromParameterList('dist', plist)
+#         self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.TabularDistribution_LogLog ==,!= methods"
@@ -1692,27 +1692,27 @@ class UniformDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.UniformDistribution isTabular method"
         self.assertTrue(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.UniformDistribution isEqual method"
-        other_dist = Distribution.UniformDistribution( -0.5, 0.5 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+#     def testIsEqual(self):
+#         "*Test Utility.Distribution.UniformDistribution isEqual method"
+#         other_dist = Distribution.UniformDistribution( -0.5, 0.5 )
+#         self.assertFalse(self.dist.isEqual(other_dist))
+#         self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.UniformDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+#     def testToParameterList(self):
+#         "*Test Utility.Distribution.UniformDistribution toParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         self.assertTrue(plist.isParameter('dist'))
+#         dummy = plist.set('extra_double', 1.0)
+#         self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.UniformDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.UniformDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+#     def testFromParameterList(self):
+#         "*Test Utility.Distribution.UniformDistribution fromParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         new_dist = Distribution.UniformDistribution()
+#         new_dist.fromParameterList('dist', plist)
+#         self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.UniformDistribution ==,!= methods"
@@ -1775,27 +1775,27 @@ class WattDistributionTestCase(unittest.TestCase):
         "*Test Utility.Distribution.WattDistribution isTabular method"
         self.assertFalse(self.dist.isTabular())
 
-    def testIsEqual(self):
-        "*Test Utility.Distribution.WattDistribution isEqual method"
-        other_dist = Distribution.WattDistribution( 1.0, 1.0, 1.0, 0.5 )
-        self.assertFalse(self.dist.isEqual(other_dist))
-        self.assertTrue(self.dist.isEqual(self.dist))
+#     def testIsEqual(self):
+#         "*Test Utility.Distribution.WattDistribution isEqual method"
+#         other_dist = Distribution.WattDistribution( 1.0, 1.0, 1.0, 0.5 )
+#         self.assertFalse(self.dist.isEqual(other_dist))
+#         self.assertTrue(self.dist.isEqual(self.dist))
 
-    def testToParameterList(self):
-        "*Test Utility.Distribution.WattDistribution toParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        self.assertTrue(plist.isParameter('dist'))
-        dummy = plist.set('extra_double', 1.0)
-        self.assertTrue(plist.isParameter('extra_double'))
+#     def testToParameterList(self):
+#         "*Test Utility.Distribution.WattDistribution toParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         self.assertTrue(plist.isParameter('dist'))
+#         dummy = plist.set('extra_double', 1.0)
+#         self.assertTrue(plist.isParameter('extra_double'))
 
-    def testFromParameterList(self):
-        "*Test Utility.Distribution.WattDistribution fromParameterList method"
-        plist = ParameterList()
-        self.dist.toParameterList('dist', plist)
-        new_dist = Distribution.WattDistribution()
-        new_dist.fromParameterList('dist', plist)
-        self.assertTrue(self.dist.isEqual(new_dist))
+#     def testFromParameterList(self):
+#         "*Test Utility.Distribution.WattDistribution fromParameterList method"
+#         plist = ParameterList()
+#         self.dist.toParameterList('dist', plist)
+#         new_dist = Distribution.WattDistribution()
+#         new_dist.fromParameterList('dist', plist)
+#         self.assertTrue(self.dist.isEqual(new_dist))
 
     def testEquality(self):
         "*Test Utility.Distribution.WattDistribution ==,!= methods"
@@ -1852,5 +1852,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstUtility.Distribution.OneDDistribution.py
+# end tstUtility.Distribution.UnivariateDistribution.py
 #-----------------------------------------------------------------------------#

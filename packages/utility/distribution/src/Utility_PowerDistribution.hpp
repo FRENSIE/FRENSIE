@@ -22,7 +22,7 @@ class UnitAwarePowerDistribution : public UnitAwareUnivariateDistribution<Indepe
 {
   // Typedef for base type
   typedef UnitAwareUnivariateDistribution<IndependentUnit,DependentUnit> BaseType;
-  
+
   // The independent unit to power N+1
   typedef UnitTraits<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<N+1>::type> IndepUnitTraitsNp1;
 
@@ -218,7 +218,10 @@ template<unsigned N> using PowerDistribution =
 //---------------------------------------------------------------------------//
 // Update the version number here
 //---------------------------------------------------------------------------//
+
+#if !defined SWIG
 BOOST_SERIALIZATION_POWER_DISTRIBUTION_VERSION( 0 );
+#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 
@@ -235,8 +238,10 @@ BOOST_SERIALIZATION_POWER_DISTRIBUTION_VERSION( 0 );
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( size_t N ),  \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( N, void, void ) )
 
+#if !defined SWIG
 BOOST_SERIALIZATION_POWER_DISTRIBUTION_EXPORT_STANDARD_KEY()
-                                   
+#endif // end !defined SWIG
+
 //---------------------------------------------------------------------------//
 // Template includes
 //---------------------------------------------------------------------------//

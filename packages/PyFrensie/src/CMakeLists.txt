@@ -23,8 +23,8 @@ SET(PyFrensie_MODULES "")
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Utility)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
-# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
-#SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
+# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Interpolation)
 SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist pyfrensie)
 
 # # Add the DataGen package

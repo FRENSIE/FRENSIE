@@ -45,7 +45,7 @@ Teuchos::ParameterList and its Python wrapper
   {
     SWIG_exception( SWIG_ValueError, e.what() );
   }
-  catch( Utility::InvalidDistributionStringRepresentation& e )
+  catch( Utility::BadUnivariateDistributionParameter& e )
   {
     SWIG_exception( SWIG_RuntimeError, e.what() );
   }
@@ -56,7 +56,7 @@ Teuchos::ParameterList and its Python wrapper
 }
 
 // Distribution support
-%include "Utility_OneDDistribution.i"
+%include "Utility_UnivariateDistribution.i"
 
 // Turn off the exception handling
 %exception;

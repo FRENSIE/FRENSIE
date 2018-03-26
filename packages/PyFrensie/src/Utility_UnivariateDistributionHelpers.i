@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_OneDDistributionHelpers.i
+//! \file   Utility_UnivariateDistributionHelpers.i
 //! \author Alex Robinson
 //! \brief  The distribution helper macros
 //!
@@ -35,7 +35,7 @@
 #define DIST_NAME( ... ) _GET_DIST_NAME_MACRO(__VA_ARGS__, _DIST_NAME_3_ARGS, _DIST_NAME_2_ARGS)(__VA_ARGS__)
 
 //---------------------------------------------------------------------------//
-// Helper macro for setting up a basic OneDDistribution class python interface
+// Helper macro for setting up a basic UnivariateDistribution class python interface
 //---------------------------------------------------------------------------//
 %define %basic_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
@@ -115,7 +115,7 @@ DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfIndepVar;
 %enddef
 
 //---------------------------------------------------------------------------//
-// Helper macro for setting up a basic TabularOneDDistribution class py. int.
+// Helper macro for setting up a basic TabularUnivariateDistribution class py. int.
 //---------------------------------------------------------------------------//
 %define %basic_tab_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
@@ -124,7 +124,7 @@ DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfIndepVar;
 DIST_NAME( DISTRIBUTION, PARAMS )::evaluateCDF;
 
 %feature("autodoc",
-"sampleAndRecordBinIndex(RENAMED_DISTRIBUTION self) -> double, unsigned int
+"sampleAndRecordBinIndex(RENAMED_DISTRIBUTION self) -> double, size_t
 
 Sample from the RENAMED_DISTRIBUTION and record the bin index corresponding to
 the sample. The first element of the returned tuple is the sample. The second
@@ -164,55 +164,55 @@ DIST_NAME( DISTRIBUTION, PARAMS )::sampleWithRandomNumberInSubrange;
 %enddef
 
 //---------------------------------------------------------------------------//
-// Helper macros for extending a OneDDistribution class python interface
+// Helper macros for extending a UnivariateDistribution class python interface
 //---------------------------------------------------------------------------//
 %define %extend_distribution_interface_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
-%feature("autodoc",
-"toParameterList(RENAMED_DISTRIBUTION self, const std::string & parameter_name, PyObject * python_parameter_list)
+// %feature("autodoc",
+// "toParameterList(RENAMED_DISTRIBUTION self, const std::string & parameter_name, PyObject * python_parameter_list)
 
-The python ParameterList only supports native python and numpy array
-types. To add a python RENAMED_DISTRIBUTION to a python ParameterList, only
-this function can be used. The dictionary methods cannot be used to add a
-python RENAMED_DISTRIBUTION to a python ParameterList. Once a python
-RENAMED_DISTRIBUTION object has been added to the python ParameterList, you
-will not be able to call print or str will it. Be careful when calling the
-ParameterList set method after a python RENAMED_DISTRIBUTION has been added as
-it returns a ParameterList object which python will try (and fail) to print.
-Calls to set should be done like this:
+// The python ParameterList only supports native python and numpy array
+// types. To add a python RENAMED_DISTRIBUTION to a python ParameterList, only
+// this function can be used. The dictionary methods cannot be used to add a
+// python RENAMED_DISTRIBUTION to a python ParameterList. Once a python
+// RENAMED_DISTRIBUTION object has been added to the python ParameterList, you
+// will not be able to call print or str will it. Be careful when calling the
+// ParameterList set method after a python RENAMED_DISTRIBUTION has been added as
+// it returns a ParameterList object which python will try (and fail) to print.
+// Calls to set should be done like this:
 
-  PyFrensie.Utility.initFrensiePrng()
+//   PyFrensie.Utility.initFrensiePrng()
 
-  u = PyFrensie.Utility.RENAMED_DISTRIBUTION( ... )
+//   u = PyFrensie.Utility.RENAMED_DISTRIBUTION( ... )
 
-  p = PyTrilinos.Teuchos.ParameterList()
+//   p = PyTrilinos.Teuchos.ParameterList()
 
-  u.toParameterList( 'my_dist', p )
+//   u.toParameterList( 'my_dist', p )
 
-  dummy = p.set( 'my_double', 1.0 )
+//   dummy = p.set( 'my_double', 1.0 )
 
-You can use the XMLParameterListWriter to write the ParameterList to an
-XML file like this (continued from the previous example):
+// You can use the XMLParameterListWriter to write the ParameterList to an
+// XML file like this (continued from the previous example):
 
-  writer = PyTrilinos.Teuchos.XMLParameterListWriter()
+//   writer = PyTrilinos.Teuchos.XMLParameterListWriter()
 
-  xml_obj = writer.toXML( p )
+//   xml_obj = writer.toXML( p )
 
-  xml_file = open( 'my_list', 'w' )
-  xml_file.write( xml_obj.toString() )
-  xml_file.close()
-" )
-DIST_NAME( DISTRIBUTION, PARAMS )::toParameterList;
+//   xml_file = open( 'my_list', 'w' )
+//   xml_file.write( xml_obj.toString() )
+//   xml_file.close()
+// " )
+// DIST_NAME( DISTRIBUTION, PARAMS )::toParameterList;
 
-%feature("autodoc",
-"fromParameterList(RENAMED_DISTRIBUTION self, const std::string & parameter_name, PyObject * python_parameter_list)
+// %feature("autodoc",
+// "fromParameterList(RENAMED_DISTRIBUTION self, const std::string & parameter_name, PyObject * python_parameter_list)
 
-The python ParameterList only supports native python and numpy array types. To
-get a python RENAMED_DISTRIBUTION from a python ParameterList, only this
-function can be used. The dictionary methods cannot be used to get a python
-RENAMED_DISTRIBUTION from a python ParameterList.
-" )
-DIST_NAME( DISTRIBUTION, PARAMS )::fromParameterList;
+// The python ParameterList only supports native python and numpy array types. To
+// get a python RENAMED_DISTRIBUTION from a python ParameterList, only this
+// function can be used. The dictionary methods cannot be used to get a python
+// RENAMED_DISTRIBUTION from a python ParameterList.
+// " )
+// DIST_NAME( DISTRIBUTION, PARAMS )::fromParameterList;
 
 %feature("autodoc",
 "__str__(RENAMED_DISTRIBUTION self) -> string
@@ -245,23 +245,23 @@ DIST_NAME( DISTRIBUTION, PARAMS )::__ne__;
 // Add some useful methods to the distribution class
 %extend DIST_NAME( DISTRIBUTION, PARAMS )
 {
-  // Add a method for exporting to a Python parameter list
-  void toParameterList( const std::string& name,
-                        PyObject* python_parameter_list ) const
-  {
-    // Check that the python object is a parameter list
-    if( !PyFrensie::addDistToParameterList( name, *$self, python_parameter_list ) )
-    {
-      PyErr_SetString(PyExc_TypeError, "The PyObject is not a PyTrilinos.Teuchos.ParameterList (a.k.a Teuchos::RCP<Teuchos::ParameterList>)." );
-    }
-  }
+  // // Add a method for exporting to a Python parameter list
+  // void toParameterList( const std::string& name,
+  //                       PyObject* python_parameter_list ) const
+  // {
+  //   // Check that the python object is a parameter list
+  //   if( !PyFrensie::addDistToParameterList( name, *$self, python_parameter_list ) )
+  //   {
+  //     PyErr_SetString(PyExc_TypeError, "The PyObject is not a PyTrilinos.Teuchos.ParameterList (a.k.a Teuchos::RCP<Teuchos::ParameterList>)." );
+  //   }
+  // }
 
-  // Add a method for importing from a Python parameter list
-  void fromParameterList( const std::string& name,
-                          PyObject* python_parameter_list )
-  {
-    PyFrensie::getDistFromParameterList( name, python_parameter_list, *$self );
-  }
+  // // Add a method for importing from a Python parameter list
+  // void fromParameterList( const std::string& name,
+  //                         PyObject* python_parameter_list )
+  // {
+  //   PyFrensie::getDistFromParameterList( name, python_parameter_list, *$self );
+  // }
 
   // String representation method
   PyObject* __repr__() const
@@ -288,29 +288,29 @@ DIST_NAME( DISTRIBUTION, PARAMS )::__ne__;
     return PyString_FromString( oss.str().c_str() );
   }
 
-  // Equality operator
-  PyObject* __eq__( const RENAMED_DISTRIBUTION& other_dist) const
-  {
-    if( $self->isEqual( other_dist ) )
-      Py_RETURN_TRUE;
-    else
-      Py_RETURN_FALSE;
-  }
+  // // Equality operator
+  // PyObject* __eq__( const RENAMED_DISTRIBUTION& other_dist) const
+  // {
+  //   if( $self->isEqual( other_dist ) )
+  //     Py_RETURN_TRUE;
+  //   else
+  //     Py_RETURN_FALSE;
+  // }
 
-  // Inequality operator
-  PyObject* __ne__( const RENAMED_DISTRIBUTION& other_dist) const
-  {
-    if( !$self->isEqual( other_dist ) )
-      Py_RETURN_TRUE;
-    else
-      Py_RETURN_FALSE;
-  }
+  // // Inequality operator
+  // PyObject* __ne__( const RENAMED_DISTRIBUTION& other_dist) const
+  // {
+  //   if( !$self->isEqual( other_dist ) )
+  //     Py_RETURN_TRUE;
+  //   else
+  //     Py_RETURN_FALSE;
+  // }
 };
 
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up a basic OneDDistribution class python interface
+// Macro for setting up a basic UnivariateDistribution class python interface
 //---------------------------------------------------------------------------//
 %define %basic_distribution_interface_setup( DISTRIBUTION )
 
@@ -351,7 +351,7 @@ typedef DIST_NAME( DISTRIBUTION, PARAMETER, void, void ) RENAMED_DISTRIBUTION;
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up a basic TabularOneDDistribution class py. int.
+// Macro for setting up a basic TabularUnivariateDistribution class py. int.
 //---------------------------------------------------------------------------//
 %define %basic_tab_distribution_interface_setup( DISTRIBUTION )
 
@@ -393,5 +393,5 @@ typedef DIST_NAME( DISTRIBUTION, PARAMETER, void, void ) RENAMED_DISTRIBUTION;
 
 
 //---------------------------------------------------------------------------//
-// end Utility_OneDDistributionHelpers.i
+// end Utility_UnivariateDistributionHelpers.i
 //---------------------------------------------------------------------------//

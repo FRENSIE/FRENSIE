@@ -129,7 +129,7 @@ public:
   IndepQuantity sampleAndRecordBinIndex( size_t& sampled_bin_index ) const override;
 
   //! Return a random sample from the distribution at the given CDF value
-  IndepQuantity sampleWithRandomNumber( const double random_number ) const override; 
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const override;
 
   //! Return a random sample from the distribution in a subrange
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const override;
@@ -319,7 +319,9 @@ template<typename InterpolationPolicy> using CoupledElasticDistribution =
 
 } // end Utility namespace
 
+#if !defined SWIG
 BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareCoupledElasticDistribution, Utility, 0 );
+#endif // end !defined SWIG
 
 #define BOOST_SERIALIZATION_COUPLED_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY()   \
   BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAwareCoupledElasticDistribution, Utility ) \
@@ -329,7 +331,9 @@ BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareCoupledElasticDistribution, Utility
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void ) )
 
+#if !defined SWIG
 BOOST_SERIALIZATION_COUPLED_ELASTIC_DISRIBUTION_EXPORT_STANDARD_KEY();
+#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template includes.
