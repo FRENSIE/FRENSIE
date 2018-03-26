@@ -76,6 +76,16 @@ FRENSIE_ADD_TEST(ElasticElectronDistributionType)
 FRENSIE_ADD_TEST_EXECUTABLE(BremsstrahlungAngularDistributionType DEPENDS tstBremsstrahlungAngularDistributionType.cpp)
 FRENSIE_ADD_TEST(BremsstrahlungAngularDistributionType)
 
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDInterpolationType DEPENDS tstTwoDInterpolationType.cpp)
+FRENSIE_ADD_TEST(TwoDInterpolationType)
+
+ADD_EXECUTABLE(tstTwoDSamplingType
+  tstTwoDSamplingType.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTwoDSamplingType monte_carlo_core)
+ADD_TEST(TwoDSamplingType_test tstTwoDSamplingType)
+SET_PROPERTY(TEST TwoDSamplingType_test PROPERTY LABELS electron)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeType DEPENDS tstParticleModeType.cpp)
 FRENSIE_ADD_TEST(ParticleModeType)
 
@@ -119,20 +129,6 @@ ADD_EXECUTABLE(tstSimulationAdjointElectronProperties
 TARGET_LINK_LIBRARIES(tstSimulationAdjointElectronProperties monte_carlo_core)
 ADD_TEST(SimulationAdjointElectronProperties_test tstSimulationAdjointElectronProperties)
 SET_PROPERTY(TEST SimulationAdjointElectronProperties_test PROPERTY LABELS electron adjoint)
-
-ADD_EXECUTABLE(tstTwoDInterpolationType
-  tstTwoDInterpolationType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDInterpolationType monte_carlo_core)
-ADD_TEST(TwoDInterpolationType_test tstTwoDInterpolationType)
-SET_PROPERTY(TEST TwoDInterpolationType_test PROPERTY LABELS electron)
-
-ADD_EXECUTABLE(tstTwoDSamplingType
-  tstTwoDSamplingType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDSamplingType monte_carlo_core)
-ADD_TEST(TwoDSamplingType_test tstTwoDSamplingType)
-SET_PROPERTY(TEST TwoDSamplingType_test PROPERTY LABELS electron)
 
 ADD_EXECUTABLE(tstSimulationProperties
   tstSimulationProperties.cpp

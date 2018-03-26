@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{

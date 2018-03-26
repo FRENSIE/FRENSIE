@@ -209,38 +209,47 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleModeType,
   MonteCarlo::ParticleModeType type_1;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+  FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::NEUTRON_MODE );
 
   MonteCarlo::ParticleModeType type_2;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::PHOTON_MODE );
 
   MonteCarlo::ParticleModeType type_3;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::ELECTRON_MODE );
 
   MonteCarlo::ParticleModeType type_4;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
+  FRENSIE_CHECK_EQUAL( type_4, MonteCarlo::NEUTRON_PHOTON_MODE );
 
   MonteCarlo::ParticleModeType type_5;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
+  FRENSIE_CHECK_EQUAL( type_5, MonteCarlo::PHOTON_ELECTRON_MODE );
 
   MonteCarlo::ParticleModeType type_6;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_6 ) );
+  FRENSIE_CHECK_EQUAL( type_6, MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
   MonteCarlo::ParticleModeType type_7;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_7 ) );
+  FRENSIE_CHECK_EQUAL( type_7, MonteCarlo::ADJOINT_NEUTRON_MODE );
 
   MonteCarlo::ParticleModeType type_8;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_8 ) );
+  FRENSIE_CHECK_EQUAL( type_8, MonteCarlo::ADJOINT_PHOTON_MODE );
 
   MonteCarlo::ParticleModeType type_9;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_9 ) );
+  FRENSIE_CHECK_EQUAL( type_9, MonteCarlo::ADJOINT_ELECTRON_MODE );
 }
 
 //---------------------------------------------------------------------------//
