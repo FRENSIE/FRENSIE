@@ -145,36 +145,69 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticElectronDistributionType,
                                    archive,
                                    TestArchives )
 {
-  // FETCH_TEMPLATE_PARAM( 0, RawOArchive );
-  // FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
-  // typedef typename std::remove_pointer<RawOArchive>::type OArchive;
-  // typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  // std::string archive_base_name( "test_elastic_electron_dist_type" );
-  // std::ostringstream archive_ostream;
+  std::string archive_base_name( "test_elastic_electron_dist_type" );
+  std::ostringstream archive_ostream;
 
-  // {
-  //   std::unique_ptr<OArchive> oarchive;
+  {
+    std::unique_ptr<OArchive> oarchive;
 
-  //   createOArchive( archive_base_name, archive_ostream, oarchive );
+    createOArchive( archive_base_name, archive_ostream, oarchive );
 
-  //   MonteCarlo::ElasticElectronDistributionType type_1 =
-  //     MonteCarlo::COUPLED_DISTRIBUTION;
+    MonteCarlo::ElasticElectronDistributionType type_1 =
+      MonteCarlo::COUPLED_DISTRIBUTION;
 
-  //   MonteCarlo::ElasticElectronDistributionType type_2 =
-  //     MonteCarlo::DECOUPLED_DISTRIBUTION;
+    MonteCarlo::ElasticElectronDistributionType type_2 =
+      MonteCarlo::DECOUPLED_DISTRIBUTION;
 
-  //   MonteCarlo::
-  // }
+    MonteCarlo::ElasticElectronDistributionType type_3 =
+      MonteCarlo::HYBRID_DISTRIBUTION;
 
-  // // Copy the archive ostream to an istream
-  // std::istringstream archive_istream( archive_ostream.str() );
+    MonteCarlo::ElasticElectronDistributionType type_4 =
+      MonteCarlo::CUTOFF_DISTRIBUTION;
 
-  // // Load the archived distributions
-  // std::unique_ptr<IArchive> iarchive;
+    MonteCarlo::ElasticElectronDistributionType type_5 =
+      MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION;
 
-  // createIArchive( archive_istream, iarchive );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_3 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_4 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_5 ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::ElasticElectronDistributionType type_1;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+
+  MonteCarlo::ElasticElectronDistributionType type_2;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+
+  MonteCarlo::ElasticElectronDistributionType type_3;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+
+  MonteCarlo::ElasticElectronDistributionType type_4;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
+
+  MonteCarlo::ElasticElectronDistributionType type_5;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -183,7 +216,53 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticSamplingMethod,
                                    archive,
                                    TestArchives )
 {
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
 
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_coupled_elastic_sampling_type" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::CoupledElasticSamplingMethod type_1 =
+      MonteCarlo::ONE_D_UNION;
+
+    MonteCarlo::CoupledElasticSamplingMethod type_2 =
+      MonteCarlo::TWO_D_UNION;
+
+    MonteCarlo::CoupledElasticSamplingMethod type_3 =
+      MonteCarlo::SIMPLIFIED_UNION;
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_1 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_2 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( type_3 ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::CoupledElasticSamplingMethod type_1;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+
+  MonteCarlo::CoupledElasticSamplingMethod type_2;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+
+  MonteCarlo::CoupledElasticSamplingMethod type_3;
+  
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
 }
 
 //---------------------------------------------------------------------------//
