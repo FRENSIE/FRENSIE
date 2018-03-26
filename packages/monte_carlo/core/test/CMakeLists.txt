@@ -82,11 +82,8 @@ FRENSIE_ADD_TEST(ParticleModeType)
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeTypeTraits DEPENDS tstParticleModeTypeTraits.cpp)
 FRENSIE_ADD_TEST(ParticleModeTypeTraits)
 
-ADD_EXECUTABLE(tstSimulationGeneralProperties
-  tstSimulationGeneralProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationGeneralProperties monte_carlo_core)
-ADD_TEST(SimulationGeneralProperties_test tstSimulationGeneralProperties)
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationGeneralProperties DEPENDS tstSimulationGeneralProperties.cpp)
+FRENSIE_ADD_TEST(SimulationGeneralProperties)
 
 ADD_EXECUTABLE(tstSimulationNeutronProperties
   tstSimulationNeutronProperties.cpp

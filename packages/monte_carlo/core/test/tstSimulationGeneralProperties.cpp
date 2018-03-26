@@ -9,138 +9,216 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>,
+  std::tuple<boost::archive::polymorphic_oarchive*,boost::archive::polymorphic_iarchive*>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Test the simulation properties defaults
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, defaults )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, defaults )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
-  TEST_EQUALITY_CONST( properties.getNumberOfHistories(), 0 );
-  TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.001 );
-  TEST_ASSERT( properties.displayWarnings() );
-  TEST_ASSERT( !properties.isImplicitCaptureModeOn() );
+  FRENSIE_CHECK( properties.displayWarnings() );
+  FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the particle mode can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setParticleMode )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setParticleMode )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
   properties.setParticleMode( MonteCarlo::NEUTRON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_MODE );
 
   properties.setParticleMode( MonteCarlo::PHOTON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(), MonteCarlo::PHOTON_MODE );
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(), MonteCarlo::PHOTON_MODE );
 
   properties.setParticleMode( MonteCarlo::ELECTRON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::ELECTRON_MODE );
 
   properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_PHOTON_MODE );
 
   properties.setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::PHOTON_ELECTRON_MODE );
 
   properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
   properties.setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::ADJOINT_PHOTON_MODE );
 
   properties.setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
 
-  TEST_EQUALITY_CONST( properties.getParticleMode(),
+  FRENSIE_CHECK_EQUAL( properties.getParticleMode(),
                        MonteCarlo::ADJOINT_ELECTRON_MODE );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the number of histories to run can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfHistories )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
   properties.setNumberOfHistories( 1000000000 );
 
-  TEST_EQUALITY_CONST(properties.getNumberOfHistories(), 1000000000 );
+  FRENSIE_CHECK_EQUAL(properties.getNumberOfHistories(), 1000000000 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the surface flux angle cosine cutoff can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties,
+FRENSIE_UNIT_TEST( SimulationGeneralProperties,
                    setSurfaceFluxEstimatorAngleCosineCutoff )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
   properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
 
-  TEST_EQUALITY_CONST( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
+  FRENSIE_CHECK_EQUAL( properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
                        0.1 );
 }
 
 //---------------------------------------------------------------------------//
 // Test that warnings can be disabled/enabled
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setWarningsOnOff )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setWarningsOnOff )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
   properties.setWarningsOff();
 
-  TEST_ASSERT( !properties.displayWarnings() );
+  FRENSIE_CHECK( !properties.displayWarnings() );
 
   properties.setWarningsOn();
 
-  TEST_ASSERT( properties.displayWarnings() );
+  FRENSIE_CHECK( properties.displayWarnings() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that implicit capture mode can be turned on/off
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOnOff )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setImplicitCaptureModeOnOff )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
   properties.setImplicitCaptureModeOn();
 
-  TEST_ASSERT( properties.isImplicitCaptureModeOn() );
+  FRENSIE_CHECK( properties.isImplicitCaptureModeOn() );
 
   properties.setAnalogueCaptureModeOn();
 
-  TEST_ASSERT( !properties.isImplicitCaptureModeOn() );
+  FRENSIE_CHECK( !properties.isImplicitCaptureModeOn() );
 }
 
 //---------------------------------------------------------------------------//
 // Test that the number of batches per processor can be set
-TEUCHOS_UNIT_TEST( SimulationGeneralProperties, setNumberOfBatchesPerProcessor )
+FRENSIE_UNIT_TEST( SimulationGeneralProperties, setNumberOfBatchesPerProcessor )
 {
   MonteCarlo::SimulationGeneralProperties properties;
   
   properties.setNumberOfBatchesPerProcessor( 25 );
 
-  TEST_EQUALITY_CONST( properties.getNumberOfBatchesPerProcessor(), 25 );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfBatchesPerProcessor(), 25 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the properties can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationGeneralProperties,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_simulation_general_props" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::SimulationGeneralProperties default_properties;
+
+    MonteCarlo::SimulationGeneralProperties custom_properties;
+    custom_properties.setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+    custom_properties.setNumberOfHistories( 1000000000 );
+    custom_properties.setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
+    custom_properties.setWarningsOff();
+    custom_properties.setImplicitCaptureModeOn();
+    custom_properties.setNumberOfBatchesPerProcessor( 25 );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( default_properties ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( custom_properties ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::SimulationGeneralProperties default_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( default_properties ) );
+
+  FRENSIE_CHECK_EQUAL( default_properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_MODE );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfHistories(), 0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
+                       0.001 );
+  FRENSIE_CHECK( default_properties.displayWarnings() );
+  FRENSIE_CHECK( !default_properties.isImplicitCaptureModeOn() );
+
+  MonteCarlo::SimulationGeneralProperties custom_properties;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( custom_properties ) );
+
+  FRENSIE_CHECK_EQUAL( custom_properties.getParticleMode(),
+                       MonteCarlo::NEUTRON_PHOTON_MODE );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfHistories(), 1000000000 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getSurfaceFluxEstimatorAngleCosineCutoff(),
+                       0.1 );
+  FRENSIE_CHECK( !custom_properties.displayWarnings() );
+  FRENSIE_CHECK( custom_properties.isImplicitCaptureModeOn() );
 }
 
 //---------------------------------------------------------------------------//
