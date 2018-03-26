@@ -79,12 +79,8 @@ FRENSIE_ADD_TEST(BremsstrahlungAngularDistributionType)
 FRENSIE_ADD_TEST_EXECUTABLE(TwoDInterpolationType DEPENDS tstTwoDInterpolationType.cpp)
 FRENSIE_ADD_TEST(TwoDInterpolationType)
 
-ADD_EXECUTABLE(tstTwoDSamplingType
-  tstTwoDSamplingType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDSamplingType monte_carlo_core)
-ADD_TEST(TwoDSamplingType_test tstTwoDSamplingType)
-SET_PROPERTY(TEST TwoDSamplingType_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDSamplingType DEPENDS tstTwoDSamplingType.cpp)
+FRENSIE_ADD_TEST(TwoDSamplingType)
 
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeType DEPENDS tstParticleModeType.cpp)
 FRENSIE_ADD_TEST(ParticleModeType)
