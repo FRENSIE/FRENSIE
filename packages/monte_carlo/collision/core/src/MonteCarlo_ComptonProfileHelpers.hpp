@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_COMPTON_PROFILE_HELPERS_HPP
 #define MONTE_CARLO_COMPTON_PROFILE_HELPERS_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// FRENSIE Includes
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 

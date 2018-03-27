@@ -9,12 +9,10 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -37,7 +35,7 @@ double calculateAdjointComptonLineEnergy(const double incoming_energy,
      (1.0 - scattering_angle_cosine));
 
   // Make sure the compton line energy is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 						       compton_line_energy ) );
 
   return compton_line_energy;
@@ -96,7 +94,7 @@ double calculateMinScatteringAngleCosine( const double incoming_energy,
   }
 
   // Make sure the min scattering angle cosine is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 					       min_scattering_angle_cosine ) );
   testPostcondition(
 		min_scattering_angle_cosine >=
@@ -129,7 +127,7 @@ double calculateAbsoluteMinScatteringAngleCosine(const double incoming_energy )
       min_scattering_angle_cosine = copysign(1.0, min_scattering_angle_cosine);
   }
   // Make sure the min scattering angle cosine is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 					       min_scattering_angle_cosine ) );
   testPostcondition( min_scattering_angle_cosine >= -1.0 );
   testPostcondition( min_scattering_angle_cosine <= 1.0 );
@@ -161,7 +159,7 @@ double calculateMinInverseEnergyGainRatio( const double incoming_energy,
     min_inverse_energy_gain_ratio = alpha/alpha_max;
 
   // Make sure the min scattering angle cosine is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 					     min_inverse_energy_gain_ratio ) );
   remember( const double absolute_min_ratio =
 	    calculateAbsoluteMinInverseEnergyGainRatio( incoming_energy ) );
@@ -193,7 +191,7 @@ double calculateAbsoluteMinInverseEnergyGainRatio(
     min_inverse_energy_gain_ratio = 0.0;
 
   // Make sure the min scattering angle cosine is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 					     min_inverse_energy_gain_ratio ) );
   testPostcondition( min_inverse_energy_gain_ratio >= 0.0 );
   testPostcondition( min_inverse_energy_gain_ratio <= 1.0 );
@@ -229,7 +227,7 @@ double calculateElectronMomentumProjectionAdjoint(
 
   // Make sure the denominator is valid
   remember( const double pz = numerator/denominator );
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( pz ) );
   testPrecondition( denominator > 0.0 );
 
   return numerator/denominator;
@@ -261,7 +259,7 @@ double calculateMaxElectronMomentumProjectionAdjoint(
     sqrt( 2*arg + binding_energy*binding_energy );
 
   // Make sure the max projection is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz_max ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( pz_max ) );
   testPostcondition( pz_max >= -1.0 );
 
   return pz_max;
@@ -290,7 +288,7 @@ double calculateMinElectronMomentumProjectionAdjoint(
 						     scattering_angle_cosine );
 
   // Make sure the max projection is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz_min ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( pz_min ) );
   testPostcondition( pz_min >=
 		     calculateAbsoluteMinElectronMomentumProjectionAdjoint(
 						   initial_energy,
@@ -309,7 +307,7 @@ double calculateAbsoluteMinElectronMomentumProjectionAdjoint(
       Utility::PhysicalConstants::electron_rest_mass_energy;
 
   // Make sure the max projection is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz_min ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( pz_min ) );
   testPostcondition( pz_min >= -1.0 );
 
   return pz_min;
@@ -393,7 +391,7 @@ double calculateDopplerBroadenedEnergyAdjoint(
   }
 
   // Make sure the final energy is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( final_energy ));
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( final_energy ));
   testPostcondition( final_energy > initial_energy ||
 		     !energetically_possible );
 
