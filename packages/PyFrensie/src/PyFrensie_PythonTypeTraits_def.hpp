@@ -295,30 +295,26 @@ inline STLCompliantArray convertPythonTo2DArray( PyObject* py_obj )
   int is_new_array = 0;
 
   PyArrayObject* py_array =
-    Details::getNumPyArray<typename STLCompliantArray::value_type>( py_obj, &is_new_array );
+    Details::getNumPyArray<typename STLCompliantArray::value_type::value_type>( py_obj, &is_new_array );
 
-  typename STLCompliantArray::size_type dimensions = PyArray_DIMS(py_array);
-  std::cout << std::setprecision(16) << std::scientific << "dimensions = \t" << dimensions << std::endl;
+  typename STLCompliantArray::size_type dimensions = *PyArray_DIMS(py_array);
 
   STLCompliantArray output_array( dimensions );
 
   for( typename STLCompliantArray::size_type i = 0; i < dimensions; ++i )
   {
-    typename STLCompliantArray::value_type data_i =
-      convertPythonToArray( py_array[i] );
 
-    output_array[i] = data_i;
+    typename STLCompliantArray::value_type::size_type length = PyArray_DIM(py_array, 0);
+
+    typename STLCompliantArray::value_type::value_type* data =
+      (typename STLCompliantArray::value_type::value_type*)PyArray_DATA(&py_array[i]);
+
+    typename STLCompliantArray::value_type output_array_i( length );
+      for( typename STLCompliantArray::size_type j = 0; j < length; ++j )
+        output_array_i[j] = *(data++);
+
+    output_array[i] = output_array_i;
   }
-
-  // typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
-
-  // typename STLCompliantArray::value_type* data =
-  //   (typename STLCompliantArray::value_type*)PyArray_DATA(py_array);
-
-  // STLCompliantArray output_array( length );
-
-  // for( typename STLCompliantArray::size_type i = 0; i < length; ++i )
-  //   output_array[i] = *(data++);
 
   // if( is_new_array )
   //   Py_DECREF(py_array);

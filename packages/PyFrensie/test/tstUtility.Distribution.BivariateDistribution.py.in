@@ -42,11 +42,11 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
         "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase))
 
-    # def testEvaluate(self):
-    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluate method"
-    #     self.assertTrue(self.dist.evaluate( 0.0, 1.0 ) == 0.5)
-    #     self.assertTrue(self.dist.evaluate( 0.0, 2.0 ) == 0.5)
-    #     self.assertTrue(self.dist.evaluate( 1.0, 4.0 ) == 0.1)
+    def testEvaluate(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluate method"
+        self.assertTrue(self.dist.evaluate( 0.0, 1.0 ) == 0.5)
+        self.assertTrue(self.dist.evaluate( 0.0, 2.0 ) == 0.5)
+        self.assertTrue(self.dist.evaluate( 1.0, 4.0 ) == 0.1)
 
     # def testEvaluatePDF(self):
     #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluatePDF method"
