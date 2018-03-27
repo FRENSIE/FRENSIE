@@ -6,12 +6,10 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -153,7 +151,7 @@ double calculateDopplerBroadenedEnergy(
   }
 
   // Make sure the final energy is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( final_energy ));
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( final_energy ));
   testPostcondition( final_energy < initial_energy );
   testPostcondition( final_energy >= 0.0 );
   remember( (test_pz = calculateElectronMomentumProjection(

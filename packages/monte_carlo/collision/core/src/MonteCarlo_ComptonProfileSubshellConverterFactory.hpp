@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_HPP
 #define MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
