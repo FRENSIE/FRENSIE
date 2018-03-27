@@ -57,6 +57,7 @@ Teuchos::ParameterList and its Python wrapper
 
 // Distribution support
 %include "Utility_UnivariateDistribution.i"
+%include "Utility_BivariateDistribution.i"
 
 // Turn off the exception handling
 %exception;

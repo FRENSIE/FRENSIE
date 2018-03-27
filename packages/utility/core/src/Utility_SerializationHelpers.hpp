@@ -65,6 +65,11 @@ namespace serialization{                            \
 }                                                                       \
 }
 
+/*! Note that swig doesn't like the extern template declaration
+ * so these macros will be turned off when SWIG is processing files.
+ */
+#if !defined SWIG
+
 /*! Declare the version of a class with no template parameters
  *
  * This macro must be called from the global namespace.
@@ -200,6 +205,22 @@ namespace serialization{                                              \
     ClassName, Namespace, \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename T, typename U, typename V, typename W ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( T, U, V, W ) )
+
+#else // !defined SWIG
+
+#define BOOST_SERIALIZATION_CLASS_VERSION( ... )
+#define BOOST_SERIALIZATION_CLASS1_VERSION( ... )
+#define BOOST_SERIALIZATION_CLASS2_VERSION( ... )
+#define BOOST_SERIALIZATION_CLASS3_VERSION( ... )
+#define BOOST_SERIALIZATION_CLASS4_VERSION( ... )
+#define BOOST_SERIALIZATION_CLASS5_VERSION( ... )
+#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( ... )
+#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS1( ... )
+#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS2( ... )
+#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS3( ... )
+#define BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS4( ... )
+
+#endif // end !defined SWIG
 
 /*! Delcare that the GUID of a template class is defined
  * \ingroup boost_serialization_helpers

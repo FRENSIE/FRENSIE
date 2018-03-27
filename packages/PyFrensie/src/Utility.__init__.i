@@ -23,7 +23,7 @@ PyFrensie.Utility is the python interface to the FRENSIE utilities package.
   # option of the %module macro does not seem to work with this version
   # of swig either. To get the import code working we have to manually add
   # the current directory to the system path temporarily.
-  
+
   import os.path
   import sys
   current_dir,file_name = os.path.split(__file__)
@@ -61,7 +61,7 @@ instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
 //! Initialize the random number generator
 void initFrensiePrng()
 {
-  // Initilize the random number generator
+  // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
 %}

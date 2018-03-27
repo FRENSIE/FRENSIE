@@ -60,14 +60,18 @@ PyObject* convertArrayToPython( const STLCompliantArray& obj );
 template<typename STLCompliantArray>
 STLCompliantArray convertPythonToArray( PyObject* py_obj );
 
-// Create an array object from a Python object without a type conversion
+// Create an array object from a Python object
+template<typename STLCompliantArray>
+STLCompliantArray convertPythonTo2DArray( PyObject* py_obj );
+
+// Create a 2D array object from a Python object without a type conversion
 template<typename STLCompliantArray>
 STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj );
 
 // Create a Python (set) object from a set object
 template<typename STLCompliantSet>
 PyObject* convertSetToPython( const STLCompliantSet& obj );
-  
+
 // Create a set object from a Python object
 template<typename STLCompliantSet>
 STLCompliantSet convertPythonToSet( PyObject* py_obj );
@@ -279,7 +283,7 @@ struct PythonTypeTraits<char*>
   { return PyString_Check( py_obj ); }
 };
 
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
  * std::set
  * \ingroup python_type_traits
  */
@@ -299,7 +303,7 @@ struct PythonTypeTraits<std::set<T> >
   { return Details::isValidSet<T>( py_obj ); }
 };
 
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
  * std::unordered_set
  * \ingroup python_type_traits
  */
@@ -308,7 +312,7 @@ struct PythonTypeTraits<std::unordered_set<T> >
 {
   //! Create a Python (NumPy) object from a std::unordered_set<T> object
   static inline PyObject* convertToPython( const std::unordered_set<T>& obj )
-  { return Details::convertSetToPython( obj ); }    
+  { return Details::convertSetToPython( obj ); }
 
   //! Create a std::unordered_set<T> object from a Python object
   static inline std::unordered_set<T> convertFromPython( PyObject* py_obj )
@@ -319,7 +323,7 @@ struct PythonTypeTraits<std::unordered_set<T> >
   { return Details::isValidSet<T>( py_obj ); }
 };
 
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
  * std::vector
  * \ingroup python_type_traits
  */
@@ -333,6 +337,26 @@ struct PythonTypeTraits<std::vector<T> >
   //! Create a std::vector<T> object from a Python object
   static inline std::vector<T> convertFromPython( PyObject* py_obj )
   { return Details::convertPythonToArray<std::vector<T> >( py_obj ); }
+
+  //! Check if a Python object can be converted to the desired type
+  static inline bool isConvertable( PyObject* py_obj )
+  { return Details::isValidNumPyArray<T>( py_obj ); }
+};
+
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
+ * std::vector
+ * \ingroup python_type_traits
+ */
+template<typename T>
+struct PythonTypeTraits<std::vector<std::vector<T> > >
+{
+  //! Create a Python (NumPy) object from a std::vector<std::vector<T> > object
+  static inline PyObject* convertToPython( const std::vector<std::vector<T> >& obj )
+  { return Details::convertArrayToPython( obj ); }
+
+  //! Create a std::vector<std::vector<T> > object from a Python object
+  static inline std::vector<std::vector<T> > convertFromPython( PyObject* py_obj )
+  { return Details::convertPythonTo2DArray<std::vector<std::vector<T> > >( py_obj ); }
 
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
@@ -358,7 +382,7 @@ struct PythonTypeTraits<std::tuple<Types...> >
   { return Details::isValidTuple<Types...>( py_obj ); }
 };
 
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
  * std::map
  * \ingroup python_type_traits
  */
@@ -378,7 +402,7 @@ struct PythonTypeTraits<std::map<KeyType,ValueType> >
   { return Details::isValidDictionary<KeyType,ValueType>( py_obj ); }
 };
 
-/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for 
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
  * std::unordered_map
  * \ingroup python_type_traits
  */
@@ -397,7 +421,7 @@ struct PythonTypeTraits<std::unordered_map<KeyType,ValueType> >
   static inline bool isConvertable( PyObject* py_obj )
   { return Details::isValidDictionary<KeyType,ValueType>( py_obj ); }
 };
-  
+
 } // end PyFrensie namespace
 
 //---------------------------------------------------------------------------//

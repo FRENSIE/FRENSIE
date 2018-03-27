@@ -40,13 +40,9 @@
 %define %basic_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
 %feature("docstring") DIST_NAME( DISTRIBUTION, PARAMS )
-"The RENAMED_DISTRIBUTION proxy class. This class can be evaluated, sampled
-from, exported to an XML file (using the PyTrilinos.Teuchos.ParameterList and
-the PyTrilinos.Teuchos.XMLParameterListWriter), and imported from an XML file
-(using the PyTrilinos.Teuchos.ParameterList and the
-PyTrilinos.Teuchos.XMLParameterListReader). Before sampling, make sure to
-initialize the Frensie Pseudo-Random Number Generator
-(PyFrensie.Utility.initFrensiePrng())"
+"The RENAMED_DISTRIBUTION proxy class. This class can be evaluated and sampled.
+Before sampling, make sure to initialize the Frensie Pseudo-Random Number
+Generator (PyFrensie.Utility.initFrensiePrng())"
 
 %feature("autodoc",
 "evaluate(RENAMED_DISTRIBUTION self, double indep_var_value ) -> double" )
@@ -95,6 +91,10 @@ DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfIndepVar;
   $1 = PyFloat_AsDouble($input);
 }
 
+%typemap(typecheck, precedence=90) (DIST_NAME( DISTRIBUTION, PARAMS )::IndepQuantity) {
+  $1 = (PyFloat_Check($input) || PyInt_Check($input) || PyLong_Check($input)) ? 1 : 0;
+}
+
 %typemap(out) DIST_NAME( DISTRIBUTION, PARAMS )::IndepQuantity
 {
   $result = PyFloat_FromDouble($1);
@@ -120,7 +120,7 @@ DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfIndepVar;
 %define %basic_tab_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
 %feature("autodoc",
-"evaluate(RENAMED_DISTRIBUTION self, double indep_var_value ) -> double" )
+"evaluateCDF(RENAMED_DISTRIBUTION self, double indep_var_value ) -> double" )
 DIST_NAME( DISTRIBUTION, PARAMS )::evaluateCDF;
 
 %feature("autodoc",
@@ -171,8 +171,7 @@ DIST_NAME( DISTRIBUTION, PARAMS )::sampleWithRandomNumberInSubrange;
 %feature("autodoc",
 "__str__(RENAMED_DISTRIBUTION self) -> string
 
-Convert the RENAMED_DISTRIBUTION to a string. The output string format is the
-same that is used to add the distribution to a Teuchos::ParameterList.")
+Convert the RENAMED_DISTRIBUTION to a string.")
 DIST_NAME( DISTRIBUTION, PARAMS )::__str__;
 
 %feature("autodoc",
@@ -199,24 +198,6 @@ DIST_NAME( DISTRIBUTION, PARAMS )::__ne__;
 // Add some useful methods to the distribution class
 %extend DIST_NAME( DISTRIBUTION, PARAMS )
 {
-  // // Add a method for exporting to a Python parameter list
-  // void toParameterList( const std::string& name,
-  //                       PyObject* python_parameter_list ) const
-  // {
-  //   // Check that the python object is a parameter list
-  //   if( !PyFrensie::addDistToParameterList( name, *$self, python_parameter_list ) )
-  //   {
-  //     PyErr_SetString(PyExc_TypeError, "The PyObject is not a PyTrilinos.Teuchos.ParameterList (a.k.a Teuchos::RCP<Teuchos::ParameterList>)." );
-  //   }
-  // }
-
-  // // Add a method for importing from a Python parameter list
-  // void fromParameterList( const std::string& name,
-  //                         PyObject* python_parameter_list )
-  // {
-  //   PyFrensie::getDistFromParameterList( name, python_parameter_list, *$self );
-  // }
-
   // String representation method
   PyObject* __repr__() const
   {
@@ -241,24 +222,6 @@ DIST_NAME( DISTRIBUTION, PARAMS )::__ne__;
 
     return PyString_FromString( oss.str().c_str() );
   }
-
-  // // Equality operator
-  // PyObject* __eq__( const RENAMED_DISTRIBUTION& other_dist) const
-  // {
-  //   if( $self->isEqual( other_dist ) )
-  //     Py_RETURN_TRUE;
-  //   else
-  //     Py_RETURN_FALSE;
-  // }
-
-  // // Inequality operator
-  // PyObject* __ne__( const RENAMED_DISTRIBUTION& other_dist) const
-  // {
-  //   if( !$self->isEqual( other_dist ) )
-  //     Py_RETURN_TRUE;
-  //   else
-  //     Py_RETURN_FALSE;
-  // }
 };
 
 %enddef

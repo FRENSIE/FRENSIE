@@ -1,0 +1,155 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Utility.Distribution.BivariateDistribution class unit tests
+#  \file   tstUtility.Distribution.BivariateDistribution.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Utility.Distribution.BivariateDistribution classes
+#-----------------------------------------------------------------------------#
+
+# System imports
+import sys
+import unittest
+from optparse import *
+import numpy
+# from PyTrilinos.Teuchos import ParameterList
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Utility = importPyFrensieModuleFromBuildDir('Utility')
+Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the Interpolated Fully Tabular Basic Bivariate Distribution
+class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCase):
+    "TestCase class for Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution class"
+
+    def setUp(self):
+        self.uni_dist = Distribution.TabularDistribution_LinLin( [1.0, 2.0, 3.0], [0.0, 1.0, 2.0] )
+        # self.dist1 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [self.uni_dist, self.uni_dist ], 1e-3, 1e-7, 1e-16 )
+        primary_indep = numpy.array([0.0,1.0])
+        secondary_indep = numpy.array([[1, 2, 3], [4, 5, 6]])
+        dep = numpy.array([[0.5, 0.5, 0.5], [0.1, 0.5, 1.5]])
+        self.dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( primary_indep, secondary_indep, dep, 1e-3, 1e-7, 1e-16 )
+
+    def testConstructor(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution constructor"
+        self.assertTrue(isinstance(self.dist, Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase))
+
+    # def testEvaluate(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluate method"
+    #     self.assertTrue(self.dist.evaluate( 0.0, 1.0 ) == 0.5)
+    #     self.assertTrue(self.dist.evaluate( 0.0, 2.0 ) == 0.5)
+    #     self.assertTrue(self.dist.evaluate( 1.0, 4.0 ) == 0.1)
+
+    # def testEvaluatePDF(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluatePDF method"
+    #     self.assertTrue(self.dist.evaluatePDF( -1.0 ) == 0.0)
+    #     self.assertTrue(self.dist.evaluatePDF( 0.0 ) != 0.0)
+    #     self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
+
+    # def testEvaluateCDF(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluateCDF method"
+    #     self.assertTrue(self.dist.evaluateCDF( -1.0 ) == 0.0)
+    #     self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 1.0 )
+    #     self.assertTrue(self.dist.evaluateCDF( 1.0 ) == 1.0 )
+
+    # def testSample(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution sample method"
+    #     sample = self.dist.sample()
+    #     self.assertTrue(sample == 0.0)
+
+    # def testSampleAndRecordTrials(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution sampleAndRecordTrials method"
+    #     trials = 0
+    #     sample,trials = self.dist.sampleAndRecordTrials( trials )
+    #     self.assertTrue(sample == 0.0)
+    #     self.assertTrue(trials == 1)
+
+    # def testSampleAndRecordBinIndex(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution sampleAndRecordBinIndex method"
+    #     sample,bin_index = self.dist.sampleAndRecordBinIndex()
+    #     self.assertTrue(sample == 0.0)
+    #     self.assertTrue(bin_index == 0)
+
+    # def testSampleWithRandomNumber(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution sampleWithRandomNumber method"
+    #     sample = self.dist.sampleWithRandomNumber( 0.5 )
+    #     self.assertTrue(sample == 0.0)
+
+    # def testSampleInSubrange(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution sampleInSubrange method"
+    #     sample = self.dist.sampleInSubrange( 1.0 )
+    #     self.assertTrue(sample == 0.0 )
+
+    # def testSampleWithRandomNumberInSubrange(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution sampleWithRandomNumberInSubrange method"
+    #     sample = self.dist.sampleWithRandomNumberInSubrange( 0.5, 1.0 )
+    #     self.assertTrue(sample == 0.0)
+
+    # def testGetUpperBoundOfIndepVar(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getUpperBoundOfIndepVar method"
+    #     upper_bound = self.dist.getUpperBoundOfIndepVar()
+    #     self.assertTrue(upper_bound == 0.0)
+
+    # def testGetLowerBoundOfIndepVar(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getLowerBoundOfIndepVar method"
+    #     lower_bound = self.dist.getLowerBoundOfIndepVar()
+    #     self.assertTrue(lower_bound == 0.0)
+
+    # def testIsContinuous(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution isContinuous method"
+    #     self.assertTrue(not self.dist.isContinuous())
+
+    # def testIsTabular(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution isTabular method"
+    #     self.assertTrue(self.dist.isTabular())
+
+    # def testEquality(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution ==,!= methods"
+    #     diff_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution( 1.0 )
+    #     same_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution( 0.0 )
+    #     self.assertTrue(self.dist != diff_dist)
+    #     self.assertTrue(self.dist == same_dist)
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Initialize the FRENSIE random number generator
+    Utility.initFrensiePrng()
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(InterpolatedFullyTabularBasicBivariateDistributionTestCase))
+
+
+    print >>sys.stderr, \
+        "\n****************************\n" + \
+        "Testing Utility.Distribution \n" + \
+        "****************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstUtility.Distribution.UnivariateDistribution.py
+#-----------------------------------------------------------------------------#

@@ -55,7 +55,7 @@ using namespace Utility;
 // Import the distribution traits class
 %import "Utility_DistributionTraits.hpp"
 
-// Include the 1D distribution helpers
+// Include the univariate distribution helpers
 %include "Utility_UnivariateDistributionHelpers.i"
 
 // Add a few general typemaps
@@ -378,8 +378,6 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 //---------------------------------------------------------------------------//
 // Add support for the TabularDistribution
 //---------------------------------------------------------------------------//
-// // Ignore the static methods
-// %ignore Utility::UnitAwareTabularDistribution<Utility::LinLin, void,void>::typeName( const bool verbose_name, const bool use_template_params = false, const std::string& delim = std::string() );
 
 // Import the Tabular Distribution
 %import "Utility_TabularDistribution.hpp"

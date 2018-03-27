@@ -18,7 +18,7 @@ template<typename T>
 inline bool isValidNumPyArray( PyObject* py_obj )
 {
   bool is_valid = false;
-  
+
   if( py_obj && (PyArray_Check( py_obj ) || PySequence_Check( py_obj )) )
   {
     PyObject* py_array = PyArray_CheckFromAny(
@@ -131,7 +131,7 @@ struct IsValidTupleElementHelper<T,Types...>
   static inline bool areElementsConvertable( PyObject* py_obj )
   {
     PyObject* py_obj_element = PyTuple_GetItem( py_obj, element_index );
-    
+
     if( !PythonTypeTraits<T>::isConvertable( py_obj_element  ) )
       return false;
 
@@ -146,7 +146,7 @@ struct IsValidTupleElementHelper<T>
   static inline bool areElementsConvertable( PyObject* py_obj )
   {
     PyObject* py_obj_element = PyTuple_GetItem( py_obj, element_index );
-    
+
     if( !PythonTypeTraits<T>::isConvertable( py_obj_element ) )
       return false;
 
@@ -176,7 +176,7 @@ template<typename T>
 inline bool isValidSet( PyObject* py_obj )
 {
   bool valid;
-  
+
   if( PySet_Check( py_obj ) )
   {
     if( PySet_Size( py_obj ) > 0 )
@@ -184,7 +184,7 @@ inline bool isValidSet( PyObject* py_obj )
       PyObject* tmp_py_obj = PySet_New(NULL);
 
       valid = true;
-      
+
       // Break down the set and check each element
       while( PySet_Size( py_obj ) > 0 )
       {
@@ -225,7 +225,7 @@ inline bool isValidDictionary( PyObject* py_obj )
     {
       if( !PythonTypeTraits<KeyType>::isConvertable( py_key ) )
         return false;
-      
+
       if( !PythonTypeTraits<ValueType>::isConvertable( py_value ) )
         return false;
     }
@@ -241,15 +241,15 @@ template<typename STLCompliantArray>
 inline PyObject* convertArrayToPython( const STLCompliantArray& obj )
 {
   typedef typename std::remove_const<typename STLCompliantArray::value_type>::type ValueType;
-  
+
   npy_intp dims[] = { obj.size() };
   int typecode = numpyTypecode( ValueType() );
-  
+
   PyArrayObject* py_array =
     (PyArrayObject*)PyArray_SimpleNew( 1, dims, typecode );
-  
+
   ValueType* data = (ValueType*)PyArray_DATA(py_array);
-  
+
   // Deep copy the NumPy array
   for( typename STLCompliantArray::const_iterator it = obj.begin();
        it != obj.end();
@@ -267,23 +267,62 @@ inline STLCompliantArray convertPythonToArray( PyObject* py_obj )
 {
   // An exception will be thrown if this fails
   int is_new_array = 0;
-  
+
   PyArrayObject* py_array =
     Details::getNumPyArray<typename STLCompliantArray::value_type>( py_obj, &is_new_array );
-  
+
   typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
-  
+
   typename STLCompliantArray::value_type* data =
     (typename STLCompliantArray::value_type*)PyArray_DATA(py_array);
-  
+
   STLCompliantArray output_array( length );
-  
+
   for( typename STLCompliantArray::size_type i = 0; i < length; ++i )
     output_array[i] = *(data++);
 
   if( is_new_array )
     Py_DECREF(py_array);
-  
+
+  return output_array;
+}
+
+// Create an array object from a Python object
+template<typename STLCompliantArray>
+inline STLCompliantArray convertPythonTo2DArray( PyObject* py_obj )
+{
+  // An exception will be thrown if this fails
+  int is_new_array = 0;
+
+  PyArrayObject* py_array =
+    Details::getNumPyArray<typename STLCompliantArray::value_type>( py_obj, &is_new_array );
+
+  typename STLCompliantArray::size_type dimensions = PyArray_DIMS(py_array);
+  std::cout << std::setprecision(16) << std::scientific << "dimensions = \t" << dimensions << std::endl;
+
+  STLCompliantArray output_array( dimensions );
+
+  for( typename STLCompliantArray::size_type i = 0; i < dimensions; ++i )
+  {
+    typename STLCompliantArray::value_type data_i =
+      convertPythonToArray( py_array[i] );
+
+    output_array[i] = data_i;
+  }
+
+  // typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
+
+  // typename STLCompliantArray::value_type* data =
+  //   (typename STLCompliantArray::value_type*)PyArray_DATA(py_array);
+
+  // STLCompliantArray output_array( length );
+
+  // for( typename STLCompliantArray::size_type i = 0; i < length; ++i )
+  //   output_array[i] = *(data++);
+
+  // if( is_new_array )
+  //   Py_DECREF(py_array);
+
   return output_array;
 }
 
@@ -296,15 +335,15 @@ STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj )
     Details::getNumPyArrayWithoutConversion<typename STLCompliantArray::value_type>( py_obj );
 
   typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
-  
+
   typename STLCompliantArray::value_type* data =
     (typename STLCompliantArray::value_type*)PyArray_DATA(py_array);
-  
+
   STLCompliantArray output_array( length );
-  
+
   for( typename STLCompliantArray::size_type i = 0; i < length; ++i )
     output_array[i] = *(data++);
-  
+
   return output_array;
 }
 
@@ -329,7 +368,7 @@ inline PyObject* convertSetToPython( const STLCompliantSet& obj )
       PyErr_Format( PyExc_RuntimeError,
                     "Could not convert a set element to Python!" );
     }
-    
+
     ++it;
   }
 
@@ -341,7 +380,7 @@ template<typename STLCompliantSet>
 inline STLCompliantSet convertPythonToSet( PyObject* py_obj )
 {
   STLCompliantSet output_set;
-  
+
   PyObject* tmp_py_obj = PySet_New(NULL);
 
   // Break down the set and convert each element
@@ -361,7 +400,7 @@ inline STLCompliantSet convertPythonToSet( PyObject* py_obj )
 
   // Delete the temporary set
   Py_DECREF( tmp_py_obj );
-  
+
   return output_set;
 }
 
@@ -420,7 +459,7 @@ inline PyObject* convertTupleToPython( const std::tuple<Types...>& obj )
     PyTuple_New( Utility::TupleSize<std::tuple<Types...> >::value );
 
   ConvertTupleElementsToPythonHelper<Types...>::convert<0>( obj, py_tuple );
-  
+
   return py_tuple;
 }
 
@@ -464,7 +503,7 @@ inline std::tuple<Types...> convertPythonToTuple( PyObject* py_obj )
   std::tuple<Types...> output_tuple;
 
   ConvertPythonToTupleElementsHelper<Types...>::convert<0>( py_obj, output_tuple );
-  
+
   return output_tuple;
 }
 
@@ -480,19 +519,19 @@ inline PyObject* convertMapToPython( const STLCompliantMap& obj )
   {
     PyObject* py_dict_key =
       PythonTypeTraits<typename STLCompliantMap::key_type>::convertToPython( it->first );
-    
+
     PyObject* py_dict_value =
       PythonTypeTraits<typename STLCompliantMap::mapped_type>::convertToPython( it->second );
-    
+
     int return_value = PyDict_SetItem( py_dict, py_dict_key, py_dict_value );
-    
+
     if( return_value != 0 )
     {
       PyErr_Format( PyExc_RuntimeError,
                     "Could not set a key-value pair in the Python "
                     "dictionary!" );
     }
-    
+
     ++it;
   }
 
@@ -519,9 +558,9 @@ inline STLCompliantMap convertPythonToMap( PyObject* py_obj )
 
   return output_map;
 }
-  
+
 } // end Details namespace
-  
+
 } // end PyFrensie namespace
 
 #endif // end PYFRENSIE_PYTHON_TYPE_TRAITS_HPP

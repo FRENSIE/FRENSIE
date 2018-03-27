@@ -34,6 +34,10 @@ PyFrensie_MAKE_TEST(tstUtility.Distribution.UnivariateDistribution)
 ADD_TEST(PyFrensie.Utility.Distribution.UnivariateDistribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.UnivariateDistribution.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Distribution.UnivariateDistribution_test PROPERTY LABELS pyfrensie)
 
+PyFrensie_MAKE_TEST(tstUtility.Distribution.BivariateDistribution)
+ADD_TEST(PyFrensie.Utility.Distribution.BivariateDistribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.BivariateDistribution.py)
+SET_PROPERTY(TEST PyFrensie.Utility.Distribution.BivariateDistribution_test PROPERTY LABELS pyfrensie)
+
 # # Add the Data.ACE.ACEFileHandler unit tests
 # PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)
 # ADD_TEST(PyFrensie.Data.ACE.ACEFileHandler_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEFileHandler.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
