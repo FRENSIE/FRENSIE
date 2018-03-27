@@ -9,19 +9,16 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a full profile can be constructed from a half profile
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
+FRENSIE_UNIT_TEST( ComptonProfileHelpers,
 		   createFullProfileFromHalfProfile )
 {
   std::vector<double> half_momentum_grid, half_profile;
@@ -34,7 +31,7 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
   half_profile.push_back( 1.63283486016400008e-06 );
   half_profile.push_back( 5.177281263934e-11 );
 
-  Teuchos::Array<double> full_momentum_grid, full_profile;
+  std::vector<double> full_momentum_grid, full_profile;
 
   // Check that the grid can be preserved
   MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
@@ -46,28 +43,28 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
 						false,
 						false );
 
-  TEST_EQUALITY_CONST( full_momentum_grid.size(), 5 );
-  TEST_EQUALITY_CONST( full_momentum_grid.front(), -100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid.back(), 100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[1], -10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[3], 10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.size(), 5 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.front(), -100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.back(), 100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[1], -10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[3], 10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[2], 0.0 );
 
-  TEST_EQUALITY_CONST( full_profile.size(), 5 );
+  FRENSIE_CHECK_EQUAL( full_profile.size(), 5 );
 
-  TEST_FLOATING_EQUALITY( full_profile.front(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.front(),
 			  5.177281263934e-11,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile.back(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.back(),
 			  5.177281263934e-11,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[1],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[1],
 			  1.63283486016400008e-06,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[3],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[3],
 			  1.63283486016400008e-06,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[2],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[2],
 			  1.69058145887700007,
 			  1e-12 );
 
@@ -84,45 +81,45 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
 						true,
 						false );
 
-  TEST_EQUALITY_CONST( full_momentum_grid.size(), 7 );
-  TEST_EQUALITY_CONST( full_momentum_grid.front(),
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.size(), 7 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.front(),
 		       -Utility::PhysicalConstants::inverse_fine_structure_constant );
-  TEST_EQUALITY_CONST( full_momentum_grid.back(),
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.back(),
 		       Utility::PhysicalConstants::inverse_fine_structure_constant );
-  TEST_EQUALITY_CONST( full_momentum_grid[1], -100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[5], 100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[2], -10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[4], 10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[3], 0.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[1], -100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[5], 100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[2], -10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[4], 10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[3], 0.0 );
 
-  TEST_EQUALITY_CONST( full_profile.size(), 7 );
+  FRENSIE_CHECK_EQUAL( full_profile.size(), 7 );
 
-  TEST_FLOATING_EQUALITY( full_profile.front(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.front(),
 			  7.2908632235832003e-13,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile.back(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.back(),
 			  7.2908632235832003e-13,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[1],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[1],
 			  5.177281263934e-11,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[5],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[5],
 			  5.177281263934e-11,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[2],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[2],
 			  1.63283486016400008e-06,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[4],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[4],
 			  1.63283486016400008e-06,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[3],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[3],
 			  1.69058145887700007,
 			  1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a full profile can be constructed from a half profile
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
+FRENSIE_UNIT_TEST( ComptonProfileHelpers,
 		   createFullProfileFromHalfProfile_doubled )
 {
   std::vector<double> half_momentum_grid, half_profile;
@@ -135,7 +132,7 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
   half_profile.push_back( 1.63283486016400008e-06 );
   half_profile.push_back( 5.177281263934e-11 );
 
-  Teuchos::Array<double> full_momentum_grid, full_profile;
+  std::vector<double> full_momentum_grid, full_profile;
 
   // Check that the grid can be preserved
   MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
@@ -147,27 +144,27 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
 						false,
 						true );
 
-  TEST_EQUALITY_CONST( full_momentum_grid.size(), 5 );
-  TEST_EQUALITY_CONST( full_momentum_grid.front(), -100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid.back(), 100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[1], -10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[3], 10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[2], 0.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.size(), 5 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.front(), -100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.back(), 100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[1], -10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[3], 10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[2], 0.0 );
 
-  TEST_EQUALITY_CONST( full_profile.size(), 5 );
-  TEST_FLOATING_EQUALITY( full_profile.front(),
+  FRENSIE_CHECK_EQUAL( full_profile.size(), 5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.front(),
 			  5.177281263934e-11/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile.back(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.back(),
 			  5.177281263934e-11/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[1],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[1],
 			  1.63283486016400008e-06/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[3],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[3],
 			  1.63283486016400008e-06/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[2],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[2],
 			  1.69058145887700007/2,
 			  1e-12 );
 
@@ -181,44 +178,44 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
 						true,
 						true );
 
-  TEST_EQUALITY_CONST( full_momentum_grid.size(), 7 );
-  TEST_EQUALITY_CONST( full_momentum_grid.front(),
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.size(), 7 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.front(),
 		       -Utility::PhysicalConstants::inverse_fine_structure_constant );
-  TEST_EQUALITY_CONST( full_momentum_grid.back(),
+  FRENSIE_CHECK_EQUAL( full_momentum_grid.back(),
 		       Utility::PhysicalConstants::inverse_fine_structure_constant );
-  TEST_EQUALITY_CONST( full_momentum_grid[1], -100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[5], 100.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[2], -10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[4], 10.0 );
-  TEST_EQUALITY_CONST( full_momentum_grid[3], 0.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[1], -100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[5], 100.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[2], -10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[4], 10.0 );
+  FRENSIE_CHECK_EQUAL( full_momentum_grid[3], 0.0 );
 
-  TEST_EQUALITY_CONST( full_profile.size(), 7 );
-  TEST_FLOATING_EQUALITY( full_profile.front(),
+  FRENSIE_CHECK_EQUAL( full_profile.size(), 7 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.front(),
 			  7.2908632235832003e-13/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile.back(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile.back(),
 			  7.2908632235832003e-13/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[1],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[1],
 			  5.177281263934e-11/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[5],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[5],
 			  5.177281263934e-11/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[2],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[2],
 			  1.63283486016400008e-06/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[4],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[4],
 			  1.63283486016400008e-06/2,
 			  1e-12 );
-  TEST_FLOATING_EQUALITY( full_profile[3],
+  FRENSIE_CHECK_FLOATING_EQUALITY( full_profile[3],
 			  1.69058145887700007/2,
 			  1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the momentum grid can be converted to me*c units
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers, convertMomentumGridToMeCUnits )
+FRENSIE_UNIT_TEST( ComptonProfileHelpers, convertMomentumGridToMeCUnits )
 {
   std::vector<double> half_momentum_grid;
 
@@ -228,11 +225,19 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers, convertMomentumGridToMeCUnits )
 
   MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
 					     half_momentum_grid.end() );
+
+  FRENSIE_CHECK_SMALL( half_momentum_grid[0], 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( half_momentum_grid[1],
+                                   7.297352569816314971e-02,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( half_momentum_grid[2],
+                                   7.297352569816315526e-01,
+                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Compton profile can be converted to inverse me*c units
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers, convertProfileToInverseMeCUnits )
+FRENSIE_UNIT_TEST( ComptonProfileHelpers, convertProfileToInverseMeCUnits )
 {
   std::vector<double> half_profile;
 
@@ -242,6 +247,10 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers, convertProfileToInverseMeCUnits )
 
   MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
 					       half_profile.end() );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( half_profile,
+                                   std::vector<double>({2.316705192331901344e+02, 2.237571563854288232e-04, 7.094739104902971188e-09}),
+                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
