@@ -86,7 +86,9 @@ FRENSIE_UNIT_TEST( IncoherentAdjointModelType,
 
 //---------------------------------------------------------------------------//
 // Check that a ParticleType can be archived
-FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ParticleType, archive, TestArchives )
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( IncoherentAdjointModelType,
+                                   archive,
+                                   TestArchives )
 {
   FETCH_TEMPLATE_PARAM( 0, RawOArchive );
   FETCH_TEMPLATE_PARAM( 1, RawIArchive );

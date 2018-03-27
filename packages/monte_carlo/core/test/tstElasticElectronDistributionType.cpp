@@ -192,22 +192,27 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ElasticElectronDistributionType,
   MonteCarlo::ElasticElectronDistributionType type_1;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+  FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::COUPLED_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_2;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::DECOUPLED_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_3;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::HYBRID_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_4;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_4 ) );
+  FRENSIE_CHECK_EQUAL( type_4, MonteCarlo::CUTOFF_DISTRIBUTION );
 
   MonteCarlo::ElasticElectronDistributionType type_5;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_5 ) );
+  FRENSIE_CHECK_EQUAL( type_5, MonteCarlo::SCREENED_RUTHERFORD_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -255,14 +260,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( CoupledElasticSamplingMethod,
   MonteCarlo::CoupledElasticSamplingMethod type_1;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+  FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::ONE_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod type_2;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::TWO_D_UNION );
 
   MonteCarlo::CoupledElasticSamplingMethod type_3;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::SIMPLIFIED_UNION );
 }
 
 //---------------------------------------------------------------------------//

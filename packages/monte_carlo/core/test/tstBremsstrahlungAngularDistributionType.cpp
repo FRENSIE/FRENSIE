@@ -125,14 +125,17 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( BremsstrahlungAngularDistributionType,
   MonteCarlo::BremsstrahlungAngularDistributionType type_1;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_1 ) );
+  FRENSIE_CHECK_EQUAL( type_1, MonteCarlo::DIPOLE_DISTRIBUTION );
 
   MonteCarlo::BremsstrahlungAngularDistributionType type_2;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_2 ) );
+  FRENSIE_CHECK_EQUAL( type_2, MonteCarlo::TABULAR_DISTRIBUTION );
 
   MonteCarlo::BremsstrahlungAngularDistributionType type_3;
   
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( type_3 ) );
+  FRENSIE_CHECK_EQUAL( type_3, MonteCarlo::TWOBS_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//

@@ -55,6 +55,9 @@ FRENSIE_ADD_TEST(ParticleBank)
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionTypeHelpers DEPENDS tstPhotoatomicReactionTypeHelpers.cpp)
 FRENSIE_ADD_TEST(PhotoatomicReactionTypeHelpers)
 
+FRENSIE_ADD_TEST_EXECUTABLE(IncoherentModelTypeHelpers DEPENDS tstIncoherentModelTypeHelpers.cpp)
+FRENSIE_ADD_TEST(IncoherentModelTypeHelpers)
+
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointModelTypeHelpers DEPENDS tstIncoherentAdjointModelTypeHelpers.cpp)
 FRENSIE_ADD_TEST(IncoherentAdjointModelTypeHelpers)
 
@@ -76,6 +79,12 @@ FRENSIE_ADD_TEST(ElasticElectronDistributionType)
 FRENSIE_ADD_TEST_EXECUTABLE(BremsstrahlungAngularDistributionType DEPENDS tstBremsstrahlungAngularDistributionType.cpp)
 FRENSIE_ADD_TEST(BremsstrahlungAngularDistributionType)
 
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDInterpolationType DEPENDS tstTwoDInterpolationType.cpp)
+FRENSIE_ADD_TEST(TwoDInterpolationType)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TwoDSamplingType DEPENDS tstTwoDSamplingType.cpp)
+FRENSIE_ADD_TEST(TwoDSamplingType)
+
 FRENSIE_ADD_TEST_EXECUTABLE(ParticleModeType DEPENDS tstParticleModeType.cpp)
 FRENSIE_ADD_TEST(ParticleModeType)
 
@@ -85,115 +94,22 @@ FRENSIE_ADD_TEST(ParticleModeTypeTraits)
 FRENSIE_ADD_TEST_EXECUTABLE(SimulationGeneralProperties DEPENDS tstSimulationGeneralProperties.cpp)
 FRENSIE_ADD_TEST(SimulationGeneralProperties)
 
-ADD_EXECUTABLE(tstSimulationNeutronProperties
-  tstSimulationNeutronProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationNeutronProperties monte_carlo_core)
-ADD_TEST(SimulationNeutronProperties_test tstSimulationNeutronProperties)
-SET_PROPERTY(TEST SimulationNeutronProperties_test PROPERTY LABELS neutron)
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationNeutronProperties DEPENDS tstSimulationNeutronProperties.cpp)
+FRENSIE_ADD_TEST(SimulationNeutronProperties)
 
-ADD_EXECUTABLE(tstSimulationPhotonProperties
-  tstSimulationPhotonProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationPhotonProperties monte_carlo_core)
-ADD_TEST(SimulationPhotonProperties_test tstSimulationPhotonProperties)
-SET_PROPERTY(TEST SimulationPhotonProperties_test PROPERTY LABELS photon)
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationPhotonProperties DEPENDS tstSimulationPhotonProperties.cpp)
+FRENSIE_ADD_TEST(SimulationPhotonProperties)
 
-ADD_EXECUTABLE(tstSimulationAdjointPhotonProperties
-  tstSimulationAdjointPhotonProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationAdjointPhotonProperties monte_carlo_core)
-ADD_TEST(SimulationAdjointPhotonProperties_test tstSimulationAdjointPhotonProperties)
-SET_PROPERTY(TEST SimulationAdjointPhotonProperties_test PROPERTY LABELS photon adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationAdjointPhotonProperties DEPENDS tstSimulationAdjointPhotonProperties.cpp)
+FRENSIE_ADD_TEST(SimulationAdjointPhotonProperties)
 
-ADD_EXECUTABLE(tstSimulationElectronProperties
-  tstSimulationElectronProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationElectronProperties monte_carlo_core)
-ADD_TEST(SimulationElectronProperties_test tstSimulationElectronProperties)
-SET_PROPERTY(TEST SimulationElectronProperties_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationElectronProperties DEPENDS tstSimulationElectronProperties.cpp)
+FRENSIE_ADD_TEST(SimulationElectronProperties)
 
-ADD_EXECUTABLE(tstSimulationAdjointElectronProperties
-  tstSimulationAdjointElectronProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationAdjointElectronProperties monte_carlo_core)
-ADD_TEST(SimulationAdjointElectronProperties_test tstSimulationAdjointElectronProperties)
-SET_PROPERTY(TEST SimulationAdjointElectronProperties_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationAdjointElectronProperties DEPENDS tstSimulationAdjointElectronProperties.cpp)
+FRENSIE_ADD_TEST(SimulationAdjointElectronProperties)
 
-ADD_EXECUTABLE(tstTwoDInterpolationType
-  tstTwoDInterpolationType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDInterpolationType monte_carlo_core)
-ADD_TEST(TwoDInterpolationType_test tstTwoDInterpolationType)
-SET_PROPERTY(TEST TwoDInterpolationType_test PROPERTY LABELS electron)
-
-ADD_EXECUTABLE(tstTwoDSamplingType
-  tstTwoDSamplingType.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDSamplingType monte_carlo_core)
-ADD_TEST(TwoDSamplingType_test tstTwoDSamplingType)
-SET_PROPERTY(TEST TwoDSamplingType_test PROPERTY LABELS electron)
-
-ADD_EXECUTABLE(tstSimulationProperties
-  tstSimulationProperties.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationProperties monte_carlo_core)
-ADD_TEST(SimulationProperties_test tstSimulationProperties)
-SET_PROPERTY(TEST SimulationProperties_test PROPERTY LABELS electron)
-
-ADD_EXECUTABLE(tstSimulationGeneralPropertiesFactory
-  tstSimulationGeneralPropertiesFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationGeneralPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationGeneralPropertiesFactory_test tstSimulationGeneralPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-
-ADD_EXECUTABLE(tstSimulationNeutronPropertiesFactory
-  tstSimulationNeutronPropertiesFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationNeutronPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationNeutronPropertiesFactory_test tstSimulationNeutronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-SET_PROPERTY(TEST SimulationNeutronPropertiesFactory_test PROPERTY LABELS neutron)
-
-ADD_EXECUTABLE(tstSimulationPhotonPropertiesFactory
-  tstSimulationPhotonPropertiesFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationPhotonPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationPhotonPropertiesFactory_test tstSimulationPhotonPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-SET_PROPERTY(TEST SimulationPhotonPropertiesFactory_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstSimulationAdjointPhotonPropertiesFactory
-  tstSimulationAdjointPhotonPropertiesFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationAdjointPhotonPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationAdjointPhotonPropertiesFactory_test tstSimulationAdjointPhotonPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-SET_PROPERTY(TEST SimulationAdjointPhotonPropertiesFactory_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstSimulationElectronPropertiesFactory
-  tstSimulationElectronPropertiesFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationElectronPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationElectronPropertiesFactory_test tstSimulationElectronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-SET_PROPERTY(TEST SimulationElectronPropertiesFactory_test PROPERTY LABELS electron)
-
-ADD_EXECUTABLE(tstSimulationAdjointElectronPropertiesFactory
-  tstSimulationAdjointElectronPropertiesFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationAdjointElectronPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationAdjointElectronPropertiesFactory_test tstSimulationAdjointElectronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-SET_PROPERTY(TEST SimulationAdjointElectronPropertiesFactory_test PROPERTY LABELS electron adjoint)
-
-ADD_EXECUTABLE(tstSimulationPropertiesFactory
-  tstSimulationPropertiesFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
-ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
-SET_PROPERTY(TEST SimulationPropertiesFactory_test PROPERTY LABELS monte_carlo_core)
-
-ADD_EXECUTABLE(tstMonteCarloHDF5FileHandler
-  tstHDF5FileHandler.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstMonteCarloHDF5FileHandler monte_carlo_core)
-ADD_TEST(MonteCarloHDF5FileHandler_test tstMonteCarloHDF5FileHandler)
-SET_PROPERTY(TEST MonteCarloHDF5FileHandler_test PROPERTY LABELS monte_carlo_core )
+FRENSIE_ADD_TEST_EXECUTABLE(SimulationProperties DEPENDS tstSimulationProperties.cpp)
+FRENSIE_ADD_TEST(SimulationProperties)
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_core)
