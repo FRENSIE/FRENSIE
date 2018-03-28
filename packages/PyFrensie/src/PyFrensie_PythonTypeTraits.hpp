@@ -44,6 +44,10 @@ PyArrayObject* getNumPyArrayWithoutConversion( PyObject* py_obj );
 template<typename... Types>
 bool isValidTuple( PyObject* py_obj );
 
+// Check if the PyObject is a valid list
+template<typename T>
+bool isValidList( PyObject* py_obj );
+
 // Check if the PyObject is a valid set
 template<typename T>
 bool isValidSet( PyObject* py_obj );
@@ -60,9 +64,13 @@ PyObject* convertArrayToPython( const STLCompliantArray& obj );
 template<typename STLCompliantArray>
 STLCompliantArray convertPythonToArray( PyObject* py_obj );
 
-// Create an array object from a Python object
-template<typename STLCompliantArray>
-STLCompliantArray convertPythonTo2DArray( PyObject* py_obj );
+// Create a Python (list of NumPy arrays) object from a 2D array object
+template<typename STLCompliant2DArray>
+STLCompliant2DArray convert2DArrayToPython( const STLCompliant2DArray& obj );
+
+// Create a list of arrays object from a Python object (list of Numpy arrays)
+template<typename STLCompliant2DArray>
+STLCompliant2DArray convertPythonTo2DArray( PyObject* py_obj );
 
 // Create a 2D array object from a Python object without a type conversion
 template<typename STLCompliantArray>
@@ -352,7 +360,7 @@ struct PythonTypeTraits<std::vector<std::vector<T> > >
 {
   //! Create a Python (NumPy) object from a std::vector<std::vector<T> > object
   static inline PyObject* convertToPython( const std::vector<std::vector<T> >& obj )
-  { return Details::convertArrayToPython( obj ); }
+  { return Details::convert2DArrayToPython( obj ); }
 
   //! Create a std::vector<std::vector<T> > object from a Python object
   static inline std::vector<std::vector<T> > convertFromPython( PyObject* py_obj )
@@ -360,7 +368,7 @@ struct PythonTypeTraits<std::vector<std::vector<T> > >
 
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
-  { return Details::isValidNumPyArray<T>( py_obj ); }
+  { return Details::isValidList<std::vector<T> >( py_obj ); }
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for

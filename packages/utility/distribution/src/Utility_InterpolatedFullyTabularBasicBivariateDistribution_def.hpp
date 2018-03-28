@@ -30,7 +30,7 @@ namespace Details{
 template<typename TwoDGridPolicy>
 struct TwoDGridPolicySamplingFunctorCreationHelper;
 
-/*! \brief The TwoDGridPolicy sampling functor creation helper base for 
+/*! \brief The TwoDGridPolicy sampling functor creation helper base for
  * uncorrelated grid policies.
  */
 struct TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
@@ -51,7 +51,7 @@ struct TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
                                   std::function<void()>& trials_updater )
   {
     trials_updater = [](){};
-    
+
     return std::bind<typename BaseUnivariateDistributionType::IndepQuantity>(
                         &BaseUnivariateDistributionType::sampleAndRecordTrials,
                         std::placeholders::_1,
@@ -69,7 +69,7 @@ struct TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
   }
 };
 
-/*! \brief The TwoDGridPolicy sampling functor creation helper base for 
+/*! \brief The TwoDGridPolicy sampling functor creation helper base for
  * correlated grid policies.
  */
 struct TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
@@ -81,7 +81,7 @@ struct TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
     // Generate a random number
     double random_number =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
+
     return std::bind<typename BaseUnivariateDistributionType::IndepQuantity>(
                        &BaseUnivariateDistributionType::sampleWithRandomNumber,
                        std::placeholders::_1,
@@ -116,43 +116,43 @@ struct TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
                                 "will always be returned)!" );
 
     secondary_bin_index = 0;
-    
+
     return TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper::createBasicSamplingFunctor<BaseUnivariateDistributionType>();
   }
-}; 
-  
-/*! \brief Partial specialization of the 
- * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+};
+
+/*! \brief Partial specialization of the
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper
  * for Utility::Direct
  */
 template<typename TwoDInterpPolicy>
 struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::Direct<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
 { /* ... */ };
 
-/*! \brief Partial specialization of the 
- * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+/*! \brief Partial specialization of the
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper
  * for Utility::UnitBase
  */
 template<typename TwoDInterpPolicy>
 struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::UnitBase<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationUncorrelatedBaseHelper
 { /* ... */ };
 
-/*! \brief Partial specialization of the 
- * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+/*! \brief Partial specialization of the
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper
  * for Utility::Correlated
  */
 template<typename TwoDInterpPolicy>
 struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::Correlated<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
 { /* ... */ };
 
-/*! \brief Partial specialization of the 
- * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper 
+/*! \brief Partial specialization of the
+ * Utility::Details::TwoDGridPolicySamplingFunctorCreationHelper
  * for Utility::Correlated
  */
 template<typename TwoDInterpPolicy>
 struct TwoDGridPolicySamplingFunctorCreationHelper<Utility::UnitBaseCorrelated<TwoDInterpPolicy> > : public TwoDGridPolicySamplingFunctorCreationCorrelatedBaseHelper
 { /* ... */ };
-  
+
 } // end Details namespace
 
 // Default constructor
@@ -216,11 +216,11 @@ UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,Prima
                       << primary_indep_grid.size() << ") does not match the "
                       "number of dependent value grids ("
                       << dependent_values.size() << ")!" );
-  
+
   // Construct the univariate distributions
   std::vector<std::shared_ptr<const BaseUnivariateDistributionType> >
     secondary_distributions( primary_indep_grid.size() );
-  
+
   for( size_t i = 0; i < primary_indep_grid.size(); ++i )
   {
     secondary_distributions[i].reset(
@@ -231,7 +231,7 @@ UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,Prima
 
   // Set the distribution data
   this->setDistribution( primary_indep_grid, secondary_distributions );
-  
+
   this->setEvaluationTolerances( fuzzy_boundary_tol,
                                  evaluate_relative_error_tol,
                                  evaluate_error_tol );
@@ -242,6 +242,21 @@ UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,Prima
 //---------------------------------------------------------------------------//
 // EVALUATING METHODS
 //---------------------------------------------------------------------------//
+
+// Evaluate the distribution
+template<typename TwoDGridPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
+{
+  return this->template evaluateImpl<DepQuantity>(
+                                         primary_indep_var_value,
+                                         secondary_indep_var_value,
+                                         &BaseUnivariateDistributionType::evaluate );
+}
 
 // Evaluate the distribution
 template<typename TwoDGridPolicy,
@@ -285,7 +300,23 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
                                 max_secondary_indep_var_functor,
                                 &BaseUnivariateDistributionType::evaluatePDF );
 }
-  
+
+// Evaluate the secondary conditional PDF
+template<typename TwoDGridPolicy,
+         typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const
+  -> InverseSecondaryIndepQuantity
+{
+  return this->template evaluateImpl<InverseSecondaryIndepQuantity>(
+                                primary_indep_var_value,
+                                secondary_indep_var_value,
+                                &BaseUnivariateDistributionType::evaluatePDF );
+}
+
 // Evaluate the secondary conditional CDF
 template<typename TwoDGridPolicy,
          typename PrimaryIndependentUnit,
@@ -396,17 +427,17 @@ double UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolic
     {
       return ((*lower_bin_boundary->second).*evaluateCDF)(secondary_indep_var_value);
     }
-    else 
+    else
       return 0.0;
   }
 }
 
 // Return a random sample from the secondary conditional PDF
-/*! \details If the primary value provided is outside of the primary grid 
- * limits the appropriate limiting secondary distribution will be used to 
+/*! \details If the primary value provided is outside of the primary grid
+ * limits the appropriate limiting secondary distribution will be used to
  * create the sample. The alternative to this behavior is to throw an exception
- * unless the distribution has been extended by calling the 
- * extendBeyondPrimaryIndepLimits method. Since this is a performance critical 
+ * unless the distribution has been extended by calling the
+ * extendBeyondPrimaryIndepLimits method. Since this is a performance critical
  * method we decided against this behavior.
  */
 template<typename TwoDGridPolicy,
@@ -425,10 +456,10 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
 }
 
 // Return a random sample from the secondary conditional PDF
-/*! \details If the primary value provided is outside of the primary grid 
- * limits the appropriate limiting secondary distribution will be used to 
+/*! \details If the primary value provided is outside of the primary grid
+ * limits the appropriate limiting secondary distribution will be used to
  * create the sample. The alternative to this behavior is to throw an exception
- * unless the distribution has been extended by calling the 
+ * unless the distribution has been extended by calling the
  * extendBeyondPrimaryIndepLimits method. Since this is a performance critical
  * method we decided against this behavior.
  */
@@ -466,7 +497,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
 {
   // Create the sampling functor and trials updater functor
   std::function<void()> trials_updater;
-  
+
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithTrialsCounter<BaseUnivariateDistributionType>( trials, trials_updater );
 
@@ -488,7 +519,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
 {
   // Dummy variable
   SecondaryIndepQuantity dummy_raw_sample;
-  
+
   // Create the sampling functor
   std::function<SecondaryIndepQuantity(const BaseUnivariateDistributionType&)>
     sampling_functor = Details::TwoDGridPolicySamplingFunctorCreationHelper<TwoDGridPolicy>::template createSamplingFunctorWithSecondaryBinIndex<BaseUnivariateDistributionType>( secondary_bin_index );
@@ -590,7 +621,7 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
   // Make sure the secondary limit is valid
   testPrecondition( max_secondary_indep_var_value >
                     this->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ) );
-  
+
   // Generate a random number
   double random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -798,7 +829,7 @@ void UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
   // Load the base class first
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
 }
-  
+
 } // end Utility namespace
 
 EXTERN_EXPLICIT_INTERPOLATED_TABULAR_BASIC_BIVARIATE_DIST_FULL( Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, void, void, void );

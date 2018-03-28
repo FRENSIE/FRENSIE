@@ -57,17 +57,17 @@ inline PyObject* convertToPython( const T& obj )
 template<typename T>
 inline T convertFromPython( PyObject* py_obj )
 {
-  // if( !PythonTypeTraits<T>::isConvertable( py_obj ) )
-  // {
-  //   PyErr_Format( PyExc_RuntimeError,
-  //                 "Unable to convert the PyObject to the desired type!" );
+  if( !PythonTypeTraits<T>::isConvertable( py_obj ) )
+  {
+    PyErr_Format( PyExc_RuntimeError,
+                  "Unable to convert the PyObject to the desired type!" );
 
-  //   return T();
-  // }
-  // else
+    return T();
+  }
+  else
     return PythonTypeTraits<T>::convertFromPython( py_obj );
 }
-  
+
 } // end PyFrensie namespace
 
 #endif // end PYFRENSIE_PYTHON_TYPE_TRAITS_DECL_HPP

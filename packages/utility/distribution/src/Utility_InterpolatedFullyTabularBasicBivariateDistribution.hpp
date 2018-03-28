@@ -98,11 +98,21 @@ public:
   //! Evaluate the distribution
   DepQuantity evaluate(
             const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const override;
+
+  //! Evaluate the distribution
+  DepQuantity evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
             min_secondary_indep_var_functor,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
             max_secondary_indep_var_functor ) const override;
+
+  //! Evaluate the secondary conditional PDF
+  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
+       const PrimaryIndepQuantity primary_indep_var_value,
+       const SecondaryIndepQuantity secondary_indep_var_value ) const override;
 
   //! Evaluate the secondary conditional PDF
   virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(

@@ -58,7 +58,8 @@ using namespace Utility;
 // Add a few general typemaps
 typedef unsigned int size_t;
 %apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
-%apply unsigned& OUTPUT { unsigned& sampled_bin_index };
+%apply unsigned& OUTPUT { unsigned& primary_bin_index };
+%apply unsigned& OUTPUT { unsigned& secondary_bin_index };
 
 %typemap(in) const std::vector<double>& (std::vector<double> temp)
 {
@@ -145,15 +146,15 @@ typedef unsigned int size_t;
 // // Add support for the InterpolatedTabularBasicBivariateDistributionImplBase
 // //---------------------------------------------------------------------------//
 // // Import the InterpolatedTabularBasicBivariateDistributionImplBase
-%import "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
+// %import "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
 
 // // There are many interpolated tabular distributions - use this macro to set up each
 // %define %tabular_bivariate_distribution_base_interface_setup( GRID, INTERP, BASE )
 
 // // Add a more detailed docstring for the constructor
 // %feature("docstring")
-// Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution
-// "The primary independent values should be stored in a NumPy array. The secondary independent values and dependent values should be stored in a 2D NumPy array.
+// Utility::UnitAwareInterpolatedTabularBasicBivariateDistributionImplBase< Utility::GRID< Utility::INTERP >,UnitAwareFullyTabularBasicBivariateDistribution<void,void,void> >
+// "The primary independent values should be stored in a NumPy array. The secondary independent values and dependent values should be stored in a list of NumPy arrays.
 // "
 
 // %advanced_bivariate_distribution_interface_setup( InterpolatedTabularBasicBivariateDistributionImplBase_ ## INTERP ## _ ## GRID, InterpolatedTabularBasicBivariateDistributionImplBase, Utility::INTERP, Utility::GRID, Utility::BASE )
@@ -167,6 +168,7 @@ typedef unsigned int size_t;
 // Add support for the InterpolatedFullyTabularBasicBivariateDistribution
 //---------------------------------------------------------------------------//
 // Import the InterpolatedFullyTabularBasicBivariateDistribution
+%include "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
 %import "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
 // There are many interpolated tabular distributions - use this macro to set up each
@@ -175,9 +177,10 @@ typedef unsigned int size_t;
 // Add a more detailed docstring for the constructor
 %feature("docstring")
 Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::GRID<Utility::INTERP>,void,void,void>::InterpolatedFullyTabularBasicBivariateDistribution
-"The primary independent values should be stored in a NumPy array. The secondary independent values and dependent values should be stored in a 2D NumPy array.
+"The primary independent values should be stored in a NumPy array. The secondary independent values and dependent values should be stored in a list of NumPy array.
 "
 
+// Typemaps for constructor data input arrays
 %typemap(in) const std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity > > & (std::vector<double> temp)
 {
   temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
@@ -215,11 +218,18 @@ Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::GRID<Utilit
 
 %enddef
 
+%tabular_bivariate_distribution_interface_setup( Direct, LinLinLin )
+%tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
 %tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLin )
+%tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( UnitBase, LogLogLog )
 %tabular_bivariate_distribution_interface_setup( Correlated, LinLinLin )
-
-// // Ignore the static methods
-// %ignore Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::typeName( const bool verbose_name, const bool use_template_params = false, const std::string& delim = std::string() );
+%tabular_bivariate_distribution_interface_setup( Correlated, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( Correlated, LogLogLog )
+%tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLin )
+%tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LogLogLog )
 
 //---------------------------------------------------------------------------//
 // end Utility_BivariateDistribution.i
