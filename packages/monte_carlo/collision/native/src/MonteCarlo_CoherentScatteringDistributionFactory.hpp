@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_FACTORY_HPP
 #define MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistribution.hpp"
@@ -25,13 +25,13 @@ public:
 
   //! Create a Thompson distribution
   static void createThompsonDistribution(
-                            Teuchos::RCP<const CoherentScatteringDistribution>&
+                            std::shared_ptr<const CoherentScatteringDistribution>&
 			    coherent_distribution );
 
 private:
 
   // The default Thompson distribution
-  static Teuchos::RCP<const CoherentScatteringDistribution>
+  static std::shared_ptr<const CoherentScatteringDistribution>
   s_thompson_distribution;
 };
 

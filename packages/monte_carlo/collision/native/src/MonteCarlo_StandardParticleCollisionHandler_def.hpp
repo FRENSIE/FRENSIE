@@ -44,9 +44,9 @@ StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::StandardParticleColl
 // Add a material to the collision handler
 template<typename DerivedHandlerTypeTraits>
 void StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::addMaterial(
-     const Teuchos::RCP<const typename DerivedHandlerTypeTraits::MaterialType>&
+     const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
      material,
-     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+     const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
      cells_containing_material )
 {
   // Make sure the material pointer is valid
@@ -60,7 +60,7 @@ void StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::addMaterial(
                  d_cell_id_material_map.find( cells_containing_material[i] ) !=
                  d_cell_id_material_map.end(),
                  std::logic_error,
-                 "Error: cell " << cells_containing_material[i] <<
+                 "cell " << cells_containing_material[i] <<
                  " already has a material assigned!" );
 
     d_cell_id_material_map[cells_containing_material[i]] = material;
@@ -77,7 +77,7 @@ bool StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::isCellVoid(
 
 // Get the material contained in a cell
 template<typename DerivedHandlerTypeTraits>
-const Teuchos::RCP<const typename DerivedHandlerTypeTraits::MaterialType>&
+const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
 StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::getMaterial(
                   const Geometry::ModuleTraits::InternalCellHandle cell ) const
 {

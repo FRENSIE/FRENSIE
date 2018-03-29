@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
@@ -34,7 +31,7 @@ public:
   DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
     const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
-    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+    const std::shared_ptr<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor

@@ -6,10 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
@@ -23,6 +19,8 @@
 #include "Data_SubshellType.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -30,7 +28,7 @@ namespace MonteCarlo{
 // Create an incoherent distribution
 void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const IncoherentModelType incoherent_model,
 	 const double kahn_sampling_cutoff_energy,
@@ -103,7 +101,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
     default:
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: incoherent model " << incoherent_model <<
+		       "incoherent model " << incoherent_model <<
 		       " cannot be constructed with native data!" );
     }
   }
@@ -112,7 +110,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 // Create a Waller-Hartree incoherent distribution
 void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const double kahn_sampling_cutoff_energy )
 {
@@ -132,9 +130,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDis
 
   std::set<unsigned>::const_iterator subshell_it = subshells.begin();
 
-  Teuchos::Array<double> occupancy_numbers;
+  std::vector<double> occupancy_numbers;
 
-  Teuchos::Array<Data::SubshellType> subshell_order;
+  std::vector<Data::SubshellType> subshell_order;
 
   while( subshell_it != subshells.end() )
   {
@@ -160,7 +158,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
     const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,
     const double kahn_sampling_cutoff_energy )
 {
@@ -189,7 +187,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
 void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const unsigned endf_subshell,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const double kahn_sampling_cutoff_energy )
 {
@@ -202,11 +200,11 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribu
 
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
-		      "Error: the requested endf subshell " <<
+		      "the requested endf subshell " <<
 		      endf_subshell << " is invalid! " );
 
   // Create the occupation number distribution
-  Teuchos::RCP<Utility::OneDDistribution> occupation_number(
+  std::shared_ptr<Utility::OneDDistribution> occupation_number(
      new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
 	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
@@ -226,7 +224,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
     const unsigned endf_subshell,
     const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,
     const double kahn_sampling_cutoff_energy )
 {
@@ -241,11 +239,11 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
 
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
-		      "Error: the requested endf subshell " <<
+		      "the requested endf subshell " <<
 		      endf_subshell << " is invalid! " );
 
   // Create the occupation number distribution
-  Teuchos::RCP<Utility::OneDDistribution> occupation_number(
+  std::shared_ptr<Utility::OneDDistribution> occupation_number(
      new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
 	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );

@@ -39,7 +39,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellD
 
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
                       std::logic_error,
-                      "Error: the requested endf subshell " << endf_subshell <<
+                      "the requested endf subshell " << endf_subshell <<
                       " is invalid!" );
 
   // Create the occupation number
@@ -79,7 +79,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDopplerBr
 
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
                       std::logic_error,
-                      "Error: the requested endf subshell " << endf_subshell <<
+                      "the requested endf subshell " << endf_subshell <<
                       " is invalid!" );
 
   // Create the occupation number

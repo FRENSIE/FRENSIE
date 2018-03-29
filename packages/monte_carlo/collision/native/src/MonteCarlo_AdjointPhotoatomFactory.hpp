@@ -11,14 +11,9 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatom.hpp"
@@ -46,7 +41,7 @@ public:
 
   //! Create the map of adjoint photoatoms
   void createAdjointPhotoatomMap(
-               std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >&
+               std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >&
                adjoint_photoatom_map ) const;
 
 private:
@@ -60,11 +55,11 @@ private:
                    const SimulationAdjointPhotonProperties& properties );
 
   // The adjoint photoatom map
-  std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
   d_adjoint_photoatom_name_map;
 
   // The table map
-  std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
   d_adjoint_photoatomic_table_name_map;
 
   // The message output stream

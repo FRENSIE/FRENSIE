@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ScatteringDistribution.hpp"
 

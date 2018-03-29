@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"

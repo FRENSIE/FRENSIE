@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
@@ -37,27 +34,27 @@ public:
 
   //! Create the requested incoherent distribution
   static void createDistribution(
-		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-		    incoherent_distribution,
-		    const IncoherentModelType incoherent_model,
-		    const double kahn_sampling_cutoff_energy );
+		 const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
+                 incoherent_distribution,
+                 const IncoherentModelType incoherent_model,
+                 const double kahn_sampling_cutoff_energy );
 
 protected:
 
   //! Create a Waller-Hartree incoherent distribution
   static void createWallerHartreeDistribution(
-		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-		    incoherent_distribution,
-		    const double kahn_sampling_cutoff_energy );
+		 const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
+                 incoherent_distribution,
+                 const double kahn_sampling_cutoff_energy );
 
   //! Create a Doppler broadened hybrid incoherent distribution
   static void createDopplerBroadenedHybridDistribution(
     const Data::XSSEPRDataExtractor& raw_photoatom_data,
     const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,
     const double kahn_sampling_cutoff_energy );
 

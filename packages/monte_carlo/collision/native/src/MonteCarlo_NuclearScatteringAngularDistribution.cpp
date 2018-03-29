@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
@@ -44,12 +41,12 @@ double NuclearScatteringAngularDistribution::sampleAngleCosine(
 
   // Due to floating-point roundoff, it is possible for the scattering angle
   // cosine to be outside [-1,1]. When this occurs, manually set to -1 or 1.
-  if(Teuchos::ScalarTraits<double>::magnitude(angle_cosine) >1.0)
+  if( std::fabs(angle_cosine) > 1.0 )
     angle_cosine = copysign( 1.0, angle_cosine );
 
   // Make sure that the scattering angle cosine is valid
-  testPrecondition( angle_cosine >= -1.0 );
-  testPrecondition( angle_cosine <= 1.0 );
+  testPostcondition( angle_cosine >= -1.0 );
+  testPostcondition( angle_cosine <= 1.0 );
 
   return angle_cosine;
 }

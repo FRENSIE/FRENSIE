@@ -9,13 +9,11 @@
 #ifndef MONTE_CARLO_ACE_LAW_1_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_ACE_LAW_1_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -28,7 +26,7 @@ class AceLaw1NuclearScatteringEnergyDistribution : public NuclearScatteringEnerg
 
 public:
 
-  typedef Teuchos::Array<Utility::Pair<double,Teuchos::Array<double> > >
+  typedef std::vector<std::pair<double,std::vector<double> > >
   EnergyDistArray;
 
   //! Constructor
@@ -39,7 +37,7 @@ public:
   { /* ... */ }
 
   //! Sample a scattering energy
-  double sampleEnergy( const double energy ) const;
+  double sampleEnergy( const double energy ) const override;
 
 private:
 

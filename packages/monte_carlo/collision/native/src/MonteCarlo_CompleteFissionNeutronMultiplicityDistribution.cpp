@@ -14,12 +14,12 @@ namespace MonteCarlo{
 
 // Constructor
 CompleteFissionNeutronMultiplicityDistribution::CompleteFissionNeutronMultiplicityDistribution(
-                                 const Teuchos::RCP<Utility::OneDDistribution>&
-				 prompt_multiplicity_distribution,
-				 const Teuchos::RCP<Utility::OneDDistribution>&
-				 delayed_multiplicity_distribution,
-				 const Teuchos::RCP<Utility::OneDDistribution>&
-				 total_multiplicity_distribution )
+                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        prompt_multiplicity_distribution,
+                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        delayed_multiplicity_distribution,
+                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        total_multiplicity_distribution )
   : d_prompt_multiplicity_distribution( prompt_multiplicity_distribution ),
     d_delayed_multiplicity_distribution( delayed_multiplicity_distribution ),
     d_total_multiplicity_distribution( total_multiplicity_distribution )

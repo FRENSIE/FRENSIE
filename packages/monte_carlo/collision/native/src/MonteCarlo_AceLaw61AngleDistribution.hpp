@@ -9,13 +9,13 @@
 #ifndef MONTE_CARLO_ACE_LAW_61_ANGLE_DISTRIBUTION_HPP
 #define MONTE_CARLO_ACE_LAW_61_ANGLE_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -30,8 +30,8 @@ public:
 
   //! Constructor
   AceLaw61AngleDistribution( 
-    const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-    const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& cosine_distributions );
+    const Utility::ArrayView<const double>& outgoing_energy_grid,
+    const std::vector<std::shared_ptr<Utility::OneDDistribution> >& cosine_distributions );
     
   //! Destructor
   virtual ~AceLaw61AngleDistribution()
@@ -47,10 +47,10 @@ protected:
   double getOutgoingEnergyGridPoint( const unsigned outgoing_index ) const;
 
   // The outgoing energy grid
-  Teuchos::Array<double> d_outgoing_energy_grid;
+  std::vector<double> d_outgoing_energy_grid;
   
   // The array of cosine distributions
-  Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> > d_cosine_distributions;
+  std::vector<std::shared_ptr<Utility::OneDDistribution> > d_cosine_distributions;
 
 };
 

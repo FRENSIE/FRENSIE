@@ -9,12 +9,9 @@
 #ifndef MONTE_CARLO_ACE_LAW_44_AR_DISTRIBUTION_HPP
 #define MONTE_CARLO_ACE_LAW_44_AR_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
+#include "Utility_Vector.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -29,9 +26,9 @@ public:
 
   //! Constructor
   AceLaw44ARDistribution(
-		  const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-		  const Teuchos::ArrayView<const double>& A_array,
-		  const Teuchos::ArrayView<const double>& R_array );
+		  const Utility::ArrayView<const double>& outgoing_energy_grid,
+		  const Utility::ArrayView<const double>& A_array,
+		  const Utility::ArrayView<const double>& R_array );
 
   //! Destructor
   virtual ~AceLaw44ARDistribution()
@@ -57,13 +54,13 @@ protected:
 private:
 
   // The outgoing energy grid
-  Teuchos::Array<double> d_outgoing_energy_grid;
+  std::vector<double> d_outgoing_energy_grid;
 
   // The A array
-  Teuchos::Array<double> d_A;
+  std::vector<double> d_A;
 
   // The R array
-  Teuchos::Array<double> d_R;
+  std::vector<double> d_R;
 };
 
 // Return the outgoing energy grid

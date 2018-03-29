@@ -9,11 +9,11 @@
 #ifndef MONTE_CARLO_GENERIC_ATOMIC_REACTION_HPP
 #define MONTE_CARLO_GENERIC_ATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
+#include "Utility_Vector.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 
@@ -41,55 +41,55 @@ public:
 
   //! Basic constructor
   StandardGenericAtomicReaction(
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const unsigned threshold_energy_index );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index );
 
   //! Constructor
   StandardGenericAtomicReaction(
-     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-     const Teuchos::ArrayRCP<const double>& cross_section,
+     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+     const std::shared_ptr<const std::vector<double> >& cross_section,
      const unsigned threshold_energy_index,
-     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+     const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   virtual ~StandardGenericAtomicReaction()
   { /* ... */ }
 
   //! Test if the energy falls within the energy grid
-  bool isEnergyWithinEnergyGrid( const double energy ) const;
+  bool isEnergyWithinEnergyGrid( const double energy ) const override;
 
   //! Return the cross section at the given energy
-  virtual double getCrossSection( const double energy ) const;
+  virtual double getCrossSection( const double energy ) const override;
 
   //! Return the cross section at the given energy (efficient)
   virtual double getCrossSection( const double energy,
-                                  const unsigned bin_index ) const;
+                                  const unsigned bin_index ) const override;
 
   //! Return the max energy
   double getMaxEnergy() const;
 
   //! Return the threshold energy
-  double getThresholdEnergy() const;
+  double getThresholdEnergy() const override;
 
 protected:
 
   //! Return the head of the energy grid
-  const double* getEnergyGridHead() const;
+  const double* getEnergyGridHead() const override;
 
 private:
 
   // The processed incoming energy grid
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+  std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
 
   // The processed cross section values evaluated on the incoming e. grid
-  Teuchos::ArrayRCP<const double> d_cross_section;
+  std::shared_ptr<const std::vector<double> > d_cross_section;
 
   // The threshold energy
   unsigned d_threshold_energy_index;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 } // end MonteCarlo namespace

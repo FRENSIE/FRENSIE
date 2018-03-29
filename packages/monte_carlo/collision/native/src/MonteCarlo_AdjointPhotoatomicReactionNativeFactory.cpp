@@ -28,7 +28,7 @@ namespace MonteCarlo{
 void AdjointPhotoatomicReactionNativeFactory::createUnionEnergyGrid(
                       const Data::AdjointElectronPhotonRelaxationDataContainer&
                       raw_adjoint_photoatom_data,
-                      Teuchos::ArrayRCP<double>& energy_grid,
+                      std::vector<double>& energy_grid,
                       const double max_energy )
 {
   // Make sure the max energy is valid
@@ -64,12 +64,12 @@ void AdjointPhotoatomicReactionNativeFactory::createUnionEnergyGrid(
 void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
        const Data::AdjointElectronPhotonRelaxationDataContainer&
        raw_adjoint_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
        std::vector<std::shared_ptr<AdjointPhotoatomicReaction> >&
        incoherent_adjoint_reactions,
        const IncoherentAdjointModelType incoherent_adjoint_model,
-       const Teuchos::ArrayRCP<const double>& critical_line_energies )
+       const std::shared_ptr<const std::vector<double> >& critical_line_energies )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid().size() >=
@@ -93,11 +93,12 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
                            raw_adjoint_photoatom_data.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
                            raw_adjoint_photoatom_data.getAdjointWallerHartreeIncoherentCrossSection() );
 
-    Teuchos::ArrayRCP<double> cross_section;
+    std::shared_ptr<std::vector<double> >
+      cross_section( new std::vector<double> );
     
     ThisType::reduceTwoDCrossSection( two_d_cross_section,
                                       energy_grid,
-                                      cross_section );
+                                      *cross_section );
                                           
     // Create the scattering distribution
     std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>
@@ -147,11 +148,12 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
                            raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentMaxEnergyGrid( *subshell_it ),
                            raw_adjoint_photoatom_data.getAdjointImpulseApproxSubshellIncoherentCrossSection( *subshell_it ) );
 
-      Teuchos::ArrayRCP<double> cross_section;
+      std::shared_ptr<const std::vector<double> >
+        cross_section( new std::vector<double> );
     
       ThisType::reduceTwoDCrossSection( two_d_cross_section,
                                         energy_grid,
-                                        cross_section );
+                                        *cross_section );
 
       // Create the subshell incoherent distribution
       std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>
@@ -191,8 +193,8 @@ void AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
 void AdjointPhotoatomicReactionNativeFactory::createCoherentReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
       raw_adjoint_photoatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<AdjointPhotoatomicReaction>& coherent_adjoint_reaction )
 {
   // Make sure the energy grid is valid
@@ -204,12 +206,12 @@ void AdjointPhotoatomicReactionNativeFactory::createCoherentReaction(
 						      energy_grid.end() ) );
 
   // Extract the coherent cross section
-  Teuchos::ArrayRCP<double> cross_section;
+  std::shared_ptr<std::vector<double> > cross_section;
 
   ThisType::sliceCrossSection( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                                raw_adjoint_photoatom_data.getAdjointWallerHartreeCoherentCrossSection(),
                                energy_grid[energy_grid.size()-1],
-                               cross_section );
+                               *cross_section );
 
   // Create the coherent distribution
   std::shared_ptr<const CoherentScatteringDistribution> coherent_distribution;
@@ -232,8 +234,8 @@ void AdjointPhotoatomicReactionNativeFactory::createCoherentReaction(
 void AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
       raw_adjoint_photoatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<LineEnergyAdjointPhotoatomicReaction>&
       pair_production_adjoint_reaction )
 {
@@ -269,8 +271,8 @@ void AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
 void AdjointPhotoatomicReactionNativeFactory::createTripletProductionReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
       raw_adjoint_photoatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<LineEnergyAdjointPhotoatomicReaction>&
       triplet_production_adjoint_reaction )
 {
@@ -306,13 +308,14 @@ void AdjointPhotoatomicReactionNativeFactory::createTripletProductionReaction(
 void AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
       raw_adjoint_photoatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       const IncoherentAdjointModelType incoherent_adjoint_model,
       std::shared_ptr<PhotoatomicReaction>& total_forward_reaction )
 {
   // Extract the total forward cross section
-  Teuchos::ArrayRCP<double> cross_section;
+  std::shared_ptr<std::vector<double> >
+    cross_section( new std::vector<double> );
   
   std::string model_name =
     convertIncoherentAdjointModelTypeToString( incoherent_adjoint_model );
@@ -324,7 +327,7 @@ void AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
                 raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                 raw_adjoint_photoatom_data.getWallerHartreeTotalCrossSection(),
                 energy_grid[energy_grid.size()-1],
-                cross_section );
+                *cross_section );
   }
   // Use impulse approx data
   else
@@ -333,7 +336,7 @@ void AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
                 raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                 raw_adjoint_photoatom_data.getImpulseApproxTotalCrossSection(),
                 energy_grid[energy_grid.size()-1],
-                cross_section );
+                *cross_section );
   }
 
   // Create the coherent adjoint reaction
@@ -349,8 +352,8 @@ void AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
 // Reduce a 2D cross section to a 1D cross section
 void AdjointPhotoatomicReactionNativeFactory::reduceTwoDCrossSection(
               const Utility::FullyTabularTwoDDistribution& two_d_cross_section,
-              const Teuchos::ArrayRCP<const double>& energy_grid,
-              Teuchos::ArrayRCP<double>& cross_section )
+              const std::shared_ptr<const std::vector<double> >& energy_grid,
+              std::vector<double>& cross_section )
 {
   // Make sure the energy grid is valid
   testPrecondition( two_d_cross_section.getUpperBoundOfPrimaryIndepVar() >=
@@ -382,7 +385,7 @@ void AdjointPhotoatomicReactionNativeFactory::sliceCrossSection(
                                  const std::vector<double>& full_energy_grid,
                                  const std::vector<double>& full_cross_section,
                                  const double max_energy,
-                                 Teuchos::ArrayRCP<double>& cross_section )
+                                 std::vector<double>& cross_section )
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy > full_energy_grid.front() );

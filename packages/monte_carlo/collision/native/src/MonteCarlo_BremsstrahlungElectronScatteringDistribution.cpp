@@ -166,7 +166,7 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   if ( d_bank_secondary_particles )
   {
     // Create new photon
-    Teuchos::RCP<PhotonState> bremsstrahlung_photon(
+    std::shared_ptr<PhotonState> bremsstrahlung_photon(
                             new PhotonState( electron, true, true ) );
 
     // Set photon energy
@@ -209,7 +209,7 @@ void BremsstrahlungElectronScatteringDistribution::scatterPositron(
   if ( d_bank_secondary_particles )
   {
     // Create new photon
-    Teuchos::RCP<PhotonState> bremsstrahlung_photon(
+    std::shared_ptr<PhotonState> bremsstrahlung_photon(
                             new PhotonState( positron, true, true ) );
 
     // Set photon energy

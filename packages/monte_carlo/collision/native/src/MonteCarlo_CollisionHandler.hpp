@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_COLLISION_HANDLER_HPP
 #define MONTE_CARLO_COLLISION_HANDLER_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronCollisionHandler.hpp"
@@ -19,6 +19,7 @@
 #include "MonteCarlo_ElectronCollisionHandler.hpp"
 #include "MonteCarlo_AdjointElectronCollisionHandler.hpp"
 #include "MonteCarlo_PositronCollisionHandler.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -47,26 +48,26 @@ public:
 
   //! Add a material to the collision handler (neutron-photon mode)
   void addMaterial(
-          const Teuchos::RCP<const NeutronMaterial>& neutron_material,
-          const Teuchos::RCP<const PhotonMaterial>& photon_material,
-          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          const std::shared_ptr<const NeutronMaterial>& neutron_material,
+          const std::shared_ptr<const PhotonMaterial>& photon_material,
+          const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
           cells_containing_material );
 
   //! Add a material to the collision handler (photon-electron mode)
   void addMaterial(
-              const Teuchos::RCP<const PhotonMaterial>& photon_material,
-              const Teuchos::RCP<const ElectronMaterial>& electron_material,
-              const Teuchos::RCP<const PositronMaterial>& positron_material,
-              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              const std::shared_ptr<const PhotonMaterial>& photon_material,
+              const std::shared_ptr<const ElectronMaterial>& electron_material,
+              const std::shared_ptr<const PositronMaterial>& positron_material,
+              const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
               cells_containing_material );
 
   //! Add a material to the collision handler (neutron-photon-electron mode)
   void addMaterial(
-              const Teuchos::RCP<const NeutronMaterial>& neutron_material,
-              const Teuchos::RCP<const PhotonMaterial>& photon_material,
-              const Teuchos::RCP<const ElectronMaterial>& electron_material,
-              const Teuchos::RCP<const PositronMaterial>& positron_material,
-              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              const std::shared_ptr<const NeutronMaterial>& neutron_material,
+              const std::shared_ptr<const PhotonMaterial>& photon_material,
+              const std::shared_ptr<const ElectronMaterial>& electron_material,
+              const std::shared_ptr<const PositronMaterial>& positron_material,
+              const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
               cells_containing_material );
 
   //! Add a material to the collision handler (neutron mode)
@@ -89,7 +90,11 @@ public:
 
   //! Check if a cell is void (as experienced by the given particle type)
   bool isCellVoid( const Geometry::ModuleTraits::InternalCellHandle cell,
-                   const MonteCarlo::ParticleType particle_type );
+                   const MonteCarlo::ParticleType particle_type ) const;
+
+  //! Check if a cell is void (as experienced by the given particle type)
+  template<typename ParticleStateType>
+  bool isCellVoid( const Geometry::ModuleTraits::InternalCellHandle cell ) const;
 
   //! Get the total macroscopic cross section of a material for neutrons
   using NeutronCollisionHandler::getMacroscopicTotalCrossSection;
@@ -127,6 +132,9 @@ public:
   //! Get the total forward macroscopic cs of a material for adjoint positrons
   using PositronCollisionHandler::getMacroscopicTotalForwardCrossSection;
 
+  //! Sample the optical path length traveled by a particle before a collision
+  double sampleOpticalPathLength() const;
+
   //! Have a neutron collide with the material in a cell
   using NeutronCollisionHandler::collideWithCellMaterial;
 
@@ -147,6 +155,12 @@ public:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_CollisionHandler_def.hpp"
 
 #endif // end MONTE_CARLO_COLLISION_HANDLER_HPP
 

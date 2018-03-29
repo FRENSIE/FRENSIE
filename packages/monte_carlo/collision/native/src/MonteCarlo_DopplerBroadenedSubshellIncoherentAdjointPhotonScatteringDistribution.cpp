@@ -194,7 +194,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
       (d_compton_profile->evaluate( pz ).value()/adjoint_occupation_number);
 
     // Create the probe with the desired energy and modified weight
-    Teuchos::RCP<AdjointPhotonProbeState> probe(
+    std::shared_ptr<AdjointPhotonProbeState> probe(
                                new AdjointPhotonProbeState( adjoint_photon ) );
 
     probe->setEnergy( energy_of_interest );

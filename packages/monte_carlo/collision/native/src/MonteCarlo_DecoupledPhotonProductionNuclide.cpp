@@ -30,7 +30,7 @@ DecoupledPhotonProductionNuclide::DecoupledPhotonProductionNuclide( const std::s
 		  const unsigned isomer_number,
 		  const double atomic_weight_ratio,
 		  const double temperature,
-		  const Teuchos::ArrayRCP<double>& energy_grid,
+		  const std::shared_ptr<std::vector<double> >& energy_grid,
 		  const ReactionMap& standard_scattering_reactions,
 		  const ReactionMap& standard_absorption_reactions,
 		  const PhotonProductionReactionMap& photon_production_reactions )

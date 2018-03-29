@@ -15,9 +15,8 @@
 #include <unordered_set>
 #include <vector>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_ArrayRCP.hpp>
+// FRENSIE Includes
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -29,11 +28,8 @@ namespace MonteCarlo{
 template<typename AtomCore>
 class Atom
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -47,12 +43,13 @@ public:
   typedef typename AtomCore::ConstReactionMap ConstReactionMap;
 
   //! Constructor
-  Atom( const std::string& name,
-        const unsigned atomic_number,
-        const double atomic_weight,
-        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-        const ReactionMap& scattering_reactions,
-        const ReactionMap& absorption_reactions );
+  Atom(
+    const std::string& name,
+    const unsigned atomic_number,
+    const double atomic_weight,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const ReactionMap& scattering_reactions,
+    const ReactionMap& absorption_reactions );
 
   //! Constructor (from a core)
   Atom( const std::string& name,

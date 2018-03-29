@@ -31,9 +31,9 @@ namespace MonteCarlo{
 // Create the incoherent photoatomic reaction(s)
 void PhotoatomicReactionNativeFactory::createIncoherentReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::vector<std::shared_ptr<PhotoatomicReaction> >&
        incoherent_reactions,
        const IncoherentModelType incoherent_model,
        const double kahn_sampling_cutoff_energy )
@@ -53,16 +53,15 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
     incoherent_reactions.resize( 1 );
 
     // Extract the cross section
-    Teuchos::ArrayRCP<double> incoherent_cross_section;
-    incoherent_cross_section.assign(
-	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().begin(),
-	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().end() );
+    std::shared_ptr<std::vector<double> > incoherent_cross_section(
+       new std::vector<double>( raw_photoatom_data.getWallerHartreeIncoherentCrossSection().begin(),
+                                raw_photoatom_data.getWallerHartreeIncoherentCrossSection().end() ) );
 
     unsigned threshold_index =
       raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
 
     // Create the scattering distribution
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
+    std::shared_ptr<const IncoherentPhotonScatteringDistribution> distribution;
 
     IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 						 raw_photoatom_data,
@@ -84,7 +83,7 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
   {
     incoherent_reactions.clear();
 
-    Teuchos::RCP<PhotoatomicReaction> subshell_incoherent_reaction;
+    std::shared_ptr<PhotoatomicReaction> subshell_incoherent_reaction;
 
     std::set<unsigned>::const_iterator subshell_it =
       raw_photoatom_data.getSubshells().begin();
@@ -92,16 +91,15 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
     while( subshell_it != raw_photoatom_data.getSubshells().end() )
     {
       // Extract the cross section
-      Teuchos::ArrayRCP<double> subshell_incoherent_cross_section;
-      subshell_incoherent_cross_section.assign(
-	   raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).begin(),
-	   raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).end() );
+      std::shared_ptr<std::vector<double> > subshell_incoherent_cross_section(
+         new std::vector<double>( raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).begin(),
+                                  raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).end() ) );
 
       unsigned subshell_threshold_index =
 	raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(*subshell_it);
 
       // Create the subshell incoherent distribution
-      Teuchos::RCP<const IncoherentPhotonScatteringDistribution>
+      std::shared_ptr<const IncoherentPhotonScatteringDistribution>
 	base_distribution;
 
       IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
@@ -111,8 +109,8 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
 						   kahn_sampling_cutoff_energy,
 						   *subshell_it );
 
-      Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>
-      distribution = Teuchos::rcp_dynamic_cast<const SubshellIncoherentPhotonScatteringDistribution>( base_distribution );
+      std::shared_ptr<const SubshellIncoherentPhotonScatteringDistribution>
+        distribution = std::dynamic_pointer_cast<const SubshellIncoherentPhotonScatteringDistribution>( base_distribution );
 
       subshell_incoherent_reaction.reset(
 	   new SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
@@ -132,9 +130,9 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
 // Create the coherent scattering photoatomic reaction
 void PhotoatomicReactionNativeFactory::createCoherentReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -142,16 +140,15 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  Teuchos::ArrayRCP<double> coherent_cross_section;
-  coherent_cross_section.assign(
-	     raw_photoatom_data.getWallerHartreeCoherentCrossSection().begin(),
-	     raw_photoatom_data.getWallerHartreeCoherentCrossSection().end() );
+  std::shared_ptr<std::vector<double> > coherent_cross_section(
+     new std::vector<double>( raw_photoatom_data.getWallerHartreeCoherentCrossSection().begin(),
+                              raw_photoatom_data.getWallerHartreeCoherentCrossSection().end() ) );
 
   unsigned threshold_index =
     raw_photoatom_data.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex();
 
   // Create the coherent scattering distribution
-  Teuchos::RCP<const CoherentScatteringDistribution> distribution;
+  std::shared_ptr<const CoherentScatteringDistribution> distribution;
 
   CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution(
 					                    raw_photoatom_data,
@@ -170,9 +167,9 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
 // Create the pair production photoatomic reaction
 void PhotoatomicReactionNativeFactory::createPairProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& pair_production_reaction,
        const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
@@ -181,10 +178,9 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  Teuchos::ArrayRCP<double> pair_production_cross_section;
-  pair_production_cross_section.assign(
-	     raw_photoatom_data.getPairProductionCrossSection().begin(),
-	     raw_photoatom_data.getPairProductionCrossSection().end() );
+  std::shared_ptr<std::vector<double> > pair_production_cross_section(
+     new std::vector<double>( raw_photoatom_data.getPairProductionCrossSection().begin(),
+                              raw_photoatom_data.getPairProductionCrossSection().end() ) );
 
   unsigned threshold_index =
     raw_photoatom_data.getPairProductionCrossSectionThresholdEnergyIndex();
@@ -201,9 +197,9 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
 // Create the triplet production photoatomic reaction
 void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& triplet_production_reaction,
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& triplet_production_reaction,
        const bool use_detailed_triplet_production_data )
 {
   // Make sure the energy grid is valid
@@ -212,10 +208,9 @@ void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  Teuchos::ArrayRCP<double> triplet_production_cross_section;
-  triplet_production_cross_section.assign(
-	     raw_photoatom_data.getTripletProductionCrossSection().begin(),
-	     raw_photoatom_data.getTripletProductionCrossSection().end() );
+  std::shared_ptr<std::vector<double> > triplet_production_cross_section(
+     new std::vector<double>( raw_photoatom_data.getTripletProductionCrossSection().begin(),
+                              raw_photoatom_data.getTripletProductionCrossSection().end() ) );
 
   unsigned threshold_index =
     raw_photoatom_data.getTripletProductionCrossSectionThresholdEnergyIndex();
@@ -232,9 +227,9 @@ void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
 // Create the total photoelectric photoatomic reaction
 void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -242,10 +237,9 @@ void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  Teuchos::ArrayRCP<double> photoelectric_cross_section;
-  photoelectric_cross_section.assign(
-	     raw_photoatom_data.getPhotoelectricCrossSection().begin(),
-	     raw_photoatom_data.getPhotoelectricCrossSection().end() );
+  std::shared_ptr<std::vector<double> > photoelectric_cross_section(
+     new std::vector<double>( raw_photoatom_data.getPhotoelectricCrossSection().begin(),
+                              raw_photoatom_data.getPhotoelectricCrossSection().end() ) );
 
   unsigned threshold_index =
     raw_photoatom_data.getPhotoelectricCrossSectionThresholdEnergyIndex();
@@ -262,9 +256,9 @@ void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
 // Create the subshell photoelectric photoatomic reactions
 void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::vector<std::shared_ptr<PhotoatomicReaction> >&
        subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
@@ -275,7 +269,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 
   subshell_photoelectric_reactions.clear();
 
-  Teuchos::RCP<PhotoatomicReaction> subshell_photoelectric_reaction;
+  std::shared_ptr<PhotoatomicReaction> subshell_photoelectric_reaction;
 
   std::set<unsigned>::const_iterator subshell_it =
     raw_photoatom_data.getSubshells().begin();
@@ -283,10 +277,9 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
   while( subshell_it != raw_photoatom_data.getSubshells().end() )
   {
     // Extract the cross section
-    Teuchos::ArrayRCP<double> subshell_photoelectric_cross_section;
-    subshell_photoelectric_cross_section.assign(
-      raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).begin(),
-      raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).end() );
+    std::shared_ptr<std::vector<double> > subshell_photoelectric_cross_section(
+      new std::vector<double>( raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).begin(),
+                               raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).end() ) );
 
     unsigned subshell_threshold_index =
       raw_photoatom_data.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( *subshell_it );
@@ -310,9 +303,9 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 // Create the heating photoatomic reaction
 void PhotoatomicReactionNativeFactory::createHeatingReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -320,10 +313,9 @@ void PhotoatomicReactionNativeFactory::createHeatingReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  Teuchos::ArrayRCP<double> heating_cross_section;
-  heating_cross_section.assign(
-	     raw_photoatom_data.getAveragePhotonHeatingNumbers().begin(),
-	     raw_photoatom_data.getAveragePhotonHeatingNumbers().end() );
+  std::shared_ptr<std::vector<double> > heating_cross_section(
+     new std::vector<double>( raw_photoatom_data.getAveragePhotonHeatingNumbers().begin(),
+                              raw_photoatom_data.getAveragePhotonHeatingNumbers().end() ) );
 
   unsigned threshold_index = 0u;
 

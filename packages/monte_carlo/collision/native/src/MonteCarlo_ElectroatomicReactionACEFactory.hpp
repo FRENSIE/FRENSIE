@@ -9,11 +9,16 @@
 #ifndef MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
-#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -26,59 +31,59 @@ public:
   //! Create a Decoupled elastic scattering electroatomic reaction
   static void createDecoupledElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
   static void createScreenedRutherfordElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the total electroionization electroatomic reaction
   static void createTotalElectroionizationReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<ElectroatomicReaction>& electroionization_reaction );
 
   //! Create the subshell electroionization electroatomic reaction
   static void createSubshellElectroionizationReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<ElectroatomicReaction>& electroionization_subshell_reaction,
       const unsigned endf_subshell_designator );
 
   //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::vector<std::shared_ptr<ElectroatomicReaction> >&
         electroionization_subshell_reactions );
 
   //! Create the bremsstrahlung electroatomic reaction
   static void createBremsstrahlungReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reaction,
       BremsstrahlungAngularDistributionType photon_distribution_function );
 
@@ -90,16 +95,16 @@ public:
 
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::ArrayView<const double>& raw_cross_section,
-      Teuchos::ArrayRCP<double>& cross_section,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const Utility::ArrayView<const double>& raw_cross_section,
+      std::vector<double>& cross_section,
       unsigned& threshold_energy_index );
 
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::ArrayRCP<const double>& raw_cross_section,
-      Teuchos::ArrayRCP<double>& cross_section,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& raw_cross_section,
+      std::vector<double>& cross_section,
       unsigned& threshold_energy_index );
 
 private:

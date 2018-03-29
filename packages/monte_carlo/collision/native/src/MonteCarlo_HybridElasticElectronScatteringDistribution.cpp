@@ -49,7 +49,7 @@ double HybridElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   THROW_EXCEPTION( std::runtime_error,
-                   "Error: evaluation of the hybrid distribution" <<
+                   "evaluation of the hybrid distribution" <<
                    " is currently not supported!" );
 
   // if ( scattering_angle_cosine <= d_cutoff_angle_cosine )
@@ -75,7 +75,7 @@ double HybridElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   THROW_EXCEPTION( std::runtime_error,
-                   "Error: evaluation of the hybrid PDF is" <<
+                   "evaluation of the hybrid PDF is" <<
                    " currently not supported!" );
 
   // if ( scattering_angle_cosine <= d_cutoff_angle_cosine )

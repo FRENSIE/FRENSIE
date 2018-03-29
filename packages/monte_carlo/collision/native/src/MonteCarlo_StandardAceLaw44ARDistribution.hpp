@@ -25,9 +25,9 @@ public:
 
   //! Constructor
   StandardAceLaw44ARDistribution(
-		   const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-		   const Teuchos::ArrayView<const double>& A_array,
-		   const Teuchos::ArrayView<const double>& R_array );
+		   const Utility::ArrayView<const double>& outgoing_energy_grid,
+		   const Utility::ArrayView<const double>& A_array,
+		   const Utility::ArrayView<const double>& R_array );
 
   //! Destructor
   ~StandardAceLaw44ARDistribution()
@@ -37,7 +37,7 @@ public:
   void sampleAR( const unsigned outgoing_index,
 		 const double energy_prime,
 		 double& sampled_A,
-		 double& sampled_R ) const;
+		 double& sampled_R ) const override;
 };
 
 } // end MonteCarlo namespace

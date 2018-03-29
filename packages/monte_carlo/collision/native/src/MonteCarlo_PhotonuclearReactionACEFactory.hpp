@@ -19,6 +19,7 @@
 #include "MonteCarlo_PhotonuclearNeutronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_PhotonuclearScatteringDistributionACEFactory.hpp"
 #include "Data_XSSPhotonuclearDataExtractor.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
 
@@ -35,10 +36,10 @@ public:
 
   //! Constructor
   PhotonuclearReactionACEFactory(
-		 const std::string& table_name,
-		 const double atomic_weight_ratio,
-		 const Teuchos::ArrayRCP<const double>& energy_grid,
-		 const Data::XSSPhotonnuclearDataExtractor& raw_nuclide_data );
+		const std::string& table_name,
+                const double atomic_weight_ratio,
+		const std::shared_ptr<const std::vector<double> >& energy_grid,
+                const Data::XSSPhotonnuclearDataExtractor& raw_nuclide_data );
 
   //! Destructor
   ~PhotonuclearReactionACEFactory()
@@ -46,12 +47,12 @@ public:
 
   //! Create the scattering reactions
   void createScatteringReactions(
-      boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >&
+      boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >&
       scattering_reactions ) const;
 
   //! Create the absorption reactions
   void createAbsorptionReactions(
-      boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >&
+      boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >&
       absorption_reactions ) const;
 
 
@@ -59,78 +60,78 @@ protected:
 
   //! Create the reaction type ordering map
   static void createReactionOrderingMap(
-       const Teuchos::ArrayView<const double>& mtr_block,
+       const Utility::ArrayView<const double>& mtr_block,
        boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering );
 
   //! Create the reaction type Q-value map
   static void createReactionQValueMap(
-   const Teuchos::ArrayView<const double>& lqr_block,
+   const Utility::ArrayView<const double>& lqr_block,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
    boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value );
 
   //! Create the reaction multiplicity map
   static void createReactionMultiplicityMap(
    const std::string& table_name,
-   const Teuchos::ArrayView<const double>& tyr_block,
-   const Teuchos::ArrayView<const double>& dlw_block,
+   const Utility::ArrayView<const double>& tyr_block,
+   const Utility::ArrayView<const double>& dlw_block,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
    boost::unordered_map<PhotonuclearReactionType,unsigned>&
    reaction_multiplicity,
-   boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayView<const double> >&
+   boost::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
    reaction_energy_dependent_multiplicity );
 
   //! Create the reaction threshold index map
   static void createReactionThresholdMap(
-   const Teuchos::ArrayView<const double>& lsig_block,
-   const Teuchos::ArrayView<const double>& sig_block,
+   const Utility::ArrayView<const double>& lsig_block,
+   const Utility::ArrayView<const double>& sig_block,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,unsigned>&
+   boost::unordered_map<PhotonuclearReactionType,size_t>&
    reaction_threshold_index );
 
   //! Create the reaction cross section map
   static void createReactionCrossSectionMap(
-   const Teuchos::ArrayView<const double>& lsig_block,
-   const Teuchos::ArrayView<const double>& sig_block,
-   const Teuchos::ArrayView<const double>& elastic_cross_section,
+   const Utility::ArrayView<const double>& lsig_block,
+   const Utility::ArrayView<const double>& sig_block,
+   const Utility::ArrayView<const double>& elastic_cross_section,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayRCP<double> >&
+   boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
    reaction_cross_section );
 
 private:
 
   // Initialize the scattering reactions
   void initializeScatteringReactions(
-    const Teuchos::ArrayRCP<const double> energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<PhotonuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayView<const double> >&
+    const boost::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
     reaction_energy_dependent_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,unsigned>&
+    const boost::unordered_map<PhotonuclearReactionType,size_t>&
     reaction_threshold_index,
-    const boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayRCP<double> >&
+    const boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
     reaction_cross_section,
     const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory );
 
   // Initialize the absorption reactions
   void initializeAbsorptionReactions(
-    const Teuchos::ArrayRCP<const double> energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<PhotonuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayView<const double> >&
+    const boost::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
     reaction_energy_dependent_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,unsigned>&
+    const boost::unordered_map<PhotonuclearReactionType,size_t>&
     reaction_threshold_index,
-    const boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayRCP<double> >&
+    const boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
     reaction_cross_section );
 
   // A map of the scattering reactions
-  boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >
+  boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >
   d_scattering_reactions;
 
   // A map of the absorption reactions
-  boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >
+  boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >
   d_absorption_reactions;
 
 };

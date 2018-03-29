@@ -18,8 +18,8 @@ namespace MonteCarlo{
 // Create the screened Rutherford elastic scattering electroatomic reaction
 void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-            const Teuchos::ArrayRCP<const double>& energy_grid,
-            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const std::shared_ptr<const std::vector<double> >& energy_grid,
+            const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
@@ -36,8 +36,9 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
     raw_electroatom_data.getAtomicNumber() );
 
   // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> elastic_cross_section;
-  elastic_cross_section.assign(
+  std::shared_ptr<std::vector<double> >
+    elastic_cross_section( new std::vector<double> );
+  elastic_cross_section->assign(
     raw_electroatom_data.getScreenedRutherfordElasticCrossSection().begin(),
     raw_electroatom_data.getScreenedRutherfordElasticCrossSection().end() );
 
@@ -58,8 +59,8 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 // Create an atomic excitation electroatomic reaction
 void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-            const Teuchos::ArrayRCP<const double>& energy_grid,
-            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const std::shared_ptr<const std::vector<double> >& energy_grid,
+            const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
             std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
@@ -69,8 +70,9 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
                                                       energy_grid.end() ) );
 
   // Atomic Excitation cross section
-  Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
-  atomic_excitation_cross_section.assign(
+  std::shared_ptr<std::vector<double> >
+    atomic_excitation_cross_section( new std::vector<double> );
+  atomic_excitation_cross_section->assign(
     raw_electroatom_data.getAtomicExcitationCrossSection().begin(),
     raw_electroatom_data.getAtomicExcitationCrossSection().end() );
 

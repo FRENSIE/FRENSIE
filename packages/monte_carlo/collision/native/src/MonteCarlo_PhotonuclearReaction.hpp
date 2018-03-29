@@ -9,16 +9,17 @@
 #ifndef MONTE_CARLO_PHOTONUCLEAR_REACTION_HPP
 #define MONTE_CARLO_PHOTONUCLEAR_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -30,18 +31,18 @@ class PhotonuclearReaction
 
 private:
 
-  // Teuchos ScalarTraits typedef
-  typedef Teuchos::ScalarTraits<double> ST;
+  // QuantityTraits typedef
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Constructor
   PhotonuclearReaction(
-		   const PhotonuclearReactionType reaction_type,
-      		   const double q_value,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section );
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section );
 
   //! Destructor
   virtual ~PhotonuclearReaction()
@@ -60,7 +61,7 @@ public:
   virtual double getCrossSection( const double energy ) const;
 
   //! Return the number of particle emitted from the rxn at the given energy
-  virtual unsigned getNumberOfEmittedParticles( const double energy) const = 0;
+  virtual size_t getNumberOfEmittedParticles( const double energy) const = 0;
 
   //! Return the average number of particles emitted from the rxn
   virtual double getAverageNumberOfEmittedParticles(const double energy) const;
@@ -71,7 +72,7 @@ public:
 protected:
 
   //! Return an integer number of emitted particles given a non-integer value
-  unsigned sampleNumberOfEmittedParticles(
+  size_t sampleNumberOfEmittedParticles(
 				     const double average_multiplicity ) const;
 
 private:
@@ -83,13 +84,13 @@ private:
   double d_q_value;
 
   // The reaction threshold energy grid index
-  unsigned d_threshold_energy_index;
+  size_t d_threshold_energy_index;
 
   // The incoming energy grid
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+  std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
 
   // The cross section values evaluated on the incoming energy grid
-  Teuchos::ArrayRCP<const double> d_cross_section;
+  std::shared_ptr<const std::vector<double> > d_cross_section;
 };
 
 // Return the average number of particles emitted from the rxn
@@ -108,7 +109,7 @@ inline double PhotonuclearReaction<OutgoingParticleType>::getAverageNumberOfEmit
 template<typename OutgoingParticleType>
 inline double PhotonuclearReaction<OutgoingParticleType>::getThresholdEnergy() const
 {
-  return d_incoming_energy_grid[d_threshold_energy_index];
+  return (*d_incoming_energy_grid)[d_threshold_energy_index];
 }
 
 // Return an integer number of emitted particles given a non-integer value

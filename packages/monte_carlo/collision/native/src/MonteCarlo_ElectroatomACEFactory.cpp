@@ -6,10 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
@@ -27,9 +23,9 @@ namespace MonteCarlo{
  */
 void ElectroatomACEFactory::createElectroatomCore(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+    const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
     const SimulationElectronProperties& properties,
-    Teuchos::RCP<ElectroatomCore>& electroatom_core )
+    std::shared_ptr<const ElectroatomCore>& electroatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -39,12 +35,12 @@ void ElectroatomACEFactory::createElectroatomCore(
   Electroatom::ReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( raw_electroatom_data.extractElectronEnergyGrid() );
+  std::shared_ptr<std::vector<double> > energy_grid(
+     new std::vector<double>( raw_electroatom_data.extractElectronEnergyGrid() ) );
 
   // Create a hash based energy grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                       energy_grid,
                       properties.getNumberOfElectronHashGridBins() ) );
 
@@ -150,16 +146,16 @@ void ElectroatomACEFactory::createElectroatom(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
             const std::string& electroatom_name,
             const double atomic_weight,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+            const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-            Teuchos::RCP<Electroatom>& electroatom )
+            std::shared_ptr<const Electroatom>& electroatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
-  Teuchos::RCP<ElectroatomCore> core;
+  std::shared_ptr<ElectroatomCore> core;
 
   ElectroatomACEFactory::createElectroatomCore( raw_electroatom_data,
                                                 atomic_relaxation_model,

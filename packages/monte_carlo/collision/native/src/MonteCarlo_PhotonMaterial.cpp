@@ -24,8 +24,8 @@ PhotonMaterial::PhotonMaterial(
 		           const ModuleTraits::InternalMaterialHandle id,
 			   const double density,
 			   const PhotoatomNameMap& photoatom_name_map,
-			   const Teuchos::Array<double>& photoatom_fractions,
-		           const Teuchos::Array<std::string>& photoatom_names )
+			   const std::vector<double>& photoatom_fractions,
+		           const std::vector<std::string>& photoatom_names )
   : d_id( id ),
     d_number_density( density ),
     d_atoms( photoatom_fractions.size() )
@@ -49,7 +49,7 @@ PhotonMaterial::PhotonMaterial(
 
     TEST_FOR_EXCEPTION( atom == photoatom_name_map.end(),
 			std::logic_error,
-			"Error: atom " << photoatom_names[i] <<
+			"atom " << photoatom_names[i] <<
 			" has not been loaded!" );
 
     Utility::get<1>( d_atoms[i] ) = atom->second;
@@ -235,7 +235,7 @@ void PhotonMaterial::collideSurvivalBias( PhotonState& photon,
 
 // Get the atomic weight from an atom pointer
 double PhotonMaterial::getAtomicWeight(
-	     const Utility::Pair<double,Teuchos::RCP<const Photoatom> >& pair )
+          const Utility::Pair<double,std::shared_ptr<const Photoatom> >& pair )
 {
   return Utility::get<1>(pair)->getAtomicWeight();
 }

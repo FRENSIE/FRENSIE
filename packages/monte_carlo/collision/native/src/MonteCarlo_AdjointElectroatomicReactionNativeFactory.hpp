@@ -11,11 +11,6 @@
 
 // Std Lib Includes
 #include <memory>
-#include <vector>
-
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
@@ -27,6 +22,7 @@
 #include "Utility_FullyTabularTwoDDistribution.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -58,9 +54,9 @@ public:
   static void createCoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol );
 
@@ -70,9 +66,9 @@ public:
   static void createDecoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering adjoint electroatomic reaction
@@ -81,9 +77,9 @@ public:
   static void createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
@@ -93,9 +89,9 @@ public:
   static void createCutoffElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
@@ -103,9 +99,9 @@ public:
   static void createScreenedRutherfordElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction );
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering adjoint electroatomic reaction
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
@@ -113,9 +109,9 @@ public:
   static void createMomentPreservingElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
@@ -123,9 +119,9 @@ public:
   static void createAtomicExcitationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& atomic_excitation_reaction );
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization adjoint electroatomic reaction
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
@@ -133,10 +129,10 @@ public:
   static void createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const unsigned subshell,
-    std::shared_ptr<AdjointElectroatomicReaction>& electroionization_subshell_reaction,
+    std::shared_ptr<const AdjointElectroatomicReaction>& electroionization_subshell_reaction,
     const double evaluation_tol );
 
   //! Create the subshell electroionization adjoint electroatomic reactions
@@ -145,9 +141,9 @@ public:
   static void createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::vector<std::shared_ptr<AdjointElectroatomicReaction> >&
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >&
         electroionization_subshell_reactions,
     const double evaluation_tol );
 
@@ -157,9 +153,9 @@ public:
   static void createBremsstrahlungReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<AdjointElectroatomicReaction>& bremsstrahlung_reaction,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<const AdjointElectroatomicReaction>& bremsstrahlung_reaction,
     const double evaluation_tol );
 
   //! Create the forward total reaction (only used to get the cross section)
@@ -167,10 +163,10 @@ public:
   static void createTotalForwardReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const std::shared_ptr<ReactionType>& elastic_reaction,
-      std::shared_ptr<ElectroatomicReaction>& total_forward_reaction );
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const ReactionType>& elastic_reaction,
+      std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction );
 };
 
 } // end MonteCarlo namespace

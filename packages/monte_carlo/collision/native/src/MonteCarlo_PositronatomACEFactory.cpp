@@ -6,14 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomACEFactory.hpp"
 #include "MonteCarlo_PositronatomicReactionACEFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -27,9 +24,9 @@ namespace MonteCarlo{
  */
 void PositronatomACEFactory::createPositronatomCore(
     const Data::XSSEPRDataExtractor& raw_positronatom_data,
-    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+    const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
     const SimulationElectronProperties& properties,
-    Teuchos::RCP<PositronatomCore>& positronatom_core )
+    std::shared_ptr<PositronatomCore>& positronatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -39,12 +36,13 @@ void PositronatomACEFactory::createPositronatomCore(
   Positronatom::ReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( raw_positronatom_data.extractElectronEnergyGrid() );
+  std::shared_ptr<const std::vector<double> > energy_grid(
+     new std::vector<double>( raw_positronatom_data.extractElectronEnergyGrid().begin(),
+                              raw_positronatom_data.extractElectronEnergyGrid().end() ) );
 
   // Create a hash based energy grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                       energy_grid,
                       properties.getNumberOfElectronHashGridBins() ) );
 
@@ -155,16 +153,16 @@ void PositronatomACEFactory::createPositronatom(
             const Data::XSSEPRDataExtractor& raw_positronatom_data,
             const std::string& positronatom_name,
             const double atomic_weight,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+            const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-            Teuchos::RCP<Positronatom>& positronatom )
+            std::shared_ptr<Positronatom>& positronatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
-  Teuchos::RCP<PositronatomCore> core;
+  std::shared_ptr<PositronatomCore> core;
 
   PositronatomACEFactory::createPositronatomCore( raw_positronatom_data,
                                                 atomic_relaxation_model,

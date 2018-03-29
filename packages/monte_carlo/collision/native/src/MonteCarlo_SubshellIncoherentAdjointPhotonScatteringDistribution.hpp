@@ -52,7 +52,7 @@ public:
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
                    const double max_energy,
-                   const double scattering_angle_cosine ) const;
+                   const double scattering_angle_cosine ) const override;
 
   //! Evaluate the distribution (pull in hidden base class overloads)
   using IncoherentAdjointPhotonScatteringDistribution::evaluate;
@@ -60,30 +60,30 @@ public:
   //! Sample an outgoing energy and direction from the distribution
   virtual void sample( const double incoming_energy,
                        double& outgoing_energy,
-                       double& scattering_angle_cosine ) const;
+                       double& scattering_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   virtual void sampleAndRecordTrials( const double incoming_energy,
                                       double& outgoing_energy,
                                       double& scattering_angle_cosine,
-                                      unsigned& trials ) const;
+                                      unsigned& trials ) const override;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   virtual void scatterAdjointPhoton(
                               AdjointPhotonState& adjoint_photon,
                               ParticleBank& bank,
-                              Data::SubshellType& shell_of_interaction ) const;
+                              Data::SubshellType& shell_of_interaction ) const override;
 
 protected:
 
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSectionImpl( const double incoming_energy,
                                              const double max_energy,
-                                             const double precision ) const;
+                                             const double precision ) const override;
 
   //! Check if an energy is above the scattering window
   bool isEnergyAboveScatteringWindow( const double energy_of_interest,
-                                      const double initial_energy ) const;
+                                      const double initial_energy ) const override;
 
   //! Evaluate the occupation number
   double evaluateOccupationNumber( const double pz ) const;

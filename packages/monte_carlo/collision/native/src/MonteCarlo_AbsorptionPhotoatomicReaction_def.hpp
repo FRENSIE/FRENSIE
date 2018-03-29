@@ -19,8 +19,8 @@ namespace MonteCarlo{
 // Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionPhotoatomicReaction(
-	   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	   const Teuchos::ArrayRCP<const double>& cross_section,
+	   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+	   const std::shared_ptr<const std::vector<double> >& cross_section,
 	   const unsigned threshold_energy_index,
 	   const PhotoatomicReactionType reaction )
   : BaseType( incoming_energy_grid,
@@ -44,10 +44,10 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionPhotoatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
        const PhotoatomicReactionType reaction )
   : BaseType( incoming_energy_grid,
               cross_section,

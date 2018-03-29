@@ -9,58 +9,57 @@
 #ifndef MONTE_CARLO_DECOUPLED_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
 #define MONTE_CARLO_DECOUPLED_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 #include "MonteCarlo_NuclearReaction.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The photon production reaction with yield data (for MFTYPE=12 or MFTYPE=16)
 class DecoupledYieldBasedPhotonProductionReaction : public DecoupledPhotonProductionReaction
 {
-
-private:
-
-  // Teuchos ScalarTraits typedef
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
+
+  //! The scattering distribution type
+  typedef DecoupledPhotonProductionReaction::ScatteringDistribution ScatteringDistribution;
 
   //! Constructor
   DecoupledYieldBasedPhotonProductionReaction(
 	 const NuclearReactionType base_reaction_type,
 	 const unsigned photon_production_id,
 	 const double temperature,
-	 const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array,
-	 const std::shared_ptr<Utility::OneDDistribution>& mtp_yield,
-	 const Teuchos::RCP<NuclearReaction>& base_reaction,
-	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
+	 const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+         total_mt_yield_array,
+	 const std::shared_ptr<const Utility::OneDDistribution>& mtp_yield,
+	 const std::shared_ptr<const NuclearReaction>& base_reaction,
+	 const std::shared_ptr<const ScatteringDistribution>&
 	 photon_production_distribution,
-	 const Teuchos::RCP<NuclearReaction>& total_reaction );
+	 const std::shared_ptr<const NuclearReaction>& total_reaction );
 
   //! Destructor
   ~DecoupledYieldBasedPhotonProductionReaction()
   { /* ... */ }
 
   //! Return the threshold energy
-  double getThresholdEnergy() const;
+  double getThresholdEnergy() const override;
 
   //! Return the base reaction cross section at a given energy
-  double getBaseReactionCrossSection( const double energy ) const;
+  double getBaseReactionCrossSection( const double energy ) const override;
 
   //! Return the cross section at a given energy
-  double getCrossSection( const double energy ) const;
+  double getCrossSection( const double energy ) const override;
 
 private:
 
   // The photon production yield distribution
-	std::shared_ptr<Utility::OneDDistribution> d_mtp_yield;
-
+  std::shared_ptr<const Utility::OneDDistribution> d_mtp_yield;
+  
   // The base neutron absorption reaction
-  Teuchos::RCP<NuclearReaction> d_base_reaction;
+  std::shared_ptr<const NuclearReaction> d_base_reaction;
 };
 
 // Return the threshold energy

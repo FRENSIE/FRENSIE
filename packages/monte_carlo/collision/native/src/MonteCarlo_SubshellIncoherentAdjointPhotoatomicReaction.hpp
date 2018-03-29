@@ -32,18 +32,18 @@ public:
 
   //! Basic Contructor
   SubshellIncoherentAdjointPhotoatomicReaction(
-          const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-          const Teuchos::ArrayRCP<const double>& cross_section,
-          const unsigned threshold_energy_index,
-          const std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
-          scattering_distribution );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
+       scattering_distribution );
 
   //! Constructor
   SubshellIncoherentAdjointPhotoatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<SubshellIncoherentAdjointPhotonScatteringDistribution>&
        scattering_distribution );
 
@@ -52,20 +52,20 @@ public:
   { /* ... */ }
 
   //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const;
+  double getCrossSection( const double energy ) const override;
 
   //! Return the cross section at the given energy (efficient)
   double getCrossSection( const double energy,
-                          const unsigned bin_index ) const;
+                          const unsigned bin_index ) const override;
   
   //! Return the reaction type
-  virtual AdjointPhotoatomicReactionType getReactionType() const;
+  virtual AdjointPhotoatomicReactionType getReactionType() const override;
 
   //! Get the interaction subshell (non-standard interface)
-  Data::SubshellType getSubshell() const;
+  Data::SubshellType getSubshell() const override;
 
   //! Get the subshell binding energy (non-standard interface)
-  double getSubshellBindingEnergy() const;
+  double getSubshellBindingEnergy() const override;
 
 private:
 

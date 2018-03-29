@@ -19,11 +19,11 @@ template<typename ScatteringCenterType, typename MaterialType>
 void CollisionHandlerFactory::createMaterialNameDataMaps(
    const MatIdFractionMap& material_id_fraction_map,
    const MatIdComponentMap& material_id_component_map,
-   const std::unordered_map<std::string,Teuchos::RCP<ScatteringCenterType> >&
+   const std::unordered_map<std::string,std::shared_ptr<const ScatteringCenterType> >&
    scattering_center_map,
    const CellIdMatIdMap& cell_id_mat_id_map,
    const CellIdDensityMap& cell_id_density_map,
-   std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
+   std::unordered_map<std::string,std::shared_ptr<const MaterialType> >&
    material_name_pointer_map,
    MatNameCellIdsMap& material_name_cell_ids_map )
 {
@@ -53,7 +53,7 @@ void CollisionHandlerFactory::createMaterialNameDataMaps(
     if( material_name_pointer_map.find( material_name ) ==
 	material_name_pointer_map.end() )
     {
-      Teuchos::RCP<const MaterialType>& new_material=
+      std::shared_ptr<const MaterialType>& new_material=
 	material_name_pointer_map[material_name];
 
       new_material.reset( new MaterialType(
@@ -74,12 +74,12 @@ void CollisionHandlerFactory::createMaterialNameDataMaps(
 template<typename MaterialType>
 void CollisionHandlerFactory::registerMaterials(
    std::shared_ptr<CollisionHandler>& collision_handler,
-   const std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
+   const std::unordered_map<std::string,std::shared_ptr<const MaterialType> >&
    material_name_pointer_map,
    const MatNameCellIdsMap& material_name_cell_ids_map )
 {
   typename std::unordered_map<std::string,
-                              Teuchos::RCP<const MaterialType> >::const_iterator
+                              std::shared_ptr<const MaterialType> >::const_iterator
     material_name_pointer_it = material_name_pointer_map.begin();
 
   while( material_name_pointer_it != material_name_pointer_map.end() )

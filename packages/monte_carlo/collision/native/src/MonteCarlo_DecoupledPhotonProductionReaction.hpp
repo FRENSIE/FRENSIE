@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_REACTION_HPP
 #define MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_REACTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearReaction.hpp"
@@ -17,29 +20,31 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The photon production (resulting from neutron absorption) reaction
 class DecoupledPhotonProductionReaction
 {
-
-private:
-
-  // Teuchos ScalarTraits typedef
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
+
+  //! The scattering distribution type
+  typedef NuclearScatteringDistribution<NeutronState,PhotonState> ScatteringDistribution;
 
   //! Constructor
   DecoupledPhotonProductionReaction(
    const NuclearReactionType base_reaction_type,
    const unsigned photon_production_id,
    const double temperature,
-   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
+   const std::shared_ptr<const ScatteringDistribution>&
    photon_production_distribution,
-   const Teuchos::RCP<NuclearReaction>& total_reaction,
-   const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array );
+   const std::shared_ptr<const NuclearReaction>& total_reaction,
+   const std::vector<std::shared_ptr<const Utility::OneDDistribution> >& total_mt_yield_array );
 
   //! Destructor
   virtual ~DecoupledPhotonProductionReaction()
@@ -83,7 +88,7 @@ private:
   NuclearReactionType d_base_reaction_type;
 
   // The array of all yield distributions
-  Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >
+  std::vector<std::shared_ptr<const Utility::OneDDistribution> >
     d_total_mt_yield_array;
 
   // The photon production id
@@ -93,11 +98,11 @@ private:
   double d_temperature;
 
   // The photon production distribution (energy and angle)
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,PhotonState> >
   d_photon_production_distribution;
 
   // The total reaction class
-  const Teuchos::RCP<NuclearReaction> d_total_neutron_reaction;
+  std::shared_ptr<const NuclearReaction> d_total_neutron_reaction;
 };
 
 // Return the base nuclear reaction type

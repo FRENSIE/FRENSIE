@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -21,7 +22,7 @@ class CompleteDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadened
 public:
 
   //! The Compton profile array
-  typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
+  typedef std::vector<std::shared_ptr<const ComptonProfile> >
   ComptonProfileArray;
 
   //! Constructor

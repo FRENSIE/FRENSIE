@@ -11,39 +11,35 @@
 
 // Std Lib Includes
 #include <unordered_map>
-
-// Trilinos Includes
-#include "Teuchos_RCP.hpp"
-#include "Teuchos_Array.hpp"
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_Photoatom.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The photon material class
 class PhotonMaterial
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Typedef for photoatom name map
-  typedef std::unordered_map<std::string,Teuchos::RCP<Photoatom> >
+  typedef std::unordered_map<std::string,std::shared_ptr<Photoatom> >
   PhotoatomNameMap;
 
   //! Constructor
   PhotonMaterial( const ModuleTraits::InternalMaterialHandle id,
 		  const double density,
 		  const PhotoatomNameMap& photoatom_name_map,
-		  const Teuchos::Array<double>& photoatom_fractions,
-		  const Teuchos::Array<std::string>& photoatom_names );
+		  const std::vector<double>& photoatom_fractions,
+		  const std::vector<std::string>& photoatom_names );
 
   //! Destructor
   ~PhotonMaterial()
@@ -84,7 +80,7 @@ private:
 
   // Get the atomic weight from an atom pointer
   static double getAtomicWeight(
-	    const Utility::Pair<double,Teuchos::RCP<const Photoatom> >& pair );
+	    const std::pair<double,std::shared_ptr<const Photoatom> >& pair );
 
   // Sample the atom that is collided with
   unsigned sampleCollisionAtom( const double energy ) const;
@@ -96,8 +92,7 @@ private:
   double d_number_density;
 
   // The atoms that make up the material
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Photoatom> > >
-  d_atoms;
+  std::vector<std::pair<double,std::shared_ptr<const Photoatom> > > d_atoms;
 };
 
 } // end MonteCarlo namespace

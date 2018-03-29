@@ -11,19 +11,17 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearScatteringDistributionACEFactoryHelper.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
 
@@ -43,22 +41,22 @@ public:
   NuclearScatteringDistributionACEFactory(
 			    const std::string& table_name,
 			    const double atomic_weight_ratio,
-			    const Teuchos::ArrayView<const double> mtr_block,
-			    const Teuchos::ArrayView<const double> tyr_block,
-			    const Teuchos::ArrayView<const double> land_block,
-			    const Teuchos::ArrayView<const double> and_block,
-			    const Teuchos::ArrayView<const double> ldlw_block,
-			    const Teuchos::ArrayView<const double> dlw_block );
+			    const Utility::ArrayView<const double> mtr_block,
+			    const Utility::ArrayView<const double> tyr_block,
+			    const Utility::ArrayView<const double> land_block,
+			    const Utility::ArrayView<const double> and_block,
+			    const Utility::ArrayView<const double> ldlw_block,
+			    const Utility::ArrayView<const double> dlw_block );
 
   //! Constructor (no TYR block)
   NuclearScatteringDistributionACEFactory(
 			    const std::string& table_name,
 			    const double atomic_weight_ratio,
-			    const Teuchos::ArrayView<const double> mtr_block,
-			    const Teuchos::ArrayView<const double> land_block,
-			    const Teuchos::ArrayView<const double> and_block,
-			    const Teuchos::ArrayView<const double> ldlw_block,
-			    const Teuchos::ArrayView<const double> dlw_block );
+			    const Utility::ArrayView<const double> mtr_block,
+			    const Utility::ArrayView<const double> land_block,
+			    const Utility::ArrayView<const double> and_block,
+			    const Utility::ArrayView<const double> ldlw_block,
+			    const Utility::ArrayView<const double> dlw_block );
 
   //! Destructor
   virtual ~NuclearScatteringDistributionACEFactory()
@@ -73,9 +71,9 @@ public:
 
   //! Create the scattering distribution
   void createScatteringDistribution(
-			  const unsigned reaction_type,
-                          const SimulationProperties& properties,
-                          Teuchos::RCP<DistributionType>& distribution ) const;
+		       const unsigned reaction_type,
+                       const SimulationProperties& properties,
+                       std::shared_ptr<DistributionType>& distribution ) const;
 
 protected:
 
@@ -84,19 +82,19 @@ protected:
 					  const double atomic_weight_ratio );
 
   //! Initialize the factory
-  void initialize( const Teuchos::ArrayView<const double> mtr_block,
-		   const Teuchos::ArrayView<const double> tyr_block,
-		   const Teuchos::ArrayView<const double> land_block,
-		   const Teuchos::ArrayView<const double> and_block,
-		   const Teuchos::ArrayView<const double> ldlw_block,
-		   const Teuchos::ArrayView<const double> dlw_block );
+  void initialize( const Utility::ArrayView<const double> mtr_block,
+		   const Utility::ArrayView<const double> tyr_block,
+		   const Utility::ArrayView<const double> land_block,
+		   const Utility::ArrayView<const double> and_block,
+		   const Utility::ArrayView<const double> ldlw_block,
+		   const Utility::ArrayView<const double> dlw_block );
 
   //! Initialize the factory (no TYR block)
-  void initialize( const Teuchos::ArrayView<const double> mtr_block,
-		   const Teuchos::ArrayView<const double> land_block,
-		   const Teuchos::ArrayView<const double> and_block,
-		   const Teuchos::ArrayView<const double> ldlw_block,
-		   const Teuchos::ArrayView<const double> dlw_block );
+  void initialize( const Utility::ArrayView<const double> mtr_block,
+		   const Utility::ArrayView<const double> land_block,
+		   const Utility::ArrayView<const double> and_block,
+		   const Utility::ArrayView<const double> ldlw_block,
+		   const Utility::ArrayView<const double> dlw_block );
 
   // Returns a map of the reaction types (MT #s) and their AND block ordering
   const boost::unordered_map<unsigned,unsigned>&
@@ -116,7 +114,7 @@ protected:
   getReactionsWithCoupledEnergyAngleDist() const;
 
   // Returns a map of the reaction types (MT #s) and the corresp. angular dist
-  const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >&
+  const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
   getReactionAngularDist() const;
 
   // Returns a map of the reaction types (MT #s) and angular dist start index
@@ -124,7 +122,7 @@ protected:
   getReactionAngularDistStartIndex() const;
 
   // Returns a map of the reaction types (MT #s) and the corresp. energy dist
-  const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >&
+  const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
   getReactionEnergyDist() const;
 
   // Returns a map of the reaction types (MT #s) and energy dist start index
@@ -135,31 +133,31 @@ private:
 
   // Initialize the reaction type ordering map
   void initializeReactionOrderingMap(
-			   const Teuchos::ArrayView<const double>& mtr_block,
-			   const Teuchos::ArrayView<const double>& tyr_block );
+			   const Utility::ArrayView<const double>& mtr_block,
+			   const Utility::ArrayView<const double>& tyr_block );
 
   // Initialize the reaction type scattering ref. frame map
   void initializeReactionRefFrameMap(
-			   const Teuchos::ArrayView<const double>& mtr_block,
-			   const Teuchos::ArrayView<const double>& tyr_block );
+			   const Utility::ArrayView<const double>& mtr_block,
+			   const Utility::ArrayView<const double>& tyr_block );
 
   // Initialize the reaction type angular distribution start index map
   void initializeReactionAngularDistStartIndexMap(
-			  const Teuchos::ArrayView<const double>& land_block );
+			  const Utility::ArrayView<const double>& land_block );
 
   // Initialize the reaction type angular distribution map
   void initializeReactionAngularDistMap(
-			   const Teuchos::ArrayView<const double>& land_block,
-			   const Teuchos::ArrayView<const double>& and_block );
+			   const Utility::ArrayView<const double>& land_block,
+			   const Utility::ArrayView<const double>& and_block );
 
   // Initialize the reaction type energy distribution start index map
   void initializeReactionEnergyDistStartIndexMap(
-			  const Teuchos::ArrayView<const double>& ldlw_block );
+			  const Utility::ArrayView<const double>& ldlw_block );
 
   // Initialize the reaction type energy distribution map
   void initializeReactionEnergyDistMap(
-			   const Teuchos::ArrayView<const double>& ldlw_block,
-			   const Teuchos::ArrayView<const double>& dlw_block );
+			   const Utility::ArrayView<const double>& ldlw_block,
+			   const Utility::ArrayView<const double>& dlw_block );
 
   // The table name
   std::string d_table_name;
@@ -183,7 +181,7 @@ private:
   d_reactions_with_coupled_energy_angle_dist;
 
   // A map of the reaction types (MT #s) and the corresponding angular dist
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >
+  boost::unordered_map<unsigned,Utility::ArrayView<const double> >
   d_reaction_angular_dist;
 
   // A map of the reaction types (MT #s) and the angular dist start index
@@ -195,7 +193,7 @@ private:
   d_reaction_energy_dist_start_index;
 
   // A map of the reaction types (MT #s) and the corresponding energy dist
-  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >
+  boost::unordered_map<unsigned,Utility::ArrayView<const double> >
   d_reaction_energy_dist;
 };
 

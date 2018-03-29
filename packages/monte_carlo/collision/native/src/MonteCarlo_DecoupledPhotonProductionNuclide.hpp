@@ -12,7 +12,6 @@
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include <boost/scoped_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
@@ -31,25 +30,23 @@ class DecoupledPhotonProductionNuclide : public Nuclide
 public:
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<unsigned,
-                   Teuchos::RCP<DecoupledPhotonProductionReaction> > PhotonProductionReactionMap;
+  typedef boost::unordered_map<unsigned,std::shared_ptr<DecoupledPhotonProductionReaction> > PhotonProductionReactionMap;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<unsigned,
-                   Teuchos::RCP<const DecoupledPhotonProductionReaction> > ConstPhotonProductionReactionMap;
+  typedef boost::unordered_map<unsigned,std::shared_ptr<const DecoupledPhotonProductionReaction> > ConstPhotonProductionReactionMap;
 
   //! Constructor
   DecoupledPhotonProductionNuclide(
      const std::string& name,
-	   const unsigned atomic_number,
-	   const unsigned atomic_mass_number,
-	   const unsigned isomer_number,
-	   const double atomic_weight_ratio,
-	   const double temperature,
-	   const Teuchos::ArrayRCP<double>& energy_grid,
-	   const ReactionMap& standard_scattering_reactions,
-	   const ReactionMap& standard_absorption_reactions,
-	   const PhotonProductionReactionMap& photon_production_reactions );
+     const unsigned atomic_number,
+     const unsigned atomic_mass_number,
+     const unsigned isomer_number,
+     const double atomic_weight_ratio,
+     const double temperature,
+     const std::shared_ptr<std::vector<double> >& energy_grid,
+     const ReactionMap& standard_scattering_reactions,
+     const ReactionMap& standard_absorption_reactions,
+     const PhotonProductionReactionMap& photon_production_reactions );
 
   //! Destructor
   ~DecoupledPhotonProductionNuclide()
@@ -57,13 +54,13 @@ public:
 
   //! Get the photon production reaction cross section
   double getPhotonProductionCrossSection( const double energy,
-				                                  const unsigned reaction );
+                                          const unsigned reaction );
 
   //! Collide with a neutron
-  void collideAnalogue( NeutronState& neutron, ParticleBank& bank ) const;
+  void collideAnalogue( NeutronState& neutron, ParticleBank& bank ) const override;
 
   //! Collide with a neutron and survival bias
-  void collideSurvivalBias( NeutronState& neutron, ParticleBank& bank ) const;
+  void collideSurvivalBias( NeutronState& neutron, ParticleBank& bank ) const override;
 
   // Get total photon production cross section
   double getTotalPhotonProductionCrossSection( const double energy ) const;
@@ -72,8 +69,8 @@ private:
 
   // Sample a decoupled photon production reaction
   void samplePhotonProductionReaction( const double scaled_random_number,
-				 NeutronState& neutron,
-				 ParticleBank& bank ) const;
+                                       NeutronState& neutron,
+                                       ParticleBank& bank ) const;
 
   // Store the reaction map of photon production reactions
   ConstPhotonProductionReactionMap d_photon_production_reactions;

@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -62,13 +63,13 @@ void ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory
     function_data[n].first = energy_grid[n];
 
     // Get the recoil energy distribution at the incoming energy
-    Teuchos::Array<double> recoil_energy(
+    std::vector<double> recoil_energy(
         raw_electroionization_data.getAdjointElectroionizationRecoilEnergy(
             subshell,
             energy_grid[n] ) );
 
     // Get the recoil energy pdf at the incoming energy
-    Teuchos::Array<double> pdf(
+    std::vector<double> pdf(
         raw_electroionization_data.getAdjointElectroionizationRecoilPDF(
             subshell,
             energy_grid[n] ) );

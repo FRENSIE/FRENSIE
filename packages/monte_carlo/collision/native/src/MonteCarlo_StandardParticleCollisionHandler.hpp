@@ -14,14 +14,11 @@
 #include <functional>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Geometry_ModuleTraits.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -46,9 +43,9 @@ public:
 
   //! Add a material to the collision handler
   void addMaterial(
-           const Teuchos::RCP<const typename DerivedHandlerTypeTraits::MaterialType>&
+           const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
            material,
-           const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+           const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
            cells_containing_material );
 
   //! Check if a cell is void
@@ -56,7 +53,7 @@ public:
                  const Geometry::ModuleTraits::InternalCellHandle cell ) const;
 
   //! Get the material contained in a cell
-  const Teuchos::RCP<const typename DerivedHandlerTypeTraits::MaterialType>&
+  const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
   getMaterial( const Geometry::ModuleTraits::InternalCellHandle cell ) const;
 
   //! Get the total macroscopic cross section of a material
@@ -90,7 +87,7 @@ private:
 
   // Typedef for cell id neutron material map
   typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       Teuchos::RCP<const typename DerivedHandlerTypeTraits::MaterialType> >
+			       std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType> >
   CellIdMaterialMap;
 
   // The cell id neutron material map

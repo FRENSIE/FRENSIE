@@ -13,11 +13,7 @@
 #include <memory>
 
 // Boost Includes
-#include <boost/scoped_ptr.hpp>
 #include <boost/bimap.hpp>
-
-// FRENSIE Includes
-#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
@@ -37,8 +33,8 @@ public:
 
   //! Constructor
   StandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-               const Teuchos::Array<double>& endf_subshell_occupancies,
-               const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
+               const std::vector<double>& endf_subshell_occupancies,
+               const std::vector<Data::SubshellType>& endf_subshell_order,
                const std::shared_ptr<const ComptonProfileSubshellConverter>&
                subshell_converter,
                const ComptonProfileArray& compton_profile_array );
@@ -48,47 +44,47 @@ public:
   { /* .. */ }
 
   //! Check if the subshell is valid
-  bool isValidSubshell( const Data::SubshellType subshell ) const;
+  bool isValidSubshell( const Data::SubshellType subshell ) const override;
 
   //! Return the occupancy of a subshell (default is the ENDF occupancy)
-  virtual double getSubshellOccupancy( const Data::SubshellType subshell ) const;
+  virtual double getSubshellOccupancy( const Data::SubshellType subshell ) const override;
 
   //! Evaluate the distribution with electron momentum projection
   virtual double evaluateWithElectronMomentumProjection(
                               const double incoming_energy,
                               const double electron_momentum_projection,
-                              const double scattering_angle_cosine ) const;
+                              const double scattering_angle_cosine ) const override;
 
   //! Evaluate the exact distribution
   virtual double evaluateExact( const double incoming_energy,
                                 const double outgoing_energy,
-                                const double scattering_angle_cosine ) const;
+                                const double scattering_angle_cosine ) const override;
 
   //! Evaluate the subshell with the electron momentum projection
   double evaluateSubshellWithElectronMomentumProjection(
                                      const double incoming_energy,
                                      const double electron_momentum_projection,
                                      const double scattering_angle_cosine,
-                                     const Data::SubshellType subshell ) const;
+                                     const Data::SubshellType subshell ) const override;
 
   //! Evaluate the exact subshell distribution
   double evaluateSubshellExact( const double incoming_energy,
                                 const double outgoing_energy,
                                 const double scattering_angle_cosine,
-                                const Data::SubshellType subshell ) const;
+                                const Data::SubshellType subshell ) const override;
 
   //! Evaluate the PDF with electron momentum projection
   double evaluatePDFWithElectronMomentumProjection(
                                    const double incoming_energy,
                                    const double electron_momentum_projection,
                                    const double scattering_angle_cosine,
-                                   const double precision ) const;
+                                   const double precision ) const override;
 
   //! Evaluate the exact PDF
   double evaluatePDFExact( const double incoming_energy,
                            const double outgoing_energy,
                            const double scattering_angle_cosine,
-                           const double precision ) const;
+                           const double precision ) const override;
 
   //! Evaluate the subshell PDF with electron momentum projection
   double evaluateSubshellPDFWithElectronMomentumProjection(
@@ -96,53 +92,53 @@ public:
                                      const double electron_momentum_projection,
                                      const double scattering_angle_cosine,
                                      const Data::SubshellType subshell,
-                                     const double precision ) const;
+                                     const double precision ) const override;
 
   //! Evaluate the exact subshell PDF
   double evaluateSubshellPDFExact( const double incoming_energy,
                                    const double outgoing_energy,
                                    const double scattering_angle_cosine,
                                    const Data::SubshellType subshell,
-                                   const double precision ) const;
+                                   const double precision ) const override;
 
   //! Evaluate the integrated cross section (b/mu)
   virtual double evaluateIntegratedCrossSection(
                                           const double incoming_energy,
                                           const double scattering_angle_cosine,
-                                          const double precision ) const;
+                                          const double precision ) const override;
 
   //! Evaluate the exact integrated cross section (b/mu)
   virtual double evaluateIntegratedCrossSectionExact(
                                           const double incoming_energy,
                                           const double scattering_angle_cosine,
-                                          const double precision ) const;
+                                          const double precision ) const override;
 
   //! Evaluate the subshell integrated cross section (b/mu)
   double evaluateSubshellIntegratedCrossSection(
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,
-					  const double precision ) const;
+					  const double precision ) const override;
 
   //! Evaluate the exact subshell integrated cross section (b/mu)
   double evaluateSubshellIntegratedCrossSectionExact(
                                           const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,
-					  const double precision ) const;
+					  const double precision ) const override;
 
   //! Sample an outgoing energy from the distribution
   void sample( const double incoming_energy,
 	       const double scattering_angle_cosine,
 	       double& outgoing_energy,
-	       Data::SubshellType& shell_of_interaction ) const;
+	       Data::SubshellType& shell_of_interaction ) const override;
 
   //! Sample an outgoing energy and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
 			      const double scattering_angle_cosine,
 			      double& outgoing_energy,
 			      Data::SubshellType& shell_of_interaction,
-			      unsigned& trials ) const;
+			      unsigned& trials ) const override;
 
   //! Sample an electron momentum from the distribution
   void sampleMomentumAndRecordTrials(
@@ -150,12 +146,12 @@ public:
                                     const double scattering_angle_cosine,
                                     double& electron_momentum,
                                     Data::SubshellType& shell_of_interaction,
-                                    unsigned& trials ) const;
+                                    unsigned& trials ) const override;
 
   //! Sample an electron momentum from the subshell distribution
   double sampleSubshellMomentum( const double incoming_energy,
                                  const double scattering_angle_cosine,
-                                 const Data::SubshellType subshell ) const;
+                                 const Data::SubshellType subshell ) const override;
 
 protected:
 
@@ -192,7 +188,7 @@ private:
                                  const ComptonProfile& compton_profile ) const;
 
   // The ENDF subshell interaction probabilities
-  boost::scoped_ptr<const Utility::TabularOneDDistribution>
+  std::unique_ptr<const Utility::TabularOneDDistribution>
   d_endf_subshell_occupancy_distribution;
 
   // The ENDF subshell order
@@ -200,7 +196,7 @@ private:
   boost::bimap<unsigned,Data::SubshellType> d_endf_subshell_order;
 
   // The ENDF subshell occupancies
-  Teuchos::Array<double> d_endf_subshell_occupancies;
+  std::vector<double> d_endf_subshell_occupancies;
 
   // The Compton profile subshell converter
   std::shared_ptr<const ComptonProfileSubshellConverter> d_subshell_converter;

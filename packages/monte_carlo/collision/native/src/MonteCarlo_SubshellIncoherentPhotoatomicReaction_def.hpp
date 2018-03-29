@@ -18,10 +18,10 @@ namespace MonteCarlo{
 // Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::SubshellIncoherentPhotoatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>&
+   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+   const std::shared_ptr<const std::vector<double> >& cross_section,
+   const unsigned threshold_energy_index,
+   const std::shared_ptr<const SubshellIncoherentPhotonScatteringDistribution>&
       scattering_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -29,33 +29,22 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
     d_scattering_distribution( scattering_distribution ),
     d_reaction_type()
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.get() );
 
-   d_reaction_type = convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
+  d_reaction_type = convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
 				    d_scattering_distribution->getSubshell() );
 }
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::SubshellIncoherentPhotoatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>&
-      scattering_distribution )
+   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+   const std::shared_ptr<const std::vector<double> >& cross_section,
+   const unsigned threshold_energy_index,
+   const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+   const std::shared_ptr<const SubshellIncoherentPhotonScatteringDistribution>&
+   scattering_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
@@ -63,21 +52,10 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
     d_scattering_distribution( scattering_distribution ),
     d_reaction_type()
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-		    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.get() );
   // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
+  testPrecondition( grid_searcher.get() );
 
   d_reaction_type = convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
 				    d_scattering_distribution->getSubshell() );

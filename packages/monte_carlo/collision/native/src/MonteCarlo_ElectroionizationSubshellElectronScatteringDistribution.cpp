@@ -308,7 +308,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   if( d_bank_secondary_particles )
   {
     // Create new electron
-    Teuchos::RCP<ParticleState> knock_on_electron(
+    std::shared_ptr<ParticleState> knock_on_electron(
                             new ElectronState( electron, true, true ) );
 
     // Set knock-on electron energy
@@ -362,7 +362,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterPositron(
   if( d_bank_secondary_particles )
   {
     // Create new electron
-    Teuchos::RCP<ParticleState> knock_on_electron(
+    std::shared_ptr<ParticleState> knock_on_electron(
                             new ElectronState( positron, true, true ) );
 
     // Set knock-on electron energy

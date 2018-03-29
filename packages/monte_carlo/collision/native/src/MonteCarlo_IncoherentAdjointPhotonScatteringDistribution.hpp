@@ -12,14 +12,10 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -30,7 +26,7 @@ class IncoherentAdjointPhotonScatteringDistribution : public AdjointPhotonScatte
 protected:
 
   //! Typedef for ArrayRCP const iterator
-  typedef Teuchos::ArrayRCP<const double>::const_iterator LineEnergyIterator;
+  typedef std::vector<double>::const_iterator LineEnergyIterator;
 
 public:
 
@@ -43,10 +39,11 @@ public:
 
   //! Set the critical line energies
   void setCriticalLineEnergies(
-	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
+                             const std::shared_ptr<const std::vector<double> >&
+                             critical_line_energies );
 
   //! Get the critical line energies
-  const Teuchos::ArrayRCP<const double>& getCriticalLineEnergies() const;
+  const std::vector<double>& getCriticalLineEnergies() const;
                                
   //! Set the max energy
   void setMaxEnergy( const double max_energy );
@@ -61,7 +58,7 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-		   const double scattering_angle_cosine ) const;
+		   const double scattering_angle_cosine ) const override;
 
   //! Evaluate the pdf
   virtual double evaluatePDF( const double incoming_energy,
@@ -70,7 +67,7 @@ public:
 
   //! Evaluate the pdf
   double evaluatePDF( const double incoming_energy,
-		      const double scattering_angle_cosine ) const;
+		      const double scattering_angle_cosine ) const override;
 
   //! Set an external integrated cross section evaluator
   void setExternalIntegratedCrossSectionEvaluator(
@@ -87,7 +84,7 @@ public:
 
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
-					 const double precision ) const;
+					 const double precision ) const override;
 
 protected:
 
@@ -145,7 +142,7 @@ private:
   double d_max_energy;
 
   // The critical line energies
-  Teuchos::ArrayRCP<const double> d_critical_line_energies;
+  std::shared_ptr<const std::vector<double> > d_critical_line_energies;
 
   // The integrated cross section evaluator
   std::function<double(double,double,double)> d_integrated_cs_evaluator;

@@ -69,7 +69,7 @@ std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
     alias_map_list = cross_sections_table_info.sublist( "alias map" );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
-                            "Error: The cross_sections.xml file in "
+                            "The cross_sections.xml file in "
                             << cross_sections_xml_directory <<
                             " is invalid - the 'alias_map' ParameterList "
                             "is not defined!" );
@@ -94,7 +94,7 @@ std::shared_ptr<CollisionHandler> CollisionHandlerFactory::createHandler(
   this->createCellIdDataMaps( cell_id_mat_id_map, cell_id_density_map );
 
   // Initialize an atomic relaxation model factory
-  Teuchos::RCP<AtomicRelaxationModelFactory> atomic_relaxation_model_factory(
+  std::shared_ptr<AtomicRelaxationModelFactory> atomic_relaxation_model_factory(
                                             new AtomicRelaxationModelFactory );
 
   // Create the new collision handler
@@ -210,13 +210,13 @@ void CollisionHandlerFactory::validateMaterialRep(
   // Make sure the id is present
   TEST_FOR_EXCEPTION( !material_rep.isParameter( "Id" ),
                       InvalidMaterialRepresentation,
-                      "Error: a material must have an id specified!" );
+                      "a material must have an id specified!" );
 
   // Make sure the id is unique
   TEST_FOR_EXCEPTION( material_ids.find( material_rep.get<unsigned>( "Id" ) )!=
                       material_ids.end(),
                       InvalidMaterialRepresentation,
-                      "Error: a materials id must be unique (material id "
+                      "a materials id must be unique (material id "
                       << material_rep.get<unsigned>( "Id" ) <<
                       " appears more than once)!" );
 
@@ -225,12 +225,12 @@ void CollisionHandlerFactory::validateMaterialRep(
   // Make sure the isotopes that make up the material are specified
   TEST_FOR_EXCEPTION( !material_rep.isParameter( "Isotopes" ),
                       InvalidMaterialRepresentation,
-                      "Error: a material must have isotopes specified!" );
+                      "a material must have isotopes specified!" );
 
   // Make sure the isotope fractions are specified
   TEST_FOR_EXCEPTION( !material_rep.isParameter( "Fractions" ),
                       InvalidMaterialRepresentation,
-                      "Error: a material must have isotope fractions "
+                      "a material must have isotope fractions "
                       "specified!" );
 }
 
@@ -261,7 +261,7 @@ void CollisionHandlerFactory::createAliasSet(
             cross_sections_alias_map.get<std::string>( material_isotopes[i] );
         }
         EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-                                  "Error: cross section alias map entry "
+                                  "cross section alias map entry "
                                   << material_isotopes[i] <<
                                   "is invalid! Please fix this entry." );
 
@@ -292,23 +292,23 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
     const Utility::ArrayString& array_string =
       material_rep.get<Utility::ArrayString>( "Fractions" );
 
-    Teuchos::Array<double> material_fractions;
+    std::vector<double> material_fractions;
 
     try{
       material_fractions = array_string.getConcreteArray<double>();
     }
     EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                                 InvalidMaterialRepresentation,
-                                "Error: The fractions requested for "
+                                "The fractions requested for "
                                 "material " << material_rep.name() <<
                                 " are not valid!" );
 
-    const Teuchos::Array<std::string>& material_isotopes =
-      material_rep.get<Teuchos::Array<std::string> >( "Isotopes" );
+    const std::vector<std::string>& material_isotopes =
+      material_rep.get<std::vector<std::string> >( "Isotopes" );
 
     TEST_FOR_EXCEPTION( material_fractions.size() != material_isotopes.size(),
                         InvalidMaterialRepresentation,
-                        "Error: The number of fractions does not "
+                        "The number of fractions does not "
                         "equal the number of isotopes in material "
                         << material_rep.name() << "!" );
 
@@ -341,12 +341,12 @@ void CollisionHandlerFactory::createNeutronMaterials(
                                   properties,
                                   d_os_warn );
 
-  std::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
+  std::unordered_map<std::string,std::shared_ptr<const Nuclide> > nuclide_map;
 
   nuclide_factory.createNuclideMap( nuclide_map );
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<const NeutronMaterial> >
+  std::unordered_map<std::string,std::shared_ptr<const NeutronMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
@@ -375,17 +375,17 @@ void CollisionHandlerFactory::createPhotonMaterials(
                        const AliasSet& photoatom_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
                        const CellIdDensityMap& cell_id_density_map,
-                       const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                       const std::shared_ptr<const AtomicRelaxationModelFactory>&
                        atomic_relaxation_model_factory,
                        const SimulationProperties& properties )
 {
-  std::unordered_map<std::string,Teuchos::RCP<Photoatom> > photoatom_map;
+  std::unordered_map<std::string,std::shared_ptr<const Photoatom> > photoatom_map;
 
   // Load the photo-nuclides of interest
   if( properties.isPhotonuclearInteractionModeOn() )
   {
     THROW_EXCEPTION( std::logic_error,
-                     "Error: Photonuclear data is not currently supported!" );
+                     "Photonuclear data is not currently supported!" );
   }
   // Load the photoatoms of interest
   else
@@ -401,7 +401,7 @@ void CollisionHandlerFactory::createPhotonMaterials(
   }
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<const PhotonMaterial> >
+  std::unordered_map<std::string,std::shared_ptr<const PhotonMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
@@ -432,7 +432,7 @@ void CollisionHandlerFactory::createAdjointPhotonMaterials(
                        const CellIdDensityMap& cell_id_density_map,
                        const SimulationProperties& properties )
 {
-  std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
     adjoint_photoatom_map;
 
   // Load the adjoint photoatoms of interest
@@ -446,7 +446,7 @@ void CollisionHandlerFactory::createAdjointPhotonMaterials(
   adjoint_photoatom_factory.createAdjointPhotoatomMap( adjoint_photoatom_map );
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<const AdjointPhotonMaterial> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointPhotonMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
@@ -475,11 +475,11 @@ void CollisionHandlerFactory::createElectronMaterials(
       const AliasSet& electroatom_aliases,
       const CellIdMatIdMap& cell_id_mat_id_map,
       const CellIdDensityMap& cell_id_density_map,
-      const Teuchos::RCP<AtomicRelaxationModelFactory>&
+      const std::shared_ptr<const AtomicRelaxationModelFactory>&
       atomic_relaxation_model_factory,
       const SimulationProperties& properties )
 {
-  std::unordered_map<std::string,Teuchos::RCP<Electroatom> > electroatom_map;
+  std::unordered_map<std::string,std::shared_ptr<const Electroatom> > electroatom_map;
 
   ElectroatomFactory electroatom_factory( cross_sections_xml_directory,
                                           cross_sections_table_info,
@@ -491,7 +491,7 @@ void CollisionHandlerFactory::createElectronMaterials(
   electroatom_factory.createElectroatomMap( electroatom_map );
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<const ElectronMaterial> >
+  std::unordered_map<std::string,std::shared_ptr<const ElectronMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
@@ -522,7 +522,7 @@ void CollisionHandlerFactory::createAdjointElectronMaterials(
                        const CellIdDensityMap& cell_id_density_map,
                        const SimulationProperties& properties )
 {
-  std::unordered_map<std::string,Teuchos::RCP<AdjointElectroatom> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >
     adjoint_electroatom_map;
 
   // Load the adjoint photoatoms of interest
@@ -536,7 +536,7 @@ void CollisionHandlerFactory::createAdjointElectronMaterials(
   adjoint_electroatom_factory.createAdjointElectroatomMap( adjoint_electroatom_map );
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<const AdjointElectronMaterial> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointElectronMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;
@@ -565,11 +565,11 @@ void CollisionHandlerFactory::createPositronMaterials(
       const AliasSet& positronatom_aliases,
       const CellIdMatIdMap& cell_id_mat_id_map,
       const CellIdDensityMap& cell_id_density_map,
-      const Teuchos::RCP<AtomicRelaxationModelFactory>&
+      const std::shared_ptr<const AtomicRelaxationModelFactory>&
       atomic_relaxation_model_factory,
       const SimulationProperties& properties )
 {
-  std::unordered_map<std::string,Teuchos::RCP<Positronatom> > positronatom_map;
+  std::unordered_map<std::string,std::shared_ptr<const Positronatom> > positronatom_map;
 
   PositronatomFactory positronatom_factory( cross_sections_xml_directory,
                                             cross_sections_table_info,
@@ -581,7 +581,7 @@ void CollisionHandlerFactory::createPositronMaterials(
   positronatom_factory.createPositronatomMap( positronatom_map );
 
   // Create the material name data maps
-  std::unordered_map<std::string,Teuchos::RCP<const PositronMaterial> >
+  std::unordered_map<std::string,std::shared_ptr<const PositronMaterial> >
     material_name_pointer_map;
 
   MatNameCellIdsMap material_name_cell_ids_map;

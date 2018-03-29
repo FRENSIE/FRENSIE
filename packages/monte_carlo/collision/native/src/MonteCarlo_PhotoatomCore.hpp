@@ -9,20 +9,19 @@
 #ifndef MONTE_CARLO_PHOTOATOM_CORE_HPP
 #define MONTE_CARLO_PHOTOATOM_CORE_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -47,12 +46,12 @@ public:
 
   //! Typedef for the reaction map
   typedef boost::unordered_map<PhotoatomicReactionType,
-			       Teuchos::RCP<PhotoatomicReaction> >
+			       std::shared_ptr<PhotoatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
   typedef boost::unordered_map<PhotoatomicReactionType,
-			       Teuchos::RCP<const PhotoatomicReaction> >
+			       std::shared_ptr<const PhotoatomicReaction> >
   ConstReactionMap;
 
   // Reactions that should be treated as absorption
@@ -65,23 +64,23 @@ public:
   //! Basic constructor
   template<typename InterpPolicy>
   PhotoatomCore(
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
        const ReactionMap& standard_scattering_reactions,
        const ReactionMap& standard_absorption_reactions,
-       const Teuchos::RCP<const AtomicRelaxationModel>& relaxation_model,
+       const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
        const bool processed_atomic_cross_sections,
        const InterpPolicy policy );
 
   //! Advanced constructor
   PhotoatomCore(
-     const Teuchos::RCP<const PhotoatomicReaction>& total_reaction,
-     const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
+     const std::shared_ptr<const PhotoatomicReaction>& total_reaction,
+     const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
      const ConstReactionMap& scattering_reactions,
      const ConstReactionMap& absorption_reactions,
      const ConstReactionMap& miscellaneous_reactions,
-     const Teuchos::RCP<const AtomicRelaxationModel>& relaxation_model,
-     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+     const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
+     const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Copy constructor
   PhotoatomCore( const PhotoatomCore& instance );
@@ -126,38 +125,38 @@ private:
   // Create the total absorption reaction
   template<typename InterpPolicy>
   static void createTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+		const std::shared_ptr<const std::vector<double> >& energy_grid,
 		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
+		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction );
 
   // Create the processed total absorption reaction
   template<typename InterpPolicy>
   static void createProcessedTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+		const std::shared_ptr<const std::vector<double> >& energy_grid,
 		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
+		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction );
 
   // Create the total reaction
   template<typename InterpPolicy>
   static void createTotalReaction(
-      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
-      const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
-      Teuchos::RCP<PhotoatomicReaction>& total_reaction );
+      const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
+      std::shared_ptr<PhotoatomicReaction>& total_reaction );
 
   // Calculate the processed total absorption cross section
   template<typename InterpPolicy>
   static void createProcessedTotalReaction(
-      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
-      const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
-      Teuchos::RCP<PhotoatomicReaction>& total_reaction );
+      const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
+      std::shared_ptr<PhotoatomicReaction>& total_reaction );
 
   // The total reaction
-  Teuchos::RCP<const PhotoatomicReaction> d_total_reaction;
+  std::shared_ptr<const PhotoatomicReaction> d_total_reaction;
 
   // The total absorption reaction
-  Teuchos::RCP<const PhotoatomicReaction> d_total_absorption_reaction;
+  std::shared_ptr<const PhotoatomicReaction> d_total_absorption_reaction;
 
   // The scattering reactions
   ConstReactionMap d_scattering_reactions;
@@ -169,10 +168,10 @@ private:
   ConstReactionMap d_miscellaneous_reactions;
 
   // The atomic relaxation model
-  Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
+  std::shared_ptr<const AtomicRelaxationModel> d_relaxation_model;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 // Return the total reaction

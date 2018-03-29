@@ -70,10 +70,10 @@ std::vector< std::vector<double> > PairProductionPhotoatomicReaction<InterpPolic
 // Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairProductionPhotoatomicReaction(
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const unsigned threshold_energy_index,
-		   const bool use_detailed_electron_emission_physics )
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index )
@@ -84,10 +84,10 @@ PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairPro
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairProductionPhotoatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
        const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -158,7 +158,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
 							   PhotonState& photon,
 							   ParticleBank& bank )
 {
-  Teuchos::RCP<ParticleState> electron(
+  std::shared_ptr<ParticleState> electron(
 				     new ElectronState( photon, true, true ) );
 
   const double total_available_kinetic_energy = photon.getEnergy() -
@@ -205,7 +205,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   photon.resetCollisionNumber();
 
   // Create the second annihilation photon
-  Teuchos::RCP<PhotonState> annihilation_photon(
+  std::shared_ptr<PhotonState> annihilation_photon(
 				       new PhotonState( photon, true, true ) );
 
   // Reverse the direction of the second annihilation photon
@@ -228,7 +228,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
  * electron/positron emission angles are sampled from a distribution based on
  * the leading term, ( 1 - beta cos(theta) )^-2, from high-energy theory.
  * Sampling the energy ratio with a random number of zero will not be allowed
- * since it return an energy ratio of zero, which is non-realistic.
+ * since it return an energy ratio of zero, which is non-physical.
  */
 template<typename InterpPolicy, bool processed_cross_section>
 void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteraction(
@@ -242,8 +242,8 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::de
   photon.setAsGone();
 
   // Create the electron and positron
-  Teuchos::RCP<ElectronState> electron( new ElectronState( photon, true, true ) );
-  Teuchos::RCP<ParticleState> positron( new PositronState( photon, true, true ) );
+  std::shared_ptr<ElectronState> electron( new ElectronState( photon, true, true ) );
+  std::shared_ptr<ParticleState> positron( new PositronState( photon, true, true ) );
 
   // Incoming photon energy in rest mass units (m_e*c^2)
   double energy_in_mec = photon.getEnergy()/electron->getRestMassEnergy();

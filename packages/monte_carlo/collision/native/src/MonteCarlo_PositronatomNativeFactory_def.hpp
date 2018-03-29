@@ -9,15 +9,12 @@
 #ifndef MONTE_CARLO_POSITRONATOM_NATIVE_FACTORY_DEF_HPP
 #define MONTE_CARLO_POSITRONATOM_NATIVE_FACTORY_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomNativeFactory.hpp"
 #include "MonteCarlo_PositronatomicReactionNativeFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -32,9 +29,9 @@ namespace MonteCarlo{
 template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void PositronatomNativeFactory::createPositronatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
         const SimulationElectronProperties& properties,
-        Teuchos::RCP<PositronatomCore>& positronatom_core )
+        std::shared_ptr<PositronatomCore>& positronatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -44,13 +41,13 @@ void PositronatomNativeFactory::createPositronatomCore(
   Positronatom::ReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( raw_positronatom_data.getElectronEnergyGrid().begin(),
-                      raw_positronatom_data.getElectronEnergyGrid().end() );
+  std::shared_ptr<const std::vector<double> > energy_grid(
+      new std::vector( raw_positronatom_data.getElectronEnergyGrid().begin(),
+                       raw_positronatom_data.getElectronEnergyGrid().end() ) );
 
   // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<Utility::HashBasedGridSearcher> grid_searcher(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
                               properties.getNumberOfElectronHashGridBins() ) );
 
@@ -138,8 +135,8 @@ void PositronatomNativeFactory::createPositronatomCore(
 template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void PositronatomNativeFactory::createElasticPositronatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<Utility::HashBasedGridSearcher>& grid_searcher,
         const SimulationElectronProperties& properties,
         Positronatom::ReactionMap& scattering_reactions )
 {
@@ -232,7 +229,7 @@ void PositronatomNativeFactory::createElasticPositronatomCore(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: elastic distribution type "
+                     "elastic distribution type "
                      << distribution_type <<
                      " is not currently supported!" );
   }

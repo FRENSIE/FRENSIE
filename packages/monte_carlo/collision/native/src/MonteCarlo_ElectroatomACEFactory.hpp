@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_ELECTROATOM_ACE_FACTORY_HPP
 #define MONTE_CARLO_ELECTROATOM_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
@@ -30,18 +30,18 @@ public:
   //! Create a electroatom core (using the provided atomic relaxation model)
   static void createElectroatomCore(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+            const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-            Teuchos::RCP<ElectroatomCore>& electroatom_core );
+            std::shared_ptr<const ElectroatomCore>& electroatom_core );
 
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
             const std::string& electroatom_name,
             const double atomic_weight,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+            const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationElectronProperties& properties,
-            Teuchos::RCP<Electroatom>& electroatom );
+            std::shared_ptr<const Electroatom>& electroatom );
 
 private:
 

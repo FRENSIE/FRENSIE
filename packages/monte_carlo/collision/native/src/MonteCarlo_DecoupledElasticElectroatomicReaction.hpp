@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_HPP
 #define MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
@@ -24,20 +21,17 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = false>
 class DecoupledElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+  typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
 
   //! Basic Constructor
   DecoupledElasticElectroatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
+      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> >& total_cross_section,
+      const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
       const unsigned threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
@@ -46,11 +40,11 @@ public:
 
   //! Constructor
   DecoupledElasticElectroatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
+      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> >& total_cross_section,
+      const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
@@ -93,16 +87,16 @@ private:
     d_analytical_distribution;
 
   // The cutoff cross sections
-  Teuchos::ArrayRCP<const double> d_cutoff_cross_section;
+  std::shared_ptr<const std::vector<double> > d_cutoff_cross_section;
 
   // The processed incoming energy grid
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+  std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
 
   // The threshold energy
   unsigned d_threshold_energy_index;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 } // end MonteCarlo namespace

@@ -9,25 +9,21 @@
 #ifndef MONTE_CARLO_ADJOINT_PHOTOATOM_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_ADJOINT_PHOTOATOM_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_Array.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatom.hpp"
 #include "MonteCarlo_AdjointPhotoatomCore.hpp"
 #include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
 //! The adjoint photoatomic factory class that uses native data
 class AdjointPhotoatomNativeFactory
 {
-
-private:
-
   // Typedef for this type
   typedef AdjointPhotoatomNativeFactory ThisType;
 
@@ -38,7 +34,7 @@ public:
                 const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_photoatom_data,
                 const SimulationAdjointPhotonProperties& properties,
-                Teuchos::RCP<AdjointPhotoatomCore>& adjoint_photoatom_core );
+                std::shared_ptr<const AdjointPhotoatomCore>& adjoint_photoatom_core );
 
   //! Create an adjoint photoatom
   static void createAdjointPhotoatom(
@@ -47,16 +43,16 @@ public:
                 const std::string& adjoint_photoatom_name,
                 const double atomic_weight,
                 const SimulationAdjointPhotonProperties& properties,
-                Teuchos::RCP<AdjointPhotoatom>& adjoint_photoatom );
+                std::shared_ptr<const AdjointPhotoatom>& adjoint_photoatom );
 
 protected:
 
   //! Add critical line energyies based on available reactions
-  static Teuchos::ArrayRCP<const double> addCriticalLineEnergies(
+  static std::shared_ptr<const std::vector<double> > addCriticalLineEnergies(
                    const Data::AdjointElectronPhotonRelaxationDataContainer&
                    raw_adjoint_photoatom_data,
                    const double max_energy,
-                   const Teuchos::Array<double>& user_critical_line_energies );
+                   const std::vector<double>& user_critical_line_energies );
 };
   
 } // end MonteCarlo namespace

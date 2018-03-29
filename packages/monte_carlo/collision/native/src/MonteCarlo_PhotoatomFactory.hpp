@@ -11,13 +11,9 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
@@ -36,7 +32,7 @@ public:
   PhotoatomFactory( const std::string& cross_sections_xml_directory,
                     const Teuchos::ParameterList& cross_section_table_info,
                     const std::unordered_set<std::string>& photoatom_aliases,
-		    const Teuchos::RCP<AtomicRelaxationModelFactory>&
+		    const std::shared_ptr<AtomicRelaxationModelFactory>&
 		    atomic_relaxation_model_factory,
 		    const SimulationProperties& properties,
 		    std::ostream* os_message = &std::cout );
@@ -47,7 +43,7 @@ public:
 
   //! Create the map of photoatoms
   void createPhotoatomMap(
-		    std::unordered_map<std::string,Teuchos::RCP<Photoatom> >&
+		    std::unordered_map<std::string,std::shared_ptr<Photoatom> >&
 		    photoatom_map ) const;
 
 private:
@@ -60,7 +56,7 @@ private:
 			  const std::string& photoatomic_table_name,
 			  const int photoatomic_file_start_line,
 			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
+			  const std::shared_ptr<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
 			  const SimulationProperties& properties );
 
@@ -70,16 +66,16 @@ private:
 			  const std::string& photoatom_alias,
 			  const std::string& native_file_path,
 			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
+			  const std::shared_ptr<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
 			  const SimulationProperties& properties );
 
   // The photoatom map
-  std::unordered_map<std::string,Teuchos::RCP<Photoatom> >
+  std::unordered_map<std::string,std::shared_ptr<Photoatom> >
   d_photoatom_name_map;
 
   // The table map
-  std::unordered_map<std::string,Teuchos::RCP<Photoatom> >
+  std::unordered_map<std::string,std::shared_ptr<Photoatom> >
   d_photoatomic_table_name_map;
 
   // The message output stream

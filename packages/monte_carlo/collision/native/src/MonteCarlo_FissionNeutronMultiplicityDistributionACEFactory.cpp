@@ -20,8 +20,8 @@ namespace MonteCarlo{
 // Constructor
 FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDistributionACEFactory(
 			    const std::string& table_name,
-			    const Teuchos::ArrayView<const double>& nu_block,
-			    const Teuchos::ArrayView<const double>& dnu_block )
+			    const Utility::ArrayView<const double>& nu_block,
+			    const Utility::ArrayView<const double>& dnu_block )
   : d_prompt_dist_exists( false ),
     d_delayed_dist_exists( false ),
     d_total_dist_exists( false )
@@ -34,12 +34,12 @@ FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDist
 
   TEST_FOR_EXCEPTION( location_of_total_data > 0,
 		      std::runtime_error,
-		      "Error: Only prompt or total nu-bar data is present in "
+		      "Only prompt or total nu-bar data is present in "
 		      "ace table " << table_name << ", which is currently not "
 		      "supported!" );
 
   // Parse the prompt nu-bar distribution
-  Teuchos::ArrayView<const double> raw_prompt_distribution =
+  Utility::ArrayView<const double> raw_prompt_distribution =
     nu_block( 1, abs(location_of_total_data) );
 
   d_prompt_dist_exists = true;
@@ -49,7 +49,7 @@ FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDist
 			     d_prompt_multiplicity_distribution );
 
   // Parse the total nu-bar distribution
-  Teuchos::ArrayView<const double> raw_total_distribution =
+  Utility::ArrayView<const double> raw_total_distribution =
     nu_block( 1 + abs(location_of_total_data),
 	      nu_block.size() - 1 - abs(location_of_total_data) );
 
@@ -72,7 +72,7 @@ FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDist
 
 // Create the fission neutron multiplicity distribution
 void FissionNeutronMultiplicityDistributionACEFactory::createDistribution(
-     Teuchos::RCP<FissionNeutronMultiplicityDistribution>& distribution ) const
+     std::shared_ptr<const FissionNeutronMultiplicityDistribution>& distribution ) const
 {
   if( d_prompt_dist_exists && d_delayed_dist_exists && d_total_dist_exists )
   {
@@ -104,8 +104,8 @@ void FissionNeutronMultiplicityDistributionACEFactory::createDistribution(
 // Create the partial distribution from a raw distribution array
 void FissionNeutronMultiplicityDistributionACEFactory::createPartialDistribution(
 	  const std::string& table_name,
-	  const Teuchos::ArrayView<const double>& distribution_array,
-	  Teuchos::RCP<Utility::OneDDistribution>& partial_distribution ) const
+	  const Utility::ArrayView<const double>& distribution_array,
+	  std::shared_ptr<const Utility::OneDDistribution>& partial_distribution ) const
 {
   unsigned form_flag = static_cast<unsigned>( distribution_array[0] );
 
@@ -131,17 +131,17 @@ void FissionNeutronMultiplicityDistributionACEFactory::createPartialDistribution
 
       TEST_FOR_EXCEPTION( number_of_interp_regions != 0,
 			  std::runtime_error,
-			  "Error: multiple interpolation regions found in "
+			  "multiple interpolation regions found in "
 			  "nu block of ace table " << table_name <<
 			  ", which is not currently supported!" );
 
       unsigned number_of_energies =
 	static_cast<unsigned>( distribution_array[2] );
 
-      Teuchos::ArrayView<const double> energy_grid =
+      Utility::ArrayView<const double> energy_grid =
 	distribution_array( 3, number_of_energies );
 
-      Teuchos::ArrayView<const double> nu_values =
+      Utility::ArrayView<const double> nu_values =
 	distribution_array( 3+number_of_energies, number_of_energies );
 
       partial_distribution.reset(
@@ -152,7 +152,7 @@ void FissionNeutronMultiplicityDistributionACEFactory::createPartialDistribution
     }
   default:
     THROW_EXCEPTION( std::runtime_error,
-		     "Error: Unsupported form flag " << form_flag <<
+		     "Unsupported form flag " << form_flag <<
 		     " found in nu block of ace table " << table_name << "!" );
   }
 }
@@ -177,21 +177,21 @@ bool FissionNeutronMultiplicityDistributionACEFactory::doesTotalDistExist() cons
 }
 
 // Return the prompt multiplicity distribution
-const Teuchos::RCP<Utility::OneDDistribution>&
+const std::shared_ptr<const Utility::OneDDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getPromptMultDist() const
 {
   return d_prompt_multiplicity_distribution;
 }
 
 // Return the delayed multiplicity distribution
-const Teuchos::RCP<Utility::OneDDistribution>&
+const std::shared_ptr<const Utility::OneDDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getDelayedMultDist() const
 {
   return d_delayed_multiplicity_distribution;
 }
 
 // Return the total multiplicity distribution
-const Teuchos::RCP<Utility::OneDDistribution>&
+const std::shared_ptr<const Utility::OneDDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getTotalMultDist() const
 {
   return d_total_multiplicity_distribution;

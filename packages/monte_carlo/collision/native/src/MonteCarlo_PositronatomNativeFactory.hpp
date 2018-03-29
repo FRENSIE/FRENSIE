@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_POSITRONATOM_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_POSITRONATOM_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_Positronatom.hpp"
@@ -35,19 +35,19 @@ public:
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createPositronatomCore(
-       const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-       const SimulationElectronProperties& properties,
-       Teuchos::RCP<PositronatomCore>& positronatom_core );
-
+      const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+      const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+      const SimulationElectronProperties& properties,
+      std::shared_ptr<PositronatomCore>& positronatom_core );
+  
   //! Create a positron-atom (using the provided atomic relaxation model)
   static void createPositronatom(
-       const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-       const std::string& positronatom_name,
-       const double atomic_weight,
-       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-       const SimulationElectronProperties& properties,
-       Teuchos::RCP<Positronatom>& positronatom );
+      const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+      const std::string& positronatom_name,
+      const double atomic_weight,
+      const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+      const SimulationElectronProperties& properties,
+      std::shared_ptr<Positronatom>& positronatom );
 
 private:
 
@@ -55,11 +55,11 @@ private:
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
             typename TwoDSamplePolicy = Utility::Correlated>
   static void createElasticPositronatomCore(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-        const SimulationElectronProperties& properties,
-        Positronatom::ReactionMap& scattering_reactions );
+      const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<Utility::HashBasedGridSearcher>& grid_searcher,
+      const SimulationElectronProperties& properties,
+      Positronatom::ReactionMap& scattering_reactions );
 
   // Constructor
   PositronatomNativeFactory();

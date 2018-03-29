@@ -13,9 +13,6 @@
 #include <sstream>
 #include <stdexcept>
 
-// Trilinos Includes
-#include "Teuchos_ArrayView.hpp"
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
 #include "MonteCarlo_NuclearScatteringDistributionACEFactoryHelper.hpp"
@@ -24,6 +21,7 @@
 #include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -50,12 +48,12 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::NuclearScatteringDistributionACEFactory(
 			    const std::string& table_name,
 			    const double atomic_weight_ratio,
-			    const Teuchos::ArrayView<const double> mtr_block,
-			    const Teuchos::ArrayView<const double> tyr_block,
-			    const Teuchos::ArrayView<const double> land_block,
-			    const Teuchos::ArrayView<const double> and_block,
-			    const Teuchos::ArrayView<const double> ldlw_block,
-			    const Teuchos::ArrayView<const double> dlw_block )
+			    const Utility::ArrayView<const double> mtr_block,
+			    const Utility::ArrayView<const double> tyr_block,
+			    const Utility::ArrayView<const double> land_block,
+			    const Utility::ArrayView<const double> and_block,
+			    const Utility::ArrayView<const double> ldlw_block,
+			    const Utility::ArrayView<const double> dlw_block )
   : d_table_name( table_name ),
     d_atomic_weight_ratio( atomic_weight_ratio )
 {
@@ -79,11 +77,11 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::NuclearScatteringDistributionACEFactory(
 			    const std::string& table_name,
 			    const double atomic_weight_ratio,
-			    const Teuchos::ArrayView<const double> mtr_block,
-			    const Teuchos::ArrayView<const double> land_block,
-			    const Teuchos::ArrayView<const double> and_block,
-			    const Teuchos::ArrayView<const double> ldlw_block,
-			    const Teuchos::ArrayView<const double> dlw_block )
+			    const Utility::ArrayView<const double> mtr_block,
+			    const Utility::ArrayView<const double> land_block,
+			    const Utility::ArrayView<const double> and_block,
+			    const Utility::ArrayView<const double> ldlw_block,
+			    const Utility::ArrayView<const double> dlw_block )
   : d_table_name( table_name ),
     d_atomic_weight_ratio( atomic_weight_ratio )
 {
@@ -98,12 +96,12 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initialize(
-		   const Teuchos::ArrayView<const double> mtr_block,
-		   const Teuchos::ArrayView<const double> tyr_block,
-		   const Teuchos::ArrayView<const double> land_block,
-		   const Teuchos::ArrayView<const double> and_block,
-		   const Teuchos::ArrayView<const double> ldlw_block,
-		   const Teuchos::ArrayView<const double> dlw_block )
+		   const Utility::ArrayView<const double> mtr_block,
+		   const Utility::ArrayView<const double> tyr_block,
+		   const Utility::ArrayView<const double> land_block,
+		   const Utility::ArrayView<const double> and_block,
+		   const Utility::ArrayView<const double> ldlw_block,
+		   const Utility::ArrayView<const double> dlw_block )
 {
   initializeReactionOrderingMap( mtr_block, tyr_block );
   initializeReactionRefFrameMap( mtr_block, tyr_block );
@@ -117,14 +115,14 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initialize(
-		   const Teuchos::ArrayView<const double> mtr_block,
-		   const Teuchos::ArrayView<const double> land_block,
-		   const Teuchos::ArrayView<const double> and_block,
-		   const Teuchos::ArrayView<const double> ldlw_block,
-		   const Teuchos::ArrayView<const double> dlw_block )
+		   const Utility::ArrayView<const double> mtr_block,
+		   const Utility::ArrayView<const double> land_block,
+		   const Utility::ArrayView<const double> and_block,
+		   const Utility::ArrayView<const double> ldlw_block,
+		   const Utility::ArrayView<const double> dlw_block )
 {
   // Create a fictitious TYR block (all multiplicity 1 in lab system)
-  Teuchos::Array<double> dummy_tyr_block( mtr_block.size(), 1.0 );
+  std::vector<double> dummy_tyr_block( mtr_block.size(), 1.0 );
 
   initializeReactionOrderingMap( mtr_block, dummy_tyr_block );
   initializeReactionRefFrameMap( mtr_block, dummy_tyr_block );
@@ -182,7 +180,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::createScatteringDistribution(
 			   const unsigned reaction_type,
                            const SimulationProperties& properties,
-			   Teuchos::RCP<DistributionType>& distribution ) const
+			   std::shared_ptr<DistributionType>& distribution ) const
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
   testPrecondition( this->doesReactionHaveScatteringDistribution(
@@ -191,7 +189,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   // Create an angular distribution if scattering law 44 is not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
-    Teuchos::RCP<NuclearScatteringAngularDistribution> angular_distribution;
+    std::shared_ptr<NuclearScatteringAngularDistribution> angular_distribution;
 
     if( !d_reactions_with_isotropic_scattering_only.count( reaction_type ) )
     {
@@ -224,7 +222,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     // Create all other scattering distributions using the energy dist factory
     else
     {
-      Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_distribution;
+      std::shared_ptr<NuclearScatteringEnergyDistribution> energy_distribution;
 
       NuclearScatteringEnergyDistributionACEFactory::createDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,
@@ -240,7 +238,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 	TEST_FOR_EXCEPTION( !(d_reaction_cm_scattering.find(
 						      reaction_type )->second),
 			    std::runtime_error,
-			    "Error: MT# " << reaction_type << " in ACE table "
+			    "MT# " << reaction_type << " in ACE table "
 			    << d_table_name << " uses ACE Law 3, which must "
 			    "be in the CM system. The ref. frame specified is "
 			    "the lab indicating that there is an error in the "
@@ -299,7 +297,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: The coupled angle-energy "
+      THROW_EXCEPTION( std::runtime_error, "The coupled angle-energy "
         "distribution ace law " << acelaw << " was found. Currently ace laws"
         " 44 and 61 are the only supported coupled angle-energy laws." );
     }
@@ -345,7 +343,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a map of the reaction types (MT #s) and the corresp. angular dist
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >&
+const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionAngularDist() const
 {
@@ -363,7 +361,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a map of the reaction types (MT #s) and the corresp. energy dist
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >&
+const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionEnergyDist() const
 {
@@ -383,8 +381,8 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initializeReactionOrderingMap(
-			   const Teuchos::ArrayView<const double>& mtr_block,
-			   const Teuchos::ArrayView<const double>& tyr_block )
+			   const Utility::ArrayView<const double>& mtr_block,
+			   const Utility::ArrayView<const double>& tyr_block )
 {
   for( unsigned i = 0; i < mtr_block.size(); ++i )
   {
@@ -399,8 +397,8 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initializeReactionRefFrameMap(
-			   const Teuchos::ArrayView<const double>& mtr_block,
-			   const Teuchos::ArrayView<const double>& tyr_block )
+			   const Utility::ArrayView<const double>& mtr_block,
+			   const Utility::ArrayView<const double>& tyr_block )
 {
   boost::unordered_map<unsigned,unsigned>::const_iterator
     reaction, end_reaction;
@@ -426,7 +424,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initializeReactionAngularDistStartIndexMap(
-			  const Teuchos::ArrayView<const double>& land_block )
+			  const Utility::ArrayView<const double>& land_block )
 {
   unsigned elastic_increment;
 
@@ -468,11 +466,11 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initializeReactionAngularDistMap(
-			   const Teuchos::ArrayView<const double>& land_block,
-			   const Teuchos::ArrayView<const double>& and_block )
+			   const Utility::ArrayView<const double>& land_block,
+			   const Utility::ArrayView<const double>& and_block )
 {
   // Calculate the size of each angular distribution array
-  Teuchos::Array<unsigned> angular_dist_array_sizes;
+  std::vector<unsigned> angular_dist_array_sizes;
   calculateDistArraySizes( land_block,
 			   and_block,
 			   angular_dist_array_sizes );
@@ -546,7 +544,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initializeReactionEnergyDistStartIndexMap(
-			  const Teuchos::ArrayView<const double>& ldlw_block )
+			  const Utility::ArrayView<const double>& ldlw_block )
 {
   // Add all other reactions
   boost::unordered_map<unsigned,unsigned>::const_iterator
@@ -568,11 +566,11 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					     OutgoingParticleType>::initializeReactionEnergyDistMap(
-			   const Teuchos::ArrayView<const double>& ldlw_block,
-			   const Teuchos::ArrayView<const double>& dlw_block )
+			   const Utility::ArrayView<const double>& ldlw_block,
+			   const Utility::ArrayView<const double>& dlw_block )
 {
   // Calculate the size of each energy distribution array
-  Teuchos::Array<unsigned> energy_dist_array_sizes;
+  std::vector<unsigned> energy_dist_array_sizes;
   calculateDistArraySizes( ldlw_block,
 			   dlw_block,
 			   energy_dist_array_sizes );

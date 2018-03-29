@@ -9,14 +9,17 @@
 #ifndef MONTE_CARLO_NUCLIDE_HPP
 #define MONTE_CARLO_NUCLIDE_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-#include <boost/scoped_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
-#include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -26,30 +29,27 @@ namespace MonteCarlo{
  */
 class Nuclide
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Typedef for the reaction map
   typedef boost::unordered_map<NuclearReactionType,
-			       Teuchos::RCP<NuclearReaction> > ReactionMap;
+			       std::shared_ptr<NuclearReaction> > ReactionMap;
 
   //! Typedef for the const reaction map
   typedef boost::unordered_map<NuclearReactionType,
-			       Teuchos::RCP<const NuclearReaction> >
+			       std::shared_ptr<const NuclearReaction> >
   ConstReactionMap;
 
   //! Set the nuclear reaction types that will be considered as absorption
   static void setAbsorptionReactionTypes(
-	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
+	const std::vector<NuclearReactionType>& absorption_reaction_types );
 
   //! Add nuclear reaction types that will be considered as absorption
   static void addAbsorptionReactionTypes(
-	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
+	const std::vector<NuclearReactionType>& absorption_reaction_types );
 
   //! Create a unique id for the nuclide based on its name
   static unsigned getUniqueIdFromName( const std::string& name );
@@ -61,12 +61,12 @@ public:
 	   const unsigned isomer_number,
 	   const double atomic_weight_ratio,
 	   const double temperature,
-	   const Teuchos::ArrayRCP<double>& energy_grid,
+	   const std::shared_ptr<std::vector<double> >& energy_grid,
 	   const ReactionMap& standard_scattering_reactions,
 	   const ReactionMap& standard_absorption_reactions );
 
   //! Destructor
-  ~Nuclide()
+  virtual ~Nuclide()
   { /* ... */ }
 
   //! Return the nuclide name
@@ -117,10 +117,11 @@ private:
 
   // Calculate the total absorption cross section
   void calculateTotalAbsorptionReaction(
-			        const Teuchos::ArrayRCP<double>& energy_grid );
+		    const std::shared_ptr<std::vector<double> >& energy_grid );
 
   // Calculate the total cross section
-  void calculateTotalReaction( const Teuchos::ArrayRCP<double>& energy_grid );
+  void calculateTotalReaction(
+                    const std::shared_ptr<std::vector<double> >& energy_grid );
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
@@ -157,10 +158,10 @@ private:
   double d_temperature;
 
   // The total reaction
-  boost::scoped_ptr<const NuclearReaction> d_total_reaction;
+  std::unique_ptr<const NuclearReaction> d_total_reaction;
 
   // The total absorption reaction
-  boost::scoped_ptr<const NuclearReaction> d_total_absorption_reaction;
+  std::unique_ptr<const NuclearReaction> d_total_absorption_reaction;
 
   // The scattering reactions
   ConstReactionMap d_scattering_reactions;

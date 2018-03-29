@@ -16,16 +16,13 @@
 #include <unordered_set>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ParameterList.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -82,16 +79,16 @@ private:
 
   //! The material id fraction map typedef
   typedef std::unordered_map<ModuleTraits::InternalMaterialHandle,
-                             Teuchos::Array<double> >
+                             std::vector<double> >
   MatIdFractionMap;
 
   //! The material id component map typedef
   typedef std::unordered_map<ModuleTraits::InternalMaterialHandle,
-                             Teuchos::Array<std::string> >
+                             std::vector<std::string> >
   MatIdComponentMap;
 
   //! The material name cell ids map typedef
-  typedef std::unordered_map<std::string,Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
+  typedef std::unordered_map<std::string,std::vector<Geometry::ModuleTraits::InternalCellHandle> >
   MatNameCellIdsMap;
 
   //! Validate a material representation
@@ -132,7 +129,7 @@ private:
                        const AliasSet& nuclide_aliases,
                        const CellIdMatIdMap& cell_id_mat_id_map,
                        const CellIdDensityMap& cell_id_density_map,
-                       const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                       const std::shared_ptr<const AtomicRelaxationModelFactory>&
                        atomic_relaxation_model_factory,
                        const SimulationProperties& properties );
 
@@ -158,7 +155,7 @@ private:
       const AliasSet& nuclide_aliases,
       const CellIdMatIdMap& cell_id_mat_id_map,
       const CellIdDensityMap& cell_id_density_map,
-      const Teuchos::RCP<AtomicRelaxationModelFactory>&
+      const std::shared_ptr<const AtomicRelaxationModelFactory>&
       atomic_relaxation_model_factory,
       const SimulationProperties& properties );
 
@@ -184,7 +181,7 @@ private:
       const AliasSet& nuclide_aliases,
       const CellIdMatIdMap& cell_id_mat_id_map,
       const CellIdDensityMap& cell_id_density_map,
-      const Teuchos::RCP<AtomicRelaxationModelFactory>&
+      const std::shared_ptr<const AtomicRelaxationModelFactory>&
       atomic_relaxation_model_factory,
       const SimulationProperties& properties );
 
@@ -193,11 +190,11 @@ private:
   static void createMaterialNameDataMaps(
      const MatIdFractionMap& material_id_fraction_map,
      const MatIdComponentMap& material_id_component_map,
-     const std::unordered_map<std::string,Teuchos::RCP<ScatteringCenterType> >&
+     const std::unordered_map<std::string,std::shared_ptr<const ScatteringCenterType> >&
      scattering_center_map,
      const CellIdMatIdMap& cell_id_mat_id_map,
      const CellIdDensityMap& cell_id_density_map,
-     std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
+     std::unordered_map<std::string,std::shared_ptr<const MaterialType> >&
      material_name_pointer_map,
      MatNameCellIdsMap& material_name_cell_ids_map );
 
@@ -205,7 +202,7 @@ private:
   template<typename MaterialType>
   static void registerMaterials(
        std::shared_ptr<CollisionHandler>& collision_handler,
-       const std::unordered_map<std::string,Teuchos::RCP<const MaterialType> >&
+       const std::unordered_map<std::string,std::shared_ptr<const MaterialType> >&
        material_name_pointer_map,
        const MatNameCellIdsMap& material_name_cell_ids_map );
 

@@ -26,7 +26,7 @@ ElectroatomFactory::ElectroatomFactory(
     const std::string& cross_sections_xml_directory,
     const Teuchos::ParameterList& cross_section_table_info,
     const std::unordered_set<std::string>& electroatom_aliases,
-    const Teuchos::RCP<AtomicRelaxationModelFactory>&
+    const std::shared_ptr<const AtomicRelaxationModelFactory>&
     atomic_relaxation_model_factory,
     const SimulationProperties& properties,
     std::ostream* os_message )
@@ -76,7 +76,7 @@ ElectroatomFactory::ElectroatomFactory(
     else
     {
       THROW_EXCEPTION( std::logic_error,
-               "Error: electroatomic file type "
+               "electroatomic file type "
                << electroatom_file_type <<
                " is not supported!" );
     }
@@ -91,7 +91,7 @@ ElectroatomFactory::ElectroatomFactory(
 
 // Create the map of electroatoms
 void ElectroatomFactory::createElectroatomMap(
-            std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+            std::unordered_map<std::string,std::shared_ptr<const Electroatom> >&
             electroatom_map ) const
 {
   // Reset the electroatom map
@@ -109,7 +109,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
                               const std::string& electroatomic_table_name,
                               const int electroatomic_file_start_line,
                               const double atomic_weight,
-                              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                              const std::shared_ptr<const AtomicRelaxationModelFactory>&
                               atomic_relaxation_model_factory,
                               const SimulationProperties& properties )
 {
@@ -134,7 +134,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
                      ace_file_handler.getTableXSSArray() );
 
     // Create the atomic relaxation model
-    Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
+    std::shared_ptr<const AtomicRelaxationModel> atomic_relaxation_model;
 
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
                              xss_data_extractor,
@@ -144,7 +144,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new electroatom
-    Teuchos::RCP<Electroatom>& electroatom =
+    std::shared_ptr<const Electroatom>& electroatom =
       d_electroatom_name_map[electroatom_alias];
 
     // Create the new electroatom
@@ -174,7 +174,7 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
                               const std::string& electroatom_alias,
                               const std::string& native_file_path,
                               const double atomic_weight,
-                              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                              const std::shared_ptr<const AtomicRelaxationModelFactory>&
                               atomic_relaxation_model_factory,
                               const SimulationProperties& properties )
 {
@@ -190,7 +190,7 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
       data_container( native_file_path );
 
     // Create the atomic relaxation model
-    Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
+    std::shared_ptr<const AtomicRelaxationModel> atomic_relaxation_model;
 
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
                              data_container,
@@ -200,7 +200,7 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new electroatom
-    Teuchos::RCP<Electroatom>& electroatom =
+    std::shared_ptr<const Electroatom>& electroatom =
       d_electroatom_name_map[electroatom_alias];
 
     // Create the new electroatom

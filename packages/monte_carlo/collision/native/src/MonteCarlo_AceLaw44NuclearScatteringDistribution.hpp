@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_ACE_LAW_44_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ACE_LAW_44_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
@@ -20,6 +16,7 @@
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -37,16 +34,16 @@ class AceLaw44NuclearScatteringDistribution : public NuclearScatteringDistributi
 public:
 
   //! Typedef for the distribution
-  typedef Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >
+  typedef std::vector<std::shared_ptr<AceLaw44ARDistribution> >
   ARDistributions;
 
   //! Constructor
   AceLaw44NuclearScatteringDistribution(
-		   const double atomic_weight_ratio,
-		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
-		   energy_scattering_distribution,
-                   const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
-		   ar_distributions );
+             const double atomic_weight_ratio,
+             const std::shared_ptr<const NuclearScatteringEnergyDistribution>&
+             energy_scattering_distribution,
+             const std::vector<std::shared_ptr<const AceLaw44ARDistribution> >&
+             ar_distributions );
 
   //! Destructor
   ~AceLaw44NuclearScatteringDistribution()
@@ -55,12 +52,12 @@ public:
   //! Randomly scatter the particle
   void scatterParticle( const IncomingParticleType& incoming_particle,
 			OutgoingParticleType& outgoing_particle,
-			const double temperature ) const;
+			const double temperature ) const override;
 
 private:
 
   // The energy distribution (only a law 4 distribution should be stored)
-  Teuchos::RCP<NuclearScatteringEnergyDistribution>
+  std::shared_ptr<const NuclearScatteringEnergyDistribution>
   d_energy_scattering_distribution;
 
   // The AR distributions

@@ -9,47 +9,45 @@
 #ifndef MONTE_CARLO_DECOUPLED_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
 #define MONTE_CARLO_DECOUPLED_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
 
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The photon production reaction with cross section data (MFTYPE=13)
 class DecoupledCrossSectionBasedPhotonProductionReaction : public DecoupledPhotonProductionReaction
 {
-
-private:
-
-  // Teuchos ScalarTraits typedef
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
-  // Constructor
+  //! The scattering distribution type
+  typedef DecoupledPhotonProductionReaction::ScatteringDistribution ScatteringDistribution;
+
+  //! Constructor
   DecoupledCrossSectionBasedPhotonProductionReaction(
-		   const NuclearReactionType base_reaction_type,
-		   const unsigned photon_production_id,
-		   const double temperature,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
-		   photon_production_distribution,
-		   const Teuchos::RCP<NuclearReaction>& total_reaction,
-		   const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array );
+       const NuclearReactionType base_reaction_type,
+       const unsigned photon_production_id,
+       const double temperature,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const ScatteringDistribution>&
+       photon_production_distribution,
+       const std::shared_ptr<const NuclearReaction>& total_reaction,
+       const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+       total_mt_yield_array );
 
   //! Return the threshold energy
-  double getThresholdEnergy() const;
+  double getThresholdEnergy() const override;
 
   //! Return the base reaction cross section at a given energy
-  double getBaseReactionCrossSection( const double energy ) const;
+  double getBaseReactionCrossSection( const double energy ) const override;
 
   //! Return the cross section at a given energy
-  double getCrossSection( const double energy ) const;
+  double getCrossSection( const double energy ) const override;
 
 private:
 
@@ -57,19 +55,18 @@ private:
   unsigned d_threshold_energy_index;
 
   // The incoming energy grid
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+  std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
 
   // The cross section
-  Teuchos::ArrayRCP<const double> d_cross_section;
+  std::shared_ptr<const std::vector<double> > d_cross_section;
 };
 
 // Return the threshold energy
 inline double
 DecoupledCrossSectionBasedPhotonProductionReaction::getThresholdEnergy() const
 {
-  return d_incoming_energy_grid[d_threshold_energy_index];
+  return (*d_incoming_energy_grid)[d_threshold_energy_index];
 }
-
 
 } // end MonteCarlo namespace
 

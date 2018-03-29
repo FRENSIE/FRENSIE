@@ -26,7 +26,7 @@ PositronatomFactory::PositronatomFactory(
     const std::string& cross_sections_xml_directory,
     const Teuchos::ParameterList& cross_section_table_info,
     const std::unordered_set<std::string>& positronatom_aliases,
-    const Teuchos::RCP<AtomicRelaxationModelFactory>&
+    const std::shared_ptr<AtomicRelaxationModelFactory>&
     atomic_relaxation_model_factory,
     const SimulationProperties& properties,
     std::ostream* os_message )
@@ -76,9 +76,9 @@ PositronatomFactory::PositronatomFactory(
     else
     {
       THROW_EXCEPTION( std::logic_error,
-               "Error: positron-atomic file type "
-               << positronatom_file_type <<
-               " is not supported!" );
+                       "positron-atomic file type "
+                       << positronatom_file_type <<
+                       " is not supported!" );
     }
 
     ++positronatom_name;
@@ -91,7 +91,7 @@ PositronatomFactory::PositronatomFactory(
 
 // Create the map of positron-atoms
 void PositronatomFactory::createPositronatomMap(
-            std::unordered_map<std::string,Teuchos::RCP<Positronatom> >&
+            std::unordered_map<std::string,std::shared_ptr<Positronatom> >&
             positronatom_map ) const
 {
   // Reset the positron-atom map
@@ -109,7 +109,7 @@ void PositronatomFactory::createPositronatomFromACETable(
                               const std::string& positronatomic_table_name,
                               const int positronatomic_file_start_line,
                               const double atomic_weight,
-                              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                              const std::shared_ptr<AtomicRelaxationModelFactory>&
                               atomic_relaxation_model_factory,
                               const SimulationProperties& properties )
 {
@@ -134,7 +134,7 @@ void PositronatomFactory::createPositronatomFromACETable(
                      ace_file_handler.getTableXSSArray() );
 
     // Create the atomic relaxation model
-    Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
+    std::shared_ptr<AtomicRelaxationModel> atomic_relaxation_model;
 
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
                              xss_data_extractor,
@@ -144,7 +144,7 @@ void PositronatomFactory::createPositronatomFromACETable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new positron-atom
-    Teuchos::RCP<Positronatom>& positronatom =
+    std::shared_ptr<Positronatom>& positronatom =
       d_positronatom_name_map[positronatom_alias];
 
     // Create the new positron-atom
@@ -174,7 +174,7 @@ void PositronatomFactory::createPositronatomFromNativeTable(
                               const std::string& positronatom_alias,
                               const std::string& native_file_path,
                               const double atomic_weight,
-                              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                              const std::shared_ptr<AtomicRelaxationModelFactory>&
                               atomic_relaxation_model_factory,
                               const SimulationProperties& properties )
 {
@@ -190,7 +190,7 @@ void PositronatomFactory::createPositronatomFromNativeTable(
       data_container( native_file_path );
 
     // Create the atomic relaxation model
-    Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
+    std::shared_ptr<AtomicRelaxationModel> atomic_relaxation_model;
 
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
                              data_container,
@@ -200,7 +200,7 @@ void PositronatomFactory::createPositronatomFromNativeTable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new positron-atom
-    Teuchos::RCP<Positronatom>& positronatom =
+    std::shared_ptr<Positronatom>& positronatom =
       d_positronatom_name_map[positronatom_alias];
 
     // Create the new positron-atom

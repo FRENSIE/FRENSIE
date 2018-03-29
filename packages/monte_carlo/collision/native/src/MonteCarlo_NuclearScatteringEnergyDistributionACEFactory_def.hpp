@@ -29,12 +29,12 @@ namespace MonteCarlo{
 template<typename ScatteringDistributionBaseType>
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
         const double atomic_weight_ratio,
-	      const Teuchos::ArrayView<const double>& dlw_block_array,
+	      const Utility::ArrayView<const double>& dlw_block_array,
 		    const unsigned dlw_block_array_start_index,
 		    const std::string& table_name,
 		    const unsigned reaction,
 		    const bool is_cm_distribution,
-		    Teuchos::RCP<ScatteringDistributionBaseType>& distribution )
+		    std::shared_ptr<ScatteringDistributionBaseType>& distribution )
 {
   typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,
@@ -52,14 +52,14 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[0] != 0,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << " in ACE table "
+		      "MT# " << reaction << " in ACE table "
 		      << table_name << " has multiple interpolation schemes "
 		      " with it, which is not currently supported!\n" );
   
   // Verify that it is law 44
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 44,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << " in ACE table "
+		      "MT# " << reaction << " in ACE table "
 		      << table_name << " should be law 44!\n" );
 
   // Start index for ldat data
@@ -68,7 +68,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << " in ACE table "
+		      "MT# " << reaction << " in ACE table "
 		      << table_name << " has multiple interpolation schemes "
 		      " with it, which is not currently supported!\n" );
 
@@ -76,12 +76,12 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  Teuchos::Array<double> incoming_energies_array =
+  std::vector<double> incoming_energies_array =
     dlw_block_array( ldat_start_index + 2,
 		     incoming_energies);
 
   // Array of distribution locations
-  Teuchos::Array<double> distribution_locations =
+  std::vector<double> distribution_locations =
     dlw_block_array( ldat_start_index + 2 + incoming_energies,
 		     incoming_energies);
 
@@ -106,22 +106,22 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
     // Check if discrete lines are present
     TEST_FOR_EXCEPTION( interpolation_flag > 10,
 		        std::runtime_error,
-		        "Error: MT# " << reaction << " in ACE table "
+		        "MT# " << reaction << " in ACE table "
 		        << table_name << " has discrete lines in continuous"
 		        " tabular data, which is not currently supported!\n" );
 
     int number_points_distribution = dlw_block_array[distribution_index + 1];
 
-    Teuchos::ArrayView<const double> outgoing_energy_grid =
+    Utility::ArrayView<const double> outgoing_energy_grid =
       dlw_block_array( distribution_index + 2, number_points_distribution );
 
-    Teuchos::ArrayView<const double> pdf;
+    Utility::ArrayView<const double> pdf;
 
-    Teuchos::ArrayView<const double> R_array =
+    Utility::ArrayView<const double> R_array =
       dlw_block_array( distribution_index + 2 + number_points_distribution*3,
 		       number_points_distribution );
 
-    Teuchos::ArrayView<const double> A_array =
+    Utility::ArrayView<const double> A_array =
       dlw_block_array( distribution_index + 2 + number_points_distribution*4,
 		       number_points_distribution );
 
@@ -170,7 +170,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
     }
   }
 
-  Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_out_distribution;
+  std::shared_ptr<NuclearScatteringEnergyDistribution> energy_out_distribution;
 
   energy_out_distribution.reset(
       new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
@@ -198,12 +198,12 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 template<typename ScatteringDistributionBaseType>
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
         const double atomic_weight_ratio,
-	      const Teuchos::ArrayView<const double>& dlw_block_array,
+	      const Utility::ArrayView<const double>& dlw_block_array,
 		    const unsigned dlw_block_array_start_index,
 		    const std::string& table_name,
 		    const unsigned reaction,
 		    const bool is_cm_distribution,
-		      Teuchos::RCP<ScatteringDistributionBaseType>& distribution )
+		      std::shared_ptr<ScatteringDistributionBaseType>& distribution )
 {
   typedef AceLaw61NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,
@@ -221,14 +221,14 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[0] != 0,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << " in ACE table "
+		      "MT# " << reaction << " in ACE table "
 		      << table_name << " has multiple interpolation schemes "
 		      " with it, which is not currently supported!\n" );
 
   // Verify that it is law 61
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 61,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << " in ACE table "
+		      "MT# " << reaction << " in ACE table "
 		      << table_name << " should be law 61!\n" );
 
   // Start index for ldat data
@@ -237,7 +237,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
   // Verify that only one interpolation scheme is present
   TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << " in ACE table "
+		      "MT# " << reaction << " in ACE table "
 		      << table_name << " has multiple interpolation schemes "
 		      " with it, which is not currently supported!\n" );
 
@@ -245,12 +245,12 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  Teuchos::Array<double> incoming_energies_array = 
+  std::vector<double> incoming_energies_array = 
     dlw_block_array( ldat_start_index + 2,
 		     incoming_energies);
 
   // Array of distribution locations
-  Teuchos::Array<double> distribution_locations = 
+  std::vector<double> distribution_locations = 
     dlw_block_array( ldat_start_index + 2 + incoming_energies,
 		     incoming_energies); 
 
@@ -275,23 +275,23 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
     // Check if discrete lines are present 
     TEST_FOR_EXCEPTION( interpolation_flag > 10,
 	          std::runtime_error,
-	          "Error: MT# " << reaction << " in ACE table "
+	          "MT# " << reaction << " in ACE table "
 	          << table_name << " has discrete lines in continuous"
 	          " tabular data, which is not currently supported!\n" );
 
     int number_points_distribution = dlw_block_array[distribution_index + 1];
 
-    Teuchos::ArrayView<const double> outgoing_energy_grid = 
+    Utility::ArrayView<const double> outgoing_energy_grid = 
       dlw_block_array( distribution_index + 2, number_points_distribution );
 
-    Teuchos::ArrayView<const double> pdf;
+    Utility::ArrayView<const double> pdf;
 
-    Teuchos::ArrayView<const double> angle_locations_array = 
+    Utility::ArrayView<const double> angle_locations_array = 
       dlw_block_array( distribution_index + 2 + number_points_distribution*3,
 	         number_points_distribution );
 	         
 	  // Array of angular distributions
-	  Teuchos::Array< Teuchos::RCP<Utility::OneDDistribution> > 
+	  std::vector<std::shared_ptr<Utility::OneDDistribution> > 
 	    cosine_arrays( number_points_distribution );
 
     // Read over the tabular angular data
@@ -310,10 +310,10 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
         // Number of angles in the distribution
         int number_of_angles = dlw_block_array[ angular_data_loc ];
         
-        Teuchos::ArrayView<const double> cosines = dlw_block_array(
+        Utility::ArrayView<const double> cosines = dlw_block_array(
           angular_data_loc + 1, number_of_angles );
           
-        Teuchos::ArrayView<const double> angle_pdf;
+        Utility::ArrayView<const double> angle_pdf;
         
         if( angle_interpolation_flag == 1 ) // Histogram 
         {
@@ -338,7 +338,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
         }
         else
         {
-          THROW_EXCEPTION( std::runtime_error, "Error: interpolation flag for "
+          THROW_EXCEPTION( std::runtime_error, "interpolation flag for "
             "Ace Law 61 was found to be " << angle_interpolation_flag <<
             " which does not correspond to histogram or lin-lin "
             "interpolation." );
@@ -392,7 +392,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
     } 
   }
   
-  Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_out_distribution; 
+  std::shared_ptr<NuclearScatteringEnergyDistribution> energy_out_distribution; 
 
   energy_out_distribution.reset( 
       new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );

@@ -13,10 +13,6 @@
 #include <stdexcept>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ParameterList.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"

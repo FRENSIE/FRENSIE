@@ -21,10 +21,10 @@ namespace MonteCarlo{
  */
 template<typename FissionNeutronMultiplicityDistributionPolicy>
 PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::PartialFissionNeutronMultiplicityDistribution(
-				 const Teuchos::RCP<Utility::OneDDistribution>&
-				 first_multiplicity_distribution,
-				 const Teuchos::RCP<Utility::OneDDistribution>&
-				 second_multiplicity_distribution )
+			      const std::shared_ptr<Utility::OneDDistribution>&
+                              first_multiplicity_distribution,
+                              const std::shared_ptr<Utility::OneDDistribution>&
+                              second_multiplicity_distribution )
   : d_first_multiplicity_distribution( first_multiplicity_distribution ),
     d_second_multiplicity_distribution( second_multiplicity_distribution )
 {

@@ -28,11 +28,11 @@ template<typename IncomingParticleType,
 AceLaw44NuclearScatteringDistribution<IncomingParticleType,
 				      OutgoingParticleType,
 				      SystemConversionPolicy>::AceLaw44NuclearScatteringDistribution(
-                   const double atomic_weight_ratio,
-		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
-		   energy_scattering_distribution,
-		   const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
-		   ar_distributions )
+             const double atomic_weight_ratio,
+             const std::shared_ptr<const NuclearScatteringEnergyDistribution>&
+             energy_scattering_distribution,
+             const std::vector<std::shared_ptr<const AceLaw44ARDistribution> >&
+             ar_distributions )
   : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),
      d_ar_distributions( ar_distributions )

@@ -23,10 +23,10 @@ namespace MonteCarlo{
 // Constructor
 DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
        const Data::SubshellType vacancy_subshell,
-       const Teuchos::Array<Data::SubshellType>& primary_transition_vacancy_shells,
-       const Teuchos::Array<Data::SubshellType>& secondary_transition_vacancy_shells,
-       const Teuchos::Array<double>& outgoing_particle_energies,
-       const Teuchos::Array<double>& transition_pdf_or_cdf,
+       const std::vector<Data::SubshellType>& primary_transition_vacancy_shells,
+       const std::vector<Data::SubshellType>& secondary_transition_vacancy_shells,
+       const std::vector<double>& outgoing_particle_energies,
+       const std::vector<double>& transition_pdf_or_cdf,
        const bool interpret_as_cdf )
   : SubshellRelaxationModel( vacancy_subshell ),
     d_transition_distribution(),
@@ -46,7 +46,7 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
 		    primary_transition_vacancy_shells.size() );
 
   // Create the transition distribution
-  Teuchos::Array<double> dummy_indep_values( transition_pdf_or_cdf.size() );
+  std::vector<double> dummy_indep_values( transition_pdf_or_cdf.size() );
 
   d_transition_distribution.reset( new Utility::DiscreteDistribution(
 						         dummy_indep_values,
@@ -121,7 +121,7 @@ void DetailedSubshellRelaxationModel::generateFluorescencePhoton(
   // Make sure the new energy is valid
   testPrecondition( new_photon_energy > 0.0 );
 
-  Teuchos::RCP<ParticleState> fluorescence_photon(
+  std::shared_ptr<ParticleState> fluorescence_photon(
 				     new PhotonState( particle, true, true ) );
 
   // Set the new energy
@@ -148,7 +148,7 @@ void DetailedSubshellRelaxationModel::generateAugerElectron(
   // table
   testPrecondition( new_electron_energy >= 0.0 );
 
-  Teuchos::RCP<ParticleState> auger_electron(
+  std::shared_ptr<ParticleState> auger_electron(
 				   new ElectronState( particle, true, true ) );
 
   // Set the new energy

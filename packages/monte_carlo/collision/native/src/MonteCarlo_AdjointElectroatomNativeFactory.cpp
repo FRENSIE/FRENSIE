@@ -19,17 +19,17 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const SimulationAdjointElectronProperties& properties,
-        Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core )
+        std::shared_ptr<const AdjointElectroatomCore>& adjoint_electroatom_core )
 {
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign(
+  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
+  energy_grid->assign(
     raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
     raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+         new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
                      energy_grid,
                      properties.getNumberOfAdjointElectronHashGridBins() ) );
 
@@ -78,7 +78,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-                       "Error: the 2D interpolation policy "
+                       "the 2D interpolation policy "
                        << electron_interp <<
                        " is not currently supported!" );
     }
@@ -128,7 +128,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-                       "Error: the 2D interpolation policy "
+                       "the 2D interpolation policy "
                        << electron_interp <<
                        " is not currently supported!" );
     }
@@ -183,7 +183,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     else
     {
       THROW_EXCEPTION( std::runtime_error,
-                       "Error: the 2D interpolation policy "
+                       "the 2D interpolation policy "
                        << electron_interp <<
                        " is not currently supported!" );
     }
@@ -210,12 +210,12 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatom(
                     const std::string& adjoint_electroatom_name,
                     const double atomic_weight,
                     const SimulationAdjointElectronProperties& properties,
-                    Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom )
+                    std::shared_ptr<const AdjointElectroatom>& adjoint_electroatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
 
-  Teuchos::RCP<AdjointElectroatomCore> core;
+  std::shared_ptr<const AdjointElectroatomCore> core;
 
   ThisType::createAdjointElectroatomCore( raw_adjoint_electroatom_data,
                                           properties,

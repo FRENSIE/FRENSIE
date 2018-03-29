@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_DOPPLER_BROADENED_HYBRID_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_DOPPLER_BROADENED_HYBRID_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"

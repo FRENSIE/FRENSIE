@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_PHOTOATOM_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_PHOTOATOM_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
@@ -30,18 +30,18 @@ public:
   //! Create a photoatom core (using the provided atomic relaxation model)
   static void createPhotoatomCore(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
          const SimulationPhotonProperties& properties,
-	 Teuchos::RCP<PhotoatomCore>& photoatom_core );
+	 std::shared_ptr<PhotoatomCore>& photoatom_core );
 
   //! Create a photoatom (using the provided atomic relaxation model)
   static void createPhotoatom(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const std::string& photoatom_name,
 	 const double atomic_weight,
-	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
          const SimulationPhotonProperties& properties,
-	 Teuchos::RCP<Photoatom>& photoatom );
+	 std::shared_ptr<Photoatom>& photoatom );
 
 private:
 

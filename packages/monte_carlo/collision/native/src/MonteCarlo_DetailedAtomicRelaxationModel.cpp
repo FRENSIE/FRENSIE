@@ -21,7 +21,7 @@ DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel()
 
 // Constructor
 DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel(
-            const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
+            const std::vector<std::shared_ptr<const SubshellRelaxationModel> >&
 	    subshell_relaxation_models,
             const double min_photon_energy,
             const double min_electron_energy)
@@ -38,7 +38,7 @@ DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel(
 
   for( unsigned i = 0; i < subshell_relaxation_models.size(); ++i )
   {
-    const Teuchos::RCP<const SubshellRelaxationModel>& model =
+    const std::shared_ptr<const SubshellRelaxationModel>& model =
       subshell_relaxation_models[i];
 
     // Neglect duplicate models
@@ -62,7 +62,7 @@ DetailedAtomicRelaxationModel::relaxAtom(
     // Recursively relax subshells
     Data::SubshellType primary_vacancy_shell, secondary_vacancy_shell;
 
-    const Teuchos::RCP<const SubshellRelaxationModel>& model =
+    const std::shared_ptr<const SubshellRelaxationModel>& model =
       d_subshell_relaxation_models.find( vacancy_shell )->second;
 
     model->relaxSubshell( particle,

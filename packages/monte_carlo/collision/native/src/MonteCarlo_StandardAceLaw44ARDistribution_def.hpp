@@ -17,9 +17,9 @@ namespace MonteCarlo{
 // Constructor
 template<typename AceLaw44InterpolationPolicy>
 StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::StandardAceLaw44ARDistribution(
-		   const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-		   const Teuchos::ArrayView<const double>& A_array,
-		   const Teuchos::ArrayView<const double>& R_array )
+		   const Utility::ArrayView<const double>& outgoing_energy_grid,
+		   const Utility::ArrayView<const double>& A_array,
+		   const Utility::ArrayView<const double>& R_array )
   : AceLaw44ARDistribution( outgoing_energy_grid, A_array, R_array )
 { /* ... */ }
 

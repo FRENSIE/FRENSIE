@@ -19,6 +19,7 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_AtomicMomentumUnit.hpp"
 #include "Utility_InverseAtomicMomentumUnit.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -33,7 +34,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 		  const bool use_full_profile )
 {
   // Create the subshell order array
-  Teuchos::Array<Data::SubshellType> subshell_order;
+  std::vector<Data::SubshellType> subshell_order;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 							    raw_photoatom_data,
@@ -104,7 +105,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 		  const bool use_full_profile )
 {
   // Create the subshell order array
-  Teuchos::Array<Data::SubshellType> subshell_order;
+  std::vector<Data::SubshellType> subshell_order;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 							    raw_photoatom_data,
@@ -182,7 +183,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
-		      "Error: the requested endf subshell " <<
+		      "the requested endf subshell " <<
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile subshell converter
@@ -199,24 +200,24 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
     compton_index = converter->convertSubshellToIndex( subshell );
   }
   EXCEPTION_CATCH_RETHROW( std::logic_error,
-			   "Error: the requested endf subshell "
+			   "the requested endf subshell "
 			   << endf_subshell << " is invalid!" );
 
   // Extract the Compton profile
-  Teuchos::ArrayView<const double> lswd_block =
+  Utility::ArrayView<const double> lswd_block =
     raw_photoatom_data.extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block =
+  Utility::ArrayView<const double> swd_block =
     raw_photoatom_data.extractSWDBlock();
 
   unsigned subshell_index = lswd_block[compton_index];
 
   unsigned num_momentum_points = swd_block[subshell_index];
 
-  Teuchos::Array<double> half_momentum_grid(
+  std::vector<double> half_momentum_grid(
 			swd_block( subshell_index + 1, num_momentum_points ) );
 
-  Teuchos::Array<double> half_profile(
+  std::vector<double> half_profile(
                            swd_block( subshell_index + 1 + num_momentum_points,
 				      num_momentum_points ) );
 
@@ -272,9 +273,9 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 void
 DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::Array<Data::SubshellType>& subshell_order )
+			   std::vector<Data::SubshellType>& subshell_order )
 {
-  Teuchos::ArrayView<const double> subshell_endf_designators =
+  Utility::ArrayView<const double> subshell_endf_designators =
     raw_photoatom_data.extractSubshellENDFDesignators();
 
   subshell_order.resize( subshell_endf_designators.size() );
@@ -293,10 +294,10 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileArr
 	 CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
          compton_profiles )
 {
-  Teuchos::ArrayView<const double> lswd_block =
+  Utility::ArrayView<const double> lswd_block =
     raw_photoatom_data.extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block =
+  Utility::ArrayView<const double> swd_block =
     raw_photoatom_data.extractSWDBlock();
 
   compton_profiles.resize( lswd_block.size() );
@@ -307,10 +308,10 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileArr
 
     unsigned num_momentum_points = swd_block[subshell_index];
 
-    Teuchos::Array<double> half_momentum_grid(
+    std::vector<double> half_momentum_grid(
 			swd_block( subshell_index + 1, num_momentum_points ) );
 
-    Teuchos::Array<double> half_profile(
+    std::vector<double> half_profile(
                            swd_block( subshell_index + 1 + num_momentum_points,
 				      num_momentum_points ) );
 
@@ -324,8 +325,8 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileArr
 
 // Create the Compton profile distribution
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
-		       Teuchos::Array<double>& raw_half_momentum_grid,
-                       Teuchos::Array<double>& raw_half_profile,
+		       std::vector<double>& raw_half_momentum_grid,
+                       std::vector<double>& raw_half_profile,
                        const bool use_full_profile,
                        std::shared_ptr<const ComptonProfile>& compton_profile )
 {
@@ -338,7 +339,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
 
   if( use_full_profile )
   {
-    Teuchos::Array<double> full_momentum_grid, full_profile;
+    std::vector<double> full_momentum_grid, full_profile;
 
     MonteCarlo::createFullProfileFromHalfProfile( raw_half_momentum_grid.begin(),
 						  raw_half_momentum_grid.end(),

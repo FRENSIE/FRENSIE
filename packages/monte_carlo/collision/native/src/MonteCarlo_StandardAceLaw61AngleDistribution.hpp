@@ -25,8 +25,8 @@ public:
 
   //! Constructor
   StandardAceLaw61AngleDistribution( 
-    const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-    const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& cosine_distributions );
+    const Utility::ArrayView<const double>& outgoing_energy_grid,
+    const std::vector<std::shared_ptr<Utility::OneDDistribution> >& cosine_distributions );
     
   //! Destructor
   virtual ~StandardAceLaw61AngleDistribution()
@@ -34,7 +34,7 @@ public:
   
   //! Sample the coupled outgoing angle from the distribution
   double sampleCoupledAngle( const unsigned outgoing_index,
-                             const double energy_prime ) const;
+                             const double energy_prime ) const override;
               
 };
 

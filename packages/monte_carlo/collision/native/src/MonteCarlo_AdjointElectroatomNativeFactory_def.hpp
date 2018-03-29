@@ -22,10 +22,10 @@ namespace MonteCarlo{
 template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
         const SimulationAdjointElectronProperties& properties,
-        std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+        std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
         AdjointElectroatom::ReactionMap& scattering_reactions )
 {
   // Get the elastic distribution type
@@ -129,7 +129,7 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: elastic distribution type "
+                     "elastic distribution type "
                      << distribution_type <<
                      " is not currently supported!" );
   }

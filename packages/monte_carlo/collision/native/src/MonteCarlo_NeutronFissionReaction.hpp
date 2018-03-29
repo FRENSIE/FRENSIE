@@ -15,39 +15,40 @@
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The neutron fission reaction base class
 class NeutronFissionReaction : public NuclearReaction
 {
-
-private:
-
-  // Teuchos ScalarTraits typedef
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
+  //! The scattering distribution type
+  typedef NuclearScatteringDistribution<NeutronState,NeutronState> ScatteringDistribution;
+
   //! Constructor
   NeutronFissionReaction(
-		   const NuclearReactionType reaction_type,
-		   const double temperature,
-		   const double q_value,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
-		   fission_neutron_multiplicity_distribution,
-		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
-		   prompt_neutron_emission_distribution );
+       const NuclearReactionType reaction_type,
+       const double temperature,
+       const double q_value,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
+       fission_neutron_multiplicity_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       prompt_neutron_emission_distribution );
 
   //! Destructor
   virtual ~NeutronFissionReaction()
   { /* ... */ }
 
   //! Return the number of neutrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedNeutrons( const double energy ) const;
+  unsigned getNumberOfEmittedNeutrons( const double energy ) const override;
 
   //! Return the number of prompt neutrons emitted from the rxn
   unsigned getNumberOfPromptNeutrons( const double energy ) const;
@@ -56,7 +57,7 @@ public:
   unsigned getNumberOfDelayedNeutrons( const double energy ) const;
 
   //! Return the average number of neutrons emitted from the rxn
-  double getAverageNumberOfEmittedNeutrons( const double energy ) const;
+  double getAverageNumberOfEmittedNeutrons( const double energy ) const override;
 
   //! Return the average number of prompt neutrons emitted from the rxn
   double getAverageNumberOfPromptNeutrons( const double energy ) const;
@@ -65,7 +66,7 @@ public:
   double getAverageNumberOfDelayedNeutrons( const double energy ) const;
 
   //! Simulate the reaction
-  virtual void react( NeutronState& neutron, ParticleBank& bank ) const;
+  virtual void react( NeutronState& neutron, ParticleBank& bank ) const override;
 
 protected:
 
@@ -77,11 +78,11 @@ protected:
 private:
 
   // The fission neutron multiplicity distribution (prompt, delayed, total nu)
-  Teuchos::RCP<FissionNeutronMultiplicityDistribution>
+  std::shared_ptr<const FissionNeutronMultiplicityDistribution>
   d_fission_neutron_multiplicity_distribution;
 
   // The prompt neutron scattering distribution
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >
   d_prompt_neutron_emission_distribution;
 };
 

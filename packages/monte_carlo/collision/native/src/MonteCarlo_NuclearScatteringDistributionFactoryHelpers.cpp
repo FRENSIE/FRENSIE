@@ -14,9 +14,9 @@ namespace MonteCarlo{
 
 // Calculate the AND/DLW block distribution array sizes
 void calculateDistArraySizes(
-                     const Teuchos::ArrayView<const double>& location_block,
-		     const Teuchos::ArrayView<const double>& data_block,
-                     Teuchos::Array<unsigned>& dist_array_sizes )
+                     const Utility::ArrayView<const double>& location_block,
+		     const Utility::ArrayView<const double>& data_block,
+                     std::vector<unsigned>& dist_array_sizes )
 {
   unsigned first_index = 0, second_index = 1;
 

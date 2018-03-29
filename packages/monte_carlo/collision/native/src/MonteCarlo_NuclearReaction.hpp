@@ -9,33 +9,35 @@
 #ifndef MONTE_CARLO_NUCLEAR_REACTION_HPP
 #define MONTE_CARLO_NUCLEAR_REACTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The nuclear reaction base class
 class NuclearReaction
 {
-
-private:
-
-  // Teuchos ScalarTraits typedef
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Constructor
-  NuclearReaction( const NuclearReactionType reaction_type,
-		   const double temperature,
-		   const double q_value,
-		   const unsigned threshold_energy_index,
-	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section );
+  NuclearReaction(
+       const NuclearReactionType reaction_type,
+       const double temperature,
+       const double q_value,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section );
 
   //! Destructor
   virtual ~NuclearReaction()
@@ -86,10 +88,10 @@ private:
   unsigned d_threshold_energy_index;
 
   // The incoming energy grid
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+  std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
 
   // The cross section values evaluated on the incoming energy grid
-  Teuchos::ArrayRCP<const double> d_cross_section;
+  std::shared_ptr<const std::vector<double> > d_cross_section;
 };
 
 // Return the temperature (in MeV) at which the reaction occurs

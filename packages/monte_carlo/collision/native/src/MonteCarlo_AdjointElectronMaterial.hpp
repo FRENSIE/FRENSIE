@@ -11,33 +11,28 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_AdjointElectroatom.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The adjoint electron material class
 class AdjointElectronMaterial
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Typedef for adjoint electroatom name map
-  typedef std::unordered_map<std::string,Teuchos::RCP<AdjointElectroatom> >
+  typedef std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >
   AdjointElectroatomNameMap;
 
   //! Constructor
@@ -45,8 +40,8 @@ public:
                 const ModuleTraits::InternalMaterialHandle id,
                 const double density,
                 const AdjointElectroatomNameMap& electroatom_name_map,
-                const Teuchos::Array<double>& adjoint_electroatom_fractions,
-                const Teuchos::Array<std::string>& adjoint_electroatom_names );
+                const std::vector<double>& adjoint_electroatom_fractions,
+                const std::vector<std::string>& adjoint_electroatom_names );
 
   //! Destructor
   ~AdjointElectronMaterial()
@@ -100,7 +95,7 @@ private:
 
   // Get the atomic weight from an atom pointer
   static double getAtomicWeight(
-        const Utility::Pair<double,Teuchos::RCP<const AdjointElectroatom> >& pair );
+        const std::pair<double,std::shared_ptr<const AdjointElectroatom> >& pair );
 
   // Sample the atom that is collided with
   unsigned sampleCollisionAtom( const double energy ) const;
@@ -112,7 +107,7 @@ private:
   double d_number_density;
 
   // The atoms that make up the material
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const AdjointElectroatom> > >
+  std::vector<std::pair<double,std::shared_ptr<const AdjointElectroatom> > >
   d_atoms;
 };
 

@@ -11,10 +11,7 @@
 
 // Std Lib Includes
 #include <stdexcept>
-
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ParameterList.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"

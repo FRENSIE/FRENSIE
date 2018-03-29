@@ -16,13 +16,13 @@ namespace MonteCarlo{
 // Constructor
 template<typename OutgoingParticleType>
 CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::CrossSectionBasedPhotonuclearProductionReaction(
-		   const PhotonuclearReactionType reaction_type,
-		   const Teuchos::Array<unsigned>& photon_production_ids,
-      		   const double q_value,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-                   const Teuchos::Array<Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
+       const PhotonuclearReactionType reaction_type,
+       const std::vector<unsigned>& photon_production_ids,
+       const double q_value,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
 		   outgoing_particle_distributions )
   : PhotonuclearReaction( reaction_type,
 			  q_value,
@@ -41,7 +41,7 @@ CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::CrossSect
 
 // Return the photon production ids
 template<typename OutgoingParticleType>
-const Teuchos::Array<unsigned>& CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::getPhotonProductionIds() const
+const std::vector<unsigned>& CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::getPhotonProductionIds() const
 {
   return d_photon_production_ids;
 }
@@ -65,7 +65,7 @@ void CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::reac
   // Create the additional particles
   for( unsigned i = 0; i < d_photon_production_ids.size(); ++i )
   {
-    Teuchos::RCP<OutgoingParticleType> new_particle(
+    std::shared_ptr<OutgoingParticleType> new_particle(
 			      new OutgoingParticleType( photon, true, true ) );
 
     d_outgoing_particle_distributions[i]->scatterParticle( photon,

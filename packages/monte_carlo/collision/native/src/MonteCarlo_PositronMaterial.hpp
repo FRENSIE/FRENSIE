@@ -12,38 +12,33 @@
 // Std Lib Includes
 #include <unordered_map>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_Positronatom.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The positron material class
 class PositronMaterial
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Typedef for positron-atom name map
-  typedef std::unordered_map<std::string,Teuchos::RCP<Positronatom> >
+  typedef std::unordered_map<std::string,std::shared_ptr<Positronatom> >
   PositronatomNameMap;
 
   //! Constructor
   PositronMaterial( const ModuleTraits::InternalMaterialHandle id,
                     const double density,
                     const PositronatomNameMap& positronatom_name_map,
-                    const Teuchos::Array<double>& positronatom_fractions,
-                    const Teuchos::Array<std::string>& positronatom_names );
+                    const std::vector<double>& positronatom_fractions,
+                    const std::vector<std::string>& positronatom_names );
 
   //! Destructor
   ~PositronMaterial()
@@ -79,7 +74,7 @@ private:
 
   // Get the atomic weight from an atom pointer
   static double getAtomicWeight(
-        const Utility::Pair<double,Teuchos::RCP<const Positronatom> >& pair );
+        const std::pair<double,std::shared_ptr<const Positronatom> >& pair );
 
   // Sample the atom that is collided with
   unsigned sampleCollisionAtom( const double energy ) const;
@@ -91,7 +86,7 @@ private:
   double d_number_density;
 
   // The atoms that make up the material
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Positronatom> > >
+  std::vector<std::pair<double,std::shared_ptr<const Positronatom> > >
   d_atoms;
 };
 

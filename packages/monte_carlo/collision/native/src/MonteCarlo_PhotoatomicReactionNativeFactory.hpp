@@ -9,15 +9,15 @@
 #ifndef MONTE_CARLO_PHOTOATOMIC_REACTION_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_PHOTOATOMIC_REACTION_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -30,9 +30,9 @@ public:
   //! Create the incoherent photoatomic reaction(s)
   static void createIncoherentReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::vector<std::shared_ptr<PhotoatomicReaction> >&
        incoherent_reactions,
        const IncoherentModelType incoherent_model,
        const double kahn_sampling_cutoff_energy );
@@ -40,47 +40,47 @@ public:
   //! Create the coherent scattering photoatomic reaction
   static void createCoherentReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& coherent_reaction );
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& coherent_reaction );
 
   //! Create the pair production photoatomic reaction
   static void createPairProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& pair_production_reaction,
        const bool use_detailed_pair_production_data );
 
   //! Create the triplet production photoatomic reaction
   static void createTripletProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& triplet_production_reaction,
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& triplet_production_reaction,
        const bool use_detailed_triplet_production_data );
 
   //! Create the total photoelectric photoatomic reaction
   static void createTotalPhotoelectricReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction );
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& photoelectric_reaction );
 
   //! Create the subshell photoelectric photoatomic reactions
   static void createSubshellPhotoelectricReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::vector<std::shared_ptr<PhotoatomicReaction> >&
        subshell_photoelectric_reactions );
 
   //! Create the heating photoatomic reaction
   static void createHeatingReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& heating_reaction );
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& heating_reaction );
 
 private:
 

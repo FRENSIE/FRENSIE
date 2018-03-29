@@ -18,12 +18,12 @@ namespace MonteCarlo{
 
 // Constructor
 NuclearReaction::NuclearReaction(
-		   const NuclearReactionType reaction_type,
-		   const double temperature,
-		   const double q_value,
-		   const unsigned threshold_energy_index,
-	     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section)
+       const NuclearReactionType reaction_type,
+       const double temperature,
+       const double q_value,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section)
   : d_reaction_type( reaction_type ),
     d_temperature( temperature ),
     d_q_value( q_value ),
@@ -32,9 +32,9 @@ NuclearReaction::NuclearReaction(
     d_cross_section( cross_section )
 {
   // Make sure the Q value is valid
-  testPrecondition( !ST::isnaninf( q_value ) );
+  testPrecondition( !QT::isnaninf( q_value ) );
   // Make sure the temperature is valid
-  testPrecondition( !ST::isnaninf( temperature ) );
+  testPrecondition( !QT::isnaninf( temperature ) );
   // Make sure the threshold energy index is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the incoming energy grid is valid
@@ -62,9 +62,9 @@ double NuclearReaction::getQValue() const
 double NuclearReaction::getCrossSection( const double energy ) const
 {
   return MonteCarlo::getCrossSection( energy,
-                          d_incoming_energy_grid,
-                          d_cross_section,
-                          d_threshold_energy_index );
+                                      *d_incoming_energy_grid,
+                                      *d_cross_section,
+                                      d_threshold_energy_index );
 }
 
 } // end MonteCarlo namespace

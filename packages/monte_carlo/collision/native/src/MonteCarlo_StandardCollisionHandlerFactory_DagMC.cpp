@@ -31,7 +31,7 @@ void StandardCollisionHandlerFactory<Geometry::DagMC>::validateMaterialIds(
   }
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidDagMCGeometry,
                               InvalidMaterialRepresentation,
-                              "Error: Unable to parse the material ids in "
+                              "Unable to parse the material ids in "
                               "DagMC!" );
 
   MatIdSet::const_iterator dagmc_mat_id_it = dagmc_material_ids.begin();
@@ -42,7 +42,7 @@ void StandardCollisionHandlerFactory<Geometry::DagMC>::validateMaterialIds(
     TEST_FOR_EXCEPTION( material_ids.find( *dagmc_mat_id_it ) ==
 			material_ids.end(),
 			InvalidMaterialRepresentation,
-			"Error: DagMC has requested material number "
+			"DagMC has requested material number "
 			<< *dagmc_mat_id_it << " which is lacking "
 			"a definition!" );
 
@@ -75,7 +75,7 @@ void StandardCollisionHandlerFactory<Geometry::DagMC>::createCellIdDataMaps(
   }
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidDagMCGeometry,
                               InvalidMaterialRepresentation,
-                              "Error: Unable to parse the material ids "
+                              "Unable to parse the material ids "
                               " associated with cells in DagMC!" );
 
   try{
@@ -83,7 +83,7 @@ void StandardCollisionHandlerFactory<Geometry::DagMC>::createCellIdDataMaps(
   }
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidDagMCGeometry,
                               InvalidMaterialRepresentation,
-                              "Error: Unable to parse the cell densities in "
+                              "Unable to parse the cell densities in "
                               "DagMC!" );
 
   CellIdMatIdMap::const_iterator cell_id_mat_id_it =
@@ -95,7 +95,7 @@ void StandardCollisionHandlerFactory<Geometry::DagMC>::createCellIdDataMaps(
     TEST_FOR_EXCEPTION( cell_id_density_map.find( cell_id_mat_id_it->first ) ==
                         cell_id_density_map.end(),
                         InvalidMaterialRepresentation,
-                        "Error: Cell " << cell_id_mat_id_it->first <<
+                        "Cell " << cell_id_mat_id_it->first <<
                         " has a material id assigned in DagMC but not a "
                         "density!" );
 
@@ -110,7 +110,7 @@ void StandardCollisionHandlerFactory<Geometry::DagMC>::createCellIdDataMaps(
     TEST_FOR_EXCEPTION( cell_id_mat_id_map.find( cell_id_density_it->first ) ==
                         cell_id_mat_id_map.end(),
                         InvalidMaterialRepresentation,
-                        "Error: Cell " << cell_id_density_it->first <<
+                        "Cell " << cell_id_density_it->first <<
                         " has a density assigned in DagMC but not a "
                         "material!" );
 

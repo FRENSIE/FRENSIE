@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_LineEnergyAdjointPhotoatomicReaction.hpp"
 #include "Utility_ContractException.hpp"
@@ -132,7 +129,7 @@ void LineEnergyAdjointPhotoatomicReaction::react(
       d_scattering_distribution->getLineEnergy() )
   {
     // Create a clone of the probe particle
-    Teuchos::RCP<AdjointPhotonState> adjoint_photon_clone(
+    std::shared_ptr<AdjointPhotonState> adjoint_photon_clone(
                       new AdjointPhotonState( adjoint_photon, false, false ) );
 
     // Scatter the clone

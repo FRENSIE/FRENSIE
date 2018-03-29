@@ -15,13 +15,14 @@ namespace MonteCarlo{
 
 // Constructor
 DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
-			      const NuclearReactionType base_reaction_type,
-			      const unsigned photon_production_id,
-			      const double temperature,
-		        const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
-			      photon_production_distribution,
-			      const Teuchos::RCP<NuclearReaction>& total_reaction,
-            const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
+          const NuclearReactionType base_reaction_type,
+          const unsigned photon_production_id,
+          const double temperature,
+          const std::shared_ptr<const ScatteringDistribution>&
+          photon_production_distribution,
+          const std::shared_ptr<const NuclearReaction>& total_reaction,
+          const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+          total_mt_yield_array )
   : d_base_reaction_type( base_reaction_type ),
     d_photon_production_id( photon_production_id ),
     d_temperature( temperature ),
@@ -34,7 +35,12 @@ DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
 
   // Make sure the total reaction is valid
   testPrecondition( d_total_neutron_reaction.get() != NULL );
-  testPrecondition( d_total_neutron_reaction->getReactionType() == N__TOTAL_REACTION );
+
+  TEST_FOR_EXCEPTION(
+       d_total_neutron_reaction->getReactionType() != N__TOTAL_REACTION,
+       std::runtime_error,
+       "the total neutron reaction was found to have type " <<
+       d_total_neutron_reaction->getReactionType() << " != 1 ");
 }
 
 // Return the photon production reaction id
@@ -53,12 +59,6 @@ double DecoupledPhotonProductionReaction::getTemperature() const
 double DecoupledPhotonProductionReaction::getTotalCrossSection(
                                                    const double energy ) const
 {
-  TEST_FOR_EXCEPTION(
-       d_total_neutron_reaction->getReactionType() != N__TOTAL_REACTION,
-       std::runtime_error,
-       "Error: the total neutron reaction was found to have type " <<
-       d_total_neutron_reaction->getReactionType() << " != 1 ");
-
   return d_total_neutron_reaction->getCrossSection( energy );
 }
 
@@ -85,17 +85,18 @@ double DecoupledPhotonProductionReaction::getTotalYield(
 
 // Simulate the reaction
 void DecoupledPhotonProductionReaction::react( const NeutronState& neutron,
-				      ParticleBank& bank,
-				      double total_photon_production_cross_section ) const
+                           ParticleBank& bank,
+			   double total_photon_production_cross_section ) const
 {
-  Teuchos::RCP<PhotonState> new_photon(
+  std::shared_ptr<PhotonState> new_photon(
 			   new PhotonState( neutron, true, false ) );
 
-	// Adjust the photon weight as Wp = Wn * (sigma_gamma)/(sigma_total)
-	new_photon->setWeight( (neutron.getWeight()*total_photon_production_cross_section)/(this->getTotalCrossSection( neutron.getEnergy() ) ) );
+  // Adjust the photon weight as Wp = Wn * (sigma_gamma)/(sigma_total)
+  new_photon->setWeight( (neutron.getWeight()*total_photon_production_cross_section)/(this->getTotalCrossSection( neutron.getEnergy() ) ) );
 
-  d_photon_production_distribution->scatterParticle( neutron, *new_photon,
-					this->getTemperature() );
+  d_photon_production_distribution->scatterParticle( neutron,
+                                                     *new_photon,
+                                                     this->getTemperature() );
 
   bank.push( new_photon );
 }

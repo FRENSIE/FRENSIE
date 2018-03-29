@@ -11,19 +11,17 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
 
@@ -38,9 +36,9 @@ public:
   DelayedNeutronEmissionDistributionACEFactory(
 		          const std::string& table_name,
 			  const double atomic_weight_ratio,
-			  const Teuchos::ArrayView<const double>& bdd_block,
-			  const Teuchos::ArrayView<const double>& dnedl_block,
-		          const Teuchos::ArrayView<const double>& dned_block );
+			  const Utility::ArrayView<const double>& bdd_block,
+			  const Utility::ArrayView<const double>& dnedl_block,
+		          const Utility::ArrayView<const double>& dned_block );
 
   //! Destructor
   ~DelayedNeutronEmissionDistributionACEFactory()
@@ -48,20 +46,20 @@ public:
 
   //! Create the delayed neutron emission distribution
   void createEmissionDistribution(
-       Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
+       std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >&
        distribution ) const;
 
 protected:
 
   //! Return the precursor group decay constants
-  const Teuchos::Array<double>& getPrecursorGroupDecayConsts() const;
+  const std::vector<double>& getPrecursorGroupDecayConsts() const;
 
   //! Return the precursor group probability distributions
-  const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
+  const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
   getPrecursorGroupProbDists() const;
 
   //! Return the precursor group emission distributions
-  const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
+  const std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >&
   getPrecursorGroupEmissionDists() const;
 
 private:
@@ -69,27 +67,27 @@ private:
   // Initialize basic delayed neutron data
   void initializeBasicDelayedNeutronData(
 			   const std::string& table_name,
-			   const Teuchos::ArrayView<const double>& bdd_block );
+			   const Utility::ArrayView<const double>& bdd_block );
 
   // Initialize the emission distributions
   void initializeEmissionDistributions(
 			  const std::string& table_name,
 			  const double atomic_weight_ratio,
-			  const Teuchos::ArrayView<const double>& dnedl_block,
-		          const Teuchos::ArrayView<const double>& dned_block );
+			  const Utility::ArrayView<const double>& dnedl_block,
+		          const Utility::ArrayView<const double>& dned_block );
 
   // The atomic weight ratio
   double d_atomic_weight_ratio;
 
   // The precursor group decay constants
-  Teuchos::Array<double> d_precursor_group_decay_consts;
+  std::vector<double> d_precursor_group_decay_consts;
 
   // The precursor group probability distributions
-  Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
+  std::vector<std::shared_ptr<const Utility::OneDDistribution> >
   d_precursor_group_prob_distributions;
 
   // The precursor group emission distributions
-  Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >
+  std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >
   d_precursor_group_emission_distributions;
 };
 

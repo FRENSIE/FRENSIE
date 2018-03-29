@@ -22,9 +22,6 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class PhotoelectricPhotoatomicReaction : public StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
   typedef StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
@@ -32,34 +29,34 @@ public:
 
   //! Basic constructor
   PhotoelectricPhotoatomicReaction(
-		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		const Teuchos::ArrayRCP<const double>& cross_section,
-		const unsigned threshold_energy_index );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index );
 
   //! Constructor
   PhotoelectricPhotoatomicReaction(
-     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-     const Teuchos::ArrayRCP<const double>& cross_section,
+     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+     const std::shared_ptr<const std::vector<double> >& cross_section,
      const unsigned threshold_energy_index,
-     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+     const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   ~PhotoelectricPhotoatomicReaction()
   { /* ... */ }
 
   //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
 
   //! Return the number of electrons emitted from the rxn at the given energy
-  virtual unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  virtual unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
   //! Return the reaction type
-  PhotoatomicReactionType getReactionType() const;
+  PhotoatomicReactionType getReactionType() const override;
 
   //! Simulate the reaction
   virtual void react( PhotonState& photon,
 		      ParticleBank& bank,
-		      Data::SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const override;
 };
 
 } // end MonteCarlo namespace

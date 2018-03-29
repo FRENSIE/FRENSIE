@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "Data_SubshellType.hpp"
@@ -31,7 +27,7 @@ public:
       const Data::SubshellType interaction_subshell,
       const double num_electrons_in_subshell,
       const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+      const std::shared_ptr<const Utility::OneDDistribution>& occupation_number,
       const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
@@ -94,7 +90,7 @@ private:
   double d_binding_energy;
 
   // The occupation number
-  Teuchos::RCP<const Utility::OneDDistribution> d_occupation_number;
+  std::shared_ptr<const Utility::OneDDistribution> d_occupation_number;
 };
 
 } // end MonteCarlo namespace

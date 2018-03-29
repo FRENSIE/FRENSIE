@@ -19,6 +19,7 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_MeCMomentumUnit.hpp"
 #include "Utility_InverseMeCMomentumUnit.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -32,8 +33,8 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 	 doppler_broadened_dist )
 {
   // Extract the binding energies, occupancies and order
-  Teuchos::Array<double> subshell_binding_energies, subshell_occupancies;
-  Teuchos::Array<Data::SubshellType> subshell_order;
+  std::vector<double> subshell_binding_energies, subshell_occupancies;
+  std::vector<Data::SubshellType> subshell_order;
 
   std::set<unsigned>::const_iterator subshell_it =
     raw_photoatom_data.getSubshells().begin();
@@ -60,7 +61,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
     compton_profiles( subshell_order.size() );
 
-  Teuchos::Array<Data::SubshellType> subshell_order_copy = subshell_order;
+  std::vector<Data::SubshellType> subshell_order_copy = subshell_order;
   std::sort( subshell_order_copy.begin(), subshell_order_copy.end() );
 
   for( unsigned i = 0; i < subshell_order_copy.size(); ++i )
@@ -113,7 +114,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
-		      "Error: the requested endf subshell " <<
+		      "the requested endf subshell " <<
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile

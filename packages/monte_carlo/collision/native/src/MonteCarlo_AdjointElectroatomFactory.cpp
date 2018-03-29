@@ -63,7 +63,7 @@ AdjointElectroatomFactory::AdjointElectroatomFactory(
     else
     {
       THROW_EXCEPTION( std::logic_error,
-                       "Error: adjoint electroatomic file type "
+                       "adjoint electroatomic file type "
                        << file_type << " is not supported!" );
     }
 
@@ -78,7 +78,7 @@ AdjointElectroatomFactory::AdjointElectroatomFactory(
 
 // Create the map of adjoint electroatoms
 void AdjointElectroatomFactory::createAdjointElectroatomMap(
-            std::unordered_map<std::string,Teuchos::RCP<AdjointElectroatom> >&
+            std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >&
             adjoint_electroatom_map ) const
 {
   // Reset the adjoint electroatom map
@@ -109,7 +109,7 @@ void AdjointElectroatomFactory::createAdjointElectroatomFromNativeTable(
       data_container( native_file_path );
 
     // Initialize the new adjoint electroatom
-    Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom =
+    std::shared_ptr<const AdjointElectroatom>& adjoint_electroatom =
       d_adjoint_electroatom_name_map[adjoint_electroatom_alias];
 
     // Create the new adjoint electroatom

@@ -52,7 +52,7 @@ Nuclide::setDefaultAbsorptionReactionTypes()
 
 // Set the nuclear reaction types that will be considered as absorption
 void Nuclide::setAbsorptionReactionTypes(
-	 const Teuchos::Array<NuclearReactionType>& absorption_reaction_types )
+	 const std::vector<NuclearReactionType>& absorption_reaction_types )
 {
   Nuclide::absorption_reaction_types.clear();
 
@@ -62,7 +62,7 @@ void Nuclide::setAbsorptionReactionTypes(
 
 // Add nuclear reaction types that will be considered as absorption
 void Nuclide::addAbsorptionReactionTypes(
-	 const Teuchos::Array<NuclearReactionType>& absorption_reaction_types )
+	 const std::vector<NuclearReactionType>& absorption_reaction_types )
 {
   for( unsigned i = 0; i < absorption_reaction_types.size(); ++i )
     Nuclide::absorption_reaction_types.insert( absorption_reaction_types[i] );
@@ -104,7 +104,7 @@ Nuclide::Nuclide( const std::string& name,
 		  const unsigned isomer_number,
 		  const double atomic_weight_ratio,
 		  const double temperature,
-		  const Teuchos::ArrayRCP<double>& energy_grid,
+		  const std::shared_ptr<std::vector<double> >& energy_grid,
 		  const ReactionMap& standard_scattering_reactions,
 		  const ReactionMap& standard_absorption_reactions )
   : d_name( name ),
@@ -329,14 +329,14 @@ void Nuclide::collideSurvivalBias( NeutronState& neutron,
 
 // Calculate the total absorption cross section
 void Nuclide::calculateTotalAbsorptionReaction(
-				 const Teuchos::ArrayRCP<double>& energy_grid )
+		     const std::shared_ptr<std::vector<double> >& energy_grid )
 {
   ConstReactionMap::const_iterator reaction_type_pointer,
     end_reaction_type_pointer;
 
   end_reaction_type_pointer = d_absorption_reactions.end();
 
-  Teuchos::ArrayRCP<double> cross_section( energy_grid.size() );
+  std::shared_ptr<std::vector<double> > cross_section( energy_grid.size() );
 
   // Calculate the absorption cross section
   for( unsigned i = 0; i < energy_grid.size(); ++i )
@@ -366,14 +366,14 @@ void Nuclide::calculateTotalAbsorptionReaction(
 
 // Calculate the total cross section
 void Nuclide::calculateTotalReaction(
-				 const Teuchos::ArrayRCP<double>& energy_grid )
+		     const std::shared_ptr<std::vector<double> >& energy_grid )
 {
   ConstReactionMap::const_iterator reaction_type_pointer,
     end_reaction_type_pointer;
 
   end_reaction_type_pointer = d_scattering_reactions.end();
 
-  Teuchos::ArrayRCP<double> cross_section( energy_grid.size() );
+  std::shared_ptr<std::vector<double> > cross_section( energy_grid.size() );
 
   // Calculate the total cross section
   for( unsigned i = 0; i < energy_grid.size(); ++i )

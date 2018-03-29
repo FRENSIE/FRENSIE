@@ -13,13 +13,11 @@
 // Std Lib Includes
 #include <memory>
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -32,10 +30,10 @@ public:
 
   //! Constructor
   DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-   const Teuchos::Array<double>& endf_subshell_occupancies,
-   const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
-   const Teuchos::Array<double>& old_subshell_binding_energies,
-   const Teuchos::Array<double>& old_subshell_occupancies,
+   const std::vector<double>& endf_subshell_occupancies,
+   const std::vector<Data::SubshellType>& endf_subshell_order,
+   const std::vector<double>& old_subshell_binding_energies,
+   const std::vector<double>& old_subshell_occupancies,
    const std::shared_ptr<const ComptonProfileSubshellConverter>&
    subshell_converter,
    const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
@@ -86,14 +84,14 @@ private:
   unsigned sampleOldInteractionSubshell() const;
 
   // The old subshell interaction probabilities
-  boost::scoped_ptr<const Utility::TabularOneDDistribution>
+  std::unique_ptr<const Utility::TabularOneDDistribution>
   d_old_subshell_occupancy_distribution;
 
   // The old subshell binding energies
-  Teuchos::Array<double> d_old_subshell_binding_energy;
+  std::vector<double> d_old_subshell_binding_energy;
 
   // The old subshell occupancies
-  Teuchos::Array<double> d_old_subshell_occupancies;
+  std::vector<double> d_old_subshell_occupancies;
 
   // The index of the minimum binding energy
   unsigned d_min_binding_energy_index;

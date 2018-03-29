@@ -12,10 +12,6 @@
 // Std Lib Includes
 #include <stdexcept>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ParameterList.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
@@ -23,9 +19,6 @@
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Geometry_Config.hpp"
-
-#ifdef HAVE_FRENSIE_DAGMC
-#include "Geometry_DagMC.hpp"
 
 namespace MonteCarlo{
 

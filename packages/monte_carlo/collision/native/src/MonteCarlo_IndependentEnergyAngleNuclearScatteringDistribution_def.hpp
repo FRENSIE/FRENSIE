@@ -22,11 +22,11 @@ template<typename IncomingParticleType,
 IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 						    OutgoingParticleType,
 						    SystemConversionPolicy>::IndependentEnergyAngleNuclearScatteringDistribution(
-		     const double atomic_weight_ratio,
-		     const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
-		     energy_scattering_distribution,
-		     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
-		     angular_scattering_distribution )
+		   const double atomic_weight_ratio,
+                   const std::shared_ptr<NuclearScatteringEnergyDistribution>&
+                   energy_scattering_distribution,
+                   const std::shared_ptr<NuclearScatteringAngularDistribution>&
+                   angular_scattering_distribution )
   : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
     d_energy_scattering_distribution( energy_scattering_distribution ),
     d_angular_scattering_distribution( angular_scattering_distribution )

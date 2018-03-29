@@ -21,13 +21,13 @@ createScreenedRutherfordElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data )
 {
   // Extract the common energy grid
-  Teuchos::ArrayRCP<double> energy_grid;
+  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
   energy_grid.assign( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
 
@@ -55,13 +55,13 @@ createAtomicExcitationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data )
 {
   // Extract the common energy grid
-  Teuchos::ArrayRCP<double> energy_grid;
+  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
   energy_grid.assign( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
                               energy_grid.size()/10 ) );
 

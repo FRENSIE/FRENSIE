@@ -16,7 +16,7 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const Teuchos::RCP<AtomicRelaxationModel>
+const std::shared_ptr<const AtomicRelaxationModel>
 AtomicRelaxationModelFactory::default_void_model(
                                                new VoidAtomicRelaxationModel );
 
@@ -28,7 +28,7 @@ AtomicRelaxationModelFactory::default_void_model(
  */
 void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+		  std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
                   const double min_photon_energy,
                   const double min_electron_energy,
 		  const bool use_atomic_relaxation_data )
@@ -38,10 +38,10 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
     if( raw_photoatom_data.hasFluorescenceData() )
     {
       // Extract the subshell subshell ENDF designators
-      Teuchos::ArrayView<const double> raw_subshell_endf_designators =
+      Utility::ArrayView<const double> raw_subshell_endf_designators =
 	raw_photoatom_data.extractSubshellENDFDesignators();
 
-      Teuchos::Array<Data::SubshellType>
+      std::vector<Data::SubshellType>
 	subshells( raw_subshell_endf_designators.size() );
 
       for( unsigned i = 0; i < subshells.size(); ++i )
@@ -51,17 +51,17 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
       }
 
       // Extract the number of transitions per subshell vacancy
-      Teuchos::ArrayView<const double> subshell_transitions =
+      Utility::ArrayView<const double> subshell_transitions =
 	raw_photoatom_data.extractSubshellVacancyTransitionPaths();
 
       // Create a subshell transition model for each subshell
-      Teuchos::ArrayView<const double> relo_block =
+      Utility::ArrayView<const double> relo_block =
 	raw_photoatom_data.extractRELOBlock();
 
-      Teuchos::ArrayView<const double> xprob_block =
+      Utility::ArrayView<const double> xprob_block =
 	raw_photoatom_data.extractXPROBBlock();
 
-      Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >
+      std::vector<std::shared_ptr<const SubshellRelaxationModel> >
 	subshell_relaxation_models;
 
       AtomicRelaxationModelFactory::createSubshellRelaxationModels(
@@ -99,7 +99,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
  */
 void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
          const double min_photon_energy,
          const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
@@ -114,7 +114,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
       std::set<unsigned>::const_iterator subshell_it =
 	endf_designators.begin();
 
-      Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >
+      std::vector<std::shared_ptr<const SubshellRelaxationModel> >
 	subshell_relaxation_models;
 
       while( subshell_it != endf_designators.end() )
@@ -124,7 +124,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	  const std::vector<std::pair<unsigned,unsigned> >& transitions =
 	    raw_photoatom_data.getSubshellRelaxationVacancies( *subshell_it );
 
-	  Teuchos::Array<Data::SubshellType> primary_transitions(transitions.size()),
+	  std::vector<Data::SubshellType> primary_transitions(transitions.size()),
 	    secondary_transitions( transitions.size() );
 
 	  for( unsigned i = 0; i < transitions.size(); ++i )
@@ -143,7 +143,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	    raw_photoatom_data.getSubshellRelaxationProbabilities(
 								*subshell_it );
 
-	  Teuchos::RCP<const SubshellRelaxationModel> subshell_model(
+	  std::shared_ptr<const SubshellRelaxationModel> subshell_model(
 	          new DetailedSubshellRelaxationModel(
 	                  Data::convertENDFDesignatorToSubshellEnum( *subshell_it ),
 			   primary_transitions,
@@ -187,7 +187,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
  */
 void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	 const Data::ENDLDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
          const double min_photon_energy,
          const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
@@ -204,7 +204,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
       std::set<unsigned>::const_iterator subshell_it =
 	endf_designators.begin();
 
-      Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >
+      std::vector<std::shared_ptr<const SubshellRelaxationModel> >
 	subshell_relaxation_models;
 
       while( subshell_it != endf_designators.end() )
@@ -214,7 +214,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	  const std::vector<std::pair<unsigned,unsigned> >& transitions =
 	    raw_photoatom_data.getSubshellRelaxationVacancies( *subshell_it );
 
-	  Teuchos::Array<Data::SubshellType> primary_transitions(transitions.size()),
+	  std::vector<Data::SubshellType> primary_transitions(transitions.size()),
 	    secondary_transitions( transitions.size() );
 
 	  for( unsigned i = 0; i < transitions.size(); ++i )
@@ -233,7 +233,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	    raw_photoatom_data.getSubshellRelaxationProbabilities(
 								*subshell_it );
 
-	  Teuchos::RCP<const SubshellRelaxationModel> subshell_model(
+	  std::shared_ptr<const SubshellRelaxationModel> subshell_model(
 	          new DetailedSubshellRelaxationModel(
 	                   Data::convertEADLDesignatorToSubshellEnum( *subshell_it ),
 			   primary_transitions,
@@ -279,7 +279,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
  */
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
                   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+		  std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
                   const double min_photon_energy,
                   const double min_electron_energy,
 		  const bool use_atomic_relaxation_data )
@@ -320,7 +320,7 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
  */
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
          const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
          const double min_photon_energy,
          const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
@@ -362,7 +362,7 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
  */
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
          const Data::ENDLDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
          const double min_photon_energy,
          const double min_electron_energy,
 	 const bool use_atomic_relaxation_data )
@@ -394,11 +394,11 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
 
 // Create the subshell relaxation models
 void AtomicRelaxationModelFactory::createSubshellRelaxationModels(
-		  const Teuchos::Array<Data::SubshellType>& subshell_designators,
-		  const Teuchos::ArrayView<const double>& subshell_transitions,
-		  const Teuchos::ArrayView<const double>& relo_block,
-		  const Teuchos::ArrayView<const double>& xprob_block,
-		  Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
+		  const std::vector<Data::SubshellType>& subshell_designators,
+		  const Utility::ArrayView<const double>& subshell_transitions,
+		  const Utility::ArrayView<const double>& relo_block,
+		  const Utility::ArrayView<const double>& xprob_block,
+		  std::vector<std::shared_ptr<const SubshellRelaxationModel> >&
 		  subshell_relaxation_models )
 {
   // Make sure the arrays are valid
@@ -422,16 +422,16 @@ void AtomicRelaxationModelFactory::createSubshellRelaxationModels(
     {
       // Extract the primary transition shells, secondary transition shells,
       // outgoing particle energies and transition CDF
-      Teuchos::Array<Data::SubshellType>
+      std::vector<Data::SubshellType>
 	primary_transition_subshells( transitions );
 
-      Teuchos::Array<Data::SubshellType>
+      std::vector<Data::SubshellType>
 	secondary_transition_subshells( transitions );
 
-      Teuchos::Array<double>
+      std::vector<double>
 	outgoing_particle_energies( transitions );
 
-      Teuchos::Array<double> transition_cdf( transitions );
+      std::vector<double> transition_cdf( transitions );
 
       for( unsigned j = 0; j < transitions; ++j )
       {
@@ -449,7 +449,7 @@ void AtomicRelaxationModelFactory::createSubshellRelaxationModels(
 	transition_cdf[j] = xprob_block[subshell_data_start+j*4+3];
       }
 
-      Teuchos::RCP<SubshellRelaxationModel> subshell_model(
+      std::shared_ptr<const SubshellRelaxationModel> subshell_model(
 				        new DetailedSubshellRelaxationModel(
 						subshell_designators[i],
 						primary_transition_subshells,

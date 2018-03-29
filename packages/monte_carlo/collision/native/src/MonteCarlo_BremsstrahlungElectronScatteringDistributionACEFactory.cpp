@@ -6,13 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "Utility_TabularCDFDistribution.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -74,23 +73,23 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
     const double evaluation_tol )
 {
   // Extract the bremsstrahlung scattering information data block (BREMI)
-  Teuchos::ArrayView<const double> bremi_block(
+  Utility::ArrayView<const double> bremi_block(
                     raw_electroatom_data.extractBREMIBlock() );
 
   // Extract the number of tabulated distributions
   int N = bremi_block.size()/3;
 
   // Extract the electron energy grid for bremsstrahlung energy distributions
-  Teuchos::Array<double> electron_energy_grid(bremi_block(0,N));
+  std::vector<double> electron_energy_grid(bremi_block(0,N));
 
   // Extract the table lengths for bremsstrahlung energy distributions
-  Teuchos::Array<double> table_length(bremi_block(N,N));
+  std::vector<double> table_length(bremi_block(N,N));
 
   // Extract the offsets for bremsstrahlung energy distributions
-  Teuchos::Array<double> offset(bremi_block(2*N,N));
+  std::vector<double> offset(bremi_block(2*N,N));
 
   // Extract the bremsstrahlung photon energy distributions block (BREME)
-  Teuchos::ArrayView<const double> breme_block =
+  Utility::ArrayView<const double> breme_block =
     raw_electroatom_data.extractBREMEBlock();
 
   // Get the scattering data

@@ -233,7 +233,7 @@ void IncoherentPhotonScatteringDistribution::createEjectedElectron(
   // Create the new electron
   if( electron_energy > 0.0 )
   {
-    Teuchos::RCP<ParticleState> electron(
+    std::shared_ptr<ParticleState> electron(
 				     new ElectronState( photon, true, true ) );
 
     electron->setEnergy( electron_energy );

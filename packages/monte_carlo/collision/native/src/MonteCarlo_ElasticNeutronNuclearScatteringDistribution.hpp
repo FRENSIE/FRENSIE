@@ -9,9 +9,8 @@
 #ifndef MONTE_CARLO_ELASTIC_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ELASTIC_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
@@ -30,10 +29,10 @@ public:
 
   //! Constructor
   ElasticNeutronNuclearScatteringDistribution(
-		     const double atomic_weight_ratio,
-                     const double free_gas_threshold,
-                     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
-		     angular_scattering_distribution );
+             const double atomic_weight_ratio,
+             const double free_gas_threshold,
+             const std::shared_ptr<const NuclearScatteringAngularDistribution>&
+             angular_scattering_distribution );
 
   //! Destructor
   ~ElasticNeutronNuclearScatteringDistribution()
@@ -42,7 +41,7 @@ public:
   //! Randomly scatter the particle
   void scatterParticle( const NeutronState& incoming_particle,
 			NeutronState& outgoing_particle,
-			const double temperature ) const;
+			const double temperature ) const override;
 
 protected:
 
@@ -75,7 +74,7 @@ private:
   double d_free_gas_threshold;
 
   // The incoming energy dependent angular scattering distribution
-  Teuchos::RCP<NuclearScatteringAngularDistribution>
+  std::shared_ptr<const NuclearScatteringAngularDistribution>
   d_angular_scattering_distribution;
 };
 

@@ -17,9 +17,9 @@ namespace MonteCarlo{
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 DecoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::DecoupledElasticAdjointElectroatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> >& total_cross_section,
+      const std::shared_ptr<const std::vector<double> >& sampling_ratios,
       const unsigned threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
@@ -48,7 +48,7 @@ DecoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_sectio
   testPrecondition( analytical_distribution.use_count() > 0 );
 
   // Construct the grid searcher
-  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,processed_cross_section>(
+  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<std::vector<double>,processed_cross_section>(
                             incoming_energy_grid,
                             incoming_energy_grid[0],
                             incoming_energy_grid[incoming_energy_grid.size()-1],
@@ -58,18 +58,19 @@ DecoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_sectio
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 DecoupledElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::DecoupledElasticAdjointElectroatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> >& total_cross_section,
+      const std::shared_ptr<const std::vector<double> >& sampling_ratios,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
             analytical_distribution )
   : BaseType( incoming_energy_grid,
               total_cross_section,
-              threshold_energy_index ),
+              threshold_energy_index,
+              grid_searcher ),
     d_incoming_energy_grid( incoming_energy_grid ),
     d_grid_searcher( grid_searcher ),
     d_threshold_energy_index( threshold_energy_index ),

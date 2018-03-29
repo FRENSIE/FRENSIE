@@ -14,12 +14,12 @@ namespace MonteCarlo{
 
 // Constructor
 NeutronAbsorptionReaction::NeutronAbsorptionReaction(
-		   const NuclearReactionType reaction_type,
-		   const double temperature,
-		   const double q_value,
-		   const unsigned threshold_energy_index,
-	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section )
+       const NuclearReactionType reaction_type,
+       const double temperature,
+       const double q_value,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section )
   : NuclearReaction( reaction_type,
 		     temperature,
 		     q_value,

@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -28,9 +29,9 @@ CollisionHandler::CollisionHandler( const bool analogue_collisions )
 
 // Add a material to the collision handler (neutron-photon mode)
 void CollisionHandler::addMaterial(
-          const Teuchos::RCP<const NeutronMaterial>& neutron_material,
-          const Teuchos::RCP<const PhotonMaterial>& photon_material,
-          const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+          const std::shared_ptr<const NeutronMaterial>& neutron_material,
+          const std::shared_ptr<const PhotonMaterial>& photon_material,
+          const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
           cells_containing_material )
 {
   // Make sure the material pointers are valid
@@ -48,10 +49,10 @@ void CollisionHandler::addMaterial(
 
 // Add a material to the collision handler (photon-electron mode)
 void CollisionHandler::addMaterial(
-              const Teuchos::RCP<const PhotonMaterial>& photon_material,
-              const Teuchos::RCP<const ElectronMaterial>& electron_material,
-              const Teuchos::RCP<const PositronMaterial>& positron_material,
-              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              const std::shared_ptr<const PhotonMaterial>& photon_material,
+              const std::shared_ptr<const ElectronMaterial>& electron_material,
+              const std::shared_ptr<const PositronMaterial>& positron_material,
+              const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
               cells_containing_material )
 {
   // Make sure the material pointers are valid
@@ -73,11 +74,11 @@ void CollisionHandler::addMaterial(
 
 // Add a material to the collision handler (neutron-photon-electron mode)
 void CollisionHandler::addMaterial(
-              const Teuchos::RCP<const NeutronMaterial>& neutron_material,
-              const Teuchos::RCP<const PhotonMaterial>& photon_material,
-              const Teuchos::RCP<const ElectronMaterial>& electron_material,
-              const Teuchos::RCP<const PositronMaterial>& positron_material,
-              const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+              const std::shared_ptr<const NeutronMaterial>& neutron_material,
+              const std::shared_ptr<const PhotonMaterial>& photon_material,
+              const std::shared_ptr<const ElectronMaterial>& electron_material,
+              const std::shared_ptr<const PositronMaterial>& positron_material,
+              const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
               cells_containing_material )
 {
   // Make sure the material pointers are valid
@@ -122,9 +123,15 @@ bool CollisionHandler::isCellVoid(
     return PositronCollisionHandler::isCellVoid( cell );
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: particle type " << particle_type <<
+                     "Particle type " << particle_type <<
                      " is not recognized by the collision handler!" );
   }
+}
+
+// Sample the optical path length traveled by a particle before a collision
+double CollisionHandler::sampleOpticalPathLength() const
+{
+  return -std::log( Utility::RandomNumberGenerator::getRandomNumber<double>() );
 }
 
 } // end MonteCarlo namespace

@@ -19,7 +19,7 @@ Atom<AtomCore>::Atom(
     const std::string& name,
     const unsigned atomic_number,
     const double atomic_weight,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Atom<AtomCore>::ReactionMap& scattering_reactions,
     const Atom<AtomCore>::ReactionMap& absorption_reactions )
   : d_name( name ),

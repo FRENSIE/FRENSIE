@@ -17,9 +17,9 @@ AdjointPhotoatom::AdjointPhotoatom(
                       const std::string& name,
                       const unsigned atomic_number,
                       const double atomic_weight,
-                      const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
+                      const std::shared_ptr<const Utility::HashBasedGridSearcher>&
                       grid_searcher,
-                      const Teuchos::ArrayRCP<const double>&
+                      const std::shared_ptr<const std::vector<double> >&
                       critical_line_energies,
                       const std::shared_ptr<const PhotoatomicReaction>&
                       total_forward_reaction,

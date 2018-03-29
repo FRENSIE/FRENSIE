@@ -16,9 +16,9 @@ namespace MonteCarlo{
 
 // Create a Klein-Nishina distribution
 void IncoherentPhotonScatteringDistributionFactory::createKleinNishinaDistribution(
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-		    incoherent_distribution,
-		    const double kahn_sampling_cutoff_energy )
+                 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
+                 incoherent_distribution,
+                 const double kahn_sampling_cutoff_energy )
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=

@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistributionFactory.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"

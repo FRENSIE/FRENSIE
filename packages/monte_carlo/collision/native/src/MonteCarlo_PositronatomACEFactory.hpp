@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_POSITRONATOM_ACE_FACTORY_HPP
 #define MONTE_CARLO_POSITRONATOM_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_Positronatom.hpp"
@@ -29,19 +29,19 @@ public:
 
   //! Create a positron-atom core (using the provided atomic relaxation model)
   static void createPositronatomCore(
-            const Data::XSSEPRDataExtractor& raw_positronatom_data,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-            const SimulationElectronProperties& properties,
-            Teuchos::RCP<PositronatomCore>& positronatom_core );
+         const Data::XSSEPRDataExtractor& raw_positronatom_data,
+         const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+         const SimulationElectronProperties& properties,
+         std::shared_ptr<PositronatomCore>& positronatom_core );
 
   //! Create a positron-atom (using the provided atomic relaxation model)
   static void createPositronatom(
-            const Data::XSSEPRDataExtractor& raw_positronatom_data,
-            const std::string& positronatom_name,
-            const double atomic_weight,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-            const SimulationElectronProperties& properties,
-            Teuchos::RCP<Positronatom>& positronatom );
+         const Data::XSSEPRDataExtractor& raw_positronatom_data,
+         const std::string& positronatom_name,
+         const double atomic_weight,
+         const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+         const SimulationElectronProperties& properties,
+         std::shared_ptr<Positronatom>& positronatom );
 
 private:
 

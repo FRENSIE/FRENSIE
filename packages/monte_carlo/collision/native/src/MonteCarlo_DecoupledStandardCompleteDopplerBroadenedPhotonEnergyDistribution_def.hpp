@@ -32,10 +32,10 @@ namespace MonteCarlo{
  */
 template<typename ComptonProfilePolicy>
 DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-   const Teuchos::Array<double>& endf_subshell_occupancies,
-   const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
-   const Teuchos::Array<double>& old_subshell_binding_energies,
-   const Teuchos::Array<double>& old_subshell_occupancies,
+   const std::vector<double>& endf_subshell_occupancies,
+   const std::vector<Data::SubshellType>& endf_subshell_order,
+   const std::vector<double>& old_subshell_binding_energies,
+   const std::vector<double>& old_subshell_occupancies,
    const std::shared_ptr<const ComptonProfileSubshellConverter>&
    subshell_converter,
    const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
@@ -59,14 +59,14 @@ DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 		    old_subshell_binding_energies.size() );
 
   // Create the old subshell interaction distribution
-  Teuchos::Array<double> dummy_indep_vals( old_subshell_occupancies.size() );
+  std::vector<double> dummy_indep_vals( old_subshell_occupancies.size() );
 
   d_old_subshell_occupancy_distribution.reset(
 	       new Utility::DiscreteDistribution( dummy_indep_vals,
 					          old_subshell_occupancies ) );
 
   // Calculate the min binding energy index
-  Teuchos::Array<double>::iterator min_binding_energy_it =
+  std::vector<double>::iterator min_binding_energy_it =
     std::min_element( d_old_subshell_binding_energy.begin(),
                       d_old_subshell_binding_energy.end() );
 

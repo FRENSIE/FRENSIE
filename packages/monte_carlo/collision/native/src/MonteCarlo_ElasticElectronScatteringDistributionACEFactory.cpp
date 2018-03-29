@@ -6,13 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_TabularCDFDistribution.hpp"
 #include "Utility_ElasticTwoDDistribution.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -59,7 +58,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
             scattering_function )
 {
   // Extract the elastic scattering information data block (ELASI)
-  Teuchos::ArrayView<const double> elasi_block(
+  Utility::ArrayView<const double> elasi_block(
                      raw_electroatom_data.extractELASIBlock() );
 
   // Get the size of the angular energy grid
@@ -69,16 +68,16 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   Utility::FullyTabularTwoDDistribution::DistributionType function_data(size);
 
   // Extract the energy grid for elastic scattering angular distributions
-  Teuchos::Array<double> angular_energy_grid(elasi_block(0,size));
+  std::vector<double> angular_energy_grid(elasi_block(0,size));
 
   // Extract the table lengths for elastic scattering angular distributions
-  Teuchos::Array<double> table_length(elasi_block(size,size));
+  std::vector<double> table_length(elasi_block(size,size));
 
   // Extract the offsets for elastic scattering angular distributions
-  Teuchos::Array<double> offset(elasi_block(2*size,size));
+  std::vector<double> offset(elasi_block(2*size,size));
 
   // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block =
+  Utility::ArrayView<const double> elas_block =
     raw_electroatom_data.extractELASBlock();
 
   // Check if the file version is eprdata14 or eprdata12

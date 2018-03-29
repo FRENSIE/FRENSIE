@@ -38,6 +38,23 @@ class XSSPhotonuclearDataExtractor
 
 public:
 
+  /*! The outgoing particle types that may have data
+   *
+   * Casting the type enum to an integer gives the value used in the 
+   * XSS array.
+   */
+  enum OutgoingParticleType
+  {
+    NEUTRON = 1,
+    PHOTON = 2,
+    ELECTRON = 3,
+    PROTON = 9,
+    DEUTERON = 31,
+    TRITON = 32,
+    HE3 = 33,
+    HE4 = 34
+  };
+
   //! Constructor
   XSSPhotonuclearDataExtractor( const Utility::ArrayView<const int>& nxs,
                                 const Utility::ArrayView<const int>& jxs,
@@ -48,7 +65,7 @@ public:
   { /* ... */ }
 
   //! Check if this secondary particle type exists in this data
-  bool hasSecondaryParticleType(const unsigned secondary_particle_type) const;
+  bool hasSecondaryParticleType(const OutgoingParticleType secondary_particle_type) const;
 
   //! Check if elastic scattering data exists
   bool hasElasticScatteringData() const;
@@ -90,34 +107,34 @@ public:
   Utility::ArrayView<const double> extractIXSBlock() const;
 
   //! Extract the PXS block for secondary particle
-  Utility::ArrayView<const double> extractPXSBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractPXSBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the PHN block for secondary particle
-  Utility::ArrayView<const double> extractPHNBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractPHNBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the MTRP block for secondary particle
-  Utility::ArrayView<const double> extractMTRPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractMTRPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the TYRP block for secondary particle
-  Utility::ArrayView<const double> extractTYRPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractTYRPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the LSIGP block for secondary particle
-  Utility::ArrayView<const double> extractLSIGPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractLSIGPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the SIGP block for secondary particle
-  Utility::ArrayView<const double> extractSIGPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractSIGPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the LANDP block for secondary particle
-  Utility::ArrayView<const double> extractLANDPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractLANDPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the ANDP block for secondary particle
-  Utility::ArrayView<const double> extractANDPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractANDPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the LDLWP block for secondary particle
-  Utility::ArrayView<const double> extractLDLWPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractLDLWPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
   //! Extract the DLWP block for secondary particle
-  Utility::ArrayView<const double> extractDLWPBlock( const unsigned secondary_particle_type ) const;
+  Utility::ArrayView<const double> extractDLWPBlock( const OutgoingParticleType secondary_particle_type ) const;
 
 private:
 

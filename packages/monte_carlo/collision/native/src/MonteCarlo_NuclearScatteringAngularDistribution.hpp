@@ -9,11 +9,13 @@
 #ifndef MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION
 #define MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -26,8 +28,7 @@ class NuclearScatteringAngularDistribution
 public:
 
   //! Typedef for energy dependent angular distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  typedef std::vector<std::pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
   AngularDistribution;
 
   //! Constructor

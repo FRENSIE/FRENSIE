@@ -17,10 +17,10 @@ namespace MonteCarlo{
 
 // Create the screened Rutherford elastic scattering positron-atomic reaction
 void PositronatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
-            const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-            const Teuchos::ArrayRCP<const double>& energy_grid,
-            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<PositronatomicReaction>& elastic_reaction )
+      const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      std::shared_ptr<PositronatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
@@ -36,10 +36,9 @@ void PositronatomicReactionNativeFactory::createScreenedRutherfordElasticReactio
     raw_positronatom_data.getAtomicNumber() );
 
   // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> elastic_cross_section;
-  elastic_cross_section.assign(
-    raw_positronatom_data.getScreenedRutherfordElasticCrossSection().begin(),
-    raw_positronatom_data.getScreenedRutherfordElasticCrossSection().end() );
+  std::shared_ptr<const std::vector<double> > elastic_cross_section(
+     new std::vector<double>( raw_positronatom_data.getScreenedRutherfordElasticCrossSection().begin(),
+                              raw_positronatom_data.getScreenedRutherfordElasticCrossSection().end() ) );
 
   // Screened Rutherford elastic cross section threshold energy bin index
   unsigned threshold_energy_index =
@@ -57,10 +56,10 @@ void PositronatomicReactionNativeFactory::createScreenedRutherfordElasticReactio
 
 // Create an atomic excitation positron-atomic reaction
 void PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
-            const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-            const Teuchos::ArrayRCP<const double>& energy_grid,
-            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction )
+    const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
@@ -69,10 +68,9 @@ void PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
                                                       energy_grid.end() ) );
 
   // Atomic Excitation cross section
-  Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
-  atomic_excitation_cross_section.assign(
-    raw_positronatom_data.getAtomicExcitationCrossSection().begin(),
-    raw_positronatom_data.getAtomicExcitationCrossSection().end() );
+  std::shared_ptr<const std::vector<double> > atomic_excitation_cross_section(
+     new std::vector<double>( raw_positronatom_data.getAtomicExcitationCrossSection().begin(),
+                              raw_positronatom_data.getAtomicExcitationCrossSection().end() ) );
 
   // Index of first non zero cross section in the energy grid
   unsigned threshold_energy_index =

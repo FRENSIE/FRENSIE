@@ -48,6 +48,12 @@ struct StandardGenericAtomicReactionHelper
   {
     return InterpPolicy::recoverProcessedIndepVar( processed_energy );
   }
+
+  //! Return the cross section of interest
+  static inline double returnCrossSectionOfInterest( const double processed_cs )
+  {
+    return InterpPolicy::recoverProcessedDepVar( processed_cs );
+  }
 };
 
 /*! \brief The standard generic atomic reaction helper class for raw cross
@@ -78,6 +84,12 @@ struct StandardGenericAtomicReactionHelper<InterpPolicy,false>
   {
     return processed_energy;
   }
+
+  //! Return the cross section of interest
+  static inline double returnCrossSectionOfInterest( const double processed_cs )
+  {
+    return processed_cs;
+  }
 };
 
 // Basic constructor
@@ -85,8 +97,8 @@ template<typename AtomicReactionBase,
          typename InterpPolicy,
          bool processed_cross_section>
 StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::StandardGenericAtomicReaction(
-           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-           const Teuchos::ArrayRCP<const double>& cross_section,
+           const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+           const std::shared_ptr<const std::vector<double> >& cross_section,
            const unsigned threshold_energy_index )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
@@ -105,11 +117,11 @@ StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_se
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 
   // Construct the grid searcher
-  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,processed_cross_section>(
-               incoming_energy_grid,
-               incoming_energy_grid[0],
-               incoming_energy_grid[incoming_energy_grid.size()-1],
-               incoming_energy_grid.size()/10+1 ) );
+  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<std::vector<double>,processed_cross_section>(
+                                         incoming_energy_grid,
+                                         incoming_energy_grid->front(),
+                                         incoming_energy_grid->back(),
+                                         incoming_energy_grid->size()/10+1 ) );
 }
 
 // Constructor
@@ -117,10 +129,10 @@ template<typename AtomicReactionBase,
          typename InterpPolicy,
          bool processed_cross_section>
 StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::StandardGenericAtomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
+      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> >& cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
     d_threshold_energy_index( threshold_energy_index ),
@@ -167,23 +179,29 @@ double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_c
 
     unsigned cs_index = energy_index - d_threshold_energy_index;
 
-    if( d_cross_section[cs_index] == 0.0 )
+    // Handle the special case where a processed cross section grid starts
+    // with 0.0 - Lin-X interpolation must be done within the first bin
+    if( (*d_cross_section)[cs_index] == 0.0 )
     {
-      cross_section = StandardGenericAtomicReactionHelper<Utility::LinLin,processed_cross_section>::calculateInterpolatedCrossSection(
-                                        d_incoming_energy_grid[energy_index],
-                                        d_incoming_energy_grid[energy_index+1],
-                                        energy,
-                                        d_cross_section[cs_index],
-                                        d_cross_section[cs_index+1] );
+      typedef StandardGenericAtomicReactionHelper<typename Utility::InterpPolicyCreationHelper<Utility::LinDepVarProcessingTag,typename InterpPolicy::IndepVarProcessingTag>::Policy,processed_cross_section> Helper;
+      
+      cross_section = Helper::calculateInterpolatedCrossSection(
+        (*d_incoming_energy_grid)[energy_index],
+        (*d_incoming_energy_grid)[energy_index+1],
+        energy,
+        (*d_cross_section)[cs_index],
+        Helper::returnCrossSectionOfInterest((*d_cross_section)[cs_index+1]) );
     }
     else
     {
-      cross_section = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
-                                        d_incoming_energy_grid[energy_index],
-                                        d_incoming_energy_grid[energy_index+1],
-                                        energy,
-                                        d_cross_section[cs_index],
-                                        d_cross_section[cs_index+1] );
+      typedef StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section> Helper;
+      
+      cross_section = Helper::calculateInterpolatedCrossSection(
+                                     (*d_incoming_energy_grid)[energy_index],
+                                     (*d_incoming_energy_grid)[energy_index+1],
+                                     energy,
+                                     (*d_cross_section)[cs_index],
+                                     (*d_cross_section)[cs_index+1] );
     }
   }
   else
@@ -213,23 +231,23 @@ double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_c
   {
     unsigned cs_index = bin_index - d_threshold_energy_index;
 
-    if( d_cross_section[cs_index] == 0.0 )
+    if( (*d_cross_section)[cs_index] == 0.0 )
     {
       return StandardGenericAtomicReactionHelper<Utility::LinLin,processed_cross_section>::calculateInterpolatedCrossSection(
-                                          d_incoming_energy_grid[bin_index],
-                                          d_incoming_energy_grid[bin_index+1],
-                                          energy,
-                                          d_cross_section[cs_index],
-                                          d_cross_section[cs_index+1] );
+                                        (*d_incoming_energy_grid)[bin_index],
+                                        (*d_incoming_energy_grid)[bin_index+1],
+                                        energy,
+                                        (*d_cross_section)[cs_index],
+                                        (*d_cross_section)[cs_index+1] );
     }
     else
     {
       return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
-                                          d_incoming_energy_grid[bin_index],
-                                          d_incoming_energy_grid[bin_index+1],
-                                          energy,
-                                          d_cross_section[cs_index],
-                                          d_cross_section[cs_index+1] );
+                                        (*d_incoming_energy_grid)[bin_index],
+                                        (*d_incoming_energy_grid)[bin_index+1],
+                                        energy,
+                                        (*d_cross_section)[cs_index],
+                                        (*d_cross_section)[cs_index+1] );
     }
   }
   else
@@ -242,7 +260,7 @@ template<typename AtomicReactionBase,
          bool processed_cross_section>
 double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::getMaxEnergy() const
 {
-  return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( d_incoming_energy_grid[d_incoming_energy_grid.size()-1] );
+  return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( d_incoming_energy_grid->back() );
 }
 
 // Return the threshold energy
@@ -251,7 +269,7 @@ template<typename AtomicReactionBase,
          bool processed_cross_section>
 double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::getThresholdEnergy() const
 {
-  return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( d_incoming_energy_grid[d_threshold_energy_index] );
+  return StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( (*d_incoming_energy_grid)[d_threshold_energy_index] );
 }
 
 // Return the head of the energy grid
@@ -260,7 +278,7 @@ template<typename AtomicReactionBase,
          bool processed_cross_section>
 const double* StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::getEnergyGridHead() const
 {
-  return d_incoming_energy_grid.getRawPtr();
+  return d_incoming_energy_grid->data();
 }
 
 } // end MonteCarlo namespace

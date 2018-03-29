@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_ACE_LAW_2_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_ACE_LAW_2_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
@@ -40,7 +36,7 @@ public:
   { /* ... */ }
 
   //! Sample a scattering energy
-  double sampleEnergy( const double energy ) const;
+  double sampleEnergy( const double energy ) const override;
 
 private:
 

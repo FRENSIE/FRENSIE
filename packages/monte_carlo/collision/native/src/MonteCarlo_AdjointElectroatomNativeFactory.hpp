@@ -9,10 +9,8 @@
 #ifndef MONTE_CARLO_ADJOINT_ELECTROATOM_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_ADJOINT_ELECTROATOM_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_Array.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
@@ -21,15 +19,13 @@
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_TwoDSamplingPolicy.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
 //! The adjoint electroatom native factory class that uses Native data
 class AdjointElectroatomNativeFactory
 {
-
-private:
-
   // Typedef for this type
   typedef AdjointElectroatomNativeFactory ThisType;
 
@@ -40,7 +36,7 @@ public:
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const SimulationAdjointElectronProperties& properties,
-        Teuchos::RCP<AdjointElectroatomCore>& adjoint_electroatom_core );
+        std::shared_ptr<const AdjointElectroatomCore>& adjoint_electroatom_core );
 
   //! Create an adjoint  electroatom
   static void createAdjointElectroatom(
@@ -49,7 +45,7 @@ public:
         const std::string& adjoint_electroatom_name,
         const double atomic_weight,
         const SimulationAdjointElectronProperties& properties,
-        Teuchos::RCP<AdjointElectroatom>& adjoint_electroatom );
+        std::shared_ptr<const AdjointElectroatom>& adjoint_electroatom );
 
 private:
 
@@ -59,10 +55,10 @@ private:
   static void createElasticElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
         const SimulationAdjointElectronProperties& properties,
-        std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction,
+        std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
         AdjointElectroatom::ReactionMap& scattering_reactions );
 };
 

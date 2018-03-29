@@ -6,10 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomNativeFactory.hpp"
 #include "MonteCarlo_PositronatomicReactionNativeFactory.hpp"
@@ -30,16 +26,16 @@ void PositronatomNativeFactory::createPositronatom(
        const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
        const std::string& positronatom_name,
        const double atomic_weight,
-       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+       const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
        const SimulationElectronProperties& properties,
-       Teuchos::RCP<Positronatom>& positronatom )
+       std::shared_ptr<Positronatom>& positronatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
-  Teuchos::RCP<PositronatomCore> core;
+  std::shared_ptr<PositronatomCore> core;
 
   TwoDInterpolationType electron_interp =
                           properties.getElectronTwoDInterpPolicy();
@@ -80,7 +76,7 @@ void PositronatomNativeFactory::createPositronatom(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: the 2D sampling policy "
+      THROW_EXCEPTION( std::runtime_error, "the 2D sampling policy "
                        << electron_sampling << " is not currently supported!" );
     }
   }
@@ -112,7 +108,7 @@ void PositronatomNativeFactory::createPositronatom(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: the 2D sampling policy "
+      THROW_EXCEPTION( std::runtime_error, "the 2D sampling policy "
                        << electron_sampling << " is not currently supported!" );
     }
   }
@@ -144,13 +140,13 @@ void PositronatomNativeFactory::createPositronatom(
     }
     else
     {
-      THROW_EXCEPTION( std::runtime_error, "Error: the 2D sampling policy "
+      THROW_EXCEPTION( std::runtime_error, "the 2D sampling policy "
                        << electron_sampling << " is not currently supported!" );
     }
   }
   else
   {
-    THROW_EXCEPTION( std::runtime_error, "Error: the 2D interpolation policy "
+    THROW_EXCEPTION( std::runtime_error, "the 2D interpolation policy "
                       << electron_interp << " is not currently supported!" );
   }
 

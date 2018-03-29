@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
 
@@ -28,7 +29,7 @@ public:
     const unsigned number_of_tables,
     const double binding_energy,
     const bool is_eprdata14,
-    const Teuchos::ArrayView<const double>& raw_electroionization_data,
+    const Utility::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
       electroionization_subshell_distribution,
     const double evaluation_tol = 1e-7 );
@@ -49,7 +50,7 @@ protected:
     const unsigned table_location,
     const unsigned number_of_tables,
     const bool is_eprdata14,
-    const Teuchos::ArrayView<const double>& raw_electroionization_data,
+    const Utility::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
       subshell_distribution,
     const double evaluation_tol = 1e-7 );

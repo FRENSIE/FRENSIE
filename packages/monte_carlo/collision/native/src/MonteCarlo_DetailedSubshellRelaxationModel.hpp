@@ -9,17 +9,14 @@
 #ifndef MONTE_CARLO_DETAILED_SUBSHELL_RELAXATION_MODEL_HPP
 #define MONTE_CARLO_DETAILED_SUBSHELL_RELAXATION_MODEL_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellRelaxationModel.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -35,10 +32,10 @@ public:
   //! Constructor
   DetailedSubshellRelaxationModel(
        const Data::SubshellType vacancy_subshell,
-       const Teuchos::Array<Data::SubshellType>& primary_transition_vacancy_shells,
-       const Teuchos::Array<Data::SubshellType>& secondary_transition_vacancy_shells,
-       const Teuchos::Array<double>& outgoing_particle_energies,
-       const Teuchos::Array<double>& transition_pdf_or_cdf,
+       const std::vector<Data::SubshellType>& primary_transition_vacancy_shells,
+       const std::vector<Data::SubshellType>& secondary_transition_vacancy_shells,
+       const std::vector<double>& outgoing_particle_energies,
+       const std::vector<double>& transition_pdf_or_cdf,
        const bool interpret_as_cdf = true );
 
   //! Destructor
@@ -70,13 +67,13 @@ private:
 				double& azimuthal_angle ) const;
 
   // The transition distribution (also stores the outgoing particle energies )
-  boost::scoped_ptr<Utility::DiscreteDistribution> d_transition_distribution;
+  std::unique_ptr<Utility::DiscreteDistribution> d_transition_distribution;
 
   // The outgoing partiel energies
-  Teuchos::Array<double> d_outgoing_particle_energies;
+  std::vector<double> d_outgoing_particle_energies;
 
   // The transition vacancy shells (first = primary, second = secondary)
-  Teuchos::Array<Utility::Pair<Data::SubshellType,Data::SubshellType> >
+  std::vector<std::pair<Data::SubshellType,Data::SubshellType> >
   d_transition_vacancy_shells;
 };
 

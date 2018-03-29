@@ -24,8 +24,8 @@ PositronMaterial::PositronMaterial(
                const ModuleTraits::InternalMaterialHandle id,
                const double density,
                const PositronatomNameMap& positronatom_name_map,
-               const Teuchos::Array<double>& positronatom_fractions,
-               const Teuchos::Array<std::string>& positronatom_names )
+               const std::vector<double>& positronatom_fractions,
+               const std::vector<std::string>& positronatom_names )
   : d_id( id ),
     d_number_density( density ),
     d_atoms( positronatom_fractions.size() )
@@ -49,7 +49,7 @@ PositronMaterial::PositronMaterial(
 
     TEST_FOR_EXCEPTION( atom == positronatom_name_map.end(),
                         std::logic_error,
-                        "Error: atom " << positronatom_names[i] <<
+                        "atom " << positronatom_names[i] <<
                         " has not been loaded!" );
 
     d_atoms[i].second = atom->second;
@@ -106,7 +106,7 @@ double PositronMaterial::getMacroscopicTotalCrossSection(
                             const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double cross_section = 0.0;
@@ -125,7 +125,7 @@ double PositronMaterial::getMacroscopicAbsorptionCrossSection(
                             const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double cross_section = 0.0;
@@ -143,7 +143,7 @@ double PositronMaterial::getMacroscopicAbsorptionCrossSection(
 double PositronMaterial::getSurvivalProbability( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double survival_prob;
@@ -158,7 +158,7 @@ double PositronMaterial::getSurvivalProbability( const double energy ) const
     survival_prob = 1.0;
 
   // Make sure the survival probability is valid
-  testPostcondition( !ST::isnaninf( survival_prob ) );
+  testPostcondition( !QT::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );
   testPostcondition( survival_prob <= 1.0 );
 
@@ -171,7 +171,7 @@ double PositronMaterial::getMacroscopicReactionCrossSection(
                      const PositronatomicReactionType reaction ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double cross_section = 0.0;
@@ -215,7 +215,7 @@ void PositronMaterial::collideSurvivalBias( PositronState& positron,
 
 // Get the atomic weight from an atom pointer
 double PositronMaterial::getAtomicWeight(
-         const Utility::Pair<double,Teuchos::RCP<const Positronatom> >& pair )
+       const Utility::Pair<double,std::shared_ptr<const Positronatom> >& pair )
 {
   return pair.second->getAtomicWeight();
 }

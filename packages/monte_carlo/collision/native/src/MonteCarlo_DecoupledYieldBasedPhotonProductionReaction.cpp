@@ -20,12 +20,13 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
 	 const NuclearReactionType base_reaction_type,
 	 const unsigned photon_production_id,
 	 const double temperature,
-	 const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array,
-	 const std::shared_ptr<Utility::OneDDistribution>& mtp_yield,
-	 const Teuchos::RCP<NuclearReaction>& base_reaction,
-	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
+	 const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+         total_mt_yield_array,
+	 const std::shared_ptr<const Utility::OneDDistribution>& mtp_yield,
+	 const std::shared_ptr<const NuclearReaction>& base_reaction,
+	 const std::shared_ptr<const ScatteringDistribution>&
 	 photon_production_distribution,
-	 const Teuchos::RCP<NuclearReaction>& total_reaction )
+	 const std::shared_ptr<const NuclearReaction>& total_reaction )
   : DecoupledPhotonProductionReaction( base_reaction_type,
 			      photon_production_id,
 			      temperature,

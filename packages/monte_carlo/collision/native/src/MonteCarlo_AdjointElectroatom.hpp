@@ -9,20 +9,21 @@
 #ifndef MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
 #define MONTE_CARLO_ADJOINT_ELECTROATOM_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomCore.hpp"
 #include "MonteCarlo_Atom.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The atom class for adjoint electroatomic reactions
 class AdjointElectroatom : public Atom<AdjointElectroatomCore>
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -37,7 +38,7 @@ public:
     const std::string& name,
     const unsigned atomic_number,
     const double atomic_weight,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
     const ReactionMap& scattering_reactions,
     const ReactionMap& absorption_reactions );

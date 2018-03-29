@@ -81,8 +81,8 @@ PositronatomicReaction::producesAnnihilationPhotons(
                             ParticleBank& bank )
 {
   // Create the first annihilation photon
-  Teuchos::RCP<PhotonState> first_photon( new PhotonState( positron, true, true ) );
-  Teuchos::RCP<PhotonState> second_photon( new PhotonState( positron, true, true ) );
+  std::shared_ptr<PhotonState> first_photon( new PhotonState( positron, true, true ) );
+  std::shared_ptr<PhotonState> second_photon( new PhotonState( positron, true, true ) );
 
   // Set the photon energies to the rest mass of an electron
   first_photon->setEnergy( positron.getRestMassEnergy() );

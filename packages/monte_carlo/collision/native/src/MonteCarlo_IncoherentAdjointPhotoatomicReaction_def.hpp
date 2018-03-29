@@ -20,11 +20,11 @@ namespace MonteCarlo{
 // Basic Contructor
 template<typename InterpPolicy, bool processed_cross_section>
 IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentAdjointPhotoatomicReaction(
-          const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-          const Teuchos::ArrayRCP<const double>& cross_section,
-          const unsigned threshold_energy_index,
-	  const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          scattering_distribution )
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+       scattering_distribution )
   : BaseType( incoming_energy_grid, cross_section, threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
@@ -45,10 +45,10 @@ IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::Inco
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentAdjointPhotoatomicReaction(
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
     scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -84,14 +84,14 @@ double IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section
 // Set the critical line energies
 template<typename InterpPolicy, bool processed_cross_section>
 void IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::setCriticalLineEnergies(
-                const Teuchos::ArrayRCP<const double>& critical_line_energies )
+                const std::shared_ptr<const std::vector<double> >& critical_line_energies )
 {
   d_scattering_distribution->setCriticalLineEnergies( critical_line_energies );
 }
 
 // Get the critical line energies
 template<typename InterpPolicy, bool processed_cross_section>
-const Teuchos::ArrayRCP<const double>&
+const std::shared_ptr<const std::vector<double> >&
 IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCriticalLineEnergies() const
 {
   return d_scattering_distribution->getCriticalLineEnergies();

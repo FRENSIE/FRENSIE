@@ -31,7 +31,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
   }
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
                               InvalidMaterialRepresentation,
-                              "Error: Unable to parse the material ids in "
+                              "Unable to parse the material ids in "
                               "Root!" );
 
   MatIdSet::const_iterator root_mat_id_it = root_material_ids.begin();
@@ -42,7 +42,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
     TEST_FOR_EXCEPTION( material_ids.find( *root_mat_id_it ) ==
 			material_ids.end(),
 			InvalidMaterialRepresentation,
-			"Error: Root has requested material number "
+			"Root has requested material number "
 			<< *root_mat_id_it << " which is lacking "
 			"a definition!" );
 
@@ -75,7 +75,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
   }
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
                               InvalidMaterialRepresentation,
-                              "Error: could not parse the material ids "
+                              "could not parse the material ids "
                               "associated with cells in Root!" );
 
   try{
@@ -83,7 +83,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
   }
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
                               InvalidMaterialRepresentation,
-                              "Error: could not parse the cell densities in"
+                              "could not parse the cell densities in"
                               "Root!" );
 
   CellIdMatIdMap::const_iterator cell_id_mat_id_it =
@@ -95,7 +95,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
     TEST_FOR_EXCEPTION( cell_id_density_map.find( cell_id_mat_id_it->first ) ==
                         cell_id_density_map.end(),
                         InvalidMaterialRepresentation,
-                        "Error: Cell " << cell_id_mat_id_it->first <<
+                        "Cell " << cell_id_mat_id_it->first <<
                         " has a material id assigned in Root but not a "
                         "density!" );
 
@@ -110,7 +110,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
     TEST_FOR_EXCEPTION( cell_id_mat_id_map.find( cell_id_density_it->first ) ==
                         cell_id_mat_id_map.end(),
                         InvalidMaterialRepresentation,
-                        "Error: Cell " << cell_id_density_it->first <<
+                        "Cell " << cell_id_density_it->first <<
                         " has a density assigned in Root but not a "
                         "material!" );
 

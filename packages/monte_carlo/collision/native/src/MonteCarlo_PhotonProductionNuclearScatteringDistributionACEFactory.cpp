@@ -10,10 +10,6 @@
 #include <sstream>
 #include <stdexcept>
 
-// Trilinos Includes
-#include "Teuchos_ArrayView.hpp"
-#include "Teuchos_Array.hpp"
-
 // FRENSIE Includes
 #include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 

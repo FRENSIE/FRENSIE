@@ -10,16 +10,15 @@
 #define MONTE_CARLO_ELECTRON_MATERIAL_HPP
 
 // Std Lib Includes
+#include <memory>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_Electroatom.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -29,21 +28,21 @@ class ElectronMaterial
 
 private:
 
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Typedef for electroatom name map
-  typedef std::unordered_map<std::string,Teuchos::RCP<Electroatom> >
+  typedef std::unordered_map<std::string,std::shared_ptr<Electroatom> >
   ElectroatomNameMap;
 
   //! Constructor
   ElectronMaterial( const ModuleTraits::InternalMaterialHandle id,
                     const double density,
                     const ElectroatomNameMap& electroatom_name_map,
-                    const Teuchos::Array<double>& electroatom_fractions,
-                    const Teuchos::Array<std::string>& electroatom_names );
+                    const std::vector<double>& electroatom_fractions,
+                    const std::vector<std::string>& electroatom_names );
 
   //! Destructor
   ~ElectronMaterial()
@@ -79,7 +78,7 @@ private:
 
   // Get the atomic weight from an atom pointer
   static double getAtomicWeight(
-        const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair );
+        const std::pair<double,std::shared_ptr<const Electroatom> >& pair );
 
   // Sample the atom that is collided with
   unsigned sampleCollisionAtom( const double energy ) const;
@@ -91,7 +90,7 @@ private:
   double d_number_density;
 
   // The atoms that make up the material
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Electroatom> > >
+  std::vector<std::pair<double,std::shared_ptr<const Electroatom> > >
   d_atoms;
 };
 

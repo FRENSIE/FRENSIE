@@ -30,12 +30,12 @@ namespace MonteCarlo{
 
 // Create an incoherent scattering photoatomic reaction
 void PhotoatomicReactionACEFactory::createIncoherentReaction(
-       const Data::XSSEPRDataExtractor& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-       const IncoherentModelType incoherent_model,
-       const double kahn_sampling_cutoff_energy )
+    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<PhotoatomicReaction>& incoherent_reaction,
+    const IncoherentModelType incoherent_model,
+    const double kahn_sampling_cutoff_energy )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
@@ -44,17 +44,19 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 						      energy_grid.end() ) );
 
   // Extract the cross section
-  Teuchos::ArrayRCP<double> incoherent_cross_section;
+  std::shared_ptr<std::vector<double> >
+    incoherent_cross_section( new std::vector<double> );
+  
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
 			    energy_grid,
 			    raw_photoatom_data.extractIncoherentCrossSection(),
-			    incoherent_cross_section,
+			    *incoherent_cross_section,
 			    threshold_energy_index );
 
   // Create the scattering distribution
-  Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
+  std::shared_ptr<const IncoherentPhotonScatteringDistribution> distribution;
 
   IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
 						 raw_photoatom_data,
@@ -74,9 +76,9 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 // Create a coherent scattering photoatomic reaction
 void PhotoatomicReactionACEFactory::createCoherentReaction(
        const Data::XSSEPRDataExtractor& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
@@ -85,17 +87,18 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
 						      energy_grid.end() ) );
 
   // Extract the cross section
-  Teuchos::ArrayRCP<double> coherent_cross_section;
+  std::shared_ptr<std::vector<double> >
+    coherent_cross_section( new std::vector<double> );
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
 			    energy_grid,
 			    raw_photoatom_data.extractCoherentCrossSection(),
-			    coherent_cross_section,
+			    *coherent_cross_section,
 			    threshold_energy_index );
 
   // Create the coherent scattering distribution
-  Teuchos::RCP<const CoherentScatteringDistribution> distribution;
+  std::shared_ptr<const CoherentScatteringDistribution> distribution;
 
   CoherentScatteringDistributionACEFactory::createEfficientCoherentDistribution(
 					                    raw_photoatom_data,
@@ -112,11 +115,11 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
 
 // Create a pair production photoatomic reaction
 void PhotoatomicReactionACEFactory::createPairProductionReaction(
-       const Data::XSSEPRDataExtractor& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
-       const bool use_detailed_pair_production_data )
+    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<PhotoatomicReaction>& pair_production_reaction,
+    const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
@@ -125,13 +128,14 @@ void PhotoatomicReactionACEFactory::createPairProductionReaction(
 						      energy_grid.end() ) );
 
   // Extract the cross section
-  Teuchos::ArrayRCP<double> pair_production_cross_section;
+  std::shared_ptr<std::vector<double> >
+    pair_production_cross_section( new std::vector<double> );
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
 			energy_grid,
 			raw_photoatom_data.extractPairProductionCrossSection(),
-			pair_production_cross_section,
+			*pair_production_cross_section,
 			threshold_energy_index );
 
   // Create the pair production reaction
@@ -146,10 +150,10 @@ void PhotoatomicReactionACEFactory::createPairProductionReaction(
 
 // Create the total photoelectric photoatomic reaction
 void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
-       const Data::XSSEPRDataExtractor& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
+    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::shared_ptr<PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
@@ -158,13 +162,14 @@ void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
 						      energy_grid.end() ) );
 
   // Extract the cross section
-  Teuchos::ArrayRCP<double> photoelectric_cross_section;
+  std::shared_ptr<std::vector<double> >
+    photoelectric_cross_section( new std::vector<double> );
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
 			energy_grid,
 			raw_photoatom_data.extractPhotoelectricCrossSection(),
-			photoelectric_cross_section,
+			*photoelectric_cross_section,
 			threshold_energy_index );
 
   // Create the total photoelectric reaction
@@ -178,11 +183,11 @@ void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
 
 // Create the subshell photoelectric photoatomic reactions
 void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
-       const Data::XSSEPRDataExtractor& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-       subshell_photoelectric_reactions )
+    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    std::vector<std::shared_ptr<PhotoatomicReaction> >&
+    subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
@@ -193,44 +198,45 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
   subshell_photoelectric_reactions.clear();
 
   // Extract the subshell information
-  Teuchos::ArrayView<const double> subshell_endf_designators =
+  Utility::ArrayView<const double> subshell_endf_designators =
     raw_photoatom_data.extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType> subshell_order(
+  std::vector<Data::SubshellType> subshell_order(
 					    subshell_endf_designators.size() );
 
     for( unsigned i = 0; i < subshell_order.size(); ++i )
     {
-      subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
+      subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 				      (unsigned)subshell_endf_designators[i] );
     }
 
-  Teuchos::ArrayView<const double> binding_energies =
+  Utility::ArrayView<const double> binding_energies =
     raw_photoatom_data.extractSubshellBindingEnergies();
 
   // Extract the subshell cross sections
-  Teuchos::ArrayView<const double> raw_subshell_cross_sections =
+  Utility::ArrayView<const double> raw_subshell_cross_sections =
     raw_photoatom_data.extractSPHELBlock();
 
   unsigned num_subshells = subshell_order.size();
   unsigned num_energy_points = energy_grid.size();
 
-  Teuchos::RCP<PhotoatomicReaction> subshell_photoelectric_reaction;
+  std::shared_ptr<PhotoatomicReaction> subshell_photoelectric_reaction;
 
   for( unsigned subshell = 0; subshell < num_subshells; ++subshell )
   {
-    Teuchos::ArrayRCP<double> subshell_cross_section;
+    std::shard_ptr<std::vector<double> >
+      subshell_cross_section( new std::vector<double> >
     unsigned threshold_energy_index;
 
-    Teuchos::ArrayView<const double> raw_subshell_cross_section =
+    Utility::ArrayView<const double> raw_subshell_cross_section =
       raw_subshell_cross_sections( subshell*num_energy_points,
 				   num_energy_points );
 
     PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-						    energy_grid,
-		                                    raw_subshell_cross_section,
-						    subshell_cross_section,
-						    threshold_energy_index );
+						   energy_grid,
+		                                   *raw_subshell_cross_section,
+                                                   subshell_cross_section,
+                                                   threshold_energy_index );
 
     // Create the subshell photoelectric reaction
     subshell_photoelectric_reaction.reset(
@@ -253,9 +259,9 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 // Create the heating photoatomic reaction
 void PhotoatomicReactionACEFactory::createHeatingReaction(
        const Data::XSSEPRDataExtractor& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       std::shared_ptr<PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
@@ -264,18 +270,19 @@ void PhotoatomicReactionACEFactory::createHeatingReaction(
 						      energy_grid.end() ) );
 
   // Extract the cross section
-  Teuchos::ArrayRCP<double> heating_cross_section;
+  std::shared_ptr<std::vector<double> >
+    heating_cross_section( new std::vector<double> );
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
 			energy_grid,
 			raw_photoatom_data.extractLHNMBlock(),
-			heating_cross_section,
+			*heating_cross_section,
 			threshold_energy_index );
 
   // Process the heating cross section (the logarithms are not stored)
   for( unsigned i = 0; i < heating_cross_section.size(); ++i )
-    heating_cross_section[i] = log( heating_cross_section[i] );
+    heating_cross_section[i] = std::log( heating_cross_section[i] );
 
   // Create the heating reaction
   heating_reaction.reset(
@@ -289,10 +296,10 @@ void PhotoatomicReactionACEFactory::createHeatingReaction(
 
 // Remove the zeros from a processed cross section
 void PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-		     const Teuchos::ArrayRCP<const double>& energy_grid,
-		     const Teuchos::ArrayView<const double>& raw_cross_section,
-		     Teuchos::ArrayRCP<double>& cross_section,
-		     unsigned& threshold_energy_index )
+                const std::shared_ptr<const std::vector<double> >& energy_grid,
+                const Utility::ArrayView<const double>& raw_cross_section,
+                std::vector<double>& cross_section,
+                unsigned& threshold_energy_index )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -302,7 +309,7 @@ void PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
   cross_section.clear();
 
   // Find the first non-zero cross section value
-  Teuchos::ArrayView<const double>::iterator start =
+  Utility::ArrayView<const double>::iterator start =
     std::find_if( raw_cross_section.begin(),
 		  raw_cross_section.end(),
 		  PhotoatomicReactionACEFactory::notEqualZero );

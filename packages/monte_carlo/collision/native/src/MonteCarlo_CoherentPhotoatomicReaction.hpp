@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_COHERENT_PHOTOATOMIC_REACTION_HPP
 #define MONTE_CARLO_COHERENT_PHOTOATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
@@ -23,9 +20,6 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class CoherentPhotoatomicReaction : public StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
   typedef StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
@@ -33,43 +27,43 @@ public:
 
   //! Basic Constructor
   CoherentPhotoatomicReaction(
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::RCP<const CoherentScatteringDistribution>&
-		   scattering_distribution );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const CoherentScatteringDistribution>&
+       scattering_distribution );
 
   //! Constructor
   CoherentPhotoatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const CoherentScatteringDistribution>&
-       scattering_distribution );
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
+    const unsigned threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const CoherentScatteringDistribution>&
+    scattering_distribution );
 
   //! Destructor
   virtual ~CoherentPhotoatomicReaction()
   { /* ... */ }
 
   //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
 
   //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
   //! Return the reaction type
-  PhotoatomicReactionType getReactionType() const;
+  PhotoatomicReactionType getReactionType() const override;
 
   //! Simulate the reaction
   void react( PhotonState& photon,
 	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 
   // The coherent scattering distribution
-  Teuchos::RCP<const CoherentScatteringDistribution> d_scattering_distribution;
+  std::shared_ptr<const CoherentScatteringDistribution> d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace

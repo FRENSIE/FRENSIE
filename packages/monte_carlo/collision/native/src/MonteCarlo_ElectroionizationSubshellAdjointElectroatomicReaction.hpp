@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ADJOINT_ELECTROATOMIC_REACTION_HPP
 #define MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistribution.hpp"
@@ -33,8 +30,8 @@ public:
 
   //! Basic Constructor
   ElectroionizationSubshellAdjointElectroatomicReaction(
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
@@ -42,10 +39,10 @@ public:
 
   //! Constructor
   ElectroionizationSubshellAdjointElectroatomicReaction(
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellAdjointElectronScatteringDistribution>&
             electroionization_subshell_distribution );
@@ -58,10 +55,10 @@ public:
   //! Simulate the reaction
   void react( AdjointElectronState& electron,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const;
+              Data::SubshellType& shell_of_interaction ) const override;
 
   //! Return the reaction type
-  AdjointElectroatomicReactionType getReactionType() const;
+  AdjointElectroatomicReactionType getReactionType() const override;
 
   //! Get the interaction subshell (non-standard interface)
   unsigned getSubshell() const;

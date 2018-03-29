@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_PHOTOATOM_HPP
 #define MONTE_CARLO_PHOTOATOM_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
@@ -16,17 +19,16 @@
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_PhotoatomCore.hpp"
 #include "MonteCarlo_Atom.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The atom class for photoatomic reactions
 class Photoatom : public Atom<PhotoatomCore>
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -43,17 +45,17 @@ public:
   //! Constructor
   template<typename InterpPolicy>
   Photoatom(
-	  const std::string& name,
-	  const unsigned atomic_number,
-	  const double atomic_weight,
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
-	  grid_searcher,
-	  const ReactionMap& standard_scattering_reactions,
-	  const ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_atomic_cross_sections,
-	  const InterpPolicy policy );
+	 const std::string& name,
+         const unsigned atomic_number,
+         const double atomic_weight,
+         const std::shared_ptr<std::vector<double> >& energy_grid,
+         const std::shared_ptr<const Utility::HashBasedGridSearcher>&
+         grid_searcher,
+         const ReactionMap& standard_scattering_reactions,
+         const ReactionMap& standard_absorption_reactions,
+	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+         const bool processed_atomic_cross_sections,
+         const InterpPolicy policy );
 
   //! Constructor (from a core)
   Photoatom( const std::string& name,

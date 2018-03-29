@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_NUCLIDE_ACE_FACTORY_HPP
 #define MONTE_CARLO_NUCLIDE_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
@@ -35,7 +35,7 @@ public:
 			 const double atomic_weight_ratio,
 			 const double temperature,
                          const SimulationProperties& properties,
-			 Teuchos::RCP<Nuclide>& nuclide,
+			 std::shared_ptr<Nuclide>& nuclide,
                          std::ostream* os_message = &std::cerr );
 
 private:

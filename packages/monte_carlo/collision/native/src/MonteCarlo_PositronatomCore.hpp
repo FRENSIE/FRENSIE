@@ -9,20 +9,19 @@
 #ifndef MONTE_CARLO_POSITRONATOM_CORE_HPP
 #define MONTE_CARLO_POSITRONATOM_CORE_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReactionType.hpp"
 #include "MonteCarlo_PositronatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -69,11 +68,11 @@ public:
   //! Basic constructor
   template<typename InterpPolicy>
   PositronatomCore(
-    const Teuchos::ArrayRCP<double>& energy_grid,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const ReactionMap& standard_scattering_reactions,
     const ReactionMap& standard_absorption_reactions,
-    const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
+    const std::shared_ptr<AtomicRelaxationModel>& relaxation_model,
     const bool processed_atomic_cross_sections,
     const InterpPolicy policy );
 
@@ -84,8 +83,8 @@ public:
     const ConstReactionMap& scattering_reactions,
     const ConstReactionMap& absorption_reactions,
     const ConstReactionMap& miscellaneous_reactions,
-    const Teuchos::RCP<const AtomicRelaxationModel> relaxation_model,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+    const std::shared_ptr<const AtomicRelaxationModel> relaxation_model,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Copy constructor
   PositronatomCore( const PositronatomCore& instance );
@@ -130,21 +129,21 @@ private:
   // Create the total absorption reaction
   template<typename InterpPolicy>
   static void createTotalAbsorptionReaction(
-        const Teuchos::ArrayRCP<double>& energy_grid,
+        const std::shared_ptr<std::vector<double> >& energy_grid,
         const ConstReactionMap& absorption_reactions,
         std::shared_ptr<PositronatomicReaction>& total_absorption_reaction );
 
   // Create the processed total absorption reaction
   template<typename InterpPolicy>
   static void createProcessedTotalAbsorptionReaction(
-        const Teuchos::ArrayRCP<double>& energy_grid,
+        const std::shared_ptr<std::vector<double> >& energy_grid,
         const ConstReactionMap& absorption_reactions,
         std::shared_ptr<PositronatomicReaction>& total_absorption_reaction );
 
   // Create the total reaction
   template<typename InterpPolicy>
   static void createTotalReaction(
-      const Teuchos::ArrayRCP<double>& energy_grid,
+      const std::shared_ptr<std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
       std::shared_ptr<PositronatomicReaction>& total_reaction );
@@ -152,7 +151,7 @@ private:
   // Calculate the processed total absorption cross section
   template<typename InterpPolicy>
   static void createProcessedTotalReaction(
-      const Teuchos::ArrayRCP<double>& energy_grid,
+      const std::shared_ptr<std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
       std::shared_ptr<PositronatomicReaction>& total_reaction );
@@ -173,10 +172,10 @@ private:
   ConstReactionMap d_miscellaneous_reactions;
 
   // The atomic relaxation model
-  Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
+  std::shared_ptr<const AtomicRelaxationModel> d_relaxation_model;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 // Return the total reaction

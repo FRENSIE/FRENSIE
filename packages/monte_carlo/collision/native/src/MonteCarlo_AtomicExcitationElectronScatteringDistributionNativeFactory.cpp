@@ -38,11 +38,11 @@ void AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLo
                                                         energy_loss_function )
 {
   // Extract the energy grid for atomic excitation energy loss
-  Teuchos::Array<double> excitation_energy_grid(
+  std::vector<double> excitation_energy_grid(
         data_container.getAtomicExcitationEnergyGrid() );
 
   // Extract the energy loss for atomic excitation
-  Teuchos::Array<double> energy_loss (
+  std::vector<double> energy_loss (
         data_container.getAtomicExcitationEnergyLoss() );
 
   energy_loss_function.reset(

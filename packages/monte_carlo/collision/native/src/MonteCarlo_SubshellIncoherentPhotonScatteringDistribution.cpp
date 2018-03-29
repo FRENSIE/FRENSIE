@@ -31,7 +31,7 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
        const Data::SubshellType interaction_subshell,
        const double num_electrons_in_subshell,
        const double binding_energy,
-       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+       const std::shared_ptr<const Utility::OneDDistribution>& occupation_number,
        const double kahn_sampling_cutoff_energy )
   : IncoherentPhotonScatteringDistribution( kahn_sampling_cutoff_energy ),
     d_subshell( interaction_subshell ),

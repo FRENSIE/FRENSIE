@@ -6,14 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
 #include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -26,10 +23,10 @@ namespace MonteCarlo{
  * Otherwise a single total photoelectric reaction will be created.
  */
 void PhotoatomACEFactory::createPhotoatomCore(
-            const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-            const SimulationPhotonProperties& properties,
-	    Teuchos::RCP<PhotoatomCore>& photoatom_core )
+         const Data::XSSEPRDataExtractor& raw_photoatom_data,
+	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+         const SimulationPhotonProperties& properties,
+         std::shared_ptr<PhotoatomCore>& photoatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -39,11 +36,11 @@ void PhotoatomACEFactory::createPhotoatomCore(
   Photoatom::ReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( raw_photoatom_data.extractPhotonEnergyGrid() );
+  std::shared_ptr<std::vector<double> > energy_grid(
+       new std::vector<double>( raw_photoatom_data.extractPhotonEnergyGrid() );
 
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, true>(
+  std::shared_ptr<Utility::HashBasedGridSearcher> grid_searcher(
+         new Utility::StandardHashBasedGridSearcher<std::vector<double>, true>(
                                 energy_grid,
                                 properties.getNumberOfPhotonHashGridBins() ) );
 
@@ -88,7 +85,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   // Create the photoelectric reaction(s)
   if( properties.isAtomicRelaxationModeOn() )
   {
-    Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<PhotoatomicReaction> > reaction_pointers;
 
     PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 							   raw_photoatom_data,
@@ -144,16 +141,16 @@ void PhotoatomACEFactory::createPhotoatom(
 	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const std::string& photoatom_name,
 	    const double atomic_weight,
-	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	    const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
             const SimulationPhotonProperties& properties,
-	    Teuchos::RCP<Photoatom>& photoatom )
+	    std::shared_ptr<Photoatom>& photoatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
-  Teuchos::RCP<PhotoatomCore> core;
+  std::shared_ptr<PhotoatomCore> core;
 
   PhotoatomACEFactory::createPhotoatomCore( raw_photoatom_data,
 					    atomic_relaxation_model,

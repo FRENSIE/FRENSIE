@@ -22,10 +22,10 @@ namespace MonteCarlo{
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::TripletProductionPhotoatomicReaction(
-                   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-                   const Teuchos::ArrayRCP<const double>& cross_section,
-                   const unsigned threshold_energy_index,
-                   const bool use_detailed_electron_emission_physics )
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index )
@@ -36,11 +36,11 @@ TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::Trip
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::TripletProductionPhotoatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const bool use_detailed_electron_emission_physics )
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
+    const unsigned threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
@@ -110,10 +110,10 @@ void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 {
   // Handle the generated electron and the ejected orbital electron
   {
-    Teuchos::RCP<ParticleState> electron_1(
+    std::shared_ptr<ParticleState> electron_1(
 				     new ElectronState( photon, true, true ) );
 
-    Teuchos::RCP<ParticleState> electron_2(
+    std::shared_ptr<ParticleState> electron_2(
                                      new ElectronState( photon, true, true ) );
 
     const double total_available_kinetic_energy = photon.getEnergy() -
@@ -152,7 +152,7 @@ void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>:
     photon.resetCollisionNumber();
 
     // Create the second annihilation photon
-    Teuchos::RCP<PhotonState> annihilation_photon(
+    std::shared_ptr<PhotonState> annihilation_photon(
 				       new PhotonState( photon, true, true ) );
 
     // Reverse the direction of the second annihilation photon
@@ -177,7 +177,7 @@ void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>:
                                                            ParticleBank& bank )
 {
   THROW_EXCEPTION( std::runtime_error,
-                   "Error: The detailed triplet production model has not been "
+                   "The detailed triplet production model has not been "
                    "implemented yet!" );
 }
   

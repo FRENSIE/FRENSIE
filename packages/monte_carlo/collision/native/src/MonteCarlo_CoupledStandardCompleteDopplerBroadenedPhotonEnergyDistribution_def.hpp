@@ -20,9 +20,9 @@ namespace MonteCarlo{
 // Constructor
 template<typename ComptonProfilePolicy>
 CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-   const Teuchos::Array<double>& subshell_binding_energies,
-   const Teuchos::Array<double>& subshell_occupancies,
-   const Teuchos::Array<Data::SubshellType>& subshell_order,
+   const std::vector<double>& subshell_binding_energies,
+   const std::vector<double>& subshell_occupancies,
+   const std::vector<Data::SubshellType>& subshell_order,
    const std::shared_ptr<const ComptonProfileSubshellConverter>&
    subshell_converter,
    const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&

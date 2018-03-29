@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 #define MONTE_CARLO_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -23,12 +26,12 @@ public:
 
   //! Constructor
   CompleteFissionNeutronMultiplicityDistribution(
-				 const Teuchos::RCP<Utility::OneDDistribution>&
-				 prompt_multiplicity_distribution,
-				 const Teuchos::RCP<Utility::OneDDistribution>&
-				 delayed_multiplicity_distribution,
-				 const Teuchos::RCP<Utility::OneDDistribution>&
-				 total_multiplicity_distribution );
+			const std::shared_ptr<const Utility::OneDDistribution>&
+                        prompt_multiplicity_distribution,
+                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        delayed_multiplicity_distribution,
+                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        total_multiplicity_distribution );
 
   //! Destructor
   ~CompleteFissionNeutronMultiplicityDistribution()
@@ -46,13 +49,13 @@ public:
 private:
 
   // The prompt multiplicity distribution (prompt nu-bar)
-  Teuchos::RCP<Utility::OneDDistribution> d_prompt_multiplicity_distribution;
+  std::shared_ptr<const Utility::OneDDistribution> d_prompt_multiplicity_distribution;
 
   // The delayed multiplicity distribution (delayed nu-bar)
-  Teuchos::RCP<Utility::OneDDistribution> d_delayed_multiplicity_distribution;
+  std::shared_ptr<const Utility::OneDDistribution> d_delayed_multiplicity_distribution;
 
   // The total multiplicity distribution (total nu-bar)
-  Teuchos::RCP<Utility::OneDDistribution> d_total_multiplicity_distribution;
+  std::shared_ptr<const Utility::OneDDistribution> d_total_multiplicity_distribution;
 };
 
 } // end MonteCarlo namespace

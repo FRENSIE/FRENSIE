@@ -17,8 +17,8 @@ namespace MonteCarlo{
 //Constructor
 template<typename AceLaw61InterpolationPolicy>
 StandardAceLaw61AngleDistribution<AceLaw61InterpolationPolicy>::StandardAceLaw61AngleDistribution(
-    const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-    const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& cosine_distributions ) :
+    const Utility::ArrayView<const double>& outgoing_energy_grid,
+    const std::vector<std::shared_ptr<Utility::OneDDistribution> >& cosine_distributions ) :
       AceLaw61AngleDistribution( outgoing_energy_grid, cosine_distributions )
 { /* ... */ }
 

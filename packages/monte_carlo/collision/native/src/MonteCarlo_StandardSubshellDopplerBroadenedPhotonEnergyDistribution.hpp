@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "Data_SubshellType.hpp"
@@ -44,25 +41,25 @@ public:
   double evaluateWithElectronMomentumProjection(
                               const double incoming_energy,
                               const double electron_momentum_projection,
-                              const double scattering_angle_cosine ) const;
+                              const double scattering_angle_cosine ) const override;
   
   //! Evaluate the distribution
   double evaluateExact( const double incoming_energy,
                         const double outgoing_energy,
-                        const double scattering_angle_cosine ) const;
+                        const double scattering_angle_cosine ) const override;
 
   //! Evaluate the PDF with electron momentum projection
   double evaluatePDFWithElectronMomentumProjection(
                               const double incoming_energy,
                               const double electron_momentum_projection,
                               const double scattering_angle_cosine,
-                              const double precision ) const;
+                              const double precision ) const override;
   
   //! Evaluate the PDF
   double evaluatePDFExact( const double incoming_energy,
                            const double outgoing_energy,
                            const double scattering_angle_cosine,
-                           const double precision ) const;
+                           const double precision ) const override;
 
   //! Evaluate the integrated cross section (b/mu)
   double evaluateIntegratedCrossSection( const double incoming_energy,
@@ -73,27 +70,27 @@ public:
   double evaluateIntegratedCrossSectionExact(
                                           const double incoming_energy,
                                           const double scattering_angle_cosine,
-                                          const double precision ) const;
+                                          const double precision ) const override;
 
   //! Sample an outgoing energy from the distribution
   void sample( const double incoming_energy,
 	       const double scattering_angle_cosine,
 	       double& outgoing_energy,
-	       Data::SubshellType& shell_of_interaction ) const;
+	       Data::SubshellType& shell_of_interaction ) const override;
 
   //! Sample an outgoing energy and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
 			      const double scattering_angle_cosine,
 			      double& outgoing_energy,
 			      Data::SubshellType& shell_of_interaction,
-			      unsigned& trials ) const;
+			      unsigned& trials ) const override;
 
   //! Sample an electron momentum projection and record the number of trials
   void sampleMomentumAndRecordTrials( const double incoming_energy,
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
                                       Data::SubshellType& shell_of_interaction,
-                                      unsigned& trials ) const;
+                                      unsigned& trials ) const override;
 
 private:
 

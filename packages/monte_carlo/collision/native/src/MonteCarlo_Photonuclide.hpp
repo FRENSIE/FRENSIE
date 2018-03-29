@@ -11,18 +11,17 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
 #include "MonteCarlo_PhotonuclearReaction.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -32,19 +31,19 @@ class Photonuclide : public Photoatom
 
 private:
 
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Typedef for the reaction map
   typedef boost::unordered_map<PhotonuclearReactionType,
-			       Teuchos::RCP<PhotonuclearReaction> >
+			       std::shared_ptr<PhotonuclearReaction> >
   NuclearReactionMap;
 
   //! Typedef for the const reaction map
   typedef boost::unordered_map<PhotonuclearReactionType,
-			       Teuchos::RCP<const PhotonuclearReaction> >
+			       std::shared_ptr<const PhotonuclearReaction> >
   ConstNuclearReactionMap;
 
   //! Return the reactions that are treated as absorption
@@ -61,28 +60,29 @@ public:
 	  const unsigned isomer_number,
 	  const double temperature,
 	  const double atomic_weight,
-	  const Teuchos::ArrayRCP<double>& nuclear_energy_grid,
+	  const std::shared_ptr<std::vector<double> >& nuclear_energy_grid,
 	  const NuclearReactionMap& standard_nuclear_scattering_reactions,
 	  const NuclearReactionMap& standard_nuclear_absorption_reactions,
-	  const Teuchos::ArrayRCP<double>& atomic_energy_grid,
+	  const std::shared_ptr<std::vector<double> >& atomic_energy_grid,
 	  const ReactionMap& standard_atomic_scattering_reactions,
 	  const ReactionMap& standard_atomic_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	  const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
 	  const bool processed_atomic_cross_sections,
 	  const AtomicInterpPolicy policy );
 
   //! Constructor (from a core)
-  Photonuclide(const std::string& atom_name,
-	       const std::string& nuclide_name,
-	       const unsigned atomic_number,
-	       const unsigned atomic_mass_number,
-	       const unsigned isomer_number,
-	       const double temperature,
-	       const double atomic_weight,
-	       const Teuchos::ArrayRCP<double>& nuclear_energy_grid,
-	       const NuclearReactionMap& standard_nuclear_scattering_reactions,
-	       const NuclearReactionMap& standard_nuclear_absorption_reactions,
-	       const PhotoatomCore& core );
+  Photonuclide(
+              const std::string& atom_name,
+              const std::string& nuclide_name,
+              const unsigned atomic_number,
+              const unsigned atomic_mass_number,
+              const unsigned isomer_number,
+              const double temperature,
+              const double atomic_weight,
+	      const std::shared_ptr<std::vector<double> >& nuclear_energy_grid,
+              const NuclearReactionMap& standard_nuclear_scattering_reactions,
+              const NuclearReactionMap& standard_nuclear_absorption_reactions,
+              const PhotoatomCore& core );
 
   //! Destructor
   ~Photonuclide()
@@ -134,10 +134,10 @@ private:
   double d_temperature;
 
   // The total nuclear reaction
-  Teuchos::RCP<PhotonuclearReaction> d_total_reaction;
+  std::shared_ptr<PhotonuclearReaction> d_total_reaction;
 
   // The total absorption reaction
-  Teuchos::RCP<PhotonuclearReaction> d_total_absorption_reaction;
+  std::shared_ptr<PhotonuclearReaction> d_total_absorption_reaction;
 
   // The nuclear scattering reactions
   NuclearReactionMap d_scattering_reactions;

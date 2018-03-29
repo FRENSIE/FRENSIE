@@ -21,8 +21,8 @@ AdjointPhotonMaterial::AdjointPhotonMaterial(
                    const ModuleTraits::InternalMaterialHandle id,
                    const double density,
                    const AdjointPhotoatomNameMap& adjoint_photoatom_name_map,
-                   const Teuchos::Array<double>& adjoint_photoatom_fractions,
-                   const Teuchos::Array<std::string>& adjoint_photoatom_names )
+                   const std::vector<double>& adjoint_photoatom_fractions,
+                   const std::vector<std::string>& adjoint_photoatom_names )
   : d_id( id ),
     d_number_density( density ),
     d_atoms( adjoint_photoatom_fractions.size() )
@@ -47,7 +47,7 @@ AdjointPhotonMaterial::AdjointPhotonMaterial(
 
     TEST_FOR_EXCEPTION( atom == adjoint_photoatom_name_map.end(),
 			std::logic_error,
-			"Error: atom " << adjoint_photoatom_names[i] <<
+			"atom " << adjoint_photoatom_names[i] <<
 			" has not been loaded!" );
 
     Utility::get<1>( d_atoms[i] ) = atom->second;
@@ -341,7 +341,7 @@ void AdjointPhotonMaterial::collideAtLineEnergy(
 
 // Get the atomic weight from an atom pointer
 double AdjointPhotonMaterial::getAtomicWeight(
-      const Utility::Pair<double,Teuchos::RCP<const AdjointPhotoatom> >& pair )
+      const Utility::Pair<double,std::shared_ptr<const AdjointPhotoatom> >& pair )
 {
   return Utility::get<1>( pair )->getAtomicWeight();
 }

@@ -18,8 +18,8 @@ namespace MonteCarlo{
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::MomentPreservingElasticPositronatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
        const std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
          discrete_scattering_distribution )
@@ -28,17 +28,6 @@ MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_secti
               threshold_energy_index ),
     d_discrete_scattering_distribution( discrete_scattering_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( discrete_scattering_distribution.use_count() > 0 );
 }
@@ -46,10 +35,10 @@ MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_secti
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::MomentPreservingElasticPositronatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
          discrete_scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -58,17 +47,6 @@ MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_secti
               grid_searcher ),
     d_discrete_scattering_distribution( discrete_scattering_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( discrete_scattering_distribution.use_count() > 0 );
   // Make sure the grid searcher is valid

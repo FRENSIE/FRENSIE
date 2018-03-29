@@ -18,8 +18,8 @@ namespace MonteCarlo{
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::ScreenedRutherfordElasticElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
@@ -35,10 +35,10 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::ScreenedRutherfordElasticElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,

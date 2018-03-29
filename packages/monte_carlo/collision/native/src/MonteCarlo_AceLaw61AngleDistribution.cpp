@@ -13,9 +13,10 @@ namespace MonteCarlo{
 
 // Constructor
 AceLaw61AngleDistribution::AceLaw61AngleDistribution( 
-		  const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-		  const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& cosine_distributions )
-  : d_outgoing_energy_grid( outgoing_energy_grid ),
+		  const Utility::ArrayView<const double>& outgoing_energy_grid,
+		  const std::vector<std::shared_ptr<Utility::OneDDistribution> >& cosine_distributions )
+  : d_outgoing_energy_grid( outgoing_energy_grid.begin(),
+                            outgoing_energy_grid.end() ),
     d_cosine_distributions( cosine_distributions )
 {
   // Make sure the arrays have the same size

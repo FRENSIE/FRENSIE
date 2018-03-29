@@ -14,18 +14,18 @@ namespace MonteCarlo{
 
 // Constructor
 DetailedNeutronFissionReaction::DetailedNeutronFissionReaction(
-		   const NuclearReactionType reaction_type,
-		   const double temperature,
-		   const double q_value,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
-		   fission_neutron_multiplicity_distribution,
-		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
-		   prompt_neutron_emission_distribution,
-		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
-		   delayed_neutron_emission_distribution )
+       const NuclearReactionType reaction_type,
+       const double temperature,
+       const double q_value,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
+       fission_neutron_multiplicity_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       prompt_neutron_emission_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       delayed_neutron_emission_distribution )
   : NeutronFissionReaction( reaction_type,
 			    temperature,
 			    q_value,
@@ -52,7 +52,7 @@ void DetailedNeutronFissionReaction::react( NeutronState& neutron,
   // Create the additional delayed neutrons
   for( unsigned i = 0; i < num_delayed_neutrons; ++i )
   {
-    Teuchos::RCP<NeutronState> new_neutron(
+    std::shared_ptr<NeutronState> new_neutron(
 				    new NeutronState( neutron, true, false ) );
 
     d_delayed_neutron_emission_distribution->scatterParticle(

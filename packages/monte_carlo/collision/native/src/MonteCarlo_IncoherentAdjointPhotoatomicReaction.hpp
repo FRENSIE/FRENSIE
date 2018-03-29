@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReaction.hpp"
@@ -26,9 +23,6 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class IncoherentAdjointPhotoatomicReaction : public StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
   typedef StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
@@ -39,18 +33,18 @@ public:
 
   //! Basic Contructor
   IncoherentAdjointPhotoatomicReaction(
-          const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-          const Teuchos::ArrayRCP<const double>& cross_section,
-          const unsigned threshold_energy_index,
-          const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
-          scattering_distribution );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
+       scattering_distribution );
 
   //! Constructor
   IncoherentAdjointPhotoatomicReaction(
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const std::shared_ptr<IncoherentAdjointPhotonScatteringDistribution>&
     scattering_distribution );
 
@@ -60,24 +54,24 @@ public:
 
   //! Set the critical line energies
   void setCriticalLineEnergies(
-               const Teuchos::ArrayRCP<const double>& critical_line_energies );
+   const std::shared_ptr<const std::vector<double> >& critical_line_energies );
 
   //! Get the critical line energies
-  const Teuchos::ArrayRCP<const double>& getCriticalLineEnergies() const;
+  const std::shared_ptr<const std::vector<double> >& getCriticalLineEnergies() const;
 
   //! Return the number of adjoint photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
 
   //! Return the number of adjoint electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const;
 
   //! Return the reaction type
-  virtual AdjointPhotoatomicReactionType getReactionType() const;
+  virtual AdjointPhotoatomicReactionType getReactionType() const override;
 
   //! Simulate the reaction
   void react( AdjointPhotonState& adjoint_photon,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const;
+              Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 

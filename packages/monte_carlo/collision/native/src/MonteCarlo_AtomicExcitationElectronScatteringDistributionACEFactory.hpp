@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_ATOMIC_EXCITATION_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_ATOMIC_EXCITATION_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"

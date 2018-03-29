@@ -44,7 +44,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   THROW_EXCEPTION( std::runtime_error,
-                   "Error: evaluation of the moment-preserving distribution" <<
+                   "evaluation of the moment-preserving distribution" <<
                    " is currently not supported!" );
   
   // // evaluate the distribution at the incoming energy and scattering_angle_cosine
@@ -67,7 +67,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   THROW_EXCEPTION( std::runtime_error,
-                   "Error: evaluation of the moment-preserving PDF is" <<
+                   "evaluation of the moment-preserving PDF is" <<
                    " currently not supported!" );
 
   // // evaluate the PDF at the incoming energy and scattering_angle_cosine
@@ -90,7 +90,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   THROW_EXCEPTION( std::runtime_error,
-                   "Error: evaluation of the moment-preserving CDF is" <<
+                   "evaluation of the moment-preserving CDF is" <<
                    " currently not supported!" );
 
   // // evaluate the CDF at the incoming energy and scattering_angle_cosine

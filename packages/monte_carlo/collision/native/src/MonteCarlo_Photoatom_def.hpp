@@ -17,17 +17,17 @@ namespace MonteCarlo{
 // Constructor
 template<typename InterpPolicy>
 Photoatom::Photoatom(
-	  const std::string& name,
-	  const unsigned atomic_number,
-	  const double atomic_weight,
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
-	  grid_searcher,
-	  const Photoatom::ReactionMap& standard_scattering_reactions,
-	  const Photoatom::ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_atomic_cross_sections,
-	  const InterpPolicy policy )
+	const std::string& name,
+        const unsigned atomic_number,
+        const double atomic_weight,
+        const std::shared_ptr<std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher>&
+        grid_searcher,
+        const Photoatom::ReactionMap& standard_scattering_reactions,
+        const Photoatom::ReactionMap& standard_absorption_reactions,
+	const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+        const bool processed_atomic_cross_sections,
+        const InterpPolicy policy )
   : Atom<PhotoatomCore>( name,
                          atomic_number,
                          atomic_weight,

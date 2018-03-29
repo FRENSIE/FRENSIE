@@ -9,15 +9,12 @@
 #ifndef MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
 #define MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -30,10 +27,10 @@ public:
   //! Constructor
   DelayedNeutronEmissionDistribution(
       const double atomic_weight_ratio,
-      const Teuchos::Array<double>& precursor_group_decay_consts,
-      const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
+      const std::vector<double>& precursor_group_decay_consts,
+      const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
       precursor_group_prob_distributions,
-      const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
+      const std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions );
 
   //! Destructor
@@ -43,7 +40,7 @@ public:
   //! Randomly "scatter" the neutron
   void scatterParticle( const NeutronState& incoming_neutron,
 		        NeutronState& outgoing_neutron,
-			const double temperature ) const;
+			const double temperature ) const override;
 
 protected:
 
@@ -53,14 +50,14 @@ protected:
 private:
 
   // The delayed neutron precursor group decay constants
-  Teuchos::Array<double> d_precursor_group_decay_consts;
+  std::vector<double> d_precursor_group_decay_consts;
 
   // The delayed neutron precursor group probability distributions
-  Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
+  std::vector<std::shared_ptr<const Utility::OneDDistribution> >
   d_precursor_group_prob_distributions;
 
   // The delayed neutron precursor group energy distributions
-  Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >
+  std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >
   d_precursor_group_emission_distributions;
 };
 

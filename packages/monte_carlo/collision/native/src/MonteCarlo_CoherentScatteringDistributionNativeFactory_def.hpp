@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 #define MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ThompsonScatteringDistribution.hpp"
 #include "MonteCarlo_BasicCoherentScatteringDistribution.hpp"

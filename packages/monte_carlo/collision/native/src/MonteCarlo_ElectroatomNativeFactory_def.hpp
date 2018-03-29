@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_DEF_HPP
 #define MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
@@ -32,9 +28,9 @@ namespace MonteCarlo{
 template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomNativeFactory::createElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
         const SimulationElectronProperties& properties,
-        Teuchos::RCP<ElectroatomCore>& electroatom_core )
+        std::shared_ptr<const ElectroatomCore>& electroatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -44,13 +40,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
   Electroatom::ReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( raw_electroatom_data.getElectronEnergyGrid().begin(),
-                      raw_electroatom_data.getElectronEnergyGrid().end() );
+  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
+  energy_grid->assign( raw_electroatom_data.getElectronEnergyGrid().begin(),
+                       raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
                               properties.getNumberOfElectronHashGridBins() ) );
 
@@ -138,8 +134,8 @@ void ElectroatomNativeFactory::createElectroatomCore(
 template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 void ElectroatomNativeFactory::createElasticElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
         const SimulationElectronProperties& properties,
         Electroatom::ReactionMap& scattering_reactions )
 {
@@ -232,7 +228,7 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
   else
   {
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: elastic distribution type "
+                     "elastic distribution type "
                      << distribution_type <<
                      " is not currently supported!" );
   }

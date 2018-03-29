@@ -6,13 +6,10 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_TabularCDFDistribution.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -26,7 +23,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
     const double evaluation_tol )
 {
   // Extract the subshell information
-  Teuchos::ArrayView<const double> subshell_endf_designators =
+  Utility::ArrayView<const double> subshell_endf_designators =
     raw_electroatom_data.extractSubshellENDFDesignators();
 
   unsigned shell_index = 0;
@@ -41,32 +38,32 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
   }
 
   // Extract the subshell binding energies
-  Teuchos::ArrayView<const double> binding_energies =
+  Utility::ArrayView<const double> binding_energies =
     raw_electroatom_data.extractSubshellBindingEnergies();
 
   // Extract the number of subshells (N_s)
   unsigned num_subshells = subshell_endf_designators.size();
 
   // Extract the subshell cross sections
-  Teuchos::ArrayView<const double> raw_subshell_cross_sections =
+  Utility::ArrayView<const double> raw_subshell_cross_sections =
     raw_electroatom_data.extractElectroionizationSubshellCrossSections();
 
 
   // Extract the electroionization data block (EION)
-  Teuchos::ArrayView<const double> eion_block(
+  Utility::ArrayView<const double> eion_block(
                       raw_electroatom_data.extractEIONBlock() );
 
   // Extract the location of info about first knock-on table relative to the EION block
   unsigned eion_loc = raw_electroatom_data.returnEIONLoc();
 
   // Extract the number of knock-on tables by subshell (N_i)
-  Teuchos::Array<double> num_tables(eion_block(0,num_subshells));
+  std::vector<double> num_tables(eion_block(0,num_subshells));
 
   // Extract the location of info about knock-on tables by subshell
-  Teuchos::Array<double> table_info(eion_block(num_subshells,num_subshells));
+  std::vector<double> table_info(eion_block(num_subshells,num_subshells));
 
   // Extract the location of knock-on tables by subshell
-  Teuchos::Array<double> table_loc(eion_block(2*num_subshells,num_subshells));
+  std::vector<double> table_loc(eion_block(2*num_subshells,num_subshells));
 
   // Subshell table info realtive to the EION Block
   unsigned subshell_info = table_info[shell_index]- eion_loc - 1;
@@ -102,7 +99,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
         const unsigned number_of_tables,
         const double binding_energy,
         const bool is_eprdata14,
-        const Teuchos::ArrayView<const double>& raw_electroionization_data,
+        const Utility::ArrayView<const double>& raw_electroionization_data,
         std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
           electroionization_subshell_distribution,
         const double evaluation_tol )
@@ -133,23 +130,23 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
     const unsigned table_location,
     const unsigned number_of_tables,
     const bool is_eprdata14,
-    const Teuchos::ArrayView<const double>& raw_electroionization_data,
+    const Utility::ArrayView<const double>& raw_electroionization_data,
     std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
             subshell_distribution,
     const double evaluation_tol )
 {
   // Extract the energies for which knock-on sampling tables are given
-  Teuchos::Array<double> table_energy_grid( raw_electroionization_data(
+  std::vector<double> table_energy_grid( raw_electroionization_data(
                                             table_info_location,
                                             number_of_tables ) );
 
   // Extract the length of the knock-on sampling tables
-  Teuchos::Array<double> table_length( raw_electroionization_data(
+  std::vector<double> table_length( raw_electroionization_data(
                                        table_info_location + number_of_tables,
                                        number_of_tables ) );
 
   // Extract the offset of the knock-on sampling tables
-  Teuchos::Array<double> table_offset( raw_electroionization_data(
+  std::vector<double> table_offset( raw_electroionization_data(
                                        table_info_location + 2*number_of_tables,
                                        number_of_tables ) );
 

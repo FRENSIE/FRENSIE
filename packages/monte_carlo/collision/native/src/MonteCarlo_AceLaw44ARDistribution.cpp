@@ -13,12 +13,13 @@ namespace MonteCarlo{
 
 // Constructor
 AceLaw44ARDistribution::AceLaw44ARDistribution(
-		  const Teuchos::ArrayView<const double>& outgoing_energy_grid,
-		  const Teuchos::ArrayView<const double>& A_array,
-		  const Teuchos::ArrayView<const double>& R_array )
-  : d_outgoing_energy_grid( outgoing_energy_grid ),
-    d_A( A_array ),
-    d_R( R_array )
+		  const Utility::ArrayView<const double>& outgoing_energy_grid,
+		  const Utility::ArrayView<const double>& A_array,
+		  const Utility::ArrayView<const double>& R_array )
+  : d_outgoing_energy_grid( outgoing_energy_grid.begin(),
+                            outgoing_energy_grid.end() ),
+    d_A( A_array.begin(), A_array.end() ),
+    d_R( R_array.begin(), A_array.end() )
 {
   // Make sure the arrays have the same size
   testPrecondition( outgoing_energy_grid.size() > 0 );

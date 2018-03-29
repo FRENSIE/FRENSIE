@@ -26,14 +26,18 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
     convertStringToCoupledElasticSamplingMethod( sampling_method );
 
   // Assign the cutoff and total elastic cross section and electron energy grid
-  Teuchos::ArrayRCP<double> cutoff_cross_section, total_cross_section, energy_grid;
-  cutoff_cross_section.assign(
+  std::shared_ptr<std::vector<double> >
+    cutoff_cross_section( new std::vector<double> ),
+    total_cross_section( new std::vector<double> ),
+    energy_grid( new std::vector<double> );
+  
+  cutoff_cross_section->assign(
     data_container.getAdjointCutoffElasticCrossSection().begin(),
     data_container.getAdjointCutoffElasticCrossSection().end() );
-  total_cross_section.assign(
+  total_cross_section->assign(
     data_container.getAdjointTotalElasticCrossSection().begin(),
     data_container.getAdjointTotalElasticCrossSection().end() );
-  energy_grid.assign(
+  energy_grid->assign(
     data_container.getAdjointElectronEnergyGrid().begin(),
     data_container.getAdjointElectronEnergyGrid().end() );
 
@@ -57,13 +61,14 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
     const double evaluation_tol )
 {
   // Extract the common energy grid used for this atom
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( data_container.getAdjointElectronEnergyGrid().begin(),
-                      data_container.getAdjointElectronEnergyGrid().end() );
+  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
+  energy_grid->assign( data_container.getAdjointElectronEnergyGrid().begin(),
+                       data_container.getAdjointElectronEnergyGrid().end() );
 
   // Cutoff elastic cross section
-  Teuchos::ArrayRCP<double> cutoff_cross_section;
-  cutoff_cross_section.assign(
+  std::shared_ptr<std::vector<double> >
+    cutoff_cross_section( new std::vector<double> );
+  cutoff_cross_section->assign(
     data_container.getAdjointCutoffElasticCrossSection().begin(),
     data_container.getAdjointCutoffElasticCrossSection().end() );
 
@@ -72,19 +77,16 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
     data_container.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Moment preserving elastic cross section
-  std::vector<double> moment_preserving_cross_sections;
+  std::shared_ptr<std::vector<double> >
+    mp_cross_section( new std::vector<double> );
+
   unsigned mp_threshold_energy_index;
   ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
-                                moment_preserving_cross_sections,
+                                *mp_cross_section,
                                 mp_threshold_energy_index,
                                 data_container,
                                 energy_grid,
                                 evaluation_tol );
-
-  Teuchos::ArrayRCP<double> mp_cross_section;
-  mp_cross_section.assign(
-    moment_preserving_cross_sections.begin(),
-    moment_preserving_cross_sections.end() );
 
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution>

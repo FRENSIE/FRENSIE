@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DelayedNeutronEmissionDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -22,10 +19,10 @@ namespace MonteCarlo{
  */
 DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
       const double atomic_weight_ratio,
-      const Teuchos::Array<double>& precursor_group_decay_consts,
-      const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
+      const std::vector<double>& precursor_group_decay_consts,
+      const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
       precursor_group_prob_distributions,
-      const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
+      const std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions )
   : NuclearScatteringDistribution<NeutronState,NeutronState>( atomic_weight_ratio ),
     d_precursor_group_decay_consts( precursor_group_decay_consts ),

@@ -12,15 +12,12 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -35,7 +32,7 @@ public:
   //! Create the subshell order array
   static void createSubshellOrderArray(
 			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::Array<Data::SubshellType>& subshell_order );
+			   std::vector<Data::SubshellType>& subshell_order );
 
   //! Create a coupled complete Doppler broadened photon energy dist
   static void createCoupledCompleteDistribution(
@@ -92,8 +89,8 @@ private:
 
   //! Create the Compton profile distribution
   static void createComptonProfile(
-		 Teuchos::Array<double>& raw_half_momentum_grid,
-                 Teuchos::Array<double>& raw_half_profile,
+		 std::vector<double>& raw_half_momentum_grid,
+                 std::vector<double>& raw_half_profile,
                  const bool use_full_profile,
                  std::shared_ptr<const ComptonProfile>& compton_profile );
 };

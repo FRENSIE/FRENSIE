@@ -9,16 +9,16 @@
 #ifndef MONTE_CARLO_DETAILED_ATOMIC_RELAXATION_MODEL_HPP
 #define MONTE_CARLO_DETAILED_ATOMIC_RELAXATION_MODEL_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_SubshellRelaxationModel.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -37,7 +37,7 @@ public:
 
   //! Constructor
   DetailedAtomicRelaxationModel(
-	    const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
+	    const std::vector<std::shared_ptr<const SubshellRelaxationModel> >&
 	    subshell_relaxation_models,
             const double min_photon_energy,
             const double min_electron_energy );
@@ -54,8 +54,7 @@ public:
 private:
 
   // The map of subshells and their relaxation data
-  boost::unordered_map<Data::SubshellType,
-		       Teuchos::RCP<const SubshellRelaxationModel> >
+  boost::unordered_map<Data::SubshellType,std::shared_ptr<const SubshellRelaxationModel> >
   d_subshell_relaxation_models;
 
   // The min photon energy

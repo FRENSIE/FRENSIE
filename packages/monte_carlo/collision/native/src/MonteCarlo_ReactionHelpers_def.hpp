@@ -15,30 +15,30 @@ namespace MonteCarlo{
 template<typename InterpPolicy>
 double getCrossSection(
     const double energy,
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index )
 {
-  if( energy >= incoming_energy_grid[threshold_energy_index] &&
-      energy < incoming_energy_grid[incoming_energy_grid.size()-1] )
+  if( energy >= (*incoming_energy_grid)[threshold_energy_index] &&
+      energy < incoming_energy_grid->back() )
   {
     unsigned energy_index =
-      Utility::Search::binaryLowerBoundIndex( incoming_energy_grid.begin(),
-                                              incoming_energy_grid.end(),
+      Utility::Search::binaryLowerBoundIndex( incoming_energy_grid->begin(),
+                                              incoming_energy_grid->end(),
                                               energy );
     unsigned cs_index = energy_index - threshold_energy_index;
 
-    return InterpPolicy::interpolate( incoming_energy_grid[energy_index],
-                                      incoming_energy_grid[energy_index+1],
+    return InterpPolicy::interpolate( (*incoming_energy_grid)[energy_index],
+                                      (*incoming_energy_grid)[energy_index+1],
                                       energy,
-                                      cross_section[cs_index],
-                                      cross_section[cs_index+1] );
+                                      (*cross_section)[cs_index],
+                                      (*cross_section)[cs_index+1] );
   }
-  else if( energy < incoming_energy_grid[threshold_energy_index] )
+  else if( energy < (*incoming_energy_grid)[threshold_energy_index] )
     return 0.0;
-  else if( energy == incoming_energy_grid[incoming_energy_grid.size()-1] )
+  else if( energy == incoming_energy_grid->back() )
   {
-    return cross_section[cross_section.size()-1];
+    return cross_section->back();
   }
   else
     return 0.0;
@@ -48,30 +48,30 @@ double getCrossSection(
 template<typename InterpPolicy>
 double getCrossSection(
     const double energy,
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
 {
   // Make sure the energy is valid
   testPrecondition( grid_searcher->isValueWithinGridBounds( energy ) );
 
   double cross_section_value;
 
-  if( energy >= incoming_energy_grid[threshold_energy_index] )
+  if( energy >= (*incoming_energy_grid)[threshold_energy_index] )
   {
     unsigned energy_index = grid_searcher->findLowerBinIndex( energy );
 
     unsigned cs_index = energy_index - threshold_energy_index;
 
     cross_section_value =
-      InterpPolicy::interpolate( incoming_energy_grid[energy_index],
-                                 incoming_energy_grid[energy_index+1],
+      InterpPolicy::interpolate( (*incoming_energy_grid)[energy_index],
+                                 (*incoming_energy_grid)[energy_index+1],
                                  energy,
-                                 cross_section[cs_index],
-                                 cross_section[cs_index+1] );
+                                 (*cross_section)[cs_index],
+                                 (*cross_section)[cs_index+1] );
   }
-  else if( energy < cross_section[threshold_energy_index] )
+  else if( energy < (*cross_section)[threshold_energy_index] )
     cross_section_value = 0.0;
 
   // Make sure the cross section is valid
@@ -85,23 +85,23 @@ template<typename InterpPolicy>
 double getCrossSection(
     const double energy,
     const unsigned bin_index,
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index )
 {
   // Make sure the bin index is valid
-  testPrecondition( incoming_energy_grid[bin_index] <= energy );
-  testPrecondition( incoming_energy_grid[bin_index+1] >= energy );
+  testPrecondition( (*incoming_energy_grid)[bin_index] <= energy );
+  testPrecondition( (*incoming_energy_grid)[bin_index+1] >= energy );
 
   if( bin_index >= threshold_energy_index )
   {
     unsigned cs_index = bin_index - threshold_energy_index;
 
-    return InterpPolicy::interpolate( incoming_energy_grid[bin_index],
-                                      incoming_energy_grid[bin_index+1],
+    return InterpPolicy::interpolate( (*incoming_energy_grid)[bin_index],
+                                      (*incoming_energy_grid)[bin_index+1],
                                       energy,
-                                      cross_section[cs_index],
-                                      cross_section[cs_index+1] );
+                                      (*cross_section)[cs_index],
+                                      (*cross_section)[cs_index+1] );
   }
   else
     return 0.0;
@@ -111,34 +111,34 @@ double getCrossSection(
 template<typename InterpPolicy>
 double getProcessedCrossSection(
     const double energy,
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index )
 {
-  if( energy >= incoming_energy_grid[threshold_energy_index] &&
-      energy < incoming_energy_grid[incoming_energy_grid.size()-1] )
+  if( energy >= (*incoming_energy_grid)[threshold_energy_index] &&
+      energy < incoming_energy_grid->back() )
   {
     unsigned energy_index =
-      Utility::Search::binaryLowerBoundIndex( incoming_energy_grid.begin(),
-                                              incoming_energy_grid.end(),
+      Utility::Search::binaryLowerBoundIndex( incoming_energy_grid->begin(),
+                                              incoming_energy_grid->end(),
                                               energy );
     unsigned cs_index = energy_index - threshold_energy_index;
 
     double processed_slope =
-      (cross_section[cs_index+1]-cross_section[cs_index])/
-      (incoming_energy_grid[energy_index+1]-
-       incoming_energy_grid[energy_index]);
+      ((*cross_section)[cs_index+1]-(*cross_section)[cs_index])/
+      ((*incoming_energy_grid)[energy_index+1]-
+       (*incoming_energy_grid)[energy_index]);
 
-    return InterpPolicy::interpolate( incoming_energy_grid[energy_index],
+    return InterpPolicy::interpolate( (*incoming_energy_grid)[energy_index],
                                       InterpPolicy::processIndepVar( energy ),
-                                      cross_section[cs_index],
+                                      (*cross_section)[cs_index],
                                       processed_slope );
   }
-  else if( energy < incoming_energy_grid[threshold_energy_index] )
+  else if( energy < (*incoming_energy_grid)[threshold_energy_index] )
     return 0.0;
-  else if( energy == incoming_energy_grid[incoming_energy_grid.size()-1] )
+  else if( energy == incoming_energy_grid->back() )
   {
-    return cross_section[cross_section.size()-1];
+    return (*cross_section)[cross_section.size()-1];
   }
   else
     return 0.0;
@@ -148,31 +148,31 @@ double getProcessedCrossSection(
 template<typename InterpPolicy>
 double getProcessedCrossSection(
     const double energy,
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
 {
   // Make sure the energy is valid
   testPrecondition( grid_searcher->isValueWithinGridBounds( energy ) );
 
   double cross_section_value;
 
-  if( energy >= incoming_energy_grid[threshold_energy_index] )
+  if( energy >= (*incoming_energy_grid)[threshold_energy_index] )
   {
     unsigned energy_index = grid_searcher->findLowerBinIndex( energy );
 
     unsigned cs_index = energy_index - threshold_energy_index;
 
     double processed_slope =
-      (cross_section[cs_index+1]-cross_section[cs_index])/
-      (incoming_energy_grid[energy_index+1]-
-       incoming_energy_grid[energy_index]);
+      ((*cross_section)[cs_index+1]-(*cross_section)[cs_index])/
+      ((*incoming_energy_grid)[energy_index+1]-
+       (*incoming_energy_grid)[energy_index]);
 
     cross_section_value =
-        InterpPolicy::interpolate( incoming_energy_grid[energy_index],
+        InterpPolicy::interpolate( (*incoming_energy_grid)[energy_index],
                                    InterpPolicy::processIndepVar( energy ),
-                                   cross_section[cs_index],
+                                   (*cross_section)[cs_index],
                                    processed_slope );
   }
   else
@@ -189,14 +189,14 @@ template<typename InterpPolicy>
 double getProcessedCrossSection(
     const double energy,
     const unsigned bin_index,
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index )
 {
   // Make sure the bin index is valid
-  testPrecondition( incoming_energy_grid[bin_index] <=
+  testPrecondition( (*incoming_energy_grid)[bin_index] <=
                     InterpPolicy::processIndepVar( energy ) );
-  testPrecondition( incoming_energy_grid[bin_index+1] >=
+  testPrecondition( (*incoming_energy_grid)[bin_index+1] >=
                     InterpPolicy::processIndepVar( energy ) );
 
   if( bin_index >= threshold_energy_index )
@@ -204,15 +204,15 @@ double getProcessedCrossSection(
     unsigned cs_index = bin_index - threshold_energy_index;
 
     double processed_slope =
-      (cross_section[cs_index+1]-cross_section[cs_index])/
-      (incoming_energy_grid[bin_index+1]-
-       incoming_energy_grid[bin_index]);
+      ((*cross_section)[cs_index+1]-(*cross_section)[cs_index])/
+      ((*incoming_energy_grid)[bin_index+1]-
+       (*incoming_energy_grid)[bin_index]);
 
     double processed_energy = InterpPolicy::processIndepVar( energy );
 
-    return InterpPolicy::interpolate( incoming_energy_grid[bin_index],
+    return InterpPolicy::interpolate( (*incoming_energy_grid)[bin_index],
                                       processed_energy,
-                                      cross_section[cs_index],
+                                      (*cross_section)[cs_index],
                                       processed_slope );
   }
   else

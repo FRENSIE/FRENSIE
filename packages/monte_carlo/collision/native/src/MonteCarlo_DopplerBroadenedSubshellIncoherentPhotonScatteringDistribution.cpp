@@ -20,7 +20,7 @@ namespace MonteCarlo{
 DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
     const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
-    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+    const std::shared_ptr<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy )
   : SubshellIncoherentPhotonScatteringDistribution(
 	       doppler_broadened_energy_dist->getSubshell(),

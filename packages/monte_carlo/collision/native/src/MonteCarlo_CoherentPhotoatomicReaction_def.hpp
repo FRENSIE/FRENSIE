@@ -17,10 +17,10 @@ namespace MonteCarlo{
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction(
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
+		   const std::shared_ptr<const std::vector<double> ><const double>& incoming_energy_grid,
+		   const std::shared_ptr<const std::vector<double> ><const double>& cross_section,
 		   const unsigned threshold_energy_index,
-		   const Teuchos::RCP<const CoherentScatteringDistribution>&
+		   const std::shared_ptr<const CoherentScatteringDistribution>&
 		   scattering_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -45,11 +45,11 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
+      const std::shared_ptr<const std::vector<double> ><const double>& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> ><const double>& cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const CoherentScatteringDistribution>&
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const CoherentScatteringDistribution>&
       scattering_distribution )
   : BaseType( incoming_energy_grid,
               cross_section,

@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
@@ -37,7 +34,7 @@ public:
   //! Create an incoherent distribution
   static void createDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const IncoherentModelType incoherent_model,
 	 const double kahn_sampling_cutoff_energy,
@@ -48,7 +45,7 @@ protected:
   //! Create a Waller-Hartree incoherent distribution
   static void createWallerHartreeDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const double kahn_sampling_cutoff_energy );
 
@@ -57,7 +54,7 @@ protected:
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
     const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,
     const double kahn_sampling_cutoff_energy );
 
@@ -65,7 +62,7 @@ protected:
   static void createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const unsigned endf_subshell,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const double kahn_sampling_cutoff_energy );
 
@@ -75,7 +72,7 @@ protected:
     const unsigned endf_subshell,
     const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,
     const double kahn_sampling_cutoff_energy );
 

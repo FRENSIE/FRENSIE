@@ -21,10 +21,10 @@ namespace MonteCarlo{
 NeutronMaterial::NeutronMaterial(
 	        const ModuleTraits::InternalMaterialHandle id,
 	        const double density,
-	        const std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
+	        const std::unordered_map<std::string,std::shared_ptr<const Nuclide> >&
 	        nuclide_name_map,
-	        const Teuchos::Array<double>& nuclide_fractions,
-	        const Teuchos::Array<std::string>& nuclide_names )
+	        const std::vector<double>& nuclide_fractions,
+	        const std::vector<std::string>& nuclide_names )
   : d_id( id ),
     d_number_density( density ),
     d_nuclides( nuclide_fractions.size() )
@@ -210,7 +210,7 @@ unsigned NeutronMaterial::sampleCollisionNuclide( const double energy ) const
 
 // Get the atomic weight ratio from a nuclide pointer
 double NeutronMaterial::getNuclideAWR(
-		     const Utility::Pair<double,Teuchos::RCP<Nuclide> >& pair )
+            const std::pair<double,std::shared_ptr<const Nuclide> >& pair )
 {
   return Utility::get<1>( pair )->getAtomicWeightRatio();
 }

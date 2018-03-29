@@ -19,8 +19,8 @@ namespace MonteCarlo{
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
        const ElectroatomicReactionType reaction )
   : BaseType( incoming_energy_grid,
@@ -32,11 +32,11 @@ AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::Absorptio
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const ElectroatomicReactionType reaction )
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
+    const unsigned threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const ElectroatomicReactionType reaction )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,

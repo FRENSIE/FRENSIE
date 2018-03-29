@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_POSITRONIONIZATION_SUBSHELL_POSITRONATOMIC_REACTION_HPP
 #define MONTE_CARLO_POSITRONIONIZATION_SUBSHELL_POSITRONATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PositronionizationPositronatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
@@ -22,19 +19,16 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = false>
 class PositronionizationSubshellPositronatomicReaction : public PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
-typedef PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_section>
+  typedef PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
 
   //! Basic Constructor
   PositronionizationSubshellPositronatomicReaction(
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
@@ -42,10 +36,10 @@ public:
 
   //! Constructor
   PositronionizationSubshellPositronatomicReaction(
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
@@ -57,15 +51,15 @@ public:
 
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,
-                                      const double outgoing_energy ) const;
+                                      const double outgoing_energy ) const override;
 
   //! Simulate the reaction
   void react( PositronState& positron,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const;
+              Data::SubshellType& shell_of_interaction ) const override;
 
   //! Return the reaction type
-  PositronatomicReactionType getReactionType() const;
+  PositronatomicReactionType getReactionType() const override;
 
   //! Get the interaction subshell (non-standard interface)
   unsigned getSubshell() const;

@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NuclideACEFactory.hpp"
@@ -75,7 +72,7 @@ NuclideFactory::NuclideFactory(
     else
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: nuclear table type " << nuclide_file_type <<
+		       "nuclear table type " << nuclide_file_type <<
 		       " is not supported!" );
     }
 
@@ -91,7 +88,7 @@ NuclideFactory::NuclideFactory(
  * will be used as its key in the map that is populated.
  */
 void NuclideFactory::createNuclideMap(
-  std::unordered_map<std::string,Teuchos::RCP<Nuclide> >& nuclide_map ) const
+  std::unordered_map<std::string,std::shared_ptr<Nuclide> >& nuclide_map ) const
 {
   // Reset the nuclide map
   nuclide_map.clear();
@@ -132,7 +129,7 @@ void NuclideFactory::createNuclideFromACETable(
 				         ace_file_handler.getTableXSSArray() );
 
   // Initialize the new nuclide
-  Teuchos::RCP<Nuclide>& nuclide = d_nuclide_name_map[nuclide_alias];
+  std::shared_ptr<Nuclide>& nuclide = d_nuclide_name_map[nuclide_alias];
 
   // Create the new nuclide
   NuclideACEFactory::createNuclide( xss_data_extractor,

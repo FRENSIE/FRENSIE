@@ -24,26 +24,26 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
                    const Data::AdjointElectronPhotonRelaxationDataContainer&
                    raw_adjoint_photoatom_data,
                    const SimulationAdjointPhotonProperties& properties,
-                   Teuchos::RCP<AdjointPhotoatomCore>& adjoint_photoatom_core )
+                   std::shared_ptr<const AdjointPhotoatomCore>& adjoint_photoatom_core )
 {
   // Create the critical line energies array
-  Teuchos::ArrayRCP<const double> critical_line_energies =
+  std::shared_ptr<const std::vector<double> > critical_line_energies =
     ThisType::addCriticalLineEnergies(
                            raw_adjoint_photoatom_data,
                            properties.getMaxAdjointPhotonEnergy(),
                            properties.getCriticalAdjointPhotonLineEnergies() );
 
   // Create the union energy grid
-  Teuchos::ArrayRCP<double> energy_grid;
+  std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
 
   AdjointPhotoatomicReactionNativeFactory::createUnionEnergyGrid(
                                       raw_adjoint_photoatom_data,
-                                      energy_grid,
+                                      *nergy_grid,
                                       properties.getMaxAdjointPhotonEnergy() );
 
   // Create the hash based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> grid_searcher(
-   new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
+  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+         new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
                          energy_grid,
                          properties.getNumberOfAdjointPhotonHashGridBins() ) );
 
@@ -150,12 +150,12 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
                       const std::string& adjoint_photoatom_name,
                       const double atomic_weight,
                       const SimulationAdjointPhotonProperties& properties,
-                      Teuchos::RCP<AdjointPhotoatom>& adjoint_photoatom )
+                      std::shared_ptr<const AdjointPhotoatom>& adjoint_photoatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
 
-  Teuchos::RCP<AdjointPhotoatomCore> core;
+  std::shared_ptr<const AdjointPhotoatomCore> core;
 
   ThisType::createAdjointPhotoatomCore( raw_adjoint_photoatom_data,
                                         properties,
@@ -181,11 +181,11 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatom(
  * transition. These line energy reactions will be different for each
  * element.
  */
-Teuchos::ArrayRCP<const double> AdjointPhotoatomNativeFactory::addCriticalLineEnergies(
+std::shared_ptr<const std::vector<double> > AdjointPhotoatomNativeFactory::addCriticalLineEnergies(
                     const Data::AdjointElectronPhotonRelaxationDataContainer&
                     raw_adjoint_photoatom_data,
                     const double max_energy,
-                    const Teuchos::Array<double>& user_critical_line_energies )
+                    const std::vector<double>& user_critical_line_energies )
 {
   std::list<double> critical_line_energies(user_critical_line_energies.begin(),
                                            user_critical_line_energies.end() );
@@ -205,9 +205,11 @@ Teuchos::ArrayRCP<const double> AdjointPhotoatomNativeFactory::addCriticalLineEn
 
   critical_line_energies.sort();
 
-  Teuchos::ArrayRCP<double> critical_line_energies_copy;
-  critical_line_energies_copy.assign( critical_line_energies.begin(),
-                                      critical_line_energies.end() );
+  std::shared_ptr<std::vector<double> >
+    critical_line_energies_copy( new std::vector<double> );
+  
+  critical_line_energies_copy->assign( critical_line_energies.begin(),
+                                       critical_line_energies.end() );
   
   return critical_line_energies_copy;
 }

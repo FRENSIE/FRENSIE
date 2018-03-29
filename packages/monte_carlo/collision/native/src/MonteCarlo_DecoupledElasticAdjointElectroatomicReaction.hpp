@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_HPP
 #define MONTE_CARLO_DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
@@ -24,20 +21,17 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = false>
 class DecoupledElasticAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
+  typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
 
   //! Basic Constructor
   DecoupledElasticAdjointElectroatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> >& total_cross_section,
+      const std::shared_ptr<const std::vector<double> >& sampling_ratios,
       const unsigned threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
@@ -46,11 +40,11 @@ public:
 
   //! Constructor
   DecoupledElasticAdjointElectroatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& total_cross_section,
-      const Teuchos::ArrayRCP<const double>& sampling_ratios,
+      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+      const std::shared_ptr<const std::vector<double> >& total_cross_section,
+      const std::shared_ptr<const std::vector<double> >& sampling_ratios,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
@@ -62,17 +56,17 @@ public:
   { /* ... */ }
 
   //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
   //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
 
   //! Return the reaction type
-  AdjointElectroatomicReactionType getReactionType() const;
+  AdjointElectroatomicReactionType getReactionType() const override;
 
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,
-                                      const double scattering_angle_cosine ) const;
+                                      const double scattering_angle_cosine ) const override;
 
   //! Return the sampling ratio at the given energy
   double getSamplingRatio( const double energy ) const;
@@ -80,7 +74,7 @@ public:
   //! Simulate the reaction
   void react( AdjointElectronState& electron,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const;
+              Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 
@@ -94,16 +88,16 @@ private:
 
   // The sampling ratios
  // std::shared_ptr<const std::vector<double> >
-  Teuchos::ArrayRCP<const double> d_sampling_ratios;
+  std::shared_ptr<const std::vector<double> > d_sampling_ratios;
 
   // The processed incoming energy grid
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+  std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
 
   // The threshold energy
   unsigned d_threshold_energy_index;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 } // end MonteCarlo namespace

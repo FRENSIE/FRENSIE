@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_INDEPENDENT_ENERGY_ANGLE_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_INDEPENDENT_ENERGY_ANGLE_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
@@ -34,11 +34,11 @@ public:
 
   //! Constructor
   IndependentEnergyAngleNuclearScatteringDistribution(
-		     const double atomic_weight_ratio,
-		     const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
-		     energy_scattering_distribution,
-		     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
-		     angular_scattering_distribution );
+		   const double atomic_weight_ratio,
+                   const std::shared_ptr<NuclearScatteringEnergyDistribution>&
+                   energy_scattering_distribution,
+                   const std::shared_ptr<NuclearScatteringAngularDistribution>&
+                   angular_scattering_distribution );
 
   //! Destructor
   ~IndependentEnergyAngleNuclearScatteringDistribution()
@@ -47,16 +47,16 @@ public:
   //! Randomly scatter the particle
   void scatterParticle( const IncomingParticleType& incoming_particle,
 			OutgoingParticleType& outgoing_particle,
-			const double temperature ) const;
+			const double temperature ) const override;
 
 private:
 
   // The energy scattering distribution
-  Teuchos::RCP<NuclearScatteringEnergyDistribution>
+  std::shared_ptr<NuclearScatteringEnergyDistribution>
   d_energy_scattering_distribution;
 
   // The angular scattering distribution
-  Teuchos::RCP<NuclearScatteringAngularDistribution>
+  std::shared_ptr<NuclearScatteringAngularDistribution>
   d_angular_scattering_distribution;
 };
 

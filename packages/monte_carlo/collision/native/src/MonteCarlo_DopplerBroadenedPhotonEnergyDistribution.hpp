@@ -12,10 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"

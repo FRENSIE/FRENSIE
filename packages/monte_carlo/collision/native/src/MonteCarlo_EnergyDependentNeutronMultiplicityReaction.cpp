@@ -19,16 +19,16 @@ namespace MonteCarlo{
 
 // Constructor
 EnergyDependentNeutronMultiplicityReaction::EnergyDependentNeutronMultiplicityReaction(
-	      const NuclearReactionType reaction_type,
-	      const double temperature,
-	      const double q_value,
-	      const Teuchos::ArrayView<const double>& multiplicity_energy_grid,
-	      const Teuchos::ArrayView<const double>& multiplicity,
-	      const unsigned threshold_energy_index,
-	      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	      const Teuchos::ArrayRCP<const double>& cross_section,
-	      const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
-	      scattering_distribution )
+       const NuclearReactionType reaction_type,
+       const double temperature,
+       const double q_value,
+       const Utility::ArrayView<const double>& multiplicity_energy_grid,
+       const Utility::ArrayView<const double>& multiplicity,
+       const unsigned threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const ScatteringDistribution>&
+       scattering_distribution )
   : NuclearReaction( reaction_type,
 		     temperature,
 		     q_value,
@@ -104,7 +104,7 @@ void EnergyDependentNeutronMultiplicityReaction::react(
   // Create the additional neutrons (multiplicity - 1)
   for( int i = 0; i < (int)num_outgoing_neutrons - 1; ++i )
   {
-    Teuchos::RCP<NeutronState> new_neutron(
+    std::shared_ptr<NeutronState> new_neutron(
 				   new NeutronState( neutron, true, false ) );
 
     d_scattering_distribution->scatterParticle( *new_neutron,

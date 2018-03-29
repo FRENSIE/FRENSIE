@@ -11,13 +11,9 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
@@ -43,8 +39,8 @@ public:
 
   //! Create the map of nuclides
   void createNuclideMap(
-                      std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
-		      nuclide_map ) const;
+                    std::unordered_map<std::string,std::shared_ptr<Nuclide> >&
+                    nuclide_map ) const;
 
 private:
 
@@ -63,7 +59,7 @@ private:
                               const SimulationProperties& properties );
 
   // The nuclide id map
-  std::unordered_map<std::string,Teuchos::RCP<Nuclide> > d_nuclide_name_map;
+  std::unordered_map<std::string,std::shared_ptr<Nuclide> > d_nuclide_name_map;
 
   // The message output stream
   std::ostream* d_os_message;

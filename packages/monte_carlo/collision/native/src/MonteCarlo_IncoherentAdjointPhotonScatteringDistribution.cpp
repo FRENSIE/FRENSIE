@@ -10,15 +10,13 @@
 #include <limits>
 #include <functional>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -44,7 +42,7 @@ IncoherentAdjointPhotonScatteringDistribution::IncoherentAdjointPhotonScattering
  * some or all of them to be above the max energy.
  */
 void IncoherentAdjointPhotonScatteringDistribution::setCriticalLineEnergies(
-		const Teuchos::ArrayRCP<const double>& critical_line_energies )
+    const std::shared_ptr<const std::vector<double> >& critical_line_energies )
 {
   // Make sure the critical line energies are valid
   testPrecondition( critical_line_energies.size() > 0 );
@@ -56,10 +54,10 @@ void IncoherentAdjointPhotonScatteringDistribution::setCriticalLineEnergies(
 }
 
 // Get the critical line energies
-const Teuchos::ArrayRCP<const double>&
+const std::vector<double>&
 IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergies() const
 {
-  return d_critical_line_energies;
+  return *d_critical_line_energies;
 }
 
 // Set the max energy
@@ -383,7 +381,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   testPostcondition( term_3 >= 0.0 );
   testPostcondition( all_terms > 0.0 );
   // Make sure the sampled value is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf(
 						 inverse_energy_gain_ratio ) );
   testPostcondition( inverse_energy_gain_ratio <= 1.0 );
   testPostcondition( inverse_energy_gain_ratio >=
@@ -435,7 +433,7 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
       pdf_conversion;
 
     // Create the probe with the desired energy and modified weight
-    Teuchos::RCP<AdjointPhotonProbeState> probe(
+    std::shared_ptr<AdjointPhotonProbeState> probe(
 			       new AdjointPhotonProbeState( adjoint_photon ) );
 
     probe->setEnergy( energy_of_interest );

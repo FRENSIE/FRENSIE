@@ -46,24 +46,24 @@ public:
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& scattering_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const;
+                              unsigned& trials ) const override;
 
 protected:
 
   //! Check if an energy is below the scattering window
   bool isEnergyBelowScatteringWindow( const double energy_of_interest,
-                                      const double initial_energy ) const;
+                                      const double initial_energy ) const override;
 
   //! Create a probe particle
   void createProbeParticle( const double energy_of_interest, 
                             const AdjointPhotonState& adjoint_photon,
-                            ParticleBank& bank ) const;
+                            ParticleBank& bank ) const override;
 
   // The Compton profile
   std::shared_ptr<const ComptonProfile> d_compton_profile;

@@ -21,8 +21,8 @@ AdjointElectronMaterial::AdjointElectronMaterial(
                const ModuleTraits::InternalMaterialHandle id,
                const double density,
                const AdjointElectroatomNameMap& adjoint_electroatom_name_map,
-               const Teuchos::Array<double>& adjoint_electroatom_fractions,
-               const Teuchos::Array<std::string>& adjoint_electroatom_names )
+               const std::vector<double>& adjoint_electroatom_fractions,
+               const std::vector<std::string>& adjoint_electroatom_names )
   : d_id( id ),
     d_number_density( density ),
     d_atoms( adjoint_electroatom_fractions.size() )
@@ -47,7 +47,7 @@ AdjointElectronMaterial::AdjointElectronMaterial(
 
     TEST_FOR_EXCEPTION( atom == adjoint_electroatom_name_map.end(),
                         std::logic_error,
-                        "Error: atom " << adjoint_electroatom_names[i] <<
+                        "atom " << adjoint_electroatom_names[i] <<
                         " has not been loaded!" );
 
     d_atoms[i].second = atom->second;
@@ -252,7 +252,7 @@ void AdjointElectronMaterial::collideSurvivalBias(
 
 // Get the atomic weight from an atom pointer
 double AdjointElectronMaterial::getAtomicWeight(
-         const Utility::Pair<double,Teuchos::RCP<const AdjointElectroatom> >& pair )
+         const Utility::Pair<double,std::shared_ptr<const AdjointElectroatom> >& pair )
 {
   return pair.second->getAtomicWeight();
 }

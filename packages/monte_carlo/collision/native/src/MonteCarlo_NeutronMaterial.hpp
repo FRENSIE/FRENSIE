@@ -10,17 +10,15 @@
 #define MONTE_CARLO_NEUTRON_MATERIAL_HPP
 
 // Std Lib Includes
+#include <memory>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_Nuclide.hpp"
 #include "MonteCarlo_SAlphaBeta.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -32,12 +30,12 @@ public:
 
   //! Constructor
   NeutronMaterial(
-		const ModuleTraits::InternalMaterialHandle id,
-		const double density,
-		const std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
-		nuclide_name_map,
-		const Teuchos::Array<double>& nuclide_fractions,
-		const Teuchos::Array<std::string>& nuclide_names );
+	 const ModuleTraits::InternalMaterialHandle id,
+         const double density,
+	 const std::unordered_map<std::string,std::shared_ptr<const Nuclide> >&
+         nuclide_name_map,
+         const std::vector<double>& nuclide_fractions,
+         const std::vector<std::string>& nuclide_names );
 
   //! Destructor
   ~NeutronMaterial()
@@ -73,7 +71,7 @@ private:
 
   // Get the atomic weight ratio from a nuclide pointer
   static double getNuclideAWR(
-		    const Utility::Pair<double,Teuchos::RCP<Nuclide> >& pair );
+	   const std::pair<double,std::shared_ptr<const Nuclide> >& pair );
 
   // Sample the nuclide that is collided with
   unsigned sampleCollisionNuclide( const double energy ) const;
@@ -86,7 +84,7 @@ private:
 
   // The nuclides that make up the material
   // (FIRST = nuclide_number_density, SECOND = nuclide pointer)
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Nuclide> > > d_nuclides;
+  std::vector<std::pair<double,std::shared_ptr<const Nuclide> > > d_nuclides;
 };
 
 } // end MonteCarlo namespace

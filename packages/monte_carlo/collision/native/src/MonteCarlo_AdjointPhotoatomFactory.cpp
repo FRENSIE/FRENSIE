@@ -62,7 +62,7 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
     else
     {
       THROW_EXCEPTION( std::logic_error,
-                       "Error: adjoint photoatomic file type "
+                       "adjoint photoatomic file type "
                        << file_type << " is not supported!" );
     }
 
@@ -76,7 +76,7 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
 
 // Create the map of adjoint photoatoms
 void AdjointPhotoatomFactory::createAdjointPhotoatomMap(
-               std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >&
+               std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >&
                adjoint_photoatom_map ) const
 {
   // Reset the adjoint photoatom map
@@ -107,7 +107,7 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
       data_container( native_file_path );
 
     // Initialize the new adjoint photoatom
-    Teuchos::RCP<AdjointPhotoatom>& adjoint_photoatom =
+    std::shared_ptr<const AdjointPhotoatom>& adjoint_photoatom =
       d_adjoint_photoatom_name_map[adjoint_photoatom_alias];
 
     // Create the new adjoint photoatom

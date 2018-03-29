@@ -22,9 +22,6 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class AbsorptionAdjointPhotoatomicReaction : public StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
   typedef StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
@@ -32,36 +29,36 @@ public:
 
   //! Basic constructor
   AbsorptionAdjointPhotoatomicReaction(
-                   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-                   const Teuchos::ArrayRCP<const double>& cross_section,
-                   const unsigned threshold_energy_index,
-                   const AdjointPhotoatomicReactionType reaction );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const AdjointPhotoatomicReactionType reaction );
 
   //! Constructor
   AbsorptionAdjointPhotoatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const AdjointPhotoatomicReactionType reaction );
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
+    const unsigned threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const AdjointPhotoatomicReactionType reaction );
 
   //! Destructor
   ~AbsorptionAdjointPhotoatomicReaction()
   { /* ... */ }
 
   //! Return the number of adjoint photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
 
   //! Return the number of adjoint electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
   //! Return the reaction type
-  AdjointPhotoatomicReactionType getReactionType() const;
+  AdjointPhotoatomicReactionType getReactionType() const override;
 
   //! Simulate the reaction
   void react( AdjointPhotonState& adjoint_photon,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const;
+              Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 

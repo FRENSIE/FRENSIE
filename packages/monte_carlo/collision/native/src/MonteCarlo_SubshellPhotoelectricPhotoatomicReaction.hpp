@@ -23,30 +23,30 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
 
   //! Basic constructor
   SubshellPhotoelectricPhotoatomicReaction(
-                const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		const Teuchos::ArrayRCP<const double>& cross_section,
-		const unsigned threshold_energy_index,
-		const Data::SubshellType interaction_subshell,
-		const double binding_energy );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const Data::SubshellType interaction_subshell,
+       const double binding_energy );
 
   //! Constructor
   SubshellPhotoelectricPhotoatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Data::SubshellType interaction_subshell,
-       const double binding_energy );
+    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cross_section,
+    const unsigned threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Data::SubshellType interaction_subshell,
+    const double binding_energy );
 
   //! Destructor
   ~SubshellPhotoelectricPhotoatomicReaction()
   { /* ... */ }
 
   //! Return the reaction type
-  PhotoatomicReactionType getReactionType() const;
+  PhotoatomicReactionType getReactionType() const override;
 
   //! Get the interaction subshell (non-standard interface)
-  Data::SubshellType getSubshell() const;
+  Data::SubshellType getSubshell() const override;
 
   //! Get the subshell binding energy (non-standard interface)
   double getSubshellBindingEnergy() const;
@@ -57,7 +57,7 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
   //! Simulate the reaction
   void react( PhotonState& photon,
 	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 

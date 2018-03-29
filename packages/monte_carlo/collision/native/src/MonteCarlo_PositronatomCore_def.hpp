@@ -26,11 +26,11 @@ namespace MonteCarlo{
  */
 template<typename InterpPolicy>
 PositronatomCore::PositronatomCore(
-        const Teuchos::ArrayRCP<double>& energy_grid,
-        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
         const ReactionMap& standard_scattering_reactions,
         const ReactionMap& standard_absorption_reactions,
-        const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
+        const std::shared_ptr<AtomicRelaxationModel>& relaxation_model,
         const bool processed_atomic_cross_sections,
         const InterpPolicy policy )
   : d_total_reaction(),
@@ -142,14 +142,16 @@ PositronatomCore::PositronatomCore(
 // Create the total absorption reaction
 template<typename InterpPolicy>
 void PositronatomCore::createTotalAbsorptionReaction(
-             const Teuchos::ArrayRCP<double>& energy_grid,
+             const std::shared_ptr<std::vector<double> >& energy_grid,
              const ConstReactionMap& absorption_reactions,
              std::shared_ptr<PositronatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
   testPrecondition( energy_grid.size() > 1 );
 
-  Teuchos::Array<double> absorption_cross_section;
+  std::shared_ptr<std::vector<double> >
+    absorption_cross_section( new std::vector<double> );
+  
   unsigned absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
@@ -171,7 +173,7 @@ void PositronatomCore::createTotalAbsorptionReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      absorption_cross_section.push_back( raw_cross_section );
+      absorption_cross_section->push_back( raw_cross_section );
     }
     else
     {
@@ -181,24 +183,21 @@ void PositronatomCore::createTotalAbsorptionReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-            std::find( absorption_cross_section.begin(),
-                       absorption_cross_section.end(),
+  remember( std::vector<double>::const_iterator zero_element =
+            std::find( absorption_cross_section->begin(),
+                       absorption_cross_section->end(),
                        0.0 ) );
-  testPostcondition( zero_element == absorption_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-            std::find( absorption_cross_section.begin(),
-                       absorption_cross_section.end(),
+  testPostcondition( zero_element == absorption_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+            std::find( absorption_cross_section->begin(),
+                       absorption_cross_section->end(),
                        std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == absorption_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> absorption_cross_section_copy;
-  absorption_cross_section_copy.deepCopy( absorption_cross_section() );
+  testPostcondition( inf_element == absorption_cross_section->end() );
 
   total_absorption_reaction.reset(
       new AbsorptionPositronatomicReaction<InterpPolicy,false>(
             energy_grid,
-            absorption_cross_section_copy,
+            absorption_cross_section,
             absorption_threshold_energy_index,
             TOTAL_ABSORPTION_POSITRONATOMIC_REACTION ) );
 }
@@ -206,14 +205,16 @@ void PositronatomCore::createTotalAbsorptionReaction(
 // Create the processed total absorption reaction
 template<typename InterpPolicy>
 void PositronatomCore::createProcessedTotalAbsorptionReaction(
-             const Teuchos::ArrayRCP<double>& energy_grid,
+             const std::shared_ptr<std::vector<double> >& energy_grid,
              const ConstReactionMap& absorption_reactions,
              std::shared_ptr<PositronatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
 
-  Teuchos::Array<double> absorption_cross_section;
+  std::shared_ptr<std::vector<double> >
+    absorption_cross_section( new std::vector<double> );
+  
   unsigned absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
@@ -238,8 +239,8 @@ void PositronatomCore::createProcessedTotalAbsorptionReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      absorption_cross_section.push_back(
-                       InterpPolicy::processDepVar( raw_cross_section ) );
+      absorption_cross_section->push_back(
+                            InterpPolicy::processDepVar( raw_cross_section ) );
     }
     else
     {
@@ -249,24 +250,21 @@ void PositronatomCore::createProcessedTotalAbsorptionReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-            std::find( absorption_cross_section.begin(),
-                        absorption_cross_section.end(),
+  remember( std::vector<double>::const_iterator zero_element =
+            std::find( absorption_cross_section->begin(),
+                        absorption_cross_section->end(),
                         0.0 ) );
-  testPostcondition( zero_element == absorption_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-            std::find( absorption_cross_section.begin(),
-                        absorption_cross_section.end(),
+  testPostcondition( zero_element == absorption_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+            std::find( absorption_cross_section->begin(),
+                        absorption_cross_section->end(),
                         std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == absorption_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> absorption_cross_section_copy;
-  absorption_cross_section_copy.deepCopy( absorption_cross_section() );
+  testPostcondition( inf_element == absorption_cross_section->end() );
 
   total_absorption_reaction.reset(
       new AbsorptionPositronatomicReaction<InterpPolicy,true>(
             energy_grid,
-            absorption_cross_section_copy,
+            absorption_cross_section,
             absorption_threshold_energy_index,
             TOTAL_ABSORPTION_POSITRONATOMIC_REACTION ) );
 }
@@ -274,7 +272,7 @@ void PositronatomCore::createProcessedTotalAbsorptionReaction(
 // Create the total reaction
 template<typename InterpPolicy>
 void PositronatomCore::createTotalReaction(
-      const Teuchos::ArrayRCP<double>& energy_grid,
+      const std::shared_ptr<std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
       std::shared_ptr<PositronatomicReaction>& total_reaction )
@@ -284,7 +282,9 @@ void PositronatomCore::createTotalReaction(
   // Make sure the absorption reaction has been created
   testPrecondition( total_absorption_reaction.use_count() > 0 );
 
-  Teuchos::Array<double> total_cross_section;
+  std::shared_ptr<std::vector<double> >
+    total_cross_section( new std::vector<double> );
+  
   unsigned total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
@@ -307,7 +307,7 @@ void PositronatomCore::createTotalReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      total_cross_section.push_back( raw_cross_section );
+      total_cross_section->push_back( raw_cross_section );
     }
     else
     {
@@ -317,24 +317,21 @@ void PositronatomCore::createTotalReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-            std::find( total_cross_section.begin(),
-                       total_cross_section.end(),
+  remember( std::vector<double>::const_iterator zero_element =
+            std::find( total_cross_section->begin(),
+                       total_cross_section->end(),
                        0.0 ) );
-  testPostcondition( zero_element == total_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-            std::find( total_cross_section.begin(),
-                       total_cross_section.end(),
+  testPostcondition( zero_element == total_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+            std::find( total_cross_section->begin(),
+                       total_cross_section->end(),
                        std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == total_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> total_cross_section_copy;
-  total_cross_section_copy.deepCopy( total_cross_section() );
+  testPostcondition( inf_element == total_cross_section->end() );
 
   total_reaction.reset(
       new AbsorptionPositronatomicReaction<InterpPolicy,false>(
             energy_grid,
-            total_cross_section_copy,
+            total_cross_section,
             total_threshold_energy_index,
             TOTAL_POSITRONATOMIC_REACTION ) );
 }
@@ -342,7 +339,7 @@ void PositronatomCore::createTotalReaction(
 // Calculate the processed total absorption cross section
 template<typename InterpPolicy>
 void PositronatomCore::createProcessedTotalReaction(
-    const Teuchos::ArrayRCP<double>& energy_grid,
+    const std::shared_ptr<std::vector<double> >& energy_grid,
     const ConstReactionMap& scattering_reactions,
     const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
     std::shared_ptr<PositronatomicReaction>& total_reaction )
@@ -352,7 +349,9 @@ void PositronatomCore::createProcessedTotalReaction(
   // Make sure the absorption reaction has been created
   testPrecondition( total_absorption_reaction.use_count() > 0 );
 
-  Teuchos::Array<double> total_cross_section;
+  std::shared_ptr<std::vector<double> >
+    total_cross_section( new std::vector<double> );
+  
   unsigned total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
@@ -378,7 +377,7 @@ void PositronatomCore::createProcessedTotalReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      total_cross_section.push_back(
+      total_cross_section->push_back(
                             InterpPolicy::processDepVar( raw_cross_section ) );
     }
     else
@@ -389,24 +388,21 @@ void PositronatomCore::createProcessedTotalReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-            std::find( total_cross_section.begin(),
-                       total_cross_section.end(),
+  remember( std::vector<double>::const_iterator zero_element =
+            std::find( total_cross_section->begin(),
+                       total_cross_section->end(),
                        0.0 ) );
-  testPostcondition( zero_element == total_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-            std::find( total_cross_section.begin(),
-                       total_cross_section.end(),
+  testPostcondition( zero_element == total_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+            std::find( total_cross_section->begin(),
+                       total_cross_section->end(),
                        std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == total_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> total_cross_section_copy;
-  total_cross_section_copy.deepCopy( total_cross_section() );
+  testPostcondition( inf_element == total_cross_section->end() );
 
   total_reaction.reset(
       new AbsorptionPositronatomicReaction<InterpPolicy,true>(
             energy_grid,
-            total_cross_section_copy,
+            total_cross_section,
             total_threshold_energy_index,
             TOTAL_POSITRONATOMIC_REACTION ) );
 }

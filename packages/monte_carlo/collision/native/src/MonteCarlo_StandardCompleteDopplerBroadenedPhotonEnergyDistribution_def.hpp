@@ -25,8 +25,8 @@ namespace MonteCarlo{
 // Constructor
 template<typename ComptonProfilePolicy>
 StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::StandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-		const Teuchos::Array<double>& endf_subshell_occupancies,
-                const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
+		const std::vector<double>& endf_subshell_occupancies,
+                const std::vector<Data::SubshellType>& endf_subshell_order,
                 const std::shared_ptr<const ComptonProfileSubshellConverter>&
                 subshell_converter,
                 const ComptonProfileArray& electron_momentum_dist_array )
@@ -48,7 +48,7 @@ StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
   testPrecondition( ComptonProfilePolicy::isValidProfile( *electron_momentum_dist_array.back() ) );
 
   // Create the ENDF subshell interaction distribution
-  Teuchos::Array<double> dummy_indep_vals( endf_subshell_occupancies.size() );
+  std::vector<double> dummy_indep_vals( endf_subshell_occupancies.size() );
 
   d_endf_subshell_occupancy_distribution.reset(
 	      new Utility::DiscreteDistribution( dummy_indep_vals,

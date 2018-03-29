@@ -9,11 +9,12 @@
 #ifndef MONTE_CARLO_CROSS_SECTION_BASED_PHOTONUCLEAR_PRODUCTION_REACTION_HPP
 #define MONTE_CARLO_CROSS_SECTION_BASED_PHOTONUCLEAR_PRODUCTION_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearReaction.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -27,12 +28,12 @@ public:
   //! Constructor
   CrossSectionBasedPhotonuclearProductionReaction(
 		   const PhotonuclearReactionType reaction_type,
-		   const unsigned photon_production_id,
+		   const std::vector<unsigned>& photon_production_ids,
       		   const double q_value,
 		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-                   const Teuchos::Array<Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
+		   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+		   const std::shared_ptr<const std::vector<double> >& cross_section,
+                   const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
 		   outgoing_particle_distributions );
 
   //! Destructor
@@ -40,7 +41,7 @@ public:
   { /* ... */ }
 
   //! Return the photon production ids
-  const Teuchos::Array<unsigned>& getPhotonProductionIds() const;
+  const std::vector<unsigned>& getPhotonProductionIds() const;
 
   //! Return the number of particle emitted from the rxn at the given energy
   unsigned getNumberOfEmittedParticles( const double energy) const;
@@ -51,10 +52,10 @@ public:
 private:
 
   // The photon production id
-  Teuchos::Array<unsigned> d_photon_production_ids;
+  std::vector<unsigned> d_photon_production_ids;
 
   // The outgoing particle distribution (energy and angle)
-  Teuchos::Array<Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >
+  std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >
   d_outgoing_particle_distributions;
 };
 

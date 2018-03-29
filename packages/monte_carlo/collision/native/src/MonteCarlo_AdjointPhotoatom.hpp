@@ -9,20 +9,22 @@
 #ifndef MONTE_CARLO_ADJOINT_PHOTOATOM_HPP
 #define MONTE_CARLO_ADJOINT_PHOTOATOM_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatomCore.hpp"
 #include "MonteCarlo_Atom.hpp"
+#include "Utility_Vector.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The atom class for adjoint photoatomic reactions
 class AdjointPhotoatom : public Atom<AdjointPhotoatomCore>
 {
-
-private:
-
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
@@ -43,9 +45,9 @@ public:
   AdjointPhotoatom( const std::string& name,
                     const unsigned atomic_number,
                     const double atomic_weight,
-                    const Teuchos::RCP<const Utility::HashBasedGridSearcher>&
+                    const std::shared_ptr<const Utility::HashBasedGridSearcher>&
                     grid_searcher,
-                    const Teuchos::ArrayRCP<const double>&
+                    const std::shared_ptr<const std::vector<double> >&
                     critical_line_energies,
                     const std::shared_ptr<const PhotoatomicReaction>&
                     total_forward_reaction,

@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
@@ -22,6 +22,8 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ElasticElectronTraits.hpp"
+#include "Utility_Tuple.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -33,7 +35,7 @@ public:
 
   using ThisType = ElasticElectronScatteringDistributionNativeFactory;
   using ElasticTraits = Utility::ElasticElectronTraits;
-  using TwoDFunction = Utility::Pair<double, std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<void, void> > >;
+  using TwoDFunction = std::pair<double, std::shared_ptr<const Utility::UnitAwareTabularOneDDistribution<void, void> > >;
   using TwoDDist = Utility::FullyTabularTwoDDistribution;
   using TabularDist = Utility::TabularDistribution<Utility::LinLin>;
 
@@ -57,9 +59,9 @@ public:
   static void createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> total_cross_section,
+    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > total_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol );
@@ -70,9 +72,9 @@ public:
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
+    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > moment_preserving_cross_section,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
@@ -104,7 +106,7 @@ public:
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -117,9 +119,9 @@ public:
   static void createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> total_cross_section,
+    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > total_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol );
@@ -130,9 +132,9 @@ public:
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
+    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > moment_preserving_cross_section,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
@@ -164,7 +166,7 @@ public:
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const double evaluation_tol );
 
 //----------------------------------------------------------------------------//
@@ -177,9 +179,9 @@ public:
   static void createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
-    const Teuchos::ArrayRCP<const double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double>& total_cross_section,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> >& total_cross_section,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
@@ -193,11 +195,11 @@ public:
   static void createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
-    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
+    const std::shared_ptr<const std::vector<double> > moment_preserving_cross_section,
     const std::map<double,std::vector<double> >& moment_preserving_angles,
     const std::map<double,std::vector<double> >& moment_preserving_weights,
     const std::vector<double>& angular_energy_grid,
@@ -239,9 +241,9 @@ public:
     const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>&
       cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::ArrayRCP<const double>& cutoff_cross_sections,
-    const Teuchos::ArrayRCP<const double>& total_cross_sections,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cutoff_cross_sections,
+    const std::shared_ptr<const std::vector<double> >& total_cross_sections,
     const double cutoff_angle_cosine,
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
@@ -332,18 +334,18 @@ protected:
 
   //! Create the cutoff to total preserving cross section ratios
   static void createCutoffCrossSectionRatios(
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> total_cross_section,
+    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > total_cross_section,
     std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios );
 
   //! Create the cutoff to moment preserving cross section ratios
   template<typename TwoDInterpPolicy = Utility::LogLogLog,
            typename TwoDSamplePolicy = Utility::Correlated>
   static void createHybridCrossSectionRatios(
-    const Teuchos::ArrayRCP<const double> energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
+    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > moment_preserving_cross_section,
     const std::shared_ptr<TwoDDist>& cutoff_scattering_function,
     const double cutoff_angle_cosine,
     std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios );

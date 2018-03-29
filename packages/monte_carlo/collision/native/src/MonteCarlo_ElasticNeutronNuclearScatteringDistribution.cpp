@@ -22,10 +22,10 @@ namespace MonteCarlo{
 
 // Constructor
 ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDistribution(
-		     const double atomic_weight_ratio,
-                     const double free_gas_threshold,
-		     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
-		     angular_scattering_distribution )
+             const double atomic_weight_ratio,
+             const double free_gas_threshold,
+	     const std::shared_ptr<const NuclearScatteringAngularDistribution>&
+             angular_scattering_distribution )
   : NuclearScatteringDistribution( atomic_weight_ratio ),
     d_free_gas_threshold( free_gas_threshold ),
     d_angular_scattering_distribution( angular_scattering_distribution )

@@ -32,7 +32,7 @@ public:
   { /* ... */ }
 
   //! Check if the distribution is complete (all subshells)
-  bool isComplete() const;
+  bool isComplete() const override;
 
   //! Return the subshell
   Data::SubshellType getSubshell() const;

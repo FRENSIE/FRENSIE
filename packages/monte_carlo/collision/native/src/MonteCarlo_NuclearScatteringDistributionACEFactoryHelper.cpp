@@ -15,17 +15,17 @@ namespace MonteCarlo{
 
 // Create the elastic scattering distribution
 void NuclearScatteringDistributionACEFactoryHelper<NeutronState,NeutronState>::createElasticScatteringDistribution(
-		      Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
+		      std::shared_ptr<NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
                       const double free_gas_threshold,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+                      const std::shared_ptr<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
 {
   TEST_FOR_EXCEPTION( !defined_in_cm_system,
 		      std::runtime_error,
-		      "Error: elastic scattering in ACE table "
+		      "elastic scattering in ACE table "
 		      << ace_table_name << " is specified in the Lab "
 		      "system. Elastic scattering must always be in the "
 		      "CM system, which indicates that there is a problem "

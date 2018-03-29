@@ -80,13 +80,13 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
     function_data[n].first = energy_grid[n];
 
     // Get the recoil energy distribution at the incoming energy
-    Teuchos::Array<double> recoil_energy(
+    std::vector<double> recoil_energy(
         raw_electroionization_data.getElectroionizationRecoilEnergy(
             subshell,
             energy_grid[n] ) );
 
     // Get the recoil energy pdf at the incoming energy
-    Teuchos::Array<double> pdf(
+    std::vector<double> pdf(
         raw_electroionization_data.getElectroionizationRecoilPDF(
             subshell,
             energy_grid[n] ) );

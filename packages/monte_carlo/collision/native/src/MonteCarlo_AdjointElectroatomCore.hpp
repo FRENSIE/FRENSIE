@@ -16,11 +16,6 @@
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
@@ -63,7 +58,7 @@ public:
 
   //! Constructor
   AdjointElectroatomCore(
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
       const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
       const ReactionMap& scattering_reactions,
       const ReactionMap& absorption_reactions );
@@ -105,7 +100,7 @@ private:
   ConstReactionMap d_absorption_reactions;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 // Return the total forward reaction

@@ -24,9 +24,9 @@ namespace MonteCarlo{
 DelayedNeutronEmissionDistributionACEFactory::DelayedNeutronEmissionDistributionACEFactory(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
-			   const Teuchos::ArrayView<const double>& bdd_block,
-			   const Teuchos::ArrayView<const double>& dnedl_block,
-		           const Teuchos::ArrayView<const double>& dned_block )
+			   const Utility::ArrayView<const double>& bdd_block,
+			   const Utility::ArrayView<const double>& dnedl_block,
+		           const Utility::ArrayView<const double>& dned_block )
   : d_atomic_weight_ratio( atomic_weight_ratio )
 {
   initializeBasicDelayedNeutronData( table_name, bdd_block );
@@ -38,7 +38,7 @@ DelayedNeutronEmissionDistributionACEFactory::DelayedNeutronEmissionDistribution
 
 // Create the delayed neutron emission distribution
 void DelayedNeutronEmissionDistributionACEFactory::createEmissionDistribution(
-       Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
+       std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >&
        distribution ) const
 {
   distribution.reset( new DelayedNeutronEmissionDistribution(
@@ -49,21 +49,21 @@ void DelayedNeutronEmissionDistributionACEFactory::createEmissionDistribution(
 }
 
 // Return the precursor group decay constants
-const Teuchos::Array<double>&
+const std::vector<double>&
 DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupDecayConsts() const
 {
   return d_precursor_group_decay_consts;
 }
 
 // Return the precursor group probability distributions
-const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
+const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
 DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupProbDists() const
 {
   return d_precursor_group_prob_distributions;
 }
 
 // Return the precursor group emission distributions
-const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
+const std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >&
 DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupEmissionDists() const
 {
   return d_precursor_group_emission_distributions;
@@ -72,10 +72,10 @@ DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupEmissionDists() c
 // Initialize basic delayed neutron data
 void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutronData(
 			    const std::string& table_name,
-			    const Teuchos::ArrayView<const double>& bdd_block )
+			    const Utility::ArrayView<const double>& bdd_block )
 {
-  Teuchos::ArrayView<const double> precursor_prob_energy_grid;
-  Teuchos::ArrayView<const double> precursor_prob_values;
+  Utility::ArrayView<const double> precursor_prob_energy_grid;
+  Utility::ArrayView<const double> precursor_prob_values;
   double group_decay_const;
   unsigned number_of_interp_regions, number_of_energies;
 
@@ -99,7 +99,7 @@ void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutron
 
     TEST_FOR_EXCEPTION( number_of_interp_regions != 0u,
 			std::runtime_error,
-			"Error: Multiple interpolation regions found in the "
+			"Multiple interpolation regions found in the "
 			"BDD block of ace table " << table_name << ", which "
 			"is not currently supported!" );
 
@@ -121,7 +121,7 @@ void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutron
     bdd_loc += number_of_energies;
 
     // Create the group probability distribution
-    Teuchos::RCP<Utility::OneDDistribution> group_prob_dist(
+    std::shared_ptr<const Utility::OneDDistribution> group_prob_dist(
 	               new Utility::TabularDistribution<Utility::LinLin>(
 						    precursor_prob_energy_grid,
 						    precursor_prob_values ) );
@@ -135,27 +135,27 @@ void
 DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
-			   const Teuchos::ArrayView<const double>& dnedl_block,
-			   const Teuchos::ArrayView<const double>& dned_block )
+			   const Utility::ArrayView<const double>& dnedl_block,
+			   const Utility::ArrayView<const double>& dned_block )
 {
   // Create the default (isotropic in lab system)
-  Teuchos::RCP<NuclearScatteringAngularDistribution>
+  std::shared_ptr<const NuclearScatteringAngularDistribution>
     default_angular_distribution;
 
   NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
 						default_angular_distribution );
 
   // Create the energy distributions
-  Teuchos::Array<unsigned> energy_dist_array_sizes;
-  Teuchos::ArrayView<const double> energy_dist_array;
+  std::vector<unsigned> energy_dist_array_sizes;
+  Utility::ArrayView<const double> energy_dist_array;
 
   calculateDistArraySizes( dnedl_block, dned_block, energy_dist_array_sizes );
 
   unsigned dist_index, ace_law;
 
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >
     emission_distribution;
-  Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_distribution;
+  std::shared_ptr<const NuclearScatteringEnergyDistribution> energy_distribution;
 
   for( unsigned i = 0u; i < dnedl_block.size(); ++i )
   {

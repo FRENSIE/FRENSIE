@@ -9,10 +9,8 @@
 #ifndef MONTE_CARLO_MATERIAL_HELPERS_DEF_HPP
 #define MONTE_CARLO_MATERIAL_HELPERS_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -82,10 +80,10 @@ bool areFractionValuesNormalized( Iterator start, Iterator end )
     ++start;
   }
 
-  sum = Teuchos::ScalarTraits<double>::magnitude( sum );
+  sum = std::fabs( sum );
 
-  if( Teuchos::ScalarTraits<double>::magnitude( sum - 1.0 ) <
-      Teuchos::ScalarTraits<double>::eps() )
+  if( std::fabs( sum - 1.0 ) <
+      Utility::QuantityTraits<double>::eps() )
     return true;
   else
     return false;
@@ -116,7 +114,7 @@ void normalizeFractionValues( Iterator start, Iterator end )
     ++start;
   }
 
-  sum = Teuchos::ScalarTraits<double>::magnitude( sum );
+  sum = std::fabs( sum );
 
   start = start_copy;
 

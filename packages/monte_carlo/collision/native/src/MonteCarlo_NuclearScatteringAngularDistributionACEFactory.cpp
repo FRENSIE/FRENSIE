@@ -9,9 +9,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "Utility_UniformDistribution.hpp"
@@ -24,17 +21,17 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-Teuchos::RCP<Utility::TabularOneDDistribution>
+std::shared_ptr<const Utility::TabularOneDDistribution>
 NuclearScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
 // Create the angular distribution
 void NuclearScatteringAngularDistributionACEFactory::createDistribution(
-	    const Teuchos::ArrayView<const double>& and_block_array,
+	    const Utility::ArrayView<const double>& and_block_array,
 	    const unsigned and_block_array_start_index,
 	    const std::string& table_name,
 	    const unsigned reaction,
-	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
+	    std::shared_ptr<const NuclearScatteringAngularDistribution>& distribution )
 {
   // Make sure the and block array is "valid"
   testPrecondition( and_block_array.size() > 0 );
@@ -43,11 +40,11 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
   unsigned num_tabulated_energies = static_cast<unsigned>(and_block_array[0]);
 
   // Get the energy grid
-  Teuchos::ArrayView<const double> energy_grid =
+  Utility::ArrayView<const double> energy_grid =
     and_block_array( 1, num_tabulated_energies);
 
   // Get the location of the angular distribution for each energy
-  Teuchos::ArrayView<const double> distribution_indices =
+  Utility::ArrayView<const double> distribution_indices =
     and_block_array( num_tabulated_energies + 1,
 		     num_tabulated_energies );
 
@@ -70,7 +67,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
       distribution_index = abs(distribution_index) - 1 -
 	      and_block_array_start_index;
 
-      Teuchos::ArrayView<const double> bin_boundaries =
+      Utility::ArrayView<const double> bin_boundaries =
 	      and_block_array( distribution_index, 33 );
 
 	  //std::cout << distribution_index << std::endl;
@@ -94,12 +91,12 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
       unsigned number_of_points_in_dist =
 	and_block_array[distribution_index + 1];
 
-      Teuchos::ArrayView<const double> scattering_angle_cosine_grid =
+      Utility::ArrayView<const double> scattering_angle_cosine_grid =
 	and_block_array( distribution_index + 2,
 			 number_of_points_in_dist );
 
       // Ignore the last evaluated point in the PDF
-      Teuchos::ArrayView<const double> pdf;
+      Utility::ArrayView<const double> pdf;
 
       switch( interpolation_flag )
       {
@@ -150,7 +147,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 
 // Create an isotropic angular distribution
 void NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
-	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
+	    std::shared_ptr<const NuclearScatteringAngularDistribution>& distribution )
 {
   NuclearScatteringAngularDistribution::AngularDistribution
     angular_distribution( 2 );
@@ -167,7 +164,7 @@ void NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution
 }
 
 // Return the isotropic angular distribution
-Teuchos::RCP<Utility::TabularOneDDistribution> 
+std::shared_ptr<const Utility::TabularOneDDistribution> 
   NuclearScatteringAngularDistributionACEFactory::getIsotropicDistribution()
 {
   return isotropic_angle_cosine_dist;

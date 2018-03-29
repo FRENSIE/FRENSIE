@@ -48,7 +48,7 @@ public:
 
   //! Evaluate the distribution (differential in scattering angle cosine)
   double evaluate( const double incoming_energy,
-                   const double scattering_angle_cosine ) const;
+                   const double scattering_angle_cosine ) const override;
 
   //! Evaluate the distribution (double differential)
   double evaluate( const double incoming_energy,
@@ -57,7 +57,7 @@ public:
 
   //! Evaluate the Marginal PDF (differential in scattering angle cosine)
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle_cosine ) const override;
 
   //! Evaluate the Marginal PDF (differential in outgoing energy)
   double evaluateEnergyPDF( const double incoming_energy,
@@ -70,12 +70,12 @@ public:
 
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double precision ) const;
+                                         const double precision ) const override;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& scattering_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( double& outgoing_energy,
@@ -85,7 +85,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const;
+                              unsigned& trials ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( double& outgoing_energy,
@@ -95,7 +95,7 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,
                              ParticleBank& bank,
-                             Data::SubshellType& shell_of_interaction ) const;
+                             Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 

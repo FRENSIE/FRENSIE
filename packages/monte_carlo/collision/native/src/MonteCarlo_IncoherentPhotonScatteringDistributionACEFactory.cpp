@@ -6,10 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
@@ -21,6 +17,8 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_InverseAngstromUnit.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -29,7 +27,7 @@ namespace MonteCarlo{
 // Create the requested incoherent distribution
 void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
 		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+		    std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 		    incoherent_distribution,
 		    const IncoherentModelType incoherent_model,
 		    const double kahn_sampling_cutoff_energy )
@@ -126,7 +124,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     default:
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: incoherent model " << incoherent_model <<
+		       "incoherent model " << incoherent_model <<
 		       " cannot be constructed with ACE data!" );
     }
   }
@@ -135,7 +133,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
 // Create a Waller-Hartree incoherent distribution
 void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistribution(
 		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+		    std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
 		    incoherent_distribution,
 		    const double kahn_sampling_cutoff_energy )
 {
@@ -151,7 +149,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
 							 scattering_function );
 
   // Create the subshell order array
-  Teuchos::Array<Data::SubshellType> subshell_order;
+  std::vector<Data::SubshellType> subshell_order;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 							    raw_photoatom_data,
@@ -170,7 +168,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHyb
  const Data::XSSEPRDataExtractor& raw_photoatom_data,
  const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
  doppler_broadened_dist,
- Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+ std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
  incoherent_distribution,
  const double kahn_sampling_cutoff_energy )
 {
@@ -199,16 +197,16 @@ void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  std::shared_ptr<const ScatteringFunction>& scattering_function )
 {
-  Teuchos::ArrayView<const double> jince_block =
+  Utility::ArrayView<const double> jince_block =
     raw_photoatom_data.extractJINCEBlock();
 
   unsigned scatt_func_size = jince_block.size()/2;
 
-  Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
+  std::vector<double> recoil_momentum( jince_block( 0, scatt_func_size ));
 
   std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function;
 
-  Teuchos::Array<double> scattering_function_values(
+  std::vector<double> scattering_function_values(
 			     jince_block( scatt_func_size, scatt_func_size ) );
 
   raw_scattering_function.reset(

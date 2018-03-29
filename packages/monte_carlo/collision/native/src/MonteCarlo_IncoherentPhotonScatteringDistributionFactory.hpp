@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_FACTORY_HPP
 #define MONTE_CARLO_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 
@@ -25,9 +22,9 @@ protected:
 
   //! Create a Klein-Nishina distribution
   static void createKleinNishinaDistribution(
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-		    incoherent_distribution,
-		    const double kahn_sampling_cutoff_energy );
+                 std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
+                 incoherent_distribution,
+                 const double kahn_sampling_cutoff_energy );
 };
 
 } // end MonteCarlo namespace

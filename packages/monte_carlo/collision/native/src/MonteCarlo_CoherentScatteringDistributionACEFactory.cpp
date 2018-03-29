@@ -6,10 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_ThompsonScatteringDistribution.hpp"
@@ -18,6 +14,8 @@
 #include "MonteCarlo_StandardFormFactorSquared.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_InverseSquareAngstromUnit.hpp"
+#include "Utility_ArrayView.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -25,7 +23,7 @@ namespace MonteCarlo{
 // Create a basic coherent distribution
 void CoherentScatteringDistributionACEFactory::createBasicCoherentDistribution(
 			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::RCP<const CoherentScatteringDistribution>&
+			   std::shared_ptr<const CoherentScatteringDistribution>&
 			   coherent_distribution )
 {
   // Create the form factor squared
@@ -42,7 +40,7 @@ void CoherentScatteringDistributionACEFactory::createBasicCoherentDistribution(
 // Create an efficient coherent distribution
 void CoherentScatteringDistributionACEFactory::createEfficientCoherentDistribution(
 			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::RCP<const CoherentScatteringDistribution>&
+			   std::shared_ptr<const CoherentScatteringDistribution>&
 			   coherent_distribution )
 {
   // Create the form factor squared
@@ -61,15 +59,15 @@ void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
                 const Data::XSSEPRDataExtractor& raw_photoatom_data,
                 std::shared_ptr<const FormFactorSquared>& form_factor_squared )
 {
-  Teuchos::ArrayView<const double> jcohe_block =
+  Utility::ArrayView<const double> jcohe_block =
     raw_photoatom_data.extractJCOHEBlock();
 
   unsigned form_factor_size = jcohe_block.size()/3;
 
-  Teuchos::Array<double> recoil_momentum_squared(
+  std::vector<double> recoil_momentum_squared(
 					  jcohe_block( 0, form_factor_size ) );
 
-  Teuchos::Array<double> form_factor_squared_values(
+  std::vector<double> form_factor_squared_values(
 			 jcohe_block( 2*form_factor_size, form_factor_size ) );
 
   // Square the grid points and the form factor factor values

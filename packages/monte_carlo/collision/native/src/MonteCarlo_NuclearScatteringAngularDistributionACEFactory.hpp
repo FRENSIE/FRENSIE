@@ -9,14 +9,11 @@
 #ifndef MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
 #define MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
 
@@ -28,18 +25,19 @@ public:
 
   //! Create the angular distribution
   static void createDistribution(
-	   const Teuchos::ArrayView<const double>& and_block_array,
+	   const Utility::ArrayView<const double>& and_block_array,
 	   const unsigned and_block_array_start_index,
 	   const std::string& table_name,
 	   const unsigned reaction,
-	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
+	   std::shared_ptr<const NuclearScatteringAngularDistribution>& distribution );
 
   //! Create an isotropic angular distribution
   static void createIsotropicDistribution(
-	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
+   std::shared_ptr<const NuclearScatteringAngularDistribution>& distribution );
 
   //! Return the isotropic_angle_cosine_dist
-  static Teuchos::RCP<Utility::TabularOneDDistribution> getIsotropicDistribution();
+  static std::shared_ptr<const Utility::TabularOneDDistribution>
+  getIsotropicDistribution();
 
 private:
 
@@ -47,7 +45,7 @@ private:
   NuclearScatteringAngularDistributionACEFactory();
   
   // The default (isotropic) angle cosine distribution
-  static Teuchos::RCP<Utility::TabularOneDDistribution>
+  static std::shared_ptr<const Utility::TabularOneDDistribution>
   isotropic_angle_cosine_dist;
   
 };

@@ -145,8 +145,8 @@ PositronatomCore::PositronatomCore(
       const ConstReactionMap& scattering_reactions,
       const ConstReactionMap& absorption_reactions,
       const ConstReactionMap& miscellaneous_reactions,
-      const Teuchos::RCP<const AtomicRelaxationModel> relaxation_model,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
+      const std::shared_ptr<const AtomicRelaxationModel> relaxation_model,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
   : d_total_reaction( total_reaction ),
     d_total_absorption_reaction( total_absorption_reaction ),
     d_scattering_reactions( d_scattering_reactions ),

@@ -9,31 +9,28 @@
 #ifndef MONTE_CARLO_NUCLEAR_REACTION_HELPER_HPP
 #define MONTE_CARLO_NUCLEAR_REACTION_HELPER_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Return the cross section at a given energy
-double getCrossSection(
-              const double energy,
-              const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-              const Teuchos::ArrayRCP<const double>& cross_section,
-              const unsigned threshold_energy_index );
-
-// Return the cross section at a given energy
+//! Return the cross section at a given energy
 inline double getCrossSection(
-              const double energy,
-              const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-              const Teuchos::ArrayRCP<const double>& cross_section,
-              const unsigned threshold_energy_index )
+       const double energy,
+       const std::vector<double>& incoming_energy_grid,
+       const std::vector<double>& cross_section,
+       const unsigned threshold_energy_index )
 {
   if( energy >= incoming_energy_grid[threshold_energy_index] &&
-      energy < incoming_energy_grid[incoming_energy_grid.size()-1] )
+      energy < incoming_energy_grid.back() )
   {
     unsigned energy_index =
       Utility::Search::binaryLowerBoundIndex( incoming_energy_grid.begin(),
@@ -49,11 +46,11 @@ inline double getCrossSection(
   }
   else if( energy < incoming_energy_grid[threshold_energy_index] )
     return 0.0;
-  else if( energy == incoming_energy_grid[incoming_energy_grid.size()-1] )
+  else if( energy == incoming_energy_grid.back() )
   {
-    return cross_section[cross_section.size()-1];
+    return cross_section.back();
   }
-  else // energy > this->getThresholdEnergy()
+  else // energy > this.getThresholdEnergy()
     return 0.0;
 }
 

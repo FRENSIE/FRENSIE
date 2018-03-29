@@ -9,9 +9,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AceLaw9NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
@@ -24,8 +21,8 @@ namespace MonteCarlo{
 
 // Constructor
 AceLaw9NuclearScatteringEnergyDistribution::AceLaw9NuclearScatteringEnergyDistribution(
-						 EnergyDistribution& energy_distribution,
-						 double restriction_energy )
+                                       EnergyDistribution& energy_distribution,
+                                       double restriction_energy )
   : NuclearScatteringEnergyDistribution( 1u ),
     d_energy_distribution( energy_distribution ),
     d_restriction_energy( restriction_energy )

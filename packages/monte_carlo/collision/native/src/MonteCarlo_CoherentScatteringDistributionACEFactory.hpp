@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistributionFactory.hpp"
 #include "MonteCarlo_FormFactorSquared.hpp"
@@ -30,15 +27,15 @@ public:
 
   //! Create a basic coherent distribution
   static void createBasicCoherentDistribution(
-			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::RCP<const CoherentScatteringDistribution>&
-			   coherent_distribution );
+			 const Data::XSSEPRDataExtractor& raw_photoatom_data,
+			 std::shared_ptr<const CoherentScatteringDistribution>&
+                         coherent_distribution );
 
   //! Create an efficient coherent distribution
   static void createEfficientCoherentDistribution(
-			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::RCP<const CoherentScatteringDistribution>&
-			   coherent_distribution );
+			 const Data::XSSEPRDataExtractor& raw_photoatom_data,
+			 std::shared_ptr<const CoherentScatteringDistribution>&
+                         coherent_distribution );
 
 protected:
 

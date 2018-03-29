@@ -24,8 +24,8 @@ ElectronMaterial::ElectronMaterial(
                const ModuleTraits::InternalMaterialHandle id,
                const double density,
                const ElectroatomNameMap& electroatom_name_map,
-               const Teuchos::Array<double>& electroatom_fractions,
-               const Teuchos::Array<std::string>& electroatom_names )
+               const std::vector<double>& electroatom_fractions,
+               const std::vector<std::string>& electroatom_names )
   : d_id( id ),
     d_number_density( density ),
     d_atoms( electroatom_fractions.size() )
@@ -49,7 +49,7 @@ ElectronMaterial::ElectronMaterial(
 
     TEST_FOR_EXCEPTION( atom == electroatom_name_map.end(),
                         std::logic_error,
-                        "Error: atom " << electroatom_names[i] <<
+                        "atom " << electroatom_names[i] <<
                         " has not been loaded!" );
 
     Utility::get<1>( d_atoms[i] ) = atom->second;
@@ -215,7 +215,7 @@ void ElectronMaterial::collideSurvivalBias( ElectronState& electron,
 
 // Get the atomic weight from an atom pointer
 double ElectronMaterial::getAtomicWeight(
-         const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair )
+         const Utility::Pair<double,std::shared_ptr<const Electroatom> >& pair )
 {
   return Utility::get<1>( pair )->getAtomicWeight();
 }

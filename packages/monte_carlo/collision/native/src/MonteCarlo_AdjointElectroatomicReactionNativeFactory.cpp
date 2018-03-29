@@ -22,9 +22,9 @@ namespace MonteCarlo{
 void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<AdjointElectroatomicReaction>& elastic_reaction )
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
@@ -44,8 +44,9 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
     raw_adjoint_electroatom_data.getAtomicNumber() );
 
   // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> elastic_cross_section;
-  elastic_cross_section.assign(
+  std::shared_ptr<std::vector<double> >
+    elastic_cross_section( new std::vector<double> );
+  elastic_cross_section->assign(
     raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSection().begin(),
     raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSection().end() );
 
@@ -67,9 +68,9 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
 void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
             const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_electroatom_data,
-            const Teuchos::ArrayRCP<const double>& energy_grid,
-            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<AdjointElectroatomicReaction>& atomic_excitation_reaction )
+            const std::shared_ptr<const std::vector<double> >& energy_grid,
+            const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+            std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
@@ -78,8 +79,10 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
                                                       energy_grid.end() ) );
 
   // Atomic Excitation cross section
-  Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
-  atomic_excitation_cross_section.assign(
+  std::shared_ptr<std::vector<double> >
+    atomic_excitation_cross_section( new std::vector<double> );
+  
+  atomic_excitation_cross_section->assign(
     raw_adjoint_electroatom_data.getAdjointAtomicExcitationCrossSection().begin(),
     raw_adjoint_electroatom_data.getAdjointAtomicExcitationCrossSection().end() );
 

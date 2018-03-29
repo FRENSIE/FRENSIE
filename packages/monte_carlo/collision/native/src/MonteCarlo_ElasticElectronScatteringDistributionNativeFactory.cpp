@@ -44,9 +44,9 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
     const std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>&
       cutoff_distribution,
     const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
-    const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::ArrayRCP<const double>& cutoff_cross_sections,
-    const Teuchos::ArrayRCP<const double>& total_cross_sections,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const std::vector<double> >& cutoff_cross_sections,
+    const std::shared_ptr<const std::vector<double> >& total_cross_sections,
     const double cutoff_angle_cosine,
     std::vector<double>& cross_sections,
     unsigned& threshold_energy_index,
@@ -313,9 +313,9 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
 
 // Create the ratio of the cutoff to the total elastic cross section
 void ElasticElectronScatteringDistributionNativeFactory::createCutoffCrossSectionRatios(
-    const Teuchos::ArrayRCP<const double> raw_energy_grid,
-    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<const double> total_cross_section,
+    const std::shared_ptr<const std::vector<double> > raw_energy_grid,
+    const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
+    const std::shared_ptr<const std::vector<double> > total_cross_section,
     std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios )
 {
   // Calculate the ratio of the cutoff to the total cross section

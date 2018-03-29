@@ -6,13 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <sstream>
-#include <stdexcept>
-
-// Trilinos Includes
-#include "Teuchos_ArrayView.hpp"
-
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearNeutronScatteringDistributionACEFactory.hpp"
 #include "Utility_ContractException.hpp"
@@ -29,14 +22,17 @@ PhotonuclearNeutronScatteringDistributionACEFactory::PhotonuclearNeutronScatteri
 					   atomic_weight_ratio )
 {
   // Make sure secondary particle has data
-  testPrecondition( raw_nuclide_data.hasSecondaryParticleType(1) );
+  testPrecondition( raw_nuclide_data.hasSecondaryParticleType( Data::XSSPhotonuclearDataExtractor::NEUTRON ) );
 
-  initialize( raw_nuclide_data.extractMTRPBlock(1),
-	      raw_nuclide_data.extractTYRPBlock(1),
-	      raw_nuclide_data.extractLANDPBlock(1),
-	      raw_nuclide_data.extractANDPBlock(1),
-	      raw_nuclide_data.extractLDLWPBlock(1),
-	      raw_nuclide_data.extractDLWPBlock(1));
+  Data::XSSPhotonuclearDataExtractor::OutgoingParticleType
+    outgoing_particle_type = Data::XSSPhotonuclearDataExtractor::NEUTRON;
+
+  initialize( raw_nuclide_data.extractMTRPBlock( outgoing_particle_type ),
+	      raw_nuclide_data.extractTYRPBlock( outgoing_particle_type ),
+	      raw_nuclide_data.extractLANDPBlock( outgoing_particle_type ),
+	      raw_nuclide_data.extractANDPBlock( outgoing_particle_type ),
+	      raw_nuclide_data.extractLDLWPBlock( outgoing_particle_type ),
+	      raw_nuclide_data.extractDLWPBlock( outgoing_particle_type ) );
  }
 
 } // end MonteCarlo namespace

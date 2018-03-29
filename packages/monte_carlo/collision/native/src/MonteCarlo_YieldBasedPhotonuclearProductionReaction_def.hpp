@@ -20,15 +20,15 @@ namespace MonteCarlo{
 // Constructor
 template<typename OutgoingParticleType>
 YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhotonuclearProductionReaction(
-                   const PhotonuclearReactionType reaction_type,
-      		   const double q_value,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::ArrayRCP<const double>& yield_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& yield,
-                   const Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
-		   outgoing_particle_distribution )
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const std::vector<double> >& yield_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& yield,
+       const std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
+       outgoing_particle_distribution )
   : PhotonuclearReaction( reaction_type,
 			  q_value,
 			  threshold_energy_index,
@@ -38,18 +38,23 @@ YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhoton
     d_yield( yield ),
     d_outgoing_particle_distribution( outgoing_particle_distribution )
 {
+  // Make sure that the pointers are valid
+  testPrecondition( incoming_energy_grid.get() );
+  testPrecondition( cross_section.get() );
+  testPrecondition( yield_energy_grid.get() );
+  testPrecondition( yield.get() );
+  testPrecondition( outgoing_particle_distribution.get() )
   // Make sure the yield energy grid is valid
-  testPrecondition( yield_energy_grid.size() > 1 );
+  testPrecondition( yield_energy_grid->size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending(
-					           yield_energy_grid.begin(),
-						   yield_energy_grid.end() ) );
-  testPrecondition( yield_energy_grid[0] == incoming_energy_grid[0] );
-  testPrecondition( yield_energy_grid[yield.size()-1] ==
-		    incoming_energy_grid[incoming_energy_grid.size()-1] );
+					          yield_energy_grid->begin(),
+                                                  yield_energy_grid->end() ) );
+  testPrecondition( yield_energy_grid->front() ==
+                    incoming_energy_grid->front() );
+  testPrecondition( yield_energy_grid->back() ==
+		    incoming_energy_grid->back() );
   // Make sure the yield is valid
-  testPrecondition( yield.size() == yield_energy_grid.size() );
-  // Make sure the outgoing particle distribution is valid
-  testPrecondition( !outgoing_particle_distribution.is_null() );
+  testPrecondition( yield->size() == yield_energy_grid->size() );
 }
 
 // Return the number of particle emitted from the rxn at the given energy
@@ -74,25 +79,25 @@ double YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getAverag
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
 
-  if( energy >= d_yield_energy_grid[0] &&
-      energy < d_yield_energy_grid[d_yield_energy_grid.size()-1] )
+  if( energy >= d_yield_energy_grid->front &&
+      energy < d_yield_energy_grid->back() )
   {
-    unsigned index =
-      Utility::Search::binaryLowerBoundIndex( d_yield_energy_grid.begin(),
-					      d_yield_energy_grid.end(),
+    size_t index =
+      Utility::Search::binaryLowerBoundIndex( d_yield_energy_grid->begin(),
+					      d_yield_energy_grid->end(),
 					      energy );
 
     return Utility::LinLin::interpolate(
-					d_yield_energy_grid[index],
-					d_yield_energy_grid[index+1],
+					(*d_yield_energy_grid)[index],
+					(*d_yield_energy_grid)[index+1],
 					energy,
-					d_yield[index],
-					d_yield[index+1] );
+					(*d_yield)[index],
+					(*d_yield)[index+1] );
   }
-  else if( energy < d_yield_energy_grid[0] )
+  else if( energy < d_yield_energy_grid->front() )
     return 0.0;
-  else if( energy == d_yield_energy_grid[d_yield_energy_grid.size()-1] )
-    return d_yield[d_yield.size()-1];
+  else if( energy == d_yield_energy_grid->back() )
+    return d_yield->back();
   else // energy > d_yield_energy_grid.back()
     return 0.0;
 }
@@ -112,7 +117,7 @@ void YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::react(
   // Create the additional particles
   for( unsigned i = 0; i < num_emitted_particles; ++i )
   {
-    Teuchos::RCP<OutgoingParticleType> new_particle(
+    std::shared_ptr<OutgoingParticleType> new_particle(
 			      new OutgoingParticleType( photon, true, true ) );
 
     d_outgoing_particle_distribution->scatterParticle( photon, *new_particle );

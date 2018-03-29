@@ -11,13 +11,9 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
@@ -37,7 +33,7 @@ public:
     const std::string& cross_sections_xml_directory,
     const Teuchos::ParameterList& cross_section_table_info,
     const std::unordered_set<std::string>& electroatom_aliases,
-    const Teuchos::RCP<AtomicRelaxationModelFactory>&
+    const std::shared_ptr<const AtomicRelaxationModelFactory>&
     atomic_relaxation_model_factory,
     const SimulationProperties& properties,
     std::ostream* os_message = &std::cout );
@@ -48,7 +44,7 @@ public:
 
   //! Create the map of electroatoms
   void createElectroatomMap(
-            std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+            std::unordered_map<std::string,std::shared_ptr<const Electroatom> >&
             electroatom_map ) const;
 
 private:
@@ -60,7 +56,7 @@ private:
               const std::string& electroatomic_table_name,
               const int electroatomic_file_start_line,
               const double atomic_weight,
-              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+              const std::shared_ptr<const AtomicRelaxationModelFactory>&
                           atomic_relaxation_model_factory,
               const SimulationProperties& properties );
 
@@ -69,16 +65,16 @@ private:
               const std::string& electroatom_alias,
               const std::string& ace_file_path,
               const double atomic_weight,
-              const Teuchos::RCP<AtomicRelaxationModelFactory>&
+              const std::shared_ptr<const AtomicRelaxationModelFactory>&
                           atomic_relaxation_model_factory,
               const SimulationProperties& properties );
 
   // The electroatom map
-  std::unordered_map<std::string,Teuchos::RCP<Electroatom> >
+  std::unordered_map<std::string,std::shared_ptr<const Electroatom> >
   d_electroatom_name_map;
 
   // The table map
-  std::unordered_map<std::string,Teuchos::RCP<Electroatom> >
+  std::unordered_map<std::string,std::shared_ptr<const Electroatom> >
   d_electroatomic_table_name_map;
 
   // The message output stream

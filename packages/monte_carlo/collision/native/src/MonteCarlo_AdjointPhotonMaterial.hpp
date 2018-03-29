@@ -11,17 +11,14 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_AdjointPhotoatom.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -31,13 +28,13 @@ class AdjointPhotonMaterial
 
 private:
 
-  // Typedef for Teuchos ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! Typedef for adjoint photoatom name map
-  typedef std::unordered_map<std::string,Teuchos::RCP<AdjointPhotoatom> >
+  typedef std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
   AdjointPhotoatomNameMap;
 
   //! Constructor
@@ -45,8 +42,8 @@ public:
                   const ModuleTraits::InternalMaterialHandle id,
                   const double density,
                   const AdjointPhotoatomNameMap& adjoint_photoatom_name_map,
-                  const Teuchos::Array<double>& adjoint_photoatom_fractions,
-                  const Teuchos::Array<std::string>& adjoint_photoatom_names );
+                  const std::vector<double>& adjoint_photoatom_fractions,
+                  const std::vector<std::string>& adjoint_photoatom_names );
 
   //! Destructor
   ~AdjointPhotonMaterial()
@@ -103,7 +100,7 @@ private:
 
   // Get the atomic weight from an atom pointer
   static double getAtomicWeight(
-     const Utility::Pair<double,Teuchos::RCP<const AdjointPhotoatom> >& pair );
+     const std::pair<double,std::shared_ptr<const AdjointPhotoatom> >& pair );
 
   // Sample the atom that is collided with
   unsigned sampleCollisionAtom( const double energy ) const;
@@ -118,7 +115,7 @@ private:
   double d_number_density;
 
   // The atoms that make up the material
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const AdjointPhotoatom> > >
+  std::vector<std::pair<double,std::shared_ptr<const AdjointPhotoatom> > >
   d_atoms;
 };
   

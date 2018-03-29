@@ -9,17 +9,17 @@
 #ifndef MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
 #define MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-#include <Teuchos_Array.hpp>
+// FRENSIE Includes
+#include "Utility_ArrayView.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
 //! Calculate the AND/DLW block distribution array sizes
 void calculateDistArraySizes(
-                    const Teuchos::ArrayView<const double>& location_block,
-		    const Teuchos::ArrayView<const double>& data_block,
-                    Teuchos::Array<unsigned>& dist_array_sizes );
+                    const Utility::ArrayView<const double>& location_block,
+		    const Utility::ArrayView<const double>& data_block,
+                    std::vector<unsigned>& dist_array_sizes );
 
 } // end MonteCarlo namespace
 

@@ -9,9 +9,8 @@
 #ifndef MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_ACE_FACTORY_HELPER_HPP
 #define MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_ACE_FACTORY_HELPER_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
@@ -29,16 +28,16 @@ public:
 
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution(
-		      Teuchos::RCP<NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType> >& distribution,
+		      std::shared_ptr<NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType> >& distribution,
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
                       const double free_gas_threshold,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+                      const std::shared_ptr<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
-		     "Error: elastic scattering for different particle types ("
+		     "elastic scattering for different particle types ("
 		       << IncomingParticleType::type << " !="
 		       << OutgoingParticleType::type << ") is not possible!");
   }
@@ -62,16 +61,16 @@ public:
 
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution(
-          Teuchos::RCP<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
+          std::shared_ptr<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
           const std::string ace_table_name,
           const bool defined_in_cm_system,
           const double atomic_weight_ratio,
           const double free_gas_threshold,
-          const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+          const std::shared_ptr<NuclearScatteringAngularDistribution>&
           angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
-		     "Error: elastic scattering is not defined for "
+		     "elastic scattering is not defined for "
 		     << ParticleType::type << "!");
   }
 
@@ -90,12 +89,12 @@ public:
 
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution(
-		      Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
+		      std::shared_ptr<NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
                       const double free_gas_threshold,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+                      const std::shared_ptr<NuclearScatteringAngularDistribution>&
 		      angular_distribution );
 
   //! Check if elastic scattering is handled implicitly in ACE table

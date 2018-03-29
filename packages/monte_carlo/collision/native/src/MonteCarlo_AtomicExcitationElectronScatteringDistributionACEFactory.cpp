@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -41,17 +38,17 @@ void AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossF
                                                         energy_loss_function )
 {
    // Extract the atomic excitation scattering information data block (EXCIT)
-  Teuchos::ArrayView<const double> excit_block(
+  Utility::ArrayView<const double> excit_block(
 				      raw_electroatom_data.extractEXCITBlock() );
 
   // Extract the number of tabulated energies
   int size = excit_block.size()/2;
 
   // Extract the energy grid for atomic excitation energy loss
-  Teuchos::Array<double> excitation_energy_grid(excit_block(0,size));
+  std::vector<double> excitation_energy_grid(excit_block(0,size));
 
   // Extract the energy loss for atomic excitation
-  Teuchos::Array<double> energy_loss(excit_block(size,size));
+  std::vector<double> energy_loss(excit_block(size,size));
 
   // Check if the file version is eprdata14 or eprdata12
   if ( raw_electroatom_data.isEPRVersion14() )

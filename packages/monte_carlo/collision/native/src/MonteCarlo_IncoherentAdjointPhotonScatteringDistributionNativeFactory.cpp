@@ -74,7 +74,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createDistribut
     default:
     {
       THROW_EXCEPTION( std::logic_error,
-                       "Error: incoherent adjoint model "
+                       "incoherent adjoint model "
                        << incoherent_adjoint_model <<
                        " cannot be constructed with native data!" );
     }
@@ -121,14 +121,14 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createSubshellD
           incoherent_adjoint_model == WH_INCOHERENT_ADJOINT_MODEL )
       {
         THROW_EXCEPTION( std::logic_error,
-                         "Error: The KN and WH incoherent adjoint models "
+                         "The KN and WH incoherent adjoint models "
                          "are not impulse (subshell) models. The subshell "
                          "distribution cannot be created." );
       }
       else
       {
         THROW_EXCEPTION( std::logic_error,
-                         "Error: incoherent adjoint model "
+                         "incoherent adjoint model "
                          << incoherent_adjoint_model <<
                          " cannot be constructed with native data!" );
       }

@@ -16,17 +16,13 @@
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatomicReactionType.hpp"
 #include "MonteCarlo_LineEnergyAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -70,8 +66,8 @@ public:
 
   //! Constructor
   AdjointPhotoatomCore(
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::ArrayRCP<const double>& critical_line_energies,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& critical_line_energies,
       const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
       const ReactionMap& scattering_reactions,
       const ReactionMap& absorption_reactions,
@@ -100,7 +96,7 @@ public:
   const ConstLineEnergyReactionMap& getLineEnergyReactions() const;
 
   //! Return the critical line energies
-  const Teuchos::ArrayRCP<const double>& getCriticalLineEnergies() const;
+  const std::vector<double>& getCriticalLineEnergies() const;
 
   //! Return the hash-based grid searcher
   const Utility::HashBasedGridSearcher& getGridSearcher() const;
@@ -114,7 +110,7 @@ private:
   template<typename Map>
   bool areLineEnergyReactionsValid(
          const Map& line_energy_reactions,
-         const Teuchos::ArrayRCP<const double>& critical_line_energies ) const;
+         const std::vector<double>& critical_line_energies ) const;
 
   // The total forward reactions
   std::shared_ptr<const PhotoatomicReaction> d_total_forward_reaction;
@@ -129,10 +125,10 @@ private:
   ConstLineEnergyReactionMap d_line_energy_reactions;
 
   // The critical line energies
-  Teuchos::ArrayRCP<const double> d_critical_line_energies;
+  std::shared_ptr<const std::vector<double> > d_critical_line_energies;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 // Return the total forward reaction
@@ -160,10 +156,10 @@ inline auto AdjointPhotoatomCore::getLineEnergyReactions() const -> const ConstL
 }
 
 // Return the critical line energies
-inline const Teuchos::ArrayRCP<const double>&
+inline const std::vector<double>&
 AdjointPhotoatomCore::getCriticalLineEnergies() const
 {
-  return d_critical_line_energies;
+  return *d_critical_line_energies;
 }
 
 // Return the hash-based grid searcher
@@ -176,7 +172,7 @@ inline const Utility::HashBasedGridSearcher& AdjointPhotoatomCore::getGridSearch
 template<typename Map>
 bool AdjointPhotoatomCore::areLineEnergyReactionsValid(
           const Map& line_energy_reactions,
-          const Teuchos::ArrayRCP<const double>& critical_line_energies ) const
+          const std::vector<double>& critical_line_energies ) const
 {
   typename Map::const_iterator line_energies =
     line_energy_reactions.begin();

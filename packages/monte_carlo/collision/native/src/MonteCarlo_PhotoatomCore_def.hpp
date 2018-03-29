@@ -10,8 +10,8 @@
 #define MONTE_CARLO_PHOTOATOM_CORE_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -23,13 +23,13 @@ namespace MonteCarlo{
  */
 template<typename InterpPolicy>
 PhotoatomCore::PhotoatomCore(
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const ReactionMap& standard_scattering_reactions,
-       const ReactionMap& standard_absorption_reactions,
-       const Teuchos::RCP<const AtomicRelaxationModel>& relaxation_model,
-       const bool processed_atomic_cross_sections,
-       const InterpPolicy policy )
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const ReactionMap& standard_scattering_reactions,
+    const ReactionMap& standard_absorption_reactions,
+    const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
+    const bool processed_atomic_cross_sections,
+    const InterpPolicy policy )
   : d_total_reaction(),
     d_total_absorption_reaction(),
     d_scattering_reactions(),
@@ -77,8 +77,8 @@ PhotoatomCore::PhotoatomCore(
   }
 
   // Create the total absorption and total reactions
-  Teuchos::RCP<PhotoatomicReaction> total_absorption_reaction;
-  Teuchos::RCP<PhotoatomicReaction> total_reaction;
+  std::shared_ptr<PhotoatomicReaction> total_absorption_reaction;
+  std::shared_ptr<PhotoatomicReaction> total_reaction;
 
   if( processed_atomic_cross_sections )
   {
@@ -123,14 +123,16 @@ PhotoatomCore::PhotoatomCore(
 // Create the total absorption reaction
 template<typename InterpPolicy>
 void PhotoatomCore::createTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+		const std::shared_ptr<const std::vector<double> >& energy_grid,
 		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction )
+		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
   testPrecondition( energy_grid.size() > 1 );
 
-  Teuchos::Array<double> absorption_cross_section;
+  std::shared_ptr<std::vector<double> >
+    absorption_cross_section( new std::vector<double> );
+  
   unsigned absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
@@ -152,7 +154,7 @@ void PhotoatomCore::createTotalAbsorptionReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      absorption_cross_section.push_back( raw_cross_section );
+      absorption_cross_section->push_back( raw_cross_section );
     }
     else
     {
@@ -162,24 +164,21 @@ void PhotoatomCore::createTotalAbsorptionReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
+  remember( std::vector<double>::const_iterator zero_element =
+	    std::find( absorption_cross_section->begin(),
+		       absorption_cross_section->end(),
 		       0.0 ) );
-  testPostcondition( zero_element == absorption_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
+  testPostcondition( zero_element == absorption_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+	    std::find( absorption_cross_section->begin(),
+		       absorption_cross_section->end(),
 		       std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == absorption_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> absorption_cross_section_copy;
-  absorption_cross_section_copy.deepCopy( absorption_cross_section() );
+  testPostcondition( inf_element == absorption_cross_section->end() );
 
   total_absorption_reaction.reset(
       new AbsorptionPhotoatomicReaction<InterpPolicy,false>(
 				     energy_grid,
-				     absorption_cross_section_copy,
+				     absorption_cross_section,
 				     absorption_threshold_energy_index,
 				     TOTAL_ABSORPTION_PHOTOATOMIC_REACTION ) );
 }
@@ -187,14 +186,16 @@ void PhotoatomCore::createTotalAbsorptionReaction(
 // Create the processed total absorption reaction
 template<typename InterpPolicy>
 void PhotoatomCore::createProcessedTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<const double>& energy_grid,
+		const std::shared_ptr<const std::vector<double> >& energy_grid,
 		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction )
+		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
 
-  Teuchos::Array<double> absorption_cross_section;
+  std::shared_ptr<std::vector<double> >
+    absorption_cross_section( new std::vector<double> );
+  
   unsigned absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
@@ -219,7 +220,7 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      absorption_cross_section.push_back(
+      absorption_cross_section->push_back(
 			    InterpPolicy::processDepVar( raw_cross_section ) );
     }
     else
@@ -230,24 +231,21 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
+  remember( std::vector<double>::const_iterator zero_element =
+	    std::find( absorption_cross_section->begin(),
+		       absorption_cross_section->end(),
 		       0.0 ) );
-  testPostcondition( zero_element == absorption_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
+  testPostcondition( zero_element == absorption_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+	    std::find( absorption_cross_section->begin(),
+		       absorption_cross_section->end(),
 		       std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == absorption_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> absorption_cross_section_copy;
-  absorption_cross_section_copy.deepCopy( absorption_cross_section() );
+  testPostcondition( inf_element == absorption_cross_section->end() );
 
   total_absorption_reaction.reset(
       new AbsorptionPhotoatomicReaction<InterpPolicy,true>(
 				     energy_grid,
-				     absorption_cross_section_copy,
+				     absorption_cross_section,
 				     absorption_threshold_energy_index,
 				     TOTAL_ABSORPTION_PHOTOATOMIC_REACTION ) );
 }
@@ -255,17 +253,19 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
 // Create the total reaction
 template<typename InterpPolicy>
 void PhotoatomCore::createTotalReaction(
-      const Teuchos::ArrayRCP<const double>& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
-      const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
-      Teuchos::RCP<PhotoatomicReaction>& total_reaction )
+      const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
+      std::shared_ptr<PhotoatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
   // Make sure the absorption reaction has been created
   testPrecondition( !total_absorption_reaction.is_null() );
 
-  Teuchos::Array<double> total_cross_section;
+  std::shared_ptr<std::vector<double> >
+    total_cross_section( new std::vector<double> );
+  
   unsigned total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
@@ -288,7 +288,7 @@ void PhotoatomCore::createTotalReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      total_cross_section.push_back( raw_cross_section );
+      total_cross_section->push_back( raw_cross_section );
     }
     else
     {
@@ -298,24 +298,21 @@ void PhotoatomCore::createTotalReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-	    std::find( total_cross_section.begin(),
-		           total_cross_section.end(),
-		      	   0.0 ) );
-  testPostcondition( zero_element == total_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-	    	   std::find( total_cross_section.begin(),
-		       total_cross_section.end(),
-		       std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == total_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> total_cross_section_copy;
-  total_cross_section_copy.deepCopy( total_cross_section() );
+  remember( std::vector<double>::const_iterator zero_element =
+	    std::find( total_cross_section->begin(),
+                       total_cross_section->end(),
+                       0.0 ) );
+  testPostcondition( zero_element == total_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+	    	   std::find( total_cross_section->begin(),
+                              total_cross_section->end(),
+                              std::numeric_limits<double>::infinity() ) );
+  testPostcondition( inf_element == total_cross_section->end() );
 
   total_reaction.reset(
       new AbsorptionPhotoatomicReaction<InterpPolicy,false>(
 						energy_grid,
-						total_cross_section_copy,
+						total_cross_section,
 						total_threshold_energy_index,
 						TOTAL_PHOTOATOMIC_REACTION ) );
 }
@@ -323,17 +320,19 @@ void PhotoatomCore::createTotalReaction(
 // Calculate the processed total absorption cross section
 template<typename InterpPolicy>
 void PhotoatomCore::createProcessedTotalReaction(
-      const Teuchos::ArrayRCP<const double>& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
-      Teuchos::RCP<PhotoatomicReaction>& total_reaction )
+   const std::shared_ptr<const std::vector<double> >& energy_grid,
+   const ConstReactionMap& scattering_reactions,
+   const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
+   std::shared_ptr<PhotoatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
   // Make sure the absorption reaction has been created
   testPrecondition( !total_absorption_reaction.is_null() );
 
-  Teuchos::Array<double> total_cross_section;
+  std::shared_ptr<std::vector<double> >
+    total_cross_section( new std::vector<double> );
+  
   unsigned total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
@@ -359,7 +358,7 @@ void PhotoatomCore::createProcessedTotalReaction(
     if( raw_cross_section > 0.0 )
     {
       // Process the raw cross section
-      total_cross_section.push_back(
+      total_cross_section->push_back(
 			    InterpPolicy::processDepVar( raw_cross_section ) );
     }
     else
@@ -370,24 +369,21 @@ void PhotoatomCore::createProcessedTotalReaction(
   }
 
   // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element =
-	    std::find( total_cross_section.begin(),
-		       total_cross_section.end(),
+  remember( std::vector<double>::const_iterator zero_element =
+	    std::find( total_cross_section->begin(),
+		       total_cross_section->end(),
 		       0.0 ) );
-  testPostcondition( zero_element == total_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element =
-	    std::find( total_cross_section.begin(),
-		       total_cross_section.end(),
+  testPostcondition( zero_element == total_cross_section->end() );
+  remember( std::vector<double>::const_iterator inf_element =
+	    std::find( total_cross_section->begin(),
+		       total_cross_section->end(),
 		       std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == total_cross_section.end() );
-
-  Teuchos::ArrayRCP<double> total_cross_section_copy;
-  total_cross_section_copy.deepCopy( total_cross_section() );
+  testPostcondition( inf_element == total_cross_section->end() );
 
   total_reaction.reset(
       new AbsorptionPhotoatomicReaction<InterpPolicy,true>(
             energy_grid,
-            total_cross_section_copy,
+            total_cross_section,
             total_threshold_energy_index,
             TOTAL_PHOTOATOMIC_REACTION ) );
 }

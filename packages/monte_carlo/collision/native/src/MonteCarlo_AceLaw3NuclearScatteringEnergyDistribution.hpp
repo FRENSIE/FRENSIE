@@ -32,7 +32,7 @@ public:
   { /* ... */ }
 
   //! Sample a scattering energy
-  double sampleEnergy( const double energy ) const;
+  double sampleEnergy( const double energy ) const override;
 
 private:
 

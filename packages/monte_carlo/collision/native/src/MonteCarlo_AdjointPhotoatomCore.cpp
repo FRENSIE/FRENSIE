@@ -34,8 +34,8 @@ AdjointPhotoatomCore::AdjointPhotoatomCore()
  * energy the line energy reaction will never occur.
  */
 AdjointPhotoatomCore::AdjointPhotoatomCore(
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::ArrayRCP<const double>& critical_line_energies,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& critical_line_energies,
       const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
       const ReactionMap& scattering_reactions,
       const ReactionMap& absorption_reactions,

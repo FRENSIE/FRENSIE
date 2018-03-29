@@ -11,17 +11,14 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
-
-// Trilinos Includes
-#include <Teuchos_ParameterList.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
 #include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -45,7 +42,7 @@ public:
 
   //! Create the map of adjoint electroatoms
   void createAdjointElectroatomMap(
-            std::unordered_map<std::string,Teuchos::RCP<AdjointElectroatom> >&
+            std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >&
             adjoint_electroatom_map ) const;
 
 private:
@@ -59,11 +56,11 @@ private:
                     const SimulationAdjointElectronProperties& properties );
 
   // The adjoint electroatom map
-  std::unordered_map<std::string,Teuchos::RCP<AdjointElectroatom> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >
   d_adjoint_electroatom_name_map;
 
   // The table map
-  std::unordered_map<std::string,Teuchos::RCP<AdjointElectroatom> >
+  std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >
   d_adjoint_electroatomic_table_name_map;
 
   // The message output stream

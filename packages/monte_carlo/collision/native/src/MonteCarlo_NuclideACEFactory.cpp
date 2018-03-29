@@ -11,6 +11,7 @@
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -23,12 +24,12 @@ void NuclideACEFactory::createNuclide(
 			 const double atomic_weight_ratio,
 			 const double temperature,
                          const SimulationProperties& properties,
-			 Teuchos::RCP<Nuclide>& nuclide,
+			 std::shared_ptr<Nuclide>& nuclide,
                          std::ostream* os_message )
 {
   // Extract the common energy grid used for this nuclide
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( raw_nuclide_data.extractEnergyGrid() );
+  std::shared_ptr<std::vector<double> > energy_grid(
+             new std::vector<double>( raw_nuclide_data.extractEnergyGrid() ) );
 
   // Create the nuclear reaction factory
   NuclearReactionACEFactory reaction_factory( nuclide_alias,

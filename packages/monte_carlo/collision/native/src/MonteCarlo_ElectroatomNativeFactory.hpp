@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_ELECTROATOM_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
@@ -20,6 +20,7 @@
 #include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -36,18 +37,18 @@ public:
             typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
   static void createElectroatomCore(
        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+       const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
        const SimulationElectronProperties& properties,
-       Teuchos::RCP<ElectroatomCore>& electroatom_core );
+       std::shared_ptr<const ElectroatomCore>& electroatom_core );
 
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
        const std::string& electroatom_name,
        const double atomic_weight,
-       const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+       const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
        const SimulationElectronProperties& properties,
-       Teuchos::RCP<Electroatom>& electroatom );
+       std::shared_ptr<const Electroatom>& electroatom );
 
 private:
 
@@ -56,8 +57,8 @@ private:
             typename TwoDSamplePolicy = Utility::Correlated>
   static void createElasticElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
         const SimulationElectronProperties& properties,
         Electroatom::ReactionMap& scattering_reactions );
 

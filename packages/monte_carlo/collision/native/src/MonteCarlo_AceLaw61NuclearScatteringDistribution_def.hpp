@@ -29,11 +29,10 @@ AceLaw61NuclearScatteringDistribution<
               IncomingParticleType,
               OutgoingParticleType,
               SystemConversionPolicy>::AceLaw61NuclearScatteringDistribution( 
-       const double atomic_weight_ratio,
-       const Teuchos::RCP<NuclearScatteringEnergyDistribution>& 
-		     energy_scattering_distribution,
-       const Teuchos::Array<Teuchos::RCP<AceLaw61AngleDistribution> >&
-		     angle_distributions )
+                    const double atomic_weight_ratio,
+                    const std::shared_ptr<NuclearScatteringEnergyDistribution>&
+                    energy_scattering_distribution,
+                    const AngleDistributions& angle_distributions )
   : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),
      d_angle_distributions( angle_distributions )
@@ -44,13 +43,13 @@ AceLaw61NuclearScatteringDistribution<
 
 // Randomly scatter the particle
 template<typename IncomingParticleType,
-	       typename OutgoingParticleType,
-	       typename SystemConversionPolicy>
+         typename OutgoingParticleType,
+         typename SystemConversionPolicy>
 void AceLaw61NuclearScatteringDistribution<IncomingParticleType,
 					   OutgoingParticleType,
 					   SystemConversionPolicy>::scatterParticle(
 				const IncomingParticleType& incoming_particle,
-				      OutgoingParticleType& outgoing_particle,
+                                OutgoingParticleType& outgoing_particle,
 				const double temperature ) const
 {
   unsigned outgoing_bin_index, incoming_bin_index;

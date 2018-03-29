@@ -23,39 +23,39 @@ public:
 
   //! Constructor
   YieldBasedPhotonuclearProductionReaction(
-		   const PhotonuclearReactionType reaction_type,
-      		   const double q_value,
-		   const unsigned threshold_energy_index,
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::ArrayRCP<const double>& yield_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& yield,
-                   const Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
-		   outgoing_particle_distribution );
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const std::vector<double> >& yield_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& yield,
+       const std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
+       outgoing_particle_distribution );
 
   //! Destructor
   virtual ~YieldBasedPhotonuclearProductionReaction()
   { /* ... */ }
 
   //! Return the number of particle emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedParticles( const double energy ) const;
+  unsigned getNumberOfEmittedParticles( const double energy ) const override;
 
   //! Return the average number of particles emitted from the rxn
-  double getAverageNumberOfEmittedParticles( const double energy ) const;
+  double getAverageNumberOfEmittedParticles( const double energy ) const override;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, ParticleBank& bank ) const;
+  void react( PhotonState& photon, ParticleBank& bank ) const override;
 
 private:
 
   // The photon production yield energy grid
-  Teuchos::ArrayRCP<const double> d_yield_energy_grid;
+  std::shared_ptr<const std::vector<double> > d_yield_energy_grid;
 
   // The photon production yield
-  Teuchos::ArrayRCP<const double> d_yield;
+  std::shared_ptr<const std::vector<double> > d_yield;
 
   // The outgoing particle distribution (energy and angle)
-  Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >
+  std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >
   d_outgoing_particle_distribution;
 };
 

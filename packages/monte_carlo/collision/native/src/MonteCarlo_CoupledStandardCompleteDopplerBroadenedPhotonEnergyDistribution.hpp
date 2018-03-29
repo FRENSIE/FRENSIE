@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -27,9 +28,9 @@ public:
 
   //! Constructor
   CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-   const Teuchos::Array<double>& subshell_binding_energies,
-   const Teuchos::Array<double>& subshell_occupancies,
-   const Teuchos::Array<Data::SubshellType>& subshell_order,
+   const std::vector<double>& subshell_binding_energies,
+   const std::vector<double>& subshell_occupancies,
+   const std::vector<Data::SubshellType>& subshell_order,
    const std::shared_ptr<const ComptonProfileSubshellConverter>&
    subshell_converter,
    const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
@@ -52,7 +53,7 @@ protected:
 private:
 
   // The endf subshell binding energies
-  Teuchos::Array<double> d_subshell_binding_energies;
+  std::vector<double> d_subshell_binding_energies;
 };
 
 } // end MonteCarlo namespace

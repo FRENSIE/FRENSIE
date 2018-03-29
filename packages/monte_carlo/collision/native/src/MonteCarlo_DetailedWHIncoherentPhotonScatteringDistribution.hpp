@@ -9,15 +9,13 @@
 #ifndef MONTE_CARLO_DETAILED_WH_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_DETAILED_WH_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -35,8 +33,8 @@ public:
   //! Constructor
   DetailedWHIncoherentPhotonScatteringDistribution(
 	  const std::shared_ptr<const ScatteringFunction>& scattering_function,
-	  const Teuchos::Array<double>& subshell_occupancies,
-	  const Teuchos::Array<Data::SubshellType>& subshell_order,
+	  const std::vector<double>& subshell_occupancies,
+	  const std::vector<Data::SubshellType>& subshell_order,
 	  const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
@@ -54,11 +52,11 @@ private:
   void sampleInteractionSubshell( Data::SubshellType& shell_of_interaction ) const;
 
   // The shell interaction probabilities
-  boost::scoped_ptr<const Utility::TabularOneDDistribution>
+  std::unique_ptr<const Utility::TabularOneDDistribution>
   d_subshell_occupancy_distribution;
 
   // The subshell ordering
-  Teuchos::Array<Data::SubshellType> d_subshell_order;
+  std::vector<Data::SubshellType> d_subshell_order;
 };
 
 } // end MonteCarlo namespace
