@@ -236,7 +236,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
            	      << table_name << " should be law 4!\n" );
 
      // Start index for ldat data
-     int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+     int ldat_start_index =
+       (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
 
      // Verify that only one law is present
      TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
@@ -249,12 +250,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
      double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
      // Array of incoming energies
-     std::vector<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
-                                                                       incoming_energies);
+     Utility::ArrayView<const double> incoming_energies_array =
+       dlw_block_array( ldat_start_index + 2, incoming_energies );
 
      // Array of distribution locations
-     std::vector<double> distribution_locations = dlw_block_array(ldat_start_index + 2 + incoming_energies,
-                                                                  incoming_energies);
+     Utility::ArrayView<const double> distribution_locations =
+       dlw_block_array( ldat_start_index + 2 + incoming_energies,
+                        incoming_energies );
 
      // Initialize the energy distribution array
      AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -379,7 +381,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
            	      << table_name << " should be law 5!\n" );
 
   // Start index for ldat data
-  int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+  int ldat_start_index =
+    (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
 
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
@@ -392,20 +395,22 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  std::vector<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
-                                                                     incoming_energies);
+  Utility::ArrayView<const double> incoming_energies_array =
+    dlw_block_array( ldat_start_index + 2, incoming_energies );
 
   // Array of Tabulated energy functions
-  std::vector<double> tabulated_energy_function_array = dlw_block_array(
-                  ldat_start_index + 2 + incoming_energies, incoming_energies );
+  Utility::ArrayView<const double> tabulated_energy_function_array =
+    dlw_block_array( ldat_start_index + 2 + incoming_energies,
+                     incoming_energies );
 
   // Number of probabilistic functions tabulated
-  double prob_function_number = dlw_block_array[ldat_start_index + 3 + incoming_energies*2];
+  double prob_function_number =
+    dlw_block_array[ldat_start_index + 3 + incoming_energies*2];
 
   // Array of probabilistic functions
-  std::vector<double> probabilistic_function_array = dlw_block_array(
-                                  ldat_start_index + 4 + incoming_energies*2,
-                                                        prob_function_number );
+  Utility::ArrayView<const double> probabilistic_function_array =
+    dlw_block_array( ldat_start_index + 4 + incoming_energies*2,
+                     prob_function_number );
 
   // Bin width for probabilistic function
   double prob_bin_width = (probabilistic_function_array.back() -
@@ -455,7 +460,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribut
            	      << table_name << " should be law 7!\n" );
 
   // Start index for ldat data
-  int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+  int ldat_start_index =
+    (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
 
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
@@ -468,12 +474,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribut
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  std::vector<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
-                                                                     incoming_energies);
+  Utility::ArrayView<const double> incoming_energies_array =
+    dlw_block_array( ldat_start_index + 2, incoming_energies );
 
   // Array of Tabulated energy functions
-  std::vector<double> tabulated_energy_function_array = dlw_block_array(
-                  ldat_start_index + 2 + incoming_energies, incoming_energies );
+  Utility::ArrayView<const double> tabulated_energy_function_array =
+    dlw_block_array( ldat_start_index + 2 + incoming_energies,
+                     incoming_energies );
 
   // Initialize the energy distribution array
   AceLaw7NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -524,12 +531,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw9EnergyDistribut
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  std::vector<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
-                                                                     incoming_energies);
+  Utility::ArrayView<const double> incoming_energies_array =
+    dlw_block_array( ldat_start_index + 2, incoming_energies );
 
   // Array of Tabulated energy functions
-  std::vector<double> tabulated_energy_function_array = dlw_block_array(
-                  ldat_start_index + 2 + incoming_energies, incoming_energies );
+  Utility::ArrayView<const double> tabulated_energy_function_array =
+    dlw_block_array( ldat_start_index + 2 + incoming_energies,
+                     incoming_energies );
 
   // Initialize the energy distribution array
   AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -566,7 +574,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
            	      << table_name << " should be law 11!\n" );
 
   // Start index for ldat data
-  int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+  int ldat_start_index =
+    (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
 
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
@@ -579,23 +588,26 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribu
   double incoming_energies_a = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies (a)
-  std::vector<double> incoming_energies_array_a = dlw_block_array( ldat_start_index + 2,
-                                                                     incoming_energies_a);
+  Utility::ArrayView<const double> incoming_energies_array_a =
+    dlw_block_array( ldat_start_index + 2, incoming_energies_a );
 
   // Array of Tabulated energy functions (a)
-  std::vector<double> tabulated_a = dlw_block_array(
-                  ldat_start_index + 2 + incoming_energies_a, incoming_energies_a );
+  Utility::ArrayView<const double> tabulated_a =
+    dlw_block_array( ldat_start_index + 2 + incoming_energies_a,
+                     incoming_energies_a );
 
   // Number of incident energies (b)
   double incoming_energies_b = dlw_block_array[ldat_start_index + 4 + 2*incoming_energies_a];
 
   // Array of incoming energies (b)
-  std::vector<double> incoming_energies_array_b = dlw_block_array(
-          ldat_start_index + 5 + 2*incoming_energies_a, incoming_energies_b );
+  Utility::ArrayView<const double> incoming_energies_array_b =
+    dlw_block_array( ldat_start_index + 5 + 2*incoming_energies_a,
+                     incoming_energies_b );
 
   // Array of Tabulated energy functions (b)
-  std::vector<double> tabulated_b = dlw_block_array(
-          ldat_start_index + 5 + 2*incoming_energies_a + incoming_energies_b, incoming_energies_b );
+  Utility::ArrayView<const double> tabulated_b =
+    dlw_block_array( ldat_start_index + 5 + 2*incoming_energies_a + incoming_energies_b,
+                     incoming_energies_b );
 
   // Restriction energy
   double restriction_energy = dlw_block_array[ldat_start_index + 6 + 2*incoming_energies_a + 2*incoming_energies_b];

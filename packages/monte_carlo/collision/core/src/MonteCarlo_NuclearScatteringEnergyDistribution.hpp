@@ -13,7 +13,7 @@
 #include <limits>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -35,8 +35,8 @@ public:
 
   //! Sample a scattering energy (and return the sampled bin index)
   virtual double sampleEnergy( const double energy,
-			       unsigned& incoming_bin_index,
-			       unsigned& outgoing_bin_index,
+			       size_t& incoming_bin_index,
+			       size_t& outgoing_bin_index,
                                double& energy_prime ) const;
 
   //! Return the scattering law
@@ -51,13 +51,13 @@ private:
 // Sample a scattering energy (and return the sampled bin index)
 inline double NuclearScatteringEnergyDistribution::sampleEnergy(
 					    const double energy,
-					    unsigned& incoming_bin_index,
-					    unsigned& outgoing_bin_index,
+					    size_t& incoming_bin_index,
+					    size_t& outgoing_bin_index,
                                             double& energy_prime ) const
 {
-  incoming_bin_index = std::numeric_limits<unsigned>::max();
+  incoming_bin_index = std::numeric_limits<size_t>::max();
 
-  outgoing_bin_index = std::numeric_limits<unsigned>::max();
+  outgoing_bin_index = std::numeric_limits<size_t>::max();
 
   return this->sampleEnergy( energy );
 }

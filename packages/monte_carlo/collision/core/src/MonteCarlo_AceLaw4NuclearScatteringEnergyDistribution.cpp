@@ -31,7 +31,7 @@ AceLaw4NuclearScatteringEnergyDistribution::AceLaw4NuclearScatteringEnergyDistri
 // Sample a scattering energy
 double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy( const double energy ) const
 {
-  unsigned incoming_index, outgoing_index;
+  size_t incoming_index, outgoing_index;
 
   double energy_prime;
 
@@ -42,8 +42,8 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy( const double en
 // Sample a scattering energy
 double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
 						    const double energy,
-						    unsigned& incoming_index,
-						    unsigned& outgoing_index,
+						    size_t& incoming_index,
+						    size_t& outgoing_index,
 						    double& energy_prime) const
 {
   // Make sure the energy is valid

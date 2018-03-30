@@ -18,7 +18,7 @@ namespace MonteCarlo{
 template<typename AceLaw61InterpolationPolicy>
 StandardAceLaw61AngleDistribution<AceLaw61InterpolationPolicy>::StandardAceLaw61AngleDistribution(
     const Utility::ArrayView<const double>& outgoing_energy_grid,
-    const std::vector<std::shared_ptr<Utility::OneDDistribution> >& cosine_distributions ) :
+    const std::vector<std::shared_ptr<Utility::UnivariateDistribution> >& cosine_distributions ) :
       AceLaw61AngleDistribution( outgoing_energy_grid, cosine_distributions )
 { /* ... */ }
 

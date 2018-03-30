@@ -14,7 +14,7 @@ namespace MonteCarlo{
 // Constructor
 AceLaw61AngleDistribution::AceLaw61AngleDistribution( 
 		  const Utility::ArrayView<const double>& outgoing_energy_grid,
-		  const std::vector<std::shared_ptr<Utility::OneDDistribution> >& cosine_distributions )
+		  const std::vector<std::shared_ptr<Utility::UnivariateDistribution> >& cosine_distributions )
   : d_outgoing_energy_grid( outgoing_energy_grid.begin(),
                             outgoing_energy_grid.end() ),
     d_cosine_distributions( cosine_distributions )

@@ -9,31 +9,26 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::SubshellRelaxationModel>
+std::unique_ptr<const MonteCarlo::SubshellRelaxationModel>
 detailed_subshell_relaxation_model;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a subshell can be relaxed
-TEUCHOS_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
+FRENSIE_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
 {
   MonteCarlo::PhotonState photon( 1 );
   photon.setEnergy( 1.0 );
@@ -56,80 +51,72 @@ TEUCHOS_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
 						     primary_vacancy,
 						     secondary_vacancy );
 
-  TEST_EQUALITY_CONST(detailed_subshell_relaxation_model->getVacancySubshell(),
+  FRENSIE_CHECK_EQUAL(detailed_subshell_relaxation_model->getVacancySubshell(),
 		      Data::K_SUBSHELL );
-  TEST_EQUALITY_CONST( primary_vacancy, Data::P3_SUBSHELL );
-  TEST_EQUALITY_CONST( secondary_vacancy, Data::INVALID_SUBSHELL );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 8.828470000000E-02 );
-  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( primary_vacancy, Data::P3_SUBSHELL );
+  FRENSIE_CHECK_EQUAL( secondary_vacancy, Data::INVALID_SUBSHELL );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 8.828470000000E-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getYPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getCollisionNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getGenerationNumber(), 1 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
 			    new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
   // Create a subshell transition model for the K subshell
-  Teuchos::ArrayView<const double> subshell_transitions =
+  Utility::ArrayView<const double> subshell_transitions =
     xss_data_extractor->extractSubshellVacancyTransitionPaths();
 
   unsigned k_shell_transitions = (unsigned)subshell_transitions[0];
 
-  Teuchos::ArrayView<const double> relo_block =
+  Utility::ArrayView<const double> relo_block =
     xss_data_extractor->extractRELOBlock();
 
   unsigned k_shell_start = (unsigned)relo_block[0];
 
-  Teuchos::ArrayView<const double> xprob_block =
+  Utility::ArrayView<const double> xprob_block =
     xss_data_extractor->extractXPROBBlock();
 
-  Teuchos::Array<Data::SubshellType>
+  std::vector<Data::SubshellType>
     primary_transition_shells( k_shell_transitions );
-  Teuchos::Array<Data::SubshellType>
+  std::vector<Data::SubshellType>
     secondary_transition_shells( k_shell_transitions );
-  Teuchos::Array<double>
+  std::vector<double>
     outgoing_particle_energies( k_shell_transitions );
-  Teuchos::Array<double> transition_cdf( k_shell_transitions );
+  std::vector<double> transition_cdf( k_shell_transitions );
 
   for( unsigned i = 0; i < k_shell_transitions; ++i )
   {
@@ -159,21 +146,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDetailedSubshellRelaxationModel.cpp

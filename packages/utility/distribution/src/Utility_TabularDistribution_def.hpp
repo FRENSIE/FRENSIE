@@ -36,6 +36,17 @@ template<typename InterpolationPolicy,
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
 		  const std::vector<double>& independent_values,
 		  const std::vector<double>& dependent_values )
+  : UnitAwareTabularDistribution( Utility::arrayViewOfConst(independent_values),
+                                  Utility::arrayViewOfConst(dependent_values) )
+{ /* ... */ }
+
+// Basic view constructor (potentially dangerous)
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values )
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() )
 {
@@ -56,6 +67,18 @@ template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
 		  const std::vector<InputIndepQuantity>& independent_values,
 		  const std::vector<InputDepQuantity>& dependent_values )
+  : UnitAwareTabularDistribution( Utility::arrayViewOfConst( independent_values ),
+                                  Utility::arrayViewOfConst( dependent_values ) )
+{ /* ... */ }
+
+// View constructor
+template<typename InterpolationPolicy,
+         typename IndependentUnit,
+         typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values )
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() )
 {
@@ -94,7 +117,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   dist_instance.reconstructOriginalDistribution( input_indep_values,
                                                  input_dep_values );
 
-  this->initializeDistribution( input_indep_values, input_dep_values );
+  this->initializeDistribution( Utility::arrayViewOfConst(input_indep_values),
+                                Utility::arrayViewOfConst(input_dep_values) );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -113,8 +137,9 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   unitless_dist_instance.reconstructOriginalDistribution( input_indep_values,
                                                           input_dep_values );
 
-  this->initializeDistributionFromRawData( input_indep_values,
-                                           input_dep_values );
+  this->initializeDistributionFromRawData(
+                                 Utility::arrayViewOfConst(input_indep_values),
+                                 Utility::arrayViewOfConst(input_dep_values) );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -509,8 +534,8 @@ template<typename InterpolationPolicy,
          typename IndependentUnit,
          typename DependentUnit>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromRawData(
-			      const std::vector<double>& independent_values,
-			      const std::vector<double>& dependent_values )
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values )
 {
   // Make sure there is at least one bin
   testPrecondition( independent_values.size() > 1 );
@@ -526,8 +551,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
   this->convertUnitlessValues( dependent_values, dependent_quantities );
 
-  this->initializeDistribution( independent_quantities,
-                                dependent_quantities );
+  this->initializeDistribution( Utility::arrayViewOfConst( independent_quantities ),
+                                Utility::arrayViewOfConst( dependent_quantities ) );
 }
 
 // Initialize the distribution
@@ -536,8 +561,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution(
-		  const std::vector<InputIndepQuantity>& independent_values,
-		  const std::vector<InputDepQuantity>& dependent_values )
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values )
 {
   // Make sure that at least two points of the distribution are specified
   testPrecondition( independent_values.size() > 1 );
@@ -615,8 +640,8 @@ template<typename InterpolationPolicy,
          typename DependentUnit>
 template<typename Quantity>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues(
-		                 const std::vector<double>& unitless_values,
-				 std::vector<Quantity>& quantities )
+                       const Utility::ArrayView<const double>& unitless_values,
+                       std::vector<Quantity>& quantities )
 {
   // Resize the quantity array
   quantities.resize( unitless_values.size() );
@@ -693,8 +718,8 @@ template<typename InterpolationPolicy,
 	 typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::verifyValidValues(
-                     const std::vector<InputIndepQuantity>& independent_values,
-                     const std::vector<InputDepQuantity>& dependent_values )
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values )
 {
   // There must be at least two independent values
   TEST_FOR_EXCEPTION( independent_values.size() < 2,
@@ -744,7 +769,7 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
   typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
   
   // Search for bad dependent values
-  typename std::vector<InputDepQuantity>::const_iterator bad_dependent_value =
+  typename Utility::ArrayView<const InputDepQuantity>::const_iterator bad_dependent_value =
     std::find_if( dependent_values.begin(),
                   dependent_values.end(),
                   [](const InputDepQuantity& element){ return element < InputDQT::zero() || InputDQT::isnaninf( element ) || !InterpolationPolicy::isDepVarInValidRange( element ); } );

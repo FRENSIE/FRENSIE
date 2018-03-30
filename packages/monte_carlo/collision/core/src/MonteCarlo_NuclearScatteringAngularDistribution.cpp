@@ -92,7 +92,7 @@ double NuclearScatteringAngularDistribution::evaluatePDF(
     // Use linear interpolation to evaluate the PDF at the desired energy
     pdf_value = pdf_low +
       (pdf_high-pdf_low)/
-      (Utility::get<0>(*upper_bin_boundary)-Utility::get<0>(*lower_bin_boundary)*
+      (Utility::get<0>(*upper_bin_boundary)-Utility::get<0>(*lower_bin_boundary))*
        (energy - Utility::get<0>(*lower_bin_boundary));
   }
 

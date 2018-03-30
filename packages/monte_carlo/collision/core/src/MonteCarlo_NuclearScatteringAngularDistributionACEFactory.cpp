@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-std::shared_ptr<const Utility::TabularOneDDistribution>
+std::shared_ptr<const Utility::TabularUnivariateDistribution>
 NuclearScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
@@ -164,7 +164,7 @@ void NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution
 }
 
 // Return the isotropic angular distribution
-std::shared_ptr<const Utility::TabularOneDDistribution> 
+std::shared_ptr<const Utility::TabularUnivariateDistribution> 
   NuclearScatteringAngularDistributionACEFactory::getIsotropicDistribution()
 {
   return isotropic_angle_cosine_dist;

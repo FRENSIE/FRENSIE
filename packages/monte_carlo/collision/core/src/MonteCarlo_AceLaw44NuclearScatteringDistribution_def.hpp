@@ -38,7 +38,7 @@ AceLaw44NuclearScatteringDistribution<IncomingParticleType,
      d_ar_distributions( ar_distributions )
 {
   // Make sure the energy distribution pointer is valid
-  testPrecondition( !energy_scattering_distribution.is_null() );
+  testPrecondition( energy_scattering_distribution.get() );
 }
 
 // Randomly scatter the particle

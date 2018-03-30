@@ -10,15 +10,15 @@
 #define MONTE_CARLO_TWO_D_DISTRIBUTION_HELPERS
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
 //! Typedef for a 2-D distribution
-typedef std::vector<Utility::Pair<double,
-                       std::shared_ptr<const Utility::TabularOneDDistribution> > >
+typedef std::vector<std::pair<double,std::shared_ptr<const Utility::TabularUnivariateDistribution> > >
 TwoDDistribution;
 
 //! Return the primary grid values of the 2-D distribution

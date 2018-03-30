@@ -85,7 +85,7 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 		        Data::SubshellType& new_secondary_vacancy_shell ) const
 {
   // Sample the transition that occurs
-  unsigned transition_index;
+  size_t transition_index;
 
   d_transition_distribution->sampleAndRecordBinIndex( transition_index );
 

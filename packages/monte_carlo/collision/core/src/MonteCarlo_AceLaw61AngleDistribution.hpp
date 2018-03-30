@@ -13,7 +13,7 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_ContractException.hpp"
@@ -31,7 +31,7 @@ public:
   //! Constructor
   AceLaw61AngleDistribution( 
     const Utility::ArrayView<const double>& outgoing_energy_grid,
-    const std::vector<std::shared_ptr<Utility::OneDDistribution> >& cosine_distributions );
+    const std::vector<std::shared_ptr<Utility::UnivariateDistribution> >& cosine_distributions );
     
   //! Destructor
   virtual ~AceLaw61AngleDistribution()
@@ -50,7 +50,7 @@ protected:
   std::vector<double> d_outgoing_energy_grid;
   
   // The array of cosine distributions
-  std::vector<std::shared_ptr<Utility::OneDDistribution> > d_cosine_distributions;
+  std::vector<std::shared_ptr<Utility::UnivariateDistribution> > d_cosine_distributions;
 
 };
 

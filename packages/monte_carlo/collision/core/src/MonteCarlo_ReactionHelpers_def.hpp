@@ -51,7 +51,7 @@ double getCrossSection(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher )
 {
   // Make sure the energy is valid
   testPrecondition( grid_searcher->isValueWithinGridBounds( energy ) );
@@ -138,7 +138,7 @@ double getProcessedCrossSection(
     return 0.0;
   else if( energy == incoming_energy_grid->back() )
   {
-    return (*cross_section)[cross_section.size()-1];
+    return cross_section->back();
   }
   else
     return 0.0;
@@ -151,7 +151,7 @@ double getProcessedCrossSection(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher )
 {
   // Make sure the energy is valid
   testPrecondition( grid_searcher->isValueWithinGridBounds( energy ) );

@@ -13,6 +13,7 @@
 #include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_CosineInterpolationPolicy.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -82,17 +83,35 @@ public:
                         const std::vector<double>& dependent_values,
                         const bool interpret_dependent_values_as_cdf = false );
 
+  //! Basic view constructor (potentially dangerous)
+  UnitAwareTabularCDFDistribution(
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values,
+                    const bool interpret_dependent_values_as_cdf = false );
+
   //! CDF constructor
   template<typename InputIndepQuantity>
   UnitAwareTabularCDFDistribution(
               const std::vector<InputIndepQuantity>& independent_values,
               const std::vector<double>& cdf_values );
 
+  //! CDF view constructor
+  template<typename InputIndepQuantity>
+  UnitAwareTabularCDFDistribution(
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const double>& cdf_values );
+
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareTabularCDFDistribution(
                   const std::vector<InputIndepQuantity>& independent_values,
                   const std::vector<InputDepQuantity>& dependent_values );
+
+  //! View constructor
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareTabularCDFDistribution(
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -202,20 +221,20 @@ private:
 
   // Initialize the distribution
   void initializeDistributionFromRawData(
-                              const std::vector<double>& independent_values,
-                              const std::vector<double>& dependent_values );
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values );
 
   // Initialize the distribution from a cdf
   template<typename InputIndepQuantity>
   void initializeDistributionFromCDF(
-                  const std::vector<InputIndepQuantity>& independent_values,
-                  const std::vector<double>& cdf_values );
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const double>& cdf_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
   void initializeDistribution(
-                  const std::vector<InputIndepQuantity>& independent_values,
-                  const std::vector<InputDepQuantity>& dependent_values );
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values );
 
   // Reconstruct original distribution
   void reconstructOriginalDistribution(
@@ -235,8 +254,8 @@ private:
   // Convert the unitless values to the correct units
   template<typename Quantity>
   static void convertUnitlessValues(
-                                 const std::vector<double>& unitless_values,
-                                 std::vector<Quantity>& quantities );
+                       const Utility::ArrayView<const double>& unitless_values,
+                       std::vector<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
@@ -245,8 +264,8 @@ private:
   // Verify that the values are valid
   template<typename InputIndepQuantity, typename InputDepQuantity>
   static void verifyValidValues(
-                     const std::vector<InputIndepQuantity>& independent_values,
-                     const std::vector<InputDepQuantity>& dependent_values );
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values );
 
   // Save the distribution to an archive
   template<typename Archive>

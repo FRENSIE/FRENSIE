@@ -28,6 +28,13 @@ namespace Utility{
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
 				 const std::vector<double>& bin_boundaries )
+  : UnitAwareEquiprobableBinDistribution( Utility::arrayViewOfConst( bin_boundaries ) )
+{ /* ... */ }
+
+// Basic constructor (potentially dangerous)
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
+                       const Utility::ArrayView<const double>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
   // Verify that the bin boundaries are valid
@@ -43,11 +50,18 @@ template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
 	           const std::vector<InputIndepQuantity>& bin_boundaries )
+  : UnitAwareEquiprobableBinDistribution( Utility::arrayViewOfConst( bin_boundaries ) )
+{ /* ... */ }
+
+// View constructor
+template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity>
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution( const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries )
   : d_bin_boundaries( bin_boundaries.size() )
 {
   // Verify that the bin boundaries are valid
   this->verifyValidBinBoundaries( bin_boundaries );
-  
+
   this->initializeDistribution( bin_boundaries );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
@@ -66,7 +80,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
   const UnitAwareEquiprobableBinDistribution<InputIndepUnit,InputDepUnit>& dist_instance )
   : d_bin_boundaries()
 {
-  this->initializeDistribution( dist_instance.d_bin_boundaries );
+  this->initializeDistribution( Utility::arrayViewOfConst(dist_instance.d_bin_boundaries) );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -77,7 +91,7 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
  const UnitAwareEquiprobableBinDistribution<void,void>& unitless_dist_instance, int )
   : d_bin_boundaries()
 {
-  this->initializeDistribution( unitless_dist_instance.d_bin_boundaries );
+  this->initializeDistribution( Utility::arrayViewOfConst(unitless_dist_instance.d_bin_boundaries) );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -371,7 +385,7 @@ bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::operat
 // Initialize the distribution
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-				 const std::vector<double>& bin_boundaries )
+                       const Utility::ArrayView<const double>& bin_boundaries )
 {
   // Make sure there is at least one bin
   testPrecondition( bin_boundaries.size() > 1 );
@@ -391,7 +405,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initia
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-		     const std::vector<InputIndepQuantity>& bin_boundaries )
+           const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries )
 {
   // Make sure there is at least one bin
   testPrecondition( bin_boundaries.size() > 1 );
@@ -418,7 +432,7 @@ bool UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::canDep
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verifyValidBinBoundaries(
-                        const std::vector<InputIndepQuantity>& bin_boundaries )
+           const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries )
 {
   TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
 		      Utility::BadUnivariateDistributionParameter,
@@ -447,7 +461,7 @@ void UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::verify
                       "constructed because the last bin boundary is "
                       "invalid!" );
 
-  typename std::vector<InputIndepQuantity>::const_iterator repeat_bin_boundary =
+  typename Utility::ArrayView<const InputIndepQuantity>::const_iterator repeat_bin_boundary =
     std::adjacent_find( bin_boundaries.begin(), bin_boundaries.end() );
 
   TEST_FOR_EXCEPTION( repeat_bin_boundary != bin_boundaries.end(),

@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
@@ -36,7 +36,7 @@ public:
    std::shared_ptr<const NuclearScatteringAngularDistribution>& distribution );
 
   //! Return the isotropic_angle_cosine_dist
-  static std::shared_ptr<const Utility::TabularOneDDistribution>
+  static std::shared_ptr<const Utility::TabularUnivariateDistribution>
   getIsotropicDistribution();
 
 private:
@@ -45,7 +45,7 @@ private:
   NuclearScatteringAngularDistributionACEFactory();
   
   // The default (isotropic) angle cosine distribution
-  static std::shared_ptr<const Utility::TabularOneDDistribution>
+  static std::shared_ptr<const Utility::TabularUnivariateDistribution>
   isotropic_angle_cosine_dist;
   
 };

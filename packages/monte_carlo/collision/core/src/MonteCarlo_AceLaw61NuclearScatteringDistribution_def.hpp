@@ -29,16 +29,16 @@ AceLaw61NuclearScatteringDistribution<
               IncomingParticleType,
               OutgoingParticleType,
               SystemConversionPolicy>::AceLaw61NuclearScatteringDistribution( 
-                    const double atomic_weight_ratio,
-                    const std::shared_ptr<NuclearScatteringEnergyDistribution>&
-                    energy_scattering_distribution,
-                    const AngleDistributions& angle_distributions )
+              const double atomic_weight_ratio,
+              const std::shared_ptr<const NuclearScatteringEnergyDistribution>&
+              energy_scattering_distribution,
+              const AngleDistributions& angle_distributions )
   : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),
      d_angle_distributions( angle_distributions )
 {
   // Make sure the energy distribution pointer is valid
-  testPrecondition( !energy_scattering_distribution.is_null() );
+  testPrecondition(  energy_scattering_distribution.get() );
 }
 
 // Randomly scatter the particle

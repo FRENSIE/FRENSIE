@@ -13,7 +13,7 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
 
@@ -28,7 +28,7 @@ class NuclearScatteringAngularDistribution
 public:
 
   //! Typedef for energy dependent angular distribution
-  typedef std::vector<std::pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
+  typedef std::vector<std::pair<double,std::shared_ptr<const Utility::TabularUnivariateDistribution> > >
   AngularDistribution;
 
   //! Constructor

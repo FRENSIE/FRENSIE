@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
 
@@ -26,7 +26,7 @@ class AceLaw4NuclearScatteringEnergyDistribution : public NuclearScatteringEnerg
 public:
 
   //! Typedef for the energy distribution
-  typedef std::vector<std::pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
+  typedef std::vector<std::pair<double,std::shared_ptr<const Utility::TabularUnivariateDistribution> > >
                                                         EnergyDistribution;
   //! Constructor
   AceLaw4NuclearScatteringEnergyDistribution(
@@ -41,8 +41,8 @@ public:
 
   //! Sample a scattering energy
   double sampleEnergy( const double energy,
-                       unsigned& incoming_index,
-                       unsigned& outgoing_index,
+                       size_t& incoming_index,
+                       size_t& outgoing_index,
                        double& energy_prime ) const override;
 
 private:

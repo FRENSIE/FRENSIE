@@ -54,12 +54,12 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
       (Utility::get<1>(d_energy_grid.front())[bin_index + 1] -
        Utility::get<1>(d_energy_grid.front())[bin_index]);
   }
-  else if( energy > Utility::get<1>( d_energy_grid.back() ) )
+  else if( energy >= Utility::get<0>( d_energy_grid.back() ) )
   {
     outgoing_energy = Utility::get<1>(d_energy_grid.back())[bin_index] +
       (bin_location - bin_index) *
       (Utility::get<1>(d_energy_grid.back())[bin_index + 1] -
-       Utility::get<1>(d_energy_grid.back()[bin_index]));
+       Utility::get<1>(d_energy_grid.back())[bin_index]);
   }
   else
   {
