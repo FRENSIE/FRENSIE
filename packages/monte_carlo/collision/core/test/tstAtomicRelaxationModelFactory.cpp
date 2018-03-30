@@ -9,11 +9,6 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_PhotonState.hpp"
@@ -23,23 +18,24 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
+std::unique_ptr<const Data::XSSEPRDataExtractor> xss_data_extractor;
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer>
+std::unique_ptr<const Data::ElectronPhotonRelaxationDataContainer>
   native_data_container;
 
-Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
+std::shared_ptr<const MonteCarlo::AtomicRelaxationModel> relaxation_model;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a void relaxation model can be created
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
+FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_ace_void )
 {
   MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
@@ -59,7 +55,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   // Clear the relaxation model
   relaxation_model.reset();
@@ -67,7 +63,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a detailed relaxation model can be created
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
+FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_ace_detailed )
 {
   MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
@@ -101,23 +97,23 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
-  TEST_EQUALITY_CONST( bank.size(), 3 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
 
   // K non-radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.71919999999999998e-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 5.71919999999999998e-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::ELECTRON );
 
   bank.pop();
 
   // L1 radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.584170000000E-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
 
   bank.pop();
 
   // L2 radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.523590000000E-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -127,7 +123,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a void relaxation model can be created
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
+FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_native_void )
 {
   MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
@@ -147,7 +143,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   // Clear the relaxation model
   relaxation_model.reset();
@@ -155,7 +151,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a detailed relaxation model can be created
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
+FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_native_detailed )
 {
   MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
@@ -189,23 +185,23 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
-  TEST_EQUALITY_CONST( bank.size(), 3 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
 
   // K non-radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.71919999999999998e-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 5.71919999999999998e-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::ELECTRON );
 
   bank.pop();
 
   // L1 radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.584170000000E-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
 
   bank.pop();
 
   // L2 radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.523590000000E-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -215,7 +211,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a relaxation model gets cached
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
+FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
 {
   MonteCarlo::AtomicRelaxationModelFactory factory_a;
 
@@ -225,7 +221,8 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
                                                  true );
 
-  Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> copy_a_relaxation_model;
+  std::shared_ptr<const MonteCarlo::AtomicRelaxationModel>
+    copy_a_relaxation_model;
 
   factory_a.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
                                                  copy_a_relaxation_model,
@@ -233,9 +230,10 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
                                                  true );
 
-  TEST_EQUALITY( relaxation_model, copy_a_relaxation_model );
+  FRENSIE_CHECK( relaxation_model == copy_a_relaxation_model );
 
-  Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> copy_b_relaxation_model;
+  std::shared_ptr<const MonteCarlo::AtomicRelaxationModel>
+    copy_b_relaxation_model;
 
   factory_a.createAndCacheAtomicRelaxationModel( *native_data_container,
                                                  copy_b_relaxation_model,
@@ -243,7 +241,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
                                                  true );
 
-  TEST_EQUALITY( relaxation_model, copy_b_relaxation_model );
+  FRENSIE_CHECK( relaxation_model == copy_b_relaxation_model );
 
   MonteCarlo::AtomicRelaxationModelFactory factory_b;
 
@@ -259,7 +257,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
 						 true );
 
-  TEST_EQUALITY( relaxation_model, copy_a_relaxation_model );
+  FRENSIE_CHECK( relaxation_model == copy_a_relaxation_model );
 
   factory_b.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
 						 copy_b_relaxation_model,
@@ -267,72 +265,51 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
 						 true );
 
-  TEST_EQUALITY( relaxation_model, copy_b_relaxation_model );
+  FRENSIE_CHECK( relaxation_model == copy_b_relaxation_model );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
-int main( int argc, char** argv )
+// Custom Setup
+//---------------------------------------------------------------------------//
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  {
-    // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
+  // Create a file handler and data extractor
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-    // Create the native data container
-    native_data_container.reset(
+  // Create the native data container
+  native_data_container.reset(
 			      new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
-  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicRelaxationModelFactory.cpp

@@ -6,17 +6,18 @@ FRENSIE_ADD_TEST(DetailedSubshellRelaxationModel
   --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
   --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstDetailedAtomicRelaxationModel
-  tstDetailedAtomicRelaxationModel.cpp)
-TARGET_LINK_LIBRARIES(tstDetailedAtomicRelaxationModel monte_carlo_collision_native)
-ADD_TEST(DetailedAtomicRelaxationModel_test tstDetailedAtomicRelaxationModel --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST DetailedAtomicRelaxationModel_test PROPERTY LABELS relaxation)
+FRENSIE_ADD_TEST_EXECUTABLE(DetailedAtomicRelaxationModel DEPENDS tstDetailedAtomicRelaxationModel.cpp)
+FRENSIE_ADD_TEST(DetailedAtomicRelaxationModel
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
-  tstAtomicRelaxationModelFactory.cpp)
-TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
-ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST AtomicRelaxationModelFactory_test PROPERTY LABELS relaxation)
+FRENSIE_ADD_TEST_EXECUTABLE(AtomicRelaxationModelFactory DEPENDS tstAtomicRelaxationModelFactory.cpp)
+FRENSIE_ADD_TEST(AtomicRelaxationModelFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
 ADD_EXECUTABLE(tstAceLaw1NuclearScatteringEnergyDistribution
   tstAceLaw1NuclearScatteringEnergyDistribution.cpp)

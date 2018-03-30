@@ -8,11 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
@@ -21,20 +17,20 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::AtomicRelaxationModel>
+std::unique_ptr<const MonteCarlo::AtomicRelaxationModel>
 detailed_atomic_relaxation_model;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the atom can be relaxed
-TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
+FRENSIE_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
 {
   MonteCarlo::PhotonState photon( 1 );
   photon.setEnergy( 1.0 );
@@ -60,85 +56,77 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
 
   detailed_atomic_relaxation_model->relaxAtom( vacancy, photon, bank );
 
-  TEST_EQUALITY_CONST( bank.size(), 3 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 3 );
 
   // K non-radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.71919999999999998e-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 5.71919999999999998e-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getYPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getCollisionNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getGenerationNumber(), 1 );
 
   bank.pop();
 
   // L1 radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.584170000000E-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getYPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getCollisionNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getGenerationNumber(), 1 );
 
   bank.pop();
 
   // L2 radiative transition
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.523590000000E-02 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_EQUAL( bank.top().getXPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getYPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZPosition(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getCollisionNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getGenerationNumber(), 1 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
 			    new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
   // Create a subshell transition model for each subshell
-  Teuchos::ArrayView<const double> raw_subshell_endf_designators =
+  Utility::ArrayView<const double> raw_subshell_endf_designators =
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType>
+  std::vector<Data::SubshellType>
     subshells( raw_subshell_endf_designators.size() );
 
   for( unsigned i = 0; i < subshells.size(); ++i )
@@ -147,16 +135,16 @@ int main( int argc, char** argv )
 					    raw_subshell_endf_designators[i] );
   }
 
-  Teuchos::ArrayView<const double> subshell_transitions =
+  Utility::ArrayView<const double> subshell_transitions =
     xss_data_extractor->extractSubshellVacancyTransitionPaths();
 
-  Teuchos::ArrayView<const double> relo_block =
+  Utility::ArrayView<const double> relo_block =
     xss_data_extractor->extractRELOBlock();
 
-  Teuchos::ArrayView<const double> xprob_block =
+  Utility::ArrayView<const double> xprob_block =
     xss_data_extractor->extractXPROBBlock();
 
-  Teuchos::Array<Teuchos::RCP<const MonteCarlo::SubshellRelaxationModel> >
+  std::vector<std::shared_ptr<const MonteCarlo::SubshellRelaxationModel> >
     subshell_relaxation_models;
 
   for( unsigned i = 0; i < subshell_transitions.size(); ++i )
@@ -165,13 +153,13 @@ int main( int argc, char** argv )
 
     unsigned shell_start = (unsigned)relo_block[i];
 
-    Teuchos::Array<Data::SubshellType>
+    std::vector<Data::SubshellType>
       primary_transition_shells( shell_transitions );
-    Teuchos::Array<Data::SubshellType>
+    std::vector<Data::SubshellType>
       secondary_transition_shells( shell_transitions );
-    Teuchos::Array<double>
+    std::vector<double>
       outgoing_particle_energies( shell_transitions );
-    Teuchos::Array<double> transition_cdf( shell_transitions );
+    std::vector<double> transition_cdf( shell_transitions );
 
     if( shell_transitions > 0 )
     {
@@ -189,7 +177,7 @@ int main( int argc, char** argv )
 	transition_cdf[j] = xprob_block[shell_start+j*4+3];
       }
 
-      Teuchos::RCP<const MonteCarlo::SubshellRelaxationModel> shell_model(
+      std::shared_ptr<const MonteCarlo::SubshellRelaxationModel> shell_model(
 			       new MonteCarlo::DetailedSubshellRelaxationModel(
 						   subshells[i],
 						   primary_transition_shells,
@@ -211,21 +199,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDetailedAtomicRelaxationModel.cpp
