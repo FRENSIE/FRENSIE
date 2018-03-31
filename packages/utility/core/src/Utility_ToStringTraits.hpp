@@ -17,6 +17,7 @@
 #include <complex>
 #include <locale>
 #include <codecvt>
+#include <memory>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
@@ -278,6 +279,48 @@ struct ToStringTraits<boost::units::quantity<Unit,T> >
     Utility::toStream( os, obj.value() );
     os << " " << Utility::UnitTraits<Unit>::symbol();
   }
+};
+
+/*! Partial specialization of ToStringTraits for raw pointer types
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<T*,typename std::enable_if<(sizeof(T)>1)>::type>
+{
+  //! Convert the pointer type to a string
+  static inline std::string toString( const T* const & obj )
+  {
+    if( obj == NULL )
+      return "NULL";
+    else
+    {
+      std::ostringstream oss;
+      oss << std::hex << obj;
+
+      return oss.str();
+    }
+  }
+
+  //! Place the pointer type in a stream
+  static inline void toStream( std::ostream& os,
+                               const T* const& obj )
+  { os << ToStringTraits<T*>::toString( obj ); }
+};
+
+/*! Partial specialization of ToStringTraits for shared pointers types
+ * \ingroup to_string_traits
+ */
+template<typename T>
+struct ToStringTraits<std::shared_ptr<T>, typename std::enable_if<(sizeof(T)>1)>::type>
+{
+  //! Convert the pointer type to a string
+  static inline std::string toString( const std::shared_ptr<T>& obj )
+  { return ToStringTraits<T*>::toString( obj.get() ); }
+
+  //! Place the pointer type in a stream
+  static inline void toStream( std::ostream& os,
+                               const std::shared_ptr<T>& obj )
+  { return ToStringTraits<T*>::toStream( os, obj.get() ); }
 };
   
 namespace Details{

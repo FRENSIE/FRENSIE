@@ -230,7 +230,7 @@ FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
                                                  true );
 
-  FRENSIE_CHECK( relaxation_model == copy_a_relaxation_model );
+  FRENSIE_CHECK_EQUAL( relaxation_model, copy_a_relaxation_model );
 
   std::shared_ptr<const MonteCarlo::AtomicRelaxationModel>
     copy_b_relaxation_model;
@@ -241,7 +241,7 @@ FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
                                                  true );
 
-  FRENSIE_CHECK( relaxation_model == copy_b_relaxation_model );
+  FRENSIE_CHECK_EQUAL( relaxation_model, copy_b_relaxation_model );
 
   MonteCarlo::AtomicRelaxationModelFactory factory_b;
 
@@ -257,7 +257,7 @@ FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
 						 true );
 
-  FRENSIE_CHECK( relaxation_model == copy_a_relaxation_model );
+  FRENSIE_CHECK_EQUAL( relaxation_model, copy_a_relaxation_model );
 
   factory_b.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
 						 copy_b_relaxation_model,
@@ -265,7 +265,7 @@ FRENSIE_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
                                                  1e-5,
 						 true );
 
-  FRENSIE_CHECK( relaxation_model == copy_b_relaxation_model );
+  FRENSIE_CHECK_EQUAL( relaxation_model, copy_b_relaxation_model );
 }
 
 //---------------------------------------------------------------------------//
