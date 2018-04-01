@@ -56,7 +56,7 @@ FRENSIE_ADD_TEST_EXECUTABLE(NuclearScatteringDistributionFactoryHelpers DEPENDS 
 FRENSIE_ADD_TEST(NuclearScatteringDistributionFactoryHelpers
   EXTRA_ARGS
   --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
-  --test_u238_ace_table="92238.70c")
+  --test_u238_ace_table=92238.70c)
 
 FRENSIE_ADD_TEST_EXECUTABLE(MaterialHelpers DEPENDS tstMaterialHelpers.cpp)
 FRENSIE_ADD_TEST(MaterialHelpers)
