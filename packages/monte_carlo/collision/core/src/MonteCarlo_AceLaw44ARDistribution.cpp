@@ -19,7 +19,7 @@ AceLaw44ARDistribution::AceLaw44ARDistribution(
   : d_outgoing_energy_grid( outgoing_energy_grid.begin(),
                             outgoing_energy_grid.end() ),
     d_A( A_array.begin(), A_array.end() ),
-    d_R( R_array.begin(), A_array.end() )
+    d_R( R_array.begin(), R_array.end() )
 {
   // Make sure the arrays have the same size
   testPrecondition( outgoing_energy_grid.size() > 0 );

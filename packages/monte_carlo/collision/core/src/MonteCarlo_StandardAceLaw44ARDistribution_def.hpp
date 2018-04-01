@@ -17,9 +17,20 @@ namespace MonteCarlo{
 // Constructor
 template<typename AceLaw44InterpolationPolicy>
 StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::StandardAceLaw44ARDistribution(
-		   const Utility::ArrayView<const double>& outgoing_energy_grid,
-		   const Utility::ArrayView<const double>& A_array,
-		   const Utility::ArrayView<const double>& R_array )
+                               const std::vector<double>& outgoing_energy_grid,
+                               const std::vector<double>& A_array,
+                               const std::vector<double>& R_array )
+  : StandardAceLaw44ARDistribution( Utility::arrayViewOfConst( outgoing_energy_grid ),
+                                    Utility::arrayViewOfConst( A_array ),
+                                    Utility::arrayViewOfConst( R_array ) )
+{ /* ... */ }
+               
+// View constructor
+template<typename AceLaw44InterpolationPolicy>
+StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::StandardAceLaw44ARDistribution(
+		  const Utility::ArrayView<const double>& outgoing_energy_grid,
+                  const Utility::ArrayView<const double>& A_array,
+                  const Utility::ArrayView<const double>& R_array )
   : AceLaw44ARDistribution( outgoing_energy_grid, A_array, R_array )
 { /* ... */ }
 

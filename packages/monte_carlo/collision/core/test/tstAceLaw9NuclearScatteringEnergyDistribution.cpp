@@ -9,21 +9,16 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_AceLaw9NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_EvaporationDistribution.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 		   sampleEnergy_lower_bound )
 {
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -47,14 +42,14 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(0.5) ,==,
+   FRENSIE_CHECK_EQUAL(distribution.sampleEnergy(0.5),
      Utility::EvaporationDistribution::sample( 0.5,
                                                energy_distribution[0].second,
                                                restriction_energy ));
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 		   sampleEnergy_upper_bound )
 {
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -78,14 +73,14 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(3.0) ,==,
+   FRENSIE_CHECK_EQUAL(distribution.sampleEnergy(3.0),
      Utility::EvaporationDistribution::sample( 3.0,
                                                energy_distribution[1].second,
                                                restriction_energy ));
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 		   sampleEnergy )
 {
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -109,25 +104,24 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
 
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(1.5) ,==,
+   FRENSIE_CHECK_EQUAL(distribution.sampleEnergy(1.5),
      Utility::EvaporationDistribution::sample( 1.5,
                                                1.5,
                                                restriction_energy ));
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstAceLaw9NuclearScatteringDistribution.cpp

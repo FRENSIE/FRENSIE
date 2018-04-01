@@ -12,10 +12,13 @@
 // Std Lib Includes
 #include <iterator>
 
+// FRENSIE Includes
+#include "Utility_Tuple.hpp"
+
 namespace MonteCarlo{
 
 //! Test if a set of fractional values are valid
-template<Utility::TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 bool areFractionValuesValid( Iterator start, Iterator end );
 
 //! Test if a set of fractional values are valid
@@ -23,7 +26,7 @@ template<typename Iterator>
 bool areFractionValuesValid( Iterator start, Iterator end );
 
 //! Test if a set of fractional values are normalized
-template<Utility::TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 bool areFractionValuesNormalized( Iterator start, Iterator end );
 
 //! Test if a set of fractional values are normalized
@@ -31,7 +34,7 @@ template<typename Iterator>
 bool areFractionValuesNormalized( Iterator start, Iterator end );
 
 //! Normalize a set of fractions
-template<Utility::TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 void normalizeFractionValues( Iterator start, Iterator end );
 
 //! Normalize a set of fractions
@@ -39,17 +42,28 @@ template<typename Iterator>
 void normalizeFractionValues( Iterator start, Iterator end );
 
 //! Convert a set of weight fractions to atom fractions
-template<Utility::TupleMember fracMember,
-	 Utility::TupleMember atomicWgtMember,
+template<size_t fracMember,
+	 size_t atomicWgtMember,
+	 typename FracIterator,
+	 typename AtomicWgtIterator,
+         typename Extractor>
+void convertWeightFractionsToAtomFractions(
+ FracIterator frac_start,
+ FracIterator frac_end,
+ AtomicWgtIterator atomic_wgt_start,
+ AtomicWgtIterator atomic_wgt_end,
+ Extractor atomic_wgt_extractor );
+
+//! Convert a set of weight fractions to atom fractions
+template<size_t fracMember,
+	 size_t atomicWgtMember,
 	 typename FracIterator,
 	 typename AtomicWgtIterator>
 void convertWeightFractionsToAtomFractions(
  FracIterator frac_start,
  FracIterator frac_end,
  AtomicWgtIterator atomic_wgt_start,
- AtomicWgtIterator atomic_wgt_end,
- double (*extractor)( const typename std::iterator_traits<AtomicWgtIterator>::value_type& )
- = &Utility::get<atomicWgtMember,typename std::iterator_traits<AtomicWgtIterator>::value_type> );
+ AtomicWgtIterator atomic_wgt_end );
 
 //! Convert a set of weight fractions to atom fractions
 template<typename FracIterator, typename AtomicWgtIterator>
@@ -59,18 +73,28 @@ void convertWeightFractionsToAtomFractions( FracIterator frac_start,
 					    AtomicWgtIterator atomic_wgt_end );
 
 //! Convert a mass density (g/cm^3) to a number density (atom/b-cm)
-template<Utility::TupleMember fracMember,
-	 Utility::TupleMember atomicWgtMember,
+template<size_t fracMember,
+	 size_t atomicWgtMember,
+	 typename FracIterator,
+	 typename AtomicWgtIterator,
+         typename Extractor>
+double convertMassDensityToNumberDensity( const double mass_density,
+                                          FracIterator frac_start,
+                                          FracIterator frac_end,
+                                          AtomicWgtIterator atomic_wgt_start,
+                                          AtomicWgtIterator atomic_wgt_end,
+                                          Extractor atomic_wgt_extractor );
+
+//! Convert a mass density (g/cm^3) to a number density (atom/b-cm)
+template<size_t fracMember,
+	 size_t atomicWgtMember,
 	 typename FracIterator,
 	 typename AtomicWgtIterator>
-double convertMassDensityToNumberDensity(
- const double mass_density,
- FracIterator frac_start,
- FracIterator frac_end,
- AtomicWgtIterator atomic_wgt_start,
- AtomicWgtIterator atomic_wgt_end,
- double (*extractor)( const typename std::iterator_traits<AtomicWgtIterator>::value_type& )
- = &Utility::get<atomicWgtMember,typename std::iterator_traits<AtomicWgtIterator>::value_type> );
+double convertMassDensityToNumberDensity( const double mass_density,
+                                          FracIterator frac_start,
+                                          FracIterator frac_end,
+                                          AtomicWgtIterator atomic_wgt_start,
+                                          AtomicWgtIterator atomic_wgt_end );
 
 //! Convert a mass density (g/cm^3) to a number density (atom/b-cm)
 template<typename FracIterator, typename AtomicWgtIterator>
@@ -81,7 +105,7 @@ double convertMassDensityToNumberDensity( const double mass_density,
 					  AtomicWgtIterator atomic_wgt_end );
 
 //! Scale atom fractions by a number density (atom/b-cm)
-template<Utility::TupleMember member, typename Iterator>
+template<size_t member, typename Iterator>
 void scaleAtomFractionsByNumberDensity( const double number_density,
 					Iterator start,
 					Iterator end );

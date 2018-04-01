@@ -31,7 +31,8 @@ public:
   //! Constructor
   AceLaw61AngleDistribution( 
     const Utility::ArrayView<const double>& outgoing_energy_grid,
-    const std::vector<std::shared_ptr<Utility::UnivariateDistribution> >& cosine_distributions );
+    const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
+    cosine_distributions );
     
   //! Destructor
   virtual ~AceLaw61AngleDistribution()
@@ -50,7 +51,7 @@ protected:
   std::vector<double> d_outgoing_energy_grid;
   
   // The array of cosine distributions
-  std::vector<std::shared_ptr<Utility::UnivariateDistribution> > d_cosine_distributions;
+  std::vector<std::shared_ptr<const Utility::UnivariateDistribution> > d_cosine_distributions;
 
 };
 

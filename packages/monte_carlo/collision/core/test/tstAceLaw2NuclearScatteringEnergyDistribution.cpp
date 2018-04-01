@@ -9,21 +9,15 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_AceLaw2NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
 		   sampleEnergy_LP_is_0_or_1 )
 {
    int LP_0 = 0;
@@ -41,12 +35,12 @@ TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
                                                       EG,
                                                       atomic_weight_ratio );
 
-   TEST_COMPARE(distribution_0.sampleEnergy(2.0) ,==, 1.0)
-   TEST_COMPARE(distribution_1.sampleEnergy(2.0) ,==, 1.0)
+   FRENSIE_CHECK_EQUAL(distribution_0.sampleEnergy(2.0), 1.0)
+   FRENSIE_CHECK_EQUAL(distribution_1.sampleEnergy(2.0), 1.0)
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
 		   sampleEnergy_LP_is_2 )
 {
    int LP_2 = 2;
@@ -58,22 +52,21 @@ TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
                                                       EG,
                                                       atomic_weight_ratio );
 
-   TEST_COMPARE(distribution_2.sampleEnergy(2.0) ,==, 2.0)
+   FRENSIE_CHECK_EQUAL(distribution_2.sampleEnergy(2.0), 2.0)
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstAceLaw5NuclearScatteringDistribution.cpp

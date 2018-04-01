@@ -290,9 +290,9 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
       dlw_block_array( distribution_index + 2 + number_points_distribution*3,
 	         number_points_distribution );
 	         
-	  // Array of angular distributions
-	  std::vector<std::shared_ptr<Utility::UnivariateDistribution> > 
-	    cosine_arrays( number_points_distribution );
+    // Array of angular distributions
+    std::vector<std::shared_ptr<const Utility::UnivariateDistribution> > 
+      cosine_arrays( number_points_distribution );
 
     // Read over the tabular angular data
     for( int j = 0; j < number_points_distribution; ++j )

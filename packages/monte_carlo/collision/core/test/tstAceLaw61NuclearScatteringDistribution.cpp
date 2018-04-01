@@ -8,11 +8,6 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AceLaw61NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
@@ -26,19 +21,19 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_DirectionHelpers.hpp"
 #include "Utility_DiscreteDistribution.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution, 
+FRENSIE_UNIT_TEST( AceLaw61NuclearScatteringDistribution, 
 		   sampleAngle )
 {
   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
     energy_distribution(2);
 
-  Teuchos::Array< Teuchos::RCP<MonteCarlo::AceLaw61AngleDistribution> > 
+  std::vector< std::shared_ptr<const MonteCarlo::AceLaw61AngleDistribution> > 
     angle_distribution(2);
 
   energy_distribution[0].first = 1.0;
@@ -68,7 +63,7 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
   std::vector<double> probability = {1.0, 1.0, 1.0}; 
 
   // Construct the cosine discrete distributions
-  Teuchos::Array< Teuchos::RCP<Utility::OneDDistribution> > cosine_arrays(3);
+  std::vector< std::shared_ptr<const Utility::UnivariateDistribution> > cosine_arrays(3);
     
   cosine_arrays[0].reset( 
     new Utility::DiscreteDistribution( cosine_vector_1, probability ) );
@@ -86,8 +81,8 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
 
   angle_distribution[0].reset( 
    new MonteCarlo::StandardAceLaw61AngleDistribution<MonteCarlo::AceLaw61LinLinInterpolationPolicy>(
-                                                        outgoing_energy_grid,
-                                                        cosine_arrays ) );
+                               Utility::arrayViewOfConst(outgoing_energy_grid),
+                               cosine_arrays ) );
 
   // ----------------------------------------------------------------------- //
   // Distributions for E_in(2)
@@ -109,8 +104,8 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
 
   angle_distribution[1].reset( 
    new MonteCarlo::StandardAceLaw61AngleDistribution<MonteCarlo::AceLaw61HistogramInterpolationPolicy>(
-                                                        outgoing_energy_grid,
-                                                        cosine_arrays ) );
+                               Utility::arrayViewOfConst(outgoing_energy_grid),
+                               cosine_arrays ) );
 
   // Create the fake stream
   std::vector<double> fake_stream( 4 );
@@ -122,14 +117,14 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Construct the energy distribution
-  Teuchos::RCP<MonteCarlo::NuclearScatteringEnergyDistribution> 
+  std::shared_ptr<const MonteCarlo::NuclearScatteringEnergyDistribution> 
   energy_scattering_distribution;
 
   energy_scattering_distribution.reset( 
      new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution(
 					   energy_distribution));
    
-  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > distribution( new MonteCarlo::AceLaw61NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState,MonteCarlo::LabSystemConversionPolicy>( 1.0, energy_scattering_distribution, angle_distribution ) );
+  std::shared_ptr<const MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > distribution( new MonteCarlo::AceLaw61NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState,MonteCarlo::LabSystemConversionPolicy>( 1.0, energy_scattering_distribution, angle_distribution ) );
 
   MonteCarlo::NeutronState neutron( 0ull );
 
@@ -147,12 +142,12 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
   double angle = 
     Utility::calculateCosineOfAngleBetweenVectors( initial_angle, 
 				                                           neutron.getDirection() );
-	double energy = neutron.getEnergy();
+  double energy = neutron.getEnergy();
 				      
-	TEST_FLOATING_EQUALITY( angle, -1.0, 1e-6 );
-	TEST_FLOATING_EQUALITY( energy, 1.0, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( angle, -1.0, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( energy, 1.0, 1e-6 );
 
-	// Test 2 - E_in(2)
+  // Test 2 - E_in(2)
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.0;
@@ -170,12 +165,12 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
   angle = 
     Utility::calculateCosineOfAngleBetweenVectors( initial_angle, 
 				                                           neutron.getDirection() );
-	energy = neutron.getEnergy();
+  energy = neutron.getEnergy();
   
-	TEST_FLOATING_EQUALITY( angle, -1.0, 1e-6 );
-	TEST_FLOATING_EQUALITY( energy, 4.0, 1e-6 );	
-	
-	// Test 3 - LinLin
+  FRENSIE_CHECK_FLOATING_EQUALITY( angle, -1.0, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( energy, 4.0, 1e-6 );	
+  
+  // Test 3 - LinLin
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.6;
   fake_stream[2] = 0.5;
@@ -193,10 +188,10 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
   angle = 
     Utility::calculateCosineOfAngleBetweenVectors( initial_angle, 
 				                                           neutron.getDirection() );
-	energy = neutron.getEnergy();
-  
-	TEST_FLOATING_EQUALITY( angle,  0.0, 1e-6 );
-	TEST_FLOATING_EQUALITY( energy, 2.2, 1e-6 );	
+  energy = neutron.getEnergy();
+        
+  FRENSIE_CHECK_FLOATING_EQUALITY( angle,  0.0, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( energy, 2.2, 1e-6 );	
 	
 	// Test 4 - Histogram
   fake_stream[0] = 0.6;
@@ -215,26 +210,24 @@ TEUCHOS_UNIT_TEST( AceLaw61NuclearScatteringDistribution,
   angle = 
     Utility::calculateCosineOfAngleBetweenVectors( initial_angle, 
 				                                           neutron.getDirection() );
-	energy = neutron.getEnergy();
+  energy = neutron.getEnergy();
   
-	TEST_FLOATING_EQUALITY( angle,  0.0, 1e-6 );
-	TEST_FLOATING_EQUALITY( energy, 5.2, 1e-6 );	
+  FRENSIE_CHECK_FLOATING_EQUALITY( angle,  0.0, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( energy, 5.2, 1e-6 );	
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstAceLaw61NuclearScatteringDistribution.cpp

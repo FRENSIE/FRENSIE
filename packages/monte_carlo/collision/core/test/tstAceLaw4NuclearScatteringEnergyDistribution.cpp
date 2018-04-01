@@ -8,23 +8,17 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
-
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 		   sampleEnergy_lower_bound_histogram )
 {
    MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -33,9 +27,9 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    energy_distribution[0].first = 1.0;
    energy_distribution[1].first = 2.0;
 
-   Teuchos::Array<double> outgoing_energy_grid(5);
+   std::vector<double> outgoing_energy_grid(5);
 
-   Teuchos::Array<double> pdf(4);
+   std::vector<double> pdf(4);
 
    outgoing_energy_grid[0] = 1.0;
    outgoing_energy_grid[1] = 2.0;
@@ -76,11 +70,11 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution
      distribution( energy_distribution );
 
-   TEST_FLOATING_EQUALITY(distribution.sampleEnergy(0.5), 3.0, 1e-15);
+   FRENSIE_CHECK_FLOATING_EQUALITY(distribution.sampleEnergy(0.5), 3.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 		   sampleEnergy_upper_bound_histogram )
 {
    MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -89,9 +83,9 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    energy_distribution[0].first = 1.0;
    energy_distribution[1].first = 2.0;
 
-   Teuchos::Array<double> outgoing_energy_grid(5);
+   std::vector<double> outgoing_energy_grid(5);
 
-   Teuchos::Array<double> pdf(4);
+   std::vector<double> pdf(4);
 
    outgoing_energy_grid[0] = 1.0;
    outgoing_energy_grid[1] = 2.0;
@@ -132,11 +126,11 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution
      distribution( energy_distribution );
 
-   TEST_FLOATING_EQUALITY(distribution.sampleEnergy(2.5), 4.0, 1e-15);
+   FRENSIE_CHECK_FLOATING_EQUALITY(distribution.sampleEnergy(2.5), 4.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 		   sampleEnergy_histogram )
 {
    MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -145,9 +139,9 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    energy_distribution[0].first = 1.0;
    energy_distribution[1].first = 2.0;
 
-   Teuchos::Array<double> outgoing_energy_grid(5);
+   std::vector<double> outgoing_energy_grid(5);
 
-   Teuchos::Array<double> pdf(4);
+   std::vector<double> pdf(4);
 
    outgoing_energy_grid[0] = 1.0;
    outgoing_energy_grid[1] = 2.0;
@@ -189,23 +183,21 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution
      distribution( energy_distribution );
 
-   TEST_FLOATING_EQUALITY(distribution.sampleEnergy(1.5), 3.5, 1e-15);
+   FRENSIE_CHECK_FLOATING_EQUALITY(distribution.sampleEnergy(1.5), 3.5, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstAceLaw4NuclearScatteringDistribution.cpp

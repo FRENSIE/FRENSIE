@@ -9,16 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs
@@ -47,16 +42,16 @@ public:
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the atomic weight ratio can be returned
-TEUCHOS_UNIT_TEST( NuclearScatteringDistribution, getAtomicWeightRatio )
+FRENSIE_UNIT_TEST( NuclearScatteringDistribution, getAtomicWeightRatio )
 {
   TestScatteringDistribution scattering_distribution( 2.0 );
 
-  TEST_EQUALITY_CONST( scattering_distribution.getAtomicWeightRatio(), 2.0 );
+  FRENSIE_CHECK_EQUAL( scattering_distribution.getAtomicWeightRatio(), 2.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the azimuthal angle can be sampled
-TEUCHOS_UNIT_TEST( NuclearScatteringDistribution, sampleAzimuthalAngle )
+FRENSIE_UNIT_TEST( NuclearScatteringDistribution, sampleAzimuthalAngle )
 {
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -69,31 +64,31 @@ TEUCHOS_UNIT_TEST( NuclearScatteringDistribution, sampleAzimuthalAngle )
 
   double azimuthal_angle = scattering_distribution.sampleAzimuthalAngle();
 
-  TEST_EQUALITY_CONST( azimuthal_angle, 0.0 );
+  FRENSIE_CHECK_EQUAL( azimuthal_angle, 0.0 );
 
   azimuthal_angle = scattering_distribution.sampleAzimuthalAngle();
 
-  TEST_EQUALITY_CONST( azimuthal_angle, Utility::PhysicalConstants::pi );
+  FRENSIE_CHECK_EQUAL( azimuthal_angle, Utility::PhysicalConstants::pi );
 
   azimuthal_angle = scattering_distribution.sampleAzimuthalAngle();
 
-  TEST_FLOATING_EQUALITY( azimuthal_angle,
-			  2*Utility::PhysicalConstants::pi,
-			  1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( azimuthal_angle,
+                                   2*Utility::PhysicalConstants::pi,
+                                   1e-15 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstNuclearScatteringDistribution.cpp

@@ -52,7 +52,7 @@ void AceLaw61NuclearScatteringDistribution<IncomingParticleType,
                                 OutgoingParticleType& outgoing_particle,
 				const double temperature ) const
 {
-  unsigned outgoing_bin_index, incoming_bin_index;
+  size_t outgoing_bin_index, incoming_bin_index;
   
   double energy_prime;
   

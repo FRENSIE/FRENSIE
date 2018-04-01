@@ -9,21 +9,16 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_WattDistribution.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
 		   sample_lower_bounds )
 {
    MonteCarlo::AceLaw11NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -64,7 +59,7 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
                                                        b_distribution,
                                                        restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(0.5) ,==,
+   FRENSIE_CHECK_EQUAL(distribution.sampleEnergy(0.5),
      Utility::WattDistribution::sample( 0.5,
                                         a_distribution[0].second,
                                         b_distribution[0].second,
@@ -72,7 +67,7 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
 		   sample_upper_bounds )
 {
    MonteCarlo::AceLaw11NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -113,7 +108,7 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
                                                        b_distribution,
                                                        restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(3.0) ,==,
+   FRENSIE_CHECK_EQUAL(distribution.sampleEnergy(3.0),
      Utility::WattDistribution::sample( 3.0,
                                         a_distribution[1].second,
                                         b_distribution[1].second,
@@ -121,7 +116,7 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
+FRENSIE_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
 		   sampleEnergy )
 {
    MonteCarlo::AceLaw11NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -162,7 +157,7 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
                                                        b_distribution,
                                                        restriction_energy );
 
-   TEST_COMPARE(distribution.sampleEnergy(1.5) ,==,
+   FRENSIE_CHECK_EQUAL(distribution.sampleEnergy(1.5),
      Utility::WattDistribution::sample( 1.5,
                                         1.5,
                                         3.5,
@@ -170,18 +165,17 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstAceLaw11NuclearScatteringDistribution.cpp

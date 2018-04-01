@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AceLaw44ARDistribution.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -25,9 +26,15 @@ public:
 
   //! Constructor
   StandardAceLaw44ARDistribution(
-		   const Utility::ArrayView<const double>& outgoing_energy_grid,
-		   const Utility::ArrayView<const double>& A_array,
-		   const Utility::ArrayView<const double>& R_array );
+                               const std::vector<double>& outgoing_energy_grid,
+                               const std::vector<double>& A_array,
+                               const std::vector<double>& R_array );
+
+  //! View constructor
+  StandardAceLaw44ARDistribution(
+		  const Utility::ArrayView<const double>& outgoing_energy_grid,
+                  const Utility::ArrayView<const double>& A_array,
+                  const Utility::ArrayView<const double>& R_array );
 
   //! Destructor
   ~StandardAceLaw44ARDistribution()

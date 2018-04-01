@@ -31,8 +31,7 @@ AceLaw44NuclearScatteringDistribution<IncomingParticleType,
              const double atomic_weight_ratio,
              const std::shared_ptr<const NuclearScatteringEnergyDistribution>&
              energy_scattering_distribution,
-             const std::vector<std::shared_ptr<const AceLaw44ARDistribution> >&
-             ar_distributions )
+             const ARDistributions& ar_distributions )
   : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),
      d_ar_distributions( ar_distributions )
@@ -52,7 +51,7 @@ void AceLaw44NuclearScatteringDistribution<IncomingParticleType,
 				OutgoingParticleType& outgoing_particle,
 				const double temperature ) const
 {
-  unsigned outgoing_bin_index, incoming_bin_index;
+  size_t outgoing_bin_index, incoming_bin_index;
 
   double energy_prime;
 

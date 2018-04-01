@@ -34,7 +34,7 @@ class AceLaw44NuclearScatteringDistribution : public NuclearScatteringDistributi
 public:
 
   //! Typedef for the distribution
-  typedef std::vector<std::shared_ptr<AceLaw44ARDistribution> >
+  typedef std::vector<std::shared_ptr<const AceLaw44ARDistribution> >
   ARDistributions;
 
   //! Constructor
@@ -42,8 +42,7 @@ public:
              const double atomic_weight_ratio,
              const std::shared_ptr<const NuclearScatteringEnergyDistribution>&
              energy_scattering_distribution,
-             const std::vector<std::shared_ptr<const AceLaw44ARDistribution> >&
-             ar_distributions );
+             const ARDistributions& ar_distributions );
 
   //! Destructor
   ~AceLaw44NuclearScatteringDistribution()
