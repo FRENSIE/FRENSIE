@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ScatteringFunction.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,12 +27,12 @@ class StandardScatteringFunction : public ScatteringFunction
 private:
 
   //! The stored scattering function independent quantity type
-  typedef typename Utility::UnitAwareOneDDistribution<StoredArgUnit,void>::IndepQuantity StoredArgumentQuantity;
+  typedef typename Utility::UnitAwareUnivariateDistribution<StoredArgUnit,void>::IndepQuantity StoredArgumentQuantity;
 
 public:
 
   //! Constructor
-  StandardScatteringFunction( const SmartPointer<const Utility::UnitAwareOneDDistribution<StoredArgUnit,void> >& raw_scattering_function );
+  StandardScatteringFunction( const SmartPointer<const Utility::UnitAwareUnivariateDistribution<StoredArgUnit,void> >& raw_scattering_function );
 
   //! Destructor
   ~StandardScatteringFunction()
@@ -56,7 +56,7 @@ public:
 private:
 
   // The raw scattering function
-  SmartPointer<const Utility::UnitAwareOneDDistribution<StoredArgUnit,void> >
+  SmartPointer<const Utility::UnitAwareUnivariateDistribution<StoredArgUnit,void> >
   d_raw_scattering_function;
 };
 

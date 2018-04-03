@@ -26,60 +26,60 @@ namespace MonteCarlo{
 class PhotoatomFactory
 {
 
-public:
+// public:
 
-  //! Constructor
-  PhotoatomFactory( const std::string& cross_sections_xml_directory,
-                    const Teuchos::ParameterList& cross_section_table_info,
-                    const std::unordered_set<std::string>& photoatom_aliases,
-		    const std::shared_ptr<AtomicRelaxationModelFactory>&
-		    atomic_relaxation_model_factory,
-		    const SimulationProperties& properties,
-		    std::ostream* os_message = &std::cout );
+//   //! Constructor
+//   PhotoatomFactory( const std::string& cross_sections_xml_directory,
+//                     const Teuchos::ParameterList& cross_section_table_info,
+//                     const std::unordered_set<std::string>& photoatom_aliases,
+// 		    const std::shared_ptr<AtomicRelaxationModelFactory>&
+// 		    atomic_relaxation_model_factory,
+// 		    const SimulationProperties& properties,
+// 		    std::ostream* os_message = &std::cout );
 
-  //! Destructor
-  ~PhotoatomFactory()
-  { /* ... */ }
+//   //! Destructor
+//   ~PhotoatomFactory()
+//   { /* ... */ }
 
-  //! Create the map of photoatoms
-  void createPhotoatomMap(
-		    std::unordered_map<std::string,std::shared_ptr<Photoatom> >&
-		    photoatom_map ) const;
+//   //! Create the map of photoatoms
+//   void createPhotoatomMap(
+// 		    std::unordered_map<std::string,std::shared_ptr<Photoatom> >&
+// 		    photoatom_map ) const;
 
-private:
+// private:
 
-  // Create a photoatom from an ACE table
-  void createPhotoatomFromACETable(
-			  const std::string& cross_sections_xml_directory,
-			  const std::string& photoatom_alias,
-			  const std::string& ace_file_path,
-			  const std::string& photoatomic_table_name,
-			  const int photoatomic_file_start_line,
-			  const double atomic_weight,
-			  const std::shared_ptr<AtomicRelaxationModelFactory>&
-			  atomic_relaxation_model_factory,
-			  const SimulationProperties& properties );
+//   // Create a photoatom from an ACE table
+//   void createPhotoatomFromACETable(
+// 			  const std::string& cross_sections_xml_directory,
+// 			  const std::string& photoatom_alias,
+// 			  const std::string& ace_file_path,
+// 			  const std::string& photoatomic_table_name,
+// 			  const int photoatomic_file_start_line,
+// 			  const double atomic_weight,
+// 			  const std::shared_ptr<AtomicRelaxationModelFactory>&
+// 			  atomic_relaxation_model_factory,
+// 			  const SimulationProperties& properties );
 
-  // Create a photoatom from a Native table
-  void createPhotoatomFromNativeTable(
-			  const std::string& cross_sections_xml_directory,
-			  const std::string& photoatom_alias,
-			  const std::string& native_file_path,
-			  const double atomic_weight,
-			  const std::shared_ptr<AtomicRelaxationModelFactory>&
-			  atomic_relaxation_model_factory,
-			  const SimulationProperties& properties );
+//   // Create a photoatom from a Native table
+//   void createPhotoatomFromNativeTable(
+// 			  const std::string& cross_sections_xml_directory,
+// 			  const std::string& photoatom_alias,
+// 			  const std::string& native_file_path,
+// 			  const double atomic_weight,
+// 			  const std::shared_ptr<AtomicRelaxationModelFactory>&
+// 			  atomic_relaxation_model_factory,
+// 			  const SimulationProperties& properties );
 
-  // The photoatom map
-  std::unordered_map<std::string,std::shared_ptr<Photoatom> >
-  d_photoatom_name_map;
+//   // The photoatom map
+//   std::unordered_map<std::string,std::shared_ptr<Photoatom> >
+//   d_photoatom_name_map;
 
-  // The table map
-  std::unordered_map<std::string,std::shared_ptr<Photoatom> >
-  d_photoatomic_table_name_map;
+//   // The table map
+//   std::unordered_map<std::string,std::shared_ptr<Photoatom> >
+//   d_photoatomic_table_name_map;
 
-  // The message output stream
-  std::ostream* d_os_message;
+//   // The message output stream
+//   std::ostream* d_os_message;
 };
 
 } // end MonteCarlo namespace

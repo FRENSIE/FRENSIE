@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "Data_SubshellType.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,7 +27,7 @@ public:
       const Data::SubshellType interaction_subshell,
       const double num_electrons_in_subshell,
       const double binding_energy,
-      const std::shared_ptr<const Utility::OneDDistribution>& occupation_number,
+      const std::shared_ptr<const Utility::UnivariateDistribution>& occupation_number,
       const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
@@ -90,7 +90,7 @@ private:
   double d_binding_energy;
 
   // The occupation number
-  std::shared_ptr<const Utility::OneDDistribution> d_occupation_number;
+  std::shared_ptr<const Utility::UnivariateDistribution> d_occupation_number;
 };
 
 } // end MonteCarlo namespace

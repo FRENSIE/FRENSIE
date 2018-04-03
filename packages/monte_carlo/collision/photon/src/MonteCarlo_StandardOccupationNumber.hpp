@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_OccupationNumber.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_UnitTraits.hpp"
 
 namespace MonteCarlo{
@@ -28,12 +28,12 @@ class StandardOccupationNumber : public OccupationNumber
 private:
 
   //! The stored momentum quantity type
-  typedef typename Utility::UnitAwareOneDDistribution<StoredMomentumUnit,void>::IndepQuantity StoredMomentumQuantity;
+  typedef typename Utility::UnitAwareUnivariateDistribution<StoredMomentumUnit,void>::IndepQuantity StoredMomentumQuantity;
 
 public:
 
   //! Constructor
-  StandardOccupationNumber( const SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,void> >& raw_occupation_number );
+  StandardOccupationNumber( const SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredMomentumUnit,void> >& raw_occupation_number );
 
   //! Destructor
   ~StandardOccupationNumber()
@@ -57,7 +57,7 @@ public:
 private:
 
   // The raw occupation number
-  SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,void> >
+  SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredMomentumUnit,void> >
   d_raw_occupation_number;
 };
   

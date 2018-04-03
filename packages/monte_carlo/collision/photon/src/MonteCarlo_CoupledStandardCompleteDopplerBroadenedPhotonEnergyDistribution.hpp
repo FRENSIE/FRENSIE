@@ -46,9 +46,9 @@ protected:
   double getSubshellBindingEnergy( const Data::SubshellType subshell ) const;
 
   //! Sample an interaction subshell
-  void sampleInteractionSubshell( unsigned& old_subshell_index,
+  void sampleInteractionSubshell( size_t& old_subshell_index,
                                   double& subshell_binding_energy,
-                                  Data::SubshellType& subshell ) const;
+                                  Data::SubshellType& subshell ) const override;
 
 private:
 

@@ -17,16 +17,17 @@ namespace MonteCarlo{
 // Create a photoatom core (using the provided atomic relaxation model)
 void PhotoatomNativeFactory::createPhotoatomCore(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+	 const std::shared_ptr<const AtomicRelaxationModel>&
+         atomic_relaxation_model,
          const SimulationPhotonProperties& properties,
-	 std::shared_ptr<PhotoatomCore>& photoatom_core )
+	 std::shared_ptr<const PhotoatomCore>& photoatom_core )
 {
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
   photoatom_core.reset( new PhotoatomCore() );
 
-  Photoatom::ReactionMap scattering_reactions, absorption_reactions;
+  Photoatom::ConstReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
   std::shared_ptr<std::vector<double> > energy_grid(
@@ -34,14 +35,14 @@ void PhotoatomNativeFactory::createPhotoatomCore(
                             raw_photoatom_data.getPhotonEnergyGrid().end() ) );
 
   // Construct the hash-based grid searcher for this atom
-  std::shared_ptr<Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> > grid_searcher(
         new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                                 energy_grid,
                                 properties.getNumberOfPhotonHashGridBins() ) );
 
   // Create the incoherent scattering reaction(s)
   {
-    std::vector<std::shared_ptr<PhotoatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<const PhotoatomicReaction> > reaction_pointers;
 
     PhotoatomicReactionNativeFactory::createIncoherentReactions(
                                     raw_photoatom_data,
@@ -61,7 +62,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
   // Create the coherent scattering reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COHERENT_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createCoherentReaction(
@@ -73,7 +74,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
   // Create the pair production reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[PAIR_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createPairProductionReaction(
@@ -86,7 +87,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
   // Create the triplet production reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createTripletProductionReaction(
@@ -100,7 +101,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
   // Create the photoelectric reaction(s)
   if( properties.isAtomicRelaxationModeOn() )
   {
-    std::vector<std::shared_ptr<PhotoatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<const PhotoatomicReaction> > reaction_pointers;
 
     PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 							   raw_photoatom_data,
@@ -116,7 +117,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
   }
   else
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       absorption_reactions[TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
@@ -127,7 +128,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
   }
 
   // Create the heating reaction
-  Photoatom::ReactionMap::mapped_type& reaction_pointer =
+  Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
     absorption_reactions[HEATING_PHOTOATOMIC_REACTION];
 
   PhotoatomicReactionNativeFactory::createHeatingReaction( raw_photoatom_data,
@@ -160,16 +161,17 @@ void PhotoatomNativeFactory::createPhotoatom(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const std::string& photoatom_name,
 	 const double atomic_weight,
-	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+	 const std::shared_ptr<const AtomicRelaxationModel>&
+         atomic_relaxation_model,
          const SimulationPhotonProperties& properties,
-	 std::shared_ptr<Photoatom>& photoatom )
+	 std::shared_ptr<const Photoatom>& photoatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
-  std::shared_ptr<PhotoatomCore> core;
+  std::shared_ptr<const PhotoatomCore> core;
 
   PhotoatomNativeFactory::createPhotoatomCore( raw_photoatom_data,
                                                atomic_relaxation_model,

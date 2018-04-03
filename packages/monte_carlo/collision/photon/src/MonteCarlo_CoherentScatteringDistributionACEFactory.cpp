@@ -64,11 +64,19 @@ void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
 
   unsigned form_factor_size = jcohe_block.size()/3;
 
-  std::vector<double> recoil_momentum_squared(
-					  jcohe_block( 0, form_factor_size ) );
+  Utility::ArrayView<const double> raw_recoil_momentum_squared =
+    jcohe_block( 0, form_factor_size );
 
+  std::vector<double> recoil_momentum_squared(
+                                           raw_recoil_momentum_squared.begin(),
+                                           raw_recoil_momentum_squared.end() );
+
+  Utility::ArrayView<const double> raw_form_factor_squared =
+    jcohe_block( 2*form_factor_size, form_factor_size );
+  
   std::vector<double> form_factor_squared_values(
-			 jcohe_block( 2*form_factor_size, form_factor_size ) );
+                                               raw_form_factor_squared.begin(),
+                                               raw_form_factor_squared.end() );
 
   // Square the grid points and the form factor factor values
   // This operation is non-linear, which means that the grid is no longer
@@ -82,14 +90,14 @@ void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
   }
 
   // The stored recoil momentum squared has units of inverse square Angstroms.
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareAngstrom,void> > raw_form_factor_squared(
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::InverseSquareAngstrom,void> > raw_form_factor_squared_dist(
            new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseSquareAngstrom,void>(
                                                 recoil_momentum_squared,
                                                 form_factor_squared_values ) );
 
   form_factor_squared.reset(
          new StandardFormFactorSquared<Utility::Units::InverseSquareAngstrom>(
-                                                   raw_form_factor_squared ) );
+                                              raw_form_factor_squared_dist ) );
 }
 
 } // end MonteCarlo namespace

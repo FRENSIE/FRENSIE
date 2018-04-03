@@ -32,9 +32,9 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
     d_angular_scattering_distribution( angular_scattering_distribution )
 {
   // Check to make sure the energy distribution pointer is valid
-  testPrecondition( !energy_scattering_distribution.is_null() );
+  testPrecondition( energy_scattering_distribution.get() );
     // Check to make sure the angular distribution pointer is valid
-  testPrecondition( !angular_scattering_distribution.is_null() );
+  testPrecondition( angular_scattering_distribution.get() );
 }
 
 // Randomly scatter the neutron

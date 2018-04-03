@@ -28,22 +28,22 @@ namespace MonteCarlo{
 
 // Determine the coupled angle energy distribution
 unsigned NuclearScatteringEnergyDistributionACEFactory::determineCoupledDistribution(
-    const double atomic_weight_ratio,
-		const Utility::ArrayView<const double>& dlw_block_array,
-		const unsigned dlw_block_array_start_index,
-		const std::string& table_name )
+                     const double atomic_weight_ratio,
+                     const Utility::ArrayView<const double>& dlw_block_array,
+                     const unsigned dlw_block_array_start_index,
+                     const std::string& table_name )
 {
   return dlw_block_array[1];
 }
 
 // Create the energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution,
-	     const double atomic_weight_ratio )
+      const Utility::ArrayView<const double>& dlw_block_array,
+      const unsigned dlw_block_array_start_index,
+      const std::string& table_name,
+      const unsigned reaction,
+      std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution,
+      const double atomic_weight_ratio )
 {
   // Make sure the dlw block array is valid
   testPrecondition( dlw_block_array.size() > 0 );
@@ -113,11 +113,11 @@ void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 
 // Create a AceLaw 1 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution )
+     const Utility::ArrayView<const double>& dlw_block_array,
+     const unsigned dlw_block_array_start_index,
+     const std::string& table_name,
+     const unsigned reaction,
+     std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution )
 {
   // Start index for ldat data
     int ldat_start_index = dlw_block_array[2] - dlw_block_array_start_index - 2;
@@ -169,18 +169,18 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
 
 // Create an AceLaw 2 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw2EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution,
-	     const double atomic_weight_ratio )
+      const Utility::ArrayView<const double>& dlw_block_array,
+      const unsigned dlw_block_array_start_index,
+      const std::string& table_name,
+      const unsigned reaction,
+      std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution,
+      const double atomic_weight_ratio )
 {
   // Verify that the law is Ace Law 2
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 2,
-           	          std::runtime_error,
-           	          "MT# " << reaction << " in ACE table "
-           	          << table_name << " should be law 2!\n" );
+                      std::runtime_error,
+                      "MT# " << reaction << " in ACE table "
+                      << table_name << " should be law 2!\n" );
 
   // Start index for ldat data
   int LP =
@@ -197,11 +197,11 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw2EnergyDistribut
 
 // Create a AceLaw 3 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw3EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution )
+     const Utility::ArrayView<const double>& dlw_block_array,
+     const unsigned dlw_block_array_start_index,
+     const std::string& table_name,
+     const unsigned reaction,
+     std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution )
 {
   // Verify that there isn't multiple interpolation regions
   TEST_FOR_EXCEPTION( dlw_block_array[3] != 0,
@@ -223,156 +223,155 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw3EnergyDistribut
 
 // Create a AceLaw 4 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution )
+     const Utility::ArrayView<const double>& dlw_block_array,
+     const unsigned dlw_block_array_start_index,
+     const std::string& table_name,
+     const unsigned reaction,
+     std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution )
 {
   // Verify that it is law 4
-     TEST_FOR_EXCEPTION( dlw_block_array[1] != 4,
+  TEST_FOR_EXCEPTION( dlw_block_array[1] != 4,
            	      std::runtime_error,
            	      "MT# " << reaction << " in ACE table "
            	      << table_name << " should be law 4!\n" );
 
-     // Start index for ldat data
-     int ldat_start_index =
-       (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+  // Start index for ldat data
+  int ldat_start_index =
+    (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
 
-     // Verify that only one law is present
-     TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
+  // Verify that only one law is present
+  TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
            	      std::runtime_error,
            	      "MT# " << reaction << " in ACE table "
            	      << table_name << " has multiple interpolation schemes "
            	      " with it, which is not currently supported!\n" );
 
-     // Number of incident energies
-     double incoming_energies = dlw_block_array[ldat_start_index + 1];
+  // Number of incident energies
+  double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
-     // Array of incoming energies
-     Utility::ArrayView<const double> incoming_energies_array =
-       dlw_block_array( ldat_start_index + 2, incoming_energies );
+  // Array of incoming energies
+  Utility::ArrayView<const double> incoming_energies_array =
+    dlw_block_array( ldat_start_index + 2, incoming_energies );
 
-     // Array of distribution locations
-     Utility::ArrayView<const double> distribution_locations =
-       dlw_block_array( ldat_start_index + 2 + incoming_energies,
+  // Array of distribution locations
+  Utility::ArrayView<const double> distribution_locations =
+    dlw_block_array( ldat_start_index + 2 + incoming_energies,
                         incoming_energies );
 
-     // Initialize the energy distribution array
-     AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
-       energy_distribution( incoming_energies );
+  // Initialize the energy distribution array
+  AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
+    energy_distribution( incoming_energies );
 
-     // Loop through the incoming energies
-     for(int i = 0; i != incoming_energies; ++i)
-     {
-       Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
-
-       int distribution_index = static_cast<int>( distribution_locations[i] ) - dlw_block_array_start_index - 1;
-
-       int interpolation_flag = dlw_block_array[distribution_index];
-
-       // Check if discrete lines are present
-       TEST_FOR_EXCEPTION( interpolation_flag < 10 && interpolation_flag > 2,
+  // Loop through the incoming energies
+  for(int i = 0; i != incoming_energies; ++i)
+  {
+    Utility::get<0>( energy_distribution[i] ) = incoming_energies_array[i];
+    
+    int distribution_index = static_cast<int>( distribution_locations[i] ) - dlw_block_array_start_index - 1;
+    
+    int interpolation_flag = dlw_block_array[distribution_index];
+    
+    // Check if discrete lines are present
+    TEST_FOR_EXCEPTION( interpolation_flag < 10 && interpolation_flag > 2,
            	        std::runtime_error,
            	        "MT# " << reaction << "in ACE table "
            	        << table_name << " has discrete lines in continuous"
            	        " tabular data, which is not currently supported!\n" );
-
-       int number_points_distribution = dlw_block_array[distribution_index + 1];
-
-       Utility::ArrayView<const double> outgoing_energy_grid =
-         dlw_block_array( distribution_index + 2, number_points_distribution );
-
-       Utility::ArrayView<const double> pdf;
-       Utility::ArrayView<const double> cdf;
-
-       if( interpolation_flag == 1) // histogram interpolation
-       {
-         pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
+    
+    int number_points_distribution = dlw_block_array[distribution_index + 1];
+    
+    Utility::ArrayView<const double> outgoing_energy_grid =
+      dlw_block_array( distribution_index + 2, number_points_distribution );
+    
+    Utility::ArrayView<const double> pdf;
+    Utility::ArrayView<const double> cdf;
+    
+    if( interpolation_flag == 1) // histogram interpolation
+    {
+      pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
            		     number_points_distribution - 1 );
-
-         Utility::get<1>( energy_distribution[i] ).reset(
-           	      new Utility::HistogramDistribution( outgoing_energy_grid,
-           						  pdf ) );
-      }
-      else if ( interpolation_flag == 2 ) // lin-lin interpolation
-      {
-         pdf = dlw_block_array( distribution_index + 2 +
-                   number_points_distribution, number_points_distribution );
-
-         Utility::get<1>( energy_distribution[i] ).reset(
+      
+      Utility::get<1>( energy_distribution[i] ).reset(
+                                                      new Utility::HistogramDistribution( outgoing_energy_grid,
+                                                                                          pdf ) );
+    }
+    else if ( interpolation_flag == 2 ) // lin-lin interpolation
+    {
+      pdf = dlw_block_array( distribution_index + 2 +
+                             number_points_distribution, number_points_distribution );
+      
+      Utility::get<1>( energy_distribution[i] ).reset(
            		     new Utility::TabularDistribution<Utility::LinLin>(
            					 outgoing_energy_grid, pdf ) );
-       }
-      else if ( interpolation_flag >= 10 )
+    }
+    else if ( interpolation_flag >= 10 )
+    {
+      if ( number_points_distribution == 1 )
       {
-        if ( number_points_distribution == 1 )
-        {
-          Utility::get<1>( energy_distribution[i] ).reset(
+        Utility::get<1>( energy_distribution[i] ).reset(
                    new Utility::DeltaDistribution( outgoing_energy_grid[0] ) );
-        }
-        else
+      }
+      else
+      {
+        cdf = dlw_block_array( distribution_index + 2 +
+                               2*number_points_distribution, number_points_distribution );
+
+        // Version 8 of ENDF has the energy distributions in reverse order
+        if( outgoing_energy_grid.begin() < outgoing_energy_grid.end() )
         {
-          cdf = dlw_block_array( distribution_index + 2 +
-                    2*number_points_distribution, number_points_distribution );
-
-          // Version 8 of ENDF has the energy distributions in reverse order
-          if( outgoing_energy_grid.begin() < outgoing_energy_grid.end() )
+          std::vector<double> outgoing_energy_grid_reverse_vector;
+          std::vector<double> cdf_reverse_vector;
+          
+          for( int j = 0; j < cdf.size(); ++j )
           {
-            std::vector<double> outgoing_energy_grid_reverse_vector;
-            std::vector<double> cdf_reverse_vector;
-
-            for( int j = 0; j < cdf.size(); ++j )
-            {
-              outgoing_energy_grid_reverse_vector.push_back(
+            outgoing_energy_grid_reverse_vector.push_back(
                 outgoing_energy_grid[outgoing_energy_grid.size()-1-j] );
 
-              cdf_reverse_vector.push_back( 1.0 - cdf[cdf.size()-1-j] );
-            }
+            cdf_reverse_vector.push_back( 1.0 - cdf[cdf.size()-1-j] );
+          }
 
-            Utility::ArrayView<const double> outgoing_energy_grid_reverse(
+          Utility::ArrayView<const double> outgoing_energy_grid_reverse(
                                          outgoing_energy_grid_reverse_vector );
 
-            Utility::ArrayView<const double> cdf_reverse( cdf_reverse_vector );
-
-            Utility::get<1>( energy_distribution[i] ).reset(
+          Utility::ArrayView<const double> cdf_reverse( cdf_reverse_vector );
+          
+          Utility::get<1>( energy_distribution[i] ).reset(
                    new Utility::DiscreteDistribution(
                                                   outgoing_energy_grid_reverse,
                                                   cdf_reverse,
                                                   true ) );
-          }
-          else
-          {
-            Utility::get<1>( energy_distribution[i] ).reset(
+        }
+        else
+        {
+          Utility::get<1>( energy_distribution[i] ).reset(
                    new Utility::DiscreteDistribution( outgoing_energy_grid,
                                                       cdf,
                                                       true ) );
-          }
-
-        }
+        }    
       }
-      else
-      {
-         THROW_EXCEPTION( std::runtime_error,
-			  "Unknown interpolation flag in table "
-			  << table_name <<
-			  " for energy distribution of MT = "
-			  << reaction << ": "
-			  << interpolation_flag << "\n" );
-       }
-     }
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Unknown interpolation flag in table "
+                       << table_name <<
+                       " for energy distribution of MT = "
+                       << reaction << ": "
+                       << interpolation_flag << "\n" );
+    }
+  }
 
-     distribution.reset(
-      new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
+  distribution.reset(
+       new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 }
 
 // Create a AceLaw 5 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution )
+     const Utility::ArrayView<const double>& dlw_block_array,
+     const unsigned dlw_block_array_start_index,
+     const std::string& table_name,
+     const unsigned reaction,
+     std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution )
 {
   // Verify that it is law 5
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 5,
@@ -447,11 +446,11 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
 
 // Create a AceLaw 7 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution )
+     const Utility::ArrayView<const double>& dlw_block_array,
+     const unsigned dlw_block_array_start_index,
+     const std::string& table_name,
+     const unsigned reaction,
+     std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution )
 {
   // Verify that it is law 7
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 7,
@@ -505,11 +504,11 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribut
 
 // Create a AceLaw 9 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw9EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution )
+     const Utility::ArrayView<const double>& dlw_block_array,
+     const unsigned dlw_block_array_start_index,
+     const std::string& table_name,
+     const unsigned reaction,
+     std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution )
 {
   // Verify that it is law 9
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 9,
@@ -561,11 +560,11 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw9EnergyDistribut
 
 // Create a AceLaw 11 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribution(
-	     const Utility::ArrayView<const double>& dlw_block_array,
-	     const unsigned dlw_block_array_start_index,
-	     const std::string& table_name,
-	     const unsigned reaction,
-	     std::shared_ptr<NuclearScatteringEnergyDistribution>& distribution )
+     const Utility::ArrayView<const double>& dlw_block_array,
+     const unsigned dlw_block_array_start_index,
+     const std::string& table_name,
+     const unsigned reaction,
+     std::shared_ptr<const NuclearScatteringEnergyDistribution>& distribution )
 {
   // Verify that it is law 11
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 11,

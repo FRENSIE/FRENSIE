@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -74,17 +74,17 @@ public:
 protected:
 
   //! Sample an interaction subshell
-  void sampleInteractionSubshell( unsigned& old_subshell_index,
+  void sampleInteractionSubshell( size_t& old_subshell_index,
                                   double& subshell_binding_energy,
-                                  Data::SubshellType& subshell ) const;
+                                  Data::SubshellType& subshell ) const override;
 
 private:
 
   // Sample the old subshell that is interacted with
-  unsigned sampleOldInteractionSubshell() const;
+  size_t sampleOldInteractionSubshell() const;
 
   // The old subshell interaction probabilities
-  std::unique_ptr<const Utility::TabularOneDDistribution>
+  std::unique_ptr<const Utility::TabularUnivariateDistribution>
   d_old_subshell_occupancy_distribution;
 
   // The old subshell binding energies

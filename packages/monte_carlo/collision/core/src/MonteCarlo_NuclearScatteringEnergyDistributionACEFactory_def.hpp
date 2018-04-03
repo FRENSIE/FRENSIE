@@ -28,13 +28,13 @@ namespace MonteCarlo{
 // Create the ACE law 44 coupled energy-angle distribution
 template<typename ScatteringDistributionBaseType>
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
-        const double atomic_weight_ratio,
-	      const Utility::ArrayView<const double>& dlw_block_array,
-		    const unsigned dlw_block_array_start_index,
-		    const std::string& table_name,
-		    const unsigned reaction,
-		    const bool is_cm_distribution,
-		    std::shared_ptr<ScatteringDistributionBaseType>& distribution )
+          const double atomic_weight_ratio,
+          const Utility::ArrayView<const double>& dlw_block_array,
+          const unsigned dlw_block_array_start_index,
+          const std::string& table_name,
+          const unsigned reaction,
+          const bool is_cm_distribution,
+          std::shared_ptr<const ScatteringDistributionBaseType>& distribution )
 {
   typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,
@@ -197,13 +197,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 // Create the ACE law 61 coupled energy-angle distribution
 template<typename ScatteringDistributionBaseType>
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
-        const double atomic_weight_ratio,
-	      const Utility::ArrayView<const double>& dlw_block_array,
-		    const unsigned dlw_block_array_start_index,
-		    const std::string& table_name,
-		    const unsigned reaction,
-		    const bool is_cm_distribution,
-		      std::shared_ptr<ScatteringDistributionBaseType>& distribution )
+          const double atomic_weight_ratio,
+          const Utility::ArrayView<const double>& dlw_block_array,
+          const unsigned dlw_block_array_start_index,
+          const std::string& table_name,
+          const unsigned reaction,
+          const bool is_cm_distribution,
+          std::shared_ptr<const ScatteringDistributionBaseType>& distribution )
 {
   typedef AceLaw61NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,

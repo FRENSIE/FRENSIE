@@ -20,8 +20,8 @@ namespace MonteCarlo{
 // Create the converter
 template<template<typename> class SmartPointer>
 void ComptonProfileSubshellConverterFactory::createConverter(
-		      SmartPointer<ComptonProfileSubshellConverter>& converter,
-		      const unsigned atomic_number )
+                SmartPointer<const ComptonProfileSubshellConverter>& converter,
+                const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0u );

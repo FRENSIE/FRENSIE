@@ -19,7 +19,7 @@ namespace MonteCarlo{
 template<typename StoredMomentumUnit,
 	 typename StoredInverseMomentumUnit,
 	 template<typename> class SmartPointer>
-StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::StandardComptonProfile( const SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >& raw_compton_profile )
+StandardComptonProfile<StoredMomentumUnit,StoredInverseMomentumUnit,SmartPointer>::StandardComptonProfile( const SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >& raw_compton_profile )
   : d_raw_compton_profile( raw_compton_profile )
 {
   // Make sure the raw Compton profile is valid

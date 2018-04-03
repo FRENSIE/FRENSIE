@@ -17,7 +17,7 @@ namespace MonteCarlo{
 LineEnergyAdjointPhotonScatteringDistribution::LineEnergyAdjointPhotonScatteringDistribution(
                  const double line_energy,
                  const double energy_dist_norm_constant,
-                 const std::shared_ptr<const Utility::TabularOneDDistribution>&
+                 const std::shared_ptr<const Utility::TabularUnivariateDistribution>&
                  energy_dist )
   : d_line_energy( line_energy ),
     d_energy_dist_norm_constant( energy_dist_norm_constant ),

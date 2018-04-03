@@ -35,7 +35,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProdu
                     raw_adjoint_photoatom_data.getAdjointPairProductionEnergyDistributionGrid().back() );
 
   // Construct the energy distribution
-  std::shared_ptr<const Utility::TabularOneDDistribution> energy_distribution;
+  std::shared_ptr<const Utility::TabularUnivariateDistribution> energy_distribution;
 
   ThisType::createEnergyDistributionFromRawDistData(
        energy_distribution,
@@ -81,7 +81,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletPr
                     raw_adjoint_photoatom_data.getAdjointTripletProductionEnergyDistributionGrid().back() );
 
   // Construct the energy distribution
-  std::shared_ptr<const Utility::TabularOneDDistribution> energy_distribution;
+  std::shared_ptr<const Utility::TabularUnivariateDistribution> energy_distribution;
 
   ThisType::createEnergyDistributionFromRawDistData(
        energy_distribution,
@@ -110,7 +110,7 @@ void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletPr
 
 // Create an energy distribution from the raw distribution data
 void LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createEnergyDistributionFromRawDistData(
-                       std::shared_ptr<const Utility::TabularOneDDistribution>&
+                       std::shared_ptr<const Utility::TabularUnivariateDistribution>&
                        energy_distribution,
                        const std::vector<double>& energy_grid,
                        const std::vector<double>& energy_dist_values,

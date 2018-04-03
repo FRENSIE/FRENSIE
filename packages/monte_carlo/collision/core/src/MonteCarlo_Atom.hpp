@@ -16,6 +16,7 @@
 #include <vector>
 
 // FRENSIE Includes
+#include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
@@ -43,13 +44,13 @@ public:
   typedef typename AtomCore::ConstReactionMap ConstReactionMap;
 
   //! Constructor
-  Atom(
-    const std::string& name,
-    const unsigned atomic_number,
-    const double atomic_weight,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const ReactionMap& scattering_reactions,
-    const ReactionMap& absorption_reactions );
+  Atom( const std::string& name,
+        const unsigned atomic_number,
+        const double atomic_weight,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+        grid_searcher,
+        const ConstReactionMap& scattering_reactions,
+        const ConstReactionMap& absorption_reactions );
 
   //! Constructor (from a core)
   Atom( const std::string& name,
@@ -271,7 +272,7 @@ inline double
 Atom<AtomCore>::getAbsorptionCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   return this->getAtomicAbsorptionCrossSection( energy ) +
@@ -285,7 +286,7 @@ Atom<AtomCore>::getAbsorptionCrossSection( const double energy,
                                            const unsigned energy_grid_bin ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   return this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin ) +

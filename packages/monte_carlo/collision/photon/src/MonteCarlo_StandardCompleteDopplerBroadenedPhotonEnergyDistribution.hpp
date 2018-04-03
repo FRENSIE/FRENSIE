@@ -20,7 +20,7 @@
 #include "Data_SubshellType.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_ComptonProfilePolicy.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -162,7 +162,7 @@ protected:
   unsigned getENDFSubshellIndex( const Data::SubshellType subshell ) const;
 
   //! Return the subshell corresponding to the endf subshell index
-  Data::SubshellType getSubshell( const unsigned endf_subshell_index ) const;
+  Data::SubshellType getSubshell( const size_t endf_subshell_index ) const;
 
   //! Return the Compton profile for a subshell
   const ComptonProfile& getComptonProfile( const Data::SubshellType& subshell) const;
@@ -175,7 +175,7 @@ protected:
   Data::SubshellType sampleENDFInteractionSubshell() const;
 
   //! Sample an interaction subshell
-  virtual void sampleInteractionSubshell( unsigned& old_subshell_index,
+  virtual void sampleInteractionSubshell( size_t& old_subshell_index,
                                           double& subshell_binding_energy,
                                           Data::SubshellType& subshell ) const = 0;
 
@@ -188,7 +188,7 @@ private:
                                  const ComptonProfile& compton_profile ) const;
 
   // The ENDF subshell interaction probabilities
-  std::unique_ptr<const Utility::TabularOneDDistribution>
+  std::unique_ptr<const Utility::TabularUnivariateDistribution>
   d_endf_subshell_occupancy_distribution;
 
   // The ENDF subshell order

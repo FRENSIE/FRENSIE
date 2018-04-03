@@ -31,8 +31,9 @@ public:
   static void createIncoherentReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::vector<std::shared_ptr<PhotoatomicReaction> >&
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::vector<std::shared_ptr<const PhotoatomicReaction> >&
        incoherent_reactions,
        const IncoherentModelType incoherent_model,
        const double kahn_sampling_cutoff_energy );
@@ -41,46 +42,52 @@ public:
   static void createCoherentReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& coherent_reaction );
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& coherent_reaction );
 
   //! Create the pair production photoatomic reaction
   static void createPairProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& pair_production_reaction,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& pair_production_reaction,
        const bool use_detailed_pair_production_data );
 
   //! Create the triplet production photoatomic reaction
   static void createTripletProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& triplet_production_reaction,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& triplet_production_reaction,
        const bool use_detailed_triplet_production_data );
 
   //! Create the total photoelectric photoatomic reaction
   static void createTotalPhotoelectricReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& photoelectric_reaction );
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& photoelectric_reaction );
 
   //! Create the subshell photoelectric photoatomic reactions
   static void createSubshellPhotoelectricReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::vector<std::shared_ptr<PhotoatomicReaction> >&
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::vector<std::shared_ptr<const PhotoatomicReaction> >&
        subshell_photoelectric_reactions );
 
   //! Create the heating photoatomic reaction
   static void createHeatingReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& heating_reaction );
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& heating_reaction );
 
 private:
 

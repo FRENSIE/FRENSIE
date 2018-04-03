@@ -34,7 +34,8 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const Data::SubshellType interaction_subshell,
     const double binding_energy );
 
@@ -46,13 +47,13 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
   PhotoatomicReactionType getReactionType() const override;
 
   //! Get the interaction subshell (non-standard interface)
-  Data::SubshellType getSubshell() const override;
+  Data::SubshellType getSubshell() const;
 
   //! Get the subshell binding energy (non-standard interface)
   double getSubshellBindingEnergy() const;
 
   //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
   //! Simulate the reaction
   void react( PhotonState& photon,

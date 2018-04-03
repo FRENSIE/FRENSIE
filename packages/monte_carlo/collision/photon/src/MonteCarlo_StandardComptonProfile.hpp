@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfile.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_UnitTraits.hpp"
 
 namespace MonteCarlo{
@@ -29,15 +29,15 @@ class StandardComptonProfile : public ComptonProfile
 private:
 
   //! The stored momentum quantity type
-  typedef typename Utility::UnitAwareOneDDistribution<StoredMomentumUnit,StoredInverseMomentumUnit>::IndepQuantity StoredMomentumQuantity;
+  typedef typename Utility::UnitAwareUnivariateDistribution<StoredMomentumUnit,StoredInverseMomentumUnit>::IndepQuantity StoredMomentumQuantity;
 
   //! The stored profile quantity type
-  typedef typename Utility::UnitAwareOneDDistribution<StoredMomentumUnit,StoredInverseMomentumUnit>::DepQuantity StoredProfileQuantity;
+  typedef typename Utility::UnitAwareUnivariateDistribution<StoredMomentumUnit,StoredInverseMomentumUnit>::DepQuantity StoredProfileQuantity;
 
 public:
 
   //! Constructor
-  StandardComptonProfile( const SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >& raw_compton_profile );
+  StandardComptonProfile( const SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >& raw_compton_profile );
 
   //! Destructor
   ~StandardComptonProfile()
@@ -67,7 +67,7 @@ public:
 private:
 
   // The raw Compton profile
-  SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >
+  SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >
   d_raw_compton_profile;
 };
 

@@ -62,7 +62,7 @@ void CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
                        SmartPtr<const FormFactorSquared>& form_factor_squared )
 {
   // The stored recoil momentum squared has units of inverse squared cm.
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_form_factor_squared(
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_form_factor_squared(
            new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseSquareCentimeter,void>(
               raw_photoatom_data.getWallerHartreeSquaredAtomicFormFactorSquaredMomentumGrid(),
               raw_photoatom_data.getWallerHartreeSquaredAtomicFormFactor() ) );

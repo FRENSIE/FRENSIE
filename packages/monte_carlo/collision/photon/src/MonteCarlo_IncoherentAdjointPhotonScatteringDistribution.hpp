@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{

@@ -17,7 +17,7 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename StoredSqrArgUnit, template<typename> class SmartPointer>
-StandardFormFactorSquared<StoredSqrArgUnit,SmartPointer>::StandardFormFactorSquared( const SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredSqrArgUnit,void> >& raw_form_factor_squared )
+StandardFormFactorSquared<StoredSqrArgUnit,SmartPointer>::StandardFormFactorSquared( const SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredSqrArgUnit,void> >& raw_form_factor_squared )
   : d_raw_form_factor_squared( raw_form_factor_squared )
 {
   // Make sure the raw form factor squared is valid

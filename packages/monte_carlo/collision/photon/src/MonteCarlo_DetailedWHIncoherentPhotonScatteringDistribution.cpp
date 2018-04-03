@@ -78,10 +78,10 @@ void DetailedWHIncoherentPhotonScatteringDistribution::scatterPhoton(
 
 // Sample the subshell that is interacted with
 void DetailedWHIncoherentPhotonScatteringDistribution::sampleInteractionSubshell(
-				     Data::SubshellType& shell_of_interaction ) const
+			       Data::SubshellType& shell_of_interaction ) const
 {
   // Sample the shell that is interacted with
-  unsigned shell_index;
+  size_t shell_index;
 
   d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
 

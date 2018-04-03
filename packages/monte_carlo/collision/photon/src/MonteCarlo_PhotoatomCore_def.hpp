@@ -24,9 +24,10 @@ namespace MonteCarlo{
 template<typename InterpPolicy>
 PhotoatomCore::PhotoatomCore(
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const ReactionMap& standard_scattering_reactions,
-    const ReactionMap& standard_absorption_reactions,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
+    const ConstReactionMap& standard_scattering_reactions,
+    const ConstReactionMap& standard_absorption_reactions,
     const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
     const bool processed_atomic_cross_sections,
     const InterpPolicy policy )
@@ -39,19 +40,19 @@ PhotoatomCore::PhotoatomCore(
     d_grid_searcher( grid_searcher )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+  testPrecondition( energy_grid->size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
   // There must be at least one reaction specified
   testPrecondition( standard_scattering_reactions.size() +
 		    standard_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !relaxation_model.is_null() );
+  testPrecondition( relaxation_model.get() );
   // Make sure the hash-based grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
+  testPrecondition( grid_searcher.get() );
 
   // Place reactions in the appropriate group
-  ReactionMap::const_iterator rxn_type_pointer =
+  ConstReactionMap::const_iterator rxn_type_pointer =
     standard_scattering_reactions.begin();
 
   while( rxn_type_pointer != standard_scattering_reactions.end() )
@@ -128,7 +129,7 @@ void PhotoatomCore::createTotalAbsorptionReaction(
 		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
 
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
@@ -137,7 +138,7 @@ void PhotoatomCore::createTotalAbsorptionReaction(
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     double raw_cross_section = 0.0;
 
@@ -146,7 +147,7 @@ void PhotoatomCore::createTotalAbsorptionReaction(
     while( absorption_reaction != absorption_reactions.end() )
     {
       raw_cross_section +=
-	absorption_reaction->second->getCrossSection( energy_grid[i] );
+	absorption_reaction->second->getCrossSection( (*energy_grid)[i] );
 
       ++absorption_reaction;
     }
@@ -191,7 +192,7 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
 		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
 
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
@@ -200,14 +201,14 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     absorption_reaction = absorption_reactions.begin();
 
     double raw_cross_section = 0.0;
 
     const double raw_energy =
-      InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+      InterpPolicy::recoverProcessedIndepVar( (*energy_grid)[i] );
 
     while( absorption_reaction != absorption_reactions.end() )
     {
@@ -259,9 +260,9 @@ void PhotoatomCore::createTotalReaction(
       std::shared_ptr<PhotoatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
   // Make sure the absorption reaction has been created
-  testPrecondition( !total_absorption_reaction.is_null() );
+  testPrecondition( total_absorption_reaction.get() );
 
   std::shared_ptr<std::vector<double> >
     total_cross_section( new std::vector<double> );
@@ -270,17 +271,17 @@ void PhotoatomCore::createTotalReaction(
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
     double raw_cross_section =
-      total_absorption_reaction->getCrossSection( energy_grid[i] );
+      total_absorption_reaction->getCrossSection( (*energy_grid)[i] );
 
     while( scattering_reaction != scattering_reactions.end() )
     {
       raw_cross_section +=
-	scattering_reaction->second->getCrossSection( energy_grid[i] );
+	scattering_reaction->second->getCrossSection( (*energy_grid)[i] );
 
       ++scattering_reaction;
     }
@@ -326,9 +327,9 @@ void PhotoatomCore::createProcessedTotalReaction(
    std::shared_ptr<PhotoatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
   // Make sure the absorption reaction has been created
-  testPrecondition( !total_absorption_reaction.is_null() );
+  testPrecondition( total_absorption_reaction.get() );
 
   std::shared_ptr<std::vector<double> >
     total_cross_section( new std::vector<double> );
@@ -337,12 +338,12 @@ void PhotoatomCore::createProcessedTotalReaction(
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
     const double raw_energy =
-      InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+      InterpPolicy::recoverProcessedIndepVar( (*energy_grid)[i] );
 
     double raw_cross_section =
       total_absorption_reaction->getCrossSection( raw_energy );

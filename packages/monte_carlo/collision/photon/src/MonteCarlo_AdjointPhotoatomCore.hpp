@@ -46,32 +46,33 @@ public:
   typedef AdjointPhotonState ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<AdjointPhotoatomicReactionType,
-                               std::shared_ptr<AdjointPhotoatomicReaction> >
+  typedef std::unordered_map<AdjointPhotoatomicReactionType,
+                             std::shared_ptr<AdjointPhotoatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<AdjointPhotoatomicReactionType,
-                               std::shared_ptr<const AdjointPhotoatomicReaction> >
+  typedef std::unordered_map<AdjointPhotoatomicReactionType,
+                             std::shared_ptr<const AdjointPhotoatomicReaction> >
   ConstReactionMap;
 
   //! Typedef for the line energy reaction map
-  typedef boost::unordered_map<double,ReactionMap> LineEnergyReactionMap;
+  typedef std::unordered_map<double,ReactionMap> LineEnergyReactionMap;
 
   //! Typedef for the const line energy reaction map
-  typedef boost::unordered_map<double,ConstReactionMap> ConstLineEnergyReactionMap;
+  typedef std::unordered_map<double,ConstReactionMap> ConstLineEnergyReactionMap;
 
   //! Default constructor
   AdjointPhotoatomCore();
 
   //! Constructor
   AdjointPhotoatomCore(
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const std::shared_ptr<const std::vector<double> >& critical_line_energies,
-      const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
-      const ReactionMap& scattering_reactions,
-      const ReactionMap& absorption_reactions,
-      const LineEnergyReactionMap& line_energy_reactions );
+     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+     grid_searcher,
+     const std::shared_ptr<const std::vector<double> >& critical_line_energies,
+     const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
+     const ConstReactionMap& scattering_reactions,
+     const ConstReactionMap& absorption_reactions,
+     const ConstLineEnergyReactionMap& line_energy_reactions );
 
   //! Copy constructor
   AdjointPhotoatomCore( const AdjointPhotoatomCore& instance );
@@ -99,7 +100,7 @@ public:
   const std::vector<double>& getCriticalLineEnergies() const;
 
   //! Return the hash-based grid searcher
-  const Utility::HashBasedGridSearcher& getGridSearcher() const;
+  const Utility::HashBasedGridSearcher<double>& getGridSearcher() const;
 
   //! Test if all of the reactions share a common energy grid
   bool hasSharedEnergyGrid() const;
@@ -128,7 +129,7 @@ private:
   std::shared_ptr<const std::vector<double> > d_critical_line_energies;
 
   // The hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> > d_grid_searcher;
 };
 
 // Return the total forward reaction
@@ -163,7 +164,7 @@ AdjointPhotoatomCore::getCriticalLineEnergies() const
 }
 
 // Return the hash-based grid searcher
-inline const Utility::HashBasedGridSearcher& AdjointPhotoatomCore::getGridSearcher() const
+inline const Utility::HashBasedGridSearcher<double>& AdjointPhotoatomCore::getGridSearcher() const
 {
   return *d_grid_searcher;
 }

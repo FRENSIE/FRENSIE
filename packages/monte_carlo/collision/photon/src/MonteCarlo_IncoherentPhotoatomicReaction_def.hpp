@@ -38,7 +38,8 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
        const std::shared_ptr<const IncoherentPhotonScatteringDistribution>&
        scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -49,8 +50,6 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
 {
   // Make sure the scattering function is valid
   testPrecondition( scattering_distribution.get() );
-  // Make sure the grid searcher is valid
-  testPrecondition( grid_searcher.get() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy

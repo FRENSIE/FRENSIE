@@ -12,10 +12,8 @@
 // Std Lib Includes
 #include <string>
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
@@ -64,7 +62,7 @@ public:
 
   //! Return the reactions with scattering distributions
   void getReactionsWithScatteringDistributions(
-			     boost::unordered_set<unsigned>& reactions ) const;
+			     std::unordered_set<unsigned>& reactions ) const;
 
   //! Check if a reaction has a scattering distribution
   bool doesReactionHaveScatteringDistribution( const unsigned reaction ) const;
@@ -97,36 +95,36 @@ protected:
 		   const Utility::ArrayView<const double> dlw_block );
 
   // Returns a map of the reaction types (MT #s) and their AND block ordering
-  const boost::unordered_map<unsigned,unsigned>&
+  const std::unordered_map<unsigned,unsigned>&
   getReactionOrdering() const;
 
   // Returns a map of the reaction types (MT #s) and the scattering ref. frame
   // Note: True = center-of-mass, False = lab
-  const boost::unordered_map<unsigned,bool>&
+  const std::unordered_map<unsigned,bool>&
   getReactionCMScattering() const;
 
   // Returns a set of the reaction types (MT #s) with isotropic scattering only
-  const boost::unordered_set<unsigned>&
+  const std::unordered_set<unsigned>&
   getReactionsWithIsotropicScatteringOnly() const;
 
   // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
-  const boost::unordered_set<unsigned>&
+  const std::unordered_set<unsigned>&
   getReactionsWithCoupledEnergyAngleDist() const;
 
   // Returns a map of the reaction types (MT #s) and the corresp. angular dist
-  const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
+  const std::unordered_map<unsigned,Utility::ArrayView<const double> >&
   getReactionAngularDist() const;
 
   // Returns a map of the reaction types (MT #s) and angular dist start index
-  const boost::unordered_map<unsigned,unsigned>&
+  const std::unordered_map<unsigned,unsigned>&
   getReactionAngularDistStartIndex() const;
 
   // Returns a map of the reaction types (MT #s) and the corresp. energy dist
-  const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
+  const std::unordered_map<unsigned,Utility::ArrayView<const double> >&
   getReactionEnergyDist() const;
 
   // Returns a map of the reaction types (MT #s) and energy dist start index
-  const boost::unordered_map<unsigned,unsigned>&
+  const std::unordered_map<unsigned,unsigned>&
   getReactionEnergyDistStartIndex() const;
 
 private:
@@ -166,34 +164,34 @@ private:
   double d_atomic_weight_ratio;
 
   // A map of the reaction types (MT #s) and their AND block ordering
-  boost::unordered_map<unsigned,unsigned> d_reaction_ordering;
+  std::unordered_map<unsigned,unsigned> d_reaction_ordering;
 
   // A map of the reaction types (MT #s) and the scattering reference frame
   // Note: True = center-of-mass, False = lab
-  boost::unordered_map<unsigned,bool> d_reaction_cm_scattering;
+  std::unordered_map<unsigned,bool> d_reaction_cm_scattering;
 
   // A set of the reaction types (MT #s) with isotropic scattering only
-  boost::unordered_set<unsigned>
+  std::unordered_set<unsigned>
   d_reactions_with_isotropic_scattering_only;
 
   // A set of the reaction types (MT #s) with coupled energy-angle dist
-  boost::unordered_set<unsigned>
+  std::unordered_set<unsigned>
   d_reactions_with_coupled_energy_angle_dist;
 
   // A map of the reaction types (MT #s) and the corresponding angular dist
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >
   d_reaction_angular_dist;
 
   // A map of the reaction types (MT #s) and the angular dist start index
-  boost::unordered_map<unsigned,unsigned>
+  std::unordered_map<unsigned,unsigned>
   d_reaction_angular_dist_start_index;
 
   // A map of the reaction types (MT #s) and the energy dist start index
-  boost::unordered_map<unsigned,unsigned>
+  std::unordered_map<unsigned,unsigned>
   d_reaction_energy_dist_start_index;
 
   // A map of the reaction types (MT #s) and the corresponding energy dist
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >
   d_reaction_energy_dist;
 };
 

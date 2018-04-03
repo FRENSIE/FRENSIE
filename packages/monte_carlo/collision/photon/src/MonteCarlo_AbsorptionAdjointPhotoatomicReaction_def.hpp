@@ -31,7 +31,8 @@ AbsorptionAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::Abso
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const AdjointPhotoatomicReactionType reaction )
   : BaseType( incoming_energy_grid,
               cross_section,

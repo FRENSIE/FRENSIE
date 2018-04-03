@@ -25,45 +25,45 @@ namespace MonteCarlo{
 class AdjointPhotoatomFactory
 {
 
-public:
+// public:
 
-  //! Constructor
-  AdjointPhotoatomFactory(
-              const std::string& cross_sections_xml_directory,
-              const Teuchos::ParameterList& cross_section_table_info,
-              const std::unordered_set<std::string>& adjoint_photoatom_aliases,
-              const SimulationAdjointPhotonProperties& properties,
-              std::ostream* os_message = &std::cout );
+//   //! Constructor
+//   AdjointPhotoatomFactory(
+//               const std::string& cross_sections_xml_directory,
+//               const Teuchos::ParameterList& cross_section_table_info,
+//               const std::unordered_set<std::string>& adjoint_photoatom_aliases,
+//               const SimulationAdjointPhotonProperties& properties,
+//               std::ostream* os_message = &std::cout );
 
-  //! Destructor
-  ~AdjointPhotoatomFactory()
-  { /* ... */ }
+//   //! Destructor
+//   ~AdjointPhotoatomFactory()
+//   { /* ... */ }
 
-  //! Create the map of adjoint photoatoms
-  void createAdjointPhotoatomMap(
-               std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >&
-               adjoint_photoatom_map ) const;
+//   //! Create the map of adjoint photoatoms
+//   void createAdjointPhotoatomMap(
+//                std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >&
+//                adjoint_photoatom_map ) const;
 
-private:
+// private:
 
-  // Create an adjoint photoatom from a Native table
-  void createAdjointPhotoatomFromNativeTable(
-                   const std::string& cross_sections_xml_directory,
-                   const std::string& adjoint_photoatom_alias,
-                   const std::string& native_file_path,
-                   const double atomic_weight,
-                   const SimulationAdjointPhotonProperties& properties );
+//   // Create an adjoint photoatom from a Native table
+//   void createAdjointPhotoatomFromNativeTable(
+//                    const std::string& cross_sections_xml_directory,
+//                    const std::string& adjoint_photoatom_alias,
+//                    const std::string& native_file_path,
+//                    const double atomic_weight,
+//                    const SimulationAdjointPhotonProperties& properties );
 
-  // The adjoint photoatom map
-  std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
-  d_adjoint_photoatom_name_map;
+//   // The adjoint photoatom map
+//   std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
+//   d_adjoint_photoatom_name_map;
 
-  // The table map
-  std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
-  d_adjoint_photoatomic_table_name_map;
+//   // The table map
+//   std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
+//   d_adjoint_photoatomic_table_name_map;
 
-  // The message output stream
-  std::ostream* d_os_message;
+//   // The message output stream
+//   std::ostream* d_os_message;
 };
 
 } // end MonteCarlo namespace

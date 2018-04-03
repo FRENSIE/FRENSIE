@@ -29,24 +29,25 @@ void PhotoatomACEFactory::createPhotoatomCore(
          std::shared_ptr<PhotoatomCore>& photoatom_core )
 {
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
   photoatom_core.reset( new PhotoatomCore() );
 
-  Photoatom::ReactionMap scattering_reactions, absorption_reactions;
+  Photoatom::ConstReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
   std::shared_ptr<std::vector<double> > energy_grid(
-       new std::vector<double>( raw_photoatom_data.extractPhotonEnergyGrid() );
+        new std::vector<double>( raw_photoatom_data.extractPhotonEnergyGrid().begin(),
+                                 raw_photoatom_data.extractPhotonEnergyGrid().end() ) );
 
-  std::shared_ptr<Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> > grid_searcher(
          new Utility::StandardHashBasedGridSearcher<std::vector<double>, true>(
                                 energy_grid,
                                 properties.getNumberOfPhotonHashGridBins() ) );
 
   // Create the incoherent scattering reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[TOTAL_INCOHERENT_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createIncoherentReaction(
@@ -60,7 +61,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
   // Create the coherent scattering reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COHERENT_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createCoherentReaction( raw_photoatom_data,
@@ -71,7 +72,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
   // Create the pair production reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[PAIR_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createPairProductionReaction(
@@ -85,7 +86,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   // Create the photoelectric reaction(s)
   if( properties.isAtomicRelaxationModeOn() )
   {
-    std::vector<std::shared_ptr<PhotoatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<const PhotoatomicReaction> > reaction_pointers;
 
     PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 							   raw_photoatom_data,
@@ -101,7 +102,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   }
   else
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer =
+    Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       absorption_reactions[TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
@@ -112,7 +113,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   }
 
   // Create the heating reaction
-  Photoatom::ReactionMap::mapped_type& reaction_pointer =
+  Photoatom::ConstReactionMap::mapped_type& reaction_pointer =
       absorption_reactions[HEATING_PHOTOATOMIC_REACTION];
 
   PhotoatomicReactionACEFactory::createHeatingReaction( raw_photoatom_data,
@@ -148,7 +149,7 @@ void PhotoatomACEFactory::createPhotoatom(
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
   std::shared_ptr<PhotoatomCore> core;
 

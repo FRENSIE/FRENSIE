@@ -14,7 +14,7 @@ namespace MonteCarlo{
 // Constructor
 template<typename StoredArgUnit, template<typename> class SmartPointer>
 StandardScatteringFunction<StoredArgUnit,SmartPointer>::StandardScatteringFunction(
-  const SmartPointer<const Utility::UnitAwareOneDDistribution<StoredArgUnit,void> >& raw_scattering_function )
+  const SmartPointer<const Utility::UnitAwareUnivariateDistribution<StoredArgUnit,void> >& raw_scattering_function )
   : d_raw_scattering_function( raw_scattering_function )
 {
   // Make sure the pointer is valid

@@ -18,7 +18,7 @@
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentAdjointModelType.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_FullyTabularTwoDDistribution.hpp"
+#include "Utility_FullyTabularBasicBivariateDistribution.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_Vector.hpp"
 
@@ -44,57 +44,64 @@ public:
 
   //! Create the incoherent adjoint photoatomic reaction(s)
   static void createIncoherentReactions(
-       const Data::AdjointElectronPhotonRelaxationDataContainer&
-       raw_adjoint_photoatom_data,
-       const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::vector<std::shared_ptr<AdjointPhotoatomicReaction> >&
-       incoherent_adjoint_reactions,
-       const IncoherentAdjointModelType incoherent_adjoint_model,
-       const std::shared_ptr<const std::vector<double> >& critical_line_energies );
+         const Data::AdjointElectronPhotonRelaxationDataContainer&
+         raw_adjoint_photoatom_data,
+         const std::shared_ptr<const std::vector<double> >& energy_grid,
+         const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+         grid_searcher,
+         std::vector<std::shared_ptr<const AdjointPhotoatomicReaction> >&
+         incoherent_adjoint_reactions,
+         const IncoherentAdjointModelType incoherent_adjoint_model,
+         const std::shared_ptr<const std::vector<double> >&
+         critical_line_energies );
 
   //! Create the coherent adjoint photoatomic reaction
   static void createCoherentReaction(
-      const Data::AdjointElectronPhotonRelaxationDataContainer&
-      raw_adjoint_photoatom_data,
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<AdjointPhotoatomicReaction>& coherent_adjoint_reaction );
+          const Data::AdjointElectronPhotonRelaxationDataContainer&
+          raw_adjoint_photoatom_data,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          std::shared_ptr<const AdjointPhotoatomicReaction>&
+          coherent_adjoint_reaction );
 
   //! Create the pair production adjoint photoatomic reaction
   static void createPairProductionReaction(
-      const Data::AdjointElectronPhotonRelaxationDataContainer&
-      raw_adjoint_photoatom_data,
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<LineEnergyAdjointPhotoatomicReaction>&
-      pair_production_adjoint_reaction );
+          const Data::AdjointElectronPhotonRelaxationDataContainer&
+          raw_adjoint_photoatom_data,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>&
+          pair_production_adjoint_reaction );
 
   //! Create the triplet production adjoint photoatomic reaction
   static void createTripletProductionReaction(
-      const Data::AdjointElectronPhotonRelaxationDataContainer&
-      raw_adjoint_photoatom_data,
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<LineEnergyAdjointPhotoatomicReaction>&
-      triplet_production_adjoint_reaction );
+          const Data::AdjointElectronPhotonRelaxationDataContainer&
+          raw_adjoint_photoatom_data,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>&
+          triplet_production_adjoint_reaction );
 
   //! Create the forward total reaction (only used to get the cross section)
   static void createTotalForwardReaction(
-      const Data::AdjointElectronPhotonRelaxationDataContainer&
-      raw_adjoint_photoatom_data,
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const IncoherentAdjointModelType incoherent_adjoint_model,
-      std::shared_ptr<PhotoatomicReaction>& total_forward_reaction );
+          const Data::AdjointElectronPhotonRelaxationDataContainer&
+          raw_adjoint_photoatom_data,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const IncoherentAdjointModelType incoherent_adjoint_model,
+          std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction );
 
 private:
 
   // Reduce a 2D cross section to a 1D cross section
   static void reduceTwoDCrossSection(
-              const Utility::FullyTabularTwoDDistribution& two_d_cross_section,
-              const std::shared_ptr<const std::vector<double> >& energy_grid,
-              std::vector<double>& cross_section );
+    const Utility::FullyTabularBasicBivariateDistribution& two_d_cross_section,
+    const std::vector<double>& energy_grid,
+    std::vector<double>& cross_section );
 
   // Slice the cross section based on the max energy
   static void sliceCrossSection( const std::vector<double>& full_energy_grid,

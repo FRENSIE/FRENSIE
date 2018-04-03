@@ -167,7 +167,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createScatterin
           raw_adjoint_photoatom_data,
           std::shared_ptr<const ScatteringFunction>& scattering_function )
 {
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseCentimeter,void>(
    raw_adjoint_photoatom_data.getWallerHartreeScatteringFunctionMomentumGrid(),
    raw_adjoint_photoatom_data.getWallerHartreeScatteringFunction() ) );
@@ -184,7 +184,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createOccupatio
           const unsigned endf_subshell,
           std::shared_ptr<const OccupationNumber>& occupation_number )
 {
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,void> > raw_occupation_number(
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::MeCMomentum,void> > raw_occupation_number(
     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,void>(
      raw_adjoint_photoatom_data.getOccupationNumberMomentumGrid(endf_subshell),
      raw_adjoint_photoatom_data.getOccupationNumber( endf_subshell ) ) );
@@ -201,7 +201,7 @@ void IncoherentAdjointPhotonScatteringDistributionNativeFactory::createComptonPr
           const unsigned endf_subshell,
           std::shared_ptr<const ComptonProfile>& compton_profile )
 {
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
        raw_adjoint_photoatom_data.getComptonProfileMomentumGrid(endf_subshell),
        raw_adjoint_photoatom_data.getComptonProfile( endf_subshell ) ) );

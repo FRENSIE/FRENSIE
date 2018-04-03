@@ -62,7 +62,7 @@ ArrayView<T>::ArrayView( const std::array<U,N>& array )
 
 // Copy constructor
 template<typename T>
-ArrayView<T>::ArrayView( ArrayView<T>& other_view )
+ArrayView<T>::ArrayView( const ArrayView<T>& other_view )
   : View<T*>( other_view )
 { /* ... */ }
 
@@ -75,7 +75,7 @@ ArrayView<T>::ArrayView( const ArrayView<U>& other_view )
 
 // Assignment operator
 template<typename T>
-ArrayView<T>& ArrayView<T>::operator=( ArrayView<T>& other_view )
+ArrayView<T>& ArrayView<T>::operator=( const ArrayView<T>& other_view )
 {
   if( this != &other_view )
     View<T*>::operator=( other_view );

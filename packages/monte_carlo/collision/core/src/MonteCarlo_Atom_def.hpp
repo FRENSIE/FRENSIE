@@ -16,12 +16,13 @@ namespace MonteCarlo{
 // Constructor
 template<typename AtomCore>
 Atom<AtomCore>::Atom(
-    const std::string& name,
-    const unsigned atomic_number,
-    const double atomic_weight,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Atom<AtomCore>::ReactionMap& scattering_reactions,
-    const Atom<AtomCore>::ReactionMap& absorption_reactions )
+          const std::string& name,
+          const unsigned atomic_number,
+          const double atomic_weight,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const ConstReactionMap& scattering_reactions,
+          const ConstReactionMap& absorption_reactions )
   : d_name( name ),
     d_atomic_number( atomic_number ),
     d_atomic_weight( atomic_weight ),
@@ -33,7 +34,7 @@ Atom<AtomCore>::Atom(
   testPrecondition( scattering_reactions.size() +
                     absorption_reactions.size() > 0 );
   // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
+  testPrecondition( grid_searcher.get() );
 }
 
 // Constructor (from a core)
@@ -130,7 +131,7 @@ template<typename AtomCore>
 double Atom<AtomCore>::getSurvivalProbability( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double survival_prob;
@@ -157,7 +158,7 @@ double Atom<AtomCore>::getSurvivalProbability( const double energy ) const
     survival_prob = 1.0;
 
   // Make sure the survival probability is valid
-  testPostcondition( !ST::isnaninf( survival_prob ) );
+  testPostcondition( !QT::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );
   testPostcondition( survival_prob <= 1.0 );
 
@@ -169,7 +170,7 @@ template<typename AtomCore>
 double Atom<AtomCore>::getAtomicSurvivalProbability( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double survival_prob;
@@ -195,7 +196,7 @@ double Atom<AtomCore>::getAtomicSurvivalProbability( const double energy ) const
     survival_prob = 1.0;
 
   // Make sure the survival probability is valid
-  testPostcondition( !ST::isnaninf( survival_prob ) );
+  testPostcondition( !QT::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );
   testPostcondition( survival_prob <= 1.0 );
 
@@ -207,7 +208,7 @@ template<typename AtomCore>
 double Atom<AtomCore>::getNuclearSurvivalProbability( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double survival_prob;
@@ -222,7 +223,7 @@ double Atom<AtomCore>::getNuclearSurvivalProbability( const double energy ) cons
     survival_prob = 1.0;
 
   // Make sure the survival probability is valid
-  testPostcondition( !ST::isnaninf( survival_prob ) );
+  testPostcondition( !QT::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );
   testPostcondition( survival_prob <= 1.0 );
 

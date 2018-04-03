@@ -32,16 +32,17 @@ namespace MonteCarlo{
 void PhotoatomicReactionACEFactory::createIncoherentReaction(
     const Data::XSSEPRDataExtractor& raw_photoatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PhotoatomicReaction>& incoherent_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
+    std::shared_ptr<const PhotoatomicReaction>& incoherent_reaction,
     const IncoherentModelType incoherent_model,
     const double kahn_sampling_cutoff_energy )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   // Extract the cross section
   std::shared_ptr<std::vector<double> >
@@ -50,7 +51,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			    energy_grid,
+			    *energy_grid,
 			    raw_photoatom_data.extractIncoherentCrossSection(),
 			    *incoherent_cross_section,
 			    threshold_energy_index );
@@ -77,14 +78,15 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 void PhotoatomicReactionACEFactory::createCoherentReaction(
        const Data::XSSEPRDataExtractor& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& coherent_reaction )
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   // Extract the cross section
   std::shared_ptr<std::vector<double> >
@@ -92,7 +94,7 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			    energy_grid,
+			    *energy_grid,
 			    raw_photoatom_data.extractCoherentCrossSection(),
 			    *coherent_cross_section,
 			    threshold_energy_index );
@@ -117,15 +119,16 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
 void PhotoatomicReactionACEFactory::createPairProductionReaction(
     const Data::XSSEPRDataExtractor& raw_photoatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PhotoatomicReaction>& pair_production_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
+    std::shared_ptr<const PhotoatomicReaction>& pair_production_reaction,
     const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   // Extract the cross section
   std::shared_ptr<std::vector<double> >
@@ -133,7 +136,7 @@ void PhotoatomicReactionACEFactory::createPairProductionReaction(
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			energy_grid,
+			*energy_grid,
 			raw_photoatom_data.extractPairProductionCrossSection(),
 			*pair_production_cross_section,
 			threshold_energy_index );
@@ -152,14 +155,15 @@ void PhotoatomicReactionACEFactory::createPairProductionReaction(
 void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
     const Data::XSSEPRDataExtractor& raw_photoatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PhotoatomicReaction>& photoelectric_reaction )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
+    std::shared_ptr<const PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   // Extract the cross section
   std::shared_ptr<std::vector<double> >
@@ -167,7 +171,7 @@ void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			energy_grid,
+			*energy_grid,
 			raw_photoatom_data.extractPhotoelectricCrossSection(),
 			*photoelectric_cross_section,
 			threshold_energy_index );
@@ -185,15 +189,16 @@ void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
 void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
     const Data::XSSEPRDataExtractor& raw_photoatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::vector<std::shared_ptr<PhotoatomicReaction> >&
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
+    std::vector<std::shared_ptr<const PhotoatomicReaction> >&
     subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   subshell_photoelectric_reactions.clear();
 
@@ -218,14 +223,15 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
     raw_photoatom_data.extractSPHELBlock();
 
   unsigned num_subshells = subshell_order.size();
-  unsigned num_energy_points = energy_grid.size();
+  unsigned num_energy_points = energy_grid->size();
 
   std::shared_ptr<PhotoatomicReaction> subshell_photoelectric_reaction;
 
   for( unsigned subshell = 0; subshell < num_subshells; ++subshell )
   {
-    std::shard_ptr<std::vector<double> >
-      subshell_cross_section( new std::vector<double> >
+    std::shared_ptr<std::vector<double> >
+      subshell_cross_section( new std::vector<double> );
+    
     unsigned threshold_energy_index;
 
     Utility::ArrayView<const double> raw_subshell_cross_section =
@@ -233,9 +239,9 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 				   num_energy_points );
 
     PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-						   energy_grid,
-		                                   *raw_subshell_cross_section,
-                                                   subshell_cross_section,
+						   *energy_grid,
+		                                   raw_subshell_cross_section,
+                                                   *subshell_cross_section,
                                                    threshold_energy_index );
 
     // Create the subshell photoelectric reaction
@@ -260,14 +266,15 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 void PhotoatomicReactionACEFactory::createHeatingReaction(
        const Data::XSSEPRDataExtractor& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& heating_reaction )
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   // Extract the cross section
   std::shared_ptr<std::vector<double> >
@@ -275,14 +282,14 @@ void PhotoatomicReactionACEFactory::createHeatingReaction(
   unsigned threshold_energy_index;
 
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			energy_grid,
+			*energy_grid,
 			raw_photoatom_data.extractLHNMBlock(),
 			*heating_cross_section,
 			threshold_energy_index );
 
   // Process the heating cross section (the logarithms are not stored)
-  for( unsigned i = 0; i < heating_cross_section.size(); ++i )
-    heating_cross_section[i] = std::log( heating_cross_section[i] );
+  for( size_t i = 0; i < heating_cross_section->size(); ++i )
+    (*heating_cross_section)[i] = std::log( (*heating_cross_section)[i] );
 
   // Create the heating reaction
   heating_reaction.reset(
@@ -296,7 +303,7 @@ void PhotoatomicReactionACEFactory::createHeatingReaction(
 
 // Remove the zeros from a processed cross section
 void PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-                const std::shared_ptr<const std::vector<double> >& energy_grid,
+                const std::vector<double>& energy_grid,
                 const Utility::ArrayView<const double>& raw_cross_section,
                 std::vector<double>& cross_section,
                 unsigned& threshold_energy_index )

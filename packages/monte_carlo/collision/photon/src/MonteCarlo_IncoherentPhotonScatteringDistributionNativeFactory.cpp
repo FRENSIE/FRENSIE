@@ -204,7 +204,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribu
 		      endf_subshell << " is invalid! " );
 
   // Create the occupation number distribution
-  std::shared_ptr<Utility::OneDDistribution> occupation_number(
+  std::shared_ptr<Utility::UnivariateDistribution> occupation_number(
      new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
 	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
@@ -243,7 +243,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
 		      endf_subshell << " is invalid! " );
 
   // Create the occupation number distribution
-  std::shared_ptr<Utility::OneDDistribution> occupation_number(
+  std::shared_ptr<Utility::UnivariateDistribution> occupation_number(
      new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
 	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
@@ -260,7 +260,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFuncti
 	const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	std::shared_ptr<const ScatteringFunction>& scattering_function )
 {
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
      new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseCentimeter,void>(
 	   raw_photoatom_data.getWallerHartreeScatteringFunctionMomentumGrid(),
 	   raw_photoatom_data.getWallerHartreeScatteringFunction() ) );

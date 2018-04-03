@@ -62,14 +62,14 @@ public:
   explicit ArrayView( const std::array<U,N>& array );
 
   //! Copy constructor
-  ArrayView( ArrayView<T>& other_view );
+  ArrayView( const ArrayView<T>& other_view );
 
   //! Const array view copy constructor
   template<typename U>
   ArrayView( const ArrayView<U>& other_view );
 
   //! Assignment operator
-  ArrayView<T>& operator=( ArrayView<T>& other_view );
+  ArrayView<T>& operator=( const ArrayView<T>& other_view );
 
   //! Const view assignment operator
   template<typename U>

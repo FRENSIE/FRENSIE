@@ -46,7 +46,7 @@ template<typename DerivedHandlerTypeTraits>
 void StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::addMaterial(
      const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
      material,
-     const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
+     const std::vector<Geometry::Model::InternalCellHandle>&
      cells_containing_material )
 {
   // Make sure the material pointer is valid
@@ -70,7 +70,7 @@ void StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::addMaterial(
 // Check if a cell is void
 template<typename DerivedHandlerTypeTraits>
 bool StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::isCellVoid(
-                  const Geometry::ModuleTraits::InternalCellHandle cell ) const
+                  const Geometry::Model::InternalCellHandle cell ) const
 {
   return d_cell_id_material_map.find( cell ) == d_cell_id_material_map.end();
 }
@@ -79,7 +79,7 @@ bool StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::isCellVoid(
 template<typename DerivedHandlerTypeTraits>
 const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
 StandardParticleCollisionHandler<DerivedHandlerTypeTraits>::getMaterial(
-                  const Geometry::ModuleTraits::InternalCellHandle cell ) const
+                  const Geometry::Model::InternalCellHandle cell ) const
 {
   // Make sure the cell is not void
   testPrecondition( !this->isCellVoid( cell ) );

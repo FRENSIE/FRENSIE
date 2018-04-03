@@ -1,0 +1,95 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   MonteCarlo_AdjointMateria.hpp
+//! \author Alex Robinson
+//! \brief  Adjoint material base class declaration
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef MONTE_CARLO_ADJOINT_MATERIAL_HPP
+#define MONTE_CARLO_ADJOINT_MATERIAL_HPP
+
+// FRENSIE Includes
+#include "MonteCarlo_Material.hpp"
+
+namespace MonteCarlo{
+
+//! The adjoint material base class
+template<typename ScatteringCenter>
+class AdjointMaterial : public Material<ScatteringCenter>
+{
+  // Typedef for QuantityTraits
+  typedef Utility::QuantityTraits<double> QT;
+
+  // Typedef for the base type
+  typedef Material<ScatteringCenter> BaseType;
+
+  // Typedef for this type
+  typedef AdjointMaterial<ScatteringCenter> ThisType;
+
+public:
+
+  //! The material handle type
+  typedef typename BaseType::InternalMaterialHandle InternalMaterialHandle;
+
+  //! The scattering center name map
+  typedef typename BaseType::ScatteringCenterNameMap ScatteringCenterNameMap;
+
+  //! Destructor
+  virtual ~AdjointMaterial()
+  { /* ... */ }
+
+  //! Check if the energy corresponds to a line energy reaction
+  bool doesEnergyHaveLineEnergyReaction( const double energy ) const;
+
+  //! Return the macroscopic total cs at the desired line energy (1/cm)
+  double getMacroscopicTotalLineEnergyCrossSection( const double energy) const;
+
+  //! Return the macroscopic total forward cross section (1/cm)
+  double getMacroscopicTotalForwardCrossSection( const double energy ) const;
+
+  //! Return the adjoint weight factor
+  double getAdjointWeightFactor( const double energy ) const;
+
+  //! Return the adjoint line energy weight factor
+  double getAdjointLineEnergyWeightFactor( const double energy ) const;
+
+  //! Collide with an adjoint photon at a line energy
+  void collideAtLineEnergy(
+           typename ScatteringCenter::ParticleStateType& adjoint_photon,
+           ParticleBank& bank ) const;
+
+protected:
+
+  //! Constructor
+  AdjointMaterial( const InternalMaterialHandle id,
+                   const double density,
+                   const ScatteringCenterNameMap& scattering_center_name_map,
+                   const std::vector<double>& scattering_center_fractions,
+                   const std::vector<std::string>& scattering_center_names );
+
+private:
+
+  // Sample the atom that is collided with at a line energy
+  size_t sampleCollisionAtomAtLineEnergy( const double energy ) const;
+
+  // The ScatteringCenter::getTotalLineEnergyCrossSection function wrapper
+  static typename BaseType::MicroscopicCrossSectionEvaluationFunctor
+  s_total_line_energy_cs_evaluation_functor;
+
+  // The ScatteringCenter::getTotalForwardCrossSection function wrapper
+  static typename BaseType::MicroscopicCrossSectionEvaluationFunctor
+  s_total_forward_cs_evaluation_functor;
+
+  // The getMacroscopicTotalLineEnergyCrossSection function wrapper
+  typename BaseType::MacroscopicCrossSectionEvaluationFunctor
+  d_macroscopic_total_line_energy_cs_evaluation_functor;
+};
+  
+} // end MonteCarlo namespace
+
+#endif // end MONTE_CARLO_ADJOINT_MATERIAL_HPP
+
+//---------------------------------------------------------------------------//
+// end MonteCarlo_AdjointMaterial.hpp
+//---------------------------------------------------------------------------//

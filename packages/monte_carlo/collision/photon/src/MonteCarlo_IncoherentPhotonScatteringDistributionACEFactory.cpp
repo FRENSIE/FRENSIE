@@ -148,6 +148,11 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
 							 raw_photoatom_data,
 							 scattering_function );
 
+  // Create the subshell occupancy array
+  std::vector<double> subshell_occupancies( 
+                       raw_photoatom_data.extractSubshellOccupancies().begin(),
+                       raw_photoatom_data.extractSubshellOccupancies().end() );
+  
   // Create the subshell order array
   std::vector<Data::SubshellType> subshell_order;
 
@@ -158,7 +163,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
   incoherent_distribution.reset(
 			 new DetailedWHIncoherentPhotonScatteringDistribution(
 			   scattering_function,
-			   raw_photoatom_data.extractSubshellOccupancies(),
+			   subshell_occupancies,
 			   subshell_order,
 			   kahn_sampling_cutoff_energy ) );
 }
@@ -202,12 +207,21 @@ void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 
   unsigned scatt_func_size = jince_block.size()/2;
 
-  std::vector<double> recoil_momentum( jince_block( 0, scatt_func_size ));
+  Utility::ArrayView<const double> raw_recoil_momentum =
+    jince_block( 0, scatt_func_size );
+  
+  std::vector<double> recoil_momentum( raw_recoil_momentum.begin(),
+                                       raw_recoil_momentum.end() );
 
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function;
+  std::shared_ptr<Utility::UnitAwareUnivariateDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function;
 
+  Utility::ArrayView<const double> raw_scattering_function_values =
+    jince_block( scatt_func_size, scatt_func_size );
+  
   std::vector<double> scattering_function_values(
-			     jince_block( scatt_func_size, scatt_func_size ) );
+                                        raw_scattering_function_values.begin(),
+                                        raw_scattering_function_values.end() );
+			     
 
   raw_scattering_function.reset(
     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>(

@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -40,7 +40,8 @@ public:
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const bool use_detailed_electron_emission_physics = true );
 
   //! Destructor
@@ -96,7 +97,7 @@ private:
   boost::function<unsigned (void)> d_interaction_model_emission;
 
   // pair production secondary energy distribution (in a ratio form)
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> d_secondary_energy_distribution;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> d_secondary_energy_distribution;
 
   // The photon energy grid
   static std::vector<double> s_photon_energy_grid;

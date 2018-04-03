@@ -42,7 +42,8 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
    const std::shared_ptr<const std::vector<double> >& cross_section,
    const unsigned threshold_energy_index,
-   const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+   const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+   grid_searcher,
    const std::shared_ptr<const SubshellIncoherentPhotonScatteringDistribution>&
    scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -54,8 +55,6 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
 {
   // Make sure the scattering distribution is valid
   testPrecondition( scattering_distribution.get() );
-  // Make sure the grid searcher is valid
-  testPrecondition( grid_searcher.get() );
 
   d_reaction_type = convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
 				    d_scattering_distribution->getSubshell() );

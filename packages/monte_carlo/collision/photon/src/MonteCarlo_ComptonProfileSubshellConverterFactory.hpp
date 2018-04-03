@@ -25,8 +25,8 @@ public:
   //! Create the converter
   template<template<typename> class SmartPointer>
   static void createConverter(
-		      SmartPointer<ComptonProfileSubshellConverter>& converter,
-		      const unsigned atomic_number );
+                SmartPointer<const ComptonProfileSubshellConverter>& converter,
+                const unsigned atomic_number );
 
 private:
 

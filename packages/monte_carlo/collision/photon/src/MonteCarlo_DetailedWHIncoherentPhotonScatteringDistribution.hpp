@@ -52,7 +52,7 @@ private:
   void sampleInteractionSubshell( Data::SubshellType& shell_of_interaction ) const;
 
   // The shell interaction probabilities
-  std::unique_ptr<const Utility::TabularOneDDistribution>
+  std::unique_ptr<const Utility::TabularUnivariateDistribution>
   d_subshell_occupancy_distribution;
 
   // The subshell ordering

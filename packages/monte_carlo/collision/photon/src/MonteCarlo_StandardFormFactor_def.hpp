@@ -17,7 +17,7 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename StoredArgUnit,template<typename> class SmartPointer>
-StandardFormFactor<StoredArgUnit,SmartPointer>::StandardFormFactor( const SmartPointer<const Utility::UnitAwareOneDDistribution<StoredArgUnit,void> >& raw_form_factor )
+StandardFormFactor<StoredArgUnit,SmartPointer>::StandardFormFactor( const SmartPointer<const Utility::UnitAwareUnivariateDistribution<StoredArgUnit,void> >& raw_form_factor )
   : d_raw_form_factor( raw_form_factor )
 {
   // Make sure the raw form factor is valid

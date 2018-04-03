@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
@@ -45,17 +43,17 @@ public:
   typedef PhotonState ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<PhotoatomicReactionType,
+  typedef std::unordered_map<PhotoatomicReactionType,
 			       std::shared_ptr<PhotoatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<PhotoatomicReactionType,
+  typedef std::unordered_map<PhotoatomicReactionType,
 			       std::shared_ptr<const PhotoatomicReaction> >
   ConstReactionMap;
 
   // Reactions that should be treated as absorption
-  static const boost::unordered_set<PhotoatomicReactionType>
+  static const std::unordered_set<PhotoatomicReactionType>
   absorption_reaction_types;
 
   //! Default constructor
@@ -65,9 +63,10 @@ public:
   template<typename InterpPolicy>
   PhotoatomCore(
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const ReactionMap& standard_scattering_reactions,
-       const ReactionMap& standard_absorption_reactions,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const ConstReactionMap& standard_scattering_reactions,
+       const ConstReactionMap& standard_absorption_reactions,
        const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
        const bool processed_atomic_cross_sections,
        const InterpPolicy policy );
@@ -80,7 +79,8 @@ public:
      const ConstReactionMap& absorption_reactions,
      const ConstReactionMap& miscellaneous_reactions,
      const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
-     const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher );
+     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+     grid_searcher );
 
   //! Copy constructor
   PhotoatomCore( const PhotoatomCore& instance );
@@ -111,7 +111,7 @@ public:
   const AtomicRelaxationModel& getAtomicRelaxationModel() const;
 
   //! Return the hash-based grid searcher
-  const Utility::HashBasedGridSearcher& getGridSearcher() const;
+  const Utility::HashBasedGridSearcher<double>& getGridSearcher() const;
 
   //! Test if all of the reactions share a common energy grid
   bool hasSharedEnergyGrid() const;
@@ -119,7 +119,7 @@ public:
 private:
 
   // Set the default absorption reaction types
-  static boost::unordered_set<PhotoatomicReactionType>
+  static std::unordered_set<PhotoatomicReactionType>
   setDefaultAbsorptionReactionTypes();
 
   // Create the total absorption reaction
@@ -171,7 +171,8 @@ private:
   std::shared_ptr<const AtomicRelaxationModel> d_relaxation_model;
 
   // The hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> >
+  d_grid_searcher;
 };
 
 // Return the total reaction
@@ -216,7 +217,7 @@ PhotoatomCore::getAtomicRelaxationModel() const
 }
 
 // Return the hash-based grid searcher
-inline const Utility::HashBasedGridSearcher& PhotoatomCore::getGridSearcher() const
+inline const Utility::HashBasedGridSearcher<double>& PhotoatomCore::getGridSearcher() const
 {
   return *d_grid_searcher;
 }

@@ -54,7 +54,7 @@ void ThompsonScatteringDistribution::sampleAndRecordTrialsImpl(
 std::shared_ptr<const FormFactorSquared>
 ThompsonScatteringDistribution::getDummyFormFactorSquaredDistribution()
 {
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_distribution(
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::InverseSquareCentimeter,void> > raw_distribution(
          new Utility::UnitAwareUniformDistribution<Utility::Units::InverseSquareCentimeter,void>(
                                 0.0*Utility::Units::inverse_square_centimeter,
                                 std::numeric_limits<double>::max()*

@@ -87,16 +87,14 @@ PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairPro
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
        const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
               grid_searcher )
 {
-  // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
-
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
 
@@ -462,23 +460,21 @@ template<typename InterpPolicy, bool processed_cross_section>
 void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::initializeSecondaryEnergyDistribution()
 {
   // Get the function data
-  Utility::FullyTabularTwoDDistribution::DistributionType
-    function_data( s_photon_energy_grid.size() );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( s_photon_energy_grid.size() );
 
-  for( unsigned n = 0; n < s_photon_energy_grid.size(); ++n )
+  for( size_t n = 0; n < s_photon_energy_grid.size(); ++n )
   {
-    // Set the photon energy in units of m_ec**2
-    function_data[n].first = s_photon_energy_grid[n];
-
     // Set the secondary energy ratios at the incoming energy
-    function_data[n].second.reset(
-      new const Utility::EquiprobableBinDistribution( s_outgoing_energy_ratio[n] ) );
+    secondary_dists[n].reset(
+      new Utility::EquiprobableBinDistribution( s_outgoing_energy_ratio[n] ) );
   }
 
   // Create the distribution
   d_secondary_energy_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
-            function_data ) );
+   new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                                                          s_photon_energy_grid,
+                                                          secondary_dists ) );
 }
 
 } // end MonteCarlo namespace

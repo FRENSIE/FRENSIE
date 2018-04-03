@@ -13,15 +13,15 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-const boost::unordered_set<PhotoatomicReactionType>
+const std::unordered_set<PhotoatomicReactionType>
 PhotoatomCore::absorption_reaction_types =
   PhotoatomCore::setDefaultAbsorptionReactionTypes();
 
 // Set the default absorption reaction types
-boost::unordered_set<PhotoatomicReactionType>
+std::unordered_set<PhotoatomicReactionType>
 PhotoatomCore::setDefaultAbsorptionReactionTypes()
 {
-  boost::unordered_set<PhotoatomicReactionType> tmp_absorption_reaction_types;
+  std::unordered_set<PhotoatomicReactionType> tmp_absorption_reaction_types;
   tmp_absorption_reaction_types.insert(
 				    TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   tmp_absorption_reaction_types.insert(
@@ -130,7 +130,8 @@ PhotoatomCore::PhotoatomCore(
    const ConstReactionMap& absorption_reactions,
    const ConstReactionMap& miscellaneous_reactions,
    const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
-   const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
+   const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+   grid_searcher )
   : d_total_reaction( total_reaction ),
     d_total_absorption_reaction( total_absorption_reaction ),
     d_scattering_reactions( d_scattering_reactions ),
@@ -140,17 +141,17 @@ PhotoatomCore::PhotoatomCore(
     d_grid_searcher( grid_searcher )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !total_reaction.is_null() );
+  testPrecondition( total_reaction.get() );
   // Make sure the absorption reaction is valid
-  testPrecondition( !total_absorption_reaction.is_null() );
+  testPrecondition( total_absorption_reaction.get() );
   // Make sure the scattering reactions map is valid
   testPrecondition( scattering_reactions.size() > 0 );
   // Make sure the absorption reactions map is valid
   testPrecondition( absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !relaxation_model.is_null() );
+  testPrecondition( relaxation_model.get() );
   // Make sure the grid searcher is valid
-  testPrecondition( !d_grid_searcher.is_null() );
+  testPrecondition( d_grid_searcher.get() );
 }
 
 //! Copy constructor
@@ -164,32 +165,32 @@ PhotoatomCore::PhotoatomCore( const PhotoatomCore& instance )
     d_grid_searcher( instance.d_grid_searcher )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !instance.d_total_reaction.is_null() );
+  testPrecondition( instance.d_total_reaction.get() );
   // Make sure the absorption reaction is valid
-  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  testPrecondition( instance.d_total_absorption_reaction.get() );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
 		    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !instance.d_relaxation_model.is_null() );
+  testPrecondition( instance.d_relaxation_model.get() );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 }
 
 //! Assignment Operator
 PhotoatomCore& PhotoatomCore::operator=( const PhotoatomCore& instance )
 {
   // Make sure the total reaction is valid
-  testPrecondition( !instance.d_total_reaction.is_null() );
+  testPrecondition( instance.d_total_reaction.get() );
   // Make sure the absorption reaction is valid
-  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  testPrecondition( instance.d_total_absorption_reaction.get() );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
 		    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !instance.d_relaxation_model.is_null() );
+  testPrecondition( instance.d_relaxation_model.get() );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 
   // Avoid self-assignment
   if( this != &instance )

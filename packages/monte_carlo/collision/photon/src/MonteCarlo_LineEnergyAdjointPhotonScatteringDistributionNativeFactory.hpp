@@ -54,7 +54,7 @@ private:
 
   // Create an energy distribution from the raw distribution data
   static void createEnergyDistributionFromRawDistData(
-                       std::shared_ptr<const Utility::TabularOneDDistribution>&
+                       std::shared_ptr<const Utility::TabularUnivariateDistribution>&
                        energy_distribution,
                        const std::vector<double>& energy_grid,
                        const std::vector<double>& energy_dist_values,

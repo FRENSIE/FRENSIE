@@ -14,18 +14,18 @@ namespace MonteCarlo{
 
 // Constructor
 AdjointPhotoatom::AdjointPhotoatom(
-                      const std::string& name,
-                      const unsigned atomic_number,
-                      const double atomic_weight,
-                      const std::shared_ptr<const Utility::HashBasedGridSearcher>&
-                      grid_searcher,
-                      const std::shared_ptr<const std::vector<double> >&
-                      critical_line_energies,
-                      const std::shared_ptr<const PhotoatomicReaction>&
-                      total_forward_reaction,
-                      const ReactionMap& scattering_reactions,
-                      const ReactionMap& absorption_reactions,
-                      const LineEnergyReactionMap& line_energy_reactions )
+          const std::string& name,
+          const unsigned atomic_number,
+          const double atomic_weight,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const std::shared_ptr<const std::vector<double> >&
+          critical_line_energies,
+          const std::shared_ptr<const PhotoatomicReaction>&
+          total_forward_reaction,
+          const ConstReactionMap& scattering_reactions,
+          const ConstReactionMap& absorption_reactions,
+          const ConstLineEnergyReactionMap& line_energy_reactions )
   : Atom<AdjointPhotoatomCore>( name,
                                 atomic_number,
                                 atomic_weight,
@@ -39,7 +39,7 @@ AdjointPhotoatom::AdjointPhotoatom(
   testPrecondition( scattering_reactions.size() +
                     absorption_reactions.size() > 0 );
   // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
+  testPrecondition( grid_searcher.get() );
 
   // Populate the core
   Atom<AdjointPhotoatomCore>::setCore(
@@ -59,7 +59,7 @@ bool AdjointPhotoatom::doesEnergyHaveLineEnergyReaction(
                                                     const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   return d_core.getLineEnergyReactions().find( energy ) !=
@@ -76,7 +76,7 @@ double AdjointPhotoatom::getTotalLineEnergyCrossSection(
                                                     const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double cross_section = 0.0;
@@ -110,7 +110,7 @@ double AdjointPhotoatom::getAtomicTotalForwardCrossSection(
                                                     const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
   
   return d_core.getTotalForwardReaction().getCrossSection( energy );
@@ -123,7 +123,7 @@ double AdjointPhotoatom::getAtomicTotalForwardCrossSection(
 double AdjointPhotoatom::getAdjointWeightFactor( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double weight_factor;
@@ -150,7 +150,7 @@ double AdjointPhotoatom::getAtomicAdjointWeightFactor(
                                                     const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double weight_factor;
@@ -177,7 +177,7 @@ double AdjointPhotoatom::getNuclearAdjointWeightFactor(
                                                     const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double weight_factor;
@@ -211,7 +211,7 @@ double AdjointPhotoatom::getAdjointLineEnergyWeightFactor(
                                                     const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double weight_factor;

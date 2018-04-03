@@ -28,6 +28,12 @@ class AdjointPhotoatom : public Atom<AdjointPhotoatomCore>
 
 public:
 
+  //! The reaction enum type
+  typedef AdjointPhotoatomicReactionType ReactionEnumType;
+
+  //! The particle state type
+  typedef AdjointPhotonState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef AdjointPhotoatomCore::ReactionMap ReactionMap;
 
@@ -42,18 +48,19 @@ public:
   ConstLineEnergyReactionMap;
 
   //! Constructor
-  AdjointPhotoatom( const std::string& name,
-                    const unsigned atomic_number,
-                    const double atomic_weight,
-                    const std::shared_ptr<const Utility::HashBasedGridSearcher>&
-                    grid_searcher,
-                    const std::shared_ptr<const std::vector<double> >&
-                    critical_line_energies,
-                    const std::shared_ptr<const PhotoatomicReaction>&
-                    total_forward_reaction,
-                    const ReactionMap& scattering_reactions,
-                    const ReactionMap& absorption_reactions,
-                    const LineEnergyReactionMap& line_energy_reactions );
+  AdjointPhotoatom(
+          const std::string& name,
+          const unsigned atomic_number,
+          const double atomic_weight,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const std::shared_ptr<const std::vector<double> >&
+          critical_line_energies,
+          const std::shared_ptr<const PhotoatomicReaction>&
+          total_forward_reaction,
+          const ConstReactionMap& scattering_reactions,
+          const ConstReactionMap& absorption_reactions,
+          const ConstLineEnergyReactionMap& line_energy_reactions );
 
   //! Constructor (from a core)
   AdjointPhotoatom( const std::string& name,

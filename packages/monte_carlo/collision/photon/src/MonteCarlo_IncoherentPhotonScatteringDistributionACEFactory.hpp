@@ -19,7 +19,7 @@
 #include "MonteCarlo_ScatteringFunction.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 

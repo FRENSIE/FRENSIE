@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Return the reactions that are treated as absorption
-const boost::unordered_set<PhotoatomicReactionType>&
+const std::unordered_set<PhotoatomicReactionType>&
 Photoatom::getAbsorptionReactionTypes()
 {
   return PhotoatomCore::absorption_reaction_types;

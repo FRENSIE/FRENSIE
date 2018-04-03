@@ -39,16 +39,14 @@ TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::Trip
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
     const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
               grid_searcher )
 {
-  // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
-
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
 

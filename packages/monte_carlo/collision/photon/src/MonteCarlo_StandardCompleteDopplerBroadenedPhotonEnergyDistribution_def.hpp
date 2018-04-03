@@ -737,7 +737,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   unsigned iterations = 0u;
 
   // Sample the shell that is interacted with
-  unsigned compton_subshell_index;
+  size_t compton_subshell_index;
   double subshell_binding_energy;
 
   // Only allow the selection of subshells where an incoherent interaction is
@@ -870,7 +870,7 @@ unsigned StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 // Return the subshell corresponding to the endf subshell index
 template<typename ComptonProfilePolicy>
 Data::SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshell(
-                                     const unsigned endf_subshell_index ) const
+                                     const size_t endf_subshell_index ) const
 {
   SubshellOrderMapType::left_map::const_iterator endf_subshell_index_it =
     d_endf_subshell_order.left.find( endf_subshell_index );
@@ -912,7 +912,7 @@ const ComptonProfile& StandardCompleteDopplerBroadenedPhotonEnergyDistribution<C
 template<typename ComptonProfilePolicy>
 Data::SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleENDFInteractionSubshell() const
 {
-  unsigned endf_subshell_index;
+  size_t endf_subshell_index;
 
   d_endf_subshell_occupancy_distribution->sampleAndRecordBinIndex(
                                                          endf_subshell_index );

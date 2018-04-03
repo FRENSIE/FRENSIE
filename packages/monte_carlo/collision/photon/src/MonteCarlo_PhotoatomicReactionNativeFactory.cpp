@@ -32,20 +32,20 @@ namespace MonteCarlo{
 void PhotoatomicReactionNativeFactory::createIncoherentReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::vector<std::shared_ptr<PhotoatomicReaction> >&
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::vector<std::shared_ptr<const PhotoatomicReaction> >&
        incoherent_reactions,
        const IncoherentModelType incoherent_model,
        const double kahn_sampling_cutoff_energy )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
-  std::string model_name =
-    convertIncoherentModelTypeToString( incoherent_model );
+  std::string model_name = Utility::toString( incoherent_model );
 
   // Use Waller-Hartree data
   if( model_name.find( "Impulse" ) >= model_name.size() )
@@ -131,14 +131,15 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
 void PhotoatomicReactionNativeFactory::createCoherentReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& coherent_reaction )
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   std::shared_ptr<std::vector<double> > coherent_cross_section(
      new std::vector<double>( raw_photoatom_data.getWallerHartreeCoherentCrossSection().begin(),
@@ -168,15 +169,16 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
 void PhotoatomicReactionNativeFactory::createPairProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& pair_production_reaction,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& pair_production_reaction,
        const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   std::shared_ptr<std::vector<double> > pair_production_cross_section(
      new std::vector<double>( raw_photoatom_data.getPairProductionCrossSection().begin(),
@@ -198,15 +200,16 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
 void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& triplet_production_reaction,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& triplet_production_reaction,
        const bool use_detailed_triplet_production_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   std::shared_ptr<std::vector<double> > triplet_production_cross_section(
      new std::vector<double>( raw_photoatom_data.getTripletProductionCrossSection().begin(),
@@ -228,14 +231,15 @@ void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
 void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& photoelectric_reaction )
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   std::shared_ptr<std::vector<double> > photoelectric_cross_section(
      new std::vector<double>( raw_photoatom_data.getPhotoelectricCrossSection().begin(),
@@ -257,15 +261,16 @@ void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
 void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::vector<std::shared_ptr<PhotoatomicReaction> >&
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::vector<std::shared_ptr<const PhotoatomicReaction> >&
        subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   subshell_photoelectric_reactions.clear();
 
@@ -304,14 +309,15 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 void PhotoatomicReactionNativeFactory::createHeatingReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-       std::shared_ptr<PhotoatomicReaction>& heating_reaction )
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       std::shared_ptr<const PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+		    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
 
   std::shared_ptr<std::vector<double> > heating_cross_section(
      new std::vector<double>( raw_photoatom_data.getAveragePhotonHeatingNumbers().begin(),

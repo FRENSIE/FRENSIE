@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 
 namespace MonteCarlo{
   
@@ -30,7 +30,7 @@ public:
   LineEnergyAdjointPhotonScatteringDistribution(
                  const double line_energy,
                  const double energy_dist_norm_constant,
-                 const std::shared_ptr<const Utility::TabularOneDDistribution>&
+                 const std::shared_ptr<const Utility::TabularUnivariateDistribution>&
                  energy_dist );
 
   //! Destructor
@@ -106,7 +106,7 @@ private:
   double d_energy_dist_norm_constant;
 
   // The energy distribution
-  std::shared_ptr<const Utility::TabularOneDDistribution> d_energy_dist;
+  std::shared_ptr<const Utility::TabularUnivariateDistribution> d_energy_dist;
 };
 
 } // end MonteCarlo namespace

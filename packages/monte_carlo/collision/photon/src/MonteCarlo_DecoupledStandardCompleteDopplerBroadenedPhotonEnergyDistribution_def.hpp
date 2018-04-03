@@ -369,9 +369,9 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
  */
 template<typename ComptonProfilePolicy>
 void DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell(
-                                               unsigned& old_subshell_index,
-                                               double& subshell_binding_energy,
-                                               Data::SubshellType& subshell ) const
+                                           size_t& old_subshell_index,
+                                           double& subshell_binding_energy,
+                                           Data::SubshellType& subshell ) const
 {
   old_subshell_index = this->sampleOldInteractionSubshell();
 
@@ -382,9 +382,9 @@ void DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonPr
 
 // Sample the old subshell that is interacted with
 template<typename ComptonProfilePolicy>
-unsigned DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleOldInteractionSubshell() const
+size_t DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleOldInteractionSubshell() const
 {
-  unsigned old_subshell_of_interaction;
+  size_t old_subshell_of_interaction;
 
   d_old_subshell_occupancy_distribution->sampleAndRecordBinIndex(
                                                  old_subshell_of_interaction );

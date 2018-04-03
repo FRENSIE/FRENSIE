@@ -124,8 +124,10 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   // Create a fictitious TYR block (all multiplicity 1 in lab system)
   std::vector<double> dummy_tyr_block( mtr_block.size(), 1.0 );
 
-  initializeReactionOrderingMap( mtr_block, dummy_tyr_block );
-  initializeReactionRefFrameMap( mtr_block, dummy_tyr_block );
+  initializeReactionOrderingMap( mtr_block,
+                                 Utility::arrayViewOfConst(dummy_tyr_block) );
+  initializeReactionRefFrameMap( mtr_block,
+                                 Utility::arrayViewOfConst(dummy_tyr_block) );
   initializeReactionAngularDistStartIndexMap( land_block );
   initializeReactionAngularDistMap( land_block, and_block );
   initializeReactionEnergyDistStartIndexMap( ldlw_block );
@@ -134,11 +136,10 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Create the scattering distribution
 template<typename IncomingParticleType, typename OutgoingParticleType>
-void NuclearScatteringDistributionACEFactory<IncomingParticleType,
-					     OutgoingParticleType>::getReactionsWithScatteringDistributions(
-			      boost::unordered_set<unsigned>& reactions ) const
+void NuclearScatteringDistributionACEFactory<IncomingParticleType,OutgoingParticleType>::getReactionsWithScatteringDistributions(
+			      std::unordered_set<unsigned>& reactions ) const
 {
-  boost::unordered_map<unsigned,unsigned>::const_iterator reaction =
+  std::unordered_map<unsigned,unsigned>::const_iterator reaction =
     d_reaction_energy_dist_start_index.begin();
 
   while( reaction != d_reaction_energy_dist_start_index.end() )
@@ -189,7 +190,8 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   // Create an angular distribution if scattering law 44 is not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
-    std::shared_ptr<NuclearScatteringAngularDistribution> angular_distribution;
+    std::shared_ptr<const NuclearScatteringAngularDistribution>
+      angular_distribution;
 
     if( !d_reactions_with_isotropic_scattering_only.count( reaction_type ) )
     {
@@ -222,7 +224,8 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     // Create all other scattering distributions using the energy dist factory
     else
     {
-      std::shared_ptr<NuclearScatteringEnergyDistribution> energy_distribution;
+      std::shared_ptr<const NuclearScatteringEnergyDistribution>
+        energy_distribution;
 
       NuclearScatteringEnergyDistributionACEFactory::createDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,
@@ -306,7 +309,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a map of the reaction types (MT #s) and their AND block ordering
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,unsigned>&
+const std::unordered_map<unsigned,unsigned>&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionOrdering() const
 {
@@ -316,7 +319,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 // Returns a map of the reaction types (MT #s) and the scattering ref. frame
 // Note: True = center-of-mass, False = lab
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,bool>&
+const std::unordered_map<unsigned,bool>&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionCMScattering() const
 {
@@ -325,7 +328,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a set of the reaction types (MT #s) with isotropic scattering only
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_set<unsigned>&
+const std::unordered_set<unsigned>&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionsWithIsotropicScatteringOnly() const
 {
@@ -334,7 +337,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_set<unsigned>&
+const std::unordered_set<unsigned>&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionsWithCoupledEnergyAngleDist() const
 {
@@ -343,7 +346,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a map of the reaction types (MT #s) and the corresp. angular dist
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
+const std::unordered_map<unsigned,Utility::ArrayView<const double> >&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionAngularDist() const
 {
@@ -352,7 +355,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a map of the reaction types (MT #s) and angular dist start index
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,unsigned>&
+const std::unordered_map<unsigned,unsigned>&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionAngularDistStartIndex() const
 {
@@ -361,7 +364,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a map of the reaction types (MT #s) and the corresp. energy dist
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,Utility::ArrayView<const double> >&
+const std::unordered_map<unsigned,Utility::ArrayView<const double> >&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionEnergyDist() const
 {
@@ -370,7 +373,7 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 
 // Returns a map of the reaction types (MT #s) and energy dist start index
 template<typename IncomingParticleType, typename OutgoingParticleType>
-const boost::unordered_map<unsigned,unsigned>&
+const std::unordered_map<unsigned,unsigned>&
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::getReactionEnergyDistStartIndex() const
 {
@@ -400,7 +403,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 			   const Utility::ArrayView<const double>& mtr_block,
 			   const Utility::ArrayView<const double>& tyr_block )
 {
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     reaction, end_reaction;
   reaction = d_reaction_ordering.begin();
   end_reaction = d_reaction_ordering.end();
@@ -440,7 +443,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     elastic_increment = 0u;
 
   // Add all other reactions
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     reaction_order, end_reaction_order;
   reaction_order = d_reaction_ordering.begin();
   end_reaction_order = d_reaction_ordering.end();
@@ -489,7 +492,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     elastic_increment = 0u;
 
   // Handle all other distributions
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     reaction_order, end_reaction_order;
   reaction_order = d_reaction_ordering.begin();
   end_reaction_order = d_reaction_ordering.end();
@@ -547,7 +550,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 			  const Utility::ArrayView<const double>& ldlw_block )
 {
   // Add all other reactions
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     reaction_order, end_reaction_order;
   reaction_order = d_reaction_ordering.begin();
   end_reaction_order = d_reaction_ordering.end();
@@ -576,7 +579,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 			   energy_dist_array_sizes );
 
   // Handle all other distributions
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     reaction_order, end_reaction_order;
   reaction_order = d_reaction_ordering.begin();
   end_reaction_order = d_reaction_ordering.end();

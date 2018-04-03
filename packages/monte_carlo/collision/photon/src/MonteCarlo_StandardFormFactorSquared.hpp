@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_FormFactorSquared.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,12 +27,12 @@ class StandardFormFactorSquared : public FormFactorSquared
 private:
 
   //! The stored form factor squared independent quantity type
-  typedef typename Utility::UnitAwareOneDDistribution<StoredSqrArgUnit,void>::IndepQuantity StoredSquaredArgumentQuantity;
+  typedef typename Utility::UnitAwareUnivariateDistribution<StoredSqrArgUnit,void>::IndepQuantity StoredSquaredArgumentQuantity;
 
 public:
 
   //! Constructor
-  StandardFormFactorSquared( const SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredSqrArgUnit,void> >& raw_form_factor_squared );
+  StandardFormFactorSquared( const SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredSqrArgUnit,void> >& raw_form_factor_squared );
 
   //! Destructor
   ~StandardFormFactorSquared()
@@ -62,7 +62,7 @@ public:
 private:
 
   // The raw form factor squared
-  SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredSqrArgUnit,void> > d_raw_form_factor_squared;
+  SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredSqrArgUnit,void> > d_raw_form_factor_squared;
 };
 
 } // end MonteCarlo namespace

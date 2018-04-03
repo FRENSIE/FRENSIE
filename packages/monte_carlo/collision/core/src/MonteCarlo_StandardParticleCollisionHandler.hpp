@@ -17,7 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_Model.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -45,16 +45,16 @@ public:
   void addMaterial(
            const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
            material,
-           const std::vector<Geometry::ModuleTraits::InternalCellHandle>&
+           const std::vector<Geometry::Model::InternalCellHandle>&
            cells_containing_material );
 
   //! Check if a cell is void
   bool isCellVoid(
-                 const Geometry::ModuleTraits::InternalCellHandle cell ) const;
+                 const Geometry::Model::InternalCellHandle cell ) const;
 
   //! Get the material contained in a cell
   const std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType>&
-  getMaterial( const Geometry::ModuleTraits::InternalCellHandle cell ) const;
+  getMaterial( const Geometry::Model::InternalCellHandle cell ) const;
 
   //! Get the total macroscopic cross section of a material
   double getMacroscopicTotalCrossSection(
@@ -86,8 +86,7 @@ private:
   d_collision_method;
 
   // Typedef for cell id neutron material map
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-			       std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType> >
+  typedef std::unordered_map<Geometry::Model::InternalCellHandle,std::shared_ptr<const typename DerivedHandlerTypeTraits::MaterialType> >
   CellIdMaterialMap;
 
   // The cell id neutron material map

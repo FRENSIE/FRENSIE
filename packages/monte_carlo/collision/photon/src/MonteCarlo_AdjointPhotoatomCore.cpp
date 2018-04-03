@@ -34,12 +34,13 @@ AdjointPhotoatomCore::AdjointPhotoatomCore()
  * energy the line energy reaction will never occur.
  */
 AdjointPhotoatomCore::AdjointPhotoatomCore(
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const std::shared_ptr<const std::vector<double> >& critical_line_energies,
-      const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
-      const ReactionMap& scattering_reactions,
-      const ReactionMap& absorption_reactions,
-      const LineEnergyReactionMap& line_energy_reactions )
+     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+     grid_searcher,
+     const std::shared_ptr<const std::vector<double> >& critical_line_energies,
+     const std::shared_ptr<const PhotoatomicReaction>& total_forward_reaction,
+     const ConstReactionMap& scattering_reactions,
+     const ConstReactionMap& absorption_reactions,
+     const ConstLineEnergyReactionMap& line_energy_reactions )
   : d_total_forward_reaction( total_forward_reaction ),
     d_scattering_reactions(),
     d_absorption_reactions(),
@@ -47,20 +48,22 @@ AdjointPhotoatomCore::AdjointPhotoatomCore(
     d_critical_line_energies( critical_line_energies ),
     d_grid_searcher( grid_searcher )
 {
+  // Make sure the grid searcher is valid
+  testPrecondition( d_grid_searcher.get() );
+  // Make sure that the critical line energy pointer is valid
+  testPrecondition( critical_line_energies.get() );
   // Make sure the total forward reaction is valid
-  testPrecondition( total_forward_reaction.get() != NULL );
+  testPrecondition( total_forward_reaction.get() );
   // Make sure the scattering reaction map is valid
   testPrecondition( scattering_reactions.size() +
                     absorption_reactions.size() > 0 );
   // Make sure the line energy reaction map is valid
   testPrecondition( this->areLineEnergyReactionsValid(
-                                                    line_energy_reactions,
-                                                    critical_line_energies ) );
-  // Make sure the grid searcher is valid
-  testPrecondition( !d_grid_searcher.is_null() );
+                                                   line_energy_reactions,
+                                                   *critical_line_energies ) );
 
   // Assign the scattering reactions
-  ReactionMap::const_iterator reaction_it =
+  ConstReactionMap::const_iterator reaction_it =
     scattering_reactions.begin();
 
   while( reaction_it != scattering_reactions.end() )
@@ -81,7 +84,7 @@ AdjointPhotoatomCore::AdjointPhotoatomCore(
   }
 
   // Assign the line energy reactions
-  LineEnergyReactionMap::const_iterator line_energy_reaction_it =
+  ConstLineEnergyReactionMap::const_iterator line_energy_reaction_it =
     line_energy_reactions.begin();
 
   while( line_energy_reaction_it != line_energy_reactions.end() )
@@ -121,10 +124,10 @@ AdjointPhotoatomCore::AdjointPhotoatomCore(
                     instance.d_absorption_reactions.size() > 0 );
   // Make sure the line energy reaction map is valid
   testPrecondition( this->areLineEnergyReactionsValid(
-                                         instance.d_line_energy_reactions,
-                                         instance.d_critical_line_energies ) );
+                                        instance.d_line_energy_reactions,
+                                        *instance.d_critical_line_energies ) );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 }
 
 // Assignment operator
@@ -138,10 +141,10 @@ AdjointPhotoatomCore& AdjointPhotoatomCore::operator=(
                     instance.d_absorption_reactions.size() > 0 );
   // Make sure the line energy reaction map is valid
   testPrecondition( this->areLineEnergyReactionsValid(
-                                         instance.d_line_energy_reactions,
-                                         instance.d_critical_line_energies ) );
+                                        instance.d_line_energy_reactions,
+                                        *instance.d_critical_line_energies ) );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 
   // Avoid self-assignment
   if( this != &instance )

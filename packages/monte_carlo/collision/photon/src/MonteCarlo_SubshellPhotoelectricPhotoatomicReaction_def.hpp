@@ -20,11 +20,11 @@ namespace MonteCarlo{
 // Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::SubshellPhotoelectricPhotoatomicReaction(
-                   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
-		   const std::shared_ptr<const std::vector<double> >& cross_section,
-		   const unsigned threshold_energy_index,
-		   const Data::SubshellType interaction_subshell,
-		   const double binding_energy )
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const unsigned threshold_energy_index,
+       const Data::SubshellType interaction_subshell,
+       const double binding_energy )
   : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>(
 						      incoming_energy_grid,
 						      cross_section,
@@ -47,7 +47,8 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
        const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
        const Data::SubshellType interaction_subshell,
        const double binding_energy )
   : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>(
@@ -65,8 +66,6 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
   testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
   // Make sure the binding energy is valid
   testPrecondition( binding_energy > 0.0 );
-  // Make sure he grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Simulate the reaction

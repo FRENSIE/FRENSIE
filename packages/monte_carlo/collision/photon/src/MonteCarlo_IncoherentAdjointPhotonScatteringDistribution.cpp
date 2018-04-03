@@ -26,7 +26,7 @@ namespace MonteCarlo{
 IncoherentAdjointPhotonScatteringDistribution::IncoherentAdjointPhotonScatteringDistribution(
 						      const double max_energy )
   : d_max_energy( max_energy ),
-    d_critical_line_energies( 1, 0.0 ),
+    d_critical_line_energies( new std::vector<double>( 1, 0.0 ) ),
     d_integrated_cs_evaluator( std::bind<double>( &IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSectionImpl,
                                                   this,
                                                   std::placeholders::_1,
@@ -45,10 +45,11 @@ void IncoherentAdjointPhotonScatteringDistribution::setCriticalLineEnergies(
     const std::shared_ptr<const std::vector<double> >& critical_line_energies )
 {
   // Make sure the critical line energies are valid
-  testPrecondition( critical_line_energies.size() > 0 );
+  testPrecondition( critical_line_energies.get() );
+  testPrecondition( critical_line_energies->size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-					      critical_line_energies.begin(),
-					      critical_line_energies.end() ) );
+					     critical_line_energies->begin(),
+					     critical_line_energies->end() ) );
 
   d_critical_line_energies = critical_line_energies;
 }
@@ -483,21 +484,21 @@ void IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergiesInSca
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
 
-  if( this->isEnergyAboveScatteringWindow( d_critical_line_energies[d_critical_line_energies.size()-1], energy ) )
+  if( this->isEnergyAboveScatteringWindow( d_critical_line_energies->back(), energy ) )
   {
-    start_energy = d_critical_line_energies.end();
+    start_energy = d_critical_line_energies->end();
     end_energy = start_energy;
   }
-  else if( this->isEnergyBelowScatteringWindow( d_critical_line_energies[0], energy ) )
+  else if( this->isEnergyBelowScatteringWindow( d_critical_line_energies->front(), energy ) )
   {
-    start_energy = d_critical_line_energies.end();
+    start_energy = d_critical_line_energies->end();
     end_energy = start_energy;
   }
   else
   {
-    start_energy = d_critical_line_energies.begin();
+    start_energy = d_critical_line_energies->begin();
 
-    while( start_energy != d_critical_line_energies.end() )
+    while( start_energy != d_critical_line_energies->end() )
     {
       if( this->isEnergyInScatteringWindow( *start_energy, energy ) )
 	break;
@@ -507,11 +508,11 @@ void IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergiesInSca
 
     end_energy = start_energy;
 
-    if( start_energy != d_critical_line_energies.end() )
+    if( start_energy != d_critical_line_energies->end() )
     {
       ++end_energy;
 
-      while( end_energy != d_critical_line_energies.end() )
+      while( end_energy != d_critical_line_energies->end() )
       {
 	if( !this->isEnergyInScatteringWindow( *end_energy, energy ) )
 	  break;

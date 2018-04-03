@@ -32,6 +32,12 @@ class Photoatom : public Atom<PhotoatomCore>
 
 public:
 
+  //! The reaction enum type
+  typedef PhotoatomicReactionType ReactionEnumType;
+
+  //! The particle state type
+  typedef PhotonState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef PhotoatomCore::ReactionMap ReactionMap;
 
@@ -39,7 +45,7 @@ public:
   typedef PhotoatomCore::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as absorption
-  static const boost::unordered_set<PhotoatomicReactionType>&
+  static const std::unordered_set<PhotoatomicReactionType>&
   getAbsorptionReactionTypes();
 
   //! Constructor
@@ -48,12 +54,13 @@ public:
 	 const std::string& name,
          const unsigned atomic_number,
          const double atomic_weight,
-         const std::shared_ptr<std::vector<double> >& energy_grid,
-         const std::shared_ptr<const Utility::HashBasedGridSearcher>&
+         const std::shared_ptr<const std::vector<double> >& energy_grid,
+         const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
          grid_searcher,
-         const ReactionMap& standard_scattering_reactions,
-         const ReactionMap& standard_absorption_reactions,
-	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+         const ConstReactionMap& standard_scattering_reactions,
+         const ConstReactionMap& standard_absorption_reactions,
+	 const std::shared_ptr<const AtomicRelaxationModel>&
+         atomic_relaxation_model,
          const bool processed_atomic_cross_sections,
          const InterpPolicy policy );
 

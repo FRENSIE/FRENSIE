@@ -61,7 +61,7 @@ double CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonPr
  */
 template<typename ComptonProfilePolicy>
 void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell(
-                                               unsigned& old_subshell_index,
+                                               size_t& old_subshell_index,
                                                double& subshell_binding_energy,
                                                Data::SubshellType& subshell ) const
 {

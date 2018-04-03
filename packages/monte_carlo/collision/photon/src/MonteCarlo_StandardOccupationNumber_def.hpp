@@ -17,7 +17,7 @@ namespace MonteCarlo{
 // Constructo
 template<typename StoredMomentumUnit,
          template<typename> class SmartPointer>
-StandardOccupationNumber<StoredMomentumUnit,SmartPointer>::StandardOccupationNumber( const SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,void> >& raw_occupation_number )
+StandardOccupationNumber<StoredMomentumUnit,SmartPointer>::StandardOccupationNumber( const SmartPointer<const Utility::UnitAwareTabularUnivariateDistribution<StoredMomentumUnit,void> >& raw_occupation_number )
   : d_raw_occupation_number( raw_occupation_number )
 {
   // Make sure the raw occupation number is valid

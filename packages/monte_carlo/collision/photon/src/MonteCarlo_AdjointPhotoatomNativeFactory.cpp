@@ -38,17 +38,17 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
 
   AdjointPhotoatomicReactionNativeFactory::createUnionEnergyGrid(
                                       raw_adjoint_photoatom_data,
-                                      *nergy_grid,
+                                      *energy_grid,
                                       properties.getMaxAdjointPhotonEnergy() );
 
   // Create the hash based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> > grid_searcher(
          new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
                          energy_grid,
                          properties.getNumberOfAdjointPhotonHashGridBins() ) );
 
   // Create the total forward reaction
-  std::shared_ptr<PhotoatomicReaction> total_forward_reaction;
+  std::shared_ptr<const PhotoatomicReaction> total_forward_reaction;
 
   AdjointPhotoatomicReactionNativeFactory::createTotalForwardReaction(
                                     raw_adjoint_photoatom_data,
@@ -58,11 +58,11 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
                                     total_forward_reaction );
 
   // Create the scattering reactions
-  AdjointPhotoatomCore::ReactionMap scattering_reactions;
+  AdjointPhotoatomCore::ConstReactionMap scattering_reactions;
 
   // Create the incoherent reaction(s)
   {
-    std::vector<std::shared_ptr<AdjointPhotoatomicReaction> >
+    std::vector<std::shared_ptr<const AdjointPhotoatomicReaction> >
       incoherent_reactions;
 
     AdjointPhotoatomicReactionNativeFactory::createIncoherentReactions(
@@ -82,7 +82,7 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
 
   // Create the coherent reaction
   {
-    AdjointPhotoatomCore::ReactionMap::mapped_type& reaction_pointer =
+    AdjointPhotoatomCore::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COHERENT_ADJOINT_PHOTOATOMIC_REACTION];
 
     AdjointPhotoatomicReactionNativeFactory::createCoherentReaction(
@@ -93,16 +93,17 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
   }
 
   // Create the line energy reactions
-  AdjointPhotoatomCore::LineEnergyReactionMap line_energy_reactions;
+  AdjointPhotoatomCore::ConstLineEnergyReactionMap line_energy_reactions;
 
   // Create the pair production reaction
   if( properties.getMaxAdjointPhotonEnergy() >
       2*Utility::PhysicalConstants::electron_rest_mass_energy )
   {
-    AdjointPhotoatomCore::ReactionMap& me_line_energy_reactions =
+    AdjointPhotoatomCore::ConstReactionMap& me_line_energy_reactions =
       line_energy_reactions[Utility::PhysicalConstants::electron_rest_mass_energy];
 
-    std::shared_ptr<LineEnergyAdjointPhotoatomicReaction> reaction_pointer;
+    std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>
+      reaction_pointer;
     
     AdjointPhotoatomicReactionNativeFactory::createPairProductionReaction(
                                                     raw_adjoint_photoatom_data,
@@ -118,10 +119,11 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
   if( properties.getMaxAdjointPhotonEnergy() >
       4*Utility::PhysicalConstants::electron_rest_mass_energy )
   {
-    AdjointPhotoatomCore::ReactionMap& me_line_energy_reactions =
+    AdjointPhotoatomCore::ConstReactionMap& me_line_energy_reactions =
       line_energy_reactions[Utility::PhysicalConstants::electron_rest_mass_energy];
 
-    std::shared_ptr<LineEnergyAdjointPhotoatomicReaction> reaction_pointer;
+    std::shared_ptr<const LineEnergyAdjointPhotoatomicReaction>
+      reaction_pointer;
     
     AdjointPhotoatomicReactionNativeFactory::createTripletProductionReaction(
                                                     raw_adjoint_photoatom_data,
@@ -135,12 +137,12 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
   
   // Create the adjoint photoatom core
   adjoint_photoatom_core.reset( new AdjointPhotoatomCore(
-                                           grid_searcher,
-                                           critical_line_energies,
-                                           total_forward_reaction,
-                                           scattering_reactions,
-                                           AdjointPhotoatomCore::ReactionMap(),
-                                           line_energy_reactions ) );
+                                      grid_searcher,
+                                      critical_line_energies,
+                                      total_forward_reaction,
+                                      scattering_reactions,
+                                      AdjointPhotoatomCore::ConstReactionMap(),
+                                      line_energy_reactions ) );
 }
 
 // Create an adjoint photoatom

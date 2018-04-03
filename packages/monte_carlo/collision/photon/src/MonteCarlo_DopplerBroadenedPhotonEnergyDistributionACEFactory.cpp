@@ -33,6 +33,16 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
+  // Create subshell binding energies array
+  std::vector<double> subshell_binding_energies(
+                   raw_photoatom_data.extractSubshellBindingEnergies().begin(),
+                   raw_photoatom_data.extractSubshellBindingEnergies().end() );
+
+  // Create the occupancies array
+  std::vector<double> subshell_occupancies(
+                       raw_photoatom_data.extractSubshellOccupancies().begin(),
+                       raw_photoatom_data.extractSubshellOccupancies().end() );
+  
   // Create the subshell order array
   std::vector<Data::SubshellType> subshell_order;
 
@@ -41,7 +51,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    subshell_order );
 
   // Create the Compton profile subshell converter
-  std::shared_ptr<ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<const ComptonProfileSubshellConverter> converter;
 
   ComptonProfileSubshellConverterFactory::createConverter(
 				    converter,
@@ -60,22 +70,22 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
   {
     doppler_broadened_dist.reset(
       new CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>(
-			   raw_photoatom_data.extractSubshellBindingEnergies(),
-			   raw_photoatom_data.extractSubshellOccupancies(),
-			   subshell_order,
-			   converter,
-			   compton_profiles ) );
+                                                     subshell_binding_energies,
+                                                     subshell_occupancies,
+                                                     subshell_order,
+                                                     converter,
+                                                     compton_profiles ) );
   }
   // ACE Compton profiles are halved and then doubled so they remain normalized
   else
   {
     doppler_broadened_dist.reset(
       new CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>(
-			   raw_photoatom_data.extractSubshellBindingEnergies(),
-			   raw_photoatom_data.extractSubshellOccupancies(),
-			   subshell_order,
-			   converter,
-			   compton_profiles ) );
+                                                     subshell_binding_energies,
+                                                     subshell_occupancies,
+                                                     subshell_order,
+                                                     converter,
+                                                     compton_profiles ) );
   }
 }
 
@@ -104,6 +114,21 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
+  // Create the occupancies array
+  std::vector<double> subshell_occupancies( 
+                       raw_photoatom_data.extractSubshellOccupancies().begin(),
+                       raw_photoatom_data.extractSubshellOccupancies().end() );
+
+  // Create the old subshell binding energy array
+  std::vector<double> old_subshell_binding_energies(
+                                raw_photoatom_data.extractLBEPSBlock().begin(),
+                                raw_photoatom_data.extractLBEPSBlock().end() );
+
+  // Create the old subshell occupancy array
+  std::vector<double> old_subshell_occupancies(
+                                raw_photoatom_data.extractLNEPSBlock().begin(),
+                                raw_photoatom_data.extractLNEPSBlock().end() );
+  
   // Create the subshell order array
   std::vector<Data::SubshellType> subshell_order;
 
@@ -112,7 +137,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    subshell_order );
 
   // Create the Compton profile subshell converter
-  std::shared_ptr<ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<const ComptonProfileSubshellConverter> converter;
 
   ComptonProfileSubshellConverterFactory::createConverter(
 				    converter,
@@ -131,10 +156,10 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
   {
     doppler_broadened_dist.reset(
        new DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>(
-			   raw_photoatom_data.extractSubshellOccupancies(),
+                           subshell_occupancies,
 			   subshell_order,
-			   raw_photoatom_data.extractLBEPSBlock(),
-			   raw_photoatom_data.extractLNEPSBlock(),
+                           old_subshell_binding_energies,
+                           old_subshell_occupancies,
                            converter,
 			   compton_profiles ) );
   }
@@ -143,10 +168,10 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
   {
     doppler_broadened_dist.reset(
       new DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>(
-			   raw_photoatom_data.extractSubshellOccupancies(),
+                           subshell_occupancies,
 			   subshell_order,
-			   raw_photoatom_data.extractLBEPSBlock(),
-			   raw_photoatom_data.extractLNEPSBlock(),
+                           old_subshell_binding_energies,
+                           old_subshell_occupancies,
                            converter,
 			   compton_profiles ) );
   }
@@ -179,7 +204,8 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 		  const bool use_full_profile )
 {
   // Convert the endf subshell to a subshell type
-  Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
+  Data::SubshellType subshell =
+    Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
 
   TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
@@ -187,7 +213,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile subshell converter
-  std::shared_ptr<ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<const ComptonProfileSubshellConverter> converter;
 
   ComptonProfileSubshellConverterFactory::createConverter(
 				    converter,
@@ -214,13 +240,19 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 
   unsigned num_momentum_points = swd_block[subshell_index];
 
-  std::vector<double> half_momentum_grid(
-			swd_block( subshell_index + 1, num_momentum_points ) );
+  Utility::ArrayView<const double> raw_half_momentum_grid =
+    swd_block( subshell_index + 1, num_momentum_points );
+  
+  std::vector<double> half_momentum_grid( raw_half_momentum_grid.begin(),
+                                          raw_half_momentum_grid.end() );
 
-  std::vector<double> half_profile(
-                           swd_block( subshell_index + 1 + num_momentum_points,
-				      num_momentum_points ) );
+  Utility::ArrayView<const double> raw_half_profile =
+    swd_block( subshell_index + 1 + num_momentum_points,
+               num_momentum_points );
 
+  std::vector<double> half_profile( raw_half_profile.begin(),
+                                    raw_half_profile.end() );
+  
   std::shared_ptr<const ComptonProfile> compton_profile;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
@@ -308,13 +340,19 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileArr
 
     unsigned num_momentum_points = swd_block[subshell_index];
 
-    std::vector<double> half_momentum_grid(
-			swd_block( subshell_index + 1, num_momentum_points ) );
+    Utility::ArrayView<const double> raw_half_momentum_grid =
+      swd_block( subshell_index + 1, num_momentum_points );
 
-    std::vector<double> half_profile(
-                           swd_block( subshell_index + 1 + num_momentum_points,
-				      num_momentum_points ) );
+    std::vector<double> half_momentum_grid( raw_half_momentum_grid.begin(),
+                                            raw_half_momentum_grid.end() );
 
+    Utility::ArrayView<const double> raw_half_profile =
+      swd_block( subshell_index + 1 + num_momentum_points,
+                 num_momentum_points );
+    
+    std::vector<double> half_profile( raw_half_profile.begin(),
+                                      raw_half_profile.end() );
+    
     DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
 						  half_momentum_grid,
 						  half_profile,
@@ -335,7 +373,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfile(
   testPrecondition( raw_half_profile.size() ==
 		    raw_half_momentum_grid.size() );
 
-  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile;
+  std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile;
 
   if( use_full_profile )
   {

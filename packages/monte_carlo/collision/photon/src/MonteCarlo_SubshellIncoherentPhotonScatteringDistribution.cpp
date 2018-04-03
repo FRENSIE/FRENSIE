@@ -31,7 +31,7 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
        const Data::SubshellType interaction_subshell,
        const double num_electrons_in_subshell,
        const double binding_energy,
-       const std::shared_ptr<const Utility::OneDDistribution>& occupation_number,
+       const std::shared_ptr<const Utility::UnivariateDistribution>& occupation_number,
        const double kahn_sampling_cutoff_energy )
   : IncoherentPhotonScatteringDistribution( kahn_sampling_cutoff_energy ),
     d_subshell( interaction_subshell ),
@@ -47,7 +47,7 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
   // Make sure the binding energy is valid
   testPrecondition( binding_energy > 0.0 );
   // Make sure the occupation number is valid
-  testPrecondition( !occupation_number.is_null() );
+  testPrecondition( occupation_number.get() );
   testPrecondition( occupation_number->getLowerBoundOfIndepVar() == -1.0 );
 }
 

@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -31,7 +31,7 @@ public:
   DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
     const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
-    const std::shared_ptr<const Utility::OneDDistribution>& occupation_number,
+    const std::shared_ptr<const Utility::UnivariateDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
