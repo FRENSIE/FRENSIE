@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -22,11 +23,11 @@ template<typename IncomingParticleType,
 IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 						    OutgoingParticleType,
 						    SystemConversionPolicy>::IndependentEnergyAngleNuclearScatteringDistribution(
-		   const double atomic_weight_ratio,
-                   const std::shared_ptr<NuclearScatteringEnergyDistribution>&
-                   energy_scattering_distribution,
-                   const std::shared_ptr<NuclearScatteringAngularDistribution>&
-                   angular_scattering_distribution )
+             const double atomic_weight_ratio,
+             const std::shared_ptr<const NuclearScatteringEnergyDistribution>&
+             energy_scattering_distribution,
+             const std::shared_ptr<const NuclearScatteringAngularDistribution>&
+             angular_scattering_distribution )
   : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
     d_energy_scattering_distribution( energy_scattering_distribution ),
     d_angular_scattering_distribution( angular_scattering_distribution )
@@ -84,6 +85,17 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
   // Set the new energy
   outgoing_particle.setEnergy( outgoing_energy );
 }
+
+class NeutronState;
+class PhotonState;
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,NeutronState,CMSystemConversionPolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,NeutronState,LabSystemConversionPolicy> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,PhotonState,CMSystemConversionPolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,PhotonState,LabSystemConversionPolicy> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentEnergyAngleNuclearScatteringDistribution<PhotonState,NeutronState,LabSystemConversionPolicy> );
 
 } // end MonteCarlo namespace
 

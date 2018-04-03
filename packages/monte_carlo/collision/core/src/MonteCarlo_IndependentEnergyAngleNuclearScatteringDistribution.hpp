@@ -34,11 +34,11 @@ public:
 
   //! Constructor
   IndependentEnergyAngleNuclearScatteringDistribution(
-		   const double atomic_weight_ratio,
-                   const std::shared_ptr<NuclearScatteringEnergyDistribution>&
-                   energy_scattering_distribution,
-                   const std::shared_ptr<NuclearScatteringAngularDistribution>&
-                   angular_scattering_distribution );
+             const double atomic_weight_ratio,
+             const std::shared_ptr<const NuclearScatteringEnergyDistribution>&
+             energy_scattering_distribution,
+             const std::shared_ptr<const NuclearScatteringAngularDistribution>&
+             angular_scattering_distribution );
 
   //! Destructor
   ~IndependentEnergyAngleNuclearScatteringDistribution()
@@ -52,11 +52,11 @@ public:
 private:
 
   // The energy scattering distribution
-  std::shared_ptr<NuclearScatteringEnergyDistribution>
+  std::shared_ptr<const NuclearScatteringEnergyDistribution>
   d_energy_scattering_distribution;
 
   // The angular scattering distribution
-  std::shared_ptr<NuclearScatteringAngularDistribution>
+  std::shared_ptr<const NuclearScatteringAngularDistribution>
   d_angular_scattering_distribution;
 };
 

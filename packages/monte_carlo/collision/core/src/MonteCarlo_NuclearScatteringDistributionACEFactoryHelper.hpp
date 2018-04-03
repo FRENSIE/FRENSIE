@@ -28,13 +28,13 @@ public:
 
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution(
-		      std::shared_ptr<NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType> >& distribution,
-		      const std::string ace_table_name,
-		      const bool defined_in_cm_system,
-		      const double atomic_weight_ratio,
-                      const double free_gas_threshold,
-                      const std::shared_ptr<NuclearScatteringAngularDistribution>&
-		      angular_distribution )
+	    std::shared_ptr<const NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType> >& distribution,
+            const std::string ace_table_name,
+            const bool defined_in_cm_system,
+            const double atomic_weight_ratio,
+            const double free_gas_threshold,
+            const std::shared_ptr<const NuclearScatteringAngularDistribution>&
+            angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
 		     "elastic scattering for different particle types ("
@@ -61,12 +61,12 @@ public:
 
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution(
-          std::shared_ptr<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
+          std::shared_ptr<const NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
           const std::string ace_table_name,
           const bool defined_in_cm_system,
           const double atomic_weight_ratio,
           const double free_gas_threshold,
-          const std::shared_ptr<NuclearScatteringAngularDistribution>&
+          const std::shared_ptr<const NuclearScatteringAngularDistribution>&
           angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
@@ -89,13 +89,13 @@ public:
 
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution(
-		      std::shared_ptr<NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
-		      const std::string ace_table_name,
-		      const bool defined_in_cm_system,
-		      const double atomic_weight_ratio,
-                      const double free_gas_threshold,
-                      const std::shared_ptr<NuclearScatteringAngularDistribution>&
-		      angular_distribution );
+             std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
+             const std::string ace_table_name,
+             const bool defined_in_cm_system,
+             const double atomic_weight_ratio,
+             const double free_gas_threshold,
+             const std::shared_ptr<const NuclearScatteringAngularDistribution>&
+             angular_distribution );
 
   //! Check if elastic scattering is handled implicitly in ACE table
   static bool isElasticScatteringImplicit();

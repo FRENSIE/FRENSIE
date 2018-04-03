@@ -15,13 +15,13 @@ namespace MonteCarlo{
 
 // Create the elastic scattering distribution
 void NuclearScatteringDistributionACEFactoryHelper<NeutronState,NeutronState>::createElasticScatteringDistribution(
-		      std::shared_ptr<NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
-		      const std::string ace_table_name,
-		      const bool defined_in_cm_system,
-		      const double atomic_weight_ratio,
-                      const double free_gas_threshold,
-                      const std::shared_ptr<NuclearScatteringAngularDistribution>&
-		      angular_distribution )
+	     std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >& distribution,
+             const std::string ace_table_name,
+             const bool defined_in_cm_system,
+             const double atomic_weight_ratio,
+             const double free_gas_threshold,
+             const std::shared_ptr<const NuclearScatteringAngularDistribution>&
+             angular_distribution )
 {
   TEST_FOR_EXCEPTION( !defined_in_cm_system,
 		      std::runtime_error,

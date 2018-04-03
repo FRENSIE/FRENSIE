@@ -22,9 +22,10 @@
 #include "MonteCarlo_NuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_Vector.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -179,9 +180,9 @@ bool NuclearScatteringDistributionACEFactory<IncomingParticleType,
 template<typename IncomingParticleType, typename OutgoingParticleType>
 void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 					OutgoingParticleType>::createScatteringDistribution(
-			   const unsigned reaction_type,
-                           const SimulationProperties& properties,
-			   std::shared_ptr<DistributionType>& distribution ) const
+                  const unsigned reaction_type,
+                  const SimulationProperties& properties,
+		  std::shared_ptr<const DistributionType>& distribution ) const
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
   testPrecondition( this->doesReactionHaveScatteringDistribution(
@@ -600,6 +601,13 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   testPostcondition( d_reaction_energy_dist.size() ==
 		     d_reaction_ordering.size() );
 }
+
+class NeutronState;
+class PhotonState;
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<NeutronState,NeutronState> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<NeutronState,PhotonState> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<PhotonState,NeutronState> );
 
 } // end MonteCarlo namespace
 

@@ -16,8 +16,9 @@
 #include "MonteCarlo_AceLaw61NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_ContractException.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -91,6 +92,17 @@ void AceLaw61NuclearScatteringDistribution<IncomingParticleType,
   outgoing_particle.setEnergy( outgoing_energy );
 }
 
+class NeutronState;
+class PhotonState;
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AceLaw61NuclearScatteringDistribution<NeutronState,NeutronState,CMSystemConversionPolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AceLaw61NuclearScatteringDistribution<NeutronState,NeutronState,LabSystemConversionPolicy> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AceLaw61NuclearScatteringDistribution<NeutronState,PhotonState,CMSystemConversionPolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AceLaw61NuclearScatteringDistribution<NeutronState,PhotonState,LabSystemConversionPolicy> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AceLaw61NuclearScatteringDistribution<PhotonState,NeutronState,LabSystemConversionPolicy> );
+  
 } // End MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ACE_LAW_61_NUCLEAR_SCATTERING_DISTRIBUTION_DEF_HPP

@@ -8,13 +8,15 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 
 namespace MonteCarlo{
 
 // Explicit instantiation
-template class NuclearScatteringDistribution<NeutronState,NeutronState>;
-template class NuclearScatteringDistribution<NeutronState,PhotonState>;
-template class NuclearScatteringDistribution<PhotonState,NeutronState>;
+EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistribution<NeutronState,NeutronState> );
+EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistribution<NeutronState,PhotonState> );
+EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistribution<PhotonState,NeutronState> );
   
 } // end MonteCarlo namespace
 

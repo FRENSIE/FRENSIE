@@ -10,16 +10,10 @@
 #define MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_PhotonState.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
-
-// Explicit instantiation (extern declaration)
-extern template class NuclearScatteringDistribution<NeutronState,NeutronState>;
-extern template class NuclearScatteringDistribution<NeutronState,PhotonState>;
-extern template class NuclearScatteringDistribution<PhotonState,NeutronState>;
 
 // Constructor
 template<typename IncomingParticleType, typename OutgoingParticleType>
@@ -38,6 +32,13 @@ NuclearScatteringDistribution<ParticleType,ParticleType>::NuclearScatteringDistr
   // Make sure the atomic weight ratio is valid
   testPrecondition( atomic_weight_ratio > 0.0 );
 }
+
+class NeutronState;
+class PhotonState;
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistribution<NeutronState,NeutronState> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistribution<NeutronState,PhotonState> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistribution<PhotonState,NeutronState> );
 
 } // end MonteCarlo namespace
 

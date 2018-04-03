@@ -69,9 +69,9 @@ public:
 
   //! Create the scattering distribution
   void createScatteringDistribution(
-		       const unsigned reaction_type,
-                       const SimulationProperties& properties,
-                       std::shared_ptr<DistributionType>& distribution ) const;
+                 const unsigned reaction_type,
+                 const SimulationProperties& properties,
+                 std::shared_ptr<const DistributionType>& distribution ) const;
 
 protected:
 
