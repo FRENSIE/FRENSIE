@@ -24,7 +24,7 @@ using namespace MonteCarlo;
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<ComptonProfileSubshellConverter> converter;
+std::shared_ptr<const ComptonProfileSubshellConverter> converter;
 
 //---------------------------------------------------------------------------//
 // Tests.

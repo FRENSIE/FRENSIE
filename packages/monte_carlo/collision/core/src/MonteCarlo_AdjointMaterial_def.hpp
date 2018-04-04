@@ -55,7 +55,7 @@ bool AdjointMaterial<ScatteringCenter>::doesEnergyHaveLineEnergyReaction( const 
 
   for( size_t i = 0; i < this->getNumberOfScatteringCenters(); ++i )
   {
-    if( this->getScatteringCenter( i )->doesEnergyHaveLineEnergyReaction( energy ) )
+    if( this->getScatteringCenter( i ).doesEnergyHaveLineEnergyReaction( energy ) )
       return true;
   }
 

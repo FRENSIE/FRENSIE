@@ -259,7 +259,7 @@ size_t Material<ScatteringCenter>::getNumberOfScatteringCenters() const
 
 // Return the scattering center at the desired index
 template<typename ScatteringCenter>
-ScatteringCenter& Material<ScatteringCenter>::getScatteringCenter( const size_t index ) const
+const ScatteringCenter& Material<ScatteringCenter>::getScatteringCenter( const size_t index ) const
 {
   testPrecondition( index < d_scattering_centers.size() );
 

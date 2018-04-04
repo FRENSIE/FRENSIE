@@ -108,7 +108,7 @@ protected:
   size_t getNumberOfScatteringCenters() const;
 
   //! Return the scattering center at the desired index
-  ScatteringCenter& getScatteringCenter( const size_t index ) const;
+  const ScatteringCenter& getScatteringCenter( const size_t index ) const;
   
 private:
 
