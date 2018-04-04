@@ -11,14 +11,7 @@
 #include <limits>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_ComptonProfile.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -28,18 +21,19 @@
 #include "Utility_InverseAtomicMomentumUnit.hpp"
 #include "Utility_InverseMeCMomentumUnit.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile;
+std::shared_ptr<const MonteCarlo::ComptonProfile> compton_profile;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the Compton profile can be evaluated
-TEUCHOS_UNIT_TEST( StandardComptonProfile, evaluate )
+FRENSIE_UNIT_TEST( StandardComptonProfile, evaluate )
 {
   MonteCarlo::ComptonProfile::MomentumQuantity
     momentum( -1.0*Utility::Units::mec_momentum );
@@ -47,14 +41,14 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, evaluate )
   MonteCarlo::ComptonProfile::ProfileQuantity
     profile_value = compton_profile->evaluate( momentum );
 
-  TEST_EQUALITY_CONST( profile_value,
+  FRENSIE_CHECK_EQUAL( profile_value,
 		       0.0*Utility::Units::inverse_mec_momentum );
 
   momentum = 0.0*Utility::Units::mec_momentum;
 
   profile_value = compton_profile->evaluate( momentum );
 
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		   profile_value,
 		   Utility::PhysicalConstants::inverse_fine_structure_constant*
 		   Utility::Units::inverse_mec_momentum );
@@ -63,7 +57,7 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, evaluate )
 
   profile_value = compton_profile->evaluate( momentum );
 
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
 		   profile_value,
 		   Utility::PhysicalConstants::inverse_fine_structure_constant*
 		   Utility::Units::inverse_mec_momentum );
@@ -72,35 +66,35 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, evaluate )
 
   profile_value = compton_profile->evaluate( momentum );
 
-  TEST_EQUALITY_CONST( profile_value,
+  FRENSIE_CHECK_EQUAL( profile_value,
 		       0.0*Utility::Units::inverse_mec_momentum );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Compton profile can be sampled from
-TEUCHOS_UNIT_TEST( StandardComptonProfile, sample )
+FRENSIE_UNIT_TEST( StandardComptonProfile, sample )
 {
   MonteCarlo::ComptonProfile::MomentumQuantity
     momentum = compton_profile->sample();
 
-  TEST_ASSERT( momentum >= 0.0*Utility::Units::mec_momentum );
-  TEST_ASSERT( momentum <= 1.0*Utility::Units::mec_momentum );
+  FRENSIE_CHECK( momentum >= 0.0*Utility::Units::mec_momentum );
+  FRENSIE_CHECK( momentum <= 1.0*Utility::Units::mec_momentum );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Compton profile can be sampled from
-TEUCHOS_UNIT_TEST( StandardComptonProfile, sampleInSubrange )
+FRENSIE_UNIT_TEST( StandardComptonProfile, sampleInSubrange )
 {
   MonteCarlo::ComptonProfile::MomentumQuantity
     momentum = compton_profile->sampleInSubrange( 0.5*Utility::Units::mec_momentum );
 
-  TEST_ASSERT( momentum >= 0.0*Utility::Units::mec_momentum );
-  TEST_ASSERT( momentum <= 0.5*Utility::Units::mec_momentum );
+  FRENSIE_CHECK( momentum >= 0.0*Utility::Units::mec_momentum );
+  FRENSIE_CHECK( momentum <= 0.5*Utility::Units::mec_momentum );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Compton profile can be sampled from
-TEUCHOS_UNIT_TEST( StandardComptonProfile, sampleInSubrange_with_lower )
+FRENSIE_UNIT_TEST( StandardComptonProfile, sampleInSubrange_with_lower )
 {
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
@@ -113,13 +107,13 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, sampleInSubrange_with_lower )
                                            0.75*Utility::Units::mec_momentum,
                                            0.25*Utility::Units::mec_momentum );
 
-  TEST_EQUALITY_CONST( momentum, 0.25*Utility::Units::mec_momentum );
+  FRENSIE_CHECK_EQUAL( momentum, 0.25*Utility::Units::mec_momentum );
 
   momentum = compton_profile->sampleInSubrange(
                                            0.75*Utility::Units::mec_momentum,
                                            0.25*Utility::Units::mec_momentum );
 
-  UTILITY_TEST_FLOATING_EQUALITY(
+  FRENSIE_CHECK_FLOATING_EQUALITY(
                           momentum, 0.75*Utility::Units::mec_momentum, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -127,52 +121,41 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, sampleInSubrange_with_lower )
 
 //---------------------------------------------------------------------------//
 // Check that the lower bound of the momentum can be returned
-TEUCHOS_UNIT_TEST( StandardComptonProfile, getLowerBoundOfMomentum )
+FRENSIE_UNIT_TEST( StandardComptonProfile, getLowerBoundOfMomentum )
 {
   MonteCarlo::ComptonProfile::MomentumQuantity
     momentum = compton_profile->getLowerBoundOfMomentum();
 
-  TEST_EQUALITY_CONST( momentum, 0.0*Utility::Units::mec_momentum );
+  FRENSIE_CHECK_EQUAL( momentum, 0.0*Utility::Units::mec_momentum );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the momentum can be returned
-TEUCHOS_UNIT_TEST( StandardComptonProfile, getUpperBoundOfMomentum )
+FRENSIE_UNIT_TEST( StandardComptonProfile, getUpperBoundOfMomentum )
 {
   MonteCarlo::ComptonProfile::MomentumQuantity
     momentum = compton_profile->getUpperBoundOfMomentum();
 
-  TEST_EQUALITY_CONST( momentum, 1.0*Utility::Units::mec_momentum );
+  FRENSIE_CHECK_EQUAL( momentum, 1.0*Utility::Units::mec_momentum );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
   // Create the raw Compton profile
   {
-    Teuchos::Array<double> momentums( 2 ), profile_vals( 2 );
+    std::vector<double> momentums( 2 ), profile_vals( 2 );
     momentums[0] = 0.0;
     momentums[1] = Utility::PhysicalConstants::inverse_fine_structure_constant;
 
     profile_vals[0] = 1.0;
     profile_vals[1] = 1.0;
 
-    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> >
+    std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> >
       raw_compton_profile( new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>( momentums, profile_vals ) );
 
     compton_profile.reset( new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>( raw_compton_profile ) );
@@ -180,21 +163,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstStandardComptonProfile.cpp
