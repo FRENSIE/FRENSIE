@@ -324,9 +324,30 @@ inline STLCompliantArray convertPythonToArray( PyObject* py_obj )
   return output_array;
 }
 
+// Create an array object from a Python object without a type conversion
+template<typename STLCompliantArray>
+STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj )
+{
+  // An exception will be thrown if this fails
+  PyArrayObject* py_array =
+    Details::getNumPyArrayWithoutConversion<typename STLCompliantArray::value_type>( py_obj );
+
+  typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
+
+  typename STLCompliantArray::value_type* data =
+    (typename STLCompliantArray::value_type*)PyArray_DATA(py_array);
+
+  STLCompliantArray output_array( length );
+
+  for( typename STLCompliantArray::size_type i = 0; i < length; ++i )
+    output_array[i] = *(data++);
+
+  return output_array;
+}
+
 // Create a Python (list of NumPy arrays) object from a 2D array object
 template<typename STLCompliant2DArray>
-inline STLCompliant2DArray convert2DArrayToPython( const STLCompliant2DArray& obj )
+inline PyObject* convert2DArrayToPython( const STLCompliant2DArray& obj )
 {
   typedef typename std::remove_const<typename STLCompliant2DArray::value_type::value_type>::type ValueType;
 
@@ -368,8 +389,6 @@ inline STLCompliant2DArray convertPythonTo2DArray( PyObject* py_obj )
 
   typename STLCompliant2DArray::size_type dimensions = PyList_Size(py_obj);
 
-  PyObject* tmp_py_obj = PyList_New(dimensions);
-
   STLCompliant2DArray output_array( dimensions );
 
   for( typename STLCompliant2DArray::size_type i = 0; i < dimensions; ++i )
@@ -399,23 +418,34 @@ inline STLCompliant2DArray convertPythonTo2DArray( PyObject* py_obj )
   return output_array;
 }
 
-// Create an array object from a Python object without a type conversion
-template<typename STLCompliantArray>
-STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj )
+// Create a Python (list of pointers) object from an array of pointers object
+template<typename STLCompliantPtrArray>
+PyObject* convertPtrArrayToPython( const STLCompliantPtrArray& obj )
 {
+
+}
+
+// Create a list of pointers object from a Python object (list of pointers)
+template<typename STLCompliantPtrArray>
+STLCompliantPtrArray convertPythonToPtrArray( PyObject* py_obj )
+{
+  std::cout << "convertPythonToPtrArray Called!" << std::endl;
   // An exception will be thrown if this fails
-  PyArrayObject* py_array =
-    Details::getNumPyArrayWithoutConversion<typename STLCompliantArray::value_type>( py_obj );
+  int is_list = 0;
+  int is_new_array = 0;
 
-  typename STLCompliantArray::size_type length = PyArray_DIM(py_array, 0);
+  is_list = PyList_Check(py_obj);
+  std::cout << "is_list =" << is_list  << std::endl;
+  typename STLCompliantPtrArray::size_type dimensions = PyList_Size(py_obj);
 
-  typename STLCompliantArray::value_type* data =
-    (typename STLCompliantArray::value_type*)PyArray_DATA(py_array);
+  STLCompliantPtrArray output_array( dimensions );
 
-  STLCompliantArray output_array( length );
-
-  for( typename STLCompliantArray::size_type i = 0; i < length; ++i )
-    output_array[i] = *(data++);
+  for( typename STLCompliantPtrArray::size_type i = 0; i < dimensions; ++i )
+  {
+    PyObject* tmp_py_obj = PyList_GetItem( py_obj, i );
+    std::cout << std::endl << std::endl << PyTuple_Check( tmp_py_obj ) << std::endl << std::endl;
+    // output_array[i] = PyList_GetItem( py_obj, i );
+  }
 
   return output_array;
 }

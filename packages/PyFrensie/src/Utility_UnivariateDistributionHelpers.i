@@ -39,6 +39,8 @@
 //---------------------------------------------------------------------------//
 %define %basic_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
+%shared_ptr(DIST_NAME( DISTRIBUTION, PARAMS ) )
+
 %feature("docstring") DIST_NAME( DISTRIBUTION, PARAMS )
 "The RENAMED_DISTRIBUTION proxy class. This class can be evaluated and sampled.
 Before sampling, make sure to initialize the Frensie Pseudo-Random Number

@@ -43,6 +43,12 @@ using namespace Utility;
 // Include typemaps support
 %include <typemaps.i>
 
+// Include vector support
+%include <std_vector.i>
+
+// Include shared pointer support
+%include <std_shared_ptr.i>
+
 // Include macros to find initialized numpy
 %include "numpy.i"
 
@@ -58,26 +64,30 @@ using namespace Utility;
 // Include the univariate distribution helpers
 %include "Utility_UnivariateDistributionHelpers.i"
 
+// Add a few general templates
+%template(DoubleVector) std::vector<double>;
+%template(VectorPtrTabUni) std::vector<std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<void,void> > >;
+
 // Add a few general typemaps
 typedef unsigned int size_t;
 %apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
 %apply unsigned& OUTPUT { unsigned& sampled_bin_index };
 
-%typemap(in) const std::vector<double>& (std::vector<double> temp)
-{
-  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
+// %typemap(in) const std::vector<double>& (std::vector<double> temp)
+// {
+//   temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
 
-  $1 = &temp;
-}
+//   $1 = &temp;
+// }
 
-// The typecheck precedence, which is used by SWIG to determine which
-// overloaded method should be called, should be set to
-// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the std::vector<double>&. You will
-// get a Python error when calling the overloaded method in Python without this
-// typecheck
-%typemap(typecheck, precedence=1050) (const std::vector<double>&) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
+// // The typecheck precedence, which is used by SWIG to determine which
+// // overloaded method should be called, should be set to
+// // SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the std::vector<double>&. You will
+// // get a Python error when calling the overloaded method in Python without this
+// // typecheck
+// %typemap(typecheck, precedence=1050) (const std::vector<double>&) {
+//   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+// }
 
 // General ignore directives
 %ignore *::IndepUnit;
@@ -101,6 +111,15 @@ typedef unsigned int size_t;
 // Basic distribution interface setup
 %basic_distribution_interface_setup( UnivariateDistribution )
 
+// Add functionality to Upcast to the UnivariateDistribution from derived classes
+%inline %{
+std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> > upcastToUnivariateDistribution(
+  std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> >& dist )
+{
+  return dist;
+}
+%}
+
 //---------------------------------------------------------------------------//
 // Add support for the TabularUnivariateDistribution
 //---------------------------------------------------------------------------//
@@ -109,6 +128,15 @@ typedef unsigned int size_t;
 
 // Basic tabular distribution interface setup
 %basic_tab_distribution_interface_setup( TabularUnivariateDistribution )
+
+// Add functionality to Upcast to the TabularUnivariateDistribution from derived classes
+%inline %{
+std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > upcastToTabularUnivariateDistribution(
+  std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> >& tab_dist )
+{
+  return tab_dist;
+}
+%}
 
 //---------------------------------------------------------------------------//
 // Add support for the DeltaDistribution
@@ -122,7 +150,7 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 "The dependent value (multiplier) can be ignored (default value = 1.0)"
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareDeltaDistribution<void,void>
+%extend Utility::UnitAwareDeltaDistribution
 {
   %template(DeltaDistribution) Utility::UnitAwareDeltaDistribution::UnitAwareDeltaDistribution<double,double>;
 };
@@ -182,7 +210,7 @@ input parameter are the following:
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareEvaporationDistribution<void,void>
+%extend Utility::UnitAwareEvaporationDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(EvaporationDistribution) Utility::UnitAwareEvaporationDistribution::UnitAwareEvaporationDistribution<double,double,double>;
@@ -207,7 +235,7 @@ input parameter are the following:
 and inf)"
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareExponentialDistribution<void,void>
+%extend Utility::UnitAwareExponentialDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(ExponentialDistribution) Utility::UnitAwareExponentialDistribution::UnitAwareExponentialDistribution<double,double,double>;
@@ -253,7 +281,7 @@ input parameter are the following:
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareMaxwellFissionDistribution<void,void>
+%extend Utility::UnitAwareMaxwellFissionDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(MaxwellFissionDistribution) Utility::UnitAwareMaxwellFissionDistribution::UnitAwareMaxwellFissionDistribution<double,double,double>;
@@ -284,7 +312,7 @@ input parameter are the following:
   max_independent_value = inf."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareNormalDistribution<void,void>
+%extend Utility::UnitAwareNormalDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(NormalDistribution) Utility::UnitAwareNormalDistribution::UnitAwareNormalDistribution<double,double,double,double>;
@@ -305,7 +333,7 @@ Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribu
 "The coefficients should be stored in a NumPy array."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwarePolynomialDistribution<void,void>
+%extend Utility::UnitAwarePolynomialDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(PolynomialDistribution) Utility::UnitAwarePolynomialDistribution::UnitAwarePolynomialDistribution<double>;
@@ -446,7 +474,7 @@ Utility::UnitAwareTabularCDFDistribution<Utility::INTERP,void,void>::UnitAwareTa
 "The dependent value (dependent_value) can be ignored (default value = 1.0)"
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareUniformDistribution<void,void>
+%extend Utility::UnitAwareUniformDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(UniformDistribution) Utility::UnitAwareUniformDistribution::UnitAwareUniformDistribution<double,double>;
@@ -483,7 +511,7 @@ input parameter are the following:
   constant_multiplier = 1.0."
 
 // Instantiate the template constructor for double values
-%extend Utility::UnitAwareWattDistribution<void,void>
+%extend Utility::UnitAwareWattDistribution
 {
   // Instantiate the desired version of the template constructor
   %template(WattDistribution) Utility::UnitAwareWattDistribution::UnitAwareWattDistribution<double,double,double,double>;
@@ -513,7 +541,7 @@ Utility::UnitAwareCoupledElasticDistribution<Utility::INTERP,void,void>::UnitAwa
 
 %coupled_elastic_distribution_interface_setup( LinLin )
 %coupled_elastic_distribution_interface_setup( LinLog )
+
 //---------------------------------------------------------------------------//
 // end Utility_UnivariateDistribution.i
 //---------------------------------------------------------------------------//
-

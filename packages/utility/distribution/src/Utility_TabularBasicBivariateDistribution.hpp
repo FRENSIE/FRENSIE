@@ -172,6 +172,7 @@ private:
 
 } // end Utility namespace
 
+#if !defined SWIG
 #define BOOST_SERIALIZATION_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_ASSUME_ABSTRACT() \
   BOOST_SERIALIZATION_ASSUME_ABSTRACT_TEMPLATE_CLASS_IMPL(              \
     UnitAwareTabularBasicBivariateDistribution, Utility,                  \
@@ -190,6 +191,7 @@ BOOST_SERIALIZATION_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_ASSUME_ABSTRACT()
 // Update the version number here
 //---------------------------------------------------------------------------//
 BOOST_SERIALIZATION_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_VERSION( 0 );
+#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template Includes

@@ -8,7 +8,7 @@
 
 %define %monte_carlo_docstring
 "
-PyFrensie.MonteCarlo is the python interface to the FRENSIE monte_carlo 
+PyFrensie.MonteCarlo is the python interface to the FRENSIE monte_carlo
 package.
 "
 %enddef

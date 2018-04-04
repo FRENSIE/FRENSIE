@@ -64,17 +64,25 @@ PyObject* convertArrayToPython( const STLCompliantArray& obj );
 template<typename STLCompliantArray>
 STLCompliantArray convertPythonToArray( PyObject* py_obj );
 
+// Create an array object from a Python object without a type conversion
+template<typename STLCompliantArray>
+STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj );
+
 // Create a Python (list of NumPy arrays) object from a 2D array object
 template<typename STLCompliant2DArray>
-STLCompliant2DArray convert2DArrayToPython( const STLCompliant2DArray& obj );
+PyObject* convert2DArrayToPython( const STLCompliant2DArray& obj );
 
 // Create a list of arrays object from a Python object (list of Numpy arrays)
 template<typename STLCompliant2DArray>
 STLCompliant2DArray convertPythonTo2DArray( PyObject* py_obj );
 
-// Create a 2D array object from a Python object without a type conversion
-template<typename STLCompliantArray>
-STLCompliantArray convertPythonToArrayWithoutConversion( PyObject* py_obj );
+// Create a Python (list of pointers) object from an array of pointers object
+template<typename STLCompliantPtrArray>
+PyObject* convertPtrArrayToPython( const STLCompliantPtrArray& obj );
+
+// Create a list of pointers object from a Python object (list of pointers)
+template<typename STLCompliantPtrArray>
+STLCompliantPtrArray convertPythonToPtrArray( PyObject* py_obj );
 
 // Create a Python (set) object from a set object
 template<typename STLCompliantSet>
@@ -352,7 +360,7 @@ struct PythonTypeTraits<std::vector<T> >
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
- * std::vector
+ * std::vector<std::vector<T> >
  * \ingroup python_type_traits
  */
 template<typename T>
@@ -369,6 +377,26 @@ struct PythonTypeTraits<std::vector<std::vector<T> > >
   //! Check if a Python object can be converted to the desired type
   static inline bool isConvertable( PyObject* py_obj )
   { return Details::isValidList<std::vector<T> >( py_obj ); }
+};
+
+/*! \brief The partial specialization of PyFrensie::PythonTypeTraits for
+ * std::vector
+ * \ingroup python_type_traits
+ */
+template<typename T>
+struct PythonTypeTraits<std::vector<std::shared_ptr<T> > >
+{
+  //! Create a Python (NumPy) object from a std::vector<std::shared_ptr<T> > object
+  static inline PyObject* convertToPython( const std::vector<std::shared_ptr<T> >& obj )
+  { return Details::convertPtrArrayToPython( obj ); }
+
+  //! Create a std::vector<std::shared_ptr<T> > object from a Python object
+  static inline std::vector<std::shared_ptr<T> > convertFromPython( PyObject* py_obj )
+  { return Details::convertPythonToArrayWithoutConversion<std::vector<std::shared_ptr<T> > >( py_obj ); }
+
+  //! Check if a Python object can be converted to the desired type
+  static inline bool isConvertable( PyObject* py_obj )
+  {/* ...*/ }
 };
 
 /*! \brief The partial specialization of PyFrensie::PythonTypeTraits for

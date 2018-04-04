@@ -45,6 +45,12 @@
 // Get the name of a distribution that has 2 template parameters
 #define _BI_DIST_NAME_2_ARGS( dist_base_name, arg_1, arg_2 ) Utility::UnitAware ## dist_base_name<arg_1,arg_2>
 
+%{
+#define BI_DIST_BASE_NAME( dist_base_name ) Utility::UnitAware ## dist_base_name
+%}
+// Get theunit aware base name of a distribution
+#define BI_DIST_BASE_NAME( dist_base_name ) Utility::UnitAware ## dist_base_name
+
 // Use Preprocessor Metaprogramming to get the distribution name
 #define _GET_BI_DIST_NAME_MACRO( _1, _2, _3, _4, _5, _6, _7, NAME, ... ) NAME
 #define BI_DIST_NAME( ... ) _GET_BI_DIST_NAME_MACRO(__VA_ARGS__, _BI_DIST_NAME_6_ARGS, _BI_DIST_NAME_5_ARGS, _BI_DIST_NAME_4_ARGS, _BI_DIST_NAME_3_ARGS, _BI_DIST_NAME_2_ARGS)(__VA_ARGS__)
@@ -53,6 +59,9 @@
 // Helper macro for setting up a basic BivariateDistribution class python interface
 //---------------------------------------------------------------------------//
 %define %basic_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
+
+%shared_ptr(RENAMED_DISTRIBUTION)
+%shared_ptr( BI_DIST_NAME( DISTRIBUTION, PARAMS ) )
 
 %feature("docstring") BI_DIST_NAME( DISTRIBUTION, PARAMS )
 "The RENAMED_DISTRIBUTION proxy class. This class can be evaluated and sampled.
@@ -146,7 +155,7 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfPrimaryIndepVar;
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic TabularBivariateDistribution class py. int.
 //---------------------------------------------------------------------------//
-%define %basic_tab_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
+%define %standard_tab_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
 %feature("autodoc",
 "evaluateSecondaryConditionalCDF(RENAMED_DISTRIBUTION self, double primary_indep_var_value, double secondary_indep_var_value ) -> double" )
@@ -188,6 +197,26 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalInSubrange;
 Sample from the RENAMED_DISTRIBUTION using the supplied random number in the
 subrange [self.getLowerBoundOfIndepVar(),max_indep_var]" )
 BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumberInSubrange;
+
+// Create unitless constructor
+%extend BI_DIST_BASE_NAME( DISTRIBUTION )
+{
+  // Constructor
+  BI_DIST_BASE_NAME( DISTRIBUTION )(
+    const std::vector<double>& raw_prim_grid,
+    const std::vector<std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<void,void> > >& vec )
+  {
+    std::vector<double> prim_grid(raw_prim_grid);
+    std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > > sec_dists(2);
+
+    for ( unsigned i = 0; i < vec.size(); ++i )
+    {
+      sec_dists[i] = vec[i];
+    }
+
+    return new BI_DIST_NAME( DISTRIBUTION, PARAMS )( prim_grid, sec_dists );
+  }
+}
 
 %basic_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS )
 
@@ -231,9 +260,16 @@ typedef BI_DIST_NAME( DISTRIBUTION, PARAMETER1, PARAMETER2, PARAMETER3, void, vo
 //---------------------------------------------------------------------------//
 // Macro for setting up a basic TabularBivariateDistribution class py. int.
 //---------------------------------------------------------------------------//
-%define %basic_tab_bivariate_distribution_interface_setup( DISTRIBUTION )
+%define %basic_tab_bivariate_distribution_interface_setup( DISTRIBUTION, PARAMETER )
 
-%basic_tab_bivariate_distribution_interface_setup_helper( DISTRIBUTION, DISTRIBUTION, void, void, void )
+// Add a typedef for the renamed distribution so that the extended methods
+// can be compiled
+%inline %{
+typedef BI_DIST_NAME( DISTRIBUTION, void, void, void, PARAMETER ) DISTRIBUTION;
+%}
+
+// Do the basic tabular setup for this distribution
+%basic_bivariate_distribution_interface_setup_helper( DISTRIBUTION, DISTRIBUTION, void , void, void, PARAMETER )
 
 %enddef
 
@@ -242,8 +278,7 @@ typedef BI_DIST_NAME( DISTRIBUTION, PARAMETER1, PARAMETER2, PARAMETER3, void, vo
 //---------------------------------------------------------------------------//
 %define %standard_tab_bivariate_distribution_interface_setup( DISTRIBUTION )
 
-// Do the basic tabular setup for this distribution
-%basic_tab_bivariate_distribution_interface_setup_helper( DISTRIBUTION, DISTRIBUTION, void , void, void )
+%standard_tab_bivariate_distribution_interface_setup_helper( DISTRIBUTION, DISTRIBUTION, void, void, void )
 
 %enddef
 
@@ -259,7 +294,7 @@ typedef BI_DIST_NAME( DISTRIBUTION, PARAMETER1, PARAMETER2, void, void, void ) R
 %}
 
 // Do the basic tabular setup for this distribution
-%basic_tab_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMETER1, PARAMETER2, void, void, void )
+%standard_tab_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMETER1, PARAMETER2, void, void, void )
 
 %enddef
 

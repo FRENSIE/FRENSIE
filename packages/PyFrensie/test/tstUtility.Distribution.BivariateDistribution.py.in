@@ -24,6 +24,13 @@ Utility = importPyFrensieModuleFromBuildDir('Utility')
 Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
 tol = 1e-12
 
+tab_linlin_1 = Distribution.TabularDistribution_LinLin( [1.0, 2.0, 3.0], [0.5, 0.5, 0.5] )
+tab_linlin_2 = Distribution.TabularDistribution_LinLin( [4.0, 5.0, 6.0, 7.0], [0.1, 0.5, 1.5, 3.5] )
+tab_linlin_5 = Distribution.TabularDistribution_LinLog( [4.0, 5.0, 6.0, 7.0], [0.1, 0.5, 1.5, 3.5] )
+Distribution.upcastToTabularUnivariateDistribution( tab_linlin_5 )
+test_dist = Distribution.upcastToTabularUnivariateDistribution( tab_linlin_1 )
+print test_dist.evaluate(1.0)
+
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
@@ -32,25 +39,24 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
     "TestCase class for Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution class"
 
     def setUp(self):
-        self.uni_dist = Distribution.TabularDistribution_LinLin( [1.0, 2.0, 3.0], [0.0, 1.0, 2.0] )
-        # self.dist1 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [self.uni_dist, self.uni_dist ], 1e-3, 1e-7, 1e-16 )
+        tab_dist1 = Distribution.TabularDistribution_LogLog( [1.0, 2.0, 3.0], [0.5, 0.5, 0.5] )
+        tab_dist2 = Distribution.TabularDistribution_LinLin( [4.0, 5.0, 6.0, 7.0], [0.1, 0.5, 1.5, 3.5] )
+        uni_tab_dist1 = Distribution.upcastToTabularUnivariateDistribution( tab_dist1 )
+        uni_tab_dist2 = Distribution.upcastToTabularUnivariateDistribution( tab_dist2 )
+
         primary_indep = numpy.array([0.0,1.0])
-
-        # secondary_indep = []
-        # secondary_indep.append(numpy.array([1.0, 2.0, 3.0]))
-        # secondary_indep.append(numpy.array([4.0, 5.0, 6.0, 7.0]))
-        # dep = []
-        # dep.append(numpy.array([0.5, 0.5, 0.5]))
-        # dep.append(numpy.array([0.1, 0.5, 1.5, 3.5]))
-
         secondary_indep = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]]
         dep = [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]]
 
-        self.dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( primary_indep, secondary_indep, dep, 1e-3, 1e-7, 1e-16 )
+        self.dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [uni_tab_dist1, uni_tab_dist2] )
+        self.dist1 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
+        self.dist2 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( primary_indep, secondary_indep, dep, 1e-3, 1e-7, 1e-16 )
 
     def testConstructor(self):
         "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase))
+        self.assertTrue(isinstance(self.dist1, Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase))
+        self.assertTrue(isinstance(self.dist2, Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase))
 
     def testEvaluate(self):
         "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluate method"

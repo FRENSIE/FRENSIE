@@ -113,6 +113,16 @@ class DeltaDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a DeltaDistribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a DeltaDistribution"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Discrete Distribution
 class DiscreteDistributionTestCase(unittest.TestCase):
@@ -256,6 +266,16 @@ class DiscreteDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Delta Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Delta Distribution"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Equiprobable Bin Distribution
 class EquiprobableBinDistributionTestCase(unittest.TestCase):
@@ -343,6 +363,16 @@ class EquiprobableBinDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Equiprobable Bin Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Equiprobable Bin Distribution"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Evaporation Distribution
 class EvaporationDistributionTestCase(unittest.TestCase):
@@ -404,6 +434,16 @@ class EvaporationDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Evaporation Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Evaporation Distribution"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
+
 #-----------------------------------------------------------------------------#
 # Test the Exponential Distribution
 class ExponentialDistributionTestCase(unittest.TestCase):
@@ -462,6 +502,16 @@ class ExponentialDistributionTestCase(unittest.TestCase):
         same_dist = Distribution.ExponentialDistribution( 1.0, 1.0 )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
+
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Exponential Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Exponential Distribution"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
 
 #-----------------------------------------------------------------------------#
 # Test the Histogram Distribution
@@ -586,6 +636,16 @@ class HistogramDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Histogram Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Histogram Distribution"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the MaxwellFission Distribution
 class MaxwellFissionDistributionTestCase(unittest.TestCase):
@@ -647,6 +707,16 @@ class MaxwellFissionDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a MaxwellFission Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a MaxwellFission Distribution"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
+
 #-----------------------------------------------------------------------------#
 # Test the Normal Distribution
 class NormalDistributionTestCase(unittest.TestCase):
@@ -707,6 +777,16 @@ class NormalDistributionTestCase(unittest.TestCase):
         same_dist = Distribution.NormalDistribution( 0.0, 0.1 )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
+
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Normal Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Normal Distribution"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
 
 #-----------------------------------------------------------------------------#
 # Test the Polynomial Distribution
@@ -771,6 +851,16 @@ class PolynomialDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Polynomial Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Polynomial Distribution"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
+
 #-----------------------------------------------------------------------------#
 # Test the Power Distribution 1
 class PowerDistribution_1TestCase(unittest.TestCase):
@@ -833,6 +923,16 @@ class PowerDistribution_1TestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Power Distribution 1"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Power Distribution 1"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
+
 #-----------------------------------------------------------------------------#
 # Test the Power Distribution 2
 class PowerDistribution_2TestCase(unittest.TestCase):
@@ -894,6 +994,16 @@ class PowerDistribution_2TestCase(unittest.TestCase):
         same_dist = Distribution.PowerDistribution_2( 0.0, 1.0 )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
+
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Power Distribution 2"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Power Distribution 2"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
 
 #-----------------------------------------------------------------------------#
 # Test the Tabular Distribution LinLin
@@ -991,6 +1101,16 @@ class TabularDistribution_LinLinTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular Distribution LinLin"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular Distribution LinLin"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Tabular Distribution LinLog
 class TabularDistribution_LinLogTestCase(unittest.TestCase):
@@ -1086,6 +1206,16 @@ class TabularDistribution_LinLogTestCase(unittest.TestCase):
         same_dist = Distribution.TabularDistribution_LinLog( [1.0,2.0,3.0], [0.0,1.0,2.0] )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
+
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular Distribution LinLog"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular Distribution LinLog"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
 
 #-----------------------------------------------------------------------------#
 # Test the Tabular Distribution LogLin
@@ -1183,6 +1313,16 @@ class TabularDistribution_LogLinTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular Distribution LogLin"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular Distribution LogLin"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Tabular Distribution LogLog
 class TabularDistribution_LogLogTestCase(unittest.TestCase):
@@ -1278,6 +1418,16 @@ class TabularDistribution_LogLogTestCase(unittest.TestCase):
         same_dist = Distribution.TabularDistribution_LogLog( [1.0,2.0,3.0], [1.0,2.0,3.0] )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
+
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular Distribution LogLog"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular Distribution LogLog"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
 
 #-----------------------------------------------------------------------------#
 # Test the Tabular CDF Distribution LinLin
@@ -1377,6 +1527,16 @@ class TabularCDFDistribution_LinLinTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular CDF Distribution LinLin"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular CDF Distribution LinLin"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Tabular CDF Distribution LinLog
 class TabularCDFDistribution_LinLogTestCase(unittest.TestCase):
@@ -1474,6 +1634,16 @@ class TabularCDFDistribution_LinLogTestCase(unittest.TestCase):
         same_dist = Distribution.TabularCDFDistribution_LinLog( [1e-3,1e-2,1e-1,1.0], [0.0,1e-1,1.0,1e2] )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
+
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular CDF Distribution LinLog"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular CDF Distribution LinLog"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
 
 #-----------------------------------------------------------------------------#
 # Test the Tabular CDF Distribution LogLin
@@ -1573,6 +1743,16 @@ class TabularCDFDistribution_LogLinTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular CDF Distribution LogLin"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular CDF Distribution LogLin"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Tabular CDF Distribution LogLog
 class TabularCDFDistribution_LogLogTestCase(unittest.TestCase):
@@ -1671,6 +1851,16 @@ class TabularCDFDistribution_LogLogTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Tabular CDF Distribution LogLog"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Tabular CDF Distribution LogLog"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Uniform Distribution
 class UniformDistributionTestCase(unittest.TestCase):
@@ -1761,6 +1951,16 @@ class UniformDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
 
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Uniform Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Uniform Distribution"
+        dist = Distribution.upcastToTabularUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.TabularUnivariateDistribution))
+
 #-----------------------------------------------------------------------------#
 # Test the Watt Distribution
 class WattDistributionTestCase(unittest.TestCase):
@@ -1821,6 +2021,16 @@ class WattDistributionTestCase(unittest.TestCase):
         same_dist = Distribution.WattDistribution( 1.0, 1.0, 1.0, 0.1 )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
+
+    def testUpcastToUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToUnivariateDistribution for a Watt Distribution"
+        dist = Distribution.upcastToUnivariateDistribution( self.dist )
+        self.assertTrue(isinstance(dist, Distribution.UnivariateDistribution))
+
+    def testUpcastToTabularUnivariateDistribution(self):
+        "*Test Utility.Distribution.upcastToTabularUnivariateDistribution for a Watt Distribution"
+        with self.assertRaises(TypeError):
+            Distribution.upcastToTabularUnivariateDistribution( self.dist )
 
 #-----------------------------------------------------------------------------#
 # Custom main
