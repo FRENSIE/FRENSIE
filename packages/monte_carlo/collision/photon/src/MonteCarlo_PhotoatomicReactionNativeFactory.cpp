@@ -57,7 +57,7 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
        new std::vector<double>( raw_photoatom_data.getWallerHartreeIncoherentCrossSection().begin(),
                                 raw_photoatom_data.getWallerHartreeIncoherentCrossSection().end() ) );
 
-    unsigned threshold_index =
+    size_t threshold_index =
       raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
 
     // Create the scattering distribution
@@ -95,7 +95,7 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
          new std::vector<double>( raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).begin(),
                                   raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).end() ) );
 
-      unsigned subshell_threshold_index =
+      size_t subshell_threshold_index =
 	raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(*subshell_it);
 
       // Create the subshell incoherent distribution
@@ -145,7 +145,7 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
      new std::vector<double>( raw_photoatom_data.getWallerHartreeCoherentCrossSection().begin(),
                               raw_photoatom_data.getWallerHartreeCoherentCrossSection().end() ) );
 
-  unsigned threshold_index =
+  size_t threshold_index =
     raw_photoatom_data.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex();
 
   // Create the coherent scattering distribution
@@ -184,7 +184,7 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
      new std::vector<double>( raw_photoatom_data.getPairProductionCrossSection().begin(),
                               raw_photoatom_data.getPairProductionCrossSection().end() ) );
 
-  unsigned threshold_index =
+  size_t threshold_index =
     raw_photoatom_data.getPairProductionCrossSectionThresholdEnergyIndex();
 
   pair_production_reaction.reset(
@@ -215,7 +215,7 @@ void PhotoatomicReactionNativeFactory::createTripletProductionReaction(
      new std::vector<double>( raw_photoatom_data.getTripletProductionCrossSection().begin(),
                               raw_photoatom_data.getTripletProductionCrossSection().end() ) );
 
-  unsigned threshold_index =
+  size_t threshold_index =
     raw_photoatom_data.getTripletProductionCrossSectionThresholdEnergyIndex();
 
   triplet_production_reaction.reset(
@@ -245,7 +245,7 @@ void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
      new std::vector<double>( raw_photoatom_data.getPhotoelectricCrossSection().begin(),
                               raw_photoatom_data.getPhotoelectricCrossSection().end() ) );
 
-  unsigned threshold_index =
+  size_t threshold_index =
     raw_photoatom_data.getPhotoelectricCrossSectionThresholdEnergyIndex();
 
   // Create the total photoelectric reaction
@@ -286,7 +286,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
       new std::vector<double>( raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).begin(),
                                raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).end() ) );
 
-    unsigned subshell_threshold_index =
+    size_t subshell_threshold_index =
       raw_photoatom_data.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( *subshell_it );
 
     subshell_photoelectric_reaction.reset(
@@ -323,7 +323,7 @@ void PhotoatomicReactionNativeFactory::createHeatingReaction(
      new std::vector<double>( raw_photoatom_data.getAveragePhotonHeatingNumbers().begin(),
                               raw_photoatom_data.getAveragePhotonHeatingNumbers().end() ) );
 
-  unsigned threshold_index = 0u;
+  size_t threshold_index = 0u;
 
   // Create the heating reaction
   heating_reaction.reset(

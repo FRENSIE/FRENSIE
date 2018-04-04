@@ -16,6 +16,7 @@
 #include "MonteCarlo_AdjointPhotoatomicReactionType.hpp"
 #include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "Data_SubshellType.hpp"
+#include "Utility_DistributionTraits.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
@@ -25,6 +26,9 @@ class AdjointPhotoatomicReaction : public AtomicReaction
 {
 
 public:
+
+  //! The trials counter type
+  typedef Utility::DistributionTraits::Counter Counter;
 
   //! Constructor
   AdjointPhotoatomicReaction();
@@ -48,7 +52,7 @@ public:
   virtual void react( AdjointPhotonState& adjoint_photon,
                       ParticleBank& bank,
                       Data::SubshellType& shell_of_interaction,
-                      unsigned& trials ) const;
+                      Counter& trials ) const;
 };
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLin,false> );

@@ -25,6 +25,9 @@ class WHIncoherentAdjointPhotonScatteringDistribution : public IncoherentAdjoint
 
 public:
 
+  //! The trials counter type
+  typedef IncoherentAdjointPhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   WHIncoherentAdjointPhotonScatteringDistribution(
         const double max_energy,
@@ -48,7 +51,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
 			      double& outgoing_energy,
 			      double& scattering_angle_cosine,
-			      unsigned& trials ) const override;
+			      Counter& trials ) const override;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,

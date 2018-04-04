@@ -30,7 +30,7 @@ public:
 		   const PhotonuclearReactionType reaction_type,
 		   const std::vector<unsigned>& photon_production_ids,
       		   const double q_value,
-		   const unsigned threshold_energy_index,
+		   const size_t threshold_energy_index,
 		   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
 		   const std::shared_ptr<const std::vector<double> >& cross_section,
                    const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&

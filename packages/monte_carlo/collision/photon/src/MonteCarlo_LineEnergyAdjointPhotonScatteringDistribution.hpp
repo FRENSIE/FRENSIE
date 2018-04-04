@@ -26,6 +26,9 @@ class LineEnergyAdjointPhotonScatteringDistribution : public AdjointPhotonScatte
 
 public:
 
+  //! The trials counter type
+  typedef AdjointPhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   LineEnergyAdjointPhotonScatteringDistribution(
                  const double line_energy,
@@ -85,12 +88,12 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const override;
+                              Counter& trials ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,

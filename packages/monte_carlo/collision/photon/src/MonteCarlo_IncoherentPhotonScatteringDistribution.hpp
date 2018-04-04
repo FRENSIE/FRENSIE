@@ -20,6 +20,9 @@ class IncoherentPhotonScatteringDistribution : public PhotonScatteringDistributi
 
 public:
 
+  //! The trials counter type
+  typedef PhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   IncoherentPhotonScatteringDistribution(
 			            const double kahn_sampling_cutoff_energy );
@@ -43,7 +46,7 @@ protected:
   void sampleAndRecordTrialsKleinNishina( const double incoming_energy,
 					  double& outgoing_energy,
 					  double& scattering_angle_cosine,
-					  unsigned& trials ) const;
+					  Counter& trials ) const;
 
   //! Create ejected electron
   void createEjectedElectron( const PhotonState& photon,

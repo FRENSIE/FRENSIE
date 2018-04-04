@@ -28,6 +28,9 @@ public:
   //! This type
   typedef SubshellIncoherentAdjointPhotonScatteringDistribution ThisType;
 
+  //! The trials counter type
+  typedef IncoherentAdjointPhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   SubshellIncoherentAdjointPhotonScatteringDistribution(
       const double max_energy,
@@ -66,7 +69,7 @@ public:
   virtual void sampleAndRecordTrials( const double incoming_energy,
                                       double& outgoing_energy,
                                       double& scattering_angle_cosine,
-                                      unsigned& trials ) const override;
+                                      Counter& trials ) const override;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   virtual void scatterAdjointPhoton(

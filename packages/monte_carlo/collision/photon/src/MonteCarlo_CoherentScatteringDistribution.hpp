@@ -28,6 +28,9 @@ class CoherentScatteringDistribution : public PhotonScatteringDistribution,
 
 public:
 
+  //! The trials counter type
+  typedef PhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   CoherentScatteringDistribution(
                                 const std::shared_ptr<const FormFactorSquared>&
@@ -58,7 +61,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
 			      double& outgoing_energy,
 			      double& scattering_angle_cosine,
-			      unsigned& trials ) const override;
+			      Counter& trials ) const override;
 
   //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
@@ -76,7 +79,7 @@ protected:
   virtual void sampleAndRecordTrialsImpl(
 				   const double incoming_energy,
 				   double& scattering_angle_cosine,
-				   unsigned& trials ) const = 0;
+				   Counter& trials ) const = 0;
 
   //! Evaluate the form factor squared
   double evaluateFormFactorSquared(
@@ -86,7 +89,7 @@ protected:
   //! Basic sampling implementation
   void sampleAndRecordTrialsBasicImpl( const double incoming_energy,
 				       double& scattering_angle_cosine,
-				       unsigned& trials ) const;
+				       Counter& trials ) const;
 
   //! Return the form factor squared distribution
   const FormFactorSquared& getFormFactorSquaredDistribution() const;

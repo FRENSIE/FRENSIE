@@ -16,6 +16,7 @@
 #include "Data_SubshellType.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ComptonProfile.hpp"
+#include "Utility_DistributionTraits.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_MeCMomentumUnit.hpp"
 #include "Utility_ContractException.hpp"
@@ -27,6 +28,9 @@ class DopplerBroadenedPhotonEnergyDistribution
 {
 
 public:
+
+  //! The trials counter type
+  typedef Utility::DistributionTraits::Counter Counter;
   
   //! Constructor
   DopplerBroadenedPhotonEnergyDistribution()
@@ -110,15 +114,15 @@ public:
 				const double scattering_angle_cosine,
 				double& outgoing_energy,
 				Data::SubshellType& shell_of_interaction,
-				unsigned& trials ) const = 0;
+				Counter& trials ) const = 0;
 
   //! Sample an electron momentum projection and record the number of trials
   virtual void sampleMomentumAndRecordTrials(
-                                          const double incoming_energy,
-                                          const double scattering_angle_cosine,
-                                          double& electron_momentum_projection,
-                                          Data::SubshellType& shell_of_interaction,
-                                          unsigned& trials ) const = 0;
+                                      const double incoming_energy,
+                                      const double scattering_angle_cosine,
+                                      double& electron_momentum_projection,
+                                      Data::SubshellType& shell_of_interaction,
+                                      Counter& trials ) const = 0;
 
 protected:
 

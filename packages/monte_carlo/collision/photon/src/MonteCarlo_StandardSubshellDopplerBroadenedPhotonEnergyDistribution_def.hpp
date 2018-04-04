@@ -341,7 +341,7 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				     double& outgoing_energy,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   this->sampleAndRecordTrials( incoming_energy,
 			       scattering_angle_cosine,
@@ -353,11 +353,11 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 // Sample an outgoing energy and record the number of trials
 template<typename ComptonProfilePolicy>
 void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleAndRecordTrials(
-				          const double incoming_energy,
-					  const double scattering_angle_cosine,
-					  double& outgoing_energy,
-					  Data::SubshellType& shell_of_interaction,
-					  unsigned& trials ) const
+                                      const double incoming_energy,
+                                      const double scattering_angle_cosine,
+                                      double& outgoing_energy,
+				      Data::SubshellType& shell_of_interaction,
+                                      Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= this->getSubshellBindingEnergy() );
@@ -406,7 +406,7 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
                                       Data::SubshellType& shell_of_interaction,
-                                      unsigned& trials ) const
+                                      Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= this->getSubshellBindingEnergy() );

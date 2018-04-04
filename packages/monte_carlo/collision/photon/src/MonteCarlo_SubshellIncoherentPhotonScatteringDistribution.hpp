@@ -22,6 +22,9 @@ class SubshellIncoherentPhotonScatteringDistribution : public IncoherentPhotonSc
 
 public:
 
+  //! The trials counter type
+  typedef IncoherentPhotonScatteringDistribution::Counter Counter;
+
   //! Constructor without Doppler broadening
   SubshellIncoherentPhotonScatteringDistribution(
       const Data::SubshellType interaction_subshell,
@@ -60,7 +63,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
 			      double& outgoing_energy,
 			      double& scattering_angle_cosine,
-			      unsigned& trials ) const;
+			      Counter& trials ) const;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   virtual void scatterPhoton( PhotonState& photon,

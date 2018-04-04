@@ -23,6 +23,9 @@ class BasicCoherentScatteringDistribution : public CoherentScatteringDistributio
 
 public:
 
+  //! The trials counter type
+  typedef CoherentScatteringDistribution::Counter Counter;
+
   //! Constructor
   BasicCoherentScatteringDistribution(
                                 const std::shared_ptr<const FormFactorSquared>&
@@ -37,7 +40,7 @@ private:
   // Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
 				  double& scattering_angle_cosine,
-				  unsigned& trials ) const;
+				  Counter& trials ) const;
 };
 
 } // end MonteCarlo namespace

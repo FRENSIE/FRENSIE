@@ -649,7 +649,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                double& outgoing_energy,
 			       Data::SubshellType& shell_of_interaction ) const
 {
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   this->sampleAndRecordTrials( incoming_energy,
 			       scattering_angle_cosine,
@@ -668,7 +668,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				     const double scattering_angle_cosine,
 				     double& outgoing_energy,
 				     Data::SubshellType& shell_of_interaction,
-				     unsigned& trials ) const
+				     Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
@@ -725,7 +725,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                     const double scattering_angle_cosine,
                                     double& electron_momentum,
                                     Data::SubshellType& shell_of_interaction,
-                                    unsigned& trials ) const
+                                    Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
@@ -734,7 +734,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Record the number of iterations
-  unsigned iterations = 0u;
+  Counter iterations = 0;
 
   // Sample the shell that is interacted with
   size_t compton_subshell_index;

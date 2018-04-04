@@ -60,7 +60,7 @@ double LineEnergyAdjointPhotoatomicReaction::getCrossSection(
 // Return the cross section at the given energy (efficient)
 double LineEnergyAdjointPhotoatomicReaction::getCrossSection(
                                                const double energy,
-                                               const unsigned bin_index ) const
+                                               const size_t bin_index ) const
 {
   return this->getCrossSection( energy );    
 }

@@ -31,6 +31,9 @@ class StandardCompleteDopplerBroadenedPhotonEnergyDistribution : public Complete
 
 public:
 
+  //! The trials counter type
+  typedef CompleteDopplerBroadenedPhotonEnergyDistribution::Counter Counter;
+
   //! Constructor
   StandardCompleteDopplerBroadenedPhotonEnergyDistribution(
                const std::vector<double>& endf_subshell_occupancies,
@@ -138,7 +141,7 @@ public:
 			      const double scattering_angle_cosine,
 			      double& outgoing_energy,
 			      Data::SubshellType& shell_of_interaction,
-			      unsigned& trials ) const override;
+			      Counter& trials ) const override;
 
   //! Sample an electron momentum from the distribution
   void sampleMomentumAndRecordTrials(
@@ -146,7 +149,7 @@ public:
                                     const double scattering_angle_cosine,
                                     double& electron_momentum,
                                     Data::SubshellType& shell_of_interaction,
-                                    unsigned& trials ) const override;
+                                    Counter& trials ) const override;
 
   //! Sample an electron momentum from the subshell distribution
   double sampleSubshellMomentum( const double incoming_energy,

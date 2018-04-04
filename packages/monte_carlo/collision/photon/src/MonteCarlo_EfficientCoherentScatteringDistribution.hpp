@@ -37,7 +37,7 @@ private:
   // Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
 				  double& scattering_angle_cosine,
-				  unsigned& trials ) const;
+				  Counter& trials ) const;
 };
 
 } // end MonteCarlo namespace

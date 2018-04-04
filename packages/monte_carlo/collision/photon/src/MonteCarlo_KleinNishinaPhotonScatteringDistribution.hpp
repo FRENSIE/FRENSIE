@@ -20,6 +20,9 @@ class KleinNishinaPhotonScatteringDistribution : public IncoherentPhotonScatteri
 
 public:
 
+  //! The trials counter type
+  typedef IncoherentPhotonScatteringDistribution::Counter Counter;
+
   //! Default Constructor
   KleinNishinaPhotonScatteringDistribution();
 
@@ -48,7 +51,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
 			      double& outgoing_energy,
 			      double& scattering_angle_cosine,
-			      unsigned& trials ) const;
+			      Counter& trials ) const;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterPhoton( PhotonState& photon,

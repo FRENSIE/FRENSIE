@@ -27,16 +27,16 @@ inline double getCrossSection(
        const double energy,
        const std::vector<double>& incoming_energy_grid,
        const std::vector<double>& cross_section,
-       const unsigned threshold_energy_index )
+       const size_t threshold_energy_index )
 {
   if( energy >= incoming_energy_grid[threshold_energy_index] &&
       energy < incoming_energy_grid.back() )
   {
-    unsigned energy_index =
+    size_t energy_index =
       Utility::Search::binaryLowerBoundIndex( incoming_energy_grid.begin(),
                                               incoming_energy_grid.end(),
                                               energy );
-    unsigned cs_index = energy_index - threshold_energy_index;
+    size_t cs_index = energy_index - threshold_energy_index;
 
     return Utility::LinLin::interpolate(incoming_energy_grid[energy_index],
                                         incoming_energy_grid[energy_index+1],

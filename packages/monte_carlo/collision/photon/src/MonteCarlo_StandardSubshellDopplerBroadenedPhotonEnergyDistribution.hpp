@@ -26,6 +26,9 @@ class StandardSubshellDopplerBroadenedPhotonEnergyDistribution : public Subshell
 
 public:
 
+  //! The trials counter type
+  typedef SubshellDopplerBroadenedPhotonEnergyDistribution::Counter Counter;
+
   //! Constructor
   StandardSubshellDopplerBroadenedPhotonEnergyDistribution(
               const Data::SubshellType interaction_subshell,
@@ -83,14 +86,14 @@ public:
 			      const double scattering_angle_cosine,
 			      double& outgoing_energy,
 			      Data::SubshellType& shell_of_interaction,
-			      unsigned& trials ) const override;
+			      Counter& trials ) const override;
 
   //! Sample an electron momentum projection and record the number of trials
   void sampleMomentumAndRecordTrials( const double incoming_energy,
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
                                       Data::SubshellType& shell_of_interaction,
-                                      unsigned& trials ) const override;
+                                      Counter& trials ) const override;
 
 private:
 

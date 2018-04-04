@@ -84,7 +84,7 @@ protected:
 		const std::vector<double>& energy_grid,
                 const Utility::ArrayView<const double>& raw_cross_section,
                 std::vector<double>& cross_section,
-                unsigned& threshold_energy_index );
+                size_t& threshold_energy_index );
 
 private:
 

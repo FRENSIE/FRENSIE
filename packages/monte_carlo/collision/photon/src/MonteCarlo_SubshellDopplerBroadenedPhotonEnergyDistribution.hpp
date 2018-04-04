@@ -21,11 +21,14 @@ class SubshellDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadened
 
 public:
 
+  //! The trials counter type
+  typedef DopplerBroadenedPhotonEnergyDistribution::Counter Counter;
+
   //! Constructor
   SubshellDopplerBroadenedPhotonEnergyDistribution(
-		                       const Data::SubshellType interaction_subshell,
-                                       const double subshell_occupancy,
-                                       const double subshell_binding_energy );
+		                 const Data::SubshellType interaction_subshell,
+                                 const double subshell_occupancy,
+                                 const double subshell_binding_energy );
 
   //! Destructor
   virtual ~SubshellDopplerBroadenedPhotonEnergyDistribution()

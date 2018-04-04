@@ -30,6 +30,9 @@ public:
   //! This type
   typedef DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution ThisType;
 
+  //! The trials counter type
+  typedef SubshellIncoherentAdjointPhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution(
      const double max_energy,
@@ -52,7 +55,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const override;
+                              Counter& trials ) const override;
 
 protected:
 

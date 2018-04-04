@@ -88,7 +88,7 @@ void KleinNishinaPhotonScatteringDistribution::sample(
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   this->sampleAndRecordTrialsKleinNishina( incoming_energy,
 					   outgoing_energy,
@@ -101,7 +101,7 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+					    Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

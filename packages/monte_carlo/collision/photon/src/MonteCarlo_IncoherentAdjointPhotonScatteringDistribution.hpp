@@ -30,6 +30,9 @@ protected:
 
 public:
 
+  //! The trials counter type
+  typedef AdjointPhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   IncoherentAdjointPhotonScatteringDistribution( const double max_energy );
 
@@ -105,7 +108,7 @@ protected:
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    unsigned& trials ) const;
+					    Counter& trials ) const;
 
   //! Check if an energy is below the scattering window
   virtual bool isEnergyBelowScatteringWindow(

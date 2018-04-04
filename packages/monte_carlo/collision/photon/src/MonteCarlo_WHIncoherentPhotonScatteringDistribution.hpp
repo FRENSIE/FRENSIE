@@ -24,6 +24,9 @@ class WHIncoherentPhotonScatteringDistribution : public IncoherentPhotonScatteri
 
 public:
 
+  //! The trials counter type
+  typedef IncoherentPhotonScatteringDistribution::Counter Counter;
+
   //! Constructor
   WHIncoherentPhotonScatteringDistribution(
    const std::shared_ptr<const ScatteringFunction>& scattering_function,
@@ -50,7 +53,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
 			      double& outgoing_energy,
 			      double& scattering_angle_cosine,
-			      unsigned& trials ) const;
+			      Counter& trials ) const;
 
 private:
 

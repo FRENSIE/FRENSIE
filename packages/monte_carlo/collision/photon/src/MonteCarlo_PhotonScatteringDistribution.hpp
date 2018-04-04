@@ -12,8 +12,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Data_SubshellType.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
+#include "Data_SubshellType.hpp"
+#include "Utility_DistributionTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -22,6 +23,9 @@ class PhotonScatteringDistribution : public virtual ScatteringDistribution
 {
 
 public:
+
+  //! The trials counter type
+  typedef Utility::DistributionTraits::Counter Counter;
 
   //! Constructor
   PhotonScatteringDistribution()
@@ -53,7 +57,7 @@ public:
   virtual void sampleAndRecordTrials( const double incoming_energy,
 				      double& outgoing_energy,
 				      double& scattering_angle_cosine,
-				      unsigned& trials ) const = 0;
+				      Counter& trials ) const = 0;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   virtual void scatterPhoton( PhotonState& photon,

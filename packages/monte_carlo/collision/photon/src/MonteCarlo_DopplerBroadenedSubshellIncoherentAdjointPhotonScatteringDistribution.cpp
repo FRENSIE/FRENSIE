@@ -63,7 +63,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( incoming_energy <= this->getMaxEnergy() - this->getSubshellBindingEnergy() );
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   return this->sampleAndRecordTrials( incoming_energy,
                                       outgoing_energy,
@@ -76,7 +76,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
                                                const double incoming_energy,
                                                double& outgoing_energy,
                                                double& scattering_angle_cosine,
-                                               unsigned& trials ) const
+                                               Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

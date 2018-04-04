@@ -45,11 +45,11 @@ public:
   bool isEnergyWithinEnergyGrid( const double energy ) const;
 
   //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const;
+  double getCrossSection( const double energy ) const override;
 
   //! Return the cross section at the given energy (efficient)
   double getCrossSection( const double energy,
-			  const unsigned bin_index ) const;
+			  const size_t bin_index ) const override;
 
   //! Return the line energy
   double getLineEnergy() const;
@@ -58,13 +58,13 @@ public:
   double getMaxEnergy() const;
 
   //! Return the threshold energy
-  double getThresholdEnergy() const;
+  double getThresholdEnergy() const override;
 
   //! Return the number of adjoint photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
 
   //! Return the number of adjoint electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
   //! Return the reaction type
   AdjointPhotoatomicReactionType getReactionType() const;
@@ -72,7 +72,7 @@ public:
   //! Simulate the reaction
   void react( AdjointPhotonState& adjoint_photon,
 	      ParticleBank& bank,
-	      Data::SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const override;
 
 protected:
 

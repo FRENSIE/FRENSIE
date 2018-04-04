@@ -43,13 +43,13 @@ public:
   StandardGenericAtomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index );
+       const size_t threshold_energy_index );
 
   //! Constructor
   StandardGenericAtomicReaction(
      const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
      const std::shared_ptr<const std::vector<double> >& cross_section,
-     const unsigned threshold_energy_index,
+     const size_t threshold_energy_index,
      const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
      grid_searcher );
 
@@ -65,7 +65,7 @@ public:
 
   //! Return the cross section at the given energy (efficient)
   virtual double getCrossSection( const double energy,
-                                  const unsigned bin_index ) const override;
+                                  const size_t bin_index ) const override;
 
   //! Return the max energy
   double getMaxEnergy() const;
@@ -87,7 +87,7 @@ private:
   std::shared_ptr<const std::vector<double> > d_cross_section;
 
   // The threshold energy
-  unsigned d_threshold_energy_index;
+  size_t d_threshold_energy_index;
 
   // The hash-based grid searcher
   std::shared_ptr<const Utility::HashBasedGridSearcher<double> >

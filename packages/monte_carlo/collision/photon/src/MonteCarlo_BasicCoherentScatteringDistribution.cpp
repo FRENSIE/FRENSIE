@@ -25,7 +25,7 @@ BasicCoherentScatteringDistribution::BasicCoherentScatteringDistribution(
 void BasicCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
 					     const double incoming_energy,
 					     double& scattering_angle_cosine,
-					     unsigned& trials ) const
+					     Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

@@ -34,7 +34,7 @@ EfficientCoherentScatteringDistribution::EfficientCoherentScatteringDistribution
 void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl(
 					       const double incoming_energy,
 					       double& scattering_angle_cosine,
-					       unsigned& trials ) const
+					       Counter& trials ) const
 {
   // The wavelength of the photon (cm)
   const boost::units::quantity<boost::units::cgs::length> wavelength =

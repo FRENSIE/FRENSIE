@@ -111,7 +111,7 @@ void CoherentScatteringDistribution::sample(
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
@@ -124,7 +124,7 @@ void CoherentScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+					    Counter& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -143,7 +143,7 @@ void CoherentScatteringDistribution::scatterPhoton(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( photon.getEnergy(),
@@ -165,7 +165,7 @@ void CoherentScatteringDistribution::scatterAdjointPhoton(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_photon.getEnergy(),
@@ -205,7 +205,7 @@ double CoherentScatteringDistribution::evaluateFormFactorSquared(
 void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl(
 					    const double incoming_energy,
 					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+					    Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

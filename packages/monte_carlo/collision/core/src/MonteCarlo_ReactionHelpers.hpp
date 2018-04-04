@@ -29,7 +29,7 @@ namespace MonteCarlo{
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index );
+    const size_t threshold_energy_index );
 
   // Return the cross section at a given energy
   template<typename InterpPolicy>
@@ -37,17 +37,17 @@ namespace MonteCarlo{
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher );
 
   // Return the cross section at a given energy (efficient)
   template<typename InterpPolicy>
   double getCrossSection(
     const double energy,
-    const unsigned bin_index,
+    const size_t bin_index,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index );
+    const size_t threshold_energy_index );
 
   // Return the cross section at a given energy
   template<typename InterpPolicy>
@@ -55,7 +55,7 @@ namespace MonteCarlo{
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index );
+    const size_t threshold_energy_index );
 
   // Return the cross section at a given energy
   template<typename InterpPolicy>
@@ -63,17 +63,17 @@ namespace MonteCarlo{
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher );
 
   // Return the cross section at a given energy (efficient)
   template<typename InterpPolicy>
   double getProcessedCrossSection(
     const double energy,
-    const unsigned bin_index,
+    const size_t bin_index,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index );
+    const size_t threshold_energy_index );
 
 } // end MonteCarlo namespace
 

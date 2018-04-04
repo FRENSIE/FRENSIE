@@ -21,7 +21,7 @@ void AdjointPhotoatomicReaction::react(
                                       AdjointPhotonState& adjoint_photon,
                                       ParticleBank& bank,
                                       Data::SubshellType& shell_of_interaction,
-                                      unsigned& trials ) const
+                                      Counter& trials ) const
 {
   ++trials;
 

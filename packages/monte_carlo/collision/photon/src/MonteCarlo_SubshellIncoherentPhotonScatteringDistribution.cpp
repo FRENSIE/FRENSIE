@@ -137,7 +137,7 @@ void SubshellIncoherentPhotonScatteringDistribution::sample(
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > d_binding_energy );
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   return this->sampleAndRecordTrials( incoming_energy,
 				      outgoing_energy,
@@ -153,7 +153,7 @@ void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    unsigned& trials ) const
+					    Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > d_binding_energy );

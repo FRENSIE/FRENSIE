@@ -99,7 +99,7 @@ template<typename AtomicReactionBase,
 StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::StandardGenericAtomicReaction(
            const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
            const std::shared_ptr<const std::vector<double> >& cross_section,
-           const unsigned threshold_energy_index )
+           const size_t threshold_energy_index )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
     d_threshold_energy_index( threshold_energy_index )
@@ -131,7 +131,7 @@ template<typename AtomicReactionBase,
 StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::StandardGenericAtomicReaction(
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& cross_section,
-      const unsigned threshold_energy_index,
+      const size_t threshold_energy_index,
       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
       grid_searcher )
   : d_incoming_energy_grid( incoming_energy_grid ),
@@ -174,7 +174,7 @@ double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_c
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
-  unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
+  size_t energy_index = d_grid_searcher->findLowerBinIndex( energy );
   
   return this->getCrossSection( energy, energy_index );
 }
@@ -185,7 +185,7 @@ template<typename AtomicReactionBase,
          bool processed_cross_section>
 double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_cross_section>::getCrossSection(
                                                const double energy,
-                                               const unsigned bin_index ) const
+                                               const size_t bin_index ) const
 {
   // Make sure the bin index is valid
   testPrecondition( (StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( (*d_incoming_energy_grid)[bin_index] ) <=
@@ -195,7 +195,7 @@ double StandardGenericAtomicReaction<AtomicReactionBase,InterpPolicy,processed_c
 
   if( bin_index >= d_threshold_energy_index )
   {
-    unsigned cs_index = bin_index - d_threshold_energy_index;
+    size_t cs_index = bin_index - d_threshold_energy_index;
 
     if( (*d_cross_section)[cs_index] == 0.0 )
     {

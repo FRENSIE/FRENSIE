@@ -32,7 +32,7 @@ public:
   SubshellIncoherentPhotoatomicReaction(
    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
    const std::shared_ptr<const std::vector<double> >& cross_section,
-   const unsigned threshold_energy_index,
+   const size_t threshold_energy_index,
    const std::shared_ptr<const SubshellIncoherentPhotonScatteringDistribution>&
    scattering_distribution );
 
@@ -40,7 +40,7 @@ public:
   SubshellIncoherentPhotoatomicReaction(
    const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
    const std::shared_ptr<const std::vector<double> >& cross_section,
-   const unsigned threshold_energy_index,
+   const size_t threshold_energy_index,
    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
    grid_searcher,
    const std::shared_ptr<const SubshellIncoherentPhotonScatteringDistribution>&

@@ -21,6 +21,9 @@ class CompleteDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadened
 
 public:
 
+  //! The counter type
+  typedef DopplerBroadenedPhotonEnergyDistribution::Counter Counter;
+
   //! The Compton profile array
   typedef std::vector<std::shared_ptr<const ComptonProfile> >
   ComptonProfileArray;

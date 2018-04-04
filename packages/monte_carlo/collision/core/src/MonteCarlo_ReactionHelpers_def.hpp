@@ -17,16 +17,16 @@ double getCrossSection(
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index )
+    const size_t threshold_energy_index )
 {
   if( energy >= (*incoming_energy_grid)[threshold_energy_index] &&
       energy < incoming_energy_grid->back() )
   {
-    unsigned energy_index =
+    size_t energy_index =
       Utility::Search::binaryLowerBoundIndex( incoming_energy_grid->begin(),
                                               incoming_energy_grid->end(),
                                               energy );
-    unsigned cs_index = energy_index - threshold_energy_index;
+    size_t cs_index = energy_index - threshold_energy_index;
 
     return InterpPolicy::interpolate( (*incoming_energy_grid)[energy_index],
                                       (*incoming_energy_grid)[energy_index+1],
@@ -50,7 +50,7 @@ double getCrossSection(
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher )
 {
   // Make sure the energy is valid
@@ -60,9 +60,9 @@ double getCrossSection(
 
   if( energy >= (*incoming_energy_grid)[threshold_energy_index] )
   {
-    unsigned energy_index = grid_searcher->findLowerBinIndex( energy );
+    size_t energy_index = grid_searcher->findLowerBinIndex( energy );
 
-    unsigned cs_index = energy_index - threshold_energy_index;
+    size_t cs_index = energy_index - threshold_energy_index;
 
     cross_section_value =
       InterpPolicy::interpolate( (*incoming_energy_grid)[energy_index],
@@ -84,10 +84,10 @@ double getCrossSection(
 template<typename InterpPolicy>
 double getCrossSection(
     const double energy,
-    const unsigned bin_index,
+    const size_t bin_index,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index )
+    const size_t threshold_energy_index )
 {
   // Make sure the bin index is valid
   testPrecondition( (*incoming_energy_grid)[bin_index] <= energy );
@@ -95,7 +95,7 @@ double getCrossSection(
 
   if( bin_index >= threshold_energy_index )
   {
-    unsigned cs_index = bin_index - threshold_energy_index;
+    size_t cs_index = bin_index - threshold_energy_index;
 
     return InterpPolicy::interpolate( (*incoming_energy_grid)[bin_index],
                                       (*incoming_energy_grid)[bin_index+1],
@@ -113,16 +113,16 @@ double getProcessedCrossSection(
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index )
+    const size_t threshold_energy_index )
 {
   if( energy >= (*incoming_energy_grid)[threshold_energy_index] &&
       energy < incoming_energy_grid->back() )
   {
-    unsigned energy_index =
+    size_t energy_index =
       Utility::Search::binaryLowerBoundIndex( incoming_energy_grid->begin(),
                                               incoming_energy_grid->end(),
                                               energy );
-    unsigned cs_index = energy_index - threshold_energy_index;
+    size_t cs_index = energy_index - threshold_energy_index;
 
     double processed_slope =
       ((*cross_section)[cs_index+1]-(*cross_section)[cs_index])/
@@ -150,7 +150,7 @@ double getProcessedCrossSection(
     const double energy,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher )
 {
   // Make sure the energy is valid
@@ -160,9 +160,9 @@ double getProcessedCrossSection(
 
   if( energy >= (*incoming_energy_grid)[threshold_energy_index] )
   {
-    unsigned energy_index = grid_searcher->findLowerBinIndex( energy );
+    size_t energy_index = grid_searcher->findLowerBinIndex( energy );
 
-    unsigned cs_index = energy_index - threshold_energy_index;
+    size_t cs_index = energy_index - threshold_energy_index;
 
     double processed_slope =
       ((*cross_section)[cs_index+1]-(*cross_section)[cs_index])/
@@ -188,10 +188,10 @@ double getProcessedCrossSection(
 template<typename InterpPolicy>
 double getProcessedCrossSection(
     const double energy,
-    const unsigned bin_index,
+    const size_t bin_index,
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index )
+    const size_t threshold_energy_index )
 {
   // Make sure the bin index is valid
   testPrecondition( (*incoming_energy_grid)[bin_index] <=
@@ -201,7 +201,7 @@ double getProcessedCrossSection(
 
   if( bin_index >= threshold_energy_index )
   {
-    unsigned cs_index = bin_index - threshold_energy_index;
+    size_t cs_index = bin_index - threshold_energy_index;
 
     double processed_slope =
       ((*cross_section)[cs_index+1]-(*cross_section)[cs_index])/

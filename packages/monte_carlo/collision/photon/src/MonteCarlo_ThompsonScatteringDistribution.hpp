@@ -20,6 +20,9 @@ class ThompsonScatteringDistribution : public CoherentScatteringDistribution
 
 public:
 
+  //! The trials counter type
+  typedef CoherentScatteringDistribution::Counter Counter;
+
   //! Default constructor
   ThompsonScatteringDistribution();
 
@@ -40,7 +43,7 @@ private:
   // Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
 				  double& scattering_angle_cosine,
-				  unsigned& trials ) const;
+				  Counter& trials ) const;
 };
 
 } // end MonteCarlo namespace
