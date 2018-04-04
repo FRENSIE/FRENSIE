@@ -13,6 +13,7 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -29,11 +30,11 @@ YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhoton
        const std::shared_ptr<const std::vector<double> >& yield,
        const std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
        outgoing_particle_distribution )
-  : PhotonuclearReaction( reaction_type,
-			  q_value,
-			  threshold_energy_index,
-			  incoming_energy_grid,
-			  cross_section ),
+  : PhotonuclearReaction<OutgoingParticleType>( reaction_type,
+                                                q_value,
+                                                threshold_energy_index,
+                                                incoming_energy_grid,
+                                                cross_section ),
     d_yield_energy_grid( yield_energy_grid ),
     d_yield( yield ),
     d_outgoing_particle_distribution( outgoing_particle_distribution )
@@ -59,7 +60,7 @@ YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhoton
 
 // Return the number of particle emitted from the rxn at the given energy
 template<typename OutgoingParticleType>
-unsigned YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles(
+size_t YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles(
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -79,7 +80,7 @@ double YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getAverag
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
 
-  if( energy >= d_yield_energy_grid->front &&
+  if( energy >= d_yield_energy_grid->front() &&
       energy < d_yield_energy_grid->back() )
   {
     size_t index =
@@ -111,11 +112,11 @@ void YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::react(
   // Make sure the photon energy is valid
   testPrecondition( photon.getEnergy() > 0.0 );
 
-  unsigned num_emitted_particles =
+  size_t num_emitted_particles =
     this->getNumberOfEmittedParticles( photon.getEnergy() );
 
   // Create the additional particles
-  for( unsigned i = 0; i < num_emitted_particles; ++i )
+  for( size_t i = 0; i < num_emitted_particles; ++i )
   {
     std::shared_ptr<OutgoingParticleType> new_particle(
 			      new OutgoingParticleType( photon, true, true ) );
@@ -123,15 +124,18 @@ void YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::react(
     d_outgoing_particle_distribution->scatterParticle( photon, *new_particle );
 
     // Add the new particle to the bank
-    bank.push( new_particle, this->getReactionType() );
+    bank.push( new_particle );
   }
 
   // Kill the original photon
   photon.setAsGone();
 }
 
-} // end MonteCarlo namespace
+class NeutronState;
+  
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( YieldBasedPhotonuclearProductionReaction<NeutronState> );
 
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_YIELD_BASED_PHOTONUCLEAR_REACTION_DEF_HPP
 

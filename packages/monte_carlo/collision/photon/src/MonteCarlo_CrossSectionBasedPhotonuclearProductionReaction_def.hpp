@@ -9,6 +9,7 @@
 #ifndef MONTE_CARLO_CROSS_SECTION_BASED_PHOTONUCLEAR_PRODUCTION_REACTION_DEF_HPP
 #define MONTE_CARLO_CROSS_SECTION_BASED_PHOTONUCLEAR_PRODUCTION_REACTION_DEF_HPP
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -24,11 +25,11 @@ CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::CrossSect
        const std::shared_ptr<const std::vector<double> >& cross_section,
        const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
 		   outgoing_particle_distributions )
-  : PhotonuclearReaction( reaction_type,
-			  q_value,
-			  threshold_energy_index,
-			  incoming_energy_grid,
-			  cross_section ),
+  : PhotonuclearReaction<OutgoingParticleType>( reaction_type,
+                                                q_value,
+                                                threshold_energy_index,
+                                                incoming_energy_grid,
+                                                cross_section ),
     d_photon_production_ids( photon_production_ids ),
     d_outgoing_particle_distributions( outgoing_particle_distributions )
 {
@@ -48,7 +49,7 @@ const std::vector<unsigned>& CrossSectionBasedPhotonuclearProductionReaction<Out
 
 // Return the number of particle emitted from the rxn at the given energy
 template<typename OutgoingParticleType>
-unsigned CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles( const double energy ) const
+size_t CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles( const double energy ) const
 {
   d_photon_production_ids.size();
 }
@@ -72,12 +73,16 @@ void CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::reac
 							   *new_particle );
 
     // Add the new particle to the bank
-    bank.push( new_particle, this->getReactionType() );
+    bank.push( new_particle );
   }
 
   // Kill the original photon
   photon.setAsGone();
 }
+
+class NeutronState;
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CrossSectionBasedPhotonuclearProductionReaction<NeutronState> );
 
 } // end MonteCarlo namespace
 

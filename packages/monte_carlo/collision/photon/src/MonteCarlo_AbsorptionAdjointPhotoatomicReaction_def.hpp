@@ -10,6 +10,7 @@
 #define MONTE_CARLO_ABSORPTION_ADJOINT_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -73,6 +74,18 @@ void AbsorptionAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointPhotoatomicReaction<Utility::LogLog,true> );
   
 } // end MonteCarlo namespace
 

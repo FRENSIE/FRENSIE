@@ -44,10 +44,10 @@ public:
   const std::vector<unsigned>& getPhotonProductionIds() const;
 
   //! Return the number of particle emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedParticles( const double energy) const;
+  size_t getNumberOfEmittedParticles( const double energy) const override;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, ParticleBank& bank ) const;
+  void react( PhotonState& photon, ParticleBank& bank ) const override;
 
 private:
 

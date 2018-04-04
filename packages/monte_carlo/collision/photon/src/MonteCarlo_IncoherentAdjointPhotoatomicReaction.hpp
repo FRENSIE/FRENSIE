@@ -58,7 +58,7 @@ public:
    const std::shared_ptr<const std::vector<double> >& critical_line_energies );
 
   //! Get the critical line energies
-  const std::shared_ptr<const std::vector<double> >& getCriticalLineEnergies() const;
+  const std::vector<double>& getCriticalLineEnergies() const;
 
   //! Return the number of adjoint photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const override;

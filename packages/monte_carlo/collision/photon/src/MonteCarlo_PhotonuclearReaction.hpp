@@ -28,9 +28,6 @@ namespace MonteCarlo{
 template<typename OutgoingParticleType>
 class PhotonuclearReaction
 {
-
-private:
-
   // QuantityTraits typedef
   typedef Utility::QuantityTraits<double> QT;
 
@@ -114,7 +111,7 @@ inline double PhotonuclearReaction<OutgoingParticleType>::getThresholdEnergy() c
 
 // Return an integer number of emitted particles given a non-integer value
 template<typename OutgoingParticleType>
-unsigned PhotonuclearReaction<OutgoingParticleType>::sampleNumberOfEmittedParticles(
+size_t PhotonuclearReaction<OutgoingParticleType>::sampleNumberOfEmittedParticles(
 				      const double average_multiplicity ) const
 {
   // Make sure the average multiplicity is valid
@@ -126,9 +123,9 @@ unsigned PhotonuclearReaction<OutgoingParticleType>::sampleNumberOfEmittedPartic
 
   if( Utility::RandomNumberGenerator::getRandomNumber<double>() <
       round_down_prob )
-    return (unsigned)floor_multiplicity;
+    return (size_t)floor_multiplicity;
   else
-    return (unsigned)floor_multiplicity + 1u;
+    return (size_t)floor_multiplicity + 1u;
 }
 
 } // end MonteCarlo namespace

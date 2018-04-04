@@ -14,7 +14,9 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReactionType.hpp"
+#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
 #include "Data_SubshellType.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -48,6 +50,18 @@ public:
                       Data::SubshellType& shell_of_interaction,
                       unsigned& trials ) const;
 };
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLog,true> );
   
 } // end MonteCarlo namespace
 

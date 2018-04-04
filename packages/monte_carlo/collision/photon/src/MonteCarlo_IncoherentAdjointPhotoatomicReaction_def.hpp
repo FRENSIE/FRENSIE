@@ -13,6 +13,7 @@
 #include <functional>
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -92,7 +93,7 @@ void IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 
 // Get the critical line energies
 template<typename InterpPolicy, bool processed_cross_section>
-const std::shared_ptr<const std::vector<double> >&
+const std::vector<double>&
 IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCriticalLineEnergies() const
 {
   return d_scattering_distribution->getCriticalLineEnergies();
@@ -134,6 +135,18 @@ void IncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 
   adjoint_photon.incrementCollisionNumber();
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentAdjointPhotoatomicReaction<Utility::LogLog,true> );
   
 } // end MonteCarlo namespace
 

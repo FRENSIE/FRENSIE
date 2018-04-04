@@ -13,6 +13,7 @@
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -143,6 +144,18 @@ unsigned SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_s
   else
     return 0u;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellPhotoelectricPhotoatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

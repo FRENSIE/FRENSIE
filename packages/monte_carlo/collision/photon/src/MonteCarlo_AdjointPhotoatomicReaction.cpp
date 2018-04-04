@@ -27,6 +27,18 @@ void AdjointPhotoatomicReaction::react(
 
   this->react( adjoint_photon, bank, shell_of_interaction );
 }
+
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLin,false> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLin,true> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLog,false> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LinLog,true> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLin,false> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLin,true> );
+
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLog,false> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<AdjointPhotoatomicReaction,Utility::LogLog,true> );
   
 } // end MonteCarlo namespace
 

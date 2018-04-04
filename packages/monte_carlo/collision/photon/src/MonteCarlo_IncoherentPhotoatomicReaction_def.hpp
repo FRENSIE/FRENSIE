@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -94,6 +95,18 @@ void IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 
   photon.incrementCollisionNumber();
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IncoherentPhotoatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

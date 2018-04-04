@@ -13,6 +13,7 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -32,19 +33,16 @@ PhotonuclearReaction<OutgoingParticleType>::PhotonuclearReaction(
       d_cross_section( cross_section)
 {
   // Make sure the Q value is valid
-  testPrecondition( !ST::isnaninf( q_value ) );
-
+  testPrecondition( !QT::isnaninf( q_value ) );
   // Make sure the threshold energy index is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-
+  testPrecondition( threshold_energy_index < incoming_energy_grid->size() );
   // Make sure the incoming energy grid is valid
   testPrecondition( Utility::Sort::isSortedAscending(
-					        incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
-  testPrecondition( incoming_energy_grid.size() > 0 );
+					        incoming_energy_grid->begin(),
+						incoming_energy_grid->end() ) );
+  testPrecondition( incoming_energy_grid->size() > 0 );
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-
+  testPrecondition( cross_section->size() > 0 );
 }
 
 // Return the reaction type
@@ -71,7 +69,7 @@ double PhotonuclearReaction<OutgoingParticleType>::getCrossSection(
   testPrecondition( energy > 0.0 );
 
   if( energy >= this->getThresholdEnergy() &&
-      energy < (*d_incoming_energy_grid)[d_incoming_energy_grid.size()-1] )
+      energy < d_incoming_energy_grid->back() )
   {
     size_t energy_index =
       Utility::Search::binaryLowerBoundIndex( d_incoming_energy_grid->begin(),
@@ -89,11 +87,15 @@ double PhotonuclearReaction<OutgoingParticleType>::getCrossSection(
   }
   else if( energy < this->getThresholdEnergy() )
     return 0.0;
-  else if( energy == (*d_incoming_energy_grid)[d_incoming_energy_grid.size()-1] )
-    return (*d_cross_section)[d_cross_section.size()-1];
+  else if( energy == d_incoming_energy_grid->back() )
+    return d_cross_section->back();
   else // energy > this->getThresholdEnergy()
     return 0.0;
 }
+
+class NeutronState;
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotonuclearReaction<NeutronState> );
 
 } // end MonteCarlo namespace
 

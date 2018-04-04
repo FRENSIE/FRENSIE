@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 //! The yield-based photonuclear reaction class
 template<typename OutgoingParticleType>
-class YieldBasedPhotonuclearReaction : public PhotonuclearReaction<OutgoingParticleType>
+class YieldBasedPhotonuclearProductionReaction : public PhotonuclearReaction<OutgoingParticleType>
 {
 
 public:
@@ -38,7 +38,7 @@ public:
   { /* ... */ }
 
   //! Return the number of particle emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedParticles( const double energy ) const override;
+  size_t getNumberOfEmittedParticles( const double energy ) const override;
 
   //! Return the average number of particles emitted from the rxn
   double getAverageNumberOfEmittedParticles( const double energy ) const override;

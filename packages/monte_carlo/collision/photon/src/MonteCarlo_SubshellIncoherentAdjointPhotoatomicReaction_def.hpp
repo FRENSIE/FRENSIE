@@ -10,6 +10,7 @@
 #define MONTE_CARLO_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -116,6 +117,18 @@ double SubshellIncoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross
 {
   return d_scattering_distribution->getSubshellBindingEnergy();
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentAdjointPhotoatomicReaction<Utility::LogLog,true> );
   
 } // end MonteCarlo namespace
 

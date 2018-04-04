@@ -4,7 +4,6 @@
 //! \author Alex Robinson
 //! \brief  The absorption photoatomic reaction class decl.
 //!
-//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_ABSORPTION_PHOTOATOMIC_REACTION_DEF_HPP
@@ -12,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -89,6 +89,18 @@ void AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionPhotoatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

@@ -14,6 +14,7 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -203,6 +204,18 @@ void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>:
   d_interaction_model = basicInteraction;
   d_interaction_model_emission = basicInteractionPhotonEmission;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LogLog,true> );
   
 } // end MonteCarlo namespace
 

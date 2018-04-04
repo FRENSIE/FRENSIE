@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -114,6 +115,18 @@ inline double SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross
 {
   return d_scattering_distribution->getSubshellBindingEnergy();
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SubshellIncoherentPhotoatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

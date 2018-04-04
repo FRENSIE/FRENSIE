@@ -18,10 +18,11 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ContractException.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -476,6 +477,18 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::in
                                                           s_photon_energy_grid,
                                                           secondary_dists ) );
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

@@ -10,6 +10,7 @@
 #define MONTE_CARLO_PHOTOELECTRIC_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -79,6 +80,18 @@ PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
   // The interaction subshell is not taken into account in this reaction
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PhotoelectricPhotoatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 
