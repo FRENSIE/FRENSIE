@@ -18,6 +18,7 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -919,6 +920,10 @@ Data::SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<Comp
 
   return this->getSubshell( endf_subshell_index );
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardCompleteDopplerBroadenedPhotonEnergyDistribution<HalfComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy> );
 
 } // end MonteCarlo namespace
 

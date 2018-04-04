@@ -20,6 +20,7 @@
 #include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_DiscreteDistribution.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -391,6 +392,10 @@ size_t DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
   return old_subshell_of_interaction;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<HalfComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy> );
 
 } // end MonteCarlo namespace
 

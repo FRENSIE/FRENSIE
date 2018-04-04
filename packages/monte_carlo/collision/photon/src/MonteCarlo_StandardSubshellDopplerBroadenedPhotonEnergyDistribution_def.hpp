@@ -18,6 +18,7 @@
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -430,6 +431,10 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 
   shell_of_interaction = this->getSubshell();
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardSubshellDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardSubshellDopplerBroadenedPhotonEnergyDistribution<HalfComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardSubshellDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy> );
 
 } // end MonteCarlo namespace
 

@@ -13,6 +13,7 @@
 #include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -71,6 +72,10 @@ void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProf
 
   old_subshell_index = this->getOldSubshellIndex( subshell );
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<HalfComptonProfilePolicy> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy> );
 
 } // end MonteCarlo namespace
 
