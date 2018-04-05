@@ -34,14 +34,12 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
     def setUp(self):
         tab_dist1 = Distribution.TabularDistribution_LogLog( [1.0, 2.0, 3.0], [0.5, 0.5, 0.5] )
         tab_dist2 = Distribution.TabularDistribution_LinLin( [4.0, 5.0, 6.0, 7.0], [0.1, 0.5, 1.5, 3.5] )
-        uni_tab_dist1 = Distribution.upcastToTabularUnivariateDistribution( tab_dist1 )
-        uni_tab_dist2 = Distribution.upcastToTabularUnivariateDistribution( tab_dist2 )
 
         primary_indep = numpy.array([0.0,1.0])
         secondary_indep = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]]
         dep = [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]]
 
-        self.dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [uni_tab_dist1, uni_tab_dist2] )
+        self.dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [tab_dist1, tab_dist2] )
         self.dist1 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
         self.dist2 = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( primary_indep, secondary_indep, dep, 1e-3, 1e-7, 1e-16 )
 

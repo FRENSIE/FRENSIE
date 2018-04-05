@@ -256,6 +256,67 @@ Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::GRID<Utilit
 
 %extend Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >
 {
+  // Constructor
+  UnitAwareInterpolatedFullyTabularBasicBivariateDistribution(
+    const std::vector<double>& raw_prim_grid,
+    PyObject* raw_sec_dists )
+  {
+    unsigned size = PyList_Size(raw_sec_dists);
+    std::vector<double> prim_grid(raw_prim_grid);
+    std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > > sec_dists(size);
+
+    for( unsigned i = 0; i < size; ++i )
+    {
+      PyObject* py_elem = PyList_GetItem( raw_sec_dists, i );
+
+      std::shared_ptr< Utility::UnitAwareTabularUnivariateDistribution< void,void > const >* arg1 = 0;
+      void* argp1;
+      int res1 = 0;
+      std::shared_ptr< Utility::UnitAwareTabularUnivariateDistribution< void,void > const > tempshared1;
+
+      {
+        int newmem = 0;
+        res1 = SWIG_ConvertPtrAndOwn( py_elem, &argp1, SWIGTYPE_p_std__shared_ptrT_Utility__UnitAwareTabularUnivariateDistributionT_void_void_t_t,  0 , &newmem);
+        if (!SWIG_IsOK(res1)) {
+          std::cout << "in method new_InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase, argument 2 of type PyObject* " << std::endl;
+          // SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase" "', argument " "2"" of type '" "PyObject* ""'"); );
+        }
+        if (newmem & SWIG_CAST_NEW_MEMORY) {
+          if (argp1) tempshared1 = *reinterpret_cast< std::shared_ptr< Utility::UnitAwareTabularUnivariateDistribution< void,void > const > * >(argp1);
+          delete reinterpret_cast< std::shared_ptr< Utility::UnitAwareTabularUnivariateDistribution< void,void > const > * >(argp1);
+          arg1 = &tempshared1;
+        } else {
+          arg1 = (argp1) ? reinterpret_cast< std::shared_ptr< Utility::UnitAwareTabularUnivariateDistribution< void,void > const > * >(argp1) : &tempshared1;
+        }
+      }
+      {
+        sec_dists[i] = *arg1;
+
+      //   try{
+      //     sec_dists[i] = *arg1;
+      //     if( PyErr_Occurred() )
+      //     SWIG_fail;
+      //   }
+      //   catch( Utility::ContractException& e )
+      //   {
+      //     SWIG_exception( SWIG_ValueError, e.what() );
+      //   }
+      //   catch( Utility::BadUnivariateDistributionParameter& e )
+      //   {
+      //     SWIG_exception( SWIG_RuntimeError, e.what() );
+      //   }
+      //   catch( ... )
+      //   {
+      //     SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+      //   }
+      }
+      // fail:
+      //   sec_dists[i] = NULL;
+    }
+
+    return new Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >( prim_grid, sec_dists );
+  }
+
   // Evaluate the distribution
   DepQuantity evaluate(
             const PrimaryIndepQuantity primary_indep_var_value,
@@ -326,172 +387,18 @@ Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::GRID<Utilit
 
 %enddef
 
-// %tabular_bivariate_distribution_interface_setup( Direct, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
+%tabular_bivariate_distribution_interface_setup( Direct, LinLinLin )
+%tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
 %tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( UnitBase, LogLogLog )
-// %tabular_bivariate_distribution_interface_setup( Correlated, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( Correlated, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( Correlated, LogLogLog )
-// %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LogLogLog )
-
-
-
-//---------------------------------------------------------------------------//
-// Add support for the InterpolatedFullyTabularBasicBivariateDistribution
-//---------------------------------------------------------------------------//
-// Import the InterpolatedFullyTabularBasicBivariateDistribution
-%include "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
-%include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
-
-// There are many interpolated tabular distributions - use this macro to set up each
-%define %tabular_bivariate_distribution_interface_setup( GRID, INTERP )
-
-// Add a more detailed docstring for the constructor
-%feature("docstring")
-Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::GRID<Utility::INTERP>,void,void,void>::InterpolatedFullyTabularBasicBivariateDistribution
-"The primary independent values should be stored in a NumPy array. The secondary independent values and dependent values should be stored in a list of NumPy array.
-"
-
-// Typemap for std::vector<PrimaryIndepQuantity
-%typemap(in) const std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity > > & (std::vector<double> temp)
-{
-  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
-
-  $1 = &temp;
-}
-
-// Typecheck for std::vector<PrimaryIndepQuantity>
-%typemap(typecheck, precedence=1050) (const std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity > > &) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
-
-// Typemap for std::vector< std::vector< SecondaryIndepQuantity > >
-%typemap(in) const std::vector< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity > >,std::allocator< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity > > > > & (std::vector<std::vector<double> > temp)
-{
-  temp = PyFrensie::convertFromPython<std::vector<std::vector<double> > >( $input );
-
-  $1 = &temp;
-}
-
-// Typecheck for std::vector< std::vector< SecondaryIndepQuantity > >
-%typemap(typecheck, precedence=1050) (const std::vector< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity > >,std::allocator< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::SecondaryIndepQuantity > > > > &) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
-
-// Typemap for std::vector< std::vector< DepQuantity > >
-%typemap(in) const std::vector< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity > >,std::allocator< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity > > > > & (std::vector<std::vector<double> > temp)
-{
-  temp = PyFrensie::convertFromPython<std::vector<std::vector<double> > >( $input );
-
-  $1 = &temp;
-}
-
-// Typecheck for std::vector< std::vector< DepQuantity > >
-%typemap(typecheck, precedence=1050) (const std::vector< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity > >,std::allocator< std::vector< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity,std::allocator< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::DepQuantity > > > > &) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
-
-// %typemap(in) const std::vector< std::shared_ptr< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::BaseUnivariateDistributionType const >,std::allocator< std::shared_ptr< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::BaseUnivariateDistributionType const > > > & (std::vector<std::shared_ptr<TabularUnivariateDistribution> > temp)
-// {
-//   temp = PyFrensie::convertFromPython<std::vector<std::shared_ptr<TabularUnivariateDistribution> > >( $input );
-
-//   $1 = &temp;
-// }
-
-// %typemap(typecheck, precedence=1050) (const std::vector< std::shared_ptr< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::BaseUnivariateDistributionType const >,std::allocator< std::shared_ptr< Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::BaseUnivariateDistributionType const > > > &) {
-//   $1 = (PyList_Check($input)) ? 1 : 0;
-// }
-
-
-%extend Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >
-{
-  // Evaluate the distribution
-  DepQuantity evaluate(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const
-  {
-    return $self->evaluate( primary_indep_var_value, secondary_indep_var_value );
-  }
-
-  // Evaluate the secondary conditional PDF
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const
-  {
-    return $self->evaluateSecondaryConditionalPDF( primary_indep_var_value,
-                                                   secondary_indep_var_value );
-  }
-
-  // Return the upper bound of the distribution primary independent variable
-  PrimaryIndepQuantity getUpperBoundOfPrimaryIndepVar() const
-  {
-    return $self->getUpperBoundOfPrimaryIndepVar();
-  }
-
-  // Return the lower bound of the distribution primary independent variable
-  PrimaryIndepQuantity getLowerBoundOfPrimaryIndepVar() const
-  {
-    return $self->getLowerBoundOfPrimaryIndepVar();
-  }
-
-  // Return the upper bound of the secondary conditional distribution
-  SecondaryIndepQuantity Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::getUpperBoundOfSecondaryConditionalIndepVar(
-                const PrimaryIndepQuantity primary_indep_var_value ) const
-  {
-    return $self->getUpperBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
-  }
-
-  // Return the lower bound of the secondary conditional distribution
-  SecondaryIndepQuantity Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::getLowerBoundOfSecondaryConditionalIndepVar(
-                const PrimaryIndepQuantity primary_indep_var_value ) const
-  {
-    return $self->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
-  }
-
-  // Test if the distribution is tabular in the primary dimension
-  bool Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::isPrimaryDimensionTabular() const
-  {
-    return $self->isPrimaryDimensionTabular();
-  }
-
-  // Test if the distribution is continuous in the primary dimension
-  bool Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::isPrimaryDimensionContinuous() const
-  {
-    return $self->isPrimaryDimensionContinuous();
-  }
-
-  // // Test if the distribution has the same primary bounds
-  // bool Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::hasSamePrimaryBounds( UnitAwareBasicBivariateDistribution<void,void,void>& distribution ) const
-  // {
-  //   return $self->hasSamePrimaryBounds( distribution );
-  // }
-
-};
-
-%advanced_tab_bivariate_distribution_interface_setup( InterpolatedFullyTabularBasicBivariateDistribution_ ## INTERP ## _ ## GRID, InterpolatedFullyTabularBasicBivariateDistribution, Utility::INTERP, Utility::GRID )
-
-// %typedef double Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity;
-// %template(VectorPrim) std::vector<Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution< Utility::GRID< Utility::INTERP >,void,void,void >::PrimaryIndepQuantity>;
-
-%enddef
-
-// %tabular_bivariate_distribution_interface_setup( Direct, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
-%tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( UnitBase, LogLogLog )
-// %tabular_bivariate_distribution_interface_setup( Correlated, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( Correlated, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( Correlated, LogLogLog )
-// %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLin )
-// %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLog )
-// %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LogLogLog )
+%tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( UnitBase, LogLogLog )
+%tabular_bivariate_distribution_interface_setup( Correlated, LinLinLin )
+%tabular_bivariate_distribution_interface_setup( Correlated, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( Correlated, LogLogLog )
+%tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLin )
+%tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLog )
+%tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LogLogLog )
 
 // //---------------------------------------------------------------------------//
 // // end Utility_BivariateDistribution.i

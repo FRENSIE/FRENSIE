@@ -200,21 +200,21 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumber
 // Create unitless constructor
 %extend BI_DIST_BASE_NAME( DISTRIBUTION )
 {
-  // Constructor
-  BI_DIST_BASE_NAME( DISTRIBUTION )(
-    const std::vector<double>& raw_prim_grid,
-    const std::vector<std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<void,void> > >& vec )
-  {
-    std::vector<double> prim_grid(raw_prim_grid);
-    std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > > sec_dists(2);
+  // // Constructor
+  // BI_DIST_BASE_NAME( DISTRIBUTION )(
+  //   const std::vector<double>& raw_prim_grid,
+  //   const std::vector<std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<void,void> > >& vec )
+  // {
+  //   std::vector<double> prim_grid(raw_prim_grid);
+  //   std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > > sec_dists(vec.size());
 
-    for ( unsigned i = 0; i < vec.size(); ++i )
-    {
-      sec_dists[i] = vec[i];
-    }
+  //   for ( unsigned i = 0; i < vec.size(); ++i )
+  //   {
+  //     sec_dists[i] = vec[i];
+  //   }
 
-    return new BI_DIST_NAME( DISTRIBUTION, PARAMS )( prim_grid, sec_dists );
-  }
+  //   return new BI_DIST_NAME( DISTRIBUTION, PARAMS )( prim_grid, sec_dists );
+  // }
 }
 
 %basic_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS )
