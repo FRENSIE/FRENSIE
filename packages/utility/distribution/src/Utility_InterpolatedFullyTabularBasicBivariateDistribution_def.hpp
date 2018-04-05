@@ -250,21 +250,6 @@ template<typename TwoDGridPolicy,
          typename DependentUnit>
 auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
             const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
-{
-  return this->template evaluateImpl<DepQuantity>(
-                                         primary_indep_var_value,
-                                         secondary_indep_var_value,
-                                         &BaseUnivariateDistributionType::evaluate );
-}
-
-// Evaluate the distribution
-template<typename TwoDGridPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluate(
-            const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value,
             const std::function<SecondaryIndepQuantity(PrimaryIndepQuantity)>&
             min_secondary_indep_var_functor,
@@ -298,22 +283,6 @@ auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,
                                 secondary_indep_var_value,
                                 min_secondary_indep_var_functor,
                                 max_secondary_indep_var_functor,
-                                &BaseUnivariateDistributionType::evaluatePDF );
-}
-
-// Evaluate the secondary conditional PDF
-template<typename TwoDGridPolicy,
-         typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-auto UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalPDF(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const SecondaryIndepQuantity secondary_indep_var_value ) const
-  -> InverseSecondaryIndepQuantity
-{
-  return this->template evaluateImpl<InverseSecondaryIndepQuantity>(
-                                primary_indep_var_value,
-                                secondary_indep_var_value,
                                 &BaseUnivariateDistributionType::evaluatePDF );
 }
 

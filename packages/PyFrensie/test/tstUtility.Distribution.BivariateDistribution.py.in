@@ -24,13 +24,6 @@ Utility = importPyFrensieModuleFromBuildDir('Utility')
 Distribution = importPyFrensieModuleFromBuildDir('Utility.Distribution')
 tol = 1e-12
 
-tab_linlin_1 = Distribution.TabularDistribution_LinLin( [1.0, 2.0, 3.0], [0.5, 0.5, 0.5] )
-tab_linlin_2 = Distribution.TabularDistribution_LinLin( [4.0, 5.0, 6.0, 7.0], [0.1, 0.5, 1.5, 3.5] )
-tab_linlin_5 = Distribution.TabularDistribution_LinLog( [4.0, 5.0, 6.0, 7.0], [0.1, 0.5, 1.5, 3.5] )
-Distribution.upcastToTabularUnivariateDistribution( tab_linlin_5 )
-test_dist = Distribution.upcastToTabularUnivariateDistribution( tab_linlin_1 )
-print test_dist.evaluate(1.0)
-
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
@@ -192,31 +185,49 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
         sample = self.dist.sampleSecondaryConditionalWithRandomNumberInSubrange( 1.0, 1.0, 5.0 )
         self.assertTrue(sample == 5.0)
 
-    # def testGetUpperBoundOfSecondaryIndepVar(self):
-    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getUpperBoundOfSecondaryIndepVar method"
-    #     upper_bound = self.dist.getUpperBoundOfSecondaryIndepVar( 0.0 )
-    #     self.assertTrue(upper_bound == 3.0)
-    #     upper_bound = self.dist.getUpperBoundOfSecondaryIndepVar( 0.5 )
-    #     self.assertTrue(upper_bound == 5.0)
-    #     upper_bound = self.dist.getUpperBoundOfSecondaryIndepVar( 1.0 )
-    #     self.assertTrue(upper_bound == 7.0)
+    def testGetUpperBoundOfPrimaryIndepVar(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getUpperBoundOfPrimaryIndepVar method"
+        upper_bound = self.dist.getUpperBoundOfPrimaryIndepVar()
+        self.assertTrue(upper_bound == 1.0)
 
-    # def testGetLowerBoundOfSecondaryIndepVar(self):
-    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getLowerBoundOfSecondaryIndepVar method"
-    #     lower_bound = self.dist.getLowerBoundOfSecondaryIndepVar( 0.0 )
-    #     self.assertTrue(lower_bound == 1.0)
-    #     lower_bound = self.dist.getLowerBoundOfSecondaryIndepVar( 0.5 )
-    #     self.assertTrue(lower_bound == 2.5)
-    #     lower_bound = self.dist.getLowerBoundOfSecondaryIndepVar( 1.0 )
-    #     self.assertTrue(lower_bound == 5.0)
+    def testGetLowerBoundOfPrimaryIndepVar(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getUpperBoundOfPrimaryIndepVar method"
+        lower_bound = self.dist.getLowerBoundOfPrimaryIndepVar()
+        self.assertTrue(lower_bound == 0.0)
 
-    # def testIsSecondaryDimensionContinuous(self):
-    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution isSecondaryDimensionContinuous method"
-    #     self.assertTrue(not self.dist.isSecondaryDimensionContinuous())
+    def testGetUpperBoundOfSecondaryConditionalIndepVar(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getUpperBoundOfSecondaryConditionalIndepVar method"
+        upper_bound = self.dist.getUpperBoundOfSecondaryConditionalIndepVar( 0.0 )
+        self.assertTrue(upper_bound == 3.0)
+        upper_bound = self.dist.getUpperBoundOfSecondaryConditionalIndepVar( 0.5 )
+        self.assertTrue(upper_bound == 5.0)
+        upper_bound = self.dist.getUpperBoundOfSecondaryConditionalIndepVar( 1.0 )
+        self.assertTrue(upper_bound == 7.0)
 
-    # def testIsSecondaryDimensionTabular(self):
-    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution isSecondaryDimensionTabular method"
-    #     self.assertTrue(self.dist.isSecondaryDimensionTabular())
+    def testGetLowerBoundOfSecondaryConditionalIndepVar(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution getLowerBoundOfSecondaryConditionalIndepVar method"
+        lower_bound = self.dist.getLowerBoundOfSecondaryConditionalIndepVar( 0.0 )
+        self.assertTrue(lower_bound == 1.0)
+        lower_bound = self.dist.getLowerBoundOfSecondaryConditionalIndepVar( 0.5 )
+        self.assertTrue(lower_bound == 2.5)
+        lower_bound = self.dist.getLowerBoundOfSecondaryConditionalIndepVar( 1.0 )
+        self.assertTrue(lower_bound == 4.0)
+
+    def testIsPrimaryDimensionContinuous(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution isPrimaryDimensionContinuous method"
+        self.assertTrue(self.dist.isPrimaryDimensionContinuous())
+
+    def testIsPrimaryDimensionTabular(self):
+        "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution isPrimaryDimensionTabular method"
+        self.assertTrue(self.dist.isPrimaryDimensionTabular())
+
+    # def testHasSamePrimaryBounds(self):
+    #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution hasSamePrimaryBounds method"
+    #     diff_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,2.0], [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0]], [[0.5, 0.5, 0.5], [0.1, 0.5, 1.5, 3.5]] )
+
+    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist1 ) )
+    #     self.assertTrue(self.dist.hasSamePrimaryBounds( self.dist2 ) )
+    #     self.assertTrue(not self.dist.hasSamePrimaryBounds( diff_dist ) )
 
     # def testEquality(self):
     #     "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution ==,!= methods"

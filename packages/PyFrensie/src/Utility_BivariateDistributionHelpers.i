@@ -60,7 +60,6 @@
 //---------------------------------------------------------------------------//
 %define %basic_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS... )
 
-%shared_ptr(RENAMED_DISTRIBUTION)
 %shared_ptr( BI_DIST_NAME( DISTRIBUTION, PARAMS ) )
 
 %feature("docstring") BI_DIST_NAME( DISTRIBUTION, PARAMS )

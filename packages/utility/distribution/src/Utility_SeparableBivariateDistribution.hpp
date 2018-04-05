@@ -70,7 +70,7 @@ public:
   typedef typename BaseType::InversePrimaryIndepQuantity InversePrimaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename BaseType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename BaseType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The inverse independent quantity type
   typedef typename BaseType::InverseIndepQuantity InverseIndepQuantity;
@@ -84,7 +84,7 @@ public:
        const std::shared_ptr<const UnitAwareUnivariateDistribution<SecondaryIndependentUnit,SecondaryDependentUnit> >& secondary_distribution );
 
   //! Destructor
-  ~UnitAwareBivariateDistribution()
+  ~UnitAwareSeparableBivariateDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
