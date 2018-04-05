@@ -36,6 +36,22 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 				 const std::vector<double>& bin_boundaries,
 				 const std::vector<double>& bin_values,
 				 const bool interpret_dependent_values_as_cdf )
+  : UnitAwareHistogramDistribution( Utility::arrayViewOfConst(bin_boundaries),
+                                    Utility::arrayViewOfConst(bin_values),
+                                    interpret_dependent_values_as_cdf )
+{ /* ... */ }
+
+// Basic view constructor
+/*! \details The bin boundaries are assumed to be sorted (lowest to
+ * highest). If cdf values are provided a pdf will be calculated. Note that
+ * the first cdf value, which is always zero, should not be passed (N-1 cdf
+ * values for N bin boundaries).
+ */
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
+                        const Utility::ArrayView<const double>& bin_boundaries,
+                        const Utility::ArrayView<const double>& bin_values,
+                        const bool interpret_dependent_values_as_cdf )
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
@@ -61,6 +77,16 @@ template<typename InputIndepQuantity>
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
 		      const std::vector<InputIndepQuantity>& bin_boundaries,
 		      const std::vector<double>& cdf_values )
+  : UnitAwareHistogramDistribution( Utility::arrayViewOfConst(bin_boundaries),
+                                    Utility::arrayViewOfConst(cdf_values) )
+{ /* ... */ }
+
+// CDF view constructor
+template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity>
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const double>& cdf_values )
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
@@ -78,6 +104,16 @@ template<typename InputIndepQuantity, typename InputDepQuantity>
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
 		      const std::vector<InputIndepQuantity>& bin_boundaries,
 		      const std::vector<InputDepQuantity>& bin_values )
+  : UnitAwareHistogramDistribution( Utility::arrayViewOfConst(bin_boundaries),
+                                    Utility::arrayViewOfConst(bin_values) )
+{ /* ... */ }
+
+// View constructor
+template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution(
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const InputDepQuantity>& bin_values )
   : d_distribution( bin_boundaries.size() ),
     d_norm_constant( DNQT::one() )
 {
@@ -115,7 +151,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 						 input_bin_values );
 
-  this->initializeDistribution( input_bin_boundaries, input_bin_values );
+  this->initializeDistribution( Utility::arrayViewOfConst(input_bin_boundaries),
+                                Utility::arrayViewOfConst(input_bin_values) );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -133,7 +170,9 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   unitless_dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 							  input_bin_values );
 
-  this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
+  this->initializeDistribution( Utility::arrayViewOfConst(input_bin_boundaries),
+                                Utility::arrayViewOfConst(input_bin_values),
+                                false );
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
 
@@ -423,9 +462,9 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::operator!=( 
 // Initialize the distribution
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-				  const std::vector<double>& bin_boundaries,
-				 const std::vector<double>& bin_values,
-				 const bool interpret_dependent_values_as_cdf )
+                        const Utility::ArrayView<const double>& bin_boundaries,
+                        const Utility::ArrayView<const double>& bin_values,
+                        const bool interpret_dependent_values_as_cdf )
 {
   // Make sure that the bin boundaries are sorted
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
@@ -442,8 +481,9 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 
   if( interpret_dependent_values_as_cdf )
   {
-    this->initializeDistributionFromCDF( bin_boundary_quantities,
-					 bin_values );
+    this->initializeDistributionFromCDF(
+                            Utility::arrayViewOfConst(bin_boundary_quantities),
+                            bin_values );
   }
   else
   {
@@ -452,8 +492,9 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 
     this->convertUnitlessValues( bin_values, bin_quantities );
 
-    this->initializeDistribution( bin_boundary_quantities,
-				  bin_quantities );
+    this->initializeDistribution(
+                            Utility::arrayViewOfConst(bin_boundary_quantities),
+                            Utility::arrayViewOfConst(bin_quantities) );
   }
 }
 
@@ -461,8 +502,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
-		     const std::vector<InputIndepQuantity>& bin_boundaries,
-		     const std::vector<double>& cdf_values )
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const double>& cdf_values )
 {
   // Make sure that the bin boundaries are sorted
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
@@ -510,8 +551,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-		      const std::vector<InputIndepQuantity>& bin_boundaries,
-		      const std::vector<InputDepQuantity>& bin_values )
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const InputDepQuantity>& bin_values )
 {
   // Make sure that the bin boundaries are sorted
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
@@ -615,8 +656,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 template<typename IndependentUnit, typename DependentUnit>
 template<typename Quantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::convertUnitlessValues(
-		                 const std::vector<double>& unitless_values,
-				 std::vector<Quantity>& quantities )
+                       const Utility::ArrayView<const double>& unitless_values,
+                       std::vector<Quantity>& quantities )
 {
   // Resize the quantity array
   quantities.resize( unitless_values.size() );
@@ -649,9 +690,9 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::canDepVarBeZ
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidValues(
-                         const std::vector<InputIndepQuantity>& bin_boundaries,
-                         const std::vector<InputDepQuantity>& bin_values,
-                         const bool cdf_bin_values )
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const InputDepQuantity>& bin_values,
+            const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( bin_boundaries.size() <= 1,
                       Utility::BadUnivariateDistributionParameter,
@@ -694,7 +735,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
                         "constructed because the bin cdf values "
                         " are not sorted!" );
 
-    typename std::vector<InputDepQuantity>::const_iterator repeat_bin_value =
+    typename Utility::ArrayView<const InputDepQuantity>::const_iterator repeat_bin_value =
       std::adjacent_find( bin_values.begin(), bin_values.end() );
     
     TEST_FOR_EXCEPTION( repeat_bin_value != bin_values.end(),
@@ -708,7 +749,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
 
   typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
   
-  typename std::vector<InputDepQuantity>::const_iterator bad_bin_value =
+  typename Utility::ArrayView<const InputDepQuantity>::const_iterator bad_bin_value =
     std::find_if( bin_values.begin(),
                   bin_values.end(),
                   [](const InputDepQuantity& element){ return InputDQT::isnaninf( element ) || element <= InputDQT::zero(); } );

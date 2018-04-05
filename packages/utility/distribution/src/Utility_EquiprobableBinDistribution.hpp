@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_TabularUnivariateDistribution.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
 
 namespace Utility{
@@ -55,9 +56,17 @@ public:
                                  const std::vector<double>& bin_boundaries =
                                  ThisType::getDefaultBinBoundaries<double>() );
 
+  //! Basic view constructor (potentially dangerous)
+  explicit UnitAwareEquiprobableBinDistribution(
+                      const Utility::ArrayView<const double>& bin_boundaries );
+
   //! Constructor
   template<typename InputIndepQuantity>
   explicit UnitAwareEquiprobableBinDistribution( const std::vector<InputIndepQuantity>& bin_boundaries );
+
+  //! View constructor
+  template<typename InputIndepQuantity>
+  explicit UnitAwareEquiprobableBinDistribution( const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -145,17 +154,17 @@ private:
 				      size_t& sampled_bin_index ) const;
 
   // Initialize the distribution
-  void initializeDistribution( const std::vector<double>& bin_boundaries );
+  void initializeDistribution( const Utility::ArrayView<const double>& bin_boundaries );
 
   // Initialize the distribution
   template<typename InputIndepQuantity>
   void initializeDistribution(
-		    const std::vector<InputIndepQuantity>& bin_boundaries );
+          const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries );
 
   // Verify that the bin boundaries are valid
   template<typename InputIndepQuantity>
   static void verifyValidBinBoundaries(
-                       const std::vector<InputIndepQuantity>& bin_boundaries );
+          const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries );
 
   // Save the distribution to an archive
   template<typename Archive>

@@ -25,11 +25,12 @@
  * \ingroup traits
  * \ingroup testing
  *
- * The Utility::ComparisonTraits allows testing equality of td::tuple
- * and Utility::Tuple classes. The Utility::ComparisonTraits struct must be 
- * specialized in order to work properly. Attempting to use the struct without
- * a specialization will result in a compile time error. The compile time error
- * message is defined by the Utility::UndefinedTraits struct.
+ * The Utility::ComparisonTraits struct can be used to conduct a comparison
+ * between two values of a generic type and, optionally, to report the results 
+ * of that comparison. The FRENSIE unit test harness uses the struct for
+ * both of these purposes. This struct can be specialized if certain
+ * comparisons aren't allowed for a type and/or comparison details need to
+ * be reported in a custom way. 
  */
 
 namespace Utility{

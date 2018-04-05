@@ -168,11 +168,11 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor, extractIXSBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor, hasSecondaryParticleType )
 {
   // True Positive
-  FRENSIE_CHECK( h2_xss_data_extractor->hasSecondaryParticleType(1) );
-  FRENSIE_CHECK( h2_xss_data_extractor->hasSecondaryParticleType(9) );
+  FRENSIE_CHECK( h2_xss_data_extractor->hasSecondaryParticleType( Data::XSSPhotonuclearDataExtractor::NEUTRON ) );
+  FRENSIE_CHECK( h2_xss_data_extractor->hasSecondaryParticleType( Data::XSSPhotonuclearDataExtractor::PROTON ) );
 
   // True Negative
-  FRENSIE_CHECK( !h2_xss_data_extractor->hasSecondaryParticleType(2) );
+  FRENSIE_CHECK( !h2_xss_data_extractor->hasSecondaryParticleType( Data::XSSPhotonuclearDataExtractor::PHOTON ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -182,13 +182,13 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor, hasSecondaryParticleType )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPXSBlock )
 {
   Utility::ArrayView<const double> pxs_block_1 =
-    h2_xss_data_extractor->extractPXSBlock(1);
+    h2_xss_data_extractor->extractPXSBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   Utility::ArrayView<const double> pxs_block_9 =
-    h2_xss_data_extractor->extractPXSBlock(9);
+    h2_xss_data_extractor->extractPXSBlock( Data::XSSPhotonuclearDataExtractor::PROTON );
 
   Utility::ArrayView<const double> pxs_block_2 =
-    h2_xss_data_extractor->extractPXSBlock(2);
+    h2_xss_data_extractor->extractPXSBlock( Data::XSSPhotonuclearDataExtractor::PHOTON );
 
  // True Positive
   FRENSIE_CHECK_EQUAL( pxs_block_1.front() , 1 );
@@ -207,7 +207,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPXSBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPHNBlock )
 {
   Utility::ArrayView<const double> phn_block_1 =
-    h2_xss_data_extractor->extractPHNBlock(1);
+    h2_xss_data_extractor->extractPHNBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( phn_block_1.front() , 1 );
   FRENSIE_CHECK_EQUAL( phn_block_1.back()  , 1.386196e1 );
@@ -220,7 +220,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPHNBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractMTRPBlock )
 {
   Utility::ArrayView<const double> mtrp_block_1 =
-    h2_xss_data_extractor->extractMTRPBlock(1);
+    h2_xss_data_extractor->extractMTRPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( mtrp_block_1.front() , 50 );
   FRENSIE_CHECK_EQUAL( mtrp_block_1.back()  , 50 );
@@ -233,7 +233,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractMTRPBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractTYRPBlock )
 {
   Utility::ArrayView<const double> tyrp_block_1 =
-    h2_xss_data_extractor->extractTYRPBlock(1);
+    h2_xss_data_extractor->extractTYRPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( tyrp_block_1.front() , -1 );
   FRENSIE_CHECK_EQUAL( tyrp_block_1.back()  , -1 );
@@ -246,7 +246,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractTYRPBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLSIGPBlock )
 {
   Utility::ArrayView<const double> lsigp_block_1 =
-    h2_xss_data_extractor->extractLSIGPBlock(1);
+    h2_xss_data_extractor->extractLSIGPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( lsigp_block_1.front() , 1 );
   FRENSIE_CHECK_EQUAL( lsigp_block_1.back()  , 1 );
@@ -259,7 +259,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLSIGPBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractSIGPBlock )
 {
   Utility::ArrayView<const double> sigp_block_1 =
-    h2_xss_data_extractor->extractSIGPBlock(1);
+    h2_xss_data_extractor->extractSIGPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( sigp_block_1.front() , 6 );
   FRENSIE_CHECK_EQUAL( sigp_block_1.back()  , 1 );
@@ -272,7 +272,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractSIGPBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLANDPBlock )
 {
   Utility::ArrayView<const double> landp_block_1 =
-    h2_xss_data_extractor->extractLANDPBlock(1);
+    h2_xss_data_extractor->extractLANDPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( landp_block_1.front() , 1 );
   FRENSIE_CHECK_EQUAL( landp_block_1.back()  , 1 );
@@ -285,7 +285,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLANDPBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractANDPBlock )
 {
   Utility::ArrayView<const double> ANDP_block_1 =
-    h2_xss_data_extractor->extractANDPBlock(1);
+    h2_xss_data_extractor->extractANDPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( ANDP_block_1.front() , 35 );
   FRENSIE_CHECK_EQUAL( ANDP_block_1.back()  , 1 );
@@ -298,7 +298,7 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractANDPBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLDLWPBlock )
 {
   Utility::ArrayView<const double> ldlwp_block_1 =
-    h2_xss_data_extractor->extractLDLWPBlock(1);
+    h2_xss_data_extractor->extractLDLWPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   FRENSIE_CHECK_EQUAL( ldlwp_block_1.front() , 1 );
   FRENSIE_CHECK_EQUAL( ldlwp_block_1.back()  , 1 );
@@ -312,13 +312,13 @@ FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLDLWPBlock )
 FRENSIE_UNIT_TEST( XSSPhotonuclearDataExtractor , extractDLWPBlock )
 {
   Utility::ArrayView<const double> dlwp_block_1 =
-    h2_xss_data_extractor->extractDLWPBlock(1);
+    h2_xss_data_extractor->extractDLWPBlock( Data::XSSPhotonuclearDataExtractor::NEUTRON );
 
   Utility::ArrayView<const double> dlwp_block_9 =
-    h2_xss_data_extractor->extractDLWPBlock(9);
+    h2_xss_data_extractor->extractDLWPBlock( Data::XSSPhotonuclearDataExtractor::PROTON );
 
   Utility::ArrayView<const double> dlwp_block_2 =
-    h2_xss_data_extractor->extractDLWPBlock(2);
+    h2_xss_data_extractor->extractDLWPBlock( Data::XSSPhotonuclearDataExtractor::PHOTON );
 
  // True Positive
   FRENSIE_CHECK_EQUAL( dlwp_block_1.front() , 0 );

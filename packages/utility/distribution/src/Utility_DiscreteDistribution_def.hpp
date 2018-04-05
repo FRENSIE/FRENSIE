@@ -35,6 +35,22 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 			      const std::vector<double>& dependent_values,
 			      const bool interpret_dependent_values_as_cdf,
                               const bool treat_as_continuous )
+  : UnitAwareDiscreteDistribution( Utility::arrayViewOfConst( independent_values ),
+                                   Utility::arrayViewOfConst( dependent_values ),
+                                   interpret_dependent_values_as_cdf,
+                                   treat_as_continuous )
+{ /* ... */ }
+
+// Basic View Constructor (potentially dangerous)
+/*! \details A precalculated CDF can be passed as the dependent values as
+ * long as the interpret_dependent_values_as_cdf argument is true.
+ */
+template<typename IndependentUnit,typename DependentUnit>
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values,
+                    const bool interpret_dependent_values_as_cdf,
+                    const bool treat_as_continuous )
   : d_distribution( independent_values.size() ),
     d_continuous( treat_as_continuous ),
     d_norm_constant()
@@ -58,6 +74,18 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 	      const std::vector<InputIndepQuantity>& independent_quantities,
 	      const std::vector<double>& dependent_values,
               const bool treat_as_continuous )
+  : UnitAwareDiscreteDistribution( Utility::arrayViewOfConst(independent_quantities),
+                                   Utility::arrayViewOfConst(dependent_values),
+                                   treat_as_continuous )
+{ /* ... */ }
+
+// CDF view constructor
+template<typename IndependentUnit,typename DependentUnit>
+template<typename InputIndepQuantity>
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
+    const Utility::ArrayView<const InputIndepQuantity>& independent_quantities,
+    const Utility::ArrayView<const double>& dependent_values,
+    const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
     d_continuous( treat_as_continuous ),
     d_norm_constant()
@@ -78,6 +106,18 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 	      const std::vector<InputIndepQuantity>& independent_quantities,
 	      const std::vector<InputDepQuantity>& dependent_quantities,
               const bool treat_as_continuous )
+  : UnitAwareDiscreteDistribution( Utility::arrayViewOfConst(independent_quantities),
+                                   Utility::arrayViewOfConst(dependent_quantities),
+                                   treat_as_continuous )
+{ /* ... */ }
+
+// View constructor
+template<typename IndependentUnit,typename DependentUnit>
+template<typename InputIndepQuantity,typename InputDepQuantity>
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
+    const Utility::ArrayView<const InputIndepQuantity>& independent_quantities,
+    const Utility::ArrayView<const InputDepQuantity>& dependent_quantities,
+    const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
     d_continuous( treat_as_continuous ),
     d_norm_constant()
@@ -92,7 +132,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
-
+ 
 // Copy constructor
 /*! \details Just like boost::units::quantity objects, the unit-aware
  * distribution can be explicitly cast to a distribution with compatible
@@ -121,7 +161,9 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
   dist_instance.reconstructOriginalDistribution( input_indep_quantities,
 						 input_dep_quantities );
 
-  this->initializeDistribution( input_indep_quantities, input_dep_quantities );
+  this->initializeDistribution(
+                             Utility::arrayViewOfConst(input_indep_quantities),
+                             Utility::arrayViewOfConst(input_dep_quantities) );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -143,9 +185,13 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
 							  input_bin_values );
 
   // Verify that the values are valid
-  this->verifyValidValues( input_bin_boundaries, input_bin_values, false );
+  this->verifyValidValues( Utility::arrayViewOfConst(input_bin_boundaries),
+                           Utility::arrayViewOfConst(input_bin_values),
+                           false );
 
-  this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
+  this->initializeDistribution( Utility::arrayViewOfConst(input_bin_boundaries),
+                                Utility::arrayViewOfConst(input_bin_values),
+                                false );
 
   BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT_FINALIZE( ThisType );
 }
@@ -463,9 +509,9 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator!=( c
 // Initialize the distribution
 template<typename IndependentUnit,typename DependentUnit>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-			  const std::vector<double>& independent_values,
-			  const std::vector<double>& dependent_values,
-			  const bool interpret_dependent_values_as_cdf )
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values,
+                    const bool interpret_dependent_values_as_cdf )
 {
   // Make sure that every value has a probability assigned
   testPrecondition( independent_values.size() == dependent_values.size() );
@@ -480,8 +526,9 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 
   if( interpret_dependent_values_as_cdf )
   {
-    this->initializeDistributionFromCDF( independent_quantities,
-					 dependent_values );
+    this->initializeDistributionFromCDF(
+                             Utility::arrayViewOfConst(independent_quantities),
+                             dependent_values );
   }
   else
   {
@@ -490,8 +537,9 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 
     this->convertUnitlessValues( dependent_values, dependent_quantities );
 
-    this->initializeDistribution( independent_quantities,
-				  dependent_quantities );
+    this->initializeDistribution(
+                             Utility::arrayViewOfConst(independent_quantities),
+                             Utility::arrayViewOfConst(dependent_quantities) );
   }
 }
 
@@ -499,8 +547,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
-	      const std::vector<InputIndepQuantity>& independent_quantities,
-	      const std::vector<double>& cdf_values )
+    const Utility::ArrayView<const InputIndepQuantity>& independent_quantities,
+    const Utility::ArrayView<const double>& cdf_values )
 {
   // Make sure that every value has a probability assigned
   testPrecondition( independent_quantities.size() == cdf_values.size() );
@@ -541,8 +589,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDis
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity,typename InputDepQuantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::initializeDistribution(
-		  const std::vector<InputIndepQuantity>& independent_values,
-		  const std::vector<InputDepQuantity>& dependent_values )
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values )
 {
   // Make sure that every value has a probability assigned
   testPrecondition( independent_values.size() == dependent_values.size() );
@@ -635,8 +683,8 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::reconstructOr
 template<typename IndependentUnit,typename DependentUnit>
 template<typename Quantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::convertUnitlessValues(
-		                 const std::vector<double>& unitless_values,
-				 std::vector<Quantity>& quantities )
+                       const Utility::ArrayView<const double>& unitless_values,
+                       std::vector<Quantity>& quantities )
 {
   // Resize the quantities array
   quantities.resize( unitless_values.size() );
@@ -657,9 +705,9 @@ bool UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::canDepVarBeZe
 template<typename IndependentUnit,typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidValues(
-                     const std::vector<InputIndepQuantity>& independent_values,
-                     const std::vector<InputDepQuantity>& dependent_values,
-                     const bool cdf_bin_values )
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values,
+        const bool cdf_bin_values )
 {
   TEST_FOR_EXCEPTION( independent_values.size() == 0,
                       Utility::BadUnivariateDistributionParameter,
@@ -695,7 +743,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
 
   typedef Utility::QuantityTraits<InputDepQuantity> IDQT;
 
-  typename std::vector<InputDepQuantity>::const_iterator bad_dependent_value =
+  typename Utility::ArrayView<const InputDepQuantity>::const_iterator bad_dependent_value =
     std::find_if( dependent_values.begin(),
                   dependent_values.end(),
                   [](const InputDepQuantity& element){ return IDQT::isnaninf( element ) || element <= IDQT::zero(); } );
@@ -716,7 +764,7 @@ void UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::verifyValidVa
                         "because the dependent cdf values  are not "
                         "sorted!" );
 
-    typename std::vector<InputDepQuantity>::const_iterator repeat_cdf_value =
+    typename Utility::ArrayView<const InputDepQuantity>::const_iterator repeat_cdf_value =
       std::adjacent_find( dependent_values.begin(), dependent_values.end() );
     
     TEST_FOR_EXCEPTION( repeat_cdf_value != dependent_values.end(),

@@ -76,11 +76,22 @@ public:
                                 const std::vector<double>& dependent_values =
                                 ThisType::getDefaultDepValues<double>() );
 
+  //! Basic view constructor (potentially dangerous)
+  UnitAwareTabularDistribution(
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values );
+
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareTabularDistribution(
 		     const std::vector<InputIndepQuantity>& independent_values,
                      const std::vector<InputDepQuantity>& dependent_values );
+
+  //! View constructor
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareTabularDistribution(
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -215,14 +226,14 @@ private:
 
   // Initialize the distribution
   void initializeDistributionFromRawData(
-                              const std::vector<double>& independent_values,
-			      const std::vector<double>& dependent_values );
+                    const Utility::ArrayView<const double>& independent_values,
+                    const Utility::ArrayView<const double>& dependent_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
   void initializeDistribution(
-		  const std::vector<InputIndepQuantity>& independent_values,
-		  const std::vector<InputDepQuantity>& dependent_values );
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values );
 
   // Reconstruct original distribution
   void reconstructOriginalDistribution(
@@ -237,8 +248,8 @@ private:
   // Convert the unitless values to the correct units
   template<typename Quantity>
   static void convertUnitlessValues(
-		                 const std::vector<double>& unitless_values,
-				 std::vector<Quantity>& quantities );
+                       const Utility::ArrayView<const double>& unitless_values,
+                       std::vector<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
@@ -247,8 +258,8 @@ private:
   // Verify that the values are valid
   template<typename InputIndepQuantity, typename InputDepQuantity>
   static void verifyValidValues(
-                     const std::vector<InputIndepQuantity>& independent_values,
-                     const std::vector<InputDepQuantity>& dependent_values );
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values );
 
   // Save the distribution to an archive
   template<typename Archive>

@@ -34,6 +34,8 @@ namespace cgs = boost::units::cgs;
 //---------------------------------------------------------------------------//
 typedef boost::mpl::list<char, signed char, int8_t, short, int16_t, int, long, int32_t, long long, int64_t> TestTypes;
 
+typedef boost::mpl::list<int16_t, int, long, int32_t, long long, int64_t> LongTestTypes;
+
 typedef boost::mpl::list<int, unsigned int, long, unsigned long, int32_t, uint32_t, long long, unsigned long long, int64_t, uint64_t, float, double> ComplexTestTypes;
 
 template<typename Unit, typename RawTypeWrapper = void>
@@ -310,6 +312,79 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( toStream, T, TestTypes )
     BOOST_CHECK_EQUAL( oss.str(), "10" );
   else
     BOOST_CHECK_EQUAL( oss.str(), std::string( 1, 10 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that pointer types can be converted to a string
+BOOST_AUTO_TEST_CASE_TEMPLATE( toString_pointer, T, LongTestTypes )
+{
+  std::string pointer_string = Utility::toString( (T*)NULL );
+    
+  BOOST_CHECK_EQUAL( pointer_string, "NULL" );
+  
+  T value = T();
+  pointer_string = Utility::toString( &value );
+  
+  BOOST_CHECK( pointer_string.find( "x" ) < pointer_string.size() );
+
+  pointer_string = Utility::toString( std::shared_ptr<T>() );
+
+  BOOST_CHECK_EQUAL( pointer_string, "NULL" );
+
+  pointer_string = Utility::toString( std::shared_ptr<const T>() );
+
+  BOOST_CHECK_EQUAL( pointer_string, "NULL" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that pointer types can be placed in a stream
+BOOST_AUTO_TEST_CASE_TEMPLATE( toStream_pointer, T, LongTestTypes )
+{
+  std::ostringstream oss;
+  Utility::toStream( oss, (T*)NULL );
+    
+  BOOST_CHECK_EQUAL( oss.str(), "NULL" );
+
+  oss.str( "" );
+  oss.clear();
+  
+  T value = T();
+
+  Utility::toStream( oss, &value );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, std::shared_ptr<T>() );
+
+  BOOST_CHECK_EQUAL( oss.str(), "NULL" );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, std::shared_ptr<const T>() );
+
+  BOOST_CHECK_EQUAL( oss.str(), "NULL" );
+
+  oss.str( "" );
+  oss.clear();
+
+  std::shared_ptr<T> shared_value( new T );
+
+  Utility::toStream( oss, shared_value );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  std::shared_ptr<const T> shared_const_value( new T );
+
+  Utility::toStream( oss, shared_const_value );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
 }
 
 //---------------------------------------------------------------------------//

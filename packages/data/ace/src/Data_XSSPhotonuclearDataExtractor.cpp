@@ -68,17 +68,17 @@ XSSPhotonuclearDataExtractor::XSSPhotonuclearDataExtractor(
 // Check if particle type exists in this data library
 /* \details Check this before extracting any sublocks of IXS block
  */
-  bool XSSPhotonuclearDataExtractor::hasSecondaryParticleType(const unsigned secondary_particle_type) const
+bool XSSPhotonuclearDataExtractor::hasSecondaryParticleType(const OutgoingParticleType secondary_particle_type) const
+{
+  if(d_secondary_particle_types.count(secondary_particle_type))
   {
-    if(d_secondary_particle_types.count(secondary_particle_type)==1)
-      {
-      return true;
-      }
-    else
-      {
-      return false;
-      }
+    return true;
   }
+  else
+  {
+    return false;
+  }
+}
 
 // Check if elastic scattering data exists
 /* \details Check this before attempting to extract the ELS block.
@@ -190,7 +190,7 @@ XSSPhotonuclearDataExtractor::extractIXSBlock() const
 
   //! Extract the PXS block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractPXSBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractPXSBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -213,7 +213,7 @@ XSSPhotonuclearDataExtractor::extractPXSBlock(const unsigned secondary_particle_
 
   //! Extract the PHN block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractPHNBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractPHNBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -236,7 +236,7 @@ XSSPhotonuclearDataExtractor::extractPHNBlock(const unsigned secondary_particle_
 
   //! Extract the MTRP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractMTRPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractMTRPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -259,7 +259,7 @@ XSSPhotonuclearDataExtractor::extractMTRPBlock(const unsigned secondary_particle
 
   //! Extract the TYRP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractTYRPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractTYRPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -282,7 +282,7 @@ XSSPhotonuclearDataExtractor::extractTYRPBlock(const unsigned secondary_particle
 
   //! Extract the LSIGP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractLSIGPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractLSIGPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -305,7 +305,7 @@ XSSPhotonuclearDataExtractor::extractLSIGPBlock(const unsigned secondary_particl
 
   //! Extract the SIGP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractSIGPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractSIGPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -328,7 +328,7 @@ XSSPhotonuclearDataExtractor::extractSIGPBlock(const unsigned secondary_particle
 
   //! Extract the LANDP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractLANDPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractLANDPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -351,7 +351,7 @@ XSSPhotonuclearDataExtractor::extractLANDPBlock(const unsigned secondary_particl
 
   //! Extract the ANDP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractANDPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractANDPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -374,7 +374,7 @@ XSSPhotonuclearDataExtractor::extractANDPBlock(const unsigned secondary_particle
 
   //! Extract the LDLWP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractLDLWPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractLDLWPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {
@@ -397,7 +397,7 @@ XSSPhotonuclearDataExtractor::extractLDLWPBlock(const unsigned secondary_particl
 
   //! Extract the DLWP block
 Utility::ArrayView<const double>
-XSSPhotonuclearDataExtractor::extractDLWPBlock(const unsigned secondary_particle_type) const
+XSSPhotonuclearDataExtractor::extractDLWPBlock(const OutgoingParticleType secondary_particle_type) const
 {
   if( this->hasSecondaryParticleType(secondary_particle_type) )
     {

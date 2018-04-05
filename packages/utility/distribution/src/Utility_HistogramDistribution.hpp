@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_TabularUnivariateDistribution.hpp"
+#include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -68,17 +69,35 @@ public:
 				  const bool interpret_dependent_values_as_cdf =
                                   false );
 
+  // Basic view constructor
+  UnitAwareHistogramDistribution(
+                        const Utility::ArrayView<const double>& bin_boundaries,
+                        const Utility::ArrayView<const double>& bin_values,
+                        const bool interpret_dependent_values_as_cdf = false );
+
   //! CDF constructor
   template<typename InputIndepQuantity>
   UnitAwareHistogramDistribution(
 		      const std::vector<InputIndepQuantity>& bin_boundaries,
 		      const std::vector<double>& cdf_values );
 
+  //! CDF view constructor
+  template<typename InputIndepQuantity>
+  UnitAwareHistogramDistribution(
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const double>& cdf_values );
+
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
   UnitAwareHistogramDistribution(
-		      const std::vector<InputIndepQuantity>& bin_boundaries,
+                      const std::vector<InputIndepQuantity>& bin_boundaries,
 		      const std::vector<InputDepQuantity>& bin_values );
+
+  //! View constructor
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareHistogramDistribution(
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const InputDepQuantity>& bin_values );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
@@ -166,21 +185,22 @@ protected:
 private:
 
   // Initialize the distribution
-  void initializeDistribution( const std::vector<double>& bin_boundaries,
-			       const std::vector<double>& bin_values,
-			       const bool interpret_dependent_values_as_cdf );
+  void initializeDistribution(
+                        const Utility::ArrayView<const double>& bin_boundaries,
+                        const Utility::ArrayView<const double>& bin_values,
+                        const bool interpret_dependent_values_as_cdf );
 
   // Initialize the distribution from a cdf
   template<typename InputIndepQuantity>
   void initializeDistributionFromCDF(
-		  const std::vector<InputIndepQuantity>& bin_boundaries,
-		  const std::vector<double>& cdf_values );
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const double>& cdf_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
   void initializeDistribution(
-		  const std::vector<InputIndepQuantity>& bin_boundaries,
-		  const std::vector<InputDepQuantity>& bin_values );
+            const Utility::ArrayView<const InputIndepQuantity>& bin_boundaries,
+            const Utility::ArrayView<const InputDepQuantity>& bin_values );
 
   // Reconstruct original distribution
   void reconstructOriginalDistribution(
@@ -195,8 +215,8 @@ private:
   // Convert the unitless values to the correct units
   template<typename Quantity>
   static void convertUnitlessValues(
-		                 const std::vector<double>& unitless_values,
-				 std::vector<Quantity>& quantities );
+                       const Utility::ArrayView<const double>& unitless_values,
+                       std::vector<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
   IndepQuantity sampleImplementation( double random_number,
@@ -205,9 +225,9 @@ private:
   // Verify that the values are valid
   template<typename InputIndepQuantity, typename InputDepQuantity>
   static void verifyValidValues(
-                     const std::vector<InputIndepQuantity>& independent_values,
-                     const std::vector<InputDepQuantity>& dependent_values,
-                     const bool cdf_bin_values );
+        const Utility::ArrayView<const InputIndepQuantity>& independent_values,
+        const Utility::ArrayView<const InputDepQuantity>& dependent_values,
+        const bool cdf_bin_values );
 
   // Save the distribution to an archive
   template<typename Archive>

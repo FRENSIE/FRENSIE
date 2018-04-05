@@ -411,6 +411,30 @@ TYPE_NAME_TRAITS_QUICK_DECL( LinLog );
 TYPE_NAME_TRAITS_QUICK_DECL( LogLin );
 TYPE_NAME_TRAITS_QUICK_DECL( LogLog );
 
+//! Helper class used to create an interpolation policy from tags
+template<typename DepVarProcessingTag, typename IndepVarProcessingTag>
+struct InterpPolicyCreationHelper;
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LinLin tags
+template<>
+struct InterpPolicyCreationHelper<LinDepVarProcessingTag,LinIndepVarProcessingTag>
+{ typedef LinLin Policy; };
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LinLog tags
+template<>
+struct InterpPolicyCreationHelper<LinDepVarProcessingTag,LogIndepVarProcessingTag>
+{ typedef LinLog Policy; };
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LogLin tags
+template<>
+struct InterpPolicyCreationHelper<LogDepVarProcessingTag,LinIndepVarProcessingTag>
+{ typedef LogLin Policy; };
+
+//! Specialization of Utility::InterpPolicyCreationHelper for LogLog tags
+template<>
+struct InterpPolicyCreationHelper<LogDepVarProcessingTag,LogIndepVarProcessingTag>
+{ typedef LogLog Policy; };
+
 //! Helper class used to invert the interpolation policy
 template<typename ParentInterpolationType>
 struct InverseInterpPolicy

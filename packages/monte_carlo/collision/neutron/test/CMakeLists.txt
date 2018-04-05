@@ -1,0 +1,134 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_neutron)
+
+ADD_EXECUTABLE(tstElasticNeutronNuclearScatteringDistribution
+  tstElasticNeutronNuclearScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstElasticNeutronNuclearScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(ElasticNeutronNuclearScatteringDistribution_test tstElasticNeutronNuclearScatteringDistribution)
+SET_PROPERTY(TEST ElasticNeutronNuclearScatteringDistribution_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstInelasticLevelNeutronScatteringDistribution
+  tstInelasticLevelNeutronScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstInelasticLevelNeutronScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(InelasticLevelNeutronScatteringDistribution_test tstInelasticLevelNeutronScatteringDistribution)
+SET_PROPERTY(TEST InelasticLevelNeutronScatteringDistribution_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNeutronNuclearScatteringDistributionACEFactory
+  tstNeutronNuclearScatteringDistributionACEFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNeutronNuclearScatteringDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(NeutronNuclearScatteringDistributionACEFactory_test
+tstNeutronNuclearScatteringDistributionACEFactory
+--test_basic_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt"
+--test_basic_h1_ace_table="1001.70c"
+--test_basic_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt"
+--test_basic_o16_ace_table="8016.70c")
+SET_PROPERTY(TEST NeutronNuclearScatteringDistributionACEFactory_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistributionACEFactory
+  tstFissionNeutronMultiplicityDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(FissionNeutronMultiplicityDistributionACEFactory_test tstFissionNeutronMultiplicityDistributionACEFactory --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+SET_PROPERTY(TEST FissionNeutronMultiplicityDistributionACEFactory_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistribution
+  tstFissionNeutronMultiplicityDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistribution monte_carlo_collision_native)
+ADD_TEST(FissionNeutronMultiplicityDistribution_test tstFissionNeutronMultiplicityDistribution --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+SET_PROPERTY(TEST FissionNeutronMultiplicityDistribution_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstDelayedNeutronEmissionDistributionACEFactory
+  tstDelayedNeutronEmissionDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(DelayedNeutronEmissionDistributionACEFactory_test tstDelayedNeutronEmissionDistributionACEFactory --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+SET_PROPERTY(TEST DelayedNeutronEmissionDistributionACEFactory_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstDelayedNeutronEmissionDistribution
+  tstDelayedNeutronEmissionDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistribution monte_carlo_collision_native)
+ADD_TEST(DelayedNeutronEmissionDistribution_test tstDelayedNeutronEmissionDistribution --test_u238_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+SET_PROPERTY(TEST DelayedNeutronEmissionDistribution_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNuclearReaction
+  tstNuclearReaction.cpp)
+TARGET_LINK_LIBRARIES(tstNuclearReaction monte_carlo_collision_native)
+ADD_TEST(NuclearReaction_test tstNuclearReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+SET_PROPERTY(TEST NuclearReaction_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstDecoupledPhotonProductionReaction
+  tstDecoupledPhotonProductionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledPhotonProductionReaction_test tstDecoupledPhotonProductionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+SET_PROPERTY(TEST DecoupledPhotonProductionReaction_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstDecoupledYieldBasedPhotonProductionReaction
+  tstDecoupledYieldBasedPhotonProductionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledYieldBasedPhotonProductionReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledYieldBasedPhotonProductionReaction_test tstDecoupledYieldBasedPhotonProductionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+SET_PROPERTY(TEST DecoupledYieldBasedPhotonProductionReaction_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstDecoupledCrossSectionBasedPhotonProductionReaction
+  tstDecoupledCrossSectionBasedPhotonProductionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledCrossSectionBasedPhotonProductionReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledCrossSectionBasedPhotonProductionReaction_test tstDecoupledCrossSectionBasedPhotonProductionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+SET_PROPERTY(TEST DecoupledCrossSectionBasedPhotonProductionReaction_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNeutronScatteringReaction
+  tstNeutronScatteringReaction.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronScatteringReaction monte_carlo_collision_native)
+ADD_TEST(NeutronScatteringReaction_test tstNeutronScatteringReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+SET_PROPERTY(TEST NeutronScatteringReaction_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstEnergyDependentNeutronMultiplicityReaction
+   tstEnergyDependentNeutronMultiplicityReaction.cpp)
+TARGET_LINK_LIBRARIES(tstEnergyDependentNeutronMultiplicityReaction monte_carlo_collision_native)
+ADD_TEST(EnergyDependentNeutronMultiplicityReaction_test tstEnergyDependentNeutronMultiplicityReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_ace_table="8016.70c")
+SET_PROPERTY(TEST EnergyDependentNeutronMultiplicityReaction_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNeutronAbsorptionReaction
+  tstNeutronAbsorptionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronAbsorptionReaction monte_carlo_collision_native)
+ADD_TEST(NeutronAbsorptionReaction_test tstNeutronAbsorptionReaction --test_basic_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+SET_PROPERTY(TEST NeutronAbsorptionReaction_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNuclearReactionACEFactory
+  tstNuclearReactionACEFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNuclearReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(NuclearReactionACEFactory_test tstNuclearReactionACEFactory --test_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
+SET_PROPERTY(TEST NuclearReactionACEFactory_test PROPERTY LABELS neutron ace)
+
+ADD_EXECUTABLE(tstDecoupledPhotonProductionReactionACEFactory
+  tstDecoupledPhotonProductionReactionACEFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(DecoupledPhotonProductionReactionACEFactory_test tstDecoupledPhotonProductionReactionACEFactory --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
+SET_PROPERTY(TEST DecoupledPhotonProductionReactionACEFactory_test PROPERTY LABELS neutron ace)
+
+ADD_EXECUTABLE(tstNuclide
+  tstNuclide.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNuclide monte_carlo_collision_native)
+ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
+SET_PROPERTY(TEST Nuclide_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNuclideFactory
+  tstNuclideFactory.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNuclideFactory monte_carlo_collision_native)
+ADD_TEST(NuclideFactory_test tstNuclideFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST NuclideFactory_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNeutronMaterial
+  tstNeutronMaterial.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronMaterial monte_carlo_collision_native)
+ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS neutron)
+
+ADD_EXECUTABLE(tstNeutronCollisionHandler
+  tstNeutronCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNeutronCollisionHandler monte_carlo_collision_native)
+ADD_TEST(NeutronCollisionHandler_test tstNeutronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST NeutronCollisionHandler_test PROPERTY LABELS neutron)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_neutron)
