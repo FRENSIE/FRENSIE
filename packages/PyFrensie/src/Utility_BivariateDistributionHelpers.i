@@ -51,6 +51,8 @@
 // Get theunit aware base name of a distribution
 #define BI_DIST_BASE_NAME( dist_base_name ) Utility::UnitAware ## dist_base_name
 
+#define SWIG_PTR_NAME( dist_base_name ) SWIGTYPE_p_std__shared_ptrT_Utility__ ## UnitAware ## dist_base_name ## T_void_void_t_t
+
 // Use Preprocessor Metaprogramming to get the distribution name
 #define _GET_BI_DIST_NAME_MACRO( _1, _2, _3, _4, _5, _6, _7, NAME, ... ) NAME
 #define BI_DIST_NAME( ... ) _GET_BI_DIST_NAME_MACRO(__VA_ARGS__, _BI_DIST_NAME_6_ARGS, _BI_DIST_NAME_5_ARGS, _BI_DIST_NAME_4_ARGS, _BI_DIST_NAME_3_ARGS, _BI_DIST_NAME_2_ARGS)(__VA_ARGS__)
@@ -100,12 +102,12 @@ the trials counter. The trials counter can be reused as such:
 BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalAndRecordTrials;
 
 %feature("autodoc",
-"getUpperBoundOfPrimaryIndepVar(RENAMED_DISTRIBUTION self, double primary_indep_var_value) -> double" )
-BI_DIST_NAME( DISTRIBUTION, PARAMS )::getUpperBoundOfPrimaryIndepVar;
+"getUpperBoundOfSecondaryConditionalIndepVar(RENAMED_DISTRIBUTION self, double primary_indep_var_value) -> double" )
+BI_DIST_NAME( DISTRIBUTION, PARAMS )::getUpperBoundOfSecondaryConditionalIndepVar;
 
 %feature("autodoc",
-"getLowerBoundOfPrimaryIndepVar(RENAMED_DISTRIBUTION self, double primary_indep_var_value) -> double" )
-BI_DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfPrimaryIndepVar;
+"getLowerBoundOfSecondaryConditionalIndepVar(RENAMED_DISTRIBUTION self, double primary_indep_var_value) -> double" )
+BI_DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfSecondaryConditionalIndepVar;
 
 // SWIG will not parse typedefs. Create some typemaps that map the
 // typedefs to their true type (double)
@@ -187,19 +189,19 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumber
 "sampleSecondaryConditionalInSubrange(RENAMED_DISTRIBUTION self, double primary_indep_var_value, const double max_secondary_indep_var_value ) -> double
 
 Sample from the RENAMED_DISTRIBUTION in the subrange
-[self.getLowerBoundOfIndepVar(),max_secondary_indep_var_value]" )
+[self.getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ),max_secondary_indep_var_value]" )
 BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalInSubrange;
 
 %feature("autodoc",
 "sampleSecondaryConditionalWithRandomNumberInSubrange(RENAMED_DISTRIBUTION self, double primary_indep_var_value, const double random_number, const double max_secondary_indep_var_value ) -> double
 
 Sample from the RENAMED_DISTRIBUTION using the supplied random number in the
-subrange [self.getLowerBoundOfIndepVar(),max_indep_var]" )
+subrange [self.getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value ),max_indep_var]" )
 BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumberInSubrange;
 
-// Create unitless constructor
-%extend BI_DIST_BASE_NAME( DISTRIBUTION )
-{
+// // Create unitless constructor
+// %extend BI_DIST_BASE_NAME( DISTRIBUTION )
+// {
   // // Constructor
   // BI_DIST_BASE_NAME( DISTRIBUTION )(
   //   const std::vector<double>& raw_prim_grid,
@@ -215,14 +217,136 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumber
 
   //   return new BI_DIST_NAME( DISTRIBUTION, PARAMS )( prim_grid, sec_dists );
   // }
-}
+// }
 
 %basic_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMS )
 
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up a basic BivariateDistribution class python interface
+// Helper macros for extending a BivariateDistribution class python interface
+//---------------------------------------------------------------------------//
+%define %extend_tab_bivariate_distribution_interface_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, BASE_DISTRIBUTION, PARAMS... )
+
+// Typemap for std::vector<PrimaryIndepQuantity
+%typemap(in) const std::vector<BI_DIST_NAME( DISTRIBUTION, PARAMS )::PrimaryIndepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::PrimaryIndepQuantity > > & (std::vector<double> temp)
+{
+  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
+
+  $1 = &temp;
+}
+
+// Typecheck for std::vector<PrimaryIndepQuantity>
+%typemap(typecheck, precedence=1050) (const std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::PrimaryIndepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::PrimaryIndepQuantity > > &) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
+// Typemap for std::vector< std::vector< SecondaryIndepQuantity > >
+%typemap(in) const std::vector< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity > >,std::allocator< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity > > > > & (std::vector<std::vector<double> > temp)
+{
+  temp = PyFrensie::convertFromPython<std::vector<std::vector<double> > >( $input );
+
+  $1 = &temp;
+}
+
+// Typecheck for std::vector< std::vector< SecondaryIndepQuantity > >
+%typemap(typecheck, precedence=1050) (const std::vector< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity > >,std::allocator< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::SecondaryIndepQuantity > > > > &) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
+// Typemap for std::vector< std::vector< DepQuantity > >
+%typemap(in) const std::vector< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity > >,std::allocator< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity > > > > & (std::vector<std::vector<double> > temp)
+{
+  temp = PyFrensie::convertFromPython<std::vector<std::vector<double> > >( $input );
+
+  $1 = &temp;
+}
+
+// Typecheck for std::vector< std::vector< DepQuantity > >
+%typemap(typecheck, precedence=1050) (const std::vector< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity > >,std::allocator< std::vector< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity,std::allocator< BI_DIST_NAME( DISTRIBUTION, PARAMS )::DepQuantity > > > > &) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
+// %typemap(in) const std::vector< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const >,std::allocator< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const > > > & (std::vector<std::shared_ptr<TabularUnivariateDistribution> > temp)
+// {
+//   temp = PyFrensie::convertFromPython<std::vector<std::shared_ptr<TabularUnivariateDistribution> > >( $input );
+
+//   $1 = &temp;
+// }
+
+// %typemap(typecheck, precedence=1050) (const std::vector< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const >,std::allocator< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const > > > &) {
+//   $1 = (PyList_Check($input)) ? 1 : 0;
+// }
+
+%extend BI_DIST_NAME( DISTRIBUTION, PARAMS )
+{
+  // Evaluate the distribution
+  DepQuantity BI_DIST_NAME( DISTRIBUTION, PARAMS )::evaluate(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const
+  {
+    return $self->evaluate( primary_indep_var_value, secondary_indep_var_value );
+  }
+
+  // Evaluate the secondary conditional PDF
+  InverseSecondaryIndepQuantity BI_DIST_NAME( DISTRIBUTION, PARAMS )::evaluateSecondaryConditionalPDF(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity secondary_indep_var_value ) const
+  {
+    return $self->evaluateSecondaryConditionalPDF( primary_indep_var_value,
+                                                   secondary_indep_var_value );
+  }
+
+  // Return the upper bound of the distribution primary independent variable
+  PrimaryIndepQuantity BI_DIST_NAME( DISTRIBUTION, PARAMS )::getUpperBoundOfPrimaryIndepVar() const
+  {
+    return $self->getUpperBoundOfPrimaryIndepVar();
+  }
+
+  // Return the lower bound of the distribution primary independent variable
+  PrimaryIndepQuantity BI_DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfPrimaryIndepVar() const
+  {
+    return $self->getLowerBoundOfPrimaryIndepVar();
+  }
+
+  // Return the upper bound of the secondary conditional distribution
+  SecondaryIndepQuantity BI_DIST_NAME( DISTRIBUTION, PARAMS )::getUpperBoundOfSecondaryConditionalIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const
+  {
+    return $self->getUpperBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
+  }
+
+  // Return the lower bound of the secondary conditional distribution
+  SecondaryIndepQuantity BI_DIST_NAME( DISTRIBUTION, PARAMS )::getLowerBoundOfSecondaryConditionalIndepVar(
+                const PrimaryIndepQuantity primary_indep_var_value ) const
+  {
+    return $self->getLowerBoundOfSecondaryConditionalIndepVar( primary_indep_var_value );
+  }
+
+  // Test if the distribution is tabular in the primary dimension
+  bool BI_DIST_NAME( DISTRIBUTION, PARAMS )::isPrimaryDimensionTabular() const
+  {
+    return $self->isPrimaryDimensionTabular();
+  }
+
+  // Test if the distribution is continuous in the primary dimension
+  bool BI_DIST_NAME( DISTRIBUTION, PARAMS )::isPrimaryDimensionContinuous() const
+  {
+    return $self->isPrimaryDimensionContinuous();
+  }
+
+  // // Test if the distribution has the same primary bounds
+  // bool BI_DIST_NAME( DISTRIBUTION, PARAMS )::hasSamePrimaryBounds( UnitAwareBasicBivariateDistribution<void,void,void>& distribution ) const
+  // {
+  //   return $self->hasSamePrimaryBounds( distribution );
+  // }
+
+};
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a basic Bivariate Distribution class python interface
 //---------------------------------------------------------------------------//
 %define %basic_bivariate_distribution_interface_setup( DISTRIBUTION )
 
@@ -231,7 +355,7 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumber
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up a standard Distribution class python interface
+// Macro for setting up a standard Bivariate Distribution class python interface
 //---------------------------------------------------------------------------//
 %define %standard_bivariate_distribution_interface_setup( DISTRIBUTION )
 
@@ -241,23 +365,23 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumber
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up an advanced Distribution class python interface
+// Macro for setting up an advanced Bivariate Distribution class python interface
 //---------------------------------------------------------------------------//
-%define %advanced_bivariate_distribution_interface_setup( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMETER1, PARAMETER2, PARAMETER3 )
+%define %advanced_bivariate_distribution_interface_setup( RENAMED_DISTRIBUTION, DISTRIBUTION, INTERP, GRID, BASE_DISTRIBUTION )
 
 // Add a typedef for the renamed distribution so that the extended methods
 // can be compiled
 %inline %{
-typedef BI_DIST_NAME( DISTRIBUTION, PARAMETER1, PARAMETER2, PARAMETER3, void, void, void ) RENAMED_DISTRIBUTION;
+typedef BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, BASE_DISTRIBUTION, void, void, void ) RENAMED_DISTRIBUTION;
 %}
 
 // Do the basic setup for this distribution
-%basic_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMETER1, PARAMETER2, PARAMETER3, void, void, void )
+%basic_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, INTERP, GRID, BASE_DISTRIBUTION, void, void, void )
 
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up a basic TabularBivariateDistribution class py. int.
+// Macro for setting up a basic Tabular Bivariate Distribution class py. int.
 //---------------------------------------------------------------------------//
 %define %basic_tab_bivariate_distribution_interface_setup( DISTRIBUTION, PARAMETER )
 
@@ -273,7 +397,7 @@ typedef BI_DIST_NAME( DISTRIBUTION, void, void, void, PARAMETER ) DISTRIBUTION;
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up a standard Tabular Distribution class python interface
+// Macro for setting up a standard Tabular Bivariate Distribution class python interface
 //---------------------------------------------------------------------------//
 %define %standard_tab_bivariate_distribution_interface_setup( DISTRIBUTION )
 
@@ -282,21 +406,171 @@ typedef BI_DIST_NAME( DISTRIBUTION, void, void, void, PARAMETER ) DISTRIBUTION;
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for setting up an advanced Tabular Distribution class python interface
+// Macro for setting up an advanced Tabular Bivariate Distribution class python interface
 //---------------------------------------------------------------------------//
-%define %advanced_tab_bivariate_distribution_interface_setup( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMETER1, PARAMETER2 )
+%define %advanced_tab_bivariate_distribution_interface_setup( RENAMED_DISTRIBUTION, DISTRIBUTION, BASE_DISTRIBUTION, INTERP, GRID )
 
 // Add a typedef for the renamed distribution so that the extended methods
 // can be compiled
 %inline %{
-typedef BI_DIST_NAME( DISTRIBUTION, PARAMETER1, PARAMETER2, void, void, void ) RENAMED_DISTRIBUTION;
+typedef BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void ) RENAMED_DISTRIBUTION;
 %}
 
+%extend BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void )
+{
+  // Constructor
+  BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void )(
+    const std::vector<double>& raw_prim_grid,
+    PyObject* raw_sec_dists,
+    const double fuzzy_boundary_tol = 1e-3,
+    const double evaluate_relative_error_tol = 1e-7,
+    const double evaluate_error_tol = 1e-16 )
+  {
+    unsigned size = PyList_Size(raw_sec_dists);
+    std::vector<double> prim_grid(raw_prim_grid);
+    std::vector<std::shared_ptr<const BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) > > sec_dists(size);
+
+    for( unsigned i = 0; i < size; ++i )
+    {
+      PyObject* py_elem = PyList_GetItem( raw_sec_dists, i );
+
+      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const >* arg1 = 0;
+      void* argp1;
+      int res1 = 0;
+      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > tempshared1;
+
+      {
+        int newmem = 0;
+        res1 = SWIG_ConvertPtrAndOwn( py_elem, &argp1, SWIG_PTR_NAME( BASE_DISTRIBUTION ),  0 , &newmem);
+        if (!SWIG_IsOK(res1)) {
+          std::cout << "in method new_" << "RENAMED_DISTRIBUTION" << ", argument 2 of type PyObject* " << std::endl;
+          // SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase" "', argument " "2"" of type '" "PyObject* ""'"); );
+        }
+        if (newmem & SWIG_CAST_NEW_MEMORY) {
+          if (argp1) tempshared1 = *reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
+          delete reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
+          arg1 = &tempshared1;
+        } else {
+          arg1 = (argp1) ? reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1) : &tempshared1;
+        }
+      }
+      {
+        sec_dists[i] = *arg1;
+
+      //   try{
+      //     sec_dists[i] = *arg1;
+      //     if( PyErr_Occurred() )
+      //     SWIG_fail;
+      //   }
+      //   catch( Utility::ContractException& e )
+      //   {
+      //     SWIG_exception( SWIG_ValueError, e.what() );
+      //   }
+      //   catch( Utility::BadUnivariateDistributionParameter& e )
+      //   {
+      //     SWIG_exception( SWIG_RuntimeError, e.what() );
+      //   }
+      //   catch( ... )
+      //   {
+      //     SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+      //   }
+      }
+      // fail:
+      //   sec_dists[i] = NULL;
+    }
+
+    return new BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void )(
+            prim_grid,
+            sec_dists,
+            fuzzy_boundary_tol,
+            evaluate_relative_error_tol,
+            evaluate_error_tol );
+  }
+};
+
+%extend_tab_bivariate_distribution_interface_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, BASE_DISTRIBUTION, INTERP, GRID, void, void, void )
+
 // Do the basic tabular setup for this distribution
-%standard_tab_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, PARAMETER1, PARAMETER2, void, void, void )
+%standard_tab_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, INTERP, GRID, void, void, void )
 
 %enddef
 
+//---------------------------------------------------------------------------//
+// Macro for setting up an advanced Histogram Tabular Bivariate Distribution class python interface
+//---------------------------------------------------------------------------//
+%define %advanced_histogram_bivariate_distribution_interface_setup( RENAMED_DISTRIBUTION, DISTRIBUTION, BASE_DISTRIBUTION )
+
+// Add a typedef for the renamed distribution so that the extended methods
+// can be compiled
+%inline %{
+typedef BI_DIST_NAME( DISTRIBUTION, void, void, void ) RENAMED_DISTRIBUTION;
+%}
+
+%extend BI_DIST_NAME( DISTRIBUTION, void, void, void )
+{
+  // Constructor
+  BI_DIST_NAME( DISTRIBUTION, void, void, void )(
+    const std::vector<double>& raw_prim_grid,
+    PyObject* raw_sec_dists )
+  {
+    unsigned size = PyList_Size(raw_sec_dists);
+    std::vector<double> prim_grid(raw_prim_grid);
+    std::vector<std::shared_ptr<const BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) > > sec_dists(size);
+
+    for( unsigned i = 0; i < size; ++i )
+    {
+      PyObject* py_elem = PyList_GetItem( raw_sec_dists, i );
+
+      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const >* arg1 = 0;
+      void* argp1;
+      int res1 = 0;
+      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > tempshared1;
+
+      {
+        int newmem = 0;
+        res1 = SWIG_ConvertPtrAndOwn( py_elem, &argp1, SWIG_PTR_NAME( BASE_DISTRIBUTION ),  0 , &newmem);
+        if (!SWIG_IsOK(res1)) {
+          std::cout << "in method new_" << "RENAMED_DISTRIBUTION" << ", argument 2 of type PyObject* " << std::endl;
+          // SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase" "', argument " "2"" of type '" "PyObject* ""'"); );
+        }
+        if (newmem & SWIG_CAST_NEW_MEMORY) {
+          if (argp1) tempshared1 = *reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
+          delete reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
+          arg1 = &tempshared1;
+        } else {
+          arg1 = (argp1) ? reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1) : &tempshared1;
+        }
+      }
+      {
+        sec_dists[i] = *arg1;
+      }
+    }
+
+    return new BI_DIST_NAME( DISTRIBUTION, void, void, void )( prim_grid, sec_dists );
+  }
+
+  // Return a random sample from the secondary conditional PDF
+  SecondaryIndepQuantity BI_DIST_NAME( DISTRIBUTION, void, void, void )::sampleSecondaryConditional(
+                const PrimaryIndepQuantity primary_indep_var_value ) const
+  {
+    return $self->sampleSecondaryConditional( primary_indep_var_value );
+  }
+
+  // Return a random sample and record the number of trials
+  SecondaryIndepQuantity BI_DIST_NAME( DISTRIBUTION, void, void, void )::sampleSecondaryConditionalAndRecordTrials(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            DistributionTraits::Counter& trials ) const
+  {
+    return $self->sampleSecondaryConditionalAndRecordTrials( primary_indep_var_value, trials);
+  }
+};
+
+%extend_tab_bivariate_distribution_interface_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, BASE_DISTRIBUTION, void, void, void )
+
+// Do the basic tabular setup for this distribution
+%standard_tab_bivariate_distribution_interface_setup_helper( RENAMED_DISTRIBUTION, DISTRIBUTION, void, void, void )
+
+%enddef
 
 //---------------------------------------------------------------------------//
 // end Utility_BivariateDistributionHelpers.i
