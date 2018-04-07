@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <fstream>
+
 // Boost Includes
 #include <boost/archive/polymorphic_text_oarchive.hpp>
 #include <boost/archive/polymorphic_xml_oarchive.hpp>

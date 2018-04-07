@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_HDF5File.hpp"
 #include "Utility_HDF5ArchiveException.hpp"
+#include "Utility_BoostVersion.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
@@ -20,6 +21,16 @@
 #else
 #define HANDLE_BOOST_FUNCTION_TEMPLATE_ORDERING
 #endif // end BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+
+//! Older versions of boost used a different load_override/save_override 
+#if BOOST_MAJOR_VERSION == 1 && BOOST_MINOR_VERSION < 59
+#define USE_OLD_BOOST_ARCHIVE_OVERRIDE
+#endif
+
+//! Older version of boost did not have the array_wrapper
+#if (BOOST_MAJOR_VERSION == 1 && BOOST_MINOR_VERSION >= 62) || BOOST_MAJOR_VERSION > 1
+#define BOOST_SERIALIZATION_ARRAY_WRAPPER_AVAILABLE
+#endif
 
 namespace Utility{
 

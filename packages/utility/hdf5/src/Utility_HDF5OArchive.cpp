@@ -32,6 +32,7 @@ template void HDF5OArchiveImpl<HDF5OArchive>::save( const double& );
 template void HDF5OArchiveImpl<HDF5OArchive>::save( const long double& );
 template void HDF5OArchiveImpl<HDF5OArchive>::save( const std::string& );
 
+#ifdef BOOST_SERIALIZATION_ARRAY_WRAPPER_AVAILABLE
 template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array_wrapper<bool>&, unsigned int );
 template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array_wrapper<char>&, unsigned int );
 template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array_wrapper<unsigned char>&, unsigned int );
@@ -48,6 +49,7 @@ template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serializa
 template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array_wrapper<double>&, unsigned int );
 template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array_wrapper<long double>&, unsigned int );
 template void HDF5OArchiveImpl<HDF5OArchive>::save_array( const boost::serialization::array_wrapper<std::string>&, unsigned int );
+#endif
   
 } // end Utility namespace
 

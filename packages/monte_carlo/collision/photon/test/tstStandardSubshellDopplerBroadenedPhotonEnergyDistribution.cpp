@@ -11,14 +11,10 @@
 #include <limits>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_Array.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "Data_SubshellType.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
@@ -27,19 +23,20 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_MeCMomentumUnit.hpp"
 #include "Utility_InverseMeCMomentumUnit.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
+std::shared_ptr<const MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( SubshellDopplerBroadenedPhotonEnergyDistribution,
+FRENSIE_UNIT_TEST( SubshellDopplerBroadenedPhotonEnergyDistribution,
 		   sample )
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
@@ -59,39 +56,28 @@ TEUCHOS_UNIT_TEST( SubshellDopplerBroadenedPhotonEnergyDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main funciton
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_file_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
-  {
-    // Create the native data file container
-    Data::ElectronPhotonRelaxationDataContainer
-      data_container( test_native_file_name );
+    Data::ElectronPhotonRelaxationDataContainer data_container( test_native_file_name );
 
     // Extract the Compton profile and occupation number for the first subshell
     const std::vector<double>& compton_profile_grid_s1 =
@@ -107,7 +93,7 @@ int main( int argc, char** argv )
       data_container.getOccupationNumber( 1 );
 
     // Create the Compton profile and occupation number distributions
-    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
+    std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
                                                        compton_profile_grid_s1,
 						       compton_profile_s1 ) );
@@ -126,21 +112,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstSubshellDopplerBroadenedPhotonEnergyDistribution.cpp

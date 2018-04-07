@@ -38,7 +38,7 @@ MACRO(ENABLE_BOOST_SUPPORT)
       SET(BOOST_COMPONENTS_LIST ${BOOST_COMPONENTS_LIST} mpi)
     ENDIF()
     
-    FIND_PACKAGE(Boost 1.65.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS_LIST})
+    FIND_PACKAGE(Boost 1.56.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS_LIST})
 
     # Set the include paths for Boost
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
@@ -48,7 +48,7 @@ MACRO(ENABLE_BOOST_SUPPORT)
     #       messages regarding this usage of the std::auto_ptr class. To avoid
     #       these warning messages that are not direcly related to FRENSIE we
     #       will simply turn them off
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations -DBOOST_LOG_DYN_LINK")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations -DBOOST_LOG_DYN_LINK -DBOOST_PROGRAM_OPTIONS_DYN_LINK")
 
     # Echo the Boost details if a verbose configure was requested
     IF(CMAKE_VERBOSE_CONFIGURE)

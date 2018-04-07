@@ -69,10 +69,12 @@ public:
     { /* ... */ };
   };
 
+#ifdef BOOST_SERIALIZATION_ARRAY_WRAPPER_AVAILABLE
   //! Save an array
   template<typename ValueType>
   void save_array( const boost::serialization::array_wrapper<ValueType>& a,
                    unsigned int version );
+#endif
 
 protected:
 
@@ -96,35 +98,35 @@ protected:
 
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
-  void save_override( const T& t );
+  void save_override( const T& t, int = 0 );
 
   //! Save a type that is wrapped in a boost::serialization::nvp
   template<typename T>
-  void save_override( const boost::serialization::nvp<T>& t );
+  void save_override( const boost::serialization::nvp<T>& t, int = 0 );
 
   //! Save a boost::archive::object_id_type attribute
-  void save_override( const boost::archive::object_id_type& t );
+  void save_override( const boost::archive::object_id_type& t, int = 0 );
 
   //! Save a boost::archive::object_reference_type attribute
-  void save_override( const boost::archive::object_reference_type& t );
+  void save_override( const boost::archive::object_reference_type& t, int = 0 );
 
   //! Save a boost::archive::version_type attribute
-  void save_override( const boost::archive::version_type& t );
+  void save_override( const boost::archive::version_type& t, int = 0 );
 
   //! Save a boost::archive::class_id_type attribute
-  void save_override( const boost::archive::class_id_type& t );
+  void save_override( const boost::archive::class_id_type& t, int = 0 );
 
   //! Save a boost::archive::class_id_optional_type attribute
-  void save_override( const boost::archive::class_id_optional_type& t );
+  void save_override( const boost::archive::class_id_optional_type& t, int = 0 );
 
   //! Save a boost::archive::class_id_reference_type attribute
-  void save_override( const boost::archive::class_id_reference_type& t );
+  void save_override( const boost::archive::class_id_reference_type& t, int = 0 );
 
   //! Save a boost::archive::class_name_type attribute
-  void save_override( const boost::archive::class_name_type& t );
+  void save_override( const boost::archive::class_name_type& t, int = 0 );
 
   //! Save a boost::archive::tracking_type attribute
-  void save_override( const boost::archive::tracking_type& t );
+  void save_override( const boost::archive::tracking_type& t, int = 0 );
 
   //! Save any type with a Utility::HDF5TypeTraits specialization
   template<typename T>

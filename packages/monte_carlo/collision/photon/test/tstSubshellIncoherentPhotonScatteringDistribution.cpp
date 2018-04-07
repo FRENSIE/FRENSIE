@@ -10,136 +10,129 @@
 #include <iostream>
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "Data_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
+std::shared_ptr<MonteCarlo::PhotonScatteringDistribution>
   distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   evaluate )
 {
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
   
-  TEST_FLOATING_EQUALITY( dist_value, 0.182031495370433727, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.182031495370433727, 1e-6 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 0.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.1309675807668618, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.1309675807668618, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.10574024270641422, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.10574024270641422, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution pdf can be evaluated
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   evaluatePDF )
 {
   double pdf_value = distribution->evaluatePDF(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-9 );
+  FRENSIE_CHECK_SMALL( pdf_value, 1e-9 );
 
   pdf_value = distribution->evaluatePDF(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
   
-  TEST_FLOATING_EQUALITY( pdf_value, 0.468210959354766421, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 0.468210959354766421, 1e-9 );
 
   pdf_value = distribution->evaluatePDF( 1.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-9 );
+  FRENSIE_CHECK_SMALL( pdf_value, 1e-9 );
 
   pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
   
-  TEST_FLOATING_EQUALITY( pdf_value, 0.361065574572935588, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 0.361065574572935588, 1e-9 );
 
   pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
   
-  TEST_FLOATING_EQUALITY( pdf_value, 0.291516123797359028, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 0.291516123797359028, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the integrated cross section can be evaluated
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
   double cross_section = distribution->evaluateIntegratedCrossSection(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.388780936741182304, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.388780936741182304, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.362725194507310333, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.362725194507310333, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshell can be returned
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   getSubshell )
 {
-  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
-    derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
+  std::shared_ptr<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+    derived_dist = std::dynamic_pointer_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_dist->getSubshell(), Data::K_SUBSHELL);
+  FRENSIE_CHECK_EQUAL( derived_dist->getSubshell(), Data::K_SUBSHELL);
 }
 
 //---------------------------------------------------------------------------//
 // Check that the binding energy can be returned
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   getSubshellBindingEnergy )
 {
-  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
-    derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
+  std::shared_ptr<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+    derived_dist = std::dynamic_pointer_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_dist->getSubshellBindingEnergy(),
+  FRENSIE_CHECK_EQUAL( derived_dist->getSubshellBindingEnergy(),
 		       8.82899999999999935e-02 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a photon can be scattered incoherently without Doppler broadening
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   scatterPhoton )
 {
   MonteCarlo::ParticleBank bank;
@@ -165,50 +158,41 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(),
 			  0.9996898054103247,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getYDirection(),
 			  -0.024905681252821114,
 			  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_SMALL( bank.top().getXDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getXDirection(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_native_file_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_native_file_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
-  {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   {
     // Create the native data file container
     Data::ElectronPhotonRelaxationDataContainer
@@ -222,7 +206,7 @@ int main( int argc, char** argv )
       data_container.getOccupationNumber( 1 );
 
     // Create the occupation number distributions
-    Teuchos::RCP<const Utility::OneDDistribution> occupation_number_s1_dist(
+    std::shared_ptr<const Utility::UnivariateDistribution> occupation_number_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>(
 						    occupation_number_grid_s1,
 						    occupation_number_s1 ) );
@@ -239,21 +223,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstSubshellIncoherentPhotonScatteringDistribution.cpp

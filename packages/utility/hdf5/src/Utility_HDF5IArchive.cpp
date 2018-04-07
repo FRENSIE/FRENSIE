@@ -32,6 +32,7 @@ template void HDF5IArchiveImpl<HDF5IArchive>::load( double& );
 template void HDF5IArchiveImpl<HDF5IArchive>::load( long double& );
 template void HDF5IArchiveImpl<HDF5IArchive>::load( std::string& );
 
+#ifdef BOOST_SERIALIZATION_ARRAY_WRAPPER_AVAILABLE
 template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<bool>&, unsigned int );
 template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<char>&, unsigned int );
 template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<unsigned char>&, unsigned int );
@@ -48,6 +49,7 @@ template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::
 template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<double>&, unsigned int );
 template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<long double>&, unsigned int );
 template void HDF5IArchiveImpl<HDF5IArchive>::load_array( boost::serialization::array_wrapper<std::string>&, unsigned int );
+#endif
   
 } // end Utility namespace
 
