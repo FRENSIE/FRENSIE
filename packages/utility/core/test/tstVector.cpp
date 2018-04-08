@@ -225,6 +225,111 @@ BOOST_AUTO_TEST_CASE( toStream )
 }
 
 //---------------------------------------------------------------------------//
+// CHeck that a vector iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toString_iterator )
+{
+  std::vector<double> double_vector( {-1.0, 0.0, 1.0} );
+
+  std::string iterator_string = Utility::toString(double_vector.begin());
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString(double_vector.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString(double_vector.rbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString(double_vector.crbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  std::vector<int> int_vector( {-1, 0, 1} );
+
+  iterator_string = Utility::toString(int_vector.begin());
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString(int_vector.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString(int_vector.rbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString(int_vector.crbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+}
+
+//---------------------------------------------------------------------------//
+// CHeck that a vector iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toStream_iterator )
+{
+  std::vector<double> double_vector( {-1.0, 0.0, 1.0} );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, double_vector.begin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, double_vector.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, double_vector.rbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, double_vector.crbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  std::vector<int> int_vector( {-1, 0, 1} );
+
+  Utility::toStream( oss, int_vector.begin());
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_vector.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_vector.rbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_vector.crbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a vector can be created from a string
 BOOST_AUTO_TEST_CASE( fromString )
 {

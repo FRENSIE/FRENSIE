@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef UTILITY_ITERATOR_TYPE_TRAITS_HPP
+#define UTILITY_ITERATOR_TYPE_TRAITS_HPP
+
 // Std Lib Includes
 #include <string>
 #include <array>
@@ -745,6 +748,8 @@ struct NonConstIterator<Iterator,typename std::enable_if<std::is_same<Iterator,t
 };
 
 } // end Utility namespace
+
+#endif // end UTILITY_ITERATOR_TYPE_TRAIS_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_IteratorTypeTraits.hpp

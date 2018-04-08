@@ -42,6 +42,29 @@ template<typename T>
 struct ToStringTraits<std::list<T> > : public Details::ToStringTraitsIteratorHelper<std::list<T> >
 { /* ... */ };
 
+/*! Partial specialization of ToStringTraits for std::list iterator types
+ *
+ * Unfortunately this cannot be used with a past-the-end iterator due to 
+ * the dereference.
+ * \ingroup vector
+ * \ingroup to_string_traits
+ */
+template<typename Iterator>
+struct ToStringTraits<Iterator,typename std::enable_if<
+         (std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::iterator>::value ||
+          std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value ||
+          std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::reverse_iterator>::value ||
+          std::is_same<Iterator,typename std::list<typename std::iterator_traits<Iterator>::value_type>::const_reverse_iterator>::value)>::type>
+{
+  //! Convert the pointer type to a string
+  static inline std::string toString( const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toString( &(*obj) ); }
+
+  //! Place the pointer type in a stream
+  static inline void toStream( std::ostream& os, const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toStream( os, &(*obj) ); }
+};
+
 /*! Partial specialization of ToStringTraits for std::forward_list
  * \ingroup list
  * \ingroup to_string_traits
@@ -49,6 +72,27 @@ struct ToStringTraits<std::list<T> > : public Details::ToStringTraitsIteratorHel
 template<typename T>
 struct ToStringTraits<std::forward_list<T> > : public Details::ToStringTraitsIteratorHelper<std::forward_list<T> >
 { /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::forward_list iterator types
+ *
+ * Unfortunately this cannot be used with a past-the-end iterator due to 
+ * the dereference.
+ * \ingroup vector
+ * \ingroup to_string_traits
+ */
+template<typename Iterator>
+struct ToStringTraits<Iterator,typename std::enable_if<
+         (std::is_same<Iterator,typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::iterator>::value ||
+          std::is_same<Iterator,typename std::forward_list<typename std::iterator_traits<Iterator>::value_type>::const_iterator>::value)>::type>
+{
+  //! Convert the pointer type to a string
+  static inline std::string toString( const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toString( &(*obj) ); }
+
+  //! Place the pointer type in a stream
+  static inline void toStream( std::ostream& os, const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toStream( os, &(*obj) ); }
+};
 
 /*! Partial specialization of FromStringTraits for std::list
  * \ingroup list

@@ -227,6 +227,90 @@ BOOST_AUTO_TEST_CASE( toStream )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a set iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toString_iterator )
+{
+  std::set<int> int_set( {-1, 0, 1} );
+
+  std::string iterator_string = Utility::toString( int_set.begin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_set.cbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_set.rbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_set.crbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  std::set<std::string> string_set( {"-1", "0", "1"} );
+
+  iterator_string = Utility::toString( string_set.begin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_set.cbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_set.rbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_set.crbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a set iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toStream_iterator )
+{
+  std::set<int> int_set( {-1, 0, 1} );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, int_set.begin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, int_set.cbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, int_set.rbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, int_set.crbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  std::set<std::string> string_set( {"-1", "0", "1"} );
+
+  Utility::toStream( oss, string_set.begin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, string_set.cbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, string_set.rbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, string_set.crbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a set can be created from a string
 BOOST_AUTO_TEST_CASE( fromString )
 {
@@ -1233,7 +1317,59 @@ BOOST_AUTO_TEST_CASE( toStream )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unordered_set can be created from a string
+// Check that an unordered_set iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toString_iterator )
+{
+  std::unordered_set<int> int_set( {-1, 0, 1} );
+
+  std::string iterator_string = Utility::toString( int_set.begin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_set.cbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  std::unordered_set<std::string> string_set( {"-1", "0", "1"} );
+
+  iterator_string = Utility::toString( string_set.begin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_set.cbegin() );
+  
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unordered_set iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toStream_iterator )
+{
+  std::unordered_set<int> int_set( {-1, 0, 1} );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, int_set.begin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, int_set.cbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  std::unordered_set<std::string> string_set( {"-1", "0", "1"} );
+
+  Utility::toStream( oss, string_set.begin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  Utility::toStream( oss, string_set.cbegin() );
+  
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an unordered_set can be created from a string
 BOOST_AUTO_TEST_CASE( fromString )
 {
   TEST_COMPARE_UNORDERED_CONTAINERS( (Utility::fromString<std::unordered_set<short> >( "{-1, 2}" )),

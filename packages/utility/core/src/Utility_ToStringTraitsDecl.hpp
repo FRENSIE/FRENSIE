@@ -31,11 +31,11 @@ struct ToStringTraits
 {
   //! Convert an object of type T to a string
   static inline std::string toString( const T& obj )
-  { Utility::UndefinedTraits<T>::notDefined(); return std::string(); }
+  { Utility::VerboseUndefinedTraits<ToStringTraits,T>::notDefined(); return std::string(); }
 
   //! Place an object of type T in a stream
   static inline void toStream( std::ostream&, const T& )
-  { Utility::UndefinedTraits<T>::notDefined(); }
+  { Utility::VerboseUndefinedTraits<ToStringTraits,T>::notDefined(); }
 };
 
 /*! Convert the object to a string
