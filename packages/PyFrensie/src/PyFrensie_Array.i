@@ -2,13 +2,12 @@
 //!
 //! \file   PyFrensie_Array.i
 //! \author Alex Robinson
-//! \brief  vector output typemaps
+//! \brief  The PyFrensie_Array.i is a SWIG interface file that provides SWIG
+//!         directives to handle std::vector output types. This class is not
+//!         wrapped, but instead typemaps are defined so that the python user
+//!         can use NumPy arrays instead.
 //!
 //---------------------------------------------------------------------------//
-
-// The PyFrensie_Array.i is a SWIG interface file that provides SWIG directives
-// to handle std::vector output types. This class is not wrapped, but instead
-// typemaps are defined so that the python user can use NumPy arrays instead.
 
 %{
 // Std Lib Includes

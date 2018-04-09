@@ -181,7 +181,7 @@ inline bool isValidList( PyObject* py_obj )
   {
     if( PyList_Size( py_obj ) > 0 )
     {
-      PyObject* tmp_py_obj = PyList_New(NULL);
+      PyObject* tmp_py_obj = PyList_New(0);
 
       valid = true;
 
@@ -216,7 +216,7 @@ inline bool isValidSet( PyObject* py_obj )
   {
     if( PySet_Size( py_obj ) > 0 )
     {
-      PyObject* tmp_py_obj = PySet_New(NULL);
+      PyObject* tmp_py_obj = PySet_New(0);
 
       valid = true;
 
@@ -351,7 +351,7 @@ inline PyObject* convert2DArrayToPython( const STLCompliant2DArray& obj )
 {
   typedef typename std::remove_const<typename STLCompliant2DArray::value_type::value_type>::type ValueType;
 
-  PyObject* py_array_list = PyList_New(NULL);
+  PyObject* py_array_list = PyList_New(0);
 
   // Create a list of arrays
   for( unsigned i = 0; i < obj.size(); ++i )
@@ -418,44 +418,12 @@ inline STLCompliant2DArray convertPythonTo2DArray( PyObject* py_obj )
   return output_array;
 }
 
-// Create a Python (list of pointers) object from an array of pointers object
-template<typename STLCompliantPtrArray>
-PyObject* convertPtrArrayToPython( const STLCompliantPtrArray& obj )
-{
-
-}
-
-// Create a list of pointers object from a Python object (list of pointers)
-template<typename STLCompliantPtrArray>
-STLCompliantPtrArray convertPythonToPtrArray( PyObject* py_obj )
-{
-  std::cout << "convertPythonToPtrArray Called!" << std::endl;
-  // An exception will be thrown if this fails
-  int is_list = 0;
-  int is_new_array = 0;
-
-  is_list = PyList_Check(py_obj);
-  std::cout << "is_list =" << is_list  << std::endl;
-  typename STLCompliantPtrArray::size_type dimensions = PyList_Size(py_obj);
-
-  STLCompliantPtrArray output_array( dimensions );
-
-  for( typename STLCompliantPtrArray::size_type i = 0; i < dimensions; ++i )
-  {
-    PyObject* tmp_py_obj = PyList_GetItem( py_obj, i );
-    std::cout << std::endl << std::endl << PyTuple_Check( tmp_py_obj ) << std::endl << std::endl;
-    // output_array[i] = PyList_GetItem( py_obj, i );
-  }
-
-  return output_array;
-}
-
 // Create a Python (set) object from a set object
 template<typename STLCompliantSet>
 inline PyObject* convertSetToPython( const STLCompliantSet& obj )
 {
   // Create a new Python set
-  PyObject* py_set = PySet_New(NULL);
+  PyObject* py_set = PySet_New(0);
 
   // Copy the set elements into the Python set
   typename STLCompliantSet::const_iterator it = obj.begin();
@@ -484,7 +452,7 @@ inline STLCompliantSet convertPythonToSet( PyObject* py_obj )
 {
   STLCompliantSet output_set;
 
-  PyObject* tmp_py_obj = PySet_New(NULL);
+  PyObject* tmp_py_obj = PySet_New(0);
 
   // Break down the set and convert each element
   while( PySet_Size( py_obj ) > 0 )
