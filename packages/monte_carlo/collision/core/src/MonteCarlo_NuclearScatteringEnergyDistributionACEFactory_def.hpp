@@ -76,21 +76,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  Utility::ArrayView<const double> raw_incoming_energies_array =
-    dlw_block_array( ldat_start_index + 2, incoming_energies);
-  
   std::vector<double> incoming_energies_array(
-                                           raw_incoming_energies_array.begin(),
-                                           raw_incoming_energies_array.end() );
+                   dlw_block_array( ldat_start_index + 2, incoming_energies) );
 
   // Array of distribution locations
-  Utility::ArrayView<const double> raw_distribution_locations =
-    dlw_block_array( ldat_start_index + 2 + incoming_energies,
-                     incoming_energies);
-  
   std::vector<double> distribution_locations(
-                                            raw_distribution_locations.begin(),
-                                            raw_distribution_locations.end() );
+                     dlw_block_array( ldat_start_index + 2 + incoming_energies,
+                                      incoming_energies ) );
 
   // Initialize the energy distribution array
   AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
@@ -252,22 +244,14 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  Utility::ArrayView<const double> raw_incoming_energies_array =
-    dlw_block_array( ldat_start_index + 2, incoming_energies);
-  
   std::vector<double> incoming_energies_array(
-                                           raw_incoming_energies_array.begin(),
-                                           raw_incoming_energies_array.end() );
+                  dlw_block_array( ldat_start_index + 2, incoming_energies ) );
 
   // Array of distribution locations
-  Utility::ArrayView<const double> raw_distribution_locations =
-    dlw_block_array( ldat_start_index + 2 + incoming_energies,
-		     incoming_energies);
-  
   std::vector<double> distribution_locations(
-                                            raw_distribution_locations.begin(),
-                                            raw_distribution_locations.end() );
-
+                     dlw_block_array( ldat_start_index + 2 + incoming_energies,
+                                      incoming_energies ) );
+  
   // Initialize the energy distribution array
   AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
     energy_distribution( incoming_energies );

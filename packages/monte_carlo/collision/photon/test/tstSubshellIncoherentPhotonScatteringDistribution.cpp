@@ -166,14 +166,14 @@ FRENSIE_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(),
 			  0.9996898054103247,
 			  1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getYDirection(),
-			  -0.024905681252821114,
-			  1e-12 );
-  FRENSIE_CHECK_SMALL( bank.top().getXDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( bank.top().getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getXDirection(),
+                                   0.024905681252821114,
+                                   1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  FRENSIE_CHECK_SMALL( photon.getXDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-15 );
   FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 

@@ -9,139 +9,135 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_KleinNishinaAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::AdjointPhotonScatteringDistribution> distribution;
+std::shared_ptr<MonteCarlo::AdjointPhotonScatteringDistribution> distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluate )
 {
   // Incoming energy = 0.1 MeV
   double dist_value = distribution->evaluate( 0.1, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.5617250013852311, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.5617250013852311, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, 0.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.2613454621535213, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.2613454621535213, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
   // Incoming energy = 1.0 MeV
   dist_value = distribution->evaluate( 1.0, 0.5145510353765 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.818399835538855, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.818399835538855, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 0.9 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.4634138962142929, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.4634138962142929, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
   // Incoming energy = 10.0 MeV
   dist_value = distribution->evaluate( 10.0, 0.9744500544935 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.6110831116179009, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.6110831116179009, 1e-15 );
 
   dist_value = distribution->evaluate( 10.0, 0.99 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.5058482673670551, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.5058482673670551, 1e-15 );
 
   dist_value = distribution->evaluate( 10.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution pdf can be evaluated
-TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluatePDF )
 {
   // Incoming energy = 0.1 MeV
   double pdf = distribution->evaluatePDF( 0.1, -1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf, 0.8005229502046525, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 0.8005229502046525, 1e-14 );
 
   pdf = distribution->evaluatePDF( 0.1, 0.0 );
 
-  TEST_FLOATING_EQUALITY( pdf, 0.37244744291211795, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 0.37244744291211795, 1e-14 );
 
   pdf = distribution->evaluatePDF( 0.1, 1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf, 0.7110391044282447, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 0.7110391044282447, 1e-14 );
 
   // Incoming energy = 1.0 MeV
   pdf = distribution->evaluatePDF( 1.0, 0.5145510353765 );
 
-  TEST_FLOATING_EQUALITY( pdf, 12.161802488005854, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 12.161802488005854, 1e-15 );
 
   pdf = distribution->evaluatePDF( 1.0, 0.9 );
 
-  TEST_FLOATING_EQUALITY( pdf, 1.1696721875147562, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.1696721875147562, 1e-15 );
 
   pdf = distribution->evaluatePDF( 1.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf, 1.2593271410147135, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 1.2593271410147135, 1e-15 );
 
   // Incoming energy = 10.0 MeV
   pdf = distribution->evaluatePDF( 10.0, 0.9744500544935 );
 
-  TEST_FLOATING_EQUALITY( pdf, 45.41678914783313, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 45.41678914783313, 1e-15 );
 
   pdf = distribution->evaluatePDF( 10.0, 0.99 );
 
-  TEST_FLOATING_EQUALITY( pdf, 37.595547419041566, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 37.595547419041566, 1e-15 );
 
   pdf = distribution->evaluatePDF( 10.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf, 37.08169681616877, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf, 37.08169681616877, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the integrated cross section can be evaluated
-TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
   double cross_section =
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-6 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.7016975606278707, 1e-14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.7016975606278707, 1e-14 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-6 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.39619125867985694, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.39619125867985694, 1e-15 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 10.0, 1e-6 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.013455004703850935, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.013455004703850935, 1e-15 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-6 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( cross_section, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled from
-TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution, sample )
+FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
 
@@ -167,32 +163,32 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution, sample )
 		    outgoing_energy,
 		    scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.053789358961052636, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.5, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.053789358961052636, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.5, 1e-15 );
 
   distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
 
   distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
 
   distribution->sample(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		    outgoing_energy,
 		    scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine,
 			  9.536743164284545e-06,
 			  1e-15 );
 
@@ -201,11 +197,11 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution, sample )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled from and trials can be recorded
-TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
-  unsigned trials = 0;
+  MonteCarlo::AdjointPhotonScatteringDistribution::Counter trials = 0;
 
   // Set the fake stream
   std::vector<double> fake_stream( 12 );
@@ -230,9 +226,9 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		    scattering_angle_cosine,
 		    trials );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.053789358961052636, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.5, 1e-15 );
-  TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.053789358961052636, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.5, 1e-15 );
+  FRENSIE_CHECK_EQUAL( 1.0/trials, 0.5 );
 
   distribution->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
@@ -240,9 +236,9 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		    scattering_angle_cosine,
 		    trials );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
-  TEST_EQUALITY_CONST( 2.0/trials, 2.0/3.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06289961773671575, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.8759615953640385, 1e-15);
+  FRENSIE_CHECK_EQUAL( 2.0/trials, 2.0/3.0 );
 
   distribution->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
@@ -250,9 +246,9 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		    scattering_angle_cosine,
 		    trials );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
-  TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.06330760990853734, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225548, 1e-15);
+  FRENSIE_CHECK_EQUAL( 3.0/trials, 0.75 );
 
   distribution->sampleAndRecordTrials(
 		    Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
@@ -260,18 +256,18 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		    scattering_angle_cosine,
 		    trials );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.056777596517404945, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine,
 			  9.536743164284545e-06,
 			  1e-15 );
-  TEST_EQUALITY_CONST( 4.0/trials, 0.8 );
+  FRENSIE_CHECK_EQUAL( 4.0/trials, 0.8 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that an adjoint photon can be scattered
-TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
+FRENSIE_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 		   scatterAdjointPhoton )
 {
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
@@ -299,12 +295,12 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      bank,
 				      shell_of_interaction );
 
-  TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
 			  0.053789358961052636,
 			  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.5, 1e-15 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.5, 1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -316,9 +312,9 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      bank,
 				      shell_of_interaction );
 
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 0.08 );
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 0.08 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
 			  29.993834199062107,
 			  1e-14 );
 
@@ -332,10 +328,10 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      bank,
 				      shell_of_interaction );
 
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top().getEnergy(),
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
 			  1.3851251716307225,
 			  1e-15 );
 
@@ -349,35 +345,38 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      bank,
 				      shell_of_interaction );
 
-  TEST_EQUALITY_CONST( bank.size(), 2 );
-  TEST_EQUALITY_CONST( bank.top().getEnergy(),
+  FRENSIE_CHECK_EQUAL( bank.size(), 2 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.3987875470381571,
 			  1e-15 );
 
   bank.pop();
 
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.20172576376840526,
 			  1e-15 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the scattering distribution
-  Teuchos::ArrayRCP<double> critical_line_energies( 3 );
+  std::shared_ptr<std::vector<double> >
+    critical_line_energies( new std::vector<double>(3) );
 
-  critical_line_energies[0] = 0.08;
-  critical_line_energies[1] =
+  (*critical_line_energies)[0] = 0.08;
+  (*critical_line_energies)[1] =
     Utility::PhysicalConstants::electron_rest_mass_energy;
-  critical_line_energies[2] = 1.0;
+  (*critical_line_energies)[2] = 1.0;
 
-  Teuchos::RCP<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
+  std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
     incoherent_base_dist(
 	      new MonteCarlo::KleinNishinaAdjointPhotonScatteringDistribution(
 								     20.0 ) );
@@ -388,10 +387,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstKleinNishinaAdjointPhotonScatteringDistribution.cpp
