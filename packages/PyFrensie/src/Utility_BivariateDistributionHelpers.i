@@ -16,6 +16,9 @@
 // Import the PyFrensie utility
 %import "PyFrensie_DistributionHelpers.hpp"
 
+ // Import the PyFrensie_ArraySharedPtr.i
+%include "PyFrensie_ArraySharedPtr.i"
+
 //---------------------------------------------------------------------------//
 // Helper macros for getting the distribution name
 //---------------------------------------------------------------------------//
@@ -409,71 +412,30 @@ typedef BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void ) RENAMED_DIS
 {
   // Constructor
   BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void )(
-    const std::vector<double>& raw_prim_grid,
+    const std::vector<double>& prim_grid,
     PyObject* raw_sec_dists,
     const double fuzzy_boundary_tol = 1e-3,
     const double evaluate_relative_error_tol = 1e-7,
     const double evaluate_error_tol = 1e-16 )
   {
-    unsigned size = PyList_Size(raw_sec_dists);
-    std::vector<double> prim_grid(raw_prim_grid);
-    std::vector<std::shared_ptr<const BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) > > sec_dists(size);
+    std::vector<std::shared_ptr<const BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) > > sec_dists;
 
-    for( unsigned i = 0; i < size; ++i )
+    bool conversion_success;
+
+    CONVERT_PYOBJECT_TO_VECTOR_OF_BASE_SHARED_PTR( raw_sec_dists, sec_dists, SWIG_PTR_NAME( BASE_DISTRIBUTION ), conversion_success );
+
+    if( conversion_success )
     {
-      PyObject* py_elem = PyList_GetItem( raw_sec_dists, i );
-
-      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const >* arg1 = 0;
-      void* argp1;
-      int res1 = 0;
-      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > tempshared1;
-
-      {
-        int newmem = 0;
-        res1 = SWIG_ConvertPtrAndOwn( py_elem, &argp1, SWIG_PTR_NAME( BASE_DISTRIBUTION ),  0 , &newmem);
-        if (!SWIG_IsOK(res1)) {
-          std::cout << "in method new_" << "RENAMED_DISTRIBUTION" << ", argument 2 of type PyObject* " << std::endl;
-          // SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase" "', argument " "2"" of type '" "PyObject* ""'"); );
-        }
-        if (newmem & SWIG_CAST_NEW_MEMORY) {
-          if (argp1) tempshared1 = *reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
-          delete reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
-          arg1 = &tempshared1;
-        } else {
-          arg1 = (argp1) ? reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1) : &tempshared1;
-        }
-      }
-      {
-        sec_dists[i] = *arg1;
-
-      //   try{
-      //     sec_dists[i] = *arg1;
-      //     if( PyErr_Occurred() )
-      //     SWIG_fail;
-      //   }
-      //   catch( Utility::ContractException& e )
-      //   {
-      //     SWIG_exception( SWIG_ValueError, e.what() );
-      //   }
-      //   catch( Utility::BadUnivariateDistributionParameter& e )
-      //   {
-      //     SWIG_exception( SWIG_RuntimeError, e.what() );
-      //   }
-      //   catch( ... )
-      //   {
-      //     SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
-      //   }
-      }
-      // fail:
-      //   sec_dists[i] = NULL;
-    }
-
-    return new BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void )(
+      return new BI_DIST_NAME( DISTRIBUTION, INTERP, GRID, void, void, void )(
             prim_grid,
             sec_dists,
             fuzzy_boundary_tol,
             evaluate_relative_error_tol,
             evaluate_error_tol );
+    }
+    // SWIG will check for a NULL return type and throw an exception
+    else
+      return NULL;
   }
 };
 
@@ -499,43 +461,22 @@ typedef BI_DIST_NAME( DISTRIBUTION, void, void, void ) RENAMED_DISTRIBUTION;
 {
   // Constructor
   BI_DIST_NAME( DISTRIBUTION, void, void, void )(
-    const std::vector<double>& raw_prim_grid,
+    const std::vector<double>& prim_grid,
     PyObject* raw_sec_dists )
   {
-    unsigned size = PyList_Size(raw_sec_dists);
-    std::vector<double> prim_grid(raw_prim_grid);
-    std::vector<std::shared_ptr<const BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) > > sec_dists(size);
+    std::vector<std::shared_ptr<const BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) > > sec_dists;
 
-    for( unsigned i = 0; i < size; ++i )
+    bool conversion_success;
+
+    CONVERT_PYOBJECT_TO_VECTOR_OF_BASE_SHARED_PTR( raw_sec_dists, sec_dists, SWIG_PTR_NAME( BASE_DISTRIBUTION ), conversion_success );
+
+    if( conversion_success )
     {
-      PyObject* py_elem = PyList_GetItem( raw_sec_dists, i );
-
-      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const >* arg1 = 0;
-      void* argp1;
-      int res1 = 0;
-      std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > tempshared1;
-
-      {
-        int newmem = 0;
-        res1 = SWIG_ConvertPtrAndOwn( py_elem, &argp1, SWIG_PTR_NAME( BASE_DISTRIBUTION ),  0 , &newmem);
-        if (!SWIG_IsOK(res1)) {
-          std::cout << "in method new_" << "RENAMED_DISTRIBUTION" << ", argument 2 of type PyObject* " << std::endl;
-          // SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "new_InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase" "', argument " "2"" of type '" "PyObject* ""'"); );
-        }
-        if (newmem & SWIG_CAST_NEW_MEMORY) {
-          if (argp1) tempshared1 = *reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
-          delete reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1);
-          arg1 = &tempshared1;
-        } else {
-          arg1 = (argp1) ? reinterpret_cast< std::shared_ptr< BI_DIST_NAME(BASE_DISTRIBUTION, void, void ) const > * >(argp1) : &tempshared1;
-        }
-      }
-      {
-        sec_dists[i] = *arg1;
-      }
+      return new BI_DIST_NAME( DISTRIBUTION, void, void, void )( prim_grid, sec_dists );
     }
-
-    return new BI_DIST_NAME( DISTRIBUTION, void, void, void )( prim_grid, sec_dists );
+    // SWIG will check for a NULL return type and throw an exception
+    else
+      return NULL;
   }
 
   // Return a random sample from the secondary conditional PDF

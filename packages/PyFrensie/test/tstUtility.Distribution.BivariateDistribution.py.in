@@ -49,6 +49,20 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
         self.assertTrue(isinstance(self.dist1, Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase))
         self.assertTrue(isinstance(self.dist2, Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase))
 
+        # Using a univariate distribution that is not tabular should result
+        # in an exception
+        univariate_dista = Distribution.TabularDistribution_LinLin( [4.0, 5.0, 6.0, 7.0], [0.1, 0.5, 1.5, 3.5] )
+        univariate_distb = Distribution.PowerDistribution_1( 0.0, 1.0 )
+
+        exception_thrown = False
+        
+        try:
+            bad_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [univariate_dista, univariate_distb] )
+        except:
+            exception_thrown = True
+
+        self.assertTrue( exception_thrown )
+
     def testEvaluate(self):
         "*Test Utility.Distribution.InterpolatedFullyTabularBasicBivariateDistribution evaluate method"
         self.assertTrue(self.dist.evaluate( 0.0, 1.0 ) == 0.5)
