@@ -122,155 +122,136 @@ FRENSIE_ADD_TEST(IncoherentPhotonScatteringDistributionNativeFactory
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-# FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointPhotonScatteringDistributionNativeFactory DEPENDS tstIncoherentAdjointPhotonScatteringDistributionNativeFactory.cpp)
-# FRENSIE_ADD_TEST(IncoherentAdjointPhotonScatteringDistributionNativeFactory
+FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointPhotonScatteringDistributionNativeFactory DEPENDS tstIncoherentAdjointPhotonScatteringDistributionNativeFactory.cpp)
+FRENSIE_ADD_TEST(IncoherentAdjointPhotonScatteringDistributionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(LineEnergyAdjointPhotonScatteringDistributionNativeFactory DEPENDS tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory.cpp)
+FRENSIE_ADD_TEST(LineEnergyAdjointPhotonScatteringDistributionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(CoherentScatteringDistributionACEFactory DEPENDS tstCoherentScatteringDistributionACEFactory.cpp)
+FRENSIE_ADD_TEST(CoherentScatteringDistributionACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(CoherentScatteringDistributionNativeFactory DEPENDS tstCoherentScatteringDistributionNativeFactory.cpp)
+FRENSIE_ADD_TEST(CoherentScatteringDistributionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(StandardPhotoatomicReaction DEPENDS tstStandardPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(StandardPhotoatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt
+  --test_ace_table=82000.04p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(PairProductionPhotoatomicReaction DEPENDS tstPairProductionPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(PairProductionPhotoatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt
+  --test_ace_table=82000.04p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(TripletProductionPhotoatomicReaction DEPENDS tstTripletProductionPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(TripletProductionPhotoatomicReaction
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(IncoherentPhotoatomicReaction DEPENDS tstIncoherentPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(IncoherentPhotoatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointPhotoatomicReaction DEPENDS tstIncoherentAdjointPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(IncoherentAdjointPhotoatomicReaction
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SubshellIncoherentPhotoatomicReaction DEPENDS tstSubshellIncoherentPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(SubshellIncoherentPhotoatomicReaction
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SubshellIncoherentAdjointPhotoatomicReaction DEPENDS tstSubshellIncoherentAdjointPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(SubshellIncoherentAdjointPhotoatomicReaction
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(CoherentPhotoatomicReaction DEPENDS tstCoherentPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(CoherentPhotoatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(CoherentAdjointPhotoatomicReaction DEPENDS tstCoherentAdjointPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(CoherentAdjointPhotoatomicReaction
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoelectricPhotoatomicReaction DEPENDS tstPhotoelectricPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(PhotoelectricPhotoatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(SubshellPhotoelectricPhotoatomicReaction DEPENDS tstSubshellPhotoelectricPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(SubshellPhotoelectricPhotoatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(LineEnergyAdjointPhotoatomicReaction DEPENDS tstLineEnergyAdjointPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(LineEnergyAdjointPhotoatomicReaction
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(AbsorptionPhotoatomicReaction DEPENDS tstAbsorptionPhotoatomicReaction.cpp)
+FRENSIE_ADD_TEST(AbsorptionPhotoatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionACEFactory DEPENDS tstPhotoatomicReactionACEFactory.cpp)
+FRENSIE_ADD_TEST(PhotoatomicReactionACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionNativeFactory DEPENDS tstPhotoatomicReactionNativeFactory.cpp)
+FRENSIE_ADD_TEST(PhotoatomicReactionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomicReactionNativeFactory DEPENDS tstAdjointPhotoatomicReactionNativeFactory.cpp)
+FRENSIE_ADD_TEST(AdjointPhotoatomicReactionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomCore DEPENDS tstPhotoatomCore.cpp)
+FRENSIE_ADD_TEST(PhotoatomCore
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomCore DEPENDS tstAdjointPhotoatomCore.cpp)
+FRENSIE_ADD_TEST(AdjointPhotoatomCore
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(Photoatom DEPENDS tstPhotoatom.cpp)
+FRENSIE_ADD_TEST(Photoatom
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
+
+# FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatom DEPENDS tstAdjointPhotoatom.cpp)
+# FRENSIE_ADD_TEST(AdjointPhotoatom
 #   EXTRA_ARGS
 #   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
-
-ADD_EXECUTABLE(tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory
-  tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory monte_carlo_collision_native)
-ADD_TEST(LineEnergyAdjointPhotonScatteringDistributionNativeFactory_test tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST LineEnergyAdjointPhotonScatteringDistributionNativeFactory_test PROPERTY LABELS photon adjoint native)
-
-ADD_EXECUTABLE(tstCoherentScatteringDistributionACEFactory
-  tstCoherentScatteringDistributionACEFactory.cpp)
-TARGET_LINK_LIBRARIES(tstCoherentScatteringDistributionACEFactory monte_carlo_collision_native)
-ADD_TEST(CoherentScatteringDistributionACEFactory_test tstCoherentScatteringDistributionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST CoherentScatteringDistributionACEFactory_test PROPERTY LABELS photon ace)
-
-ADD_EXECUTABLE(tstCoherentScatteringDistributionNativeFactory
-  tstCoherentScatteringDistributionNativeFactory.cpp)
-TARGET_LINK_LIBRARIES(tstCoherentScatteringDistributionNativeFactory monte_carlo_collision_native)
-ADD_TEST(CoherentScatteringDistributionNativeFactory_test tstCoherentScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST CoherentScatteringDistributionNativeFactory_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstStandardPhotoatomicReaction
-  tstStandardPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstStandardPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(StandardPhotoatomicReaction_test tstStandardPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
-SET_PROPERTY(TEST StandardPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstPairProductionPhotoatomicReaction
-  tstPairProductionPhotoatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPairProductionPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(PairProductionPhotoatomicReaction_test tstPairProductionPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
-SET_PROPERTY(TEST PairProductionPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstTripletProductionPhotoatomicReaction
-  tstTripletProductionPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstTripletProductionPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(TripletProductionPhotoatomicReaction_test tstTripletProductionPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST TripletProductionPhotoatomicReaction_test  PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstIncoherentPhotoatomicReaction
-  tstIncoherentPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstIncoherentPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(IncoherentPhotoatomicReaction_test tstIncoherentPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST IncoherentPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstIncoherentAdjointPhotoatomicReaction
-  tstIncoherentAdjointPhotoatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(IncoherentAdjointPhotoatomicReaction_test tstIncoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST IncoherentAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native no_threads)
-
-ADD_EXECUTABLE(tstSubshellIncoherentPhotoatomicReaction
-  tstSubshellIncoherentPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstSubshellIncoherentPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(SubshellIncoherentPhotoatomicReaction_test tstSubshellIncoherentPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST SubshellIncoherentPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstSubshellIncoherentAdjointPhotoatomicReaction
-  tstSubshellIncoherentAdjointPhotoatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSubshellIncoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(SubshellIncoherentAdjointPhotoatomicReaction_test tstSubshellIncoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST SubshellIncoherentAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native no_threads)
-
-ADD_EXECUTABLE(tstCoherentPhotoatomicReaction
-  tstCoherentPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstCoherentPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(CoherentPhotoatomicReaction_test tstCoherentPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST CoherentPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstCoherentAdjointPhotoatomicReaction
-  tstCoherentAdjointPhotoatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCoherentAdjointPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(CoherentAdjointPhotoatomicReaction_test tstCoherentAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST CoherentAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native)
-
-ADD_EXECUTABLE(tstPhotoelectricPhotoatomicReaction
-  tstPhotoelectricPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstPhotoelectricPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(PhotoelectricPhotoatomicReaction_test tstPhotoelectricPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoelectricPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstSubshellPhotoelectricPhotoatomicReaction
-  tstSubshellPhotoelectricPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstSubshellPhotoelectricPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(SubshellPhotoelectricPhotoatomicReaction_test tstSubshellPhotoelectricPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST SubshellPhotoelectricPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstLineEnergyAdjointPhotoatomicReaction
-  tstLineEnergyAdjointPhotoatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstLineEnergyAdjointPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(LineEnergyAdjointPhotoatomicReaction_test tstLineEnergyAdjointPhotoatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST LineEnergyAdjointPhotoatomicReaction_test PROPERTY LABELS photon adjoint native)
-
-ADD_EXECUTABLE(tstAbsorptionPhotoatomicReaction
-  tstAbsorptionPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstAbsorptionPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(AbsorptionPhotoatomicReaction_test tstAbsorptionPhotoatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST AbsorptionPhotoatomicReaction_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstPhotoatomCore tstPhotoatomCore.cpp)
-TARGET_LINK_LIBRARIES(tstPhotoatomCore monte_carlo_collision_native)
-ADD_TEST(PhotoatomCore_test tstPhotoatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoatomCore_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstAdjointPhotoatomCore
-  tstAdjointPhotoatomCore.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotoatomCore monte_carlo_collision_native)
-ADD_TEST(AdjointPhotoatomCore_test tstAdjointPhotoatomCore --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatomCore_test PROPERTY LABELS photon adjoint native)
-
-ADD_EXECUTABLE(tstPhotoatom tstPhotoatom.cpp)
-TARGET_LINK_LIBRARIES(tstPhotoatom monte_carlo_collision_native)
-ADD_TEST(Photoatom_test tstPhotoatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST Photoatom_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstAdjointPhotoatom
-  tstAdjointPhotoatom.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotoatom monte_carlo_collision_native)
-ADD_TEST(AdjointPhotoatom_test tstAdjointPhotoatom --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatom_test PROPERTY LABELS photon adjoint native)
-
-ADD_EXECUTABLE(tstPhotoatomicReactionACEFactory
-  tstPhotoatomicReactionACEFactory.cpp)
-TARGET_LINK_LIBRARIES(tstPhotoatomicReactionACEFactory monte_carlo_collision_native)
-ADD_TEST(PhotoatomicReactionACEFactory_test tstPhotoatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoatomicReactionACEFactory_test  PROPERTY LABELS photon ace)
-
-ADD_EXECUTABLE(tstPhotoatomicReactionNativeFactory
-  tstPhotoatomicReactionNativeFactory.cpp)
-TARGET_LINK_LIBRARIES(tstPhotoatomicReactionNativeFactory monte_carlo_collision_native)
-ADD_TEST(PhotoatomicReactionNativeFactory_test tstPhotoatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST PhotoatomicReactionNativeFactory_test PROPERTY LABELS photon native)
-
-ADD_EXECUTABLE(tstAdjointPhotoatomicReactionNativeFactory
-  tstAdjointPhotoatomicReactionNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotoatomicReactionNativeFactory monte_carlo_collision_native)
-ADD_TEST(AdjointPhotoatomicReactionNativeFactory_test tstAdjointPhotoatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatomicReactionNativeFactory_test PROPERTY LABELS photon adjoint native)
 
 ADD_EXECUTABLE(tstPhotoatomACEFactory
   tstPhotoatomACEFactory.cpp

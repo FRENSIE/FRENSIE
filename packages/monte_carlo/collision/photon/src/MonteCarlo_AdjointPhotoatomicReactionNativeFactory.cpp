@@ -207,7 +207,8 @@ void AdjointPhotoatomicReactionNativeFactory::createCoherentReaction(
 						      energy_grid->end() ) );
 
   // Extract the coherent cross section
-  std::shared_ptr<std::vector<double> > cross_section;
+  std::shared_ptr<std::vector<double> >
+    cross_section( new std::vector<double> );
 
   ThisType::sliceCrossSection( raw_adjoint_photoatom_data.getAdjointPhotonEnergyGrid(),
                                raw_adjoint_photoatom_data.getAdjointWallerHartreeCoherentCrossSection(),

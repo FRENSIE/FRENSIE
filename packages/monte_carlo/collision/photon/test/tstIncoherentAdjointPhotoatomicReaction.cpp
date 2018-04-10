@@ -10,18 +10,13 @@
 #include <iostream>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistributionNativeFactory.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -33,110 +28,110 @@ std::shared_ptr<MonteCarlo::AdjointPhotoatomicReaction> adjoint_incoherent_react
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getReactionType )
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getReactionType(),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getReactionType(),
                        MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getThresholdEnergy )
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getThresholdEnergy(),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getThresholdEnergy(),
                        1e-3 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the max energy can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getMaxEnergy )
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getMaxEnergy )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getMaxEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getMaxEnergy(), 20.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check if an energy falls within the energy grid
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
                    isEnergyWithinEnergyGrid )
 {
-  TEST_ASSERT( !adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 9e-4 ) );
-  TEST_ASSERT( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 1e-3 ) );
-  TEST_ASSERT( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 1.0 ) );
-  TEST_ASSERT( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 20.0 ) );
-  TEST_ASSERT( !adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 20.1 ) );
+  FRENSIE_CHECK( !adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 9e-4 ) );
+  FRENSIE_CHECK( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 1e-3 ) );
+  FRENSIE_CHECK( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 1.0 ) );
+  FRENSIE_CHECK( adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 20.0 ) );
+  FRENSIE_CHECK( !adjoint_incoherent_reaction->isEnergyWithinEnergyGrid( 20.1 ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of adjoint photons emitted from the reaction can be
 // returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
                    getNumberOfEmittedPhotons )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 9e-4 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 9e-4 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 1e-3 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 1e-3 ),
                        1u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 20.0 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 20.0 ),
                        1u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 20.1 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedPhotons( 20.1 ),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of adjoint electrons emitted from the reaction can be
 // returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
                    getNumberOfEmittedElectrons )
 {
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 9e-4 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 9e-4 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 1e-3 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 20.0 ),
                        0u );
-  TEST_EQUALITY_CONST( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 20.1 ),
+  FRENSIE_CHECK_EQUAL( adjoint_incoherent_reaction->getNumberOfEmittedElectrons( 20.1 ),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getCrossSection )
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, getCrossSection )
 {
   double cross_section = 
     adjoint_incoherent_reaction->getCrossSection( 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
 
   cross_section =
     adjoint_incoherent_reaction->getCrossSection( 1.0 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 5.50415974966055277, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.50415974966055277, 1e-12 );
 
   cross_section =
     adjoint_incoherent_reaction->getCrossSection( 20.0 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned (efficiently)
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction,
                    getCrossSection_efficient )
 {
   double cross_section = 
     adjoint_incoherent_reaction->getCrossSection( 1e-3, 0u );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.620920802623559753, 1e-12 );
 
   cross_section =
     adjoint_incoherent_reaction->getCrossSection( 20.0, 1166 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the incoherent adjoint reaction can be simulated
-TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
+FRENSIE_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
 {
   MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
   adjoint_photon.setEnergy(
@@ -165,12 +160,12 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
 				      bank,
 				      shell_of_interaction );
 
-  TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
 			  0.05677765668111111,
 			  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  FRENSIE_CHECK_SMALL( adjoint_photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -182,67 +177,66 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotoatomicReaction, react )
 				      bank,
 				      shell_of_interaction );
 
-  TEST_EQUALITY_CONST( bank.size(), 2 );
-  TEST_EQUALITY_CONST( bank.top().getEnergy(),
+  FRENSIE_CHECK_EQUAL( bank.size(), 2 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   // Due to the coarseness of the 2d test grid the weight will not be
   // exactly what it should theoretically be
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.401104057813784276,
 			  5e-3 );
 
   bank.pop();
 
-  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getEnergy(), 1.0 );
   // Due to the coarseness of the 2d test grid the weight will not be
   // exactly what it should theoretically be
-  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.203384875392762621,
 			  5e-3 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom setup
+// Custom Setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the native data file container
   Data::AdjointElectronPhotonRelaxationDataContainer
     data_container( test_native_file_name );
 
   // Get the incoming energy grid
-  Teuchos::ArrayRCP<double> incoming_energy_grid;
-  incoming_energy_grid.assign(
-                           data_container.getAdjointPhotonEnergyGrid().begin(),
-                           data_container.getAdjointPhotonEnergyGrid().end() );
-
+  std::shared_ptr<std::vector<double> > incoming_energy_grid(
+      new std::vector<double>( data_container.getAdjointPhotonEnergyGrid() ) );
+  
   // Evaluate the cross section at the energy of interest
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> two_d_cross_section;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> two_d_cross_section;
   {
   two_d_cross_section.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
+    new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LinLinLin> >(
         data_container.getAdjointPhotonEnergyGrid(),
         data_container.getAdjointWallerHartreeIncoherentMaxEnergyGrid(),
         data_container.getAdjointWallerHartreeIncoherentCrossSection() ) );
   }
 
-  Teuchos::ArrayRCP<double> cross_section( incoming_energy_grid.size() );
+  std::shared_ptr<std::vector<double> > cross_section(
+                     new std::vector<double>( incoming_energy_grid->size() ) );
 
-  for( size_t i = 0; i < incoming_energy_grid.size(); ++i )
+  for( size_t i = 0; i < incoming_energy_grid->size(); ++i )
   {
-    cross_section[i] =
-      two_d_cross_section->evaluate( incoming_energy_grid[i], 20.0 );
+    (*cross_section)[i] =
+      two_d_cross_section->evaluate( (*incoming_energy_grid)[i], 20.0 );
   }
   
   // Create the scattering distribution
@@ -264,12 +258,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                    scattering_distribution ) );
 
   // Set the critical line energies
-  Teuchos::ArrayRCP<double> critical_line_energies( 3 );
+  std::shared_ptr<std::vector<double> >
+    critical_line_energies( new std::vector<double>(3) );
 
-  critical_line_energies[0] = 0.08;
-  critical_line_energies[1] =
+  (*critical_line_energies)[0] = 0.08;
+  (*critical_line_energies)[1] =
     Utility::PhysicalConstants::electron_rest_mass_energy;
-  critical_line_energies[2] = 1.0;
+  (*critical_line_energies)[2] = 1.0;
 
   complete_reaction->setCriticalLineEnergies(critical_line_energies);
   
@@ -279,7 +274,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstIncoherentAdjointPhotoatomicReaction.cpp

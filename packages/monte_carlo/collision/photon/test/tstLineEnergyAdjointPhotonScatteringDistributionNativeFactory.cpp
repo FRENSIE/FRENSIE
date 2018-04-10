@@ -11,16 +11,12 @@
 #include <iostream>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_LineEnergyAdjointPhotonScatteringDistributionNativeFactory.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -33,7 +29,7 @@ std::shared_ptr<const Data::AdjointElectronPhotonRelaxationDataContainer>
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that  a pair production distribution can be created
-TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
+FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
                    createPairProductionDistribution )
 {
   std::shared_ptr<const MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
@@ -49,13 +45,13 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
                                                            20.0 );
 
   // Test the distribution
-  TEST_ASSERT( distribution.get() );
-  TEST_EQUALITY_CONST( distribution->getLineEnergy(),
+  FRENSIE_CHECK( distribution.get() != NULL );
+  FRENSIE_CHECK_EQUAL( distribution->getLineEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
+  FRENSIE_CHECK_EQUAL( distribution->getMinOutgoingEnergy(),
                        2*Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 14.739362127632583, 1e-15 );
+  FRENSIE_CHECK_EQUAL( distribution->getMaxOutgoingEnergy(), 20.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section_value, 14.739362127632583, 1e-15 );
 
   // Create a distribution with max energy = 1.03 MeV
   MonteCarlo::LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createPairProductionDistribution(
@@ -65,18 +61,18 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributioNativeFactory,
                                                            1.03 );
 
   // Test the distribution
-  TEST_ASSERT( distribution.get() );
-  TEST_EQUALITY_CONST( distribution->getLineEnergy(),
+  FRENSIE_CHECK( distribution.get() != NULL );
+  FRENSIE_CHECK_EQUAL( distribution->getLineEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
+  FRENSIE_CHECK_EQUAL( distribution->getMinOutgoingEnergy(),
                        2*Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 1.03 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 4.815451815420467e-10, 1e-15 );
+  FRENSIE_CHECK_EQUAL( distribution->getMaxOutgoingEnergy(), 1.03 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section_value, 4.815451815420467e-10, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a triplet production distribution can be created
-TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributionNativeFactory,
                    createTripletProductionDistribution )
 {
   std::shared_ptr<const MonteCarlo::LineEnergyAdjointPhotonScatteringDistribution>
@@ -92,13 +88,13 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributionNativeFactory,
                                                            20.0 );
 
   // Test the distribution
-  TEST_ASSERT( distribution.get() );
-  TEST_EQUALITY_CONST( distribution->getLineEnergy(),
+  FRENSIE_CHECK( distribution.get() != NULL );
+  FRENSIE_CHECK_EQUAL( distribution->getLineEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
+  FRENSIE_CHECK_EQUAL( distribution->getMinOutgoingEnergy(),
                        4*Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 0.6221793747726394, 1e-15 );
+  FRENSIE_CHECK_EQUAL( distribution->getMaxOutgoingEnergy(), 20.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section_value, 0.6221793747726394, 1e-15 );
 
   // Create a distribution with max energy = 2.05 MeV
   MonteCarlo::LineEnergyAdjointPhotonScatteringDistributionNativeFactory::createTripletProductionDistribution(
@@ -108,30 +104,30 @@ TEUCHOS_UNIT_TEST( LineEnergyAdjointPhotonScatteringDistributionNativeFactory,
                                                            2.05 );
 
   // Test the distribution
-  TEST_ASSERT( distribution.get() );
-  TEST_EQUALITY_CONST( distribution->getLineEnergy(),
+  FRENSIE_CHECK( distribution.get() != NULL );
+  FRENSIE_CHECK_EQUAL( distribution->getLineEnergy(),
                        Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMinOutgoingEnergy(),
+  FRENSIE_CHECK_EQUAL( distribution->getMinOutgoingEnergy(),
                        4*Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_EQUALITY_CONST( distribution->getMaxOutgoingEnergy(), 2.05 );
-  TEST_FLOATING_EQUALITY( cross_section_value, 1.2123883500190036e-10, 1e-15 );
+  FRENSIE_CHECK_EQUAL( distribution->getMaxOutgoingEnergy(), 2.05 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section_value, 1.2123883500190036e-10, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom setup
+// Custom Setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the native data file container
   data_container.reset( new Data::AdjointElectronPhotonRelaxationDataContainer(
@@ -141,7 +137,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstLineEnergyAdjointPhotonScatteringDistributionNativeFactory.cpp
