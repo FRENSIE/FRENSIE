@@ -42,6 +42,14 @@ PyFrensie_MAKE_TEST(tstUtility.Coordinate.CartesianCoordinate)
 ADD_TEST(PyFrensie.Utility.Coordinate.CartesianCoordinate_test ${PYTHON_EXECUTABLE} tstUtility.Coordinate.CartesianCoordinate.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.CartesianCoordinate_test PROPERTY LABELS pyfrensie)
 
+PyFrensie_MAKE_TEST(tstUtility.Coordinate.SphericalCoordinate)
+ADD_TEST(PyFrensie.Utility.Coordinate.SphericalCoordinate_test ${PYTHON_EXECUTABLE} tstUtility.Coordinate.SphericalCoordinate.py)
+SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.SphericalCoordinate_test PROPERTY LABELS pyfrensie)
+
+PyFrensie_MAKE_TEST(tstUtility.Coordinate.CylindricalCoordinate)
+ADD_TEST(PyFrensie.Utility.Coordinate.CylindricalCoordinate_test ${PYTHON_EXECUTABLE} tstUtility.Coordinate.CylindricalCoordinate.py)
+SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.CylindricalCoordinate_test PROPERTY LABELS pyfrensie)
+
 # # Add the Data.ACE.ACEFileHandler unit tests
 # PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)
 # ADD_TEST(PyFrensie.Data.ACE.ACEFileHandler_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEFileHandler.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)

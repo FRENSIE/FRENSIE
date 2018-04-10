@@ -84,8 +84,8 @@ using namespace Utility;
 
 // Support for specific coordinate types
 %include "Utility_CartesianCoordinate.i"
-// %include "Utility_DirectionalCoordinate.i"
-
+%include "Utility_SphericalCoordinate.i"
+%include "Utility_CylindricalCoordinate.i"
 
 //---------------------------------------------------------------------------//
 // end Utility.Coordinate.i

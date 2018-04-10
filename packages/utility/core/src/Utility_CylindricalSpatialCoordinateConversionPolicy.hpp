@@ -37,10 +37,10 @@ public:
   //! Convert the Cartesian coordinates to cylindrical coordinates
   static void convertFromCartesianPosition( const double x_spatial_coord,
                                             const double y_spatial_coord,
-                                    const double z_spatial_coord_in,
-                                    double& r_spatial_coord,
-                                    double& theta_spatial_coord,
-                                    double& z_spatial_coord_out );
+                                            const double z_spatial_coord_in,
+                                            double& r_spatial_coord,
+                                            double& theta_spatial_coord,
+                                            double& z_spatial_coord_out );
 
   //! Convert the cylindrical coordinates to Cartesian coordinates
   static void convertToCartesianPosition( const double cylindrical_coords[3],

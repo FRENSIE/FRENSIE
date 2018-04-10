@@ -6,6 +6,20 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Include vector support
+%include <std_vector.i>
+
+// Add a few general templates
+%template(DoubleVector) std::vector<double>;
+
+// Add a few general typemaps
+%apply double& OUTPUT { double& x_spatial_coord };
+%apply double& OUTPUT { double& y_spatial_coord };
+%apply double& OUTPUT { double& z_spatial_coord };
+%apply double& OUTPUT { double& x_directional_coord };
+%apply double& OUTPUT { double& y_directional_coord };
+%apply double& OUTPUT { double& z_directional_coord };
+
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
@@ -157,10 +171,85 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
 %enddef
 
 //---------------------------------------------------------------------------//
+// Macro for extending the rotation CoordinateConversionPolicy class python interface
+//---------------------------------------------------------------------------//
+%define %extend_rotation_coordinate_interface_setup_helper( DISTRIBUTION )
+
+// Extend constructor to use std::vector<double>
+%extend Utility::DISTRIBUTION
+{
+   DISTRIBUTION(
+    const std::vector<double> axis )
+  {
+    return new Utility::DISTRIBUTION(
+      axis.data() );
+  }
+}
+
+%enddef
+
+//---------------------------------------------------------------------------//
 // Macro for setting up a basic SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
 %define %basic_spatial_coordinate_interface_setup( DISTRIBUTION )
 
+// Set up basic spatial interface
+%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a translation SpatialCoordinateConversionPolicy class python interface
+//---------------------------------------------------------------------------//
+%define %translation_spatial_coordinate_interface_setup( DISTRIBUTION )
+
+// Extend constructor to use std::vector<double>
+%extend Utility::DISTRIBUTION
+{
+   DISTRIBUTION(
+    const std::vector<double> origin )
+  {
+    return new Utility::DISTRIBUTION(
+      origin.data() );
+  }
+}
+
+// Set up basic spatial interface
+%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a general SpatialCoordinateConversionPolicy class python interface
+//---------------------------------------------------------------------------//
+%define %general_spatial_coordinate_interface_setup( DISTRIBUTION )
+
+// Extend constructor to use std::vector<double>
+%extend Utility::DISTRIBUTION
+{
+   DISTRIBUTION(
+    const std::vector<double> origin,
+    const std::vector<double> axis )
+  {
+    return new Utility::DISTRIBUTION(
+      origin.data(), axis.data() );
+  }
+}
+
+// Set up basic spatial interface
+%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a rotation SpatialCoordinateConversionPolicy class python interface
+//---------------------------------------------------------------------------//
+%define %rotation_spatial_coordinate_interface_setup( DISTRIBUTION )
+
+// Extend the constructor
+%extend_rotation_coordinate_interface_setup_helper( DISTRIBUTION )
+
+// Set up basic spatial interface
 %basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
 
 %enddef
@@ -170,6 +259,7 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
 //---------------------------------------------------------------------------//
 %define %basic_directional_coordinate_interface_setup( DISTRIBUTION )
 
+// Set up basic directional interface
 %basic_directional_coordinate_interface_setup_helper( DISTRIBUTION )
 
 %enddef
@@ -179,7 +269,26 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
 //---------------------------------------------------------------------------//
 %define %basic_coordinate_interface_setup( DISTRIBUTION )
 
+// Set up basic spatial interface
 %basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+
+// Set up basic directional interface
+%basic_directional_coordinate_interface_setup_helper( DISTRIBUTION )
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a rotation DirectionalCoordinateConversionPolicy class python interface
+//---------------------------------------------------------------------------//
+%define %rotation_coordinate_interface_setup( DISTRIBUTION )
+
+// Extend the constructor
+%extend_rotation_coordinate_interface_setup_helper( DISTRIBUTION )
+
+// Set up basic spatial interface
+%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+
+// Set up basic directional interface
 %basic_directional_coordinate_interface_setup_helper( DISTRIBUTION )
 
 %enddef
