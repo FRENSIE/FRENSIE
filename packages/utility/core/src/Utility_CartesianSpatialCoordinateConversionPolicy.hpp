@@ -25,7 +25,7 @@ protected:
   typedef SpatialCoordinateSystemTraits<CARTESIAN_SPATIAL_COORDINATE_SYSTEM> LocalCSTraits;
 
 public:
-  
+
   //! Convert the Cartesian coordinates to Cartesian coordinates
   static void convertFromCartesianPosition( const double input_coords[3],
                                             double output_coords[3] );
@@ -168,7 +168,7 @@ inline bool CartesianSpatialCoordinateConversionPolicy::isTertiarySpatialCoordin
   return coordinate >= LocalCSTraits::tertiarySpatialDimensionLowerBound() &&
     coordinate <= LocalCSTraits::tertiarySpatialDimensionUpperBound();
 }
-  
+
 } // end Utility namespace
 
 #endif // end UTILITY_CARTESIAN_SPATIAL_COORDINATE_CONVERSION_POLICY_HPP

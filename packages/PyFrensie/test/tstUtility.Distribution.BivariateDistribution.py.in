@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------#
 ## Utility.Distribution.BivariateDistribution class unit tests
 #  \file   tstUtility.Distribution.BivariateDistribution.py
-#  \author Alex Robinson
+#  \author Luke Kersting
 #  \brief  Unit tests for the Utility.Distribution.BivariateDistribution classes
 #-----------------------------------------------------------------------------#
 

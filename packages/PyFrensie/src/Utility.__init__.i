@@ -39,7 +39,7 @@ sys.path.pop(0)
 
 __all__ = ['Distribution',
            'Prng',
-           'Interpolation'
+           'Coordinate'
            ]
 %}
 

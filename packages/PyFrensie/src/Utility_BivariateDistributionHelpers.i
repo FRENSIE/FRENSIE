@@ -267,17 +267,6 @@ BI_DIST_NAME( DISTRIBUTION, PARAMS )::sampleSecondaryConditionalWithRandomNumber
   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
 }
 
-// %typemap(in) const std::vector< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const >,std::allocator< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const > > > & (std::vector<std::shared_ptr<TabularUnivariateDistribution> > temp)
-// {
-//   temp = PyFrensie::convertFromPython<std::vector<std::shared_ptr<TabularUnivariateDistribution> > >( $input );
-
-//   $1 = &temp;
-// }
-
-// %typemap(typecheck, precedence=1050) (const std::vector< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const >,std::allocator< std::shared_ptr< BI_DIST_NAME( DISTRIBUTION, PARAMS )::BaseUnivariateDistributionType const > > > &) {
-//   $1 = (PyList_Check($input)) ? 1 : 0;
-// }
-
 %extend BI_DIST_NAME( DISTRIBUTION, PARAMS )
 {
   // Evaluate the distribution
