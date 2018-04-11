@@ -1,5 +1,9 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_photon)
 
+##---------------------------------------------------------------------------##
+## Support class tests
+##---------------------------------------------------------------------------##
+
 FRENSIE_ADD_TEST_EXECUTABLE(PhotonKinematicsHelpers DEPENDS tstPhotonKinematicsHelpers.cpp)
 FRENSIE_ADD_TEST(PhotonKinematicsHelpers)
 
@@ -43,6 +47,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(StandardSubshellDopplerBroadenedPhotonEnergyDistribu
 FRENSIE_ADD_TEST(StandardSubshellDopplerBroadenedPhotonEnergyDistribution
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
+
+##---------------------------------------------------------------------------##
+## Scattering distribution tests
+##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentAdjointPhotonScatteringDistribution DEPENDS tstIncoherentAdjointPhotonScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(IncoherentAdjointPhotonScatteringDistribution)
@@ -143,6 +151,22 @@ FRENSIE_ADD_TEST(CoherentScatteringDistributionNativeFactory
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonuclearScatteringDistributionACEFactory DEPENDS tstPhotonuclearScatteringDistributionACEFactory.cpp)
+FRENSIE_ADD_TEST(PhotonuclearScatteringDistributionACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt
+  --test_ace_table=6012.24u )
+
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonuclearNeutronScatteringDistributionACEFactory DEPENDS tstPhotonuclearNeutronScatteringDistributionACEFactory.cpp)
+FRENSIE_ADD_TEST(PhotonuclearNeutronScatteringDistributionACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt
+  --test_ace_table=1002.24u )
+
+##---------------------------------------------------------------------------##
+## Reaction tests
+##---------------------------------------------------------------------------##
+
 FRENSIE_ADD_TEST_EXECUTABLE(StandardPhotoatomicReaction DEPENDS tstStandardPhotoatomicReaction.cpp)
 FRENSIE_ADD_TEST(StandardPhotoatomicReaction
   EXTRA_ARGS
@@ -215,6 +239,14 @@ FRENSIE_ADD_TEST(AbsorptionPhotoatomicReaction
   --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
   --test_ace_table=82000.12p)
 
+FRENSIE_ADD_TEST_EXECUTABLE(StandardPhotonuclearReaction DEPENDS tstStandardPhotonuclearReaction.cpp)
+FRENSIE_ADD_TEST(StandardPhotonuclearReaction
+  EXTRA_ARGS
+  --h2_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt
+  --h2_ace_table=1002.24u
+  --c12_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt
+  --c12_ace_table=6012.24u)
+
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionACEFactory DEPENDS tstPhotoatomicReactionACEFactory.cpp)
 FRENSIE_ADD_TEST(PhotoatomicReactionACEFactory
   EXTRA_ARGS
@@ -230,6 +262,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomicReactionNativeFactory DEPENDS tstA
 FRENSIE_ADD_TEST(AdjointPhotoatomicReactionNativeFactory
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+##---------------------------------------------------------------------------##
+## Scattering center tests
+##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomCore DEPENDS tstPhotoatomCore.cpp)
 FRENSIE_ADD_TEST(PhotoatomCore
@@ -281,6 +317,10 @@ TARGET_LINK_LIBRARIES(tstAdjointPhotoatomFactory monte_carlo_collision_native)
 ADD_TEST(AdjointPhotoatomFactory_test tstAdjointPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
 SET_PROPERTY(TEST AdjointPhotoatomFactory_test PROPERTY LABELS photon adjoint native)
 
+##---------------------------------------------------------------------------##
+## Material tests
+##---------------------------------------------------------------------------##
+
 ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
 ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
@@ -306,26 +346,5 @@ ADD_EXECUTABLE(tstAdjointPhotonCollisionHandler
 TARGET_LINK_LIBRARIES(tstAdjointPhotonCollisionHandler monte_carlo_collision_native)
 ADD_TEST(AdjointPhotonCollisionHandler_test tstAdjointPhotonCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
 SET_PROPERTY(TEST AdjointPhotonCollisionHandler_test PROPERTY LABELS photon adjoint native)
-
-ADD_EXECUTABLE(tstPhotonuclearNeutronScatteringDistributionACEFactory
-	tstPhotonuclearNeutronScatteringDistributionACEFactory.cpp)
-TARGET_LINK_LIBRARIES(tstPhotonuclearNeutronScatteringDistributionACEFactory
- monte_carlo_collision_native)
-ADD_TEST(PhotonuclearNeutronScatteringDistributionACEFactory_test tstPhotonuclearNeutronScatteringDistributionACEFactory --test_basic_h2_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt" --test_basic_h2_ace_table=1002.24u )
-SET_PROPERTY(TEST PhotonuclearNeutronScatteringDistributionACEFactory_test PROPERTY LABELS photon ace)
-
-ADD_EXECUTABLE(tstPhotonuclearScatteringDistributionACEFactory
-	tstPhotonuclearScatteringDistributionACEFactory.cpp)
-TARGET_LINK_LIBRARIES(tstPhotonuclearScatteringDistributionACEFactory
- monte_carlo_collision_native)
-ADD_TEST(PhotonuclearScatteringDistributionACEFactory_test tstPhotonuclearScatteringDistributionACEFactory --test_basic_c12_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt" --test_basic_c12_ace_table=6012.24u )
-SET_PROPERTY(TEST PhotonuclearScatteringDistributionACEFactory_test PROPERTY LABELS photon ace)
-
-ADD_EXECUTABLE(tstPhotonuclearReaction
-               tstPhotonuclearReaction.cpp)
-TARGET_LINK_LIBRARIES(tstPhotonuclearReaction
-  monte_carlo_collision_native)
-ADD_TEST(PhotonuclearReaction_test tstPhotonuclearReaction --h2_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u --c12_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt" --c12_ace_table=6012.24u)
-SET_PROPERTY(TEST PhotonuclearReaction_test PROPERTY LABELS photon)
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_photon)
