@@ -322,22 +322,6 @@ struct ToStringTraits<std::shared_ptr<T>, typename std::enable_if<(sizeof(T)>1)>
                                const std::shared_ptr<T>& obj )
   { return ToStringTraits<T*>::toStream( os, obj.get() ); }
 };
-
-/*! Partial specialization of ToStringTraits for shared pointers of const types
- * \ingroup to_string_traits
- */
-template<typename T>
-struct ToStringTraits<std::shared_ptr<const T>, typename std::enable_if<(sizeof(T)>1)>::type>
-{
-  //! Convert the pointer type to a string
-  static inline std::string toString( const std::shared_ptr<const T>& obj )
-  { return ToStringTraits<T*>::toString( obj.get() ); }
-
-  //! Place the pointer type in a stream
-  static inline void toStream( std::ostream& os,
-                               const std::shared_ptr<const T>& obj )
-  { return ToStringTraits<T*>::toStream( os, obj.get() ); }
-};
   
 namespace Details{
 
