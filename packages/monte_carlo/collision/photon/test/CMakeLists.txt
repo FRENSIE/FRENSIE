@@ -248,10 +248,10 @@ FRENSIE_ADD_TEST(Photoatom
   --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
   --test_ace_table=82000.12p)
 
-# FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatom DEPENDS tstAdjointPhotoatom.cpp)
-# FRENSIE_ADD_TEST(AdjointPhotoatom
-#   EXTRA_ARGS
-#   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatom DEPENDS tstAdjointPhotoatom.cpp)
+FRENSIE_ADD_TEST(AdjointPhotoatom
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
 ADD_EXECUTABLE(tstPhotoatomACEFactory
   tstPhotoatomACEFactory.cpp
