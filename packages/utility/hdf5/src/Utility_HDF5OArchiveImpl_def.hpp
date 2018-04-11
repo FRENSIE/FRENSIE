@@ -77,6 +77,7 @@ inline void HDF5OArchiveImpl<Archive>::save_binary( const void* address,
   this->saveImpl( address, count );
 }
 
+#ifdef BOOST_SERIALIZATION_ARRAY_WRAPPER_AVAILABLE
 // Save an array
 template<typename Archive>
 template<typename ValueType>
@@ -86,6 +87,7 @@ inline void HDF5OArchiveImpl<Archive>::save_array(
 {
   this->saveImpl( a.address(), a.count() );
 }
+#endif
 
 // Start a save
 template<typename Archive>
@@ -108,19 +110,23 @@ void HDF5OArchiveImpl<Archive>::save_end( const char* name )
  */
 template<typename Archive>
 template<typename T>
-void HDF5OArchiveImpl<Archive>::save_override( const T& t )
+void HDF5OArchiveImpl<Archive>::save_override( const T& t, int )
 {
   testStaticPrecondition((boost::serialization::is_wrapper<T>::type::value));
 
   // This should never be called
+#ifdef USE_OLD_BOOST_ARCHIVE_OVERRIDE
+  this->CommonOArchive::save_override( t, 0 );
+#else
   this->CommonOArchive::save_override( t );
+#endif
 }
 
 // Save a type that is wrapped in a boost::serialization::nvp
 template<typename Archive>
 template<typename T>
 inline void HDF5OArchiveImpl<Archive>::save_override(
-                        const boost::serialization::nvp<T>& t )
+                                   const boost::serialization::nvp<T>& t, int )
 {
   this->save_start( t.name() );
 
@@ -132,7 +138,7 @@ inline void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::object_id_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                      const boost::archive::object_id_type& t )
+                                 const boost::archive::object_id_type& t, int )
 {
   unsigned object_id = t;
   this->writeToCurrentGroupAttribute( "object_id", &object_id, 1 );
@@ -145,7 +151,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::object_reference_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-               const boost::archive::object_reference_type& t )
+                          const boost::archive::object_reference_type& t, int )
 {
   unsigned object_reference = t;
   this->writeToCurrentGroupAttribute( "object_reference", &object_reference, 1 );
@@ -158,7 +164,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::version_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                        const boost::archive::version_type& t )
+                                   const boost::archive::version_type& t, int )
 {
   unsigned version = t;
   this->writeToCurrentGroupAttribute( "version", &version, 1 );
@@ -170,7 +176,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_id_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                       const boost::archive::class_id_type& t )
+                                  const boost::archive::class_id_type& t, int )
 {
   size_t class_id = t;
   this->writeToCurrentGroupAttribute( "class_id", &class_id, 1 );
@@ -182,7 +188,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_id_optional_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-              const boost::archive::class_id_optional_type& t )
+                         const boost::archive::class_id_optional_type& t, int )
 {
   // Ignore the writing of this type - it is not needed by this archive type
   // Note: this implementation of this method is similar to the implementation
@@ -199,7 +205,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_id_reference_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-             const boost::archive::class_id_reference_type& t )
+                        const boost::archive::class_id_reference_type& t, int )
 {
   size_t class_id_reference = t;
   this->writeToCurrentGroupAttribute( "class_id_reference", &class_id_reference, 1 );
@@ -211,7 +217,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::class_name_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                     const boost::archive::class_name_type& t )
+                                const boost::archive::class_name_type& t, int )
 {
   const std::string class_name( t );
   this->writeToCurrentGroupAttribute( "class_name", &class_name, 1 );
@@ -223,7 +229,7 @@ void HDF5OArchiveImpl<Archive>::save_override(
 // Save a boost::archive::tracking_type attribute
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
-                       const boost::archive::tracking_type& t )
+                                  const boost::archive::tracking_type& t, int )
 {
   this->writeToCurrentGroupAttribute( "class_tracking", &t.t, 1 );
 
@@ -308,7 +314,11 @@ template<typename Archive>
 template<typename T>
 void HDF5OArchiveImpl<Archive>::saveIntercept( const T& t, std::false_type is_fast_serializable_tuple )
 {
+#if USE_OLD_BOOST_ARCHIVE_OVERRIDE
+  this->CommonOArchive::save_override( t, 0 );
+#else
   this->CommonOArchive::save_override( t );
+#endif 
 }
 
 // Save implementation

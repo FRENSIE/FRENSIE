@@ -207,20 +207,12 @@ void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 
   unsigned scatt_func_size = jince_block.size()/2;
 
-  Utility::ArrayView<const double> raw_recoil_momentum =
-    jince_block( 0, scatt_func_size );
-  
-  std::vector<double> recoil_momentum( raw_recoil_momentum.begin(),
-                                       raw_recoil_momentum.end() );
+  std::vector<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
 
   std::shared_ptr<Utility::UnitAwareUnivariateDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function;
 
-  Utility::ArrayView<const double> raw_scattering_function_values =
-    jince_block( scatt_func_size, scatt_func_size );
-  
   std::vector<double> scattering_function_values(
-                                        raw_scattering_function_values.begin(),
-                                        raw_scattering_function_values.end() );
+                             jince_block( scatt_func_size, scatt_func_size ) );
 			     
 
   raw_scattering_function.reset(

@@ -95,6 +95,12 @@ public:
   //! Implicitly convert to a const array view
   operator ArrayView<const typename std::remove_const<T>::type>() const;
 
+  //! Return a std::vector
+  std::vector<typename std::remove_const<T>::type> toVector() const;
+
+  //! Implicitly convert to a std::vector
+  operator std::vector<typename std::remove_const<T>::type>() const;
+
   //! Return a direct pointer to the memory array used internally
   typename View<T*>::pointer data() const;
 };

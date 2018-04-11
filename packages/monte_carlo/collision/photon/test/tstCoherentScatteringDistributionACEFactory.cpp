@@ -8,31 +8,27 @@
 
 // Std Lib Includes
 #include <iostream>
-
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP<const MonteCarlo::CoherentScatteringDistribution> distribution;
+std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor;
+std::shared_ptr<const MonteCarlo::CoherentScatteringDistribution> distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a Thompson distribution can be created
-TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 		   createThompsonDistribution )
 {
   MonteCarlo::CoherentScatteringDistributionACEFactory::createThompsonDistribution(
@@ -41,15 +37,15 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
   // Test distribution properties
   double dist_value = distribution->evaluate( 0.1, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, 0.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 2.4946720254416256e-1, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 2.4946720254416256e-1, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
 
   double outgoing_energy, scattering_angle_cosine;
   Data::SubshellType shell_of_interaction;
@@ -65,15 +61,15 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 			outgoing_energy,
 			scattering_angle_cosine );
 
-  TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
-  UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( outgoing_energy, 0.1 );
+  FRENSIE_CHECK_SMALL( scattering_angle_cosine, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that a basic coherent distribution can be created
-TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 		   createBasicCoherentDistribution )
 {
   MonteCarlo::CoherentScatteringDistributionACEFactory::createBasicCoherentDistribution(
@@ -83,15 +79,15 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
   // Test distribution properties
   double dist_value = distribution->evaluate( 0.1, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 3.354834939813898e3, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 3.354834939813898e3, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, 0.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.17273487105470142, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.17273487105470142, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 3.59244179705391486, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 3.59244179705391486, 1e-15 );
 
   double outgoing_energy, scattering_angle_cosine;
 
@@ -109,15 +105,15 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 			outgoing_energy,
 			scattering_angle_cosine );
 
-  TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
+  FRENSIE_CHECK_EQUAL( outgoing_energy, 0.1 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that an efficient coherent distribution can be created
-TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 		   createEfficientCoherentDistribution )
 {
   MonteCarlo::CoherentScatteringDistributionACEFactory::createEfficientCoherentDistribution(
@@ -139,42 +135,34 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 			outgoing_energy,
 			scattering_angle_cosine );
 
-  TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.940007827406442842, 1e-15 );
+  FRENSIE_CHECK_EQUAL( outgoing_energy, 0.1 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.940007827406442842, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
@@ -186,21 +174,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCoherentScatteringDistributionACEFactory.cpp

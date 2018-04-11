@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -71,7 +72,13 @@ void OArchivableObject<DerivedType>::saveToFile(
   Details::OArchiveCreator::create( archive_name_with_path, oarchive_stream, oarchive );
 
   // Save the derived type to the archive
-  (*oarchive) << boost::serialization::make_nvp( this->getOArchiveName(), *dynamic_cast<const DerivedType*>(this) );
+  try{
+    (*oarchive) << boost::serialization::make_nvp( this->getOArchiveName(), *dynamic_cast<const DerivedType*>(this) );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                              std::runtime_error,
+                              "Unable to save the object to file "
+                              << archive_name_with_path.string() << "!" );
 
   // Ensure that the archive destructor is called before the stream destructor
   oarchive.reset();

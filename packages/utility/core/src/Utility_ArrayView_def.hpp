@@ -152,6 +152,24 @@ ArrayView<T>::operator ArrayView<const typename std::remove_const<T>::type>() co
   return this->toConst();
 }
 
+// Return a std::vector
+/*! \details The returned vector will store a copy of the data
+ */
+template<typename T>
+std::vector<typename std::remove_const<T>::type> ArrayView<T>::toVector() const
+{
+  return std::vector<typename std::remove_const<T>::type>( this->begin(), this->end() );
+}
+
+// Implicitly convert to a std::vector
+/*! \details The returned vector will store a copy of the data
+ */
+template<typename T>
+ArrayView<T>::operator std::vector<typename std::remove_const<T>::type>() const
+{
+  return std::vector<typename std::remove_const<T>::type>( this->begin(), this->end() );
+}
+
 // Return a direct pointer to the memory array used internally
 template<typename T>
 auto ArrayView<T>::data() const -> typename View<T*>::pointer

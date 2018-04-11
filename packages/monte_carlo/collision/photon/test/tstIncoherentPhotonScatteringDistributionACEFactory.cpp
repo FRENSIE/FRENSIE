@@ -9,31 +9,26 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
+std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor;
+std::shared_ptr<const MonteCarlo::IncoherentPhotonScatteringDistribution>
   distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a Klein-Nishina distribution can be created
-TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 		   createKleinNishinaDistribution )
 {
   MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
@@ -47,18 +42,18 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.9893440508834e-1, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 4.9893440508834e-1, 1e-12 );
 
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 9.2395260201544e-2, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 9.2395260201544e-2, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a basic incoherent distribution can be created
-TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 		   createIncoherentDistribution )
 {
   MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
@@ -72,13 +67,13 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
 
   MonteCarlo::ParticleBank bank;
 
@@ -104,16 +99,16 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::M3_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::M3_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Doppler broadened incoherent distribution can be created
-TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 		   createDHPDopplerBroadenedHybridIncoherentDistribution )
 {
   MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
@@ -127,13 +122,13 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
 
   MonteCarlo::ParticleBank bank;
 
@@ -162,16 +157,16 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Doppler broadened incoherent distribution can be created
-TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 		   createDFPDopplerBroadenedHybridIncoherentDistribution )
 {
   MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
@@ -185,13 +180,13 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
 
   MonteCarlo::ParticleBank bank;
 
@@ -219,16 +214,16 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the Doppler broadened incoherent distribution can be created
-TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 		   createCHPDopplerBroadenedHybridIncoherentDistribution )
 {
   MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
@@ -242,13 +237,13 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
 
   MonteCarlo::ParticleBank bank;
 
@@ -276,16 +271,16 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a basic Doppler broadened incoherent distribution can be created
-TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 		   createCFPDopplerBroadenedHybridIncoherentDistribution )
 {
   MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
@@ -299,13 +294,13 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  FRENSIE_CHECK_SMALL( dist_value, 1e-15 );
 
   dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
 
   MonteCarlo::ParticleBank bank;
 
@@ -332,43 +327,35 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
@@ -380,21 +367,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstIncoherentPhotonScatteringDistributionACEFactory.cpp

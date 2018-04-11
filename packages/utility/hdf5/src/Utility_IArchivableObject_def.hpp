@@ -12,6 +12,9 @@
 // Boost Includes
 #include <boost/serialization/nvp.hpp>
 
+// FRENSIE Includes
+#include "Utility_ExceptionCatchMacros.hpp"
+
 namespace Utility{
 
 namespace Details{
@@ -56,7 +59,13 @@ void IArchivableObject<DerivedType>::loadFromFile( const boost::filesystem::path
   Details::IArchiveCreator::create( archive_name_with_path, iarchive_stream, iarchive );
 
   // Load the derived type from the archive
-  (*iarchive) >> boost::serialization::make_nvp( this->getIArchiveName(), *dynamic_cast<DerivedType*>(this) );
+  //try{
+    (*iarchive) >> boost::serialization::make_nvp( this->getIArchiveName(), *dynamic_cast<DerivedType*>(this) );
+    //}
+  // EXCEPTION_CATCH_RETHROW_AS( std::exception,
+  //                             std::runtime_error,
+  //                             "Unable to load the object from file "
+  //                             << archive_name_with_path.string() << "!" );
 
   // Ensure that the archive destructor is called before the stream destructor
   iarchive.reset();

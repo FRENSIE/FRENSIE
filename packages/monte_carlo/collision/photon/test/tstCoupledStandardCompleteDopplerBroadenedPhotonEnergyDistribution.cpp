@@ -11,14 +11,7 @@
 #include <limits>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
@@ -31,22 +24,23 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_AtomicMomentumUnit.hpp"
 #include "Utility_InverseAtomicMomentumUnit.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
+std::shared_ptr<const MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   half_distribution;
 
-std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
+std::shared_ptr<const MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   full_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
+FRENSIE_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 		   sample_half )
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
@@ -69,13 +63,13 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.352804013048420073, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.352804013048420073, 1e-12 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
+FRENSIE_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 		   sample_full )
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
@@ -96,37 +90,29 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_ace_file_name, test_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_ace_file_name, test_ace_table_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Create a file handler and data extractor
   std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
@@ -139,10 +125,10 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableXSSArray() ) );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_des =
+  Utility::ArrayView<const double> subshell_endf_des =
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType> subshell_order(
+  std::vector<Data::SubshellType> subshell_order(
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
@@ -152,17 +138,17 @@ int main( int argc, char** argv )
   }
 
   // Create the Compton profile subshell converter
-  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<const MonteCarlo::ComptonProfileSubshellConverter> converter;
 
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
 			           xss_data_extractor->extractAtomicNumber() );
 
   // Create the compton profile distributions
-  Teuchos::ArrayView<const double> lswd_block =
+  Utility::ArrayView<const double> lswd_block =
     xss_data_extractor->extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block =
+  Utility::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
   MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray
@@ -175,13 +161,19 @@ int main( int argc, char** argv )
 
     unsigned num_mom_vals = swd_block[shell_index];
 
-    Teuchos::Array<double> half_momentum_grid(
-				  swd_block( shell_index + 1, num_mom_vals ) );
-
-    Teuchos::Array<double> half_profile(
-		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
-
-    Teuchos::Array<double> full_momentum_grid, full_profile;
+    Utility::ArrayView<const double> raw_half_momentum_grid =
+      swd_block( shell_index + 1, num_mom_vals );
+    
+    std::vector<double> half_momentum_grid( raw_half_momentum_grid.begin(),
+                                            raw_half_momentum_grid.end() );
+                                           
+    Utility::ArrayView<const double> raw_half_profile =
+      swd_block( shell_index + 1 + num_mom_vals, num_mom_vals );
+    
+    std::vector<double> half_profile( raw_half_profile.begin(),
+                                      raw_half_profile.end() );
+                                     
+    std::vector<double> full_momentum_grid, full_profile;
 
     MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
 						  half_momentum_grid.end(),
@@ -191,7 +183,7 @@ int main( int argc, char** argv )
 						  full_profile,
                                                   true );
 
-    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
+    std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
                                                        half_momentum_grid,
                                                        half_profile ) );
@@ -209,21 +201,29 @@ int main( int argc, char** argv )
                                                        raw_compton_profile ) );
   }
 
+  std::vector<double> subshell_binding_energies(
+                  xss_data_extractor->extractSubshellBindingEnergies().begin(),
+                  xss_data_extractor->extractSubshellBindingEnergies().end() );
+
+  std::vector<double> subshell_occupancies(
+                      xss_data_extractor->extractSubshellOccupancies().begin(),
+                      xss_data_extractor->extractSubshellOccupancies().end() );
+
   half_distribution.reset(
      new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>(
-			  xss_data_extractor->extractSubshellBindingEnergies(),
-			  xss_data_extractor->extractSubshellOccupancies(),
-			  subshell_order,
-			  converter,
-			  half_compton_profiles ) );
+                                                subshell_binding_energies,
+                                                subshell_occupancies,
+                                                subshell_order,
+                                                converter,
+                                                half_compton_profiles ) );
 
   full_distribution.reset(
      new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
-			  xss_data_extractor->extractSubshellBindingEnergies(),
-			  xss_data_extractor->extractSubshellOccupancies(),
-			  subshell_order,
-			  converter,
-			  full_compton_profiles ) );
+                                                 subshell_binding_energies,
+                                                 subshell_occupancies,
+                                                 subshell_order,
+                                                 converter,
+                                                 full_compton_profiles ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -231,21 +231,9 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution.cpp

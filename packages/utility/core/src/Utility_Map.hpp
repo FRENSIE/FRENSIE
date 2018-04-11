@@ -23,6 +23,7 @@
 #include "Utility_Tuple.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_FromStringTraits.hpp"
+#include "Utility_IteratorTypeTraits.hpp"
 #include "Utility_ComparisonTraits.hpp"
 #include "Utility_TypeNameTraits.hpp"
 
@@ -43,6 +44,29 @@ template<typename Key, typename T>
 struct ToStringTraits<std::map<Key,T> > : public Details::ToStringTraitsIteratorHelper<std::map<Key,T> >
 { /* ... */ };
 
+/*! Partial specialization of ToStringTraits for std::map iterator types
+ *
+ * Unfortunately this cannot be used with a past-the-end iterator due to 
+ * the dereference.
+ * \ingroup map
+ * \ingroup to_string_traits
+ */
+template<typename Iterator>
+struct ToStringTraits<Iterator,typename std::enable_if<
+         (std::is_same<Iterator,typename std::map<typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T2>::iterator>::value ||
+          std::is_same<Iterator,typename std::map<typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T2>::const_iterator>::value ||
+          std::is_same<Iterator,typename std::map<typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T2>::reverse_iterator>::value ||
+          std::is_same<Iterator,typename std::map<typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::RemovePairMemberCV<typename std::iterator_traits<Iterator>::value_type>::T2>::const_reverse_iterator>::value)>::type>
+{
+  //! Convert the pointer type to a string
+  static inline std::string toString( const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toString( &(*obj) ); }
+
+  //! Place the pointer type in a stream
+  static inline void toStream( std::ostream& os, const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toStream( os, &(*obj) ); }
+};
+
 /*! Partial specialization of ToStringTraits for std::unordered_map
  * \ingroup map
  * \ingroup to_string_traits
@@ -50,6 +74,27 @@ struct ToStringTraits<std::map<Key,T> > : public Details::ToStringTraitsIterator
 template<typename Key, typename T>
 struct ToStringTraits<std::unordered_map<Key,T> > : public Details::ToStringTraitsIteratorHelper<std::unordered_map<Key,T> >
 { /* ... */ };
+
+/*! Partial specialization of ToStringTraits for std::unordered_map iterator types
+ *
+ * Unfortunately this cannot be used with a past-the-end iterator due to 
+ * the dereference.
+ * \ingroup map
+ * \ingroup to_string_traits
+ */
+template<typename Iterator>
+struct ToStringTraits<Iterator,typename std::enable_if<
+         (std::is_same<Iterator,typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::iterator>::value ||
+          std::is_same<Iterator,typename std::unordered_map<typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T1,typename Details::InterceptUnhashableType<typename std::iterator_traits<Iterator>::value_type>::T2>::const_iterator>::value)>::type>
+{
+  //! Convert the pointer type to a string
+  static inline std::string toString( const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toString( &(*obj) ); }
+
+  //! Place the pointer type in a stream
+  static inline void toStream( std::ostream& os, const Iterator& obj )
+  { return ToStringTraits<typename std::iterator_traits<Iterator>::pointer>::toStream( os, &(*obj) ); }
+};
 
 /*! Partial specialization of FromStringTraits for std::map
  * \ingroup map

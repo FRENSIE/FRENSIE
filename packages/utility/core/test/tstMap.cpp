@@ -242,6 +242,111 @@ BOOST_AUTO_TEST_CASE( toStream )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a map iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toString_iterator )
+{
+  std::map<int, int> int_map( {std::pair<int,int>({-1,0}), std::pair<int,int>({1,2})} );
+
+  std::string iterator_string = Utility::toString( int_map.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_map.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_map.rbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_map.crbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  std::map<std::string,double> string_double_map( {std::pair<std::string,double>({"-1",0.0}), std::pair<std::string,double>({"1", 2.0})} );
+
+  iterator_string = Utility::toString( string_double_map.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_double_map.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_double_map.rbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_double_map.crbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a map iterator can be placed in a stream
+BOOST_AUTO_TEST_CASE( toStream_iterator )
+{
+  std::map<int, int> int_map( {std::pair<int,int>({-1,0}), std::pair<int,int>({1,2})} );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, int_map.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_map.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_map.rbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_map.crbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  std::map<std::string,double> string_double_map( {std::pair<std::string,double>({"-1",0.0}), std::pair<std::string,double>({"1", 2.0})} );
+
+  Utility::toStream( oss, string_double_map.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, string_double_map.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, string_double_map.rbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, string_double_map.crbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a map can be created from a string
 BOOST_AUTO_TEST_CASE( fromString )
 {
@@ -1225,6 +1330,70 @@ BOOST_AUTO_TEST_CASE( toStream )
   
   BOOST_CHECK_EQUAL( oss.str(),
                        "{{1000000000, {0.000000000e+00}}, {-1000000000, {-1.000000000e+00, 0.000000000e+00, 1.000000000e+00}}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an unordered_map iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toString_iterator )
+{
+  std::unordered_map<int, int> int_map( {std::pair<int,int>({-1,0}), std::pair<int,int>({1,2})} );
+
+  std::string iterator_string = Utility::toString( int_map.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_map.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  std::unordered_map<std::string,double> string_double_map( {std::pair<std::string,double>({"-1",0.0}), std::pair<std::string,double>({"1", 2.0})} );
+
+  iterator_string = Utility::toString( string_double_map.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( string_double_map.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an unordered_map iterator can be placed in a stream
+BOOST_AUTO_TEST_CASE( toStream_iterator )
+{
+  std::unordered_map<int, int> int_map( {std::pair<int,int>({-1,0}), std::pair<int,int>({1,2})} );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, int_map.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_map.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  std::unordered_map<std::string,double> string_double_map( {std::pair<std::string,double>({"-1",0.0}), std::pair<std::string,double>({"1", 2.0})} );
+
+  Utility::toStream( oss, string_double_map.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, string_double_map.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
 }
 
 //---------------------------------------------------------------------------//

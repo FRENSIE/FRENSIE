@@ -236,6 +236,114 @@ BOOST_AUTO_TEST_CASE( toStream )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a list iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toString_iterator )
+{
+  std::list<int> int_list( {-1, 0, 1} );
+
+  std::string iterator_string = Utility::toString( int_list.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_list.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_list.rbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_list.crbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  std::list<double> double_list( {-1, 0, 1} );
+
+  iterator_string = Utility::toString( double_list.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( double_list.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( double_list.rbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( double_list.crbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a list iterator can be placed in a stream
+BOOST_AUTO_TEST_CASE( toStream_iterator )
+{
+  std::list<int> int_list( {-1, 0, 1} );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, int_list.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_list.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_list.rbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_list.crbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  std::list<double> double_list( {-1, 0, 1} );
+
+  Utility::toStream( oss, double_list.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, double_list.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, double_list.rbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, double_list.crbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+}
+
+//---------------------------------------------------------------------------//
 // Check that a list can be created from a string
 BOOST_AUTO_TEST_CASE( fromString )
 {
@@ -2041,6 +2149,67 @@ BOOST_AUTO_TEST_CASE( toStream )
   
   BOOST_CHECK_EQUAL( oss.str(),
                        "{{0, 1.000000000000000000e+00, -100000}, {1, -1.000000000000000000e+00, 100001}}" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a list iterator can be converted to a string
+BOOST_AUTO_TEST_CASE( toString_iterator )
+{
+  std::forward_list<int> int_list( {-1, 0, 1} );
+
+  std::string iterator_string = Utility::toString( int_list.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( int_list.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  std::forward_list<double> double_list( {-1, 0, 1} );
+
+  iterator_string = Utility::toString( double_list.begin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+
+  iterator_string = Utility::toString( double_list.cbegin() );
+
+  BOOST_CHECK( iterator_string.find( "x" ) < iterator_string.size() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a list iterator can be placed in a stream
+BOOST_AUTO_TEST_CASE( toStream_iterator )
+{
+  std::forward_list<int> int_list( {-1, 0, 1} );
+
+  std::ostringstream oss;
+
+  Utility::toStream( oss, int_list.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, int_list.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  std::forward_list<double> double_list( {-1, 0, 1} );
+
+  Utility::toStream( oss, double_list.begin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
+
+  oss.str( "" );
+  oss.clear();
+
+  Utility::toStream( oss, double_list.cbegin() );
+
+  BOOST_CHECK( oss.str().find( "x" ) < oss.str().size() );
 }
 
 //---------------------------------------------------------------------------//

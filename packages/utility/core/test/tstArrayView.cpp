@@ -344,6 +344,64 @@ BOOST_AUTO_TEST_CASE_TEMPLATE( to_const, T, TestTypes )
 }
 
 //---------------------------------------------------------------------------//
+// Check if an array view can be converted to a std::vector
+BOOST_AUTO_TEST_CASE_TEMPLATE( to_vector, T, TestTypes )
+{
+  std::vector<T> container( {0, 1, 2, 3, 4, 5} );
+
+  Utility::ArrayView<T> view( container );
+  Utility::ArrayView<const T> view_of_const = view( 1, 4 );
+
+  {
+    std::vector<T> container_copy = view.toVector();
+
+    BOOST_CHECK_EQUAL( container_copy.size(), 6 );
+    BOOST_CHECK_EQUAL( container_copy.front(), 0 );
+    BOOST_CHECK_EQUAL( container_copy.back(), 5 );
+  }
+
+  {
+    std::vector<T> container_copy = (std::vector<T>)view;
+
+    BOOST_CHECK_EQUAL( container_copy.size(), 6 );
+    BOOST_CHECK_EQUAL( container_copy.front(), 0 );
+    BOOST_CHECK_EQUAL( container_copy.back(), 5 );
+  }
+
+  {
+    std::vector<T> container_copy( view );
+
+    BOOST_CHECK_EQUAL( container_copy.size(), 6 );
+    BOOST_CHECK_EQUAL( container_copy.front(), 0 );
+    BOOST_CHECK_EQUAL( container_copy.back(), 5 );
+  }
+
+  {
+    std::vector<T> container_copy = view_of_const.toVector();
+
+    BOOST_CHECK_EQUAL( container_copy.size(), 4 );
+    BOOST_CHECK_EQUAL( container_copy.front(), 1 );
+    BOOST_CHECK_EQUAL( container_copy.back(), 4 );
+  }
+
+  {
+    std::vector<T> container_copy = (std::vector<T>)view_of_const;
+
+    BOOST_CHECK_EQUAL( container_copy.size(), 4 );
+    BOOST_CHECK_EQUAL( container_copy.front(), 1 );
+    BOOST_CHECK_EQUAL( container_copy.back(), 4 );
+  }
+
+  {
+    std::vector<T> container_copy( view_of_const );
+
+    BOOST_CHECK_EQUAL( container_copy.size(), 4 );
+    BOOST_CHECK_EQUAL( container_copy.front(), 1 );
+    BOOST_CHECK_EQUAL( container_copy.back(), 4 );
+  }
+}
+
+//---------------------------------------------------------------------------//
 // Check that a direct pointer to the memory array used internally can be
 // acquired
 BOOST_AUTO_TEST_CASE_TEMPLATE( data, T, TestTypes )
