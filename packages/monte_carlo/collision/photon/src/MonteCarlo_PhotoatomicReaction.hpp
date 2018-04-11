@@ -14,7 +14,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_DistributionTraits.hpp"
@@ -66,17 +66,17 @@ inline void PhotoatomicReaction::react(
   this->react( photon, bank, shell_of_interaction );
 }
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LinLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LinLin,true> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LinLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LinLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LinLog,true> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LinLog,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LogLin,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LogLin,true> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LogLin,true> );
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LogLog,false> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardGenericAtomicReaction<PhotoatomicReaction,Utility::LogLog,true> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotoatomicReaction,Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

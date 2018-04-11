@@ -11,7 +11,7 @@
 #include <algorithm>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSPhotoatomicDataExtractor.hpp"
@@ -30,14 +30,14 @@ std::shared_ptr<MonteCarlo::PhotoatomicReaction> ace_pe_reaction;
 // Testing Structs.
 //---------------------------------------------------------------------------//
 template<typename InterpPolicy, bool processed_cross_section>
-class TestPhotoatomicReaction : public MonteCarlo::StandardGenericAtomicReaction<MonteCarlo::PhotoatomicReaction,InterpPolicy,processed_cross_section>
+class TestPhotoatomicReaction : public MonteCarlo::StandardReactionBaseImpl<MonteCarlo::PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
 public:
   TestPhotoatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
        const size_t threshold_energy_index )
-    : MonteCarlo::StandardGenericAtomicReaction<MonteCarlo::PhotoatomicReaction,InterpPolicy,processed_cross_section>( incoming_energy_grid, cross_section, threshold_energy_index )
+    : MonteCarlo::StandardReactionBaseImpl<MonteCarlo::PhotoatomicReaction,InterpPolicy,processed_cross_section>( incoming_energy_grid, cross_section, threshold_energy_index )
   { /* ... */ }
 
   ~TestPhotoatomicReaction()

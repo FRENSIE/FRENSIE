@@ -13,17 +13,17 @@
 #include <functional>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
 
 //! The triplet production photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = true>
-class TripletProductionPhotoatomicReaction : public StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section>
+class TripletProductionPhotoatomicReaction : public StandardReactionBaseImpl<PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
+  typedef StandardReactionBaseImpl<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
 public:
 

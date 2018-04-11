@@ -14,22 +14,51 @@
 
 namespace MonteCarlo{
 
+// Basic Constructor
+template<typename OutgoingParticleType>
+CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::CrossSectionBasedPhotonuclearProductionReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const std::vector<unsigned>& photon_production_ids,
+       const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
+       outgoing_particle_distributions )
+  : StandardPhotonuclearReaction( incoming_energy_grid,
+                                  cross_section,
+                                  threshold_energy_index,
+                                  reaction_type,
+                                  q_value ),
+    d_photon_production_ids( photon_production_ids ),
+    d_outgoing_particle_distributions( outgoing_particle_distributions )
+{
+  // Make sure the photon production ids are valid
+  testPrecondition( photon_production_ids.size() > 0 );
+  // Make sure the outgoing particle distributions are valid
+  testPrecondition( outgoing_particle_distributions.size() ==
+		    photon_production_ids.size() );
+}
+
 // Constructor
 template<typename OutgoingParticleType>
 CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::CrossSectionBasedPhotonuclearProductionReaction(
-       const PhotonuclearReactionType reaction_type,
-       const std::vector<unsigned>& photon_production_ids,
-       const double q_value,
-       const size_t threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const std::vector<unsigned>& photon_production_ids,
        const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
-		   outgoing_particle_distributions )
-  : PhotonuclearReaction<OutgoingParticleType>( reaction_type,
-                                                q_value,
-                                                threshold_energy_index,
-                                                incoming_energy_grid,
-                                                cross_section ),
+       outgoing_particle_distributions )
+  : StandardPhotonuclearReaction( incoming_energy_grid,
+                                  cross_section,
+                                  threshold_energy_index,
+                                  grid_searcher,
+                                  reaction_type,
+                                  q_value ),
     d_photon_production_ids( photon_production_ids ),
     d_outgoing_particle_distributions( outgoing_particle_distributions )
 {
@@ -49,7 +78,7 @@ const std::vector<unsigned>& CrossSectionBasedPhotonuclearProductionReaction<Out
 
 // Return the number of particle emitted from the rxn at the given energy
 template<typename OutgoingParticleType>
-size_t CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles( const double energy ) const
+unsigned CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles( const double energy ) const
 {
   d_photon_production_ids.size();
 }

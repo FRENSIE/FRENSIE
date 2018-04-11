@@ -1,35 +1,38 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicReaction.hpp
-//! \author Luke Kersting
-//! \brief  The atomic reaction base class declaration
+//! \file   MonteCarlo_NuclearReaction.hpp
+//! \author Alex Robinson
+//! \brief  The nuclear reaction base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ATOMIC_REACTION_HPP
-#define MONTE_CARLO_ATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_NUCLEAR_REACTION_HPP
+#define MONTE_CARLO_NUCLEAR_REACTION_HPP
 
 namespace MonteCarlo{
 
-//! The atomic reaction base class
-class AtomicReaction
+//! The nuclear reaction base class
+class NuclearReaction
 {
 
 public:
 
   //! Constructor
-  AtomicReaction()
+  NuclearReaction()
   { /* ... */ }
 
   //! Destructor
-  virtual ~AtomicReaction()
+  virtual ~NuclearReaction()
   { /* ... */ }
 
   //! Test if two Atomic reactions share the same energy grid
-  bool isEnergyGridShared( const AtomicReaction& other_reaction ) const;
+  bool isEnergyGridShared( const NuclearReaction& other_reaction ) const;
 
   //! Test if the energy falls within the energy grid
   virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
+
+  //! Return the reaction Q value
+  virtual double getQValue() const = 0;
 
   //! Return the threshold energy
   virtual double getThresholdEnergy() const = 0;
@@ -44,29 +47,26 @@ public:
   virtual double getCrossSection( const double energy,
                                   const size_t bin_index ) const = 0;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
+  //! Return the number of emitted primary outgoing particles
+  virtual unsigned getNumberOfEmittedParticles( const double energy ) const = 0;
 
-  //! Return the number of electrons emitted from the rxn at the given energy
-  virtual unsigned getNumberOfEmittedElectrons( const double energy ) const = 0;
+  //! Return the average number of emitted primary outgoing particles
+  virtual double getAverageNumberOfEmittedParticles( const double energy ) const;
 
 protected:
+
+  //! Return an integer number of emitted particles given an average value
+  unsigned sampleNumberOfEmittedParticles(
+                      const double average_number_of_emitted_particles ) const;
 
   //! Return the head of the energy grid
   virtual const double* getEnergyGridHead() const = 0;
 };
-
-// Test if two Atomic reactions share the same energy grid
-inline bool AtomicReaction::isEnergyGridShared(
-                                   const AtomicReaction& other_reaction ) const
-{
-  return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
-}
-
+  
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_NUCLEAR_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AtomicReaction.hpp
+// end MonteCarlo_NuclearReaction.hpp
 //---------------------------------------------------------------------------//

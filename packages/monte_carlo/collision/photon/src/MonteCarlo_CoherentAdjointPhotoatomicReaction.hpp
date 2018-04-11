@@ -13,7 +13,7 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReaction.hpp"
 #include "MonteCarlo_CoherentScatteringDistribution.hpp"
 
@@ -21,10 +21,10 @@ namespace MonteCarlo{
 
 //! The coherent adjoint photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = true>
-class CoherentAdjointPhotoatomicReaction : public StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section>
+class CoherentAdjointPhotoatomicReaction : public StandardReactionBaseImpl<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
+  typedef StandardReactionBaseImpl<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
 public:
 

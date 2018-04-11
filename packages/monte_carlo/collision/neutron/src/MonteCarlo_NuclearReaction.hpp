@@ -117,29 +117,6 @@ inline double NuclearReaction::getAverageNumberOfEmittedNeutrons(
   return this->getNumberOfEmittedNeutrons( energy );
 }
 
-// Return an integer number of emitted neutrons given a non-integer value
-/*! In reality, only an integer number of neutrons can be released per
- * reaction. The integer return type of this function reflects this reality.
- * The integer value is sampled so that the expected value is the average
- * multiplicity.
- */
-inline unsigned NuclearReaction::sampleNumberOfEmittedNeutrons(
-				      const double average_multiplicity ) const
-{
-  // Make sure the average multiplicity is valid
-  testPrecondition( average_multiplicity >= 0.0 );
-
-  double floor_multiplicity;
-  double round_down_prob = 1.0 - modf( average_multiplicity,
-				       &floor_multiplicity );
-
-  if( Utility::RandomNumberGenerator::getRandomNumber<double>() <
-      round_down_prob )
-    return (unsigned)floor_multiplicity;
-  else
-    return (unsigned)floor_multiplicity + 1u;
-}
-
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_NUCLEAR_REACTION_HPP

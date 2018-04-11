@@ -13,28 +13,42 @@
 #include <memory>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonuclearReaction.hpp"
+#include "MonteCarlo_StandardPhotonuclearReaction.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
 //! The cross section based photonuclear reaction class
 template<typename OutgoingParticleType>
-class CrossSectionBasedPhotonuclearProductionReaction : public PhotonuclearReaction<OutgoingParticleType>
+class CrossSectionBasedPhotonuclearProductionReaction : public StandardPhotonuclearReaction
 {
 
 public:
 
+  //! Basic Constructor
+  CrossSectionBasedPhotonuclearProductionReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const std::vector<unsigned>& photon_production_ids,
+       const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
+       outgoing_particle_distributions );
+
   //! Constructor
   CrossSectionBasedPhotonuclearProductionReaction(
-		   const PhotonuclearReactionType reaction_type,
-		   const std::vector<unsigned>& photon_production_ids,
-      		   const double q_value,
-		   const size_t threshold_energy_index,
-		   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
-		   const std::shared_ptr<const std::vector<double> >& cross_section,
-                   const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
-		   outgoing_particle_distributions );
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const std::vector<unsigned>& photon_production_ids,
+       const std::vector<std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
+       outgoing_particle_distributions );
 
   //! Destructor
   ~CrossSectionBasedPhotonuclearProductionReaction()
@@ -43,11 +57,11 @@ public:
   //! Return the photon production ids
   const std::vector<unsigned>& getPhotonProductionIds() const;
 
-  //! Return the number of particle emitted from the rxn at the given energy
-  size_t getNumberOfEmittedParticles( const double energy) const override;
+  //! Return the number of particles emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedParticles( const double energy ) const final override;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, ParticleBank& bank ) const override;
+  void react( PhotonState& photon, ParticleBank& bank ) const final override;
 
 private:
 
