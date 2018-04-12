@@ -29,19 +29,20 @@ public:
 
   //! Create a photoatom core (using the provided atomic relaxation model)
   static void createPhotoatomCore(
-	 const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-         const SimulationPhotonProperties& properties,
-         std::shared_ptr<PhotoatomCore>& photoatom_core );
+   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationPhotonProperties& properties,
+   std::shared_ptr<PhotoatomCore>& photoatom_core );
 
   //! Create a photoatom (using the provided atomic relaxation model)
   static void createPhotoatom(
-	 const Data::XSSEPRDataExtractor& raw_photoatom_data,
-         const std::string& photoatom_name,
-         const double atomic_weight,
-         const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-         const SimulationPhotonProperties& properties,
-         std::shared_ptr<Photoatom>& photoatom );
+   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+   const std::string& photoatom_name,
+   const double atomic_weight,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationPhotonProperties& properties,
+   std::shared_ptr<Photoatom>& photoatom );
+  
 private:
 
   // Constructor

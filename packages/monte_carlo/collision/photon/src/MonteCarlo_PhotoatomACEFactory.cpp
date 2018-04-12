@@ -23,10 +23,10 @@ namespace MonteCarlo{
  * Otherwise a single total photoelectric reaction will be created.
  */
 void PhotoatomACEFactory::createPhotoatomCore(
-         const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	 const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-         const SimulationPhotonProperties& properties,
-         std::shared_ptr<PhotoatomCore>& photoatom_core )
+   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationPhotonProperties& properties,
+   std::shared_ptr<PhotoatomCore>& photoatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( atomic_relaxation_model.get() );
@@ -139,12 +139,12 @@ void PhotoatomACEFactory::createPhotoatomCore(
  * Otherwise a single total photoelectric reaction will be created.
  */
 void PhotoatomACEFactory::createPhotoatom(
-	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	    const std::string& photoatom_name,
-	    const double atomic_weight,
-	    const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-            const SimulationPhotonProperties& properties,
-	    std::shared_ptr<Photoatom>& photoatom )
+   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+   const std::string& photoatom_name,
+   const double atomic_weight,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationPhotonProperties& properties,
+   std::shared_ptr<Photoatom>& photoatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
