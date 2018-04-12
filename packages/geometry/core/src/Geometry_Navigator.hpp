@@ -56,7 +56,7 @@ public:
 
   //! The advance callback
   typedef std::function<void(const Length)> AdvanceCompleteCallback;
-  
+
   //! Constructor
   Navigator( const AdvanceCompleteCallback& advance_complete_callback =
              AdvanceCompleteCallback() );
@@ -74,7 +74,7 @@ public:
                                      const Length position[3],
                                      const double direction[3],
                                      const InternalCellHandle cell ) const = 0;
-  
+
   /*! Get the location of a cell w.r.t. a given cell
    *
    * The direction can be used to help determine if the point is inside or
@@ -105,7 +105,7 @@ public:
    * The direction can be used to help determine the cell that contains
    * the point when close to a boundary. The cells in the found cell cache
    * will be checked first. If a new cell is found it will be added to the
-   * cache. A std::runtime_error (or class derived from it) will be thrown if 
+   * cache. A std::runtime_error (or class derived from it) will be thrown if
    * an error occurs.
    */
   virtual InternalCellHandle findCellContainingRay(
@@ -118,7 +118,7 @@ public:
    * The direction can be used to help determine the cell that contains
    * the point when close to a boundary. The cells in the found cell cache
    * will be checked first. If a new cell is found it will be added to the
-   * cache. A std::runtime_error (or class derived from it) will be thrown if 
+   * cache. A std::runtime_error (or class derived from it) will be thrown if
    * an error occurs.
    */
   InternalCellHandle findCellContainingRay(
@@ -128,17 +128,17 @@ public:
   /*! Find the cell that contains a given ray
    *
    * The direction can be used to help determine the cell that contains
-   * the point when close to a boundary. A std::runtime_error (or class 
+   * the point when close to a boundary. A std::runtime_error (or class
    * derived from it) must be thrown if an error occurs.
    */
   virtual InternalCellHandle findCellContainingRay(
                                          const Length position[3],
                                          const double direction[3] ) const = 0;
-  
+
   /*! Find the cell that contains a given ray
    *
    * The direction can be used to help determine the cell that contains
-   * the point when close to a boundary. A std::runtime_error (or class 
+   * the point when close to a boundary. A std::runtime_error (or class
    * derived from it) must be thrown if an error occurs.
    * A std::runtime_error (or class derived from it) will be thrown if an error
    * occurs.
@@ -176,7 +176,7 @@ public:
 
   /*! Set the internal ray with known starting cell
    *
-   * Failure to provide the correct starting cell will result in undefined 
+   * Failure to provide the correct starting cell will result in undefined
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
@@ -190,7 +190,7 @@ public:
 
   /*! Set the internal ray with known starting cell
    *
-   * Failure to provide the correct starting cell will result in undefined 
+   * Failure to provide the correct starting cell will result in undefined
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
@@ -200,7 +200,7 @@ public:
 
   /*! Set the internal ray with known starting cell
    *
-   * Failure to provide the correct starting cell will result in undefined 
+   * Failure to provide the correct starting cell will result in undefined
    * behavior. A std::runtime_error (or class derived from it) must be thrown
    * if an error occurs.
    */
@@ -222,21 +222,21 @@ public:
 
   /*! Fire the internal ray through the geometry
    *
-   * A std::runtime_error (or class derived from it) must be thrown if a ray 
+   * A std::runtime_error (or class derived from it) must be thrown if a ray
    * tracing error occurs.
    */
   virtual Length fireRay( InternalSurfaceHandle* surface_hit ) = 0;
 
   /*! Fire the internal ray through the geometry
    *
-   * A std::runtime_error (or class derived from it) must be thrown if a ray 
+   * A std::runtime_error (or class derived from it) must be thrown if a ray
    * tracing error occurs.
    */
   Length fireRay( InternalSurfaceHandle& surface_hit );
 
   /*! Fire the internal ray through the geometry
    *
-   * A std::runtime_error (or class derived from it) must be thrown if a ray 
+   * A std::runtime_error (or class derived from it) must be thrown if a ray
    * tracing error occurs.
    */
   Length fireRay();
@@ -277,7 +277,7 @@ public:
    * The returned pointer must be heap allocated.
    */
   virtual Navigator* clone( const AdvanceCompleteCallback& advance_complete_callback ) const = 0;
-  
+
   /*! Clone the navigator
    *
    * The returned pointer must be heap allocated.
@@ -326,6 +326,10 @@ inline void Navigator::getSurfaceNormal(
                           normal );
 }
 
+/* SWIG has limitations with the auto function return type. To avoid a syntax
+ * error the following functions will not be defined for SWIG.
+ */
+#if !defined SWIG
 // Find the cell that contains a given ray
 inline auto Navigator::findCellContainingRay(
                       const Ray& ray,
@@ -341,6 +345,7 @@ inline auto Navigator::findCellContainingRay( const Ray& ray ) const -> Internal
 {
   return this->findCellContainingRay( ray.getPosition(), ray.getDirection() );
 }
+#endif // end !defined SWIG
 
 // Set the internal ray with unknown starting cell
 inline void Navigator::setState( const Length position[3],
@@ -425,7 +430,7 @@ inline std::string Navigator::arrayToString( const T* data )
 {
   return Utility::toString( Utility::ArrayView<const T>( data, data+3 ) );
 }
-  
+
 } // end Geometry namespace
 
 #endif // end GEOMETRY_NAVIGATOR_HPP

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility.CartesianCoordinate.i
+//! \file   Utility_CartesianCoordinate.i
 //! \author Luke Kersting
 //! \brief  The Cartesian Coordinate Conversion Policy classes interface file
 //!
@@ -79,5 +79,5 @@ using namespace Utility;
 %basic_coordinate_interface_setup( BasicCartesianCoordinateConversionPolicy )
 
 //---------------------------------------------------------------------------//
-// end Utility.CartesianCoordinate.i
+// end Utility_CartesianCoordinate.i
 //---------------------------------------------------------------------------//e

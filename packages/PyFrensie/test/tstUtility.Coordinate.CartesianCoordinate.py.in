@@ -11,7 +11,6 @@ import sys
 import unittest
 from optparse import *
 import numpy as nm
-# from PyTrilinos.Teuchos import ParameterList
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -32,6 +31,8 @@ class TranslationCartesianSpatialCoordinateConversionPolicyTestCase(unittest.Tes
 
     def setUp(self):
         self.policy= Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0] )
+        with self.assertRaises(TypeError):
+            Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0] )
 
     def testConstructor(self):
         "*Test Utility.Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy constructor"
@@ -74,6 +75,10 @@ class GeneralCartesianSpatialCoordinateConversionPolicyTestCase(unittest.TestCas
 
     def setUp(self):
         self.policy= Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0, 2.0])
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0], [2.0, 1.0, 2.0] )
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0] )
 
     def testConstructor(self):
         "*Test Utility.Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy constructor"
@@ -116,6 +121,8 @@ class RotationCartesianCoordinateConversionPolicyTestCase(unittest.TestCase):
 
     def setUp(self):
         self.policy= Coordinate.RotationCartesianCoordinateConversionPolicy([1.0, 1.0, 1.0])
+        with self.assertRaises(TypeError):
+            Coordinate.RotationCartesianCoordinateConversionPolicy( [1.0, 2.0] )
 
     def testConstructor(self):
         "*Test Utility.Coordinate.RotationCartesianCoordinateConversionPolicy constructor"

@@ -11,7 +11,6 @@ import sys
 import unittest
 from optparse import *
 import numpy as nm
-# from PyTrilinos.Teuchos import ParameterList
 
 # Parse the command-line arguments
 parser = OptionParser()
@@ -32,6 +31,8 @@ class TranslationSphericalSpatialCoordinateConversionPolicyTestCase(unittest.Tes
 
     def setUp(self):
         self.policy= Coordinate.TranslationSphericalSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0] )
+        with self.assertRaises(TypeError):
+            Coordinate.TranslationSphericalSpatialCoordinateConversionPolicy( [2.0, 1.0])
 
     def testConstructor(self):
         "*Test Utility.Coordinate.TranslationSphericalSpatialCoordinateConversionPolicy constructor"
@@ -74,6 +75,10 @@ class GeneralSphericalSpatialCoordinateConversionPolicyTestCase(unittest.TestCas
 
     def setUp(self):
         self.policy= Coordinate.GeneralSphericalSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0, 2.0])
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralSphericalSpatialCoordinateConversionPolicy( [1.0, 2.0], [2.0, 1.0, 2.0])
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralSphericalSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [1.0, 2.0])
 
     def testConstructor(self):
         "*Test Utility.Coordinate.GeneralSphericalSpatialCoordinateConversionPolicy constructor"
@@ -116,6 +121,8 @@ class RotationSphericalCoordinateConversionPolicyTestCase(unittest.TestCase):
 
     def setUp(self):
         self.policy= Coordinate.RotationSphericalCoordinateConversionPolicy([1.0, 1.0, 1.0])
+        with self.assertRaises(TypeError):
+            Coordinate.RotationSphericalCoordinateConversionPolicy([1.0, 1.0])
 
     def testConstructor(self):
         "*Test Utility.Coordinate.RotationSphericalCoordinateConversionPolicy constructor"

@@ -71,10 +71,10 @@ SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.CylindricalCoordinate_test PROPER
 # ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt --tablename=82000.14p)
 # SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test PROPERTY LABELS pyfrensie ace14 electron photon neutron)
 
-# # Add the Geometry.Ray unit tests
-# PyFrensie_MAKE_TEST(tstGeometry.Ray)
-# ADD_TEST(PyFrensie.Geometry.Ray_test ${PYTHON_EXECUTABLE} tstGeometry.Ray.py)
-# SET_PROPERTY(TEST PyFrensie.Geometry.Ray_test PROPERTY LABELS pyfrensie)
+# Add the Geometry.Ray unit tests
+PyFrensie_MAKE_TEST(tstGeometry.Ray)
+ADD_TEST(PyFrensie.Geometry.Ray_test ${PYTHON_EXECUTABLE} tstGeometry.Ray.py)
+SET_PROPERTY(TEST PyFrensie.Geometry.Ray_test PROPERTY LABELS pyfrensie)
 
 # # Add the Geometry.createModel unit tests
 # IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
@@ -111,7 +111,7 @@ SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.CylindricalCoordinate_test PROPER
 #   PyFrensie_MAKE_TEST(tstGeometry.Navigator)
 
 #   IF(FRENSIE_ENABLE_DAGMC)
-#     ADD_TEST(PyFrensie.Geometry.Navigator_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Navigator.py --dagmc_xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_dagmc_geom.xml)
+#     ADD_TEST(PyFrensie.Geometry.Navigator_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.Navigator.py --dagmc_cad_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_dagmc_geom.sat)
 #     SET_PROPERTY(TEST PyFrensie.Geometry.Navigator_DagMC_test PROPERTY LABELS pyfrensie dagmc)
 #   ENDIF()
 

@@ -64,6 +64,28 @@ using namespace Utility;
 // General ignore directives
 // %ignore *::operator<<;
 
+// General exception handling
+%exception
+{
+  try{
+    $action;
+    if( PyErr_Occurred() )
+      SWIG_fail;
+  }
+  catch( Utility::ContractException& e )
+  {
+    SWIG_exception( SWIG_ValueError, e.what() );
+  }
+  catch( std::runtime_error& e )
+  {
+    SWIG_exception( SWIG_RuntimeError, e.what() );
+  }
+  catch( ... )
+  {
+    SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+  }
+}
+
 //---------------------------------------------------------------------------//
 // Add support for the SpatialCoordinateSystemPolicy
 //---------------------------------------------------------------------------//

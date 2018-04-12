@@ -75,7 +75,7 @@ public:
   void getCells( CellIdSet& cell_set,
                  const bool include_void_cells,
                  const bool include_termination_cells ) const override;
-  
+
   //! Get the cell material ids
   void getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const override;
 
@@ -117,7 +117,7 @@ public:
 
   //! Create a raw, heap-allocated navigator
   DagMCNavigator* createNavigatorAdvanced() const override;
-  
+
 
 private:
 
@@ -186,7 +186,7 @@ private:
   void getSurfacePropertyValues(
                    const std::string& property,
                    SurfaceIdPropertyValuesMap& surface_id_prop_val_map ) const;
-  
+
   // Get the surface ids with a property value
   void getSurfaceIdsWithPropertyValue(
                         const std::string& property,
@@ -230,7 +230,7 @@ private:
 
   // The DagMC model instance
   static std::shared_ptr<DagMCModel> s_instance;
-  
+
   // The raw DagMC instance
   moab::DagMC* d_dagmc;
 
@@ -265,9 +265,11 @@ public:
 
 } // end Geometry namespace
 
+#if !defined SWIG
 BOOST_SERIALIZATION_CLASS_VERSION( DagMCModel, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCModel, Geometry );
 EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModel );
+#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template Includes

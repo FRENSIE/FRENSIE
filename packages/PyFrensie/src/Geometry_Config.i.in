@@ -9,6 +9,10 @@
 // Set the __all__ special variable
 %pythoncode
 %{
+# Remove the local current directory from the sys path (added to help
+# import code - see comment in Geometry.__init__.i)
+sys.path.pop(0)
+
 ${PyFrensie_Geometry_ALL}
 %}
 

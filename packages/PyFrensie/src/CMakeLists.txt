@@ -42,33 +42,33 @@ SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 # SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_endl data_native pyfrensie)
 
-# # Add the Geometry package
-# SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
-# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.__init__)
+# Add the Geometry package
+SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.__init__)
 
-# SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core geometry_factory ${TEUCHOS_CORE} ${PYTRILINOS})
-# SET(PyFrensie_Geometry_PACKAGES "")
+SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core utility_core pyfrensie)
+SET(PyFrensie_Geometry_PACKAGES "")
 
-# # IF(FRENSIE_ENABLE_DAGMC)
-# #   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
-# #   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
-# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc pyfrensie)
-# # ENDIF()
+# IF(FRENSIE_ENABLE_DAGMC)
+#   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
+#   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry_DagMC)
+#   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc pyfrensie)
+# ENDIF()
 
-# # IF(FRENSIE_ENABLE_ROOT)
-# #   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
-# #   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
-# #   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root pyfrensie)
-# # ENDIF()
+# IF(FRENSIE_ENABLE_ROOT)
+#   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
+#   SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
+#   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root pyfrensie)
+# ENDIF()
 
-# SET(PyFrensie_Geometry_ALL "__all__ = [")
-# FOREACH(PACKAGE ${PyFrensie_Geometry_PACKAGES})
-#   SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}'${PACKAGE}',\n          ")
-# ENDFOREACH()
-# SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}]")
+SET(PyFrensie_Geometry_ALL "__all__ = [")
+FOREACH(PACKAGE ${PyFrensie_Geometry_PACKAGES})
+  SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}'${PACKAGE}',\n          ")
+ENDFOREACH()
+SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}]")
 
-# CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
-#   ${CMAKE_CURRENT_BINARY_DIR}/Geometry_Config.i)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
+  ${CMAKE_CURRENT_BINARY_DIR}/Geometry_Config.i)
 
 # # Add the MonteCarlo package
 # SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)

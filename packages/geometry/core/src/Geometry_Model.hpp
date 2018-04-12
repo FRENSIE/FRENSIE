@@ -40,13 +40,13 @@ public:
 
   //! The internal cell handle type
   typedef Navigator::InternalCellHandle InternalCellHandle;
-  
+
   //! The internal surface handle type
   typedef Navigator::InternalSurfaceHandle InternalSurfaceHandle;
-  
+
   //! The internal material handle type
   typedef unsigned long long InternalMaterialHandle;
-  
+
   //! The internal estimator handle type
   typedef unsigned long long InternalEstimatorHandle;
 
@@ -160,7 +160,7 @@ public:
 
   //! Create a raw, heap-allocated navigator
   virtual Geometry::Navigator* createNavigatorAdvanced() const;
-  
+
   //! Create a navigator
   std::shared_ptr<Geometry::Navigator> createNavigator(
           const Navigator::AdvanceCompleteCallback& advance_complete_callback =
@@ -203,11 +203,13 @@ inline std::shared_ptr<Geometry::Navigator> Model::createNavigator(
   return std::shared_ptr<Geometry::Navigator>(
                            this->createNavigatorAdvanced( advance_callback ) );
 }
-  
+
 } // end Geometry namespace
 
+#if !defined SWIG
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Model, Geometry );
 BOOST_SERIALIZATION_CLASS_VERSION( Model, Geometry, 0 );
+#endif // end !defined SWIG
 
 #endif // end GEOMETRY_MODEL_HPP
 

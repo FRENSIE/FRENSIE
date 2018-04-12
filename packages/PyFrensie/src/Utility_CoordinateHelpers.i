@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_CartesianCoordinateHelpers.i
+//! \file   Utility_CoordinateHelpers.i
 //! \author Luke Kersting
 //! \brief  The distribution helper macros
 //!
@@ -181,6 +181,13 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
    DISTRIBUTION(
     const std::vector<double> axis )
   {
+    // Make sure the sequence has 3 elements
+    if( axis.size() != 3 )
+    {
+      PyErr_SetString( PyExc_TypeError,
+                      "The input axis must have 3 elements." );
+    }
+
     return new Utility::DISTRIBUTION(
       axis.data() );
   }
@@ -209,6 +216,13 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
    DISTRIBUTION(
     const std::vector<double> origin )
   {
+    // Make sure the sequence has 3 elements
+    if( origin.size() != 3 )
+    {
+      PyErr_SetString( PyExc_TypeError,
+                      "The input origin must have 3 elements." );
+    }
+
     return new Utility::DISTRIBUTION(
       origin.data() );
   }
@@ -231,6 +245,13 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
     const std::vector<double> origin,
     const std::vector<double> axis )
   {
+    // Make sure the sequence has 3 elements
+    if( origin.size() != 3 || axis.size() != 3 )
+    {
+      PyErr_SetString( PyExc_TypeError,
+                      "The input origin and axis must have 3 elements." );
+    }
+
     return new Utility::DISTRIBUTION(
       origin.data(), axis.data() );
   }

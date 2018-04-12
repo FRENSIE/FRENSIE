@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility.SphericalCoordinate.i
+//! \file   Utility_SphericalCoordinate.i
 //! \author Luke Kersting
 //! \brief  The Spherical Coordinate Conversion Policy classes interface file
 //!
@@ -79,5 +79,5 @@ using namespace Utility;
 %basic_coordinate_interface_setup( BasicSphericalCoordinateConversionPolicy )
 
 //---------------------------------------------------------------------------//
-// end Utility.SphericalCoordinate.i
+// end Utility_SphericalCoordinate.i
 //---------------------------------------------------------------------------//e

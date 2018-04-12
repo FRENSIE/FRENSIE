@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility.CylindricalCoordinate.i
+//! \file   Utility_CylindricalCoordinate.i
 //! \author Luke Kersting
 //! \brief  The Cylindrical Coordinate Conversion Policy classes interface file
 //!
@@ -67,5 +67,5 @@ using namespace Utility;
 %basic_spatial_coordinate_interface_setup( BasicCylindricalSpatialCoordinateConversionPolicy )
 
 //---------------------------------------------------------------------------//
-// end Utility.CylindricalCoordinate.i
+// end Utility_CylindricalCoordinate.i
 //---------------------------------------------------------------------------//e

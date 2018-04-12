@@ -17,514 +17,515 @@ from optparse import *
 parser = OptionParser()
 parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
-parser.add_option("-d", "--dagmc_xmlfile", type="string", dest="dagmc_xmlfile", default="",
-                  help="set the dagmc xml file that will be used to create the model")
+parser.add_option("-d", "--dagmc_cad_file", type="string", dest="dagmc_cad_file", default="",
+                  help="set the dagmc cad file that will be used to create the model")
 parser.add_option("-r", "--root_xmlfile", type="string", dest="root_xmlfile", default="",
                   help="set the root xml file that will be used to create the model")
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
-Geometry = importPyFrensieModuleFromBuildDir('Geometry')    
+Geometry = importPyFrensieModuleFromBuildDir('Geometry')
 
-def fixRoundingErrors(array):
-    for i in range(0,len(array)):
-        if(math.fabs(array[i]) < 1e-12):
-            array[i] = 0.0
+# def fixRoundingErrors(array):
+#     for i in range(0,len(array)):
+#         if(math.fabs(array[i]) < 1e-12):
+#             array[i] = 0.0
 
-#-----------------------------------------------------------------------------#
-# Tests.
-#-----------------------------------------------------------------------------#
-# Test the Navigator class with a DagMC geometry
-class DagMCNavigatorTestCase(unittest.TestCase):
-    "TestCase class for Geometry.Navigator class using a DagMC geometry"
+# #-----------------------------------------------------------------------------#
+# # Tests.
+# #-----------------------------------------------------------------------------#
+# # Test the Navigator class with a DagMC geometry
+# class DagMCNavigatorTestCase(unittest.TestCase):
+#     "TestCase class for Geometry.Navigator class using a DagMC geometry"
 
-    @classmethod
-    def setUpClass(cls):
-        cls.model = Geometry.createModel( options.dagmc_xmlfile )
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.model = Geometry.Model()
+#         # cls.model = Geometry.createModel( options.dagmc_xmlfile )
 
-    def testGetPointLocation(self):
-        "*Test Geometry.Navigator getPointLocation"
-        navigator = self.model.createNavigator()
+#     def testGetPointLocation(self):
+#         "*Test Geometry.Navigator getPointLocation"
+#         navigator = self.model.createNavigator()
 
-        ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
-        location = navigator.getPointLocation( ray, 53 )
+#         ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#         location = navigator.getPointLocation( ray, 53 )
 
-        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+#         self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
 
-        ray = Geometry.Ray( -42.647, -40.0, 59.0, -1.0, 0.0, 0.0 )
-        location = navigator.getPointLocation( ray, 53 )
+#         ray = Geometry.Ray( -42.647, -40.0, 59.0, -1.0, 0.0, 0.0 )
+#         location = navigator.getPointLocation( ray, 53 )
 
-        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+#         self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
 
-        ray = Geometry.Ray( -42.648, -40.0, 59.0, -1.0, 0.0, 0.0 )
-        location = navigator.getPointLocation( ray.getPosition(), ray.getDirection(), 53 )
+#         ray = Geometry.Ray( -42.648, -40.0, 59.0, -1.0, 0.0, 0.0 )
+#         location = navigator.getPointLocation( ray.getPosition(), ray.getDirection(), 53 )
 
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-    def testGetSurfaceNormal(self):
-        "*Test Geometry.Navigator getSurfaceNormal"
-        navigator = self.model.createNavigator()
+#     # def testGetSurfaceNormal(self):
+#     #     "*Test Geometry.Navigator getSurfaceNormal"
+#     #     navigator = self.model.createNavigator()
 
-        ray = Geometry.Ray( -40.0, -40.0, 60.959999084, 0.0, 0.0, 1.0 )
-        normal = navigator.getSurfaceNormal( 242, ray )
+#     #     ray = Geometry.Ray( -40.0, -40.0, 60.959999084, 0.0, 0.0, 1.0 )
+#     #     normal = navigator.getSurfaceNormal( 242, ray )
 
-        self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
+#     #     self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
 
-        normal = navigator.getSurfaceNormal( 242, ray.getPosition(), ray.getDirection() )
+#     #     normal = navigator.getSurfaceNormal( 242, ray.getPosition(), ray.getDirection() )
 
-        self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
+#     #     self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
 
-    def testFindCellContainingRay(self):
-        "*Test Geometry.Navigator findCellContainingRay"
-        navigator = self.model.createNavigator()
+#     # def testFindCellContainingRay(self):
+#     #     "*Test Geometry.Navigator findCellContainingRay"
+#     #     navigator = self.model.createNavigator()
 
-        ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
-        cell = navigator.findCellContainingRay( ray )
+#     #     ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#     #     cell = navigator.findCellContainingRay( ray )
 
-        self.assertEqual( cell, 53 )
+#     #     self.assertEqual( cell, 53 )
 
-        ray = Geometry.Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
-        cell = navigator.findCellContainingRay( ray )
+#     #     ray = Geometry.Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
+#     #     cell = navigator.findCellContainingRay( ray )
 
-        self.assertEqual( cell, 54 )
+#     #     self.assertEqual( cell, 54 )
 
-        ray = Geometry.Ray( -40.0, -40.0, 64.0, 0.0, 0.0, 1.0 )
-        cell = navigator.findCellContainingRay( ray.getPosition(), ray.getDirection() )
+#     #     ray = Geometry.Ray( -40.0, -40.0, 64.0, 0.0, 0.0, 1.0 )
+#     #     cell = navigator.findCellContainingRay( ray.getPosition(), ray.getDirection() )
 
-        self.assertEqual( cell, 55 )
+#     #     self.assertEqual( cell, 55 )
 
-    def testSetInternalRay(self):
-        "*Test Geometry.Navigator setInternalRay"
-        navigator = self.model.createNavigator()
+#     # def testSetState(self):
+#     #     "*Test Geometry.Navigator setState"
+#     #     navigator = self.model.createNavigator()
 
-        self.assertFalse( navigator.isInternalRaySet() )
-        
-        ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
-        navigator.setInternalRay( ray )
+#     #     self.assertFalse( navigator.isStateSet() )
 
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [-40.0, -40.0, 59.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 53 )
+#     #     ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#     #     navigator.setState( ray )
 
-        # Reset the navigator
-        navigator = self.model.createNavigator()
+#     #     self.assertTrue( navigator.isStateSet() )
+#     #     self.assertListEqual( list(navigator.getPosition()), [-40.0, -40.0, 59.0] )
+#     #     self.assertListEqual( list(navigator.getDirection()), [0.0, 0.0, 1.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 53 )
 
-        self.assertFalse( navigator.isInternalRaySet() )
-        
-        ray = Geometry.Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
-        navigator.setInternalRay( ray.getPosition(), ray.getDirection() )
+#     #     # Reset the navigator
+#     #     navigator = self.model.createNavigator()
 
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [-40.0, -40.0, 61.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 54 )
+#     #     self.assertFalse( navigator.isStateSet() )
 
-        # Reset the navigator
-        navigator = self.model.createNavigator()
+#     #     ray = Geometry.Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
+#     #     navigator.setState( ray.getPosition(), ray.getDirection() )
 
-        self.assertFalse( navigator.isInternalRaySet() )
-        
-        navigator.setInternalRay( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
+#     #     self.assertTrue( navigator.isStateSet() )
+#     #     self.assertListEqual( list(navigator.getPosition()), [-40.0, -40.0, 61.0] )
+#     #     self.assertListEqual( list(navigator.getDirection()), [0.0, 0.0, 1.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 54 )
 
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [-40.0, -40.0, 61.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 54 )
+#     #     # Reset the navigator
+#     #     navigator = self.model.createNavigator()
 
-        # Reset the navigator
-        navigator = self.model.createNavigator()
-        
-        self.assertFalse( navigator.isInternalRaySet() )
-        
-        ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
-        navigator.setInternalRay( ray, 53 )
+#     #     self.assertFalse( navigator.isStateSet() )
 
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [-40.0, -40.0, 59.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 53 )
+#     #     navigator.setState( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
 
-        # Reset the navigator
-        navigator = self.model.createNavigator()
-        
-        self.assertFalse( navigator.isInternalRaySet() )
+#     #     self.assertTrue( navigator.isStateSet() )
+#     #     self.assertListEqual( list(navigator.getPosition()), [-40.0, -40.0, 61.0] )
+#     #     self.assertListEqual( list(navigator.getDirection()), [0.0, 0.0, 1.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 54 )
 
-        ray = Geometry.Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
-        navigator.setInternalRay( ray.getPosition(), ray.getDirection(), 54 )
+#     #     # Reset the navigator
+#     #     navigator = self.model.createNavigator()
 
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [-40.0, -40.0, 61.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 54 )
+#     #     self.assertFalse( navigator.isStateSet() )
 
-        # Reset the navigator
-        navigator = self.model.createNavigator()
+#     #     ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#     #     navigator.setState( ray, 53 )
 
-        self.assertFalse( navigator.isInternalRaySet() )
+#     #     self.assertTrue( navigator.isStateSet() )
+#     #     self.assertListEqual( list(navigator.getPosition()), [-40.0, -40.0, 59.0] )
+#     #     self.assertListEqual( list(navigator.getDirection()), [0.0, 0.0, 1.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 53 )
 
-        navigator.setInternalRay( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0, 54 )
+#     #     # Reset the navigator
+#     #     navigator = self.model.createNavigator()
 
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [-40.0, -40.0, 61.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 54 )
+#     #     self.assertFalse( navigator.isStateSet() )
 
-    def testFireInternalRay(self):
-        "*Test Geometry.Navigator fireInternalRay"
-        navigator = self.model.createNavigator()
+#     #     ray = Geometry.Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
+#     #     navigator.setState( ray.getPosition(), ray.getDirection(), 54 )
 
-        navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
-        distance_to_surface_hit = navigator.fireInternalRay()
+#     #     self.assertTrue( navigator.isStateSet() )
+#     #     self.assertListEqual( list(navigator.getPosition()), [-40.0, -40.0, 61.0] )
+#     #     self.assertListEqual( list(navigator.getDirection()), [0.0, 0.0, 1.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 54 )
 
-        self.assertAlmostEqual( distance_to_surface_hit, 1.959999084, delta=1e-6 );
+#     #     # Reset the navigator
+#     #     navigator = self.model.createNavigator()
 
-    def testFireInternalRayAndGetSurfaceHit(self):
-        "*Test Geometry.Navigator fireInternalRayAndGetSurfaceHit"
-        navigator = self.model.createNavigator()
+#     #     self.assertFalse( navigator.isStateSet() )
 
-        navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     #     navigator.setState( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0, 54 )
 
-        self.assertAlmostEqual( distance_to_surface_hit, 1.959999084, delta=1e-6 );
-        self.assertEqual( surface_hit, 242 )
+#     #     self.assertTrue( navigator.isStateSet() )
+#     #     self.assertListEqual( list(navigator.getPosition()), [-40.0, -40.0, 61.0] )
+#     #     self.assertListEqual( list(navigator.getDirection()), [0.0, 0.0, 1.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 54 )
 
-    def testAdvanceInternalRayBySubstep(self):
-        "*Test Geometry.Navigator advanceInternalRayBySubstep"
-        navigator = self.model.createNavigator()
+#     # def testFireRay(self):
+#     #     "*Test Geometry.Navigator FireRay"
+#     #     navigator = self.model.createNavigator()
 
-        navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 )
-        navigator.advanceInternalRayBySubstep( 0.959999084 )
+#     #     navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#     #     distance_to_surface_hit = navigator.FireRay()
 
-        self.assertEqual( navigator.getCellContainingInternalRay(), 53 )
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 1.959999084, delta=1e-6 );
 
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
-        self.assertAlmostEqual( distance_to_surface_hit, 1.0, delta=1e-6 )
-        self.assertEqual( surface_hit, 242 )
+#     # def testFireRayAndGetSurfaceHit(self):
+#     #     "*Test Geometry.Navigator FireRayAndGetSurfaceHit"
+#     #     navigator = self.model.createNavigator()
 
-    def testAdvanceInternalRayToCellBoundary(self):
-        "*Test Geometry.Navigator advanceInternalRayToCellBoundary"
-        navigator = self.model.createNavigator()
+#     #     navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-        navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 )
-        reflected = navigator.advanceInternalRayToCellBoundary()
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 1.959999084, delta=1e-6 );
+#     #     self.assertEqual( surface_hit, 242 )
 
-        self.assertEqual( navigator.getCellContainingInternalRay(), 54 )
-        self.assertFalse( reflected )
+#     # def testAdvanceBySubstep(self):
+#     #     "*Test Geometry.Navigator advanceBySubstep"
+#     #     navigator = self.model.createNavigator()
 
-    def testAdvanceInternalRayToCellBoundaryAndGetSurfaceNormal(self):
-        "*Test Geometry.Navigator advanceInternalRayToCellBoundaryAndGetSurfaceNormal"
-        navigator = self.model.createNavigator()
+#     #     navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 )
+#     #     navigator.advanceBySubstep( 0.959999084 )
 
-        navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 )
-        reflected, surface_normal = navigator.advanceInternalRayToCellBoundaryAndGetSurfaceNormal()
+#     #     self.assertEqual( navigator.getCellContainingRay(), 53 )
 
-        self.assertEqual( navigator.getCellContainingInternalRay(), 54 )
-        self.assertFalse( reflected )
-        self.assertListEqual( list(surface_normal), [0.0, 0.0, 1.0] )
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 1.0, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 242 )
 
-    def testChangeInternalRayDirection(self):
-        "*Test Geometry.Navigator changeInternalRayDirection"
-        navigator = self.model.createNavigator()
+#     # def testAdvanceToCellBoundary(self):
+#     #     "*Test Geometry.Navigator advanceToCellBoundary"
+#     #     navigator = self.model.createNavigator()
 
-        navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
-        navigator.changeInternalRayDirection( 1.0, 0.0, 0.0 )
+#     #     navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 )
+#     #     reflected = navigator.advanceToCellBoundary()
 
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [1.0, 0.0, 0.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 54 )
+#     #     self.assertFalse( reflected )
 
-        navigator.changeInternalRayDirection( [0.0, 1.0, 0.0] )
-        
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 1.0, 0.0] )
+#     # def testAdvanceToCellBoundaryAndGetSurfaceNormal(self):
+#     #     "*Test Geometry.Navigator advanceToCellBoundaryAndGetSurfaceNormal"
+#     #     navigator = self.model.createNavigator()
 
-    def testRayTrace(self):
-        "*Test Geometry.Navigator ray trace"
-        navigator = self.model.createNavigator()
+#     #     navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0, 53 )
+#     #     reflected, surface_normal = navigator.advanceToCellBoundaryAndGetSurfaceNormal()
 
-        # Initialize the ray
-        navigator.setInternalRay( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 54 )
+#     #     self.assertFalse( reflected )
+#     #     self.assertListEqual( list(surface_normal), [0.0, 0.0, 1.0] )
 
-        self.assertEqual( navigator.getCellContainingInternalRay(), 53 )
+#     # def testChangeDirection(self):
+#     #     "*Test Geometry.Navigator changeDirection"
+#     #     navigator = self.model.createNavigator()
 
-        # Fire the ray
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     #     navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+#     #     navigator.changeDirection( 1.0, 0.0, 0.0 )
 
-        self.assertAlmostEqual( distance_to_surface_hit, 1.959999084, delta=1e-6 )
-        self.assertEqual( surface_hit, 242 )
+#     #     self.assertListEqual( list(navigator.getDirection()), [1.0, 0.0, 0.0] )
 
-        # Advance the ray to the boundary
-        reflected = navigator.advanceInternalRayToCellBoundary()
+#     #     navigator.changeDirection( [0.0, 1.0, 0.0] )
 
-        self.assertFalse( reflected )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 54 )
+#     #     self.assertListEqual( list(navigator.getDirection()), [0.0, 1.0, 0.0] )
 
-        # Fire the ray
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     # def testRayTrace(self):
+#     #     "*Test Geometry.Navigator ray trace"
+#     #     navigator = self.model.createNavigator()
 
-        self.assertAlmostEqual( distance_to_surface_hit, 2.54, delta=1e-6 )
-        self.assertEqual( surface_hit, 248 )
+#     #     # Initialize the ray
+#     #     navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
 
-        # Advance the ray to the boundary surface
-        reflected = navigator.advanceInternalRayToCellBoundary()
+#     #     self.assertEqual( navigator.getCellContainingRay(), 53 )
 
-        self.assertFalse( reflected )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 55 )
+#     #     # Fire the ray
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-        # Fire the ray
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 1.959999084, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 242 )
 
-        self.assertAlmostEqual( distance_to_surface_hit, 2.54, delta=1e-6 )
-        self.assertEqual( surface_hit, 254 )
+#     #     # Advance the ray to the boundary
+#     #     reflected = navigator.advanceToCellBoundary()
 
-        # Advance the ray by a substep
-        navigator.advanceInternalRayBySubstep( 0.5*distance_to_surface_hit )
+#     #     self.assertFalse( reflected )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 54 )
 
-        # Change the ray direction
-        navigator.changeInternalRayDirection( 0.0, 0.0, -1.0 )
+#     #     # Fire the ray
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-        # Fire the ray
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 2.54, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 248 )
 
-        self.assertAlmostEqual( distance_to_surface_hit, 1.27, delta=1e-6 )
-        self.assertEqual( surface_hit, 248 )
+#     #     # Advance the ray to the boundary surface
+#     #     reflected = navigator.advanceToCellBoundary()
 
-    def testRayTraceWithReflection(self):
-        "*Test Geometry.Navigator ray trace with reflection"
-        navigator = self.model.createNavigator()
+#     #     self.assertFalse( reflected )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 55 )
 
-        # Initialize the ray
-        navigator.setInternalRay( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 )
+#     #     # Fire the ray
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-        self.assertEqual( navigator.getCellContainingInternalRay(), 82 )
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 2.54, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 254 )
 
-        # Fire the ray
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     #     # Advance the ray by a substep
+#     #     navigator.advanceBySubstep( 0.5*distance_to_surface_hit )
 
-        self.assertAlmostEqual( distance_to_surface_hit, 1.474, delta=1e-6 )
-        self.assertEqual( surface_hit, 394 )
+#     #     # Change the ray direction
+#     #     navigator.changeDirection( 0.0, 0.0, -1.0 )
 
-        # Advance the ray to the boundary
-        reflected = navigator.advanceInternalRayToCellBoundary()
+#     #     # Fire the ray
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-        self.assertFalse( reflected )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 83 )
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 1.27, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 248 )
 
-        # Fire the ray
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     # def testRayTraceWithReflection(self):
+#     #     "*Test Geometry.Navigator ray trace with reflection"
+#     #     navigator = self.model.createNavigator()
 
-        self.assertAlmostEqual( distance_to_surface_hit, 17.526, delta=1e-6 )
-        self.assertEqual( surface_hit, 408 )
+#     #     # Initialize the ray
+#     #     navigator.setState( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 )
 
-        # Advance the ray to the boundary
-        reflected, normal = navigator.advanceInternalRayToCellBoundaryAndGetSurfaceNormal()
+#     #     self.assertEqual( navigator.getCellContainingRay(), 82 )
 
-        self.assertTrue( reflected )
-        self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 83 )
+#     #     # Fire the ray
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-        # Fire the ray
-        distance_to_surface_hit, surface_hit = navigator.fireInternalRayAndGetSurfaceHit()
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 1.474, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 394 )
 
-        self.assertAlmostEqual( distance_to_surface_hit, 17.526, delta=1e-6 )
-        self.assertEqual( surface_hit, 394 )
+#     #     # Advance the ray to the boundary
+#     #     reflected = navigator.advanceToCellBoundary()
 
-#-----------------------------------------------------------------------------#
-# Test the Navigator class with a Root geometry
-class RootNavigatorTestCase(unittest.TestCase):
-    "TestCase class for Geometry.Navigator class using a Root geometry"
+#     #     self.assertFalse( reflected )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 83 )
 
-    @classmethod
-    def setUpClass(cls):
-        cls.model = Geometry.createModel( options.root_xmlfile )
+#     #     # Fire the ray
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-    def testGetPointLocation(self):
-        "*Test Geometry.Navigator getPointLocation"
-        navigator = self.model.createNavigator()
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 17.526, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 408 )
 
-        # Point inside of cell 2
-        ray = Geometry.Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
-        location = navigator.getPointLocation( ray, 2 )
-        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+#     #     # Advance the ray to the boundary
+#     #     reflected, normal = navigator.advanceToCellBoundaryAndGetSurfaceNormal()
 
-        location = navigator.getPointLocation( ray, 1 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#     #     self.assertTrue( reflected )
+#     #     self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
+#     #     self.assertEqual( navigator.getCellContainingRay(), 83 )
 
-        location = navigator.getPointLocation( ray.getPosition(), ray.getDirection(), 3 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#     #     # Fire the ray
+#     #     distance_to_surface_hit, surface_hit = navigator.FireRayAndGetSurfaceHit()
 
-        # Point on boundary between cell 2 and cell 1
-        ray = Geometry.Ray( 0.0, 0.0, 2.5, 0.0, 0.0, 1.0 )
-        location = navigator.getPointLocation( ray, 2 )
-        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+#     #     self.assertAlmostEqual( distance_to_surface_hit, 17.526, delta=1e-6 )
+#     #     self.assertEqual( surface_hit, 394 )
 
-        location = navigator.getPointLocation( ray, 1 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+# #-----------------------------------------------------------------------------#
+# # Test the Navigator class with a Root geometry
+# class RootNavigatorTestCase(unittest.TestCase):
+#     "TestCase class for Geometry.Navigator class using a Root geometry"
 
-        location = navigator.getPointLocation( ray, 3 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.model = Geometry.createModel( options.root_xmlfile )
 
-        # Point in cell 1
-        ray = Geometry.Ray( 0.0, 0.0, 4.0, 0.0, 0.0, 1.0 )
-        location = navigator.getPointLocation( ray, 2 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#     def testGetPointLocation(self):
+#         "*Test Geometry.Navigator getPointLocation"
+#         navigator = self.model.createNavigator()
 
-        location = navigator.getPointLocation( ray, 1 )
-        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+#         # Point inside of cell 2
+#         ray = Geometry.Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
+#         location = navigator.getPointLocation( ray, 2 )
+#         self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
 
-        location = navigator.getPointLocation( ray, 3 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#         location = navigator.getPointLocation( ray, 1 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        # Point on boundary between cell 1 and 3
-        ray = Geometry.Ray( 0.0, 0.0, 5.0, 0.0, 0.0, 1.0 )
-        location = navigator.getPointLocation( ray, 2 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#         location = navigator.getPointLocation( ray.getPosition(), ray.getDirection(), 3 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        location = navigator.getPointLocation( ray, 1 )
-        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+#         # Point on boundary between cell 2 and cell 1
+#         ray = Geometry.Ray( 0.0, 0.0, 2.5, 0.0, 0.0, 1.0 )
+#         location = navigator.getPointLocation( ray, 2 )
+#         self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
 
-        location = navigator.getPointLocation( ray, 3 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#         location = navigator.getPointLocation( ray, 1 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        # Point in cell 3
-        ray = Geometry.Ray( 0.0, 0.0, 6.0, 0.0, 0.0, 1.0 )
-        location = navigator.getPointLocation( ray, 2 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#         location = navigator.getPointLocation( ray, 3 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        location = navigator.getPointLocation( ray, 1 )
-        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+#         # Point in cell 1
+#         ray = Geometry.Ray( 0.0, 0.0, 4.0, 0.0, 0.0, 1.0 )
+#         location = navigator.getPointLocation( ray, 2 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        location = navigator.getPointLocation( ray, 3 )
-        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+#         location = navigator.getPointLocation( ray, 1 )
+#         self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
 
-    def testGetSurfaceNormal(self):
-        "*Test Geometry.Navigator getSurfaceNormal"
-        navigator = self.model.createNavigator()
+#         location = navigator.getPointLocation( ray, 3 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        ray = Geometry.Ray( 2.5, 0.0, 0.0, 1.0, 0.0, 0.0 )
-        normal = navigator.getSurfaceNormal( 0, ray )
-        fixRoundingErrors( normal )
-        self.assertListEqual( list(normal), [1.0, 0.0, 0.0] )
+#         # Point on boundary between cell 1 and 3
+#         ray = Geometry.Ray( 0.0, 0.0, 5.0, 0.0, 0.0, 1.0 )
+#         location = navigator.getPointLocation( ray, 2 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        ray = Geometry.Ray( 2.5, 0.0, 0.0, -1.0, 0.0, 0.0 )
-        normal = navigator.getSurfaceNormal( 0, ray )
-        fixRoundingErrors( normal )
-        self.assertListEqual( list(normal), [-1.0, 0.0, 0.0] )
+#         location = navigator.getPointLocation( ray, 1 )
+#         self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
 
-        ray = Geometry.Ray( 2.5, 0.0, 0.0, 1/math.sqrt(3), 1/math.sqrt(3), 1/math.sqrt(3) )
-        normal = navigator.getSurfaceNormal( 0, ray )
-        fixRoundingErrors( normal )
-        self.assertListEqual( list(normal), [1.0, 0.0, 0.0] )
+#         location = navigator.getPointLocation( ray, 3 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        ray = Geometry.Ray( 2.5, 0.0, 0.0, -1/math.sqrt(3), -1/math.sqrt(3), -1/math.sqrt(3) )
-        normal = navigator.getSurfaceNormal( 0, ray )
-        fixRoundingErrors( normal )
-        self.assertListEqual( list(normal), [-1.0, 0.0, 0.0] )
+#         # Point in cell 3
+#         ray = Geometry.Ray( 0.0, 0.0, 6.0, 0.0, 0.0, 1.0 )
+#         location = navigator.getPointLocation( ray, 2 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-    def testFindCellContainingRay(self):
-        "*Test Geometry.Navigator findCellContainingRay"
-        navigator = self.model.createNavigator()
+#         location = navigator.getPointLocation( ray, 1 )
+#         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
-        ray = Geometry.Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
-        cell = navigator.findCellContainingRay( ray )
-        self.assertEqual( cell, 2 )
+#         location = navigator.getPointLocation( ray, 3 )
+#         self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
 
-        ray = Geometry.Ray( 0.0, 0.0, 2.5, 0.0, 0.0, 1.0 )
-        cell = navigator.findCellContainingRay( ray )
-        self.assertEqual( cell, 1 )
+#     def testGetSurfaceNormal(self):
+#         "*Test Geometry.Navigator getSurfaceNormal"
+#         navigator = self.model.createNavigator()
 
-        cell = navigator.findCellContainingRay( [0.0, 0.0, 2.5], [0.0, 0.0, -1.0] )
-        self.assertEqual( cell, 2 )
+#         ray = Geometry.Ray( 2.5, 0.0, 0.0, 1.0, 0.0, 0.0 )
+#         normal = navigator.getSurfaceNormal( 0, ray )
+#         fixRoundingErrors( normal )
+#         self.assertListEqual( list(normal), [1.0, 0.0, 0.0] )
 
-    def testSetInternalRay(self):
-        "*Test Geometry.Navigator setInternalRay"
-        navigator = self.model.createNavigator()
+#         ray = Geometry.Ray( 2.5, 0.0, 0.0, -1.0, 0.0, 0.0 )
+#         normal = navigator.getSurfaceNormal( 0, ray )
+#         fixRoundingErrors( normal )
+#         self.assertListEqual( list(normal), [-1.0, 0.0, 0.0] )
 
-        self.assertFalse( navigator.isInternalRaySet() )
-        
-        ray = Geometry.Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
-        navigator.setInternalRay( ray )
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [0.0, 0.0, 0.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 2 )
+#         ray = Geometry.Ray( 2.5, 0.0, 0.0, 1/math.sqrt(3), 1/math.sqrt(3), 1/math.sqrt(3) )
+#         normal = navigator.getSurfaceNormal( 0, ray )
+#         fixRoundingErrors( normal )
+#         self.assertListEqual( list(normal), [1.0, 0.0, 0.0] )
 
-        # Reset the navigator
-        navigator = self.model.createNavigator()
+#         ray = Geometry.Ray( 2.5, 0.0, 0.0, -1/math.sqrt(3), -1/math.sqrt(3), -1/math.sqrt(3) )
+#         normal = navigator.getSurfaceNormal( 0, ray )
+#         fixRoundingErrors( normal )
+#         self.assertListEqual( list(normal), [-1.0, 0.0, 0.0] )
 
-        self.assertFalse( navigator.isInternalRaySet() )
+#     def testFindCellContainingRay(self):
+#         "*Test Geometry.Navigator findCellContainingRay"
+#         navigator = self.model.createNavigator()
 
-        navigator.setInternalRay( [1.0, 1.0, 1.0], [0.0, 1.0, 0.0] )
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [1.0, 1.0, 1.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 1.0, 0.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 2 )
+#         ray = Geometry.Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
+#         cell = navigator.findCellContainingRay( ray )
+#         self.assertEqual( cell, 2 )
 
-        # Reset the navigator
-        navigator = self.model.createNavigator()
+#         ray = Geometry.Ray( 0.0, 0.0, 2.5, 0.0, 0.0, 1.0 )
+#         cell = navigator.findCellContainingRay( ray )
+#         self.assertEqual( cell, 1 )
 
-        self.assertFalse( navigator.isInternalRaySet() )
+#         cell = navigator.findCellContainingRay( [0.0, 0.0, 2.5], [0.0, 0.0, -1.0] )
+#         self.assertEqual( cell, 2 )
 
-        navigator.setInternalRay( -1.0, -1.0, -1.0, 1.0, 0.0, 0.0 )
-        self.assertTrue( navigator.isInternalRaySet() )
-        self.assertListEqual( list(navigator.getInternalRayPosition()), [-1.0, -1.0, -1.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [1.0, 0.0, 0.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 2 )
+#     def testSetState(self):
+#         "*Test Geometry.Navigator setState"
+#         navigator = self.model.createNavigator()
 
-    def testFireInternalRay(self):
-        "*Test Geometry.Navigator fireInternalRay"
-        navigator = self.model.createNavigator()
+#         self.assertFalse( navigator.isStateSet() )
 
-        navigator.setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
+#         ray = Geometry.Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
+#         navigator.setState( ray )
+#         self.assertTrue( navigator.isStateSet() )
+#         self.assertListEqual( list(navigator.getPosition()), [0.0, 0.0, 0.0] )
+#         self.assertListEqual( list(navigator.getDirection()), [0.0, 0.0, 1.0] )
+#         self.assertEqual( navigator.getCellContainingRay(), 2 )
 
-        distance_to_boundary = navigator.fireInternalRay()
-        self.assertAlmostEqual( distance_to_boundary, 2.5, delta=1e-6 )
+#         # Reset the navigator
+#         navigator = self.model.createNavigator()
 
-    def testChangeInternalRayDirection(self):
-        "*Test Geometry.Navigator changeInternalRayDirection"
-        navigator = self.model.createNavigator()
+#         self.assertFalse( navigator.isStateSet() )
 
-        navigator.setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
-        navigator.changeInternalRayDirection( 1.0, 0.0, 0.0 )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [1.0, 0.0, 0.0] )
+#         navigator.setState( [1.0, 1.0, 1.0], [0.0, 1.0, 0.0] )
+#         self.assertTrue( navigator.isStateSet() )
+#         self.assertListEqual( list(navigator.getPosition()), [1.0, 1.0, 1.0] )
+#         self.assertListEqual( list(navigator.getDirection()), [0.0, 1.0, 0.0] )
+#         self.assertEqual( navigator.getCellContainingRay(), 2 )
 
-        navigator.changeInternalRayDirection( [0.0, 1.0, 0.0] )
-        self.assertListEqual( list(navigator.getInternalRayDirection()), [0.0, 1.0, 0.0] )
+#         # Reset the navigator
+#         navigator = self.model.createNavigator()
 
-    def testRayTrace(self):
-        "*Test Geometry.Navigator ray trace"
-        navigator = self.model.createNavigator()
+#         self.assertFalse( navigator.isStateSet() )
 
-        # Initialize the ray
-        navigator.setInternalRay( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 2 )
+#         navigator.setState( -1.0, -1.0, -1.0, 1.0, 0.0, 0.0 )
+#         self.assertTrue( navigator.isStateSet() )
+#         self.assertListEqual( list(navigator.getPosition()), [-1.0, -1.0, -1.0] )
+#         self.assertListEqual( list(navigator.getDirection()), [1.0, 0.0, 0.0] )
+#         self.assertEqual( navigator.getCellContainingRay(), 2 )
 
-        # Fire a ray
-        distance_to_boundary = navigator.fireInternalRay()
-        self.assertAlmostEqual( distance_to_boundary, 2.5, delta=1e-6 )
+#     def testFireRay(self):
+#         "*Test Geometry.Navigator FireRay"
+#         navigator = self.model.createNavigator()
 
-        # Advance the ray to the cell boundary
-        reflected, normal = navigator.advanceInternalRayToCellBoundaryAndGetSurfaceNormal()
-        self.assertFalse( reflected )
-        self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 1 )
+#         navigator.setState( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
 
-        # Fire a ray
-        distance_to_boundary = navigator.fireInternalRay()
-        self.assertAlmostEqual( distance_to_boundary, 2.5, delta=1e-3 )
+#         distance_to_boundary = navigator.FireRay()
+#         self.assertAlmostEqual( distance_to_boundary, 2.5, delta=1e-6 )
 
-        # Advance the ray by a substep
-        navigator.advanceInternalRayBySubstep( 0.5*distance_to_boundary )
+#     def testChangeDirection(self):
+#         "*Test Geometry.Navigator changeDirection"
+#         navigator = self.model.createNavigator()
 
-        # Change the ray direction
-        navigator.changeInternalRayDirection( 0.0, 1.0, 0.0 )
+#         navigator.setState( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
+#         navigator.changeDirection( 1.0, 0.0, 0.0 )
+#         self.assertListEqual( list(navigator.getDirection()), [1.0, 0.0, 0.0] )
 
-        # Fire a ray
-        distance_to_boundary = navigator.fireInternalRay()
-        self.assertAlmostEqual( distance_to_boundary, 5.0, delta=1e-6 )
+#         navigator.changeDirection( [0.0, 1.0, 0.0] )
+#         self.assertListEqual( list(navigator.getDirection()), [0.0, 1.0, 0.0] )
 
-        # Advance the ray to the cell boundary
-        reflected = navigator.advanceInternalRayToCellBoundary()
-        self.assertFalse( reflected )
-        self.assertEqual( navigator.getCellContainingInternalRay(), 3 )
+#     def testRayTrace(self):
+#         "*Test Geometry.Navigator ray trace"
+#         navigator = self.model.createNavigator()
+
+#         # Initialize the ray
+#         navigator.setState( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 )
+#         self.assertEqual( navigator.getCellContainingRay(), 2 )
+
+#         # Fire a ray
+#         distance_to_boundary = navigator.FireRay()
+#         self.assertAlmostEqual( distance_to_boundary, 2.5, delta=1e-6 )
+
+#         # Advance the ray to the cell boundary
+#         reflected, normal = navigator.advanceToCellBoundaryAndGetSurfaceNormal()
+#         self.assertFalse( reflected )
+#         self.assertListEqual( list(normal), [0.0, 0.0, 1.0] )
+#         self.assertEqual( navigator.getCellContainingRay(), 1 )
+
+#         # Fire a ray
+#         distance_to_boundary = navigator.FireRay()
+#         self.assertAlmostEqual( distance_to_boundary, 2.5, delta=1e-3 )
+
+#         # Advance the ray by a substep
+#         navigator.advanceBySubstep( 0.5*distance_to_boundary )
+
+#         # Change the ray direction
+#         navigator.changeDirection( 0.0, 1.0, 0.0 )
+
+#         # Fire a ray
+#         distance_to_boundary = navigator.FireRay()
+#         self.assertAlmostEqual( distance_to_boundary, 5.0, delta=1e-6 )
+
+#         # Advance the ray to the cell boundary
+#         reflected = navigator.advanceToCellBoundary()
+#         self.assertFalse( reflected )
+#         self.assertEqual( navigator.getCellContainingRay(), 3 )
 
 #-----------------------------------------------------------------------------#
 # Custom main
@@ -534,12 +535,12 @@ if __name__ == "__main__":
     # Create the test suite object
     suite = unittest.TestSuite()
 
-    # Add the test cases to the test suite
-    if len(options.dagmc_xmlfile) > 0:
-        suite.addTest(unittest.makeSuite(DagMCNavigatorTestCase))
+    # # Add the test cases to the test suite
+    # if len(options.dagmc_cad_file) > 0:
+    #     suite.addTest(unittest.makeSuite(DagMCNavigatorTestCase))
 
-    if len(options.root_xmlfile) > 0:
-        suite.addTest(unittest.makeSuite(RootNavigatorTestCase))
+    # if len(options.root_xmlfile) > 0:
+    #     suite.addTest(unittest.makeSuite(RootNavigatorTestCase))
 
     print >>sys.stderr, \
         "\n**************************************\n" + \

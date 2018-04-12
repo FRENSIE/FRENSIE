@@ -20,7 +20,7 @@ namespace Geometry{
 //! The advanced model base class
 class AdvancedModel : public Model
 {
-  
+
 public:
 
   //! The surface id set type
@@ -65,7 +65,7 @@ public:
   //! Check if a surface exists
   virtual bool doesSurfaceExist(
                             const InternalSurfaceHandle surface_id ) const = 0;
-  
+
   //! Get the surface area
   virtual Area getSurfaceArea(
                             const InternalSurfaceHandle surface_id ) const = 0;
@@ -91,11 +91,13 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 };
-  
+
 } // end Geometry namespace
 
+#if !defined SWIG
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AdvancedModel, Geometry );
 BOOST_SERIALIZATION_CLASS_VERSION( AdvancedModel, Geometry, 0 );
+#endif // end !defined SWIG
 
 #endif // end GEOMETRY_ADVANCED_MODEL_HPP
 
