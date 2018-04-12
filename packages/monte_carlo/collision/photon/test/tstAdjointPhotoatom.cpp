@@ -593,9 +593,9 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
   // Sample the pair production reaction
   std::vector<double> fake_stream( 4 );
   // if( BOOST_VERSION < 106000 )
-  //   fake_stream[0] = 0.95; // select pair production (for boost below version 1.60)
+  fake_stream[0] = 0.95; // select pair production (for boost below version 1.60)
   // else
-    fake_stream[0] = 0.05; // select pair production (for boost above version 1.60)
+  //fake_stream[0] = 0.05; // select pair production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -622,9 +622,9 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 
   // Sample the triplet production reaction
   // if( BOOST_VERSION < 106000 )
-  //   fake_stream[0] = 0.96; // select triplet production (for boost below version 1.60)
+  fake_stream[0] = 0.96; // select triplet production (for boost below version 1.60)
   // else
-    fake_stream[0] = 0.04; // select triplet production (for boost above version 1.60)
+  //fake_stream[0] = 0.04; // select triplet production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -764,7 +764,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     me_line_energy_reactions[reaction->getReactionType()] = reaction;
 
-    std::cout << reaction->getCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy ) << std::endl;
     
     MonteCarlo::AdjointPhotoatomicReactionNativeFactory::createTripletProductionReaction(
                                                                 data_container,
@@ -773,8 +772,6 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                                 reaction );
 
     me_line_energy_reactions[reaction->getReactionType()] = reaction;
-
-    std::cout << reaction->getCrossSection( Utility::PhysicalConstants::electron_rest_mass_energy ) << std::endl;
   }
 
   // Construct the adjoint photoatom

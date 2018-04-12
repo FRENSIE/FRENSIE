@@ -8,11 +8,11 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearReaction.hpp"
-#include "MonteCarlo_NeutronState.hpp"
 
 namespace MonteCarlo{
 
-EXPLICIT_TEMPLATE_CLASS_INST( PhotonuclearReaction<NeutronState> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotonuclearReaction,Utility::LinLin,false> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PhotonuclearReaction,Utility::LinLin,true> );
   
 } // end MonteCarlo namespace
 

@@ -10,7 +10,7 @@
 #define MONTE_CARLO_PHOTOELECTRIC_PHOTOATOMIC_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
@@ -20,10 +20,10 @@ namespace MonteCarlo{
  * reaction and not the reaction with individual subshells.
  */
 template<typename InterpPolicy, bool processed_cross_section = true>
-class PhotoelectricPhotoatomicReaction : public StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section>
+class PhotoelectricPhotoatomicReaction : public StandardReactionBaseImpl<PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
+  typedef StandardReactionBaseImpl<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
 public:
 

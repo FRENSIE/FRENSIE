@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ABSORPTION_ADJOINT_PHOTOATOMIC_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
@@ -20,10 +20,10 @@ namespace MonteCarlo{
  * absorption reactions (e.g. the total reaction).
  */
 template<typename InterpPolicy, bool processed_cross_section = true>
-class AbsorptionAdjointPhotoatomicReaction : public StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section>
+class AbsorptionAdjointPhotoatomicReaction : public StandardReactionBaseImpl<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
+  typedef StandardReactionBaseImpl<AdjointPhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
 public:
 

@@ -18,30 +18,28 @@
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic Constructor
 template<typename OutgoingParticleType>
 YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhotonuclearProductionReaction(
-       const PhotonuclearReactionType reaction_type,
-       const double q_value,
-       const size_t threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
        const std::shared_ptr<const std::vector<double> >& yield_energy_grid,
        const std::shared_ptr<const std::vector<double> >& yield,
        const std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
        outgoing_particle_distribution )
-  : PhotonuclearReaction<OutgoingParticleType>( reaction_type,
-                                                q_value,
-                                                threshold_energy_index,
-                                                incoming_energy_grid,
-                                                cross_section ),
+  : StandardPhotonuclearReaction( incoming_energy_grid,
+                                  cross_section,
+                                  threshold_energy_index,
+                                  reaction_type,
+                                  q_value ),
     d_yield_energy_grid( yield_energy_grid ),
     d_yield( yield ),
     d_outgoing_particle_distribution( outgoing_particle_distribution )
 {
   // Make sure that the pointers are valid
-  testPrecondition( incoming_energy_grid.get() );
-  testPrecondition( cross_section.get() );
   testPrecondition( yield_energy_grid.get() );
   testPrecondition( yield.get() );
   testPrecondition( outgoing_particle_distribution.get() )
@@ -58,9 +56,50 @@ YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhoton
   testPrecondition( yield->size() == yield_energy_grid->size() );
 }
 
-// Return the number of particle emitted from the rxn at the given energy
+// Constructor
 template<typename OutgoingParticleType>
-size_t YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles(
+YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::YieldBasedPhotonuclearProductionReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const PhotonuclearReactionType reaction_type,
+       const double q_value,
+       const std::shared_ptr<const std::vector<double> >& yield_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& yield,
+       const std::shared_ptr<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
+       outgoing_particle_distribution )
+  : StandardPhotonuclearReaction( incoming_energy_grid,
+                                  cross_section,
+                                  threshold_energy_index,
+                                  grid_searcher,
+                                  reaction_type,
+                                  q_value ),
+    d_yield_energy_grid( yield_energy_grid ),
+    d_yield( yield ),
+    d_outgoing_particle_distribution( outgoing_particle_distribution )
+{
+  // Make sure that the pointers are valid
+  testPrecondition( yield_energy_grid.get() );
+  testPrecondition( yield.get() );
+  testPrecondition( outgoing_particle_distribution.get() )
+  // Make sure the yield energy grid is valid
+  testPrecondition( yield_energy_grid->size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+					          yield_energy_grid->begin(),
+                                                  yield_energy_grid->end() ) );
+  testPrecondition( yield_energy_grid->front() ==
+                    incoming_energy_grid->front() );
+  testPrecondition( yield_energy_grid->back() ==
+		    incoming_energy_grid->back() );
+  // Make sure the yield is valid
+  testPrecondition( yield->size() == yield_energy_grid->size() );
+}
+
+// Return the number of particles emitted from the rxn at the given energy
+template<typename OutgoingParticleType>
+unsigned YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::getNumberOfEmittedParticles(
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -112,7 +151,7 @@ void YieldBasedPhotonuclearProductionReaction<OutgoingParticleType>::react(
   // Make sure the photon energy is valid
   testPrecondition( photon.getEnergy() > 0.0 );
 
-  size_t num_emitted_particles =
+  unsigned num_emitted_particles =
     this->getNumberOfEmittedParticles( photon.getEnergy() );
 
   // Create the additional particles
