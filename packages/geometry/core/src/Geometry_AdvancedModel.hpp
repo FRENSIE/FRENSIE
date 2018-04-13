@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Geometry_Model.hpp
+//! \file   Geometry_AdvancedModel.hpp
 //! \author Alex Robinson
 //! \brief  The advanced geometry model base class declaration
 //!

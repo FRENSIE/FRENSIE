@@ -32,9 +32,21 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 
 %include "Geometry_Config.i"
 
+// // Set the special python variables
+// %pythoncode
+// %{
+// # Remove the local current directory from the sys path (added to help
+// # import code - see comment above)
+// sys.path.pop(0)
+
+// __all__ = ['DagMC'
+//            ]
+// %}
+
 %{
 // Std Lib Includes
 #include <sstream>
+#include <memory>
 
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
@@ -63,6 +75,7 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 // Include typemaps support
 %include <typemaps.i>
 
+// Include the vector support
 %include "PyFrensie_Array.i"
 
 // Standard exception handling
@@ -130,8 +143,6 @@ typedef Geometry::UnitAwareRay<void>::Length Length;
 //---------------------------------------------------------------------------//
 // Add support for the Navigator class
 //---------------------------------------------------------------------------//
-// Include the Navigator class
-%include "Geometry_Navigator.hpp"
 
 %feature("docstring")
 Geometry::Navigator
@@ -319,11 +330,12 @@ Geometry::Navigator::changeDirection;
   $1 = temp.data();
 }
 
+// Include the Navigator class
+%include "Geometry_Navigator.hpp"
+
 //---------------------------------------------------------------------------//
 // Add support for the Model class
 //---------------------------------------------------------------------------//
-// Include the Model class
-%include "Geometry_Model.hpp"
 
 // Add more detailed docstrings for the Model class
 %feature("docstring")
@@ -454,13 +466,12 @@ Geometry::Model::createNavigator;
   }
 };
 
-// %template(cell_id_density_map) std::map<Geometry::Model::InternalCellHandle, double>;
+// Include the Model class
+%include "Geometry_Model.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the AdvancedModel class
 //---------------------------------------------------------------------------//
-// Include the AdvancedModel class
-%include "Geometry_AdvancedModel.hpp"
 
 // Add more detailed docstrings for the AdvancedModel class
 %feature("docstring")
@@ -550,6 +561,9 @@ Geometry::AdvancedModel::getSurfaceEstimatorData;
     return PyFrensie::convertToPython( string_rep );
   }
 }
+
+// Include the AdvancedModel class
+%include "Geometry_AdvancedModel.hpp"
 
 // // //---------------------------------------------------------------------------//
 // // // Add support for the ModelFactory class

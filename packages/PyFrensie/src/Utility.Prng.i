@@ -40,6 +40,7 @@ Prng.RandomNumberGenerator proxy class.
 // Include the vector support
 %include "PyFrensie_Array.i"
 
+// Include macros to find initialized numpy
 %include "numpy.i"
 
 // Standard exception handling
