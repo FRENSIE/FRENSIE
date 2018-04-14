@@ -20,6 +20,7 @@
 #include "MonteCarlo_ScatteringCenterDefinition.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_StaticOutputFormatter.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -42,6 +43,7 @@ ScatteringCenterDefinition::ScatteringCenterDefinition(
                                                        const Data::ZAID& zaid )
   : d_name( name ),
     d_zaid( zaid ),
+    d_atomic_weight_ratio(),
     d_temperature()
 {
   // White space characters are not allowed in scattering center names
@@ -60,6 +62,55 @@ const std::string& ScatteringCenterDefinition::getName() const
 const Data::ZAID& ScatteringCenterDefinition::getZAID() const
 {
   return d_zaid;
+}
+
+// Check if an atomic weight override has been set
+/*! If the atomic weight is set it should be used when constructing the
+ * scattering center instead of the atomic weights stored in the various
+ * properties classes.
+ */
+bool ScatteringCenterDefinition::isAtomicWeightSet() const
+{
+  return d_atomic_weight_ratio != boost::none;
+}
+
+// Set the atomic weight override
+void ScatteringCenterDefinition::setAtomicWeight( const double atomic_weight )
+{
+  TEST_FOR_EXCEPTION( atomic_weight <= 0.0,
+                      std::runtime_error,
+                      "The atomic weight ratio must be greater than 0.0!" );
+  
+  d_atomic_weight_ratio =
+    atomic_weight/Utility::PhysicalConstants::neutron_rest_mass_amu;
+}
+
+// Set the atomic weight ratio override
+void ScatteringCenterDefinition::setAtomicWeightRatio(
+                                             const double atomic_weight_ratio )
+{
+  TEST_FOR_EXCEPTION( atomic_weight_ratio <= 0.0,
+                      std::runtime_error,
+                      "The atomic weight ratio must be greater than 0.0!" );
+  
+  d_atomic_weight_ratio = atomic_weight_ratio;
+}
+
+// Get the atomic weight override
+double ScatteringCenterDefinition::getAtomicWeight() const
+{
+  return this->getAtomicWeightRatio()*
+    Utility::PhysicalConstants::neutron_rest_mass_amu;
+}
+
+// Get the atomic weight ratio override
+double ScatteringCenterDefinition::getAtomicWeightRatio() const
+{
+  TEST_FOR_EXCEPTION( !this->isAtomicWeightSet(),
+                      std::runtime_error,
+                      "The atomic weight has not been set!" );
+
+  return d_atomic_weight_ratio.value();
 }
 
 // Check if there are photoatomic data properties

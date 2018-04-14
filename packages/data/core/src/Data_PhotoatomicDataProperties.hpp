@@ -64,7 +64,7 @@ public:
   { return this->atom(); }
 
   //! Get the atomic weight of the nuclide that the file specifies data for
-  virtual AtomicWeight atomicWeight() const = 0;
+  //virtual AtomicWeight atomicWeight() const = 0;
 
   //! Get the photoatomic data file type
   virtual FileType fileType() const = 0;

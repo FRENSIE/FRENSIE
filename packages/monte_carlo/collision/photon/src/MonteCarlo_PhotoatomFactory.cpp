@@ -62,6 +62,15 @@ PhotoatomFactory::PhotoatomFactory(
     const Data::PhotoatomicDataProperties& photoatom_data_properties =
       photoatom_definition.getPhotoatomicDataProperties();
 
+    // Get the atomic weight
+    double atomic_weight;
+
+    // Check if there is an atomic weight override
+    if( photoatom_definition.isAtomicWeightSet() )
+      atomic_weight = photoatom_definition.getAtomicWeight();
+    else
+      atomic_weight = photoatom_data_properties.atomicWeight().value();
+
     if( photoatom_data_properties.fileType() ==
         Data::PhotoatomicDataProperties::ACE_EPR_FILE )
     {
@@ -74,6 +83,7 @@ PhotoatomFactory::PhotoatomFactory(
         
       this->createPhotoatomFromACETable( cross_sections_xml_directory,
                                          *photoatom_name,
+                                         atomic_weight,
                                          photoatom_data_properties,
                                          atomic_relaxation_model_factory,
                                          properties );
@@ -90,6 +100,7 @@ PhotoatomFactory::PhotoatomFactory(
       
       this->createPhotoatomFromNativeTable( cross_sections_xml_directory,
                                             *photoatom_name,
+                                            atomic_weight,
                                             photoatom_data_properties,
                                             atomic_relaxation_model_factory,
                                             properties );
@@ -122,6 +133,7 @@ void PhotoatomFactory::createPhotoatomMap(
 void PhotoatomFactory::createPhotoatomFromACETable(
 			const boost::filesystem::path& data_directory,
                         const std::string& photoatom_name,
+                        const double atomic_weight,
 			const Data::PhotoatomicDataProperties& data_properties,
                         const std::shared_ptr<AtomicRelaxationModelFactory>&
                         atomic_relaxation_model_factory,
@@ -173,8 +185,8 @@ void PhotoatomFactory::createPhotoatomFromACETable(
     // Create the new photoatom
     PhotoatomACEFactory::createPhotoatom(
                                         xss_data_extractor,
-                                        data_properties.tableName();
-					data_properties.atomicWeight().value(),
+                                        data_properties.tableName(),
+                                        atomic_weight,
                                         atomic_relaxation_model,
                                         properties,
                                         photoatom );
@@ -199,6 +211,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 void PhotoatomFactory::createPhotoatomFromNativeTable(
 			const boost::filesystem::path& data_directory,
                         const std::string& photoatom_name,
+                        const double atomic_weight,
                         const Data::PhotoatomicDataProperties& data_properties,
                         const std::shared_ptr<AtomicRelaxationModelFactory>&
                         atomic_relaxation_model_factory,
@@ -244,7 +257,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
     PhotoatomNativeFactory::createPhotoatom(
                                            data_container,
                                            data_properties.filePath().string(),
-                                           data_properties.atomicWeight(),
+                                           atomic_weight,
                                            atomic_relaxation_model,
                                            properties,
                                            photoatom );

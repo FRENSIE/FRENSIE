@@ -423,6 +423,43 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, getZAID )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atomic weight can be set
+FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAtomicWeight )
+{
+  MonteCarlo::ScatteringCenterDefinition definition( "H1", 1001 );
+
+  FRENSIE_CHECK( !definition.isAtomicWeightSet() );
+  FRENSIE_CHECK_THROW( definition.getAtomicWeight(), std::runtime_error );
+  FRENSIE_CHECK_THROW( definition.getAtomicWeightRatio(), std::runtime_error );
+  
+  definition.setAtomicWeight( 1.0 );
+
+  FRENSIE_CHECK( definition.isAtomicWeightSet() );
+  FRENSIE_CHECK_EQUAL( definition.getAtomicWeight(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( definition.getAtomicWeightRatio(),
+                                   9.914095197851978680e-01,
+                                   1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic weight ratio can be set
+FRENSIE_UNIT_TEST( ScatteringCenterDefintion, setAtomicWeightRatio )
+{
+  MonteCarlo::ScatteringCenterDefinition definition( "H1", 1001 );
+
+  FRENSIE_CHECK( !definition.isAtomicWeightSet() );
+  FRENSIE_CHECK_THROW( definition.getAtomicWeightRatio(), std::runtime_error );
+  FRENSIE_CHECK_THROW( definition.getAtomicWeight(), std::runtime_error );
+  
+  definition.setAtomicWeightRatio( 9.914095197851978680e-01 );
+
+  FRENSIE_CHECK( definition.isAtomicWeightSet() );
+  FRENSIE_CHECK_EQUAL( definition.getAtomicWeightRatio(),
+                       9.914095197851978680e-01 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( definition.getAtomicWeight(), 1.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that photoatomic data properties can be set
 FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setPhotoatomicDataProperties )
 {
@@ -1148,6 +1185,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinition,
     MonteCarlo::ScatteringCenterDefinition h_definition( 1000 );
     
     MonteCarlo::ScatteringCenterDefinition h1_definition( "H1-293.1K", 1001 );
+    h1_definition.setAtomicWeight( 1.0 );
 
     {
       std::shared_ptr<const Data::PhotoatomicDataProperties> properties(
@@ -1285,17 +1323,26 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinition,
 
   FRENSIE_CHECK_EQUAL( h_definition.getName(), "H" );
   FRENSIE_CHECK_EQUAL( h_definition.getZAID(), Data::ZAID(1000) );
-  FRENSIE_CHECK( h_definition.hasPhotoatomicDataProperties() );
-  FRENSIE_CHECK( h_definition.hasAdjointPhotoatomicDataProperties() );
-  FRENSIE_CHECK( h_definition.hasElectroatomicDataProperties() );
-  FRENSIE_CHECK( h_definition.hasAdjointElectroatomicDataProperties() );
+  FRENSIE_CHECK( !h_definition.isAtomicWeightSet() );
+  FRENSIE_REQUIRE( h_definition.hasPhotoatomicDataProperties() );
+  FRENSIE_REQUIRE( h_definition.hasAdjointPhotoatomicDataProperties() );
+  FRENSIE_REQUIRE( h_definition.hasElectroatomicDataProperties() );
+  FRENSIE_REQUIRE( h_definition.hasAdjointElectroatomicDataProperties() );
+  FRENSIE_CHECK( !h_definition.hasNuclearDataProperties() );
+  FRENSIE_CHECK( !h_definition.hasAdjointNuclearDataProperties() );
+  FRENSIE_CHECK( !h_definition.hasThermalNuclearDataProperties() );
+  FRENSIE_CHECK( !h_definition.hasAdjointThermalNuclearDataProperties() );
+  FRENSIE_CHECK( !h_definition.hasPhotonuclearDataProperties() );
+  FRENSIE_CHECK( !h_definition.hasAdjointPhotonuclearDataProperties() );
 
   FRENSIE_CHECK_EQUAL( h1_definition.getName(), "H1-293.1K" );
   FRENSIE_CHECK_EQUAL( h1_definition.getZAID(), Data::ZAID(1001) );
-  FRENSIE_CHECK( h1_definition.hasPhotoatomicDataProperties() );
-  FRENSIE_CHECK( h1_definition.hasAdjointPhotoatomicDataProperties() );
-  FRENSIE_CHECK( h1_definition.hasElectroatomicDataProperties() );
-  FRENSIE_CHECK( h1_definition.hasAdjointElectroatomicDataProperties() );
+  FRENSIE_REQUIRE( h1_definition.isAtomicWeightSet() );
+  FRENSIE_CHECK_EQUAL( h1_definition.getAtomicWeight(), 1.0 );
+  FRENSIE_REQUIRE( h1_definition.hasPhotoatomicDataProperties() );
+  FRENSIE_REQUIRE( h1_definition.hasAdjointPhotoatomicDataProperties() );
+  FRENSIE_REQUIRE( h1_definition.hasElectroatomicDataProperties() );
+  FRENSIE_REQUIRE( h1_definition.hasAdjointElectroatomicDataProperties() );
   FRENSIE_CHECK( h1_definition.hasNuclearDataProperties() );
   FRENSIE_CHECK( h1_definition.hasAdjointNuclearDataProperties() );
   FRENSIE_CHECK( h1_definition.hasThermalNuclearDataProperties() );

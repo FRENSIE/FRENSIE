@@ -63,6 +63,7 @@ private:
   void createPhotoatomFromACETable(
                         const boost::filesystem::path& data_directory,
                         const std::string& photoatom_name,
+                        const double atomic_weight,
 			const Data::PhotoatomicDataProperties& data_properties,
                         const std::shared_ptr<AtomicRelaxationModelFactory>&
                         atomic_relaxation_model_factory,
@@ -72,6 +73,7 @@ private:
   void createPhotoatomFromNativeTable(
 			const boost::filesystem::path& data_directory,
                         const std::string& photoatom_name,
+                        const double atomic_weight,
                         const Data::PhotoatomicDataProperties& data_properties,
                         const std::shared_ptr<AtomicRelaxationModelFactory>&
                         atomic_relaxation_model_factory,

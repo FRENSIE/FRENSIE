@@ -55,6 +55,21 @@ public:
   //! Return the zaid
   const Data::ZAID& getZAID() const;
 
+  //! Check if an atomic weight (or atomic weight ratio) override has been set
+  bool isAtomicWeightSet() const;
+
+  //! Set the atomic weight override
+  void setAtomicWeight( const double atomic_weight );
+
+  //! Set the atomic weight ratio override
+  void setAtomicWeightRatio( const double atomic_weight_ratio );
+
+  //! Get the atomic weight override
+  double getAtomicWeight() const;
+
+  //! Get the atomic weight ratio override
+  double getAtomicWeightRatio() const;
+
   //! Check if there are photoatomic data properties
   bool hasPhotoatomicDataProperties() const;
 
@@ -219,6 +234,9 @@ private:
   // The scattering center zaid
   Data::ZAID d_zaid;
 
+  // The atomic weight ratio override
+  boost::optional<double> d_atomic_weight_ratio;
+
   // The scattering center temperature
   boost::optional<Data::NuclearDataProperties::Energy> d_temperature;
 
@@ -260,6 +278,8 @@ void ScatteringCenterDefinition::save( Archive& ar,
 {
   ar & BOOST_SERIALIZATION_NVP( d_name );
   ar & BOOST_SERIALIZATION_NVP( d_zaid );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_temperature );
   ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
@@ -279,6 +299,8 @@ void ScatteringCenterDefinition::load( Archive& ar,
 {
   ar & BOOST_SERIALIZATION_NVP( d_name );
   ar & BOOST_SERIALIZATION_NVP( d_zaid );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_temperature );
   ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
