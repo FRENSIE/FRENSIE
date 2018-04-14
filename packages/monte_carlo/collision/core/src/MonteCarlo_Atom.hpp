@@ -131,8 +131,8 @@ public:
 
 protected:
 
-  // The atom core (storing all reactions, relaxation model)
-  AtomCore d_core;
+  //! Return the core
+  AtomCore& getCore();
 
 private:
 
@@ -184,6 +184,9 @@ private:
 
   // The atomic weight of the atom
   double d_atomic_weight;
+
+  // The atom core (storing all reactions, relaxation model)
+  AtomCore d_core;
 };
 
 // Return the nuclide name

@@ -26,12 +26,10 @@ void PhotoatomACEFactory::createPhotoatomCore(
    const Data::XSSEPRDataExtractor& raw_photoatom_data,
    const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
    const SimulationPhotonProperties& properties,
-   std::shared_ptr<PhotoatomCore>& photoatom_core )
+   std::shared_ptr<const PhotoatomCore>& photoatom_core )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( atomic_relaxation_model.get() );
-
-  photoatom_core.reset( new PhotoatomCore() );
 
   Photoatom::ConstReactionMap scattering_reactions, absorption_reactions;
 
@@ -144,14 +142,14 @@ void PhotoatomACEFactory::createPhotoatom(
    const double atomic_weight,
    const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
    const SimulationPhotonProperties& properties,
-   std::shared_ptr<Photoatom>& photoatom )
+   std::shared_ptr<const Photoatom>& photoatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( atomic_relaxation_model.get() );
 
-  std::shared_ptr<PhotoatomCore> core;
+  std::shared_ptr<const PhotoatomCore> core;
 
   PhotoatomACEFactory::createPhotoatomCore( raw_photoatom_data,
 					    atomic_relaxation_model,

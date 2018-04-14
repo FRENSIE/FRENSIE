@@ -32,7 +32,7 @@ public:
    const Data::XSSEPRDataExtractor& raw_photoatom_data,
    const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
    const SimulationPhotonProperties& properties,
-   std::shared_ptr<PhotoatomCore>& photoatom_core );
+   std::shared_ptr<const PhotoatomCore>& photoatom_core );
 
   //! Create a photoatom (using the provided atomic relaxation model)
   static void createPhotoatom(
@@ -41,7 +41,7 @@ public:
    const double atomic_weight,
    const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
    const SimulationPhotonProperties& properties,
-   std::shared_ptr<Photoatom>& photoatom );
+   std::shared_ptr<const Photoatom>& photoatom );
   
 private:
 
