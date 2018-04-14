@@ -318,10 +318,10 @@ SET_PROPERTY(TEST AdjointPhotoatomFactory_test PROPERTY LABELS photon adjoint na
 ## Material tests
 ##---------------------------------------------------------------------------##
 
-FRENSIE_ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
-TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
-ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PhotonMaterial_test PROPERTY LABELS photon)
+# FRENSIE_ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
+# TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
+# ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+# SET_PROPERTY(TEST PhotonMaterial_test PROPERTY LABELS photon)
 
 ADD_EXECUTABLE(tstAdjointPhotonMaterial
   tstAdjointPhotonMaterial.cpp

@@ -58,6 +58,15 @@ FRENSIE_ADD_TEST(NuclearScatteringDistributionFactoryHelpers
   --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
   --test_u238_ace_table=92238.70c)
 
+FRENSIE_ADD_TEST_EXECUTABLE(ScatteringCenterDefinition DEPENDS tstScatteringCenterDefinition.cpp)
+FRENSIE_ADD_TEST(ScatteringCenterDefinition)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ScatteringCenterDefinitionDatabase DEPENDS tstScatteringCenterDefinitionDatabase.cpp)
+FRENSIE_ADD_TEST(ScatteringCenterDefinitionDatabase)
+
+FRENSIE_ADD_TEST_EXECUTABLE(MaterialDefinitionDatabase DEPENDS tstMaterialDefinitionDatabase.cpp)
+FRENSIE_ADD_TEST(MaterialDefinitionDatabase)
+
 FRENSIE_ADD_TEST_EXECUTABLE(MaterialHelpers DEPENDS tstMaterialHelpers.cpp)
 FRENSIE_ADD_TEST(MaterialHelpers)
 
