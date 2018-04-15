@@ -32,13 +32,17 @@ NativeEPRAdjointPhotoatomicDataProperties::NativeEPRAdjointPhotoatomicDataProper
 
 // Constructor
 NativeEPRAdjointPhotoatomicDataProperties::NativeEPRAdjointPhotoatomicDataProperties(
+                                      const AtomicWeight atomic_weight,
                                       const boost::filesystem::path& file_path,
                                       const unsigned file_version,
                                       const AtomType atom )
-  : d_file_path( file_path ),
+  : d_atomic_weight( atomic_weight ),
+    d_file_path( file_path ),
     d_file_version( file_version ),
     d_atom( atom )
 {
+  // Make sure that the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0*Utility::Units::amu );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
 
@@ -48,8 +52,9 @@ NativeEPRAdjointPhotoatomicDataProperties::NativeEPRAdjointPhotoatomicDataProper
 
 // Copy constructor
 NativeEPRAdjointPhotoatomicDataProperties::NativeEPRAdjointPhotoatomicDataProperties(
-                                  const NativeEPRAdjointPhotoatomicDataProperties& other )
-  : d_file_path( other.d_file_path ),
+                       const NativeEPRAdjointPhotoatomicDataProperties& other )
+  : d_atomic_weight( other.d_atomic_weight ),
+    d_file_path( other.d_file_path ),
     d_file_version( other.d_file_version ),
     d_atom( other.d_atom )
 {
@@ -67,6 +72,12 @@ AtomType NativeEPRAdjointPhotoatomicDataProperties::atom() const
 auto NativeEPRAdjointPhotoatomicDataProperties::fileType() const -> FileType
 {
   return AdjointPhotoatomicDataProperties::Native_EPR_FILE;
+}
+
+// Get the photoatomic data file type
+auto NativeEPRAdjointPhotoatomicDataProperties::atomicWeight() const -> AtomicWeight
+{
+  return d_atomic_weight;
 }
 
 // Get the photoatomic data file path (relative to the data directory)
@@ -107,6 +118,8 @@ void NativeEPRAdjointPhotoatomicDataProperties::save( Archive& ar, const unsigne
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdjointPhotoatomicDataProperties );
 
   // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
   std::string raw_path = d_file_path.string();
   
   ar & BOOST_SERIALIZATION_NVP( raw_path );
@@ -122,6 +135,8 @@ void NativeEPRAdjointPhotoatomicDataProperties::load( Archive& ar, const unsigne
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AdjointPhotoatomicDataProperties );
 
   // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
   std::string raw_path;  
   ar & BOOST_SERIALIZATION_NVP( raw_path );
 

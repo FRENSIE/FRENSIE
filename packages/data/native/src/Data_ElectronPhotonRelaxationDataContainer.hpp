@@ -62,6 +62,9 @@ public:
   //! Return the atomic number
   unsigned getAtomicNumber() const;
 
+  //! Return the atomic weight
+  double getAtomicWeight() const;
+
   //! Return the minimum photon energy
   double getMinPhotonEnergy() const;
 
@@ -412,6 +415,9 @@ protected:
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
+
+  //! Set the atomic weight
+  void setAtomicWeight( const double atomic_weight );
 
   //! Set the minimum photon energy
   void setMinPhotonEnergy( const double min_photon_energy );
@@ -839,6 +845,9 @@ private:
 
   // The atomic number
   unsigned d_atomic_number;
+
+  // The atomic weight
+  double d_atomic_weight;
 
   // The minimum photon energy
   double d_min_photon_energy;

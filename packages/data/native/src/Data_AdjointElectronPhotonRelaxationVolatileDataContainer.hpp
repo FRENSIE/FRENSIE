@@ -32,6 +32,7 @@ public:
 
   // Basic table functions
   using AdjointElectronPhotonRelaxationDataContainer::setAtomicNumber;
+  using AdjointElectronPhotonRelaxationDataContainer::setAtomicWeight;
   using AdjointElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
   using AdjointElectronPhotonRelaxationDataContainer::setMinElectronEnergy;

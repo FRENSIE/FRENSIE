@@ -18,7 +18,6 @@
 #include "Data_AdjointPhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_AdjointElectroatomicDataProperties.hpp"
-#include "Data_PhotonuclearDataProperties.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_OStreamableObject.hpp"
 
@@ -31,10 +30,10 @@ class AtomProperties : public Utility::OStreamableObject
 public:
 
   //! The atomic mass unit
-  typedef PhotonuclearDataProperties::AtomicMassUnit AtomicMassUnit;
+  typedef PhotoatomicDataProperties::AtomicMassUnit AtomicMassUnit;
 
   //! The atomic mass quantity
-  typedef PhotonuclearDataProperties::AtomicWeight AtomicWeight;
+  typedef PhotoatomicDataProperties::AtomicWeight AtomicWeight;
 
   //! Constructor
   AtomProperties( const Data::ZAID zaid,

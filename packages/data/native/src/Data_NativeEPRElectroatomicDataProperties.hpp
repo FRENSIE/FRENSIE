@@ -22,9 +22,11 @@ class NativeEPRElectroatomicDataProperties : public ElectroatomicDataProperties
 public:
 
   //! Constructor
-  NativeEPRElectroatomicDataProperties( const boost::filesystem::path& file_path,
-                                   const unsigned file_version,
-                                   const AtomType atom );
+  NativeEPRElectroatomicDataProperties(
+                                      const AtomicWeight atomic_weight,
+                                      const boost::filesystem::path& file_path,
+                                      const unsigned file_version,
+                                      const AtomType atom );
 
   //! Destructor
   ~NativeEPRElectroatomicDataProperties()
@@ -35,6 +37,9 @@ public:
 
   //! Get the electroatomic data file type
   FileType fileType() const override;
+
+  //! Get the atomic weight of the atom that the file specifies data for
+  AtomicWeight atomicWeight() const override;
 
   //! Get the electroatomic data file path (relative to the data directory)
   boost::filesystem::path filePath() const override;
@@ -74,6 +79,9 @@ private:
 
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
+
+  // The atomic weight of the atom that the file specifies data for
+  AtomicWeight d_atomic_weight;
 
   // The file path (relative to the data directory)
   boost::filesystem::path d_file_path;

@@ -32,13 +32,17 @@ ACEPhotoatomicDataProperties::ACEPhotoatomicDataProperties()
 
 // Constructor
 ACEPhotoatomicDataProperties::ACEPhotoatomicDataProperties(
+                                      const AtomicWeight atomic_weight,
                                       const boost::filesystem::path& file_path,
                                       const size_t file_start_line,
                                       const ACETableName& file_table_name )
-  : d_file_path( file_path ),
+  : d_atomic_weight( atomic_weight ),
+    d_file_path( file_path ),
     d_file_start_line( file_start_line ),
     d_file_table_name( file_table_name )
 {
+  // Make sure that the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0*Utility::Units::amu );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
 
@@ -53,7 +57,8 @@ ACEPhotoatomicDataProperties::ACEPhotoatomicDataProperties(
 // Copy constructor
 ACEPhotoatomicDataProperties::ACEPhotoatomicDataProperties(
                                  const ACEPhotoatomicDataProperties& other )
-  : d_file_path( other.d_file_path ),
+  : d_atomic_weight( other.d_atomic_weight ),
+    d_file_path( other.d_file_path ),
     d_file_start_line( other.d_file_start_line ),
     d_file_table_name( other.d_file_table_name )
 { 
@@ -74,6 +79,12 @@ auto ACEPhotoatomicDataProperties::fileType() const -> FileType
     return PhotoatomicDataProperties::ACE_FILE;
   else
     return PhotoatomicDataProperties::ACE_EPR_FILE;
+}
+
+// Get the atomic weight of the nuclide that the file specifies data for
+auto ACEPhotoatomicDataProperties::atomicWeight() const -> AtomicWeight
+{
+  return d_atomic_weight;
 }
 
 // Get the photoatomic data file path (relative to the data directory)
@@ -114,6 +125,8 @@ void ACEPhotoatomicDataProperties::save( Archive& ar, const unsigned version ) c
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotoatomicDataProperties );
 
   // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
   std::string raw_path = d_file_path.string();
   
   ar & BOOST_SERIALIZATION_NVP( raw_path );
@@ -129,6 +142,8 @@ void ACEPhotoatomicDataProperties::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhotoatomicDataProperties );
 
   // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
   std::string raw_path;  
   ar & BOOST_SERIALIZATION_NVP( raw_path );
 

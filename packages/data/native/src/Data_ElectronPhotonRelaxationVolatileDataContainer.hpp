@@ -30,6 +30,7 @@ public:
   // Add the setter member functions to the public interface
   using ElectronPhotonRelaxationDataContainer::setNotes;
   using ElectronPhotonRelaxationDataContainer::setAtomicNumber;
+  using ElectronPhotonRelaxationDataContainer::setAtomicWeight;
   using ElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
   using ElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
   using ElectronPhotonRelaxationDataContainer::setMinElectronEnergy;

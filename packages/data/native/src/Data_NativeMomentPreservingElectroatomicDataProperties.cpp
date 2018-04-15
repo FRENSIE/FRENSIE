@@ -33,13 +33,17 @@ NativeMomentPreservingElectroatomicDataProperties::NativeMomentPreservingElectro
 
 // Constructor
 NativeMomentPreservingElectroatomicDataProperties::NativeMomentPreservingElectroatomicDataProperties(
+                                      const AtomicWeight atomic_weight,
                                       const boost::filesystem::path& file_path,
                                       const unsigned file_version,
                                       const AtomType atom )
-  : d_file_path( file_path ),
+  : d_atomic_weight( atomic_weight ),
+    d_file_path( file_path ),
     d_file_version( file_version ),
     d_atom( atom )
 {
+  // Make sure that the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0*Utility::Units::amu );
   // Make sure that the file path is valid
   testPrecondition( !file_path.string().empty() );
 
@@ -50,7 +54,8 @@ NativeMomentPreservingElectroatomicDataProperties::NativeMomentPreservingElectro
 // Copy constructor
 NativeMomentPreservingElectroatomicDataProperties::NativeMomentPreservingElectroatomicDataProperties(
                                  const NativeMomentPreservingElectroatomicDataProperties& other )
-  : d_file_path( other.d_file_path ),
+  : d_atomic_weight( other.d_atomic_weight ),
+    d_file_path( other.d_file_path ),
     d_file_version( other.d_file_version ),
     d_atom( other.d_atom )
 {
@@ -68,6 +73,12 @@ AtomType NativeMomentPreservingElectroatomicDataProperties::atom() const
 auto NativeMomentPreservingElectroatomicDataProperties::fileType() const -> FileType
 {
   return ElectroatomicDataProperties::Native_Moment_Preserving_FILE;
+}
+
+// Get the atomic weight of the nuclide that the file specifies data for
+auto NativeMomentPreservingElectroatomicDataProperties::atomicWeight() const -> AtomicWeight
+{
+  return d_atomic_weight;
 }
 
 // Get the electroatomic data file path (relative to the data directory)
@@ -108,6 +119,8 @@ void NativeMomentPreservingElectroatomicDataProperties::save( Archive& ar, const
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ElectroatomicDataProperties );
 
   // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
   std::string raw_path = d_file_path.string();
   
   ar & BOOST_SERIALIZATION_NVP( raw_path );
@@ -123,6 +136,8 @@ void NativeMomentPreservingElectroatomicDataProperties::load( Archive& ar, const
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ElectroatomicDataProperties );
 
   // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight );
+  
   std::string raw_path;  
   ar & BOOST_SERIALIZATION_NVP( raw_path );
 

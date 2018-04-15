@@ -1293,6 +1293,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 1 );
@@ -1310,6 +1312,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 1 );
@@ -1686,6 +1690,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         3.968220*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 3020 );
@@ -1703,6 +1709,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         3.968220*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 3020 );
@@ -2201,6 +2209,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         143.667877*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 7921 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
@@ -2229,6 +2239,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         149.060207*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 8053 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
@@ -2257,6 +2269,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         150.657141*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 8185 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
@@ -2285,6 +2299,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         224.084000*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "mcplib04" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 158629 );
@@ -2314,6 +2330,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         225.050000*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "mcplib04" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 161228 );
@@ -2343,6 +2361,8 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          atom_properties.zaid().atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         230.045000*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "mcplib04" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 163774 );

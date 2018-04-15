@@ -455,6 +455,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
     case 'p':
     {
       this->createAtomicTableProperties( database,
+                                         atomic_weight_ratio,
                                          table_file_path,
                                          file_start_line,
                                          table_name_components );
@@ -463,6 +464,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
     case 'e':
     {
       this->createAtomicTableProperties( database,
+                                         atomic_weight_ratio,
                                          table_file_path,
                                          file_start_line,
                                          table_name_components );
@@ -630,6 +632,7 @@ void Xsdir::createPhotonuclearTableProperties(
 // Create the photoatomic and electroatomic table properties
 void Xsdir::createAtomicTableProperties(
             ScatteringCenterPropertiesDatabase& database,
+            const double atomic_weight_ratio,
             const boost::filesystem::path& table_file_path,
             const size_t file_start_line,
             const std::tuple<std::string,unsigned,char> table_name_components ) const
@@ -645,10 +648,15 @@ void Xsdir::createAtomicTableProperties(
                       " does not exist at the specified path ("
                       << complete_table_file_path.string() << ")!" );
 
+  // Convert the atomic weight ratio to the atomic weight
+  const auto atomic_weight =
+    atomic_weight_ratio*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+
   if( Utility::get<2>( table_name_components ) == 'p' )
   {
     std::shared_ptr<const PhotoatomicDataProperties> photoatomic_properties(
-                   new ACEPhotoatomicDataProperties( table_file_path,
+                   new ACEPhotoatomicDataProperties( atomic_weight,
+                                                     table_file_path,
                                                      file_start_line,
                                                      table_name_components ) );
 
@@ -658,7 +666,8 @@ void Xsdir::createAtomicTableProperties(
     if( Utility::get<1>( table_name_components ) == 12 )
     {
       std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
-                 new ACEElectroatomicDataProperties( table_file_path,
+                 new ACEElectroatomicDataProperties( atomic_weight,
+                                                     table_file_path,
                                                      file_start_line,
                                                      table_name_components ) );
 
@@ -669,7 +678,8 @@ void Xsdir::createAtomicTableProperties(
   else if( Utility::get<2>( table_name_components ) == 'e' )
   {
     std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
-                 new ACEElectroatomicDataProperties( table_file_path,
+                 new ACEElectroatomicDataProperties( atomic_weight,
+                                                     table_file_path,
                                                      file_start_line,
                                                      table_name_components ) );
 
