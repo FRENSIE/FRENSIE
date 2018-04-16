@@ -34,19 +34,19 @@ double Photoatom::getReactionCrossSection(
     return this->getAtomicAbsorptionCrossSection( energy );
   default:
     ConstReactionMap::const_iterator photoatomic_reaction =
-      d_core.getScatteringReactions().find( reaction );
+      this->getCore().getScatteringReactions().find( reaction );
 
-    if( photoatomic_reaction != d_core.getScatteringReactions().end() )
+    if( photoatomic_reaction != this->getCore().getScatteringReactions().end() )
       return photoatomic_reaction->second->getCrossSection( energy );
 
-    photoatomic_reaction = d_core.getAbsorptionReactions().find( reaction );
+    photoatomic_reaction = this->getCore().getAbsorptionReactions().find( reaction );
 
-    if( photoatomic_reaction != d_core.getAbsorptionReactions().end() )
+    if( photoatomic_reaction != this->getCore().getAbsorptionReactions().end() )
       return photoatomic_reaction->second->getCrossSection( energy );
 
-    photoatomic_reaction = d_core.getMiscReactions().find( reaction );
+    photoatomic_reaction = this->getCore().getMiscReactions().find( reaction );
 
-    if( photoatomic_reaction != d_core.getMiscReactions().end() )
+    if( photoatomic_reaction != this->getCore().getMiscReactions().end() )
       return photoatomic_reaction->second->getCrossSection( energy );
     else // If the reaction does not exist for an atom, return 0
       return 0.0;

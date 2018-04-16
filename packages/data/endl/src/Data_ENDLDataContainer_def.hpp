@@ -24,6 +24,7 @@ void ENDLDataContainer::save( Archive& ar,
 						  const unsigned version) const
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+  ar & boost::serialization::make_nvp( "atomic_weight", d_atomic_weight );
 
 //---------------------------------------------------------------------------//
 // RELAXATION DATA
@@ -329,6 +330,7 @@ void ENDLDataContainer::load( Archive& ar,
 						  const unsigned version )
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+  ar & boost::serialization::make_nvp( "atomic_weight", d_atomic_weight );
 
 //---------------------------------------------------------------------------//
 // RELAXATION DATA

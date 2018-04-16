@@ -62,9 +62,6 @@ public:
   virtual ~Atom()
   { /* ... */ }
 
-  //! Set the atomic core
-  void setCore( const AtomCore& core );
-
   //! Return the atom name
   const std::string& getAtomName() const;
 
@@ -130,6 +127,9 @@ public:
                           ParticleBank& bank ) const = 0;
 
 protected:
+
+  //! Set the atomic core
+  void setCore( const AtomCore& core );
 
   //! Return the core
   AtomCore& getCore();

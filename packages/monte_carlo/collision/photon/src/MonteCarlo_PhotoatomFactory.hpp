@@ -48,7 +48,7 @@ public:
        const std::shared_ptr<AtomicRelaxationModelFactory>&
        atomic_relaxation_model_factory,
        const SimulationProperties& properties,
-       const bool verbose = false )
+       const bool verbose = false );
 
   //! Destructor
   ~PhotoatomFactory()

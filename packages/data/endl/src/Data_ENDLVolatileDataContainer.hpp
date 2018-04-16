@@ -28,6 +28,7 @@ public:
 
   // Add the setter member functions to the public interface
   using ENDLDataContainer::setAtomicNumber;
+  using ENDLDataContainer::setAtomicWeight;
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA

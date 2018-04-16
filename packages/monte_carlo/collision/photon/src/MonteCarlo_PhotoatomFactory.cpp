@@ -44,13 +44,13 @@ PhotoatomFactory::PhotoatomFactory(
 
   while( photoatom_name != photoatom_names.end() )
   {
-    TEST_FOR_EXCEPTION( !photoatom_defintions.doesDefinitionExist( *photoatom_name ),
+    TEST_FOR_EXCEPTION( !photoatom_definitions.doesDefinitionExist( *photoatom_name ),
                         std::runtime_error,
                         "Photoatom " << *photoatom_name << " cannot be "
                         "created because its definition has not been "
                         "specified!" );
 
-    const ScatteringCenterDefintion& photoatom_definition =
+    const ScatteringCenterDefinition& photoatom_definition =
       photoatom_definitions.getDefinition( *photoatom_name );
 
     TEST_FOR_EXCEPTION( !photoatom_definition.hasPhotoatomicDataProperties(),
@@ -75,13 +75,13 @@ PhotoatomFactory::PhotoatomFactory(
         Data::PhotoatomicDataProperties::ACE_EPR_FILE )
     {
       // Initialize the photoatomic table name map for ACE_EPR files
-      if( d_photoatom_table_name_map.find( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) ==
-          d_photoatom_table_name_map.end() )
+      if( d_photoatomic_table_name_map.find( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) ==
+          d_photoatomic_table_name_map.end() )
       {
-        d_photoatom_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE];
+        d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE];
       }
         
-      this->createPhotoatomFromACETable( cross_sections_xml_directory,
+      this->createPhotoatomFromACETable( data_directory,
                                          *photoatom_name,
                                          atomic_weight,
                                          photoatom_data_properties,
@@ -92,13 +92,13 @@ PhotoatomFactory::PhotoatomFactory(
              Data::PhotoatomicDataProperties::Native_EPR_FILE )
     {
       // Initialize the photoatomic table name map for Native_EPR files
-      if( d_photoatom_table_name_map.find( Data::PhotoatomicDataProperties::Native_EPR_FILE ) ==
-          d_photoatom_table_name_map.end() )
+      if( d_photoatomic_table_name_map.find( Data::PhotoatomicDataProperties::Native_EPR_FILE ) ==
+          d_photoatomic_table_name_map.end() )
       {
-        d_photoatom_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE];
+        d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE];
       }
       
-      this->createPhotoatomFromNativeTable( cross_sections_xml_directory,
+      this->createPhotoatomFromNativeTable( data_directory,
                                             *photoatom_name,
                                             atomic_weight,
                                             photoatom_data_properties,
@@ -273,7 +273,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
   // The table has already been loaded
   else
   {
-    d_photoatom_name_map[photoatom_alias] =
+    d_photoatom_name_map[photoatom_name] =
       d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()];
   }
 }
