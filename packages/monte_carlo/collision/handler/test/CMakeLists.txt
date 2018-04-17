@@ -1,5 +1,19 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_handler)
 
+ADD_EXECUTABLE(tstPhotonCollisionHandler
+  tstPhotonCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhotonCollisionHandler monte_carlo_collision_native)
+ADD_TEST(PhotonCollisionHandler_test tstPhotonCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
+SET_PROPERTY(TEST PhotonCollisionHandler_test PROPERTY LABELS photon)
+
+ADD_EXECUTABLE(tstAdjointPhotonCollisionHandler
+  tstAdjointPhotonCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonCollisionHandler monte_carlo_collision_native)
+ADD_TEST(AdjointPhotonCollisionHandler_test tstAdjointPhotonCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST AdjointPhotonCollisionHandler_test PROPERTY LABELS photon adjoint native)
+
 ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

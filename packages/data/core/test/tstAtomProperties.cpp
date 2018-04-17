@@ -50,21 +50,12 @@ FRENSIE_UNIT_TEST( AtomProperties, constructor )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the properties do not correspond to a nuclide
-FRENSIE_UNIT_TEST( AtomProperties, isNuclide )
+// Check that the atom type can be returned
+FRENSIE_UNIT_TEST( AtomProperties, atom )
 {
   Data::AtomProperties atom_properties( Data::H_ATOM, 1.0*amu );
 
-  FRENSIE_CHECK( !atom_properties.isNuclide() );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the zaid can be returned
-FRENSIE_UNIT_TEST( AtomProperties, zaid )
-{
-  Data::AtomProperties atom_properties( Data::H_ATOM, 1.0*amu );
-
-  FRENSIE_CHECK_EQUAL( atom_properties.zaid(), Data::ZAID(Data::H_ATOM) );
+  FRENSIE_CHECK_EQUAL( atom_properties.atom(), Data::H_ATOM );
 }
 
 //---------------------------------------------------------------------------//
@@ -437,20 +428,26 @@ FRENSIE_UNIT_TEST( AtomProperties, getPhotoatomicDataProperties )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 0 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::PhotoatomicDataProperties::ACE_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
+  FRENSIE_CHECK( photoatomic_properties ==
+                 atom_properties.getSharedPhotoatomicDataProperties(
+                        Data::PhotoatomicDataProperties::ACE_FILE, 0 ).get() );
 
   photoatomic_properties =
     &atom_properties.getPhotoatomicDataProperties(
                                 Data::PhotoatomicDataProperties::ACE_FILE, 1 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::PhotoatomicDataProperties::ACE_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
+  FRENSIE_CHECK( photoatomic_properties ==
+                 atom_properties.getSharedPhotoatomicDataProperties(
+                        Data::PhotoatomicDataProperties::ACE_FILE, 1 ).get() );
 
   FRENSIE_CHECK_THROW( atom_properties.getPhotoatomicDataProperties(
                                 Data::PhotoatomicDataProperties::ACE_FILE, 2 ),
@@ -461,20 +458,26 @@ FRENSIE_UNIT_TEST( AtomProperties, getPhotoatomicDataProperties )
                             Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::PhotoatomicDataProperties::ACE_EPR_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
+  FRENSIE_CHECK( photoatomic_properties ==
+                 atom_properties.getSharedPhotoatomicDataProperties(
+                    Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 ).get() );
 
   photoatomic_properties =
     &atom_properties.getPhotoatomicDataProperties(
                             Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::PhotoatomicDataProperties::ACE_EPR_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 2 );
+  FRENSIE_CHECK( photoatomic_properties ==
+                 atom_properties.getSharedPhotoatomicDataProperties(
+                    Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 ).get() );
 
   FRENSIE_CHECK_THROW( atom_properties.getPhotoatomicDataProperties(
                             Data::PhotoatomicDataProperties::ACE_EPR_FILE, 0 ),
@@ -485,20 +488,26 @@ FRENSIE_UNIT_TEST( AtomProperties, getPhotoatomicDataProperties )
                          Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::PhotoatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
+  FRENSIE_CHECK( photoatomic_properties ==
+                 atom_properties.getSharedPhotoatomicDataProperties(
+                 Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ).get() );
 
   photoatomic_properties =
     &atom_properties.getPhotoatomicDataProperties(
                          Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::PhotoatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 2 );
+  FRENSIE_CHECK( photoatomic_properties ==
+                 atom_properties.getSharedPhotoatomicDataProperties(
+                 Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 ).get() );
 
   FRENSIE_CHECK_THROW( atom_properties.getPhotoatomicDataProperties(
                          Data::PhotoatomicDataProperties::Native_EPR_FILE, 1 ),
@@ -663,20 +672,28 @@ FRENSIE_UNIT_TEST( AtomProperties, getAdjointPhotoatomicDataProperties )
                   Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
+  FRENSIE_CHECK(
+       photoatomic_properties ==
+       atom_properties.getSharedAdjointPhotoatomicDataProperties(
+          Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ).get() );
 
   photoatomic_properties =
     &atom_properties.getAdjointPhotoatomicDataProperties(
                   Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 );
 
   FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                        Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
+  FRENSIE_CHECK(
+       photoatomic_properties ==
+       atom_properties.getSharedAdjointPhotoatomicDataProperties(
+          Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 ).get() );
 
   FRENSIE_CHECK_THROW(
              atom_properties.getAdjointPhotoatomicDataProperties(
@@ -1035,20 +1052,26 @@ FRENSIE_UNIT_TEST( AtomProperties, getElectroatomicDataProperties )
                               Data::ElectroatomicDataProperties::ACE_FILE, 0 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::ElectroatomicDataProperties::ACE_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
+  FRENSIE_CHECK( electroatomic_properties ==
+                 atom_properties.getSharedElectroatomicDataProperties(
+                      Data::ElectroatomicDataProperties::ACE_FILE, 0 ).get() );
 
   electroatomic_properties =
     &atom_properties.getElectroatomicDataProperties(
                               Data::ElectroatomicDataProperties::ACE_FILE, 1 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::ElectroatomicDataProperties::ACE_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
+  FRENSIE_CHECK( electroatomic_properties ==
+                 atom_properties.getSharedElectroatomicDataProperties(
+                      Data::ElectroatomicDataProperties::ACE_FILE, 1 ).get() );
 
   FRENSIE_CHECK_THROW( atom_properties.getElectroatomicDataProperties(
                               Data::ElectroatomicDataProperties::ACE_FILE, 2 ),
@@ -1059,20 +1082,26 @@ FRENSIE_UNIT_TEST( AtomProperties, getElectroatomicDataProperties )
                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::ElectroatomicDataProperties::ACE_EPR_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
+  FRENSIE_CHECK( electroatomic_properties ==
+                 atom_properties.getSharedElectroatomicDataProperties(
+                  Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 ).get() );
 
   electroatomic_properties =
     &atom_properties.getElectroatomicDataProperties(
                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::ElectroatomicDataProperties::ACE_EPR_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 2 );
+  FRENSIE_CHECK( electroatomic_properties ==
+                 atom_properties.getSharedElectroatomicDataProperties(
+                  Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 ).get() );
 
   FRENSIE_CHECK_THROW( atom_properties.getElectroatomicDataProperties(
                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 0 ),
@@ -1083,20 +1112,28 @@ FRENSIE_UNIT_TEST( AtomProperties, getElectroatomicDataProperties )
                        Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::ElectroatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
+  FRENSIE_CHECK(
+               electroatomic_properties ==
+               atom_properties.getSharedElectroatomicDataProperties(
+               Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ).get() );
 
   electroatomic_properties =
     &atom_properties.getElectroatomicDataProperties(
                        Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::ElectroatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 2 );
+  FRENSIE_CHECK(
+               electroatomic_properties ==
+               atom_properties.getSharedElectroatomicDataProperties(
+               Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 ).get() );
 
   FRENSIE_CHECK_THROW(
                     atom_properties.getElectroatomicDataProperties(
@@ -1262,409 +1299,33 @@ FRENSIE_UNIT_TEST( AtomProperties, getAdjointElectroatomicDataProperties )
                   Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::AdjointElectroatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
+  FRENSIE_CHECK(
+      electroatomic_properties ==
+      atom_properties.getSharedAdjointElectroatomicDataProperties(
+        Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ).get() );
 
   electroatomic_properties =
     &atom_properties.getAdjointElectroatomicDataProperties(
                   Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 );
 
   FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                       atom_properties.zaid().atom() );
+                       atom_properties.atom() );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                        Data::AdjointElectroatomicDataProperties::Native_EPR_FILE );
   FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
+  FRENSIE_CHECK(
+      electroatomic_properties ==
+      atom_properties.getSharedAdjointElectroatomicDataProperties(
+        Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 ).get() );
 
   FRENSIE_CHECK_THROW(
              atom_properties.getAdjointElectroatomicDataProperties(
                   Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 2 ),
              Data::InvalidScatteringCenterPropertiesRequest );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the atom properties can be cloned
-FRENSIE_UNIT_TEST( AtomProperties, clone )
-{
-  Data::AtomProperties atom_properties( Data::H_ATOM, 1.0*amu );
-  
-  // Set the photoatomic data
-  {
-    std::shared_ptr<const Data::PhotoatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_FILE,
-                                 0 ) );
-    
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_FILE,
-                                 1 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_EPR_FILE,
-                                 1 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_EPR_FILE,
-                                 2 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                              Data::H_ATOM,
-                              Data::PhotoatomicDataProperties::Native_EPR_FILE,
-                              0 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                              Data::H_ATOM,
-                              Data::PhotoatomicDataProperties::Native_EPR_FILE,
-                              2 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-  }
-
-  // Set the adjoint photoatomic data
-  {
-    std::shared_ptr<const Data::AdjointPhotoatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE,
-                       0 ) );
-    
-    atom_properties.setAdjointPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE,
-                       1 ) );
-
-    atom_properties.setAdjointPhotoatomicDataProperties( test_data );
-  }
-
-  // Set the electroatomic data
-  {
-    std::shared_ptr<const Data::ElectroatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::ElectroatomicDataProperties::ACE_FILE,
-                                 0 ) );
-    
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::ElectroatomicDataProperties::ACE_FILE,
-                                 1 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                               Data::H_ATOM,
-                               Data::ElectroatomicDataProperties::ACE_EPR_FILE,
-                               1 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                               Data::H_ATOM,
-                               Data::ElectroatomicDataProperties::ACE_EPR_FILE,
-                               2 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                            Data::H_ATOM,
-                            Data::ElectroatomicDataProperties::Native_EPR_FILE,
-                            0 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                            Data::H_ATOM,
-                            Data::ElectroatomicDataProperties::Native_EPR_FILE,
-                            2 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-  }
-
-  // Set the adjoint electroatomic data
-  {
-    std::shared_ptr<const Data::AdjointElectroatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointElectroatomicDataProperties::Native_EPR_FILE,
-                       0 ) );
-    
-    atom_properties.setAdjointElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointElectroatomicDataProperties::Native_EPR_FILE,
-                       1 ) );
-
-    atom_properties.setAdjointElectroatomicDataProperties( test_data );
-  }
-
-  std::unique_ptr<const Data::AtomProperties>
-    atom_properties_clone( atom_properties.clone() );
-
-  FRENSIE_CHECK( atom_properties_clone.get() != &atom_properties );
-  
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) ==
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 1 ) ==
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 1 ) );
-  
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 ) ==
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 ) ==
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) ==
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 ) ==
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) ==
-                 &atom_properties.getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 ) ==
-                 &atom_properties.getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) ==
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 1 ) ==
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 1 ) );
-  
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 ) ==
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 ) ==
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) ==
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 ) ==
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) ==
-                 &atom_properties.getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 ) ==
-                 &atom_properties.getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the atom properties and the underlying data can be cloned
-FRENSIE_UNIT_TEST( AtomProperties, deepClone )
-{
-  Data::AtomProperties atom_properties( Data::H_ATOM, 1.0*amu );
-  
-  // Set the photoatomic data
-  {
-    std::shared_ptr<const Data::PhotoatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_FILE,
-                                 0 ) );
-    
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_FILE,
-                                 1 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_EPR_FILE,
-                                 1 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::PhotoatomicDataProperties::ACE_EPR_FILE,
-                                 2 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                              Data::H_ATOM,
-                              Data::PhotoatomicDataProperties::Native_EPR_FILE,
-                              0 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::PhotoatomicDataProperties>(
-                              Data::H_ATOM,
-                              Data::PhotoatomicDataProperties::Native_EPR_FILE,
-                              2 ) );
-
-    atom_properties.setPhotoatomicDataProperties( test_data );
-  }
-
-  // Set the adjoint photoatomic data
-  {
-    std::shared_ptr<const Data::AdjointPhotoatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE,
-                       0 ) );
-    
-    atom_properties.setAdjointPhotoatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::AdjointPhotoatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE,
-                       1 ) );
-
-    atom_properties.setAdjointPhotoatomicDataProperties( test_data );
-  }
-
-  // Set the electroatomic data
-  {
-    std::shared_ptr<const Data::ElectroatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::ElectroatomicDataProperties::ACE_FILE,
-                                 0 ) );
-    
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                                 Data::H_ATOM,
-                                 Data::ElectroatomicDataProperties::ACE_FILE,
-                                 1 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                               Data::H_ATOM,
-                               Data::ElectroatomicDataProperties::ACE_EPR_FILE,
-                               1 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                               Data::H_ATOM,
-                               Data::ElectroatomicDataProperties::ACE_EPR_FILE,
-                               2 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                            Data::H_ATOM,
-                            Data::ElectroatomicDataProperties::Native_EPR_FILE,
-                            0 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::ElectroatomicDataProperties>(
-                            Data::H_ATOM,
-                            Data::ElectroatomicDataProperties::Native_EPR_FILE,
-                            2 ) );
-
-    atom_properties.setElectroatomicDataProperties( test_data );
-  }
-
-  // Set the adjoint electroatomic data
-  {
-    std::shared_ptr<const Data::AdjointElectroatomicDataProperties> test_data(
-           new Data::TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointElectroatomicDataProperties::Native_EPR_FILE,
-                       0 ) );
-    
-    atom_properties.setAdjointElectroatomicDataProperties( test_data );
-
-    test_data.reset(
-           new Data::TestAtomicDataProperties<Data::AdjointElectroatomicDataProperties>(
-                       Data::H_ATOM,
-                       Data::AdjointElectroatomicDataProperties::Native_EPR_FILE,
-                       1 ) );
-
-    atom_properties.setAdjointElectroatomicDataProperties( test_data );
-  }
-
-  std::unique_ptr<const Data::AtomProperties>
-    atom_properties_clone( atom_properties.deepClone() );
-
-  FRENSIE_CHECK( atom_properties_clone.get() != &atom_properties );
-  
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) !=
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 1 ) !=
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_FILE, 1 ) );
-  
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 ) !=
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 ) !=
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) !=
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 ) !=
-                 &atom_properties.getPhotoatomicDataProperties( Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) !=
-                 &atom_properties.getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 ) !=
-                 &atom_properties.getAdjointPhotoatomicDataProperties( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) !=
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 1 ) !=
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_FILE, 1 ) );
-  
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 ) !=
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 ) !=
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) !=
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 ) !=
-                 &atom_properties.getElectroatomicDataProperties( Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 ) );
-
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) !=
-                 &atom_properties.getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
-  FRENSIE_CHECK( &atom_properties_clone->getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 ) !=
-                 &atom_properties.getAdjointElectroatomicDataProperties( Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1980,7 +1641,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( atom_properties ) );
 
     std::unique_ptr<const Data::AtomProperties>
-      atom_properties_ptr( atom_properties.clone() );
+      atom_properties_ptr( new Data::AtomProperties( atom_properties ) );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( atom_properties_ptr ) );
   }
@@ -1997,7 +1658,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( atom_properties ) );
 
-  FRENSIE_CHECK_EQUAL( atom_properties.zaid(), Data::ZAID(Data::H_ATOM) );
+  FRENSIE_CHECK_EQUAL( atom_properties.atom(), Data::H_ATOM );
   FRENSIE_CHECK_EQUAL( atom_properties.atomicWeight(), 1.0*amu );
 
   {
@@ -2006,7 +1667,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
@@ -2016,7 +1677,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
@@ -2030,7 +1691,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                             Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
@@ -2040,7 +1701,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                             Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 2 );
@@ -2054,7 +1715,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                          Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
@@ -2064,7 +1725,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                          Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 2 );
@@ -2080,7 +1741,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                   Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
@@ -2090,7 +1751,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                   Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
@@ -2107,7 +1768,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                               Data::ElectroatomicDataProperties::ACE_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
@@ -2117,7 +1778,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                               Data::ElectroatomicDataProperties::ACE_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
@@ -2131,7 +1792,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
@@ -2141,7 +1802,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 2 );
@@ -2155,7 +1816,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                        Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
@@ -2165,7 +1826,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                        Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 2 );
@@ -2182,7 +1843,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                 Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::AdjointElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
@@ -2192,7 +1853,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                 Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::AdjointElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
@@ -2207,7 +1868,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( atom_properties_ptr ) );
 
-  FRENSIE_CHECK_EQUAL( atom_properties_ptr->zaid(), Data::ZAID(Data::H_ATOM) );
+  FRENSIE_CHECK_EQUAL( atom_properties_ptr->atom(), Data::H_ATOM );
   FRENSIE_CHECK_EQUAL( atom_properties_ptr->atomicWeight(), 1.0*amu );
 
   {
@@ -2216,7 +1877,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
@@ -2226,7 +1887,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
@@ -2240,7 +1901,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                             Data::PhotoatomicDataProperties::ACE_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
@@ -2250,7 +1911,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                             Data::PhotoatomicDataProperties::ACE_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 2 );
@@ -2264,7 +1925,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                          Data::PhotoatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
@@ -2274,7 +1935,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                          Data::PhotoatomicDataProperties::Native_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::PhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 2 );
@@ -2290,7 +1951,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                   Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 0 );
@@ -2300,7 +1961,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                   Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileType(),
                          Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( photoatomic_properties->fileVersion(), 1 );
@@ -2317,7 +1978,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                               Data::ElectroatomicDataProperties::ACE_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
@@ -2327,7 +1988,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                               Data::ElectroatomicDataProperties::ACE_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
@@ -2341,7 +2002,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );
@@ -2351,7 +2012,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                           Data::ElectroatomicDataProperties::ACE_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 2 );
@@ -2365,7 +2026,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                        Data::ElectroatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
@@ -2375,7 +2036,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                        Data::ElectroatomicDataProperties::Native_EPR_FILE, 2 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::ElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 2 );
@@ -2392,7 +2053,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                 Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::AdjointElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 0 );
@@ -2402,7 +2063,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( AtomProperties, archive, TestArchives )
                 Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties->atom(),
-                         atom_properties_ptr->zaid().atom() );
+                         atom_properties_ptr->atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileType(),
                          Data::AdjointElectroatomicDataProperties::Native_EPR_FILE );
     FRENSIE_CHECK_EQUAL( electroatomic_properties->fileVersion(), 1 );

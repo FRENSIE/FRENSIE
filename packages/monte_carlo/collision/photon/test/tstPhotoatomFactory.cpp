@@ -8,12 +8,10 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <fstream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
+// Boost Includes
+#include <boost/archive/xml_iarchive.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomFactory.hpp"
@@ -21,26 +19,27 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "Data_ScatteringCenterPropertiesDatabase.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::string cross_sections_xml_directory;
-Teuchos::ParameterList cross_section_table_info;
-Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
+std::unique_ptr<const boost::filesystem::path> data_directory;
+std::unique_ptr<MonteCarlo::ScatteringCenterDefinitionDatabase> photoatom_definitions;
+std::shared_ptr<MonteCarlo::AtomicRelaxationModelFactory>
 atomic_relaxation_model_factory;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (only basic data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
+FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb" );
 
   MonteCarlo::SimulationProperties properties;
@@ -50,126 +49,126 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                      new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
+                                               *data_directory,
+                                               photoatom_aliases,
+					       *photoatom_definitions,
 					       atomic_relaxation_model_factory,
-                                               properties ) );
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb" ) );
-  TEST_ASSERT( !photoatom_map["Pb"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb" ) );
+  FRENSIE_CHECK( photoatom_map["Pb"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb"];
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom = photoatom_map["Pb"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomName(), "82000.12p" );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section =
     atom->getTotalCrossSection( exp( -1.381551055796E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
 
   cross_section =
     atom->getTotalCrossSection( exp( 1.151292546497E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
 
   // Test that the absorption cross section can be returned
   cross_section =
     atom->getAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section =
     atom->getAbsorptionCrossSection( exp( -1.214969212306E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
   cross_section =
     atom->getAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			   exp( -1.381551055796E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			   exp( -1.364234411496E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			   exp( 1.151292546497E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   exp(-1.381551055796E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 				   exp( -1.364234411496E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 				   exp( 1.151292546497E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
 
   // Test that the total photoelectric cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			exp( -1.381551055796E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			exp( -1.214969212306E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			exp( -1.214720768866E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			exp( 1.151292546497E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
 
   // Test that there are no subshell cross sections
   cross_section = atom->getReactionCrossSection(
 		   exp( -1.381551055796E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 		   exp( 1.151292546497E+01 ),
@@ -180,32 +179,32 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 			    exp( -1.381551055796E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			    exp( 2.480967890857E-02 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			    exp( 1.151292546497E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
 
   // Test that there is no triplet production cross section
   cross_section = atom->getReactionCrossSection(
 			 exp( -1.381551055796E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			 exp( 1.151292546497E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   // Test that the Doppler data is not present
   MonteCarlo::ParticleBank bank;
@@ -228,8 +227,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 
   atom->collideAnalogue( photon, bank );
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -239,10 +238,10 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (only basic data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
+FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
   MonteCarlo::SimulationProperties properties;
@@ -252,142 +251,140 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                        new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
+					       *data_directory,
+                                               photoatom_aliases,
+					       *photoatom_definitions,
 					       atomic_relaxation_model_factory,
-                                               properties ) );
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb-Native" ) );
-  TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb-Native" ) );
+  FRENSIE_CHECK( photoatom_map["Pb-Native"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
-
-  std::string cross_sections_xml_name = cross_sections_xml_directory;
-  cross_sections_xml_name += "/test_epr_82_native.xml";
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom =
+    photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+  FRENSIE_CHECK( atom->getAtomName().find( "test_epr_82_native.xml" ) <
 	       atom->getAtomName().size() );
 
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999999999999886, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.13373119562157392e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.13373119562157392e+01, 1e-12 );
 
   // Test that the absorption cross section can be reaturned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getAbsorptionCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			   0.001,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 			   20.0,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   0.001,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
 
   cross_section = atom->getReactionCrossSection(
 				   20.0,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
 
   // Test that the photoelectric cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			0.001,
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 			20.0,
 		        MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			    0.001,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        2*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 
   // Test that the triplet production cross section can be returned
   cross_section = atom->getReactionCrossSection(
                          0.001,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        4*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                          20.0,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell cross sections
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   // Test that the Doppler data is not present
   MonteCarlo::ParticleBank bank;
@@ -406,8 +403,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 
   atom->collideAnalogue( photon, bank );
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -418,10 +415,10 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (Doppler data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
+FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb" );
 
   MonteCarlo::SimulationProperties properties;
@@ -431,126 +428,126 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                         new MonteCarlo::PhotoatomFactory(
-                                               cross_sections_xml_directory,
-                                               cross_section_table_info,
+                                               *data_directory,
                                                photoatom_aliases,
-		                               atomic_relaxation_model_factory,
-                                               properties ) );
+					       *photoatom_definitions,
+					       atomic_relaxation_model_factory,
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb" ) );
-  TEST_ASSERT( !photoatom_map["Pb"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb" ) );
+  FRENSIE_CHECK( photoatom_map["Pb"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb"];
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom = photoatom_map["Pb"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomName(), "82000.12p" );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section =
     atom->getTotalCrossSection( exp( -1.381551055796E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
 
   cross_section =
     atom->getTotalCrossSection( exp( 1.151292546497E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
 
   // Test that the absorption cross section can be returned
   cross_section =
     atom->getAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section =
     atom->getAbsorptionCrossSection( exp( -1.214969212306E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
   cross_section =
     atom->getAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			   exp( -1.381551055796E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			   exp( -1.364234411496E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			   exp( 1.151292546497E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   exp(-1.381551055796E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 				   exp( -1.364234411496E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 				   exp( 1.151292546497E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
 
   // Test that the total photoelectric cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			exp( -1.381551055796E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			exp( -1.214969212306E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			exp( -1.214720768866E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			exp( 1.151292546497E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
 
   // Test that there are no subshell cross sections
   cross_section = atom->getReactionCrossSection(
 		   exp( -1.381551055796E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 		   exp( 1.151292546497E+01 ),
@@ -561,26 +558,26 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
 			    exp( -1.381551055796E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			    exp( 2.480967890857E-02 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			    exp( 1.151292546497E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
 
   // Test that there is no triplet production cross section
   cross_section = atom->getReactionCrossSection(
 			 exp( -1.381551055796E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			 exp( 1.151292546497E+01 ),
@@ -611,18 +608,18 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
 
   atom->collideAnalogue( photon, bank );
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (Doppler data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
+FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
   MonteCarlo::SimulationProperties properties;
@@ -632,142 +629,140 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                new MonteCarlo::PhotoatomFactory(
-                                               cross_sections_xml_directory,
-                                               cross_section_table_info,
+                                               *data_directory,
                                                photoatom_aliases,
-                                               atomic_relaxation_model_factory,
-                                               properties ) );
+					       *photoatom_definitions,
+					       atomic_relaxation_model_factory,
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb-Native" ) );
-  TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb-Native" ) );
+  FRENSIE_CHECK( photoatom_map["Pb-Native"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
-
-  std::string cross_sections_xml_name = cross_sections_xml_directory;
-  cross_sections_xml_name += "/test_epr_82_native.xml";
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom =
+    photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
-	       atom->getAtomName().size() );
+  FRENSIE_CHECK( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+                 atom->getAtomName().size() );
 
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999999999999886, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-15 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
 
   // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getAbsorptionCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			   0.001,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 			   20.0,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   0.001,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
 
   cross_section = atom->getReactionCrossSection(
 				   20.0,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
 
   // Test that the photoelectric cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			0.001,
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 			20.0,
 		        MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			    0.001,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        2*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 
   // Test that the triplet production cross section can be returned
   cross_section = atom->getReactionCrossSection(
                          0.001,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        4*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                          20.0,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell cross sections
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   // Test that the Doppler data is present
   MonteCarlo::ParticleBank bank;
@@ -791,19 +786,19 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), 1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (impulse approx data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory,
+FRENSIE_UNIT_TEST( PhotoatomFactory,
 		   createPhotoatomMap_native_impulse_approx_basic )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
   MonteCarlo::SimulationProperties properties;
@@ -813,155 +808,153 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                    new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-                                               cross_section_table_info,
+					       *data_directory,
                                                photoatom_aliases,
+					       *photoatom_definitions,
 					       atomic_relaxation_model_factory,
-                                               properties ) );
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb-Native" ) );
-  TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb-Native" ) );
+  FRENSIE_CHECK( photoatom_map["Pb-Native"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
-
-  std::string cross_sections_xml_name = cross_sections_xml_directory;
-  cross_sections_xml_name += "/test_epr_82_native.xml";
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom =
+    photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
-	       atom->getAtomName().size() );
+  FRENSIE_CHECK( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+                 atom->getAtomName().size() );
 
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999999999999886, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084209057610761E+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.79084209057610761E+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 21.3391619464462181, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 21.3391619464462181, 1e-12 );
 
   // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getAbsorptionCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that there is no total incoherent cross section
   cross_section = atom->getReactionCrossSection(
 			   20.0,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   // Test the subshell incoherent cross sections can be returned
   cross_section = atom->getReactionCrossSection(
 		      8.82900086220703151e-02,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		     1e-3,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.198065568410027426, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.198065568410027426, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		     20.0,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.0402322921484711687, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0402322921484711687, 1e-12 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   0.001,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
 
   cross_section = atom->getReactionCrossSection(
 				   20.0,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
 
   // Test that the photoelectric cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			0.001,
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 			20.0,
 		        MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			    0.001,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        2*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 
   // Test that the triplet production cross section can be returned
   cross_section = atom->getReactionCrossSection(
                          0.001,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        4*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                          20.0,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell photoelectric cross sections
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
   
   // Test that the Doppler data is not present
   MonteCarlo::ParticleBank bank;
@@ -983,19 +976,19 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), -1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (impulse approx, Doppler data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory,
+FRENSIE_UNIT_TEST( PhotoatomFactory,
 		   createPhotoatomMap_native_impulse_approx_doppler )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
   MonteCarlo::SimulationProperties properties;
@@ -1005,155 +998,154 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   properties.setAtomicRelaxationModeOff( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                      new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
+					       *data_directory,
+                                               photoatom_aliases,
+					       *photoatom_definitions,
 					       atomic_relaxation_model_factory,
-                                               properties ) );
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb-Native" ) );
-  TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb-Native" ) );
+  FRENSIE_CHECK( photoatom_map["Pb-Native"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
-
-  std::string cross_sections_xml_name = cross_sections_xml_directory;
-  cross_sections_xml_name += "/test_epr_82_native.xml";
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom =
+    photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
-	       atom->getAtomName().size() );
+  FRENSIE_CHECK( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+                 atom->getAtomName().size() );
 
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999999999999886, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084209057610761E+06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.79084209057610761E+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 21.3391619464462181, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 21.3391619464462181, 1e-12 );
 
   // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getAbsorptionCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that there is no total incoherent cross section
   cross_section = atom->getReactionCrossSection(
 			   20.0,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   // Test the subshell incoherent cross sections can be returned
   cross_section = atom->getReactionCrossSection(
 		      8.82900086220703151e-02,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.25526576584511952e-09, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0603100048795882984, 1e-9 );
 
   cross_section = atom->getReactionCrossSection(
 		     1e-3,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.198065568410027426, 1e-6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.198065568410027426, 1e-6 );
 
   cross_section = atom->getReactionCrossSection(
 		     20.0,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0402322921484711687, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0402322921484711687, 1e-12 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   0.001,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
 
   cross_section = atom->getReactionCrossSection(
 				   20.0,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
 
   // Test that the photoelectric cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			0.001,
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 			20.0,
 		        MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			    0.001,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        2*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 
   // Test that the triplet production cross section can be returned
   cross_section = atom->getReactionCrossSection(
                          0.001,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        4*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                          20.0,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell photoelectric cross sections
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   // Test that the Doppler data is present
   MonteCarlo::ParticleBank bank;
@@ -1176,15 +1168,15 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getZDirection(), 1e-15 );
+  FRENSIE_CHECK_SMALL( photon.getYDirection(), 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon.getXDirection(), 1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (detailed pair production data)
-// TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_detailed_pp )
+// FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_detailed_pp )
 // {
 //   // Create the set of photoatom aliases
 //   photoatom_aliases.insert( "Pb" );
@@ -1198,22 +1190,22 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 // 					       false,
 // 					       false ) );
 
-//   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
+//   MonteCarlo::PhotoatomFactory::PhotoatomNameMap
 //     photoatom_map;
 
 //   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-//   TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-//   TEST_ASSERT( photoatom_map.count( "Pb" ) );
-//   TEST_ASSERT( !photoatom_map["Pb"].is_null() );
+//   FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+//   FRENSIE_CHECK( photoatom_map.count( "Pb" ) );
+//   FRENSIE_CHECK( photoatom_map["Pb"].get() );
 // }
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (subshell pe data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
+FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb" );
 
   MonteCarlo::SimulationProperties properties;
@@ -1223,133 +1215,133 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
   properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                      new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
+					       *data_directory,
+                                               photoatom_aliases,
+					       *photoatom_definitions,
 					       atomic_relaxation_model_factory,
-                                               properties ) );
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb" ) );
-  TEST_ASSERT( !photoatom_map["Pb"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb" ) );
+  FRENSIE_CHECK( photoatom_map["Pb"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb"];
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom = photoatom_map["Pb"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomName(), "82000.12p" );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section =
     atom->getTotalCrossSection( exp( -1.381551055796E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.006275141600000259, 1e-12 );
 
   cross_section =
     atom->getTotalCrossSection( exp( 1.151292546497E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 41.18471143984235, 1e-12 );
 
   // Test that the absorption cross section can be returned
   cross_section =
     atom->getAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section =
     atom->getAbsorptionCrossSection( exp( -1.214969212306E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
   cross_section =
     atom->getAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-11 );
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			   exp( -1.381551055796E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			   exp( -1.364234411496E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			   exp( 1.151292546497E+01 ),
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   exp(-1.381551055796E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -5.071403810640E+00 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 				   exp( -1.364234411496E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -4.284251858121E+00 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 				   exp( 1.151292546497E+01 ),
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -2.309498238246E+01 ), 1e-12 );
 
   // Test that there is no total photoelectric
   cross_section = atom->getReactionCrossSection(
 			exp( -1.381551055796E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			exp( 1.151292546497E+01 ),
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			    exp( -1.381551055796E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			    exp( 2.480967890857E-02 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			    exp( 1.151292546497E+01 ),
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
 
   // Test that there is no triplet production cross section
   cross_section = atom->getReactionCrossSection(
 			 exp( -1.381551055796E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 			 exp( 1.151292546497E+01 ),
@@ -1360,46 +1352,46 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
 		   exp( -1.381551055796E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 		   exp( -2.427128314806E+00 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 7.578565567350E+00 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 7.578565567350E+00 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 		   exp( 1.151292546497E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -1.135387253512E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -1.135387253512E+01 ), 1e-12 );
 
   // Test that the P3 subshell photoelectric cross section can be returned
   cross_section = atom->getReactionCrossSection(
 		  exp( -1.381551055796E+01 ),
 		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 		  exp( -1.214969212306E+01 ),
 		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
 		  exp( 1.151292546497E+01 ),
 		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, exp( -2.364731020721E+01 ), 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, exp( -2.364731020721E+01 ), 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a photoatom map can be created (subshell pe data)
-TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
+FRENSIE_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "Pb-Native" );
 
   MonteCarlo::SimulationProperties properties;
@@ -1409,169 +1401,167 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
   properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                      new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
+					       *data_directory,
+                                               photoatom_aliases,
+					       *photoatom_definitions,
 					       atomic_relaxation_model_factory,
-                                               properties ) );
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "Pb-Native" ) );
-  TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 1 );
+  FRENSIE_CHECK( photoatom_map.count( "Pb-Native" ) );
+  FRENSIE_CHECK( photoatom_map["Pb-Native"].get() != NULL );
 
-  Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
-
-  std::string cross_sections_xml_name = cross_sections_xml_directory;
-  cross_sections_xml_name += "/test_epr_82_native.xml";
+  std::shared_ptr<const MonteCarlo::Photoatom>& atom =
+    photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
-	       atom->getAtomName().size() );
+  FRENSIE_CHECK( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+                 atom->getAtomName().size() );
 
-  TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
-  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
+  FRENSIE_CHECK_EQUAL( atom->getAtomicNumber(), 82 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999999999999886, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-15 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 21.3373119562183398, 1e-15 );
 
   // Test that the absorption cross section can be reaturned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.78857306272290740e+06, 1e-15 );
 
   cross_section = atom->getAbsorptionCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.03368055321776603e-02, 1e-15 );
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			   0.001,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 			   20.0,
 			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection(
 				   0.001,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.26802744627581296e+03, 1e-3 );
 
   cross_section = atom->getReactionCrossSection(
 				   20.0,
 				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.33286215895818971e-03, 1e-3 );
 
   // Test that the total photoelectric cross section is not present
   cross_section = atom->getReactionCrossSection(
 			0.001,
 			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			20.0,
 		        MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   // Test that the subshell photoelectric cross sections can be returned
   cross_section = atom->getReactionCrossSection(
 		   8.82900099999595622e-02,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.95582145812230942e+03, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.95582145812230942e+03, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 		   20.0,
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.61425467896072372e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.61425467896072372e-02, 1e-15 );
 
   cross_section = atom->getReactionCrossSection(
 		  1e-3,
 		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 7.38175550850533909e+02, 1e-24 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 7.38175550850533909e+02, 1e-24 );
 
   cross_section = atom->getReactionCrossSection(
 		  20.0,
 		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.03007633456089762e-07, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.03007633456089762e-07, 1e-15 );
 
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			    0.001,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        2*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
 			    20.0,
 			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 18.5899999999999999, 1e-15 );
 
   // Test that the triplet production cross section can be returned
   cross_section = atom->getReactionCrossSection(
                          0.001,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                        4*Utility::PhysicalConstants::electron_rest_mass_energy,
                        MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = atom->getReactionCrossSection(
                          20.0,
                          MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.186299999999999993, 1e-12 );
 
   // Test that there are no subshell incoherent cross sections
   cross_section = atom->getReactionCrossSection(
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that tables are not duplicated
-TEUCHOS_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
+FRENSIE_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
 {
   // Create the set of photoatom aliases
-  std::unordered_set<std::string> photoatom_aliases;
+  MonteCarlo::PhotoatomFactory::ScatteringCenterNameSet photoatom_aliases;
   photoatom_aliases.insert( "H-1_293.6K" );
   photoatom_aliases.insert( "H-1_300K" );
 
@@ -1582,51 +1572,90 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
   properties.setAtomicRelaxationModeOn( MonteCarlo::PHOTON );
   properties.setDetailedPairProductionModeOff();
 
-  Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory(
+  std::unique_ptr<MonteCarlo::PhotoatomFactory> photoatom_factory(
                                           new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
-					       atomic_relaxation_model_factory,
-                                               properties ) );
+        				       *data_directory,
+                                               photoatom_aliases,
+        				       *photoatom_definitions,
+        				       atomic_relaxation_model_factory,
+                                               properties,
+                                               true ) );
 
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-    photoatom_map;
+  MonteCarlo::PhotoatomFactory::PhotoatomNameMap photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
-  TEST_EQUALITY_CONST( photoatom_map.size(), 2 );
+  FRENSIE_CHECK_EQUAL( photoatom_map.size(), 2 );
 
-  TEST_ASSERT( photoatom_map.count( "H-1_293.6K" ) );
-  TEST_ASSERT( !photoatom_map["H-1_293.6K"].is_null() );
+  FRENSIE_CHECK( photoatom_map.count( "H-1_293.6K" ) );
+  FRENSIE_CHECK( photoatom_map["H-1_293.6K"].get() != NULL );
 
-  TEST_ASSERT( photoatom_map.count( "H-1_300K" ) );
-  TEST_ASSERT( !photoatom_map["H-1_300K"].is_null() );
+  FRENSIE_CHECK( photoatom_map.count( "H-1_300K" ) );
+  FRENSIE_CHECK( photoatom_map["H-1_300K"].get() != NULL );
 
-  TEST_EQUALITY( photoatom_map["H-1_293.6K"], photoatom_map["H-1_300K"] );
+  FRENSIE_CHECK( photoatom_map["H-1_293.6K"] == photoatom_map["H-1_300K"] );
 }
 
 //---------------------------------------------------------------------------//
-// Custom setup
+// Custom Setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+std::string test_scattering_center_database_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_cross_sections_xml_directory",
-                   &cross_sections_xml_directory,
-                   "Test cross_sections.xml file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_database",
+                                        test_scattering_center_database_name, "",
+                                        "Test scattering center database name "
+                                        "with path" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  std::string cross_sections_xml_file = cross_sections_xml_directory;
-  cross_sections_xml_file += "/cross_sections.xml";
+  // Determine the database directory
+  boost::filesystem::path database_path =
+    test_scattering_center_database_name;
+  
+  data_directory.reset(
+                  new boost::filesystem::path( database_path.parent_path() ) );
+  // Load the database
+  const Data::ScatteringCenterPropertiesDatabase database( database_path );
 
-  // Read in the xml file storing the cross section table info
-  Teuchos::updateParametersFromXmlFile(
-			       cross_sections_xml_file,
-			       Teuchos::inoutArg( cross_section_table_info ) );
+  const Data::AtomProperties& h_properties =
+    database.getAtomProperties( 1001 );
+  
+  const Data::AtomProperties& pb_properties =
+    database.getAtomProperties( Data::Pb_ATOM );
+  
+  // Initialize the photoatom definitions
+  photoatom_definitions.reset( new MonteCarlo::ScatteringCenterDefinitionDatabase );
+
+  MonteCarlo::ScatteringCenterDefinition& h1_293K_definition =
+    photoatom_definitions->createDefinition( "H-1_293.6K", 1001 );
+
+  h1_293K_definition.setPhotoatomicDataProperties(
+           h_properties.getSharedPhotoatomicDataProperties(
+                                 Data::PhotoatomicDataProperties::ACE_EPR_FILE,
+                                 12 ) );
+
+  photoatom_definitions->createDefinitionAlias( "H-1_293.6K", "H-1_300K" );
+  
+  MonteCarlo::ScatteringCenterDefinition& pb_definition =
+    photoatom_definitions->createDefinition( "Pb", Data::Pb_ATOM );
+
+  pb_definition.setPhotoatomicDataProperties(
+           pb_properties.getSharedPhotoatomicDataProperties(
+                                 Data::PhotoatomicDataProperties::ACE_EPR_FILE,
+                                 12 ) );
+
+  MonteCarlo::ScatteringCenterDefinition& pb_native_definition =
+    photoatom_definitions->createDefinition( "Pb-Native", Data::Pb_ATOM );
+
+  pb_native_definition.setPhotoatomicDataProperties(
+           pb_properties.getSharedPhotoatomicDataProperties(
+                              Data::PhotoatomicDataProperties::Native_EPR_FILE,
+                              0 ) );
 
   // Create the atomic relaxation model factory
   atomic_relaxation_model_factory.reset(
@@ -1636,7 +1665,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPhotoatomFactory.cpp

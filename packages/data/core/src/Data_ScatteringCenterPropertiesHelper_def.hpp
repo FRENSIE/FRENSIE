@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_AtomProperties_def.hpp
+//! \file   Data_ScatteringCenterPropertiesHelper_def.hpp
 //! \author Alex Robinson
 //! \brief  The atom properties class template function definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_ATOM_PROPERTIES_DEF_HPP
-#define DATA_ATOM_PROPERTIES_DEF_HPP
+#ifndef DATA_SCATTERING_CENTER_PROPERTIES_HELPER_DEF_HPP
+#define DATA_SCATTERING_CENTER_PROPERTIES_HELPER_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_StaticOutputFormatter.hpp"
@@ -16,7 +16,7 @@ namespace Data{
 
 // Check if there is data available with the desired format
 template<typename PropertiesMap>
-inline bool AtomProperties::dataAvailable(
+inline bool ScatteringCenterPropertiesHelper::dataAvailable(
                              const PropertiesMap& properties,
                              const typename PropertiesMap::key_type file_type )
 {
@@ -25,7 +25,7 @@ inline bool AtomProperties::dataAvailable(
 
 // Check if there is data available with the desired format and table version
 template<typename PropertiesMap>
-inline bool AtomProperties::dataAvailable(
+inline bool ScatteringCenterPropertiesHelper::dataAvailable(
                               const PropertiesMap& properties,
                               const typename PropertiesMap::key_type file_type,
                               const unsigned table_version )
@@ -47,7 +47,8 @@ inline bool AtomProperties::dataAvailable(
 // Get the data file types
 template<typename PropertiesMap>
 inline std::set<typename PropertiesMap::key_type>
-AtomProperties::getDataFileTypes( const PropertiesMap& properties )
+ScatteringCenterPropertiesHelper::getDataFileTypes(
+                                              const PropertiesMap& properties )
 {
   std::set<typename PropertiesMap::key_type> file_types;
 
@@ -65,7 +66,7 @@ AtomProperties::getDataFileTypes( const PropertiesMap& properties )
 
 // Get the data file versions
 template<typename PropertiesMap>
-inline std::set<unsigned> AtomProperties::getDataFileVersions(
+inline std::set<unsigned> ScatteringCenterPropertiesHelper::getDataFileVersions(
                              const PropertiesMap& properties,
                              const typename PropertiesMap::key_type file_type )
 {
@@ -92,7 +93,7 @@ inline std::set<unsigned> AtomProperties::getDataFileVersions(
 
 // Get the recommended data file version
 template<typename PropertiesMap>
-unsigned AtomProperties::getMaxDataFileVersion(
+unsigned ScatteringCenterPropertiesHelper::getMaxDataFileVersion(
                               const PropertiesMap& properties,
                               const typename PropertiesMap::key_type file_type,
                               const std::string& type_name )
@@ -127,7 +128,23 @@ unsigned AtomProperties::getMaxDataFileVersion(
 
 // Get the properties
 template<typename Properties, typename PropertiesMap>
-inline const Properties& AtomProperties::getProperties(
+inline const Properties& ScatteringCenterPropertiesHelper::getProperties(
+                              const PropertiesMap& properties,
+                              const typename PropertiesMap::key_type file_type,
+                              const unsigned table_version,
+                              const std::string& type_name )
+{
+  return *ScatteringCenterPropertiesHelper::getSharedProperties<Properties>(
+                                                                 properties,
+                                                                 file_type,
+                                                                 table_version,
+                                                                 type_name );
+}
+
+// Get the properties
+template<typename Properties, typename PropertiesMap>
+inline const std::shared_ptr<const Properties>&
+ScatteringCenterPropertiesHelper::getSharedProperties(
                               const PropertiesMap& properties,
                               const typename PropertiesMap::key_type file_type,
                               const unsigned table_version,
@@ -142,7 +159,7 @@ inline const Properties& AtomProperties::getProperties(
       properties_it->second.find( table_version );
 
     if( version_it != properties_it->second.end() )
-      return *version_it->second;
+      return version_it->second;
     else
     {
       THROW_EXCEPTION( InvalidScatteringCenterPropertiesRequest,
@@ -161,7 +178,7 @@ inline const Properties& AtomProperties::getProperties(
 
 // Set the properties
 template<typename Properties, typename PropertiesMap>
-inline void AtomProperties::setProperties(
+inline void ScatteringCenterPropertiesHelper::setProperties(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
                        const AtomType expected_atom,
@@ -176,24 +193,25 @@ inline void AtomProperties::setProperties(
                         "this atom (" << new_properties->atom() << " != "
                         << expected_atom << ")!" );
     
-    AtomProperties::setPropertiesImpl( properties,
-                                       new_properties,
-                                       warning_tag,
-                                       type_name );
+    ScatteringCenterPropertiesHelper::setPropertiesImpl( properties,
+                                                         new_properties,
+                                                         warning_tag,
+                                                         type_name );
   }
 }
 
 // Set the properties
 template<typename Properties, typename PropertiesMap>
-inline void AtomProperties::setPropertiesImpl(
+inline void ScatteringCenterPropertiesHelper::setPropertiesImpl(
                        PropertiesMap& properties,
                        const std::shared_ptr<const Properties>& new_properties,
                        const std::string& warning_tag,
                        const std::string& type_name )
 {
-  if( AtomProperties::dataAvailable( properties,
-                                     new_properties->fileType(),
-                                     new_properties->fileVersion()) )
+  if( ScatteringCenterPropertiesHelper::dataAvailable(
+                                               properties,
+                                               new_properties->fileType(),
+                                               new_properties->fileVersion()) )
   {
     FRENSIE_LOG_TAGGED_WARNING( warning_tag,
                                 type_name << " data properties with file "
@@ -208,42 +226,12 @@ inline void AtomProperties::setPropertiesImpl(
     new_properties;
 }
 
-// Clone properties
-template<typename PropertiesMap>
-void AtomProperties::cloneProperties( const PropertiesMap& original_properties,
-                                      PropertiesMap& new_properties )
-{
-  new_properties.clear();
-
-  typename PropertiesMap::const_iterator properties_it =
-    original_properties.begin();
-
-  while( properties_it != original_properties.end() )
-  {
-    typename PropertiesMap::mapped_type& new_properties_map = 
-      new_properties[properties_it->first];
-    
-    typename PropertiesMap::mapped_type::const_iterator version_it =
-      properties_it->second.begin();
-
-    while( version_it != properties_it->second.end() )
-    {
-      new_properties_map[version_it->first] =
-        typename PropertiesMap::mapped_type::mapped_type(
-                                                 version_it->second->clone() );
-      
-      ++version_it;
-    }
-
-    ++properties_it;
-  }
-}
-
 // print properties
 template<typename PropertiesMap>
-void AtomProperties::printProperties( const PropertiesMap& properties,
-                                      const std::string& type_name,
-                                      std::ostream& os )
+void ScatteringCenterPropertiesHelper::printProperties(
+                                               const PropertiesMap& properties,
+                                               const std::string& type_name,
+                                               std::ostream& os )
 {
   std::string indent( "  " );
   
@@ -270,37 +258,11 @@ void AtomProperties::printProperties( const PropertiesMap& properties,
     ++file_type_it;
   }
 }
-
-// Save the properties to an archive
-template<typename Archive>
-void AtomProperties::save( Archive& ar, const unsigned version ) const
-{
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaid );
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
-  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
-}
-
-// Load the properties from an archive
-template<typename Archive>
-void AtomProperties::load( Archive& ar, const unsigned version )
-{
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_zaid );
-  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
-  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
-  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
-}
   
 } // end Data namespace
 
-#endif // end DATA_ATOM_PROPERTIES_DEF_HPP
+#endif // end DATA_SCATTERING_CENTER_PROPERTIES_HELPER_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_AtomProperties_def.hpp
+// end Data_ScatteringCenterPropertiesHelper_def.hpp
 //---------------------------------------------------------------------------//

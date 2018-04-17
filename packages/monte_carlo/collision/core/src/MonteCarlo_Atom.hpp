@@ -325,6 +325,13 @@ inline const AtomCore& Atom<AtomCore>::getCore() const
   return d_core;
 }
 
+// Return the core
+template<typename AtomCore>
+inline AtomCore& Atom<AtomCore>::getCore()
+{
+  return d_core;
+}
+
 // Return the scatt. cross section from atomic interactions with a bin index
 template<typename AtomCore>
 inline double Atom<AtomCore>::getAtomicScatteringCrossSection(

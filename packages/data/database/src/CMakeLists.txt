@@ -1,0 +1,4 @@
+FRENSIE_SETUP_PACKAGE(data_database
+  MPI_LIBRARIES ${MPI_CXX_LIBRARIES} 
+  NON_MPI_LIBRARIES ${Boost_LIBRARIES} data_core data_ace data_endl data_native
+  SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})

@@ -1,0 +1,6 @@
+FRENSIE_INITIALIZE_PACKAGE_TESTS(data_database)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ScatteringCenterPropertiesDatabase DEPENDS tstScatteringCenterPropertiesDatabase.cpp)
+FRENSIE_ADD_TEST(ScatteringCenterPropertiesDatabase)
+
+FRENSIE_FINALIZE_PACKAGE_TESTS(data_database)

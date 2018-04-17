@@ -4,6 +4,7 @@ ADD_SUBDIRECTORY(test_files)
 SET(GLOBAL_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files)
 SET(GLOBAL_TEST_DATA_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/test_files)
 
+SET(GLOBAL_TOOLS_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/tools)
 SET(GLOBAL_ACE_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/ace)
 SET(GLOBAL_ENDF_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/endf)
 SET(GLOBAL_ENDL_TEST_DATA_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test_files/endl)
@@ -30,7 +31,7 @@ IF(FRENSIE_ENABLE_DAGMC)
 ENDIF()
 
 ADD_SUBDIRECTORY(data)
-INCLUDE_DIRECTORIES(data/core/src data/ace/src data/endf/src data/endl/src data/native/src)
+INCLUDE_DIRECTORIES(data/core/src data/ace/src data/endf/src data/endl/src data/native/src data/database/src)
 
 ADD_SUBDIRECTORY(monte_carlo)
 INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/native/src)

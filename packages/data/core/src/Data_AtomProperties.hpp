@@ -13,48 +13,52 @@
 #include <stdexcept>
 
 // FRENSIE Includes
-#include "Data_ZAID.hpp"
+#include "Data_ScatteringCenterPropertiesHelper.hpp"
 #include "Data_PhotoatomicDataProperties.hpp"
 #include "Data_AdjointPhotoatomicDataProperties.hpp"
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_AdjointElectroatomicDataProperties.hpp"
+#include "Data_ZAID.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_OStreamableObject.hpp"
 
 namespace Data{
 
 //! The atom propreties base class
-class AtomProperties : public Utility::OStreamableObject
+class AtomProperties : public Utility::OStreamableObject,
+                       private ScatteringCenterPropertiesHelper
 {
+  // The base type
+  typedef ScatteringCenterPropertiesHelper BaseType;
 
 public:
 
   //! The atomic mass unit
-  typedef PhotoatomicDataProperties::AtomicMassUnit AtomicMassUnit;
+  typedef ScatteringCenterPropertiesHelper::AtomicMassUnit AtomicMassUnit;
 
   //! The atomic mass quantity
-  typedef PhotoatomicDataProperties::AtomicWeight AtomicWeight;
+  typedef ScatteringCenterPropertiesHelper::AtomicWeight AtomicWeight;
 
   //! Constructor
-  AtomProperties( const Data::ZAID zaid,
+  AtomProperties( const Data::AtomType atom,
                   const double atomic_weight_ratio );
 
   //! Constructor
-  AtomProperties( const Data::ZAID zaid,
+  AtomProperties( const Data::AtomType atom,
                   const AtomicWeight atomic_weight );
 
+  //! Copy constructor
+  AtomProperties( const AtomProperties& other );
+
   //! Destructor
-  virtual ~AtomProperties()
+  ~AtomProperties()
   { /* ... */ }
 
-  //! Check if the scattering center is a nuclide
-  virtual bool isNuclide() const;
-
   //! Check if there are no properties
-  virtual bool empty() const;
+  bool empty() const;
 
-  //! Get the zaid
-  const Data::ZAID& zaid() const;
+  //! Get the atom
+  AtomType atom() const;
 
   //! Get the atomic weight
   AtomicWeight atomicWeight() const;
@@ -88,6 +92,12 @@ public:
                            const PhotoatomicDataProperties::FileType file_type,
                            const unsigned table_version ) const;
 
+  //! Get the shared photoatomic data properties
+  const std::shared_ptr<const PhotoatomicDataProperties>&
+  getSharedPhotoatomicDataProperties(
+                           const PhotoatomicDataProperties::FileType file_type,
+                           const unsigned table_version ) const;
+
   //! Set the photoatomic data
   void setPhotoatomicDataProperties( const std::shared_ptr<const PhotoatomicDataProperties>& properties );
 
@@ -114,6 +124,12 @@ public:
 
   //! Get the adjoint photoatomic data properties
   const AdjointPhotoatomicDataProperties& getAdjointPhotoatomicDataProperties(
+                    const AdjointPhotoatomicDataProperties::FileType file_type,
+                    const unsigned table_version ) const;
+
+  //! Get the shared adjoint photoatomic data properties
+  const std::shared_ptr<const AdjointPhotoatomicDataProperties>&
+  getSharedAdjointPhotoatomicDataProperties(
                     const AdjointPhotoatomicDataProperties::FileType file_type,
                     const unsigned table_version ) const;
 
@@ -146,6 +162,12 @@ public:
                          const ElectroatomicDataProperties::FileType file_type,
                          const unsigned table_version ) const;
 
+  //! Get the shared electroatomic data properties
+  const std::shared_ptr<const ElectroatomicDataProperties>&
+  getSharedElectroatomicDataProperties(
+                         const ElectroatomicDataProperties::FileType file_type,
+                         const unsigned table_version ) const;
+
   //! Set the electroatomic data properties
   void setElectroatomicDataProperties( const std::shared_ptr<const ElectroatomicDataProperties>& properties );
 
@@ -174,114 +196,22 @@ public:
                   const AdjointElectroatomicDataProperties::FileType file_type,
                   const unsigned table_version ) const;
 
+  //! Get the shared adjoint electroatomic data properties
+  const std::shared_ptr<const AdjointElectroatomicDataProperties>&
+  getSharedAdjointElectroatomicDataProperties(
+                  const AdjointElectroatomicDataProperties::FileType file_type,
+                  const unsigned table_version ) const;
+
   //! Set the adjoint electroatomic data properties
   void setAdjointElectroatomicDataProperties( const std::shared_ptr<const AdjointElectroatomicDataProperties>& properties );
 
-  //! Clone the properties
-  virtual AtomProperties* clone() const;
-
-  //! Deep clone the properties
-  virtual AtomProperties* deepClone() const;
-
   //! Place the object in an output stream
-  virtual void toStream( std::ostream& os ) const override;
-
-protected:
-
-  //! The properties map type helper class
-  template<typename Properties>
-  struct PropertiesMapTypeHelper
-  {
-    //! The version properties map type
-    typedef std::map<unsigned,std::shared_ptr<const Properties> > VersionPropertiesMap;
-
-    //! The file type version properties map type
-    typedef std::map<typename Properties::FileType,VersionPropertiesMap> FileTypeVersionPropertiesMap;
-  };
-
-  //! Default constructor
-  AtomProperties();
-
-  //! Copy constructor
-  AtomProperties( const AtomProperties& other );
-
-  //! Set the zaid
-  void setZAID( const Data::ZAID zaid );
-
-  //! Set the atomic weight ratio
-  void setAtomicWeightRatio( const double atomic_weight_ratio );
-
-  //! Check if there is data available with the desired format
-  template<typename PropertiesMap>
-  static bool dataAvailable( const PropertiesMap& properties,
-                             const typename PropertiesMap::key_type file_type );
-
-  //! Check if there is data available with the desired format and table version
-  template<typename PropertiesMap>
-  static bool dataAvailable( const PropertiesMap& properties,
-                             const typename PropertiesMap::key_type file_type,
-                             const unsigned table_version );
-
-  //! Get the data file types
-  template<typename PropertiesMap>
-  static std::set<typename PropertiesMap::key_type> getDataFileTypes(
-                                             const PropertiesMap& properties );
-
-  //! Get the data file versions
-  template<typename PropertiesMap>
-  static std::set<unsigned> getDataFileVersions(
-                            const PropertiesMap& properties,
-                            const typename PropertiesMap::key_type file_type );
-
-  //! Get the max data file version
-  template<typename PropertiesMap>
-  static unsigned getMaxDataFileVersion(
-                            const PropertiesMap& properties,
-                            const typename PropertiesMap::key_type file_type,
-                            const std::string& type_name );
-
-  //! Get the properties
-  template<typename Properties, typename PropertiesMap>
-  static const Properties& getProperties(
-                              const PropertiesMap& properties,
-                              const typename PropertiesMap::key_type file_type,
-                              const unsigned table_version,
-                              const std::string& type_name );
-
-  //! Set the properties
-  template<typename Properties, typename PropertiesMap>
-  static void setPropertiesImpl(
-                       PropertiesMap& properties,
-                       const std::shared_ptr<const Properties>& new_properties,
-                       const std::string& warning_tag,
-                       const std::string& type_name );
-
-  //! Clone the stored properties
-  static void cloneStoredAtomProperties(
-                                     const AtomProperties& original_properties,
-                                     AtomProperties& new_properties );
-
-  //! Clone properties
-  template<typename PropertiesMap>
-  static void cloneProperties( const PropertiesMap& original_properties,
-                               PropertiesMap& new_properties );
-
-  //! Print properties
-  template<typename PropertiesMap>
-  static void printProperties( const PropertiesMap& properties,
-                               const std::string& type_name,
-                               std::ostream& os );
+  void toStream( std::ostream& os ) const final override;
 
 private:
 
-  // Set the properties
-  template<typename Properties, typename PropertiesMap>
-  static void setProperties(
-                       PropertiesMap& properties,
-                       const std::shared_ptr<const Properties>& new_properties,
-                       const AtomType expected_atom,
-                       const std::string& warning_tag,
-                       const std::string& type_name );
+  //! Default constructor
+  AtomProperties();
 
   // Save the properties to an archive
   template<typename Archive>
@@ -296,48 +226,56 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
-  // The zaid
-  Data::ZAID d_zaid;
+  // The atom
+  Data::AtomType d_atom;
 
   // The atomic weight ratio
   double d_atomic_weight_ratio;
 
   // The photoatomic data properties
-  std::shared_ptr<typename PropertiesMapTypeHelper<PhotoatomicDataProperties>::FileTypeVersionPropertiesMap> d_photoatomic_data_properties;
+  typename PropertiesMapTypeHelper<PhotoatomicDataProperties>::FileTypeVersionPropertiesMap d_photoatomic_data_properties;
 
   // The adjoint photoatomic data properties
-  std::shared_ptr<typename PropertiesMapTypeHelper<AdjointPhotoatomicDataProperties>::FileTypeVersionPropertiesMap> d_adjoint_photoatomic_data_properties;
+  typename PropertiesMapTypeHelper<AdjointPhotoatomicDataProperties>::FileTypeVersionPropertiesMap d_adjoint_photoatomic_data_properties;
 
   // The electroatomic data properties
-  std::shared_ptr<typename PropertiesMapTypeHelper<ElectroatomicDataProperties>::FileTypeVersionPropertiesMap> d_electroatomic_data_properties;
+  typename PropertiesMapTypeHelper<ElectroatomicDataProperties>::FileTypeVersionPropertiesMap d_electroatomic_data_properties;
 
   // The adjoint electroatomic data properties
-  std::shared_ptr<typename PropertiesMapTypeHelper<AdjointElectroatomicDataProperties>::FileTypeVersionPropertiesMap> d_adjoint_electroatomic_data_properties;
+  typename PropertiesMapTypeHelper<AdjointElectroatomicDataProperties>::FileTypeVersionPropertiesMap d_adjoint_electroatomic_data_properties;
 };
 
-//! The invalid data error
-class InvalidScatteringCenterPropertiesData : public std::runtime_error
+// Save the properties to an archive
+template<typename Archive>
+void AtomProperties::save( Archive& ar, const unsigned version ) const
 {
+  // Save the local member data
+  Data::ZAID zaid( d_atom );
+  
+  ar & BOOST_SERIALIZATION_NVP( zaid );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
+}
 
-public:
-
-  //! Constructor
-  InvalidScatteringCenterPropertiesData( const std::string& what )
-    : std::runtime_error( what )
-  { /* ... */ }
-};
-
-//! The invalid request error
-class InvalidScatteringCenterPropertiesRequest : public std::runtime_error
+// Load the properties from an archive
+template<typename Archive>
+void AtomProperties::load( Archive& ar, const unsigned version )
 {
+  // Load the local member data
+  Data::ZAID zaid;
+  ar & BOOST_SERIALIZATION_NVP( zaid );
 
-public:
-
-  //! Constructor
-  InvalidScatteringCenterPropertiesRequest( const std::string& what )
-    : std::runtime_error( what )
-  { /* ... */ }
-};
+  d_atom = zaid.atom();
+  
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
+  ar & BOOST_SERIALIZATION_NVP( d_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_photoatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_electroatomic_data_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_adjoint_electroatomic_data_properties );
+}
   
 } // end Data namespace
 
@@ -345,12 +283,6 @@ BOOST_SERIALIZATION_CLASS_VERSION( AtomProperties, Data, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( AtomProperties, Data );
 
 EXTERN_EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( AtomProperties );
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "Data_AtomProperties_def.hpp"
 
 //---------------------------------------------------------------------------//
 
