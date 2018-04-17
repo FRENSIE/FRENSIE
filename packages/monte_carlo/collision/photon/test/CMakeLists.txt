@@ -300,18 +300,19 @@ FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomNativeFactory DEPENDS tstAdjointPhot
     EXTRA_ARGS
     --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
-FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomFactory DEPENDS tstPhotoatomFactory.cpp
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomFactory
+  DEPENDS tstPhotoatomFactory.cpp
   TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
 FRENSIE_ADD_TEST(PhotoatomFactory
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstAdjointPhotoatomFactory
-  tstAdjointPhotoatomFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotoatomFactory monte_carlo_collision_native)
-ADD_TEST(AdjointPhotoatomFactory_test tstAdjointPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointPhotoatomFactory_test PROPERTY LABELS photon adjoint native)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomFactory
+  DEPENDS tstAdjointPhotoatomFactory.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(AdjointPhotoatomFactory
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 ##---------------------------------------------------------------------------##
 ## Material tests

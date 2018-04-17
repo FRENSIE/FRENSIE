@@ -38,10 +38,6 @@ PhotoatomFactory::PhotoatomFactory(
   ScatteringCenterNameSet::const_iterator photoatom_name =
     photoatom_names.begin();
 
-  std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
-  int photoatom_file_start_line;
-  double atomic_weight;
-
   while( photoatom_name != photoatom_names.end() )
   {
     TEST_FOR_EXCEPTION( !photoatom_definitions.doesDefinitionExist( *photoatom_name ),
@@ -91,7 +87,7 @@ PhotoatomFactory::PhotoatomFactory(
     else if( photoatom_data_properties.fileType() ==
              Data::PhotoatomicDataProperties::Native_EPR_FILE )
     {
-      // Initialize the photoatomic table name map for Native_EPR files
+      // Initialize the photoatomic table name map for Native EPR files
       if( d_photoatomic_table_name_map.find( Data::PhotoatomicDataProperties::Native_EPR_FILE ) ==
           d_photoatomic_table_name_map.end() )
       {
@@ -109,7 +105,7 @@ PhotoatomFactory::PhotoatomFactory(
     {
       THROW_EXCEPTION( std::runtime_error,
                        "Photoatom " << *photoatom_name << " cannot be "
-                       "created because its definition specifies the use of "
+                       "created because its definition specifies the use of a "
                        "photoatomic data file of type "
                        << photoatom_data_properties.fileType() <<
                        ", which is currently unsupported!" );
@@ -150,10 +146,11 @@ void PhotoatomFactory::createPhotoatomFromACETable(
     
     if( d_verbose )
     {
-      FRENSIE_LOG_NOTIFICATION( "Loading ACE EPR photoatomic cross section "
-                                "table " << data_properties.tableName() <<
-                                " from " << ace_file_path.string() <<
-                                " ... " );
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                   "Loading ACE EPR photoatomic cross section "
+                                   "table " << data_properties.tableName() <<
+                                   " from " << ace_file_path.string() <<
+                                   " ... " );
     }
     
     // Create the ACEFileHandler
@@ -196,7 +193,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 
     if( d_verbose )
     {
-      FRENSIE_LOG_NOTIFICATION( "  done." );
+      FRENSIE_LOG_NOTIFICATION( "done." );
     }
   }
   // The table has already been loaded
@@ -228,7 +225,8 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
 
     if( d_verbose )
     {
-      FRENSIE_LOG_NOTIFICATION( "Loading native EPR cross section table "
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                "Loading native EPR cross section table "
                                 "(v " << data_properties.fileVersion() <<
                                 ") for " << data_properties.atom() <<
                                 "from " << native_file_path.string() <<
@@ -267,7 +265,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
 
     if( d_verbose )
     {
-      FRENSIE_LOG_NOTIFICATION( "  done." );
+      FRENSIE_LOG_NOTIFICATION( "done." );
     }
   }
   // The table has already been loaded

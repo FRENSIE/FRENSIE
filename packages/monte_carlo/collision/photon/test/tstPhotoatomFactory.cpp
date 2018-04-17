@@ -10,9 +10,6 @@
 #include <iostream>
 #include <fstream>
 
-// Boost Includes
-#include <boost/archive/xml_iarchive.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"

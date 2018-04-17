@@ -142,7 +142,7 @@ void LoggingHelper::initializeAndAddErrorLogSink(
                                            boost::log::keywords::format = "%n",
                                            boost::log::keywords::delimiter =
                                            FRENSIE_LOG_STACK_DELIMINATOR )
-          << "\n"
+          << "\n\n"
          ] );
 
   // Register the error sink with the logging core
@@ -177,7 +177,7 @@ void LoggingHelper::initializeAndAddWarningLogSink(
                                  "%f" FRENSIE_LOG_FILE_LINE_SEP "%l",
                                  boost::log::keywords::depth = 1,
                                  boost::log::keywords::incomplete_marker = "" )
-        << "\n" );
+        << "\n\n" );
 
   // Register the warning sink with the logging core
   boost::log::core::get()->add_sink( warning_sink );
@@ -199,11 +199,15 @@ void LoggingHelper::initializeAndAddNotificationLogSink(
   
   notification_sink->set_formatter(
         boost::log::expressions::stream
-        << boost::log::expressions::if_( boost::log::expressions::has_attr( tag_log_attr ) )
+        << boost::log::expressions::if_( boost::log::expressions::has_attr( tag_log_attr ) && tag_log_attr != FRENSIE_LOG_PARTIAL_NOTIFICATION_TAG )
         [
          boost::log::expressions::stream << tag_log_attr << ": "
         ]
-        << boost::log::expressions::smessage << "\n" );
+        << boost::log::expressions::smessage
+        << boost::log::expressions::if_( (boost::log::expressions::has_attr( tag_log_attr ) && tag_log_attr != FRENSIE_LOG_PARTIAL_NOTIFICATION_TAG ) || !boost::log::expressions::has_attr( tag_log_attr ) )
+        [
+         boost::log::expressions::stream << "\n\n"
+        ] );
 
   // Register the notification sink with the logging core
   boost::log::core::get()->add_sink( notification_sink );

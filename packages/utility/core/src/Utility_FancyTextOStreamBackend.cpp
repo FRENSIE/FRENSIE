@@ -119,7 +119,7 @@ void BasicFancyTextOStreamBackend<CharT>::consume(
 
     if( os_ptr->good() )
     {
-      *os_ptr << backend_formatted_message << '\n';
+      *os_ptr << backend_formatted_message;
 
       if( d_impl->auto_flush )
         os_ptr->flush();
