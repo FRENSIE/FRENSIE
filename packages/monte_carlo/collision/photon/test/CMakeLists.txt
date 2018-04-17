@@ -318,17 +318,18 @@ FRENSIE_ADD_TEST(AdjointPhotoatomFactory
 ## Material tests
 ##---------------------------------------------------------------------------##
 
-# FRENSIE_ADD_TEST_EXECUTABLE(PhotonMaterial DEPENDS tstPhotonMaterial.cpp
-#   TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
-# FRENSIE_ADD_TEST(PhotonMaterial
-#   EXTRA_ARGS
-#   --test_database=${COLLISION_DATABASE_XML_FILE})
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonMaterial
+  DEPENDS tstPhotonMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(PhotonMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstAdjointPhotonMaterial
-  tstAdjointPhotonMaterial.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonMaterial monte_carlo_collision_native)
-ADD_TEST(AdjointPhotonMaterial_test tstAdjointPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointPhotonMaterial_test PROPERTY LABELS photon adjoint native)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonMaterial
+  DEPENDS tstAdjointPhotonMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(AdjointPhotonMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_photon)
