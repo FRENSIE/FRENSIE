@@ -469,6 +469,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setPhotoatomicDataProperties )
   
   std::shared_ptr<const Data::PhotoatomicDataProperties> properties(
                new Data::NativeEPRPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -478,6 +479,18 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setPhotoatomicDataProperties )
   FRENSIE_CHECK( definition.hasPhotoatomicDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getPhotoatomicDataProperties() );
 
+  double atomic_weight;
+  
+  definition.getPhotoatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.0 );
+
+  definition.setAtomicWeight( 1.1 );
+
+  definition.getPhotoatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.1 );  
+
   // A NULL pointer should be ignored
   definition.setPhotoatomicDataProperties( std::shared_ptr<const Data::PhotoatomicDataProperties>() );
 
@@ -486,6 +499,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setPhotoatomicDataProperties )
 
   // Properties for a different atom will result in a warning
   properties.reset( new Data::NativeEPRPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::He_ATOM ) );
@@ -506,6 +520,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAdjointPhotoatomicDataProperti
   
   std::shared_ptr<const Data::AdjointPhotoatomicDataProperties> properties(
                new Data::NativeEPRAdjointPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -515,6 +530,18 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAdjointPhotoatomicDataProperti
   FRENSIE_CHECK( definition.hasAdjointPhotoatomicDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getAdjointPhotoatomicDataProperties() );
 
+  double atomic_weight;
+
+  definition.getAdjointPhotoatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.0 );
+
+  definition.setAtomicWeight( 1.1 );
+
+  definition.getAdjointPhotoatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.1 );
+
   // A NULL pointer should be ignored
   definition.setAdjointPhotoatomicDataProperties( std::shared_ptr<const Data::AdjointPhotoatomicDataProperties>() );
 
@@ -523,6 +550,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAdjointPhotoatomicDataProperti
 
   // Properties for a different atom will result in a warning
   properties.reset( new Data::NativeEPRAdjointPhotoatomicDataProperties(
+                                             4.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::He_ATOM ) );
@@ -543,6 +571,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setElectroatomicDataProperties )
   
   std::shared_ptr<const Data::ElectroatomicDataProperties> properties(
                new Data::NativeEPRElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -552,6 +581,18 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setElectroatomicDataProperties )
   FRENSIE_CHECK( definition.hasElectroatomicDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getElectroatomicDataProperties() );
 
+  double atomic_weight;
+
+  definition.getElectroatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.0 );
+
+  definition.setAtomicWeight( 1.1 );
+
+  definition.getElectroatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.1 );
+
   // A NULL pointer should be ignored
   definition.setElectroatomicDataProperties( std::shared_ptr<const Data::ElectroatomicDataProperties>() );
 
@@ -560,6 +601,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setElectroatomicDataProperties )
 
   // Properties for a different atom will result in a warning
   properties.reset( new Data::NativeEPRElectroatomicDataProperties(
+                                             4.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::He_ATOM ) );
@@ -580,6 +622,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAdjointElectroatomicDataProper
   
   std::shared_ptr<const Data::AdjointElectroatomicDataProperties> properties(
                new Data::NativeEPRAdjointElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -589,6 +632,18 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAdjointElectroatomicDataProper
   FRENSIE_CHECK( definition.hasAdjointElectroatomicDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getAdjointElectroatomicDataProperties() );
 
+  double atomic_weight;
+
+  definition.getAdjointElectroatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.0 );
+
+  definition.setAtomicWeight( 1.1 );
+
+  definition.getAdjointElectroatomicDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.1 );
+
   // A NULL pointer should be ignored
   definition.setAdjointElectroatomicDataProperties( std::shared_ptr<const Data::AdjointElectroatomicDataProperties>() );
 
@@ -597,6 +652,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAdjointElectroatomicDataProper
 
   // Properties for a different atom will result in a warning
   properties.reset( new Data::NativeEPRAdjointElectroatomicDataProperties(
+                                             4.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::He_ATOM ) );
@@ -627,6 +683,18 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setNuclearDataProperties )
 
   FRENSIE_CHECK( definition.hasNuclearDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getNuclearDataProperties() );
+
+  double atomic_weight_ratio;
+
+  definition.getNuclearDataProperties( &atomic_weight_ratio );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 1.0 );
+
+  definition.setAtomicWeightRatio( 0.9 );
+
+  definition.getNuclearDataProperties( &atomic_weight_ratio );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 0.9 );
 
   // A NULL pointer should be ignored
   definition.setNuclearDataProperties( std::shared_ptr<const Data::NuclearDataProperties>() );
@@ -669,6 +737,18 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition,
 
   FRENSIE_CHECK( definition.hasAdjointNuclearDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getAdjointNuclearDataProperties() );
+
+  double atomic_weight_ratio;
+  
+  definition.getAdjointNuclearDataProperties( &atomic_weight_ratio );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 1.0 );
+
+  definition.setAtomicWeightRatio( 0.9 );
+
+  definition.getAdjointNuclearDataProperties( &atomic_weight_ratio );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight_ratio, 0.9 );
 
   // A NULL pointer should be ignored
   definition.setAdjointNuclearDataProperties( std::shared_ptr<const Data::AdjointNuclearDataProperties>() );
@@ -792,6 +872,18 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setPhotonuclearDataProperties )
   FRENSIE_CHECK( definition.hasPhotonuclearDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getPhotonuclearDataProperties() );
 
+  double atomic_weight;
+
+  definition.getPhotonuclearDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.0 );
+
+  definition.setAtomicWeight( 1.1 );
+
+  definition.getPhotonuclearDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.1 );
+
   // A NULL pointer should be ignored
   definition.setPhotonuclearDataProperties( std::shared_ptr<const Data::PhotonuclearDataProperties>() );
 
@@ -830,6 +922,20 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, setAdjointPhotonuclearDataPropert
 
   FRENSIE_CHECK( definition.hasAdjointPhotonuclearDataProperties() );
   FRENSIE_CHECK( properties.get() == &definition.getAdjointPhotonuclearDataProperties() );
+
+  double atomic_weight;
+
+  definition.getAdjointPhotonuclearDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_FLOATING_EQUALITY( atomic_weight,
+                                   1.008664916004299972e+00,
+                                   1e-15 );
+
+  definition.setAtomicWeight( 1.1 );
+
+  definition.getAdjointPhotonuclearDataProperties( &atomic_weight );
+
+  FRENSIE_CHECK_EQUAL( atomic_weight, 1.1 );
 
   // A NULL pointer should be ignored
   definition.setAdjointPhotonuclearDataProperties( std::shared_ptr<const Data::AdjointPhotonuclearDataProperties>() );
@@ -1047,6 +1153,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, toStream )
   {
     std::shared_ptr<const Data::PhotoatomicDataProperties> properties(
                new Data::NativeEPRPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -1058,6 +1165,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, toStream )
   {
     std::shared_ptr<const Data::AdjointPhotoatomicDataProperties> properties(
                new Data::NativeEPRAdjointPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -1069,6 +1177,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, toStream )
   {
     std::shared_ptr<const Data::ElectroatomicDataProperties> properties(
                new Data::NativeEPRElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -1080,6 +1189,7 @@ FRENSIE_UNIT_TEST( ScatteringCenterDefinition, toStream )
   {
     std::shared_ptr<const Data::AdjointElectroatomicDataProperties> properties(
                new Data::NativeEPRAdjointElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -1190,6 +1300,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinition,
     {
       std::shared_ptr<const Data::PhotoatomicDataProperties> properties(
                new Data::NativeEPRPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -1201,6 +1312,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinition,
     {
       std::shared_ptr<const Data::AdjointPhotoatomicDataProperties> properties(
                new Data::NativeEPRAdjointPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -1212,6 +1324,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinition,
     {
       std::shared_ptr<const Data::ElectroatomicDataProperties> properties(
                new Data::NativeEPRElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -1223,6 +1336,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinition,
     {
       std::shared_ptr<const Data::AdjointElectroatomicDataProperties> properties(
                new Data::NativeEPRAdjointElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
