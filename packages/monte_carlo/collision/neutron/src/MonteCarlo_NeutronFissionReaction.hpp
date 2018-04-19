@@ -67,7 +67,7 @@ public:
   unsigned getNumberOfPromptParticles( const double energy ) const;
 
   //! Return the number of delayed neutrons emitted from the rxn
-  unsigned getNumberOfDelayedParticles const double energy ) const;
+  unsigned getNumberOfDelayedParticles( const double energy ) const;
 
   //! Return the average number of neutrons emitted from the rxn
   double getAverageNumberOfEmittedParticles( const double energy ) const override;
@@ -104,7 +104,7 @@ inline double NeutronFissionReaction::getAverageNumberOfEmittedParticles(
 						    const double energy ) const
 {
   return
-    d_fission_neutron_multiplicity_distribution->getAverageNumberOfEmittedParticles(
+    d_fission_neutron_multiplicity_distribution->getAverageNumberOfEmittedNeutrons(
 								      energy );
 }
 
@@ -113,7 +113,7 @@ inline double NeutronFissionReaction::getAverageNumberOfPromptParticles(
 						    const double energy ) const
 {
   return
-    d_fission_neutron_multiplicity_distribution->getAverageNumberOfPromptParticles(
+    d_fission_neutron_multiplicity_distribution->getAverageNumberOfPromptNeutrons(
 								      energy );
 }
 
@@ -122,7 +122,7 @@ inline double NeutronFissionReaction::getAverageNumberOfDelayedParticles(
 						    const double energy ) const
 {
   return
-    d_fission_neutron_multiplicity_distribution->getAverageNumberOfDelayedParticles(
+    d_fission_neutron_multiplicity_distribution->getAverageNumberOfDelayedNeutrons(
 								      energy );
 }
 

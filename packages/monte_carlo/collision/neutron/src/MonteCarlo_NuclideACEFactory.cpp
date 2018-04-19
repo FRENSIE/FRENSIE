@@ -63,7 +63,7 @@ void NuclideACEFactory::createNuclide(
     FRENSIE_LOG_TAGGED_WARNING( "NuclideACEFactory",
                                 "Unresolved resonance data has been "
                                 "requested. This feature is not currently "
-                                "supported!"
+                                "supported!" );
   }
 
   if( properties.getParticleMode() == NEUTRON_PHOTON_MODE ||

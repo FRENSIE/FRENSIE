@@ -30,7 +30,7 @@ NeutronScatteringReaction::NeutronScatteringReaction(
                                     threshold_energy_index,
                                     reaction_type,
                                     q_value,
-                                    temperature )
+                                    temperature ),
     d_multiplicity( multiplicity ),
     d_scattering_distribution( scattering_distribution )
 {
@@ -59,7 +59,7 @@ NeutronScatteringReaction::NeutronScatteringReaction(
                                     grid_searcher,
                                     reaction_type,
                                     q_value,
-                                    temperature )
+                                    temperature ),
     d_multiplicity( multiplicity ),
     d_scattering_distribution( scattering_distribution )
 {
@@ -84,7 +84,7 @@ void NeutronScatteringReaction::react( NeutronState& neutron,
 
   // There should always be at least one outgoing neutron (>= 0 additional)
   unsigned num_additional_neutrons =
-    this->getNumberOfEmittedNeutrons( neutron.getEnergy() ) - 1u;
+    this->getNumberOfEmittedParticles( neutron.getEnergy() ) - 1u;
 
   // Create the additional neutrons (multiplicity - 1)
   for( unsigned i = 0; i < num_additional_neutrons; ++i )

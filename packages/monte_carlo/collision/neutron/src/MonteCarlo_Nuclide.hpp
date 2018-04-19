@@ -128,13 +128,13 @@ private:
 
   // Calculate the total absorption cross section
   void calculateTotalAbsorptionReaction(
-          const std::shared_ptr<std::vector<double> >& energy_grid,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher );
 
   // Calculate the total cross section
   void calculateTotalReaction(
-          const std::shared_ptr<std::vector<double> >& energy_grid,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher );
 

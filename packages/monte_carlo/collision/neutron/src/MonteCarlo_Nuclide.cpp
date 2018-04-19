@@ -126,15 +126,18 @@ Nuclide::Nuclide(
   // Make sure the temperature is valid
   testPrecondition( temperature > 0.0 );
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+  testPrecondition( energy_grid->size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+						      energy_grid->end() ) );
+  // Make sure that the grid searcher is valid
+  testPrecondition( grid_searcher.get() );
   // There must be at least one reaction specified
   testPrecondition( standard_scattering_reactions.size() +
 		    standard_absorption_reactions.size() > 0 );
 
   // Place the reactions in the appropriate group
-  ReactionMap::const_iterator reaction_type_pointer, end_reaction_type_pointer;
+  ConstReactionMap::const_iterator reaction_type_pointer,
+    end_reaction_type_pointer;
 
   reaction_type_pointer = standard_scattering_reactions.begin();
   end_reaction_type_pointer = standard_scattering_reactions.end();
@@ -206,7 +209,7 @@ double Nuclide::getAtomicWeightRatio() const
 }
 
 // Return the atomic weight
-double Nuclide::getAtomicWeightRatio() const
+double Nuclide::getAtomicWeight() const
 {
   return d_atomic_weight_ratio*Utility::PhysicalConstants::neutron_rest_mass_amu;
 }
@@ -233,7 +236,7 @@ double Nuclide::getAbsorptionCrossSection( const double energy ) const
 double Nuclide::getSurvivalProbability( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double survival_prob = 1.0 -
@@ -339,7 +342,7 @@ void Nuclide::collideSurvivalBias( NeutronState& neutron,
 
 // Calculate the total absorption cross section
 void Nuclide::calculateTotalAbsorptionReaction(
-          const std::shared_ptr<std::vector<double> >& energy_grid,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher )
 {
@@ -381,7 +384,7 @@ void Nuclide::calculateTotalAbsorptionReaction(
 
 // Calculate the total cross section
 void Nuclide::calculateTotalReaction(
-          const std::shared_ptr<std::vector<double> >& energy_grid,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher )
 {

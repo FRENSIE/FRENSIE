@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistributionACEFactoryNeutronHelper.hpp"
+#include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{

@@ -35,7 +35,7 @@ ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDist
   // Make sure the free gas threshold is valid
   testPrecondition( free_gas_threshold > 0.0 );
   // Make sure the angular distribution pointer is valid
-  testPrecondition( !angular_scattering_distribution.is_null() );
+  testPrecondition( angular_scattering_distribution.get() );
 }
 
 // Randomly scatter the nuclear
@@ -66,11 +66,11 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 
     double outgoing_neutron_direction[3];
 
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-						lab_scattering_angle_cosine,
-						sampleAzimuthalAngle(),
-						incoming_neutron.getDirection(),
-						outgoing_neutron_direction);
+    Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
+					       lab_scattering_angle_cosine,
+                                               sampleAzimuthalAngle(),
+					       incoming_neutron.getDirection(),
+                                               outgoing_neutron_direction);
 
     // Make sure the lab scattering angle cosine is in [-1,1]
     testPostcondition( lab_scattering_angle_cosine >= -1.0 );
@@ -101,18 +101,20 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
    // Sample the target velocity
    double target_velocity[3];
 
-   sampleTargetVelocity( incoming_neutron, temperature, target_velocity );
+   this->sampleTargetVelocity( incoming_neutron,
+                               temperature,
+                               target_velocity );
 
    // Calculate the center-of-mass velocity
    double center_of_mass_velocity[3];
 
-   calculateCenterOfMassVelocity( neutron_velocity,
-				  target_velocity,
-				  center_of_mass_velocity );
+   this->calculateCenterOfMassVelocity( neutron_velocity,
+                                        target_velocity,
+                                        center_of_mass_velocity );
 
    // Transform the neutron velocity to the center-of-mass frame
-   transformVelocityToCenterOfMassFrame( center_of_mass_velocity,
-					 neutron_velocity );
+   this->transformVelocityToCenterOfMassFrame( center_of_mass_velocity,
+                                               neutron_velocity );
 
    // Calculate the neutron speed in the center-of-mass
    double cm_neutron_speed = Utility::vectorMagnitude( neutron_velocity );
@@ -123,7 +125,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 				     neutron_velocity[2]/cm_neutron_speed};
 
    // Eliminate roundoff errors from the previous division operation
-   Utility::normalizeDirection( cm_neutron_direction );
+   Utility::normalizeVector( cm_neutron_direction );
 
    // Sample the CM scattering angle cosine
    double cm_scattering_angle_cosine =
@@ -134,7 +136,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
    // Note: The speed of the neutron does not change in the center-of-mass
    double cm_outgoing_neutron_direction[3];
 
-   Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
+   Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
 						cm_scattering_angle_cosine,
 						sampleAzimuthalAngle(),
 						cm_neutron_direction,
@@ -145,7 +147,8 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
    neutron_velocity[2] = cm_neutron_speed*cm_outgoing_neutron_direction[2];
 
    // Transform back to the lab frame
-   transformVelocityToLabFrame( center_of_mass_velocity, neutron_velocity );
+   this->transformVelocityToLabFrame( center_of_mass_velocity,
+                                      neutron_velocity );
 
    // Calculate the outgoing neutron speed
    double outgoing_neutron_speed =
@@ -159,8 +162,8 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 
    // Set the new neutron direction
    outgoing_neutron.setDirection( neutron_velocity[0]/outgoing_neutron_speed,
-				   neutron_velocity[1]/outgoing_neutron_speed,
-				   neutron_velocity[2]/outgoing_neutron_speed);
+                                  neutron_velocity[1]/outgoing_neutron_speed,
+                                  neutron_velocity[2]/outgoing_neutron_speed);
 
    outgoing_neutron.setEnergy( outgoing_neutron_energy );
  }
@@ -202,7 +205,7 @@ void ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity(
   // Calculate the velocity of the target nucleus
   if( target_speed > 0.0 )
   {
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
+    Utility::rotateUnitVectorThroughPolarAndAzimuthalAngle(
 							mu_target,
 						        sampleAzimuthalAngle(),
 							neutron.getDirection(),

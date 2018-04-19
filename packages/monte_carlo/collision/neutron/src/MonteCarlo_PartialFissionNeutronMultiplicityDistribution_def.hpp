@@ -29,8 +29,8 @@ PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistribu
     d_second_multiplicity_distribution( second_multiplicity_distribution )
 {
   // Make sure the distributions are valid
-  testPrecondition( !first_multiplicity_distribution.is_null() );
-  testPrecondition( !second_multiplicity_distribution.is_null() );
+  testPrecondition( first_multiplicity_distribution.get() );
+  testPrecondition( second_multiplicity_distribution.get() );
 }
 
 // Return the average number of neutrons emitted

@@ -61,13 +61,13 @@ bool DecoupledYieldBasedPhotonProductionReaction::isEnergyWithinEnergyGrid(
 // Return the threshold energy
 double DecoupledYieldBasedPhotonProductionReaction::getThresholdEnergy() const
 {
-  return d_base_reaction->getThresholdEnergy();
+  return d_mtp_yield->getLowerBoundOfIndepVar();
 }
 
 // Return the max energy
 double DecoupledYieldBasedPhotonProductionReaction::getMaxEnergy() const
 {
-  return d_base_reaction->getMaxEnergy();
+  return d_mtp_yield->getUpperBoundOfIndepVar();
 }
 
 // Return the base reaction cross section at a given energy

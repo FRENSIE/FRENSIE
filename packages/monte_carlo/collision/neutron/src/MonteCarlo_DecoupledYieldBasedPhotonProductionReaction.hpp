@@ -83,12 +83,6 @@ private:
   std::shared_ptr<const NeutronNuclearReaction> d_base_reaction;
 };
 
-// Return the threshold energy
-inline double DecoupledYieldBasedPhotonProductionReaction::getThresholdEnergy() const
-{
-  return d_mtp_yield->getLowerBoundOfIndepVar();
-}
-
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_DECOUPLED_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP

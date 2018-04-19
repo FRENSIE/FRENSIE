@@ -26,12 +26,12 @@ namespace MonteCarlo{
 class EnergyDependentNeutronMultiplicityReaction : public StandardNeutronNuclearReaction
 {
   // Typedef for QuantityTraits
-  typedef Utility::QuatityTraits<double> QT;
+  typedef Utility::QuantityTraits<double> QT;
 
 public:
 
   //! The scattering distribution type
-  typedef NuclearScatteringDistribution<NeutronState,NeutronState> ScatteringDistribution
+  typedef NuclearScatteringDistribution<NeutronState,NeutronState> ScatteringDistribution;
 
   //! Basic Constructor
   EnergyDependentNeutronMultiplicityReaction(

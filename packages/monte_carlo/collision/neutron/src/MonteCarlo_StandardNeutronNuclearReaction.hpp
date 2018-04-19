@@ -10,6 +10,8 @@
 #define MONTE_CARLO_STANDARD_NEUTRON_NUCLEAR_REACTION_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_NeutronNuclearReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{

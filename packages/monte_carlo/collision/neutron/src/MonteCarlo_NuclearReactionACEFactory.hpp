@@ -17,7 +17,7 @@
 #include <boost/unordered_set.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReaction.hpp"
+#include "MonteCarlo_NeutronNuclearReaction.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
@@ -114,7 +114,7 @@ protected:
   //! Get the reaction associated with an Reaction Type
   void getReactionFromReactionType(
           NuclearReactionType reaction_type,
-          const std::shared_ptr<const NeutronNuclearReaction>& base_reaction );
+          std::shared_ptr<const NeutronNuclearReaction>& base_reaction );
 
 private:
 
@@ -139,7 +139,7 @@ private:
   // Initialize the absorption reactions
   void initializeAbsorptionReactions(
     const double temperature,
-    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
     grid_searcher,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
@@ -155,7 +155,7 @@ private:
   // Initialize the fission reactions
   void initializeFissionReactions(
     const double temperature,
-    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
     grid_searcher,
     const SimulationProperties& properties,
@@ -177,7 +177,7 @@ private:
   d_scattering_reactions;
 
   // A map of the absorption reactions
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutonNuclearReaction> >
+  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
   d_absorption_reactions;
 
   // A map of the fission reactions

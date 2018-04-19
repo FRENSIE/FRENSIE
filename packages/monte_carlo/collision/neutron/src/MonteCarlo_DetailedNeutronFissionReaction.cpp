@@ -78,7 +78,7 @@ void DetailedNeutronFissionReaction::react( NeutronState& neutron,
   neutron.incrementCollisionNumber();
 
   unsigned num_delayed_neutrons =
-    this->getNumberOfDelayedNeutrons( neutron.getEnergy() );
+    this->getNumberOfDelayedParticles( neutron.getEnergy() );
 
   // Create the additional delayed neutrons
   for( unsigned i = 0; i < num_delayed_neutrons; ++i )

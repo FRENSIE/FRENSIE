@@ -21,7 +21,7 @@ namespace MonteCarlo{
 NeutronMaterial::NeutronMaterial(
                                 const InternalMaterialHandle id,
                                 const double density,
-                                const NuclideNameMap nuclide_name_map,
+                                const NuclideNameMap& nuclide_name_map,
                                 const std::vector<double>& nuclide_fractions,
                                 const std::vector<std::string>& nuclide_names )
   : BaseType( id, density, nuclide_name_map, nuclide_fractions, nuclide_names )

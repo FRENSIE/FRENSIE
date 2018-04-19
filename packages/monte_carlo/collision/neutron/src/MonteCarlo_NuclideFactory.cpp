@@ -31,7 +31,7 @@ NuclideFactory::NuclideFactory(
 
   while( nuclide_name != nuclide_names.end() )
   {
-    TEST_FOR_EXCEPTION( !nuclide_definitions.doesDefinitionExist( *photoatom_name ),
+    TEST_FOR_EXCEPTION( !nuclide_definitions.doesDefinitionExist( *nuclide_name ),
                         std::runtime_error,
                         "Nuclide " << *nuclide_name << " cannot be "
                         "created because its definition has not been "
@@ -99,8 +99,8 @@ void NuclideFactory::createNuclideFromACETable(
                             const SimulationProperties& properties )
 {
   // Check if the table has already been loaded
-  if( d_nuclear_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE].find( data_properties.tableName() ) ==
-      d_nuclear_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE].end() )
+  if( d_nuclear_table_name_map[Data::NuclearDataProperties::ACE_FILE].find( data_properties.tableName() ) ==
+      d_nuclear_table_name_map[Data::NuclearDataProperties::ACE_FILE].end() )
   {
     // Construct the path to the data file
     boost::filesystem::path ace_file_path = data_directory;
@@ -118,7 +118,7 @@ void NuclideFactory::createNuclideFromACETable(
     // The ACE table reader
     Data::ACEFileHandler ace_file_handler( ace_file_path,
                                            data_properties.tableName(),
-                                           data_propreties.fileStartLine(),
+                                           data_properties.fileStartLine(),
                                            true );
     
     // The XSS neutron data extractor
