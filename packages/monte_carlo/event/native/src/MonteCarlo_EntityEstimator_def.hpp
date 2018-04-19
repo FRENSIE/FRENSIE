@@ -20,7 +20,7 @@
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_CommHelpers.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
@@ -330,7 +330,7 @@ void EntityEstimator<EntityId>::assignDiscretization(
       const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   Estimator::assignDiscretization( bin_boundaries );
 

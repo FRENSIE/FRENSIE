@@ -16,7 +16,7 @@
 #include "MonteCarlo_SourceModuleInterfaceDecl.hpp"
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -81,7 +81,7 @@ inline void SourceModuleInterface<ParticleSource>::enableThreadSupport(
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   s_source->enableThreadSupport( num_threads );
 }
@@ -92,7 +92,7 @@ inline void SourceModuleInterface<ParticleSource>::resetSourceData()
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   s_source->resetData();
 }
@@ -105,7 +105,7 @@ inline void SourceModuleInterface<ParticleSource>::reduceSourceData(
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   s_source->reduceData( comm, root_process );
 }
@@ -117,7 +117,7 @@ inline void SourceModuleInterface<ParticleSource>::exportSourceData(
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   s_source->exportData( hdf5_file );
 }
@@ -140,7 +140,7 @@ SourceModuleInterface<ParticleSource>::getNumberOfTrials()
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   return s_source->getNumberOfTrials();
 }
@@ -152,7 +152,7 @@ SourceModuleInterface<ParticleSource>::getNumberOfSamples()
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   return s_source->getNumberOfSamples();
 }
@@ -163,7 +163,7 @@ inline double SourceModuleInterface<ParticleSource>::getSamplingEfficiency()
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   return s_source->getSamplingEfficiency();
 }
@@ -175,7 +175,7 @@ inline void SourceModuleInterface<ParticleSource>::printSourceSummary(
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   s_source->printSummary( os );
 }

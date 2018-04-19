@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Geometry_DagMCNavigator.hpp"
 #include "Geometry_DagMCModel.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"

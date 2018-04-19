@@ -22,7 +22,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_ParticleDistribution.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 
 namespace MonteCarlo{
 

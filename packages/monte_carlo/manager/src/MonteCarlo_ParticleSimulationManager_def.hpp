@@ -26,7 +26,7 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -119,24 +119,24 @@ void ParticleSimulationManager<mode>::runSimulation()
 
   // Enable geometry thread support
   GMI::enableThreadSupport(
-                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+                 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   // Enable source thread support
   SMI::enableThreadSupport(
-                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+                 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   // Enable estimator thread support
   EMI::enableThreadSupport(
-                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+                 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   // Set the start time
-  this->setStartTime( Utility::GlobalOpenMPSession::getTime() );
+  this->setStartTime( Utility::OpenMPProperties::getTime() );
 
   // Simulate the batch
   this->runSimulationBatch( d_start_history, d_history_number_wall );
 
   // Set the end time
-  this->setEndTime( Utility::GlobalOpenMPSession::getTime() );
+  this->setEndTime( Utility::OpenMPProperties::getTime() );
 
   std::cout << "done." << std::endl;
 }
@@ -152,7 +152,7 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
   testPrecondition( batch_start_history >= d_start_history );
   testPrecondition( batch_end_history <= d_history_number_wall );
 
-  #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+  #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
   {
     // Create a bank for each thread
     ParticleBank bank;
@@ -161,7 +161,7 @@ void ParticleSimulationManager<mode>::runSimulationBatch(
     for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
       double history_start_time =
-        Utility::GlobalOpenMPSession::getTime(); - d_start_time;
+        Utility::OpenMPProperties::getTime(); - d_start_time;
 
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
@@ -572,7 +572,7 @@ void ParticleSimulationManager<mode>::signalHandler(int signal)
 template<ParticleModeType mode>
 void ParticleSimulationManager<mode>::printSimulationStateInfo()
 {
-  double time = Utility::GlobalOpenMPSession::getTime();
+  double time = Utility::OpenMPProperties::getTime();
 
   #pragma omp critical( ostream_update )
   {

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstGlobalOpenMPSession.cpp
+//! \file   tstOpenMPProperties.cpp
 //! \author Alex Robinson
-//! \brief  Global OpenMP session unit tests
+//! \brief  OpenMP session unit tests
 //! 
 //---------------------------------------------------------------------------//
 
@@ -16,7 +16,7 @@
 #include <boost/test/unit_test.hpp>
 
 // FRENSIE Includes
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "FRENSIE_config.hpp"
 
@@ -27,9 +27,9 @@
 BOOST_AUTO_TEST_CASE( isOpenMPUsed )
 {
 #ifdef HAVE_FRENSIE_OPENMP
-  BOOST_CHECK( Utility::GlobalOpenMPSession::isOpenMPUsed() );
+  BOOST_CHECK( Utility::OpenMPProperties::isOpenMPUsed() );
 #else
-  BOOST_CHECK( !Utility::GlobalOpenMPSession::isOpenMPUsed() );
+  BOOST_CHECK( !Utility::OpenMPProperties::isOpenMPUsed() );
 #endif
 }
 
@@ -37,12 +37,12 @@ BOOST_AUTO_TEST_CASE( isOpenMPUsed )
 // Check that the number of threads that will be used in OMP blocks can be set
 BOOST_AUTO_TEST_CASE( setNumberOfThreads )
 {
-  Utility::GlobalOpenMPSession::setNumberOfThreads( 2 );
+  Utility::OpenMPProperties::setNumberOfThreads( 2 );
 
 #ifdef HAVE_FRENSIE_OPENMP
-  BOOST_CHECK_EQUAL( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads(), 2 );
+  BOOST_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 2 );
 #else
-  BOOST_CHECK_EQUAL( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads(), 1 );
+  BOOST_CHECK_EQUAL( Utility::OpenMPProperties::getRequestedNumberOfThreads(), 1 );
 #endif 
 }
 
@@ -52,16 +52,16 @@ BOOST_AUTO_TEST_CASE( setNumberOfThreads )
 BOOST_AUTO_TEST_CASE( getNumberOfThreads )
 {
   // Outside of parallel block, this should always return 1;
-  BOOST_CHECK_EQUAL( Utility::GlobalOpenMPSession::getNumberOfThreads(), 1 );
+  BOOST_CHECK_EQUAL( Utility::OpenMPProperties::getNumberOfThreads(), 1 );
   
   #pragma omp parallel num_threads( 4 )
   {
-    if( Utility::GlobalOpenMPSession::getThreadId() == 0 )
+    if( Utility::OpenMPProperties::getThreadId() == 0 )
     {
 #ifdef HAVE_FRENSIE_OPENMP
-      BOOST_CHECK_EQUAL( Utility::GlobalOpenMPSession::getNumberOfThreads(), 4 );
+      BOOST_CHECK_EQUAL( Utility::OpenMPProperties::getNumberOfThreads(), 4 );
 #else
-      BOOST_CHECK_EQUAL( Utility::GlobalOpenMPSession::getNumberOfThreads(), 1 );
+      BOOST_CHECK_EQUAL( Utility::OpenMPProperties::getNumberOfThreads(), 1 );
 #endif
     }
   }
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE( getNumberOfThreads )
 BOOST_AUTO_TEST_CASE( createTimer )
 {
   std::shared_ptr<Utility::Timer> timer =
-    Utility::GlobalOpenMPSession::createTimer();
+    Utility::OpenMPProperties::createTimer();
 
   // Start the timer
   timer->start();
@@ -116,5 +116,5 @@ BOOST_AUTO_TEST_CASE( createTimer )
 }
 
 //---------------------------------------------------------------------------//
-// end tstGlobalOpenMPSession.cpp
+// end tstOpenMPProperties.cpp
 //---------------------------------------------------------------------------//

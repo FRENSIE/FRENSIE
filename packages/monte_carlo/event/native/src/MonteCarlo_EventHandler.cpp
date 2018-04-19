@@ -10,7 +10,7 @@
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
 #include "Utility_HDF5FileHandler.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -40,7 +40,7 @@ bool EventHandler::doesObserverExist(
 void EventHandler::enableThreadSupport( const unsigned num_threads )
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
@@ -75,7 +75,7 @@ void EventHandler::printObserverSummaries( std::ostream& os,
                                            const double end_time ) const
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   ParticleHistoryObserver::setNumberOfHistories( num_histories );
   ParticleHistoryObserver::setStartTime( start_time );
@@ -98,7 +98,7 @@ void EventHandler::printObserverSummaries( std::ostream& os,
 void EventHandler::resetObserverData()
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
@@ -117,7 +117,7 @@ void EventHandler::reduceObserverData(
 	    const int root_process )
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   ParticleHistoryObservers::iterator it =
     d_particle_history_observers.begin();
@@ -140,7 +140,7 @@ void EventHandler::exportObserverData(
                     const bool process_data )
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Create a particle history observer HDF5 file handler
   {

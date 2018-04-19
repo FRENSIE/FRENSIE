@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_CommHelpers.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -75,7 +75,7 @@ template<typename EntityId>
 void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 {
   // Thread id
-  size_t thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  size_t thread_id = Utility::OpenMPProperties::getThreadId();
 
   // Number of bins per response function
   size_t num_bins = this->getNumberOfBins();
@@ -173,7 +173,7 @@ void StandardEntityEstimator<EntityId>::enableThreadSupport(
                                                      const size_t num_threads )
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   EntityEstimator<EntityId>::enableThreadSupport( num_threads );
 
@@ -186,7 +186,7 @@ template<typename EntityId>
 void StandardEntityEstimator<EntityId>::resetData()
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   EntityEstimator<EntityId>::resetData();
 
@@ -222,7 +222,7 @@ void StandardEntityEstimator<EntityId>::reduceData(
 	    const int root_process )
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure the comm is valid
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
@@ -271,7 +271,7 @@ void StandardEntityEstimator<EntityId>::exportData(
                    const bool process_data ) const
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Export the lower level data first
   EntityEstimator<EntityId>::exportData( hdf5_file, process_data );
@@ -384,7 +384,7 @@ void StandardEntityEstimator<EntityId>::assignResponseFunction(
                  const Estimator::responseFunctionPointer& response_functions )
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   EntityEstimator<EntityId>::setResponseFunctions( response_functions );
 
@@ -406,14 +406,14 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryPointContribution(
                    const double contribution )
 {
   // Make sure the thread id is valid
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+  testPrecondition( Utility::OpenMPProperties::getThreadId() <
 		    d_update_tracker.size() );
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure that the particle type is assigned
   testPrecondition( this->isParticleTypeAssigned( particle_state_wrapper.getParticleState().getParticleType() ) );
   
-  const size_t thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  const size_t thread_id = Utility::OpenMPProperties::getThreadId();
     
   // Only add the contribution if the particle state is in the phase space
   if( this->isPointInEstimatorPhaseSpace( particle_state_wrapper ) )
@@ -460,14 +460,14 @@ void StandardEntityEstimator<EntityId>::addParticleHistoryRangeContribution(
                    const double contribution )
 {
   // Make sure the thread id is valid
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+  testPrecondition( Utility::OpenMPProperties::getThreadId() <
 		    d_update_tracker.size() );
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure that the particle type is assigned
   testPrecondition( this->isParticleTypeAssigned( particle_state_wrapper.getParticleState().getParticleType() ) );
   
-  const size_t thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  const size_t thread_id = Utility::OpenMPProperties::getThreadId();
     
   // Only add the contribution if the particle state is in the phase space
   if( this->doesRangeIntersectEstimatorPhaseSpace<RangeDimensions...>( particle_state_wrapper ) )
@@ -511,7 +511,7 @@ void StandardEntityEstimator<EntityId>::printImplementation(
 					 const std::string& entity_type ) const
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   EntityEstimator<EntityId>::printImplementation( os, entity_type );
 

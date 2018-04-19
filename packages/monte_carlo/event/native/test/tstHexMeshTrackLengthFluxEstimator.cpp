@@ -26,7 +26,7 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_EventUnitTestHarnessExtensions.hpp"
 #include "Utility_StructuredHexMesh.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -382,8 +382,8 @@ int main( int argc, char** argv )
   }
   
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
     
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   

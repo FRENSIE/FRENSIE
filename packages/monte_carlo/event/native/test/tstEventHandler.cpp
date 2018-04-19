@@ -896,7 +896,7 @@ TEUCHOS_UNIT_TEST( EventHandler,
 		   commitObserverHistoryContributions_thread_safe )
 {
   unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
 
   // Enable thread support in the estimators
   event_handler->enableThreadSupport( threads );
@@ -1256,8 +1256,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Initialize estimators
   cell_ids.resize( 2 );

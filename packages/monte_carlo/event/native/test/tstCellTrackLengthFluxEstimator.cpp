@@ -511,16 +511,16 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
 
     // Enable thread support
     estimator_1_base->enableThreadSupport(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
     estimator_2_base->enableThreadSupport(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   }
 
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
 
   unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
 
   #pragma omp parallel num_threads( threads )
   {
@@ -857,8 +857,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

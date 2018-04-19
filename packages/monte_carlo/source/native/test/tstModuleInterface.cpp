@@ -25,7 +25,7 @@
 #include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, sampleParticleState_thread_safe )
   typedef MonteCarlo::SourceModuleInterface<MonteCarlo::ParticleSource> SMI;
 
   unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
 
   std::vector<MonteCarlo::ParticleBank> banks( threads );
 
@@ -61,8 +61,8 @@ TEUCHOS_UNIT_TEST( ModuleInterface, sampleParticleState_thread_safe )
   #pragma omp parallel num_threads( threads )
   {
     SMI::sampleParticleState(
-                            banks[Utility::GlobalOpenMPSession::getThreadId()],
-                            Utility::GlobalOpenMPSession::getThreadId() );
+                            banks[Utility::OpenMPProperties::getThreadId()],
+                            Utility::OpenMPProperties::getThreadId() );
   }
 
   // Splice all of the banks
@@ -233,8 +233,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

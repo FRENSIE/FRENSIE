@@ -23,7 +23,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "Geometry_InfiniteMediumModel.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -51,23 +51,23 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, parallel_ops )
   }
   
   // Enable thread support
-  source->enableThreadSupport( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  source->enableThreadSupport( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   // Generate samples in each distributed particle source using the number
   // of requested threads
-  Teuchos::Array<MonteCarlo::ParticleBank> banks( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  Teuchos::Array<MonteCarlo::ParticleBank> banks( Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
-  #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+  #pragma omp parallel for num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
   for( unsigned long long history = 1000*comm->getRank();
        history < 1000*(comm->getRank()+1);
        ++history )
   {
-    source->sampleParticleState( banks[Utility::GlobalOpenMPSession::getThreadId()], history );
+    source->sampleParticleState( banks[Utility::OpenMPProperties::getThreadId()], history );
   }
 
   MonteCarlo::ParticleBank combined_bank;
   
-  for( int i = 0; i < Utility::GlobalOpenMPSession::getRequestedNumberOfThreads(); ++i )
+  for( int i = 0; i < Utility::OpenMPProperties::getRequestedNumberOfThreads(); ++i )
   {
     combined_bank.merge( banks[i], [](const MonteCarlo::ParticleState& a, const MonteCarlo::ParticleState& b){ return a.getHistoryNumber() < b.getHistoryNumber(); } );
   }
@@ -216,7 +216,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   comm->barrier();
   
   // Set the number of threads to use
-  Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  Utility::OpenMPProperties::setNumberOfThreads( threads );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

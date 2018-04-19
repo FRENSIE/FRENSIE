@@ -1312,11 +1312,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
     // Enable thread support
     estimator_base->enableThreadSupport(
-	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+	         Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   }
 
   unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
 
   for( unsigned i = 0; i < threads; ++i )
     TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution( i ) );
@@ -1902,8 +1902,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

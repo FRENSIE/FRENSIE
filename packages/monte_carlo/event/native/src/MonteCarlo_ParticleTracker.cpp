@@ -10,7 +10,7 @@
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 #include "Utility_CommHelpers.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -79,7 +79,7 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
   // Check if we still need to be tracking particles
   if ( particle.getHistoryNumber() <= d_number_of_histories )
@@ -139,7 +139,7 @@ void ParticleTracker::commitParticleTrackData()
 {
   #pragma omp critical
   {
-    unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+    unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
     ParticleTrackerHDF5FileHandler::ParticleDataTwoDArray particle_data;
 
@@ -250,7 +250,7 @@ void ParticleTracker::commitParticleTrackData()
 
 void ParticleTracker::resetParticleTrackData()
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
   // Clear the arrays to prepare for a new particle
   d_x_pos[thread_id].clear();
@@ -275,7 +275,7 @@ void ParticleTracker::exportData(  const std::shared_ptr<Utility::HDF5FileHandle
                                    const bool process_data ) const
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   ParticleTrackerHDF5FileHandler ptrac_hdf5_file( hdf5_file );
 
@@ -293,63 +293,63 @@ void ParticleTracker::enableThreadSupport( const unsigned num_threads )
 // Get the x position data
 void ParticleTracker::getXPositionData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_x_pos[thread_id];
 }
 
 // Get the y position data
 void ParticleTracker::getYPositionData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_y_pos[thread_id];
 }
 
 // Get the z position data
 void ParticleTracker::getZPositionData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_z_pos[thread_id];
 }
 
 // Get the x direction data
 void ParticleTracker::getXDirectionData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_x_dir[thread_id];
 }
 
 // Get the y direction data
 void ParticleTracker::getYDirectionData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_y_dir[thread_id];
 }
 
 // Get the z direction data
 void ParticleTracker::getZDirectionData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_z_dir[thread_id];
 }
 
 // Get the energy data
 void ParticleTracker::getEnergyData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_energy[thread_id];
 }
 
 // Get the collision number data
 void ParticleTracker::getCollisionNumberData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_col_num[thread_id];
 }
 
 // Get the weight data
 void ParticleTracker::getWeightData( std::vector< double >& array )
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   array = d_weight[thread_id];
 }
 
@@ -363,7 +363,7 @@ void ParticleTracker::getDataMap(
 // Check if particle is reset
 bool ParticleTracker::isParticleReset()
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
   return d_particle_reset[thread_id];
 }
 
@@ -371,7 +371,7 @@ bool ParticleTracker::isParticleReset()
 void ParticleTracker::resetData()
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   ParticleTracker::resetParticleTrackData();
 
@@ -392,7 +392,7 @@ void ParticleTracker::commitHistoryContribution()
 std::string ParticleTracker::packDataInString()
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Serialize the history number map
   std::ostringstream output_stream("ptrack_data_map");
@@ -408,7 +408,7 @@ void ParticleTracker::unpackDataFromString(
               ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map )
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   std::istringstream input_stream( packed_string );
   boost::archive::binary_iarchive input_archive( input_stream );
@@ -421,7 +421,7 @@ void ParticleTracker::reduceData(
 	    const int root_process )
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure the comm is valid
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
