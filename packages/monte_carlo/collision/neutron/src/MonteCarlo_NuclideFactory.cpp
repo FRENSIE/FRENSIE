@@ -9,141 +9,153 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NuclideACEFactory.hpp"
-#include "MonteCarlo_NuclearReactionACEFactory.hpp"
-#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 NuclideFactory::NuclideFactory(
-		     const std::string& cross_sections_xml_directory,
-		     const Teuchos::ParameterList& cross_section_table_info,
-		     const std::unordered_set<std::string>& nuclide_aliases,
-                     const SimulationProperties& properties,
-		     std::ostream* os_message )
-  : d_os_message( os_message )
+                 const boost::filesystem::path& data_directory,
+                 const ScatteringCenterNameSet& nuclide_names,
+                 const ScatteringCenterDefinitionDatabase& nuclide_definitions,
+                 const SimulationProperties& properties,
+                 const bool verbose )
 {
-  // Make sure the message output stream is valid
-  testPrecondition( os_message != NULL );
-
   // Create each nuclide in the set
-  std::unordered_set<std::string>::const_iterator nuclide_name =
-    nuclide_aliases.begin();
+  ScatteringCenterNameSet::const_iterator nuclide_name =
+    nuclide_names.begin();
 
-  std::string nuclide_file_path, nuclide_file_type, nuclide_table_name;
-  int nuclide_file_start_line;
-  int atomic_number, atomic_mass_number, isomer_number;
-  double atomic_weight_ratio, temperature;
-
-  while( nuclide_name != nuclide_aliases.end() )
+  while( nuclide_name != nuclide_names.end() )
   {
-    Data::CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
-						  cross_sections_xml_directory,
-						  *nuclide_name,
-						  cross_section_table_info,
-						  nuclide_file_path,
-						  nuclide_file_type,
-						  nuclide_table_name,
-						  nuclide_file_start_line,
-						  atomic_number,
-						  atomic_mass_number,
-						  isomer_number,
-						  atomic_weight_ratio,
-						  temperature );
+    TEST_FOR_EXCEPTION( !nuclide_definitions.doesDefinitionExist( *photoatom_name ),
+                        std::runtime_error,
+                        "Nuclide " << *nuclide_name << " cannot be "
+                        "created because its definition has not been "
+                        "specified!" );
 
-    if( nuclide_file_type == Data::CrossSectionsXMLProperties::ace_file )
+    const ScatteringCenterDefinition& nuclide_definition =
+      nuclide_definitions.getDefinition( *nuclide_name );
+
+    TEST_FOR_EXCEPTION( !nuclide_definition.hasNuclearDataProperties(),
+                        std::runtime_error,
+                        "Nuclide " << *nuclide_name << " cannot be "
+                        "created because its definition does not specify "
+                        "any nuclear data properties!" );
+
+    double atomic_weight_ratio;
+
+    const Data::NuclearDataProperties& nuclear_data_properties =
+      nuclide_definition.getNuclearDataProperties( &atomic_weight_ratio );
+
+    if( nuclear_data_properties.fileType() ==
+        Data::NuclearDataProperties::ACE_FILE )
     {
-      createNuclideFromACETable( cross_sections_xml_directory,
-				 *nuclide_name,
-				 nuclide_file_path,
-				 nuclide_table_name,
-				 nuclide_file_start_line,
-				 atomic_number,
-				 atomic_mass_number,
-				 isomer_number,
-				 atomic_weight_ratio,
-				 temperature,
-                                 properties );
+      // Initialize the nuclear table name map for ACE files
+      if( d_nuclear_table_name_map.find( Data::NuclearDataProperties::ACE_FILE ) ==
+          d_nuclear_table_name_map.end() )
+      {
+        d_nuclear_table_name_map[Data::NuclearDataProperties::ACE_FILE];
+      }
+      
+      this->createNuclideFromACETable( data_directory,
+                                       *nuclide_name,
+                                       atomic_weight_ratio,
+                                       nuclear_data_properties,
+                                       properties );
     }
     else
     {
-      THROW_EXCEPTION( std::logic_error,
-		       "nuclear table type " << nuclide_file_type <<
-		       " is not supported!" );
+      THROW_EXCEPTION( std::runtime_error,
+                       "Nuclide " << *nuclide_name << " cannot be created "
+                       "because its definition specifies the use of a "
+                       "nuclear data file of type "
+                       << nuclear_data_properties.fileType() <<
+                       ", which is currently unsupported!" );
     }
 
     ++nuclide_name;
   }
 
   // Make sure that every nuclide has been created
-  testPostcondition( d_nuclide_name_map.size() == nuclide_aliases.size() );
+  testPostcondition( d_nuclide_name_map.size() == nuclide_names.size() );
 }
 
 // Create the map of nuclides
-/*! \details the nuclide name will be converted to a unique identifier that
- * will be used as its key in the map that is populated.
- */
-void NuclideFactory::createNuclideMap(
-  std::unordered_map<std::string,std::shared_ptr<Nuclide> >& nuclide_map ) const
+void NuclideFactory::createNuclideMap( NuclideNameMap& nuclide_map ) const
 {
-  // Reset the nuclide map
-  nuclide_map.clear();
-
-  // Copy the stored map
-  nuclide_map.insert( d_nuclide_name_map.begin(), d_nuclide_name_map.end() );
-
+  nuclide_map = d_nuclide_name_map;
 }
 
 // Create a nuclide from an ACE table
 void NuclideFactory::createNuclideFromACETable(
-			       const std::string& cross_sections_xml_directory,
-                               const std::string& nuclide_alias,
-                               const std::string& ace_file_path,
-                               const std::string& nuclear_table_name,
-                               const int nuclide_file_start_line,
-                               const int atomic_number,
-                               const int atomic_mass_number,
-                               const int isomer_number,
-                               const double atomic_weight_ratio,
-                               const double temperature,
-                               const SimulationProperties& properties )
+                            const boost::filesystem::path& data_directory,
+                            const std::string& nuclide_name,
+                            const double atomic_weight_ratio,
+                            const Data::NuclearDataProperties& data_properties,
+                            const SimulationProperties& properties )
 {
-  // Load the cross section data with the specified format
-  *d_os_message << "Loading ACE cross section table "
-		<< nuclear_table_name << " (" << nuclide_alias << ") ... ";
+  // Check if the table has already been loaded
+  if( d_nuclear_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE].find( data_properties.tableName() ) ==
+      d_nuclear_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE].end() )
+  {
+    // Construct the path to the data file
+    boost::filesystem::path ace_file_path = data_directory;
+    ace_file_path /= data_properties.filePath();
+    ace_file_path.make_preferred();
+    
+    if( d_verbose )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION( "Loading ACE cross section table "
+                                        << data_properties.tableName() <<
+                                        " from " << ace_file_path.string() <<
+                                        " ... " );
+    }
 
-  // The ACE table reader
-  Data::ACEFileHandler ace_file_handler( ace_file_path,
-					 nuclear_table_name,
-					 nuclide_file_start_line,
-					 true );
-
-  // The XSS neutron data extractor
-  Data::XSSNeutronDataExtractor xss_data_extractor(
+    // The ACE table reader
+    Data::ACEFileHandler ace_file_handler( ace_file_path,
+                                           data_properties.tableName(),
+                                           data_propreties.fileStartLine(),
+                                           true );
+    
+    // The XSS neutron data extractor
+    Data::XSSNeutronDataExtractor xss_data_extractor(
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 				         ace_file_handler.getTableXSSArray() );
 
-  // Initialize the new nuclide
-  std::shared_ptr<Nuclide>& nuclide = d_nuclide_name_map[nuclide_alias];
+    // Initialize the new nuclide
+    NuclideNameMap::mapped_type& nuclide = d_nuclide_name_map[nuclide_name];
 
-  // Create the new nuclide
-  NuclideACEFactory::createNuclide( xss_data_extractor,
-				    nuclear_table_name,
-				    atomic_number,
-				    atomic_mass_number,
-				    isomer_number,
-				    atomic_weight_ratio,
-				    temperature,
-                                    properties,
-				    nuclide,
-                                    d_os_message );
+    // Create the new nuclide
+    NuclideACEFactory::createNuclide(
+                          xss_data_extractor,
+                          data_properties.tableName(),
+                          data_properties.zaid().atomicNumber(),
+                          data_properties.zaid().atomicMassNumber(),
+                          data_properties.zaid().isomerNumber(),
+                          atomic_weight_ratio,
+                          data_properties.evaluationTemperatureInMeV().value(),
+                          properties,
+                          nuclide );
 
-  *d_os_message << "done." << std::endl;
+    // Cache the new nuclide in the table name map
+    d_nuclear_table_name_map[Data::NuclearDataProperties::ACE_FILE][data_properties.tableName()] = nuclide;
+    
+    if( d_verbose )
+    {
+      FRENSIE_LOG_NOTIFICATION( "done." );
+    }
+  }
+  // The table has already been loaded
+  else
+  {
+    d_nuclide_name_map[nuclide_name] =
+      d_nuclear_table_name_map[Data::NuclearDataProperties::ACE_FILE][data_properties.tableName()];
+  }
 }
 
 } // end MonteCarlo namespace

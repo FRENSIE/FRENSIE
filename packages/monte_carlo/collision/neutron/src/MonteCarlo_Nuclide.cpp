@@ -14,6 +14,7 @@
 #include "MonteCarlo_Nuclide.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -98,15 +99,18 @@ unsigned Nuclide::getUniqueIdFromName( const std::string& name )
 }
 
 // Constructor
-Nuclide::Nuclide( const std::string& name,
-		  const unsigned atomic_number,
-		  const unsigned atomic_mass_number,
-		  const unsigned isomer_number,
-		  const double atomic_weight_ratio,
-		  const double temperature,
-		  const std::shared_ptr<std::vector<double> >& energy_grid,
-		  const ReactionMap& standard_scattering_reactions,
-		  const ReactionMap& standard_absorption_reactions )
+Nuclide::Nuclide(
+          const std::string& name,
+          const unsigned atomic_number,
+          const unsigned atomic_mass_number,
+          const unsigned isomer_number,
+          const double atomic_weight_ratio,
+          const double temperature,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const ConstReactionMap& standard_scattering_reactions,
+          const ConstReactionMap& standard_absorption_reactions )
   : d_name( name ),
     d_id( Nuclide::getUniqueIdFromName( name ) ),
     d_atomic_number( atomic_number ),
@@ -159,10 +163,10 @@ Nuclide::Nuclide( const std::string& name,
   }
 
   // Calculate the total absorption cross section
-  calculateTotalAbsorptionReaction( energy_grid );
+  this->calculateTotalAbsorptionReaction( energy_grid, grid_searcher );
 
   // Calculate the total cross section
-  calculateTotalReaction( energy_grid );
+  this->calculateTotalReaction( energy_grid, grid_searcher );
 }
 
 // Return the nuclide name
@@ -199,6 +203,12 @@ unsigned Nuclide::getIsomerNumber() const
 double Nuclide::getAtomicWeightRatio() const
 {
   return d_atomic_weight_ratio;
+}
+
+// Return the atomic weight
+double Nuclide::getAtomicWeightRatio() const
+{
+  return d_atomic_weight_ratio*Utility::PhysicalConstants::neutron_rest_mass_amu;
 }
 
 // Return the temperature of the nuclide (in MeV)
@@ -329,26 +339,29 @@ void Nuclide::collideSurvivalBias( NeutronState& neutron,
 
 // Calculate the total absorption cross section
 void Nuclide::calculateTotalAbsorptionReaction(
-		     const std::shared_ptr<std::vector<double> >& energy_grid )
+          const std::shared_ptr<std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher )
 {
   ConstReactionMap::const_iterator reaction_type_pointer,
     end_reaction_type_pointer;
 
   end_reaction_type_pointer = d_absorption_reactions.end();
 
-  std::shared_ptr<std::vector<double> > cross_section( energy_grid.size() );
+  std::shared_ptr<std::vector<double> > cross_section(
+                              new std::vector<double>( energy_grid->size() ) );
 
   // Calculate the absorption cross section
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
-    cross_section[i] = 0.0;
+    (*cross_section)[i] = 0.0;
 
     reaction_type_pointer = d_absorption_reactions.begin();
 
     while( reaction_type_pointer != end_reaction_type_pointer )
     {
-      cross_section[i] +=
-	reaction_type_pointer->second->getCrossSection( energy_grid[i] );
+      (*cross_section)[i] +=
+	reaction_type_pointer->second->getCrossSection( (*energy_grid)[i] );
 
       ++reaction_type_pointer;
     }
@@ -356,49 +369,55 @@ void Nuclide::calculateTotalAbsorptionReaction(
 
   // Create the total absorption reaction
   d_total_absorption_reaction.reset( new NeutronAbsorptionReaction(
-						  N__TOTAL_ABSORPTION_REACTION,
-						  d_temperature,
-						  0.0,
-						  energy_grid[0],
-						  energy_grid,
-						  cross_section ) );
+                                                  energy_grid,
+                                                  cross_section,
+                                                  0,
+                                                  grid_searcher,
+                                                  N__TOTAL_ABSORPTION_REACTION,
+                                                  0.0,
+                                                  d_temperature ) );
+
 }
 
 // Calculate the total cross section
 void Nuclide::calculateTotalReaction(
-		     const std::shared_ptr<std::vector<double> >& energy_grid )
+          const std::shared_ptr<std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher )
 {
   ConstReactionMap::const_iterator reaction_type_pointer,
     end_reaction_type_pointer;
 
   end_reaction_type_pointer = d_scattering_reactions.end();
 
-  std::shared_ptr<std::vector<double> > cross_section( energy_grid.size() );
+  std::shared_ptr<std::vector<double> > cross_section(
+                              new std::vector<double>( energy_grid->size() ) );
 
   // Calculate the total cross section
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
-    cross_section[i] =
-      d_total_absorption_reaction->getCrossSection( energy_grid[i] );
+    (*cross_section)[i] =
+      d_total_absorption_reaction->getCrossSection( (*energy_grid)[i] );
 
     reaction_type_pointer = d_scattering_reactions.begin();
 
     while( reaction_type_pointer != end_reaction_type_pointer )
     {
-      cross_section[i] +=
-	reaction_type_pointer->second->getCrossSection( energy_grid[i] );
+      (*cross_section)[i] +=
+	reaction_type_pointer->second->getCrossSection( (*energy_grid)[i] );
 
       ++reaction_type_pointer;
     }
   }
 
   // Create the total reaction
-  d_total_reaction.reset( new NeutronAbsorptionReaction( N__TOTAL_REACTION,
-							 d_temperature,
-							 0.0,
-							 energy_grid[0],
-							 energy_grid,
-							 cross_section ) );
+  d_total_reaction.reset( new NeutronAbsorptionReaction( energy_grid,
+                                                         cross_section,
+                                                         0,
+                                                         grid_searcher,
+                                                         N__TOTAL_REACTION,
+                                                         0.0,
+                                                         d_temperature ) );
 }
 
 // Sample a scattering reaction

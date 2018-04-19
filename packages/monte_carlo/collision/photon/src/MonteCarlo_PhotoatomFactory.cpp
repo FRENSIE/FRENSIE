@@ -55,17 +55,10 @@ PhotoatomFactory::PhotoatomFactory(
                         "created because its definition does not specify "
                         "any photoatomic data properties!" );
 
-    const Data::PhotoatomicDataProperties& photoatom_data_properties =
-      photoatom_definition.getPhotoatomicDataProperties();
-
-    // Get the atomic weight
     double atomic_weight;
 
-    // Check if there is an atomic weight override
-    if( photoatom_definition.isAtomicWeightSet() )
-      atomic_weight = photoatom_definition.getAtomicWeight();
-    else
-      atomic_weight = photoatom_data_properties.atomicWeight().value();
+    const Data::PhotoatomicDataProperties& photoatom_data_properties =
+      photoatom_definition.getPhotoatomicDataProperties( &atomic_weight );
 
     if( photoatom_data_properties.fileType() ==
         Data::PhotoatomicDataProperties::ACE_EPR_FILE )

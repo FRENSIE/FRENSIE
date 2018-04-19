@@ -21,7 +21,8 @@
 #include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
 
@@ -40,12 +41,14 @@ public:
 
   //! Constructor
   DecoupledPhotonProductionReactionACEFactory(
-		 const std::string& table_name,
-		 const double atomic_weight_ratio,
-		 const double temperature,
-		 const std::shared_ptr<const std::vector<double> >& energy_grid,
-                 const SimulationProperties& properties,
-		 const Data::XSSNeutronDataExtractor& raw_nuclide_data );
+          const std::string& table_name,
+          const double atomic_weight_ratio,
+          const double temperature,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const SimulationProperties& properties,
+          const Data::XSSNeutronDataExtractor& raw_nuclide_data );
 
   //! Destructor
   ~DecoupledPhotonProductionReactionACEFactory()
@@ -65,9 +68,11 @@ protected:
 
   //! Create the total reaction
   void createTotalReaction(
-                       const Utility::ArrayView<const double>& total_xs_block,
-                       const std::shared_ptr<const std::vector<double> >& energy_grid,
-                       const double temperature );
+          const Utility::ArrayView<const double>& total_xs_block,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const double temperature );
 
   //! Parse the SIGP Block
   static void parseSIGP(
@@ -105,7 +110,7 @@ private:
        const boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
        const boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >& base_reaction_map,
        const SimulationProperties& properties,
-       PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
+       PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory );
 
   // Initialize the yield based photon production reactions
   void initializeCrossSectionBasedPhotonProductionReactions(
@@ -114,20 +119,22 @@ private:
        const boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
        const boost::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
        const std::shared_ptr<const std::vector<double> >& energy_grid,
+       std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
        const SimulationProperties& properties,
-       PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
+       PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory );
 
   // A map of the photon production reactions
   boost::unordered_map<unsigned,std::shared_ptr<const DecoupledPhotonProductionReaction> >
   d_photon_production_reactions;
 
   // A map of the nuclear reaction type to associated array of TabularDistributions
-  boost::unordered_map<NuclearReactionType,std::vector<std::shared_ptr<Utility::OneDDistribution> > >
+  boost::unordered_map<NuclearReactionType,std::vector<std::shared_ptr<Utility::UnivariateDistribution> > >
   d_mt_yield_distributions;
 
   // A map of photon production reaction MT numbers to shared pointers of
   //   Tabular distributions
-  boost::unordered_map<unsigned,std::shared_ptr<Utility::OneDDistribution> >
+  boost::unordered_map<unsigned,std::shared_ptr<const Utility::UnivariateDistribution> >
   d_mtp_yield_distributions_map;
 
   // Total reaction

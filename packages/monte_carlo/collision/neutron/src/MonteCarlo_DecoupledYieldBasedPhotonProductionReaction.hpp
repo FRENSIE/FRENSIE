@@ -32,34 +32,55 @@ public:
 	 const NuclearReactionType base_reaction_type,
 	 const unsigned photon_production_id,
 	 const double temperature,
-	 const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+	 const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
          total_mt_yield_array,
-	 const std::shared_ptr<const Utility::OneDDistribution>& mtp_yield,
-	 const std::shared_ptr<const NuclearReaction>& base_reaction,
+	 const std::shared_ptr<const Utility::UnivariateDistribution>& mtp_yield,
+	 const std::shared_ptr<const NeutronNuclearReaction>& base_reaction,
 	 const std::shared_ptr<const ScatteringDistribution>&
 	 photon_production_distribution,
-	 const std::shared_ptr<const NuclearReaction>& total_reaction );
+	 const std::shared_ptr<const NeutronNuclearReaction>& total_reaction );
 
   //! Destructor
   ~DecoupledYieldBasedPhotonProductionReaction()
   { /* ... */ }
 
+  //! Test if two Atomic reactions share the same energy grid
+  bool isEnergyGridShared( const NuclearReaction& other_reaction ) const final override;
+
+  //! Test if the energy falls within the energy grid
+  bool isEnergyWithinEnergyGrid( const double energy ) const final override;
+
   //! Return the threshold energy
-  double getThresholdEnergy() const override;
+  double getThresholdEnergy() const final override;
+
+  //! Return the max energy
+  double getMaxEnergy() const final override;
 
   //! Return the base reaction cross section at a given energy
-  double getBaseReactionCrossSection( const double energy ) const override;
+  double getBaseReactionCrossSection( const double energy ) const final override;
 
   //! Return the cross section at a given energy
-  double getCrossSection( const double energy ) const override;
+  double getCrossSection( const double energy ) const final override;
+
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+                          const size_t bin_index ) const final override;
+
+  //! Return the average number of emitted photons
+  double getAverageNumberOfEmittedParticles( const double energy ) const final override;
+
+protected:
+
+  //! Return the head of the energy grid
+  const double* getEnergyGridHead() const final override;
 
 private:
 
   // The photon production yield distribution
-  std::shared_ptr<const Utility::OneDDistribution> d_mtp_yield;
+  std::shared_ptr<const Utility::UnivariateDistribution> d_mtp_yield;
   
   // The base neutron absorption reaction
-  std::shared_ptr<const NuclearReaction> d_base_reaction;
+  std::shared_ptr<const NeutronNuclearReaction> d_base_reaction;
 };
 
 // Return the threshold energy

@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Vector.hpp"
 
@@ -28,7 +28,7 @@ public:
   DelayedNeutronEmissionDistribution(
       const double atomic_weight_ratio,
       const std::vector<double>& precursor_group_decay_consts,
-      const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+      const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
       precursor_group_prob_distributions,
       const std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions );
@@ -53,7 +53,7 @@ private:
   std::vector<double> d_precursor_group_decay_consts;
 
   // The delayed neutron precursor group probability distributions
-  std::vector<std::shared_ptr<const Utility::OneDDistribution> >
+  std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
   d_precursor_group_prob_distributions;
 
   // The delayed neutron precursor group energy distributions

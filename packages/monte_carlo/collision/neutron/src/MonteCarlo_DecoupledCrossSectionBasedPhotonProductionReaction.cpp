@@ -12,40 +12,32 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_NuclearReactionHelper.hpp"
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic Constructor
 DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPhotonProductionReaction(
        const NuclearReactionType base_reaction_type,
        const unsigned photon_production_id,
        const double temperature,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
        const std::shared_ptr<const ScatteringDistribution>&
        photon_production_distribution,
-       const std::shared_ptr<const NuclearReaction>& total_reaction,
-       const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+       const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
+       const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
        total_mt_yield_array )
-  : DecoupledPhotonProductionReaction( base_reaction_type,
-			      photon_production_id,
-			      temperature,
-			      photon_production_distribution,
-			      total_reaction,
-			      total_mt_yield_array ),
-    d_threshold_energy_index( threshold_energy_index ),
-    d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section )
+  : BaseType( incoming_energy_grid,
+              cross_section,
+              threshold_energy_index )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( incoming_energy_grid.begin(),
-					     incoming_energy_grid.end() ) );
-
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 1 );
+  this->initialize( base_reaction_type,
+                    photon_production_id,
+                    temperature,
+                    photon_production_distribution,
+                    total_reaction,
+                    total_mt_yield_array );
 }
 
 // Return the cross section at a given energy
@@ -54,13 +46,13 @@ double DecoupledCrossSectionBasedPhotonProductionReaction::getBaseReactionCrossS
   return DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( energy );
 }
 
-// Return the cross section at a given energy
-double DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( const double energy ) const
+// Return the average number of emitted photons
+/*! \details The multiplicity is incorporated into the cross section and
+ * therefore cannot be returned directly. This method will simply return 1.
+ */
+double DecoupledCrossSectionBasedPhotonProductionReaction::getAverageNumberOfEmittedParticles( const double ) const
 {
-  return MonteCarlo::getCrossSection( energy,
-                                      *d_incoming_energy_grid,
-                                      *d_cross_section,
-                                      d_threshold_energy_index );
+  return 1.0;
 }
 
 } // end MonteCarlo namespace

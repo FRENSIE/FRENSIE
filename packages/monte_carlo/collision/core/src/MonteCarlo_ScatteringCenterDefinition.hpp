@@ -80,7 +80,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::PhotoatomicDataProperties>& properties );
 
   //! Get the photoatomic data properties
-  const Data::PhotoatomicDataProperties& getPhotoatomicDataProperties() const;
+  const Data::PhotoatomicDataProperties& getPhotoatomicDataProperties(
+                                          double* atomic_weight = NULL ) const;
 
   //! Check if there are adjoint photoatomic data properties
   bool hasAdjointPhotoatomicDataProperties() const;
@@ -92,7 +93,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::AdjointPhotoatomicDataProperties>& properties );
 
   //! Get the adjoint photoatomic data properties
-  const Data::AdjointPhotoatomicDataProperties& getAdjointPhotoatomicDataProperties() const;
+  const Data::AdjointPhotoatomicDataProperties& getAdjointPhotoatomicDataProperties(
+                                          double* atomic_weight = NULL ) const;
 
   //! Check if there are electroatomic data properties
   bool hasElectroatomicDataProperties() const;
@@ -104,7 +106,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::ElectroatomicDataProperties>& properties );
 
   //! Get the electroatomic data properties
-  const Data::ElectroatomicDataProperties& getElectroatomicDataProperties() const;
+  const Data::ElectroatomicDataProperties& getElectroatomicDataProperties(
+                                          double* atomic_weight = NULL ) const;
 
   //! Check if there are adjoint electroatomic data properties
   bool hasAdjointElectroatomicDataProperties() const;
@@ -116,7 +119,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::AdjointElectroatomicDataProperties>& properties );
 
   //! Get the adjoint electroatomic data properties
-  const Data::AdjointElectroatomicDataProperties& getAdjointElectroatomicDataProperties() const;
+  const Data::AdjointElectroatomicDataProperties& getAdjointElectroatomicDataProperties(
+                                          double* atomic_weight = NULL ) const;
 
   //! Check if there are nuclear data properties
   bool hasNuclearDataProperties() const;
@@ -128,7 +132,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::NuclearDataProperties>& properties );
 
   //! Get the nuclear data properties
-  const Data::NuclearDataProperties& getNuclearDataProperties() const;
+  const Data::NuclearDataProperties& getNuclearDataProperties(
+                                    double* atomic_weight_ratio = NULL ) const;
 
   //! Check if there are thermal nuclear data properties
   bool hasThermalNuclearDataProperties() const;
@@ -152,7 +157,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::AdjointNuclearDataProperties>& properties );
 
   //! Get the adjoint nuclear data properties
-  const Data::AdjointNuclearDataProperties& getAdjointNuclearDataProperties() const;
+  const Data::AdjointNuclearDataProperties& getAdjointNuclearDataProperties(
+                                    double* atomic_weight_ratio = NULL ) const;
 
   //! Check if there are adjoint thermal nuclear data properties
   bool hasAdjointThermalNuclearDataProperties() const;
@@ -176,7 +182,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::PhotonuclearDataProperties>& properties );
 
   //! Get the photonuclear data properties
-  const Data::PhotonuclearDataProperties& getPhotonuclearDataProperties() const;
+  const Data::PhotonuclearDataProperties& getPhotonuclearDataProperties(
+                                          double* atomic_weight = NULL ) const;
 
   //! Check if there are adjoint photonuclear data properties
   bool hasAdjointPhotonuclearDataProperties() const;
@@ -188,7 +195,8 @@ public:
   void setDataProperties( const std::shared_ptr<const Data::AdjointPhotonuclearDataProperties>& properties );
 
   //! Get the adjoint photonuclear data properties
-  const Data::AdjointPhotonuclearDataProperties& getAdjointPhotonuclearDataProperties() const;
+  const Data::AdjointPhotonuclearDataProperties& getAdjointPhotonuclearDataProperties(
+                                          double* atomic_weight = NULL ) const;
 
   //! Place the object in an output stream
   void toStream( std::ostream& os ) const final override;
@@ -197,6 +205,14 @@ private:
 
   // Default constructor
   ScatteringCenterDefinition();
+
+  // Get the atomic weight
+  template<typename DataProperties>
+  double getAtomicWeight( const DataProperties& properties ) const;
+
+  // Get the atomic weight ratio
+  template<typename DataProperties>
+  double getAtomicWeightRatio( const DataProperties& properties ) const;
 
   // Verify consistent atom
   void verifyConsistentAtom( const Data::AtomType atom,
@@ -270,6 +286,30 @@ private:
   // The adjoint photonuclear data properties
   std::shared_ptr<const Data::AdjointPhotonuclearDataProperties> d_adjoint_photonuclear_data_properties;
 };
+
+// Get the atomic weight
+template<typename DataProperties>
+double ScatteringCenterDefinition::getAtomicWeight(
+                                       const DataProperties& properties ) const
+{
+  // Check for an override
+  if( this->isAtomicWeightSet() )
+    return this->getAtomicWeight();
+  else
+    return properties.atomicWeight().value();
+}
+
+// Get the atomic weight ratio
+template<typename DataProperties>
+double ScatteringCenterDefinition::getAtomicWeightRatio(
+                                       const DataProperties& properties ) const
+{
+  // Check for an override
+  if( this->isAtomicWeightSet() )
+    return this->getAtomicWeightRatio();
+  else
+    return properties.atomicWeightRatio();
+}
 
 // Save the object to an archive
 template<typename Archive>

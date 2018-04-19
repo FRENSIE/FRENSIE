@@ -12,62 +12,95 @@
 
 namespace MonteCarlo{
 
+// Basic Constructor (delayed neutron data)
+/*! \details This constructor should be used when delayed neutron data is
+ * available.
+ */
+NeutronFissionReaction::NeutronFissionReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
+       const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
+       fission_neutron_multiplicity_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       prompt_neutron_emission_distribution )
+  : StandardNeutronNuclearReaction( incoming_energy_grid,
+                                    cross_section,
+                                    threshold_energy_index,
+                                    reaction_type,
+                                    q_value,
+                                    temperature ),
+    d_fission_neutron_multiplicity_distribution( fission_neutron_multiplicity_distribution ),
+    d_prompt_neutron_emission_distribution( prompt_neutron_emission_distribution )
+{
+  // Make sure the distributions are valid
+  testPrecondition( fission_neutron_multiplicity_distribution.get() );
+  testPrecondition( prompt_neutron_emission_distribution.get() )
+}
+
 // Constructor (delayed neutron data)
 /*! \details This constructor should be used when delayed neutron data is
  * available.
  */
 NeutronFissionReaction::NeutronFissionReaction(
-       const NuclearReactionType reaction_type,
-       const double temperature,
-       const double q_value,
-       const unsigned threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
        const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
        fission_neutron_multiplicity_distribution,
        const std::shared_ptr<const ScatteringDistribution>&
        prompt_neutron_emission_distribution )
-  : NuclearReaction( reaction_type,
-		     temperature,
-		     q_value,
-		     threshold_energy_index,
-		     incoming_energy_grid,
-		     cross_section ),
+  : StandardNeutronNuclearReaction( incoming_energy_grid,
+                                    cross_section,
+                                    threshold_energy_index,
+                                    grid_searcher,
+                                    reaction_type,
+                                    q_value,
+                                    temperature ),
     d_fission_neutron_multiplicity_distribution( fission_neutron_multiplicity_distribution ),
     d_prompt_neutron_emission_distribution( prompt_neutron_emission_distribution )
 {
   // Make sure the distributions are valid
-  testPrecondition( !fission_neutron_multiplicity_distribution.is_null() );
-  testPrecondition( !prompt_neutron_emission_distribution.is_null() );
+  testPrecondition( fission_neutron_multiplicity_distribution.get() );
+  testPrecondition( prompt_neutron_emission_distribution.get() )
 }
 
 // Return the number of neutrons emitted from the rxn at the given energy
-unsigned NeutronFissionReaction::getNumberOfEmittedNeutrons(
+unsigned NeutronFissionReaction::getNumberOfEmittedParticles(
 						    const double energy ) const
 {
-  double average_multiplicity = getAverageNumberOfEmittedNeutrons( energy );
+  double average_multiplicity =
+    this->getAverageNumberOfEmittedParticles( energy );
 
-  return sampleNumberOfEmittedNeutrons( average_multiplicity );
+  return this->sampleNumberOfEmittedParticles( average_multiplicity );
 }
 
 // Return the number of prompt neutrons emitted from the rxn
-unsigned NeutronFissionReaction::getNumberOfPromptNeutrons(
+unsigned NeutronFissionReaction::getNumberOfPromptParticles(
 						    const double energy ) const
 {
   double average_prompt_multiplicity =
-    getAverageNumberOfPromptNeutrons( energy );
+    this->getAverageNumberOfPromptParticles( energy );
 
-  return sampleNumberOfEmittedNeutrons( average_prompt_multiplicity );
+  return this->sampleNumberOfEmittedParticles( average_prompt_multiplicity );
 }
 
 // Return the number of delayed neutrons emitted from the rxn
-unsigned NeutronFissionReaction::getNumberOfDelayedNeutrons(
+unsigned NeutronFissionReaction::getNumberOfDelayedParticles(
 						    const double energy ) const
 {
   double average_delayed_multiplicity =
-    getAverageNumberOfDelayedNeutrons( energy );
+    this->getAverageNumberOfDelayedParticles( energy );
 
-  return sampleNumberOfEmittedNeutrons( average_delayed_multiplicity );
+  return this->sampleNumberOfEmittedParticles( average_delayed_multiplicity );
 }
 
 // Simulate the reaction
@@ -77,7 +110,7 @@ unsigned NeutronFissionReaction::getNumberOfDelayedNeutrons(
 void NeutronFissionReaction::react( NeutronState& neutron,
 				    ParticleBank& bank ) const
 {
-  reactImplementation( neutron, bank, true );
+  this->reactImplementation( neutron, bank, true );
 }
 
 // The implementation of the reaction simulation
@@ -94,7 +127,7 @@ void NeutronFissionReaction::reactImplementation(
     neutron.incrementCollisionNumber();
 
   int num_prompt_neutrons =
-    this->getNumberOfPromptNeutrons( neutron.getEnergy() );
+    this->getNumberOfPromptParticles( neutron.getEnergy() );
 
   // Create the additional prompt neutrons
   for( int i = 0; i < num_prompt_neutrons; ++i )

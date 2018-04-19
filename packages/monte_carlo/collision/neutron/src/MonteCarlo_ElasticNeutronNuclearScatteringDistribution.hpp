@@ -16,7 +16,7 @@
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{

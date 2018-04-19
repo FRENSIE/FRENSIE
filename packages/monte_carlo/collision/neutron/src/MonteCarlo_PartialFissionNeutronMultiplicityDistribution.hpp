@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,31 +27,33 @@ public:
 
   //! Constructor (prompt and total)
   PartialFissionNeutronMultiplicityDistribution(
-			      const std::shared_ptr<Utility::OneDDistribution>&
-                              first_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              second_multiplicity_distribution );
+		  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  first_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  second_multiplicity_distribution );
   
   //! Destructor
   ~PartialFissionNeutronMultiplicityDistribution()
   { /* ... */ }
 
   //! Return the average number of neutrons emitted
-  double getAverageNumberOfEmittedNeutrons( const double energy) const override;
+  double getAverageNumberOfEmittedNeutrons( const double energy) const final override;
 
   //! Return the average number of prompt neutrons emitted
-  double getAverageNumberOfPromptNeutrons( const double energy ) const override;
+  double getAverageNumberOfPromptNeutrons( const double energy ) const final override;
 
   //! Return the average number of delayed neutrons emitted
-  double getAverageNumberOfDelayedNeutrons( const double energy) const override;
+  double getAverageNumberOfDelayedNeutrons( const double energy) const final override;
 
 private:
 
   // The first multiplicity distribution
-  std::shared_ptr<Utility::OneDDistribution> d_first_multiplicity_distribution;
+  std::shared_ptr<const Utility::UnivariateDistribution>
+  d_first_multiplicity_distribution;
 
   // The second multiplicity distribution
-  std::shared_ptr<Utility::OneDDistribution> d_second_multiplicity_distribution;
+  std::shared_ptr<const Utility::UnivariateDistribution>
+  d_second_multiplicity_distribution;
 };
 
 //! The prompt-total policy
@@ -59,33 +61,33 @@ struct PromptTotalFissionNeutronMultiplicityPolicy
 {
   //! Return the total nu-bar
   static inline double getTotalNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_prompt_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_total_multiplicity_distribution,
-                              const double energy )
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_prompt_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_total_multiplicity_distribution,
+                  const double energy )
   {
     return d_total_multiplicity_distribution->evaluate( energy );
   }
 
   //! Return the prompt nu-bar
   static inline double getPromptNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_prompt_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_total_multiplicity_distribution,
-                              const double energy )
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_prompt_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_total_multiplicity_distribution,
+                  const double energy )
   {
     return d_prompt_multiplicity_distribution->evaluate( energy );
   }
 
   //! Return the delayed nu-bar
   static inline double getDelayedNuBar(
-			      const std::shared_ptr<Utility::OneDDistribution>&
-                              d_prompt_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_total_multiplicity_distribution,
-                              const double energy )
+		  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_prompt_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_total_multiplicity_distribution,
+                  const double energy )
   {
     return d_total_multiplicity_distribution->evaluate( energy ) -
       d_prompt_multiplicity_distribution->evaluate( energy );
@@ -97,21 +99,21 @@ struct DelayedTotalFissionNeutronMultiplicityPolicy
 {
   //! Return the total nu-bar
   static inline double getTotalNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_delayed_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_total_multiplicity_distribution,
-                              const double energy )
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_delayed_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_total_multiplicity_distribution,
+                  const double energy )
   {
     return d_total_multiplicity_distribution->evaluate( energy );
   }
 
   //! Return the prompt nu-bar
   static inline double getPromptNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_delayed_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_total_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_delayed_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_total_multiplicity_distribution,
                               const double energy )
   {
     return d_total_multiplicity_distribution->evaluate( energy ) -
@@ -120,11 +122,11 @@ struct DelayedTotalFissionNeutronMultiplicityPolicy
 
   //! Return the delayed nu-bar
   static inline double getDelayedNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_delayed_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_total_multiplicity_distribution,
-                              const double energy )
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_delayed_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_total_multiplicity_distribution,
+                  const double energy )
   {
     return d_delayed_multiplicity_distribution->evaluate( energy );
   }
@@ -135,11 +137,11 @@ struct DelayedPromptFissionNeutronMultiplicityPolicy
 {
   //! Return the total nu-bar
   static inline double getTotalNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_delayed_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_prompt_multiplicity_distribution,
-                              const double energy )
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_delayed_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_prompt_multiplicity_distribution,
+                  const double energy )
   {
     return d_delayed_multiplicity_distribution->evaluate( energy ) +
       d_prompt_multiplicity_distribution->evaluate( energy );
@@ -147,22 +149,22 @@ struct DelayedPromptFissionNeutronMultiplicityPolicy
 
   //! Return the prompt nu-bar
   static inline double getPromptNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_delayed_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_prompt_multiplicity_distribution,
-                              const double energy )
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_delayed_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_prompt_multiplicity_distribution,
+                  const double energy )
   {
     return d_prompt_multiplicity_distribution->evaluate( energy );
   }
 
   //! Return the delayed nu-bar
   static inline double getDelayedNuBar(
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_delayed_multiplicity_distribution,
-                              const std::shared_ptr<Utility::OneDDistribution>&
-                              d_prompt_multiplicity_distribution,
-                              const double energy )
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_delayed_multiplicity_distribution,
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  d_prompt_multiplicity_distribution,
+                  const double energy )
   {
     return d_delayed_multiplicity_distribution->evaluate( energy );
   }

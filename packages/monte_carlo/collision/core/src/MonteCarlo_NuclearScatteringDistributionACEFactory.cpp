@@ -13,7 +13,6 @@
 
 namespace MonteCarlo{
 
-EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<NeutronState,NeutronState> );
 EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<NeutronState,PhotonState> );
 EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<PhotonState,NeutronState> );
   

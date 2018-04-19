@@ -10,7 +10,7 @@
 #define MONTE_CARLO_ENERGY_DEPENDENT_NEUTRON_MULTIPLICITY_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReaction.hpp"
+#include "MonteCarlo_StandardNeutronNuclearReaction.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
@@ -23,7 +23,7 @@ namespace MonteCarlo{
  * scattering reaction depending on the neutron multiplicity at the given
  * energy (e.g. N__N_ANYTHING reaction in O16)
  */
-class EnergyDependentNeutronMultiplicityReaction : public NuclearReaction
+class EnergyDependentNeutronMultiplicityReaction : public StandardNeutronNuclearReaction
 {
   // Typedef for QuantityTraits
   typedef Utility::QuatityTraits<double> QT;
@@ -33,28 +33,43 @@ public:
   //! The scattering distribution type
   typedef NuclearScatteringDistribution<NeutronState,NeutronState> ScatteringDistribution
 
-  //! Constructor
+  //! Basic Constructor
   EnergyDependentNeutronMultiplicityReaction(
-       const NuclearReactionType reaction_type,
-       const double temperature,
-       const double q_value,
-       const Utility::ArrayView<const double>& multiplicity_energy_grid,
-       const Utility::ArrayView<const double>& multiplicity,
-       const unsigned threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
        const std::shared_ptr<const ScatteringDistribution>&
-       scattering_distribution );
+       scattering_distribution,
+       const Utility::ArrayView<const double>& multiplicity_energy_grid,
+       const Utility::ArrayView<const double>& multiplicity );
+
+  //! Constructor
+  EnergyDependentNeutronMultiplicityReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
+       const std::shared_ptr<const ScatteringDistribution>&
+       scattering_distribution,
+       const Utility::ArrayView<const double>& multiplicity_energy_grid,
+       const Utility::ArrayView<const double>& multiplicity );
 
   //! Destructor
   ~EnergyDependentNeutronMultiplicityReaction()
   { /* ... */ }
 
   //! Return the number of neutrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedNeutrons( const double energy ) const override;
+  unsigned getNumberOfEmittedParticles( const double energy ) const override;
 
   //! Return the average number of neutrons emitted from the rxn
-  double getAverageNumberOfEmittedNeutrons( const double energy ) const override;
+  double getAverageNumberOfEmittedParticles( const double energy ) const override;
 
   //! Simulate the reaction
   void react( NeutronState& neutron, ParticleBank& bank ) const override;

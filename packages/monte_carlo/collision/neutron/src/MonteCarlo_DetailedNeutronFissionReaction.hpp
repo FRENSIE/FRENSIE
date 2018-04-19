@@ -26,14 +26,31 @@ public:
   //! The scattering distribution type
   typedef NeutronFissionReaction::ScatteringDistribution ScatteringDistribution;
 
-  //! Constructor
+  //! Basic Constructor
   DetailedNeutronFissionReaction(
-       const NuclearReactionType reaction_type,
-       const double temperature,
-       const double q_value,
-       const unsigned threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
+       const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
+       fission_neutron_multiplicity_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       prompt_neutron_emission_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       delayed_neutron_emission_distribution );
+
+  //! Constructor
+  DetailedNeutronFissionReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
        const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
        fission_neutron_multiplicity_distribution,
        const std::shared_ptr<const ScatteringDistribution>&
@@ -46,7 +63,7 @@ public:
   { /* ... */ }
 
   //! Simulate the reaction
-  void react( NeutronState& neutron, ParticleBank& bank ) const override;
+  void react( NeutronState& neutron, ParticleBank& bank ) const final override;
 
 private:
 

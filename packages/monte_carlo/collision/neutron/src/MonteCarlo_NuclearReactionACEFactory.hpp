@@ -23,6 +23,7 @@
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
 
@@ -41,30 +42,32 @@ public:
 
   //! Constructor
   NuclearReactionACEFactory(
-		 const std::string& table_name,
-		 const double atomic_weight_ratio,
-		 const double temperature,
-		 const std::shared_ptr<const std::vector<double> >& energy_grid,
-                 const SimulationProperties& properties,
-		 const Data::XSSNeutronDataExtractor& raw_nuclide_data );
+          const std::string& table_name,
+          const double atomic_weight_ratio,
+          const double temperature,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const SimulationProperties& properties,
+          const Data::XSSNeutronDataExtractor& raw_nuclide_data );
 
   //! Destructor
-  ~NuclearReactionACEFactory()
+  virtual ~NuclearReactionACEFactory()
   { /* ... */ }
 
   //! Create the scattering reactions
   void createScatteringReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >&
+      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       scattering_reactions ) const;
 
   //! Create the absorption reactions
   void createAbsorptionReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >&
+      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       absorption_reactions ) const;
 
   //! Create the fission reactions
   virtual void createFissionReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >&
+      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       fission_reactions ) const;
 
 protected:
@@ -110,8 +113,8 @@ protected:
 
   //! Get the reaction associated with an Reaction Type
   void getReactionFromReactionType(
-                               NuclearReactionType reaction_type,
-                               std::shared_ptr<const NuclearReaction>& base_reaction );
+          NuclearReactionType reaction_type,
+          const std::shared_ptr<const NeutronNuclearReaction>& base_reaction );
 
 private:
 
@@ -119,6 +122,8 @@ private:
   void initializeScatteringReactions(
     const double temperature,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
@@ -135,6 +140,8 @@ private:
   void initializeAbsorptionReactions(
     const double temperature,
     const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
@@ -149,6 +156,8 @@ private:
   void initializeFissionReactions(
     const double temperature,
     const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
@@ -164,15 +173,15 @@ private:
     delayed_neutron_emission_distribution );
 
   // A map of the scattering reactions
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >
+  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
   d_scattering_reactions;
 
   // A map of the absorption reactions
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >
+  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutonNuclearReaction> >
   d_absorption_reactions;
 
   // A map of the fission reactions
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >
+  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
   d_fission_reactions;
 };
 

@@ -140,12 +140,21 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the photoatomic data properties
-const Data::PhotoatomicDataProperties& ScatteringCenterDefinition::getPhotoatomicDataProperties() const
+/*! \details If an atomic weight has been set for this definition, that atomic
+ * weight will be returned. Otherwise, the atomic weight specified in the
+ * PhotoatomicDataProperties will be returned.
+ */
+const Data::PhotoatomicDataProperties& ScatteringCenterDefinition::getPhotoatomicDataProperties(
+                                                  double* atomic_weight ) const
 {
   TEST_FOR_EXCEPTION( d_photoatomic_data_properties.get() == NULL,
                       std::logic_error,
                       "The photoatomic data properties have not been set!" );
 
+  // Get the atomic weight
+  if( atomic_weight )
+    *atomic_weight = this->getAtomicWeight( *d_photoatomic_data_properties );
+  
   return *d_photoatomic_data_properties;
 }
 
@@ -178,12 +187,20 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the adjoint photoatomic data properties
-const Data::AdjointPhotoatomicDataProperties& ScatteringCenterDefinition::getAdjointPhotoatomicDataProperties() const
+const Data::AdjointPhotoatomicDataProperties& ScatteringCenterDefinition::getAdjointPhotoatomicDataProperties(
+                                                  double* atomic_weight ) const
 {
   TEST_FOR_EXCEPTION( d_adjoint_photoatomic_data_properties.get() == NULL,
                       std::logic_error,
                       "The adjoint photoatomic data properties have not been "
                       "set!" );
+
+  // Get the atomic weight
+  if( atomic_weight )
+  {
+    *atomic_weight =
+      this->getAtomicWeight( *d_adjoint_photoatomic_data_properties );
+  }
 
   return *d_adjoint_photoatomic_data_properties;
 }
@@ -217,12 +234,17 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the electroatomic data properties
-const Data::ElectroatomicDataProperties& ScatteringCenterDefinition::getElectroatomicDataProperties() const
+const Data::ElectroatomicDataProperties& ScatteringCenterDefinition::getElectroatomicDataProperties(
+                                                  double* atomic_weight ) const
 {
   TEST_FOR_EXCEPTION( d_electroatomic_data_properties.get() == NULL,
                       std::logic_error,
                       "The electroatomic data properties have not been set!" );
 
+  // Get the atomic weight
+  if( atomic_weight )
+    *atomic_weight = this->getAtomicWeight( *d_electroatomic_data_properties );
+  
   return *d_electroatomic_data_properties;
 }
 
@@ -255,12 +277,20 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the adjoint electroatomic data properties
-const Data::AdjointElectroatomicDataProperties& ScatteringCenterDefinition::getAdjointElectroatomicDataProperties() const
+const Data::AdjointElectroatomicDataProperties& ScatteringCenterDefinition::getAdjointElectroatomicDataProperties(
+                                                  double* atomic_weight ) const
 {
   TEST_FOR_EXCEPTION( d_adjoint_electroatomic_data_properties.get() == NULL,
                       std::logic_error,
                       "The adjoint electroatomic data properties have not been"
                       " set!" );
+
+  // Get the atomic weight
+  if( atomic_weight )
+  {
+    *atomic_weight =
+      this->getAtomicWeight( *d_adjoint_electroatomic_data_properties );
+  }
 
   return *d_adjoint_electroatomic_data_properties;
 }
@@ -296,12 +326,20 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the nuclear data properties
-const Data::NuclearDataProperties& ScatteringCenterDefinition::getNuclearDataProperties() const
+const Data::NuclearDataProperties& ScatteringCenterDefinition::getNuclearDataProperties(
+                                            double* atomic_weight_ratio ) const
 {
   TEST_FOR_EXCEPTION( d_nuclear_data_properties.get() == NULL,
                       std::logic_error,
                       "The nuclear data properties have not been set!" );
 
+  // Get the atomic weight ratio
+  if( atomic_weight_ratio )
+  {
+    *atomic_weight_ratio =
+      this->getAtomicWeightRatio( *d_nuclear_data_properties );
+  }
+  
   return *d_nuclear_data_properties;
 }
 
@@ -377,12 +415,20 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the adjoint nuclear data properties
-const Data::AdjointNuclearDataProperties& ScatteringCenterDefinition::getAdjointNuclearDataProperties() const
+const Data::AdjointNuclearDataProperties& ScatteringCenterDefinition::getAdjointNuclearDataProperties(
+                                            double* atomic_weight_ratio ) const
 {
   TEST_FOR_EXCEPTION( d_adjoint_nuclear_data_properties.get() == NULL,
                       std::logic_error,
                       "The adjoint nuclear data properties have not been "
                       "set!" );
+
+  // Get the atomic weight ratio
+  if( atomic_weight_ratio )
+  {
+    *atomic_weight_ratio =
+      this->getAtomicWeightRatio( *d_adjoint_nuclear_data_properties );
+  }
 
   return *d_adjoint_nuclear_data_properties;
 }
@@ -457,12 +503,17 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the photonuclear data properties
-const Data::PhotonuclearDataProperties& ScatteringCenterDefinition::getPhotonuclearDataProperties() const
+const Data::PhotonuclearDataProperties& ScatteringCenterDefinition::getPhotonuclearDataProperties(
+                                                  double* atomic_weight ) const
 {
   TEST_FOR_EXCEPTION( d_photonuclear_data_properties.get() == NULL,
                       std::logic_error,
                       "The photonuclear data properties have not been set!" );
 
+  // Get the atomic weight
+  if( atomic_weight )
+    *atomic_weight = this->getAtomicWeight( *d_photonuclear_data_properties );
+  
   return *d_photonuclear_data_properties;
 }
 
@@ -495,12 +546,20 @@ void ScatteringCenterDefinition::setDataProperties(
 }
 
 // Get the adjoint photonuclear data properties
-const Data::AdjointPhotonuclearDataProperties& ScatteringCenterDefinition::getAdjointPhotonuclearDataProperties() const
+const Data::AdjointPhotonuclearDataProperties& ScatteringCenterDefinition::getAdjointPhotonuclearDataProperties(
+                                                  double* atomic_weight ) const
 {
   TEST_FOR_EXCEPTION( d_adjoint_photonuclear_data_properties.get() == NULL,
                       std::logic_error,
                       "The adjoint photonuclear data properties have not been "
                       "set!" );
+
+  // Get the atomic weight
+  if( atomic_weight )
+  {
+    *atomic_weight =
+      this->getAtomicWeight( *d_adjoint_photonuclear_data_properties );
+  }
 
   return *d_adjoint_photonuclear_data_properties;
 }

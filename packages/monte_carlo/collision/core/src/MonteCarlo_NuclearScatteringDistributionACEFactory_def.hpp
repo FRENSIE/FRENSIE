@@ -605,7 +605,6 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 class NeutronState;
 class PhotonState;
 
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<NeutronState,NeutronState> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<NeutronState,PhotonState> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( NuclearScatteringDistributionACEFactory<PhotonState,NeutronState> );
 

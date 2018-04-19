@@ -35,8 +35,7 @@ public:
 			 const double atomic_weight_ratio,
 			 const double temperature,
                          const SimulationProperties& properties,
-			 std::shared_ptr<Nuclide>& nuclide,
-                         std::ostream* os_message = &std::cerr );
+			 std::shared_ptr<const Nuclide>& nuclide );
 
 private:
 

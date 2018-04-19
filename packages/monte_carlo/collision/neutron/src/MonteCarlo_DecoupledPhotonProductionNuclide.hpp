@@ -43,10 +43,12 @@ public:
      const unsigned isomer_number,
      const double atomic_weight_ratio,
      const double temperature,
-     const std::shared_ptr<std::vector<double> >& energy_grid,
-     const ReactionMap& standard_scattering_reactions,
-     const ReactionMap& standard_absorption_reactions,
-     const PhotonProductionReactionMap& photon_production_reactions );
+     const std::shared_ptr<const std::vector<double> >& energy_grid,
+     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+     grid_searcher,
+     const ConstReactionMap& standard_scattering_reactions,
+     const ConstReactionMap& standard_absorption_reactions,
+     const ConstPhotonProductionReactionMap& photon_production_reactions );
 
   //! Destructor
   ~DecoupledPhotonProductionNuclide()
@@ -68,8 +70,7 @@ public:
 private:
 
   // Sample a decoupled photon production reaction
-  void samplePhotonProductionReaction( const double scaled_random_number,
-                                       NeutronState& neutron,
+  void samplePhotonProductionReaction( const NeutronState& neutron,
                                        ParticleBank& bank ) const;
 
   // Store the reaction map of photon production reactions

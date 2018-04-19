@@ -26,7 +26,7 @@ public:
   { /* ... */ }
 
   //! Test if two Atomic reactions share the same energy grid
-  bool isEnergyGridShared( const NuclearReaction& other_reaction ) const;
+  virtual bool isEnergyGridShared( const NuclearReaction& other_reaction ) const;
 
   //! Test if the energy falls within the energy grid
   virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;

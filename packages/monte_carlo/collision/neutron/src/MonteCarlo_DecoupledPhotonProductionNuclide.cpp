@@ -24,16 +24,19 @@
 namespace MonteCarlo{
 
 // Constructor
-DecoupledPhotonProductionNuclide::DecoupledPhotonProductionNuclide( const std::string& name,
-		  const unsigned atomic_number,
-		  const unsigned atomic_mass_number,
-		  const unsigned isomer_number,
-		  const double atomic_weight_ratio,
-		  const double temperature,
-		  const std::shared_ptr<std::vector<double> >& energy_grid,
-		  const ReactionMap& standard_scattering_reactions,
-		  const ReactionMap& standard_absorption_reactions,
-		  const PhotonProductionReactionMap& photon_production_reactions )
+DecoupledPhotonProductionNuclide::DecoupledPhotonProductionNuclide(
+          const std::string& name,
+          const unsigned atomic_number,
+          const unsigned atomic_mass_number,
+          const unsigned isomer_number,
+          const double atomic_weight_ratio,
+          const double temperature,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const ConstReactionMap& standard_scattering_reactions,
+          const ConstReactionMap& standard_absorption_reactions,
+          const ConstPhotonProductionReactionMap& photon_production_reactions )
   : Nuclide( name,
              atomic_number,
              atomic_mass_number,
@@ -41,11 +44,12 @@ DecoupledPhotonProductionNuclide::DecoupledPhotonProductionNuclide( const std::s
              atomic_weight_ratio,
              temperature,
              energy_grid,
+             grid_searcher,
              standard_scattering_reactions,
              standard_absorption_reactions )
 {
   // Place the photon production reactions into the member data
-  PhotonProductionReactionMap::const_iterator reaction_type_pointer, end_reaction_type_pointer;
+  ConstPhotonProductionReactionMap::const_iterator reaction_type_pointer, end_reaction_type_pointer;
 
   reaction_type_pointer = photon_production_reactions.begin();
   end_reaction_type_pointer = photon_production_reactions.end();
@@ -61,57 +65,46 @@ DecoupledPhotonProductionNuclide::DecoupledPhotonProductionNuclide( const std::s
 // Get the photon production reaction cross section
 double DecoupledPhotonProductionNuclide::getPhotonProductionCrossSection(
                                                      const double energy,
-				                                             const unsigned reaction )
+                                                     const unsigned reaction )
 {
   return d_photon_production_reactions[reaction]->getCrossSection( energy );
 }
 
 // Collide with a neutron
-void DecoupledPhotonProductionNuclide::collideAnalogue( NeutronState& neutron,
-			       ParticleBank& bank ) const
+void DecoupledPhotonProductionNuclide::collideAnalogue(
+                                                     NeutronState& neutron,
+                                                     ParticleBank& bank ) const
 {
-  NeutronState neutron_copy = neutron;
+  // Sample photon production stochastically before the neutron's state changes
+  this->samplePhotonProductionReaction( neutron, bank );
 
   // Call the base class implementation for the neutron
   Nuclide::collideAnalogue( neutron, bank );
-
-  // Sample photon production stochastically
-  double total_cross_section = getTotalPhotonProductionCrossSection(
-                                                    neutron_copy.getEnergy() );
-
-  double scaled_random_number =
-    Utility::RandomNumberGenerator::getRandomNumber<double>()*
-    total_cross_section;
-
-  samplePhotonProductionReaction( scaled_random_number, neutron_copy, bank );
 }
 
 // Collide with a neutron and survival bias
-void DecoupledPhotonProductionNuclide::collideSurvivalBias( NeutronState& neutron,
-				   ParticleBank& bank) const
+void DecoupledPhotonProductionNuclide::collideSurvivalBias(
+                                                      NeutronState& neutron,
+                                                      ParticleBank& bank) const
 {
-  NeutronState neutron_copy = neutron;
-
+  // Sample photon production stochastically before the neutron's state changes
+  this->samplePhotonProductionReaction( neutron, bank );
+  
   // Call the base class implementation for the neutron
   Nuclide::collideSurvivalBias( neutron, bank );
-
-  // Sample photon production stochastically
-  double total_cross_section = getTotalPhotonProductionCrossSection(
-                                                   neutron_copy.getEnergy() );
-
-  double scaled_random_number =
-    Utility::RandomNumberGenerator::getRandomNumber<double>()*
-    total_cross_section;
-
-  samplePhotonProductionReaction( scaled_random_number, neutron_copy, bank );
 }
 
 // Sample a decoupled photon production reaction
 void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
-                                            const double scaled_random_number,
-			                                      NeutronState& neutron,
-			                                      ParticleBank& bank ) const
+                                                   const NeutronState& neutron,
+                                                   ParticleBank& bank ) const
 {
+  double total_cross_section =
+    this->getTotalPhotonProductionCrossSection( neutron.getEnergy() );
+
+  double scaled_random_number = total_cross_section*
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+  
   double partial_cross_section = 0.0;
 
   ConstPhotonProductionReactionMap::const_iterator nuclear_reaction, nuclear_reaction_end;
@@ -134,10 +127,7 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
   testPostcondition( nuclear_reaction != nuclear_reaction_end );
 
   // Undergo the reaction selected
-  nuclear_reaction->second->react(
-         neutron,
-         bank,
-         getTotalPhotonProductionCrossSection( neutron.getEnergy() ) );
+  nuclear_reaction->second->react( neutron, bank, total_cross_section );
 }
 
 // Get total photon production cross section
