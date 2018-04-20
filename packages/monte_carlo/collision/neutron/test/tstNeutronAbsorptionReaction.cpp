@@ -9,77 +9,38 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_basic_ace_file_name;
-std::string test_basic_ace_table_name;
 
-Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
-
-Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-
-Teuchos::RCP<MonteCarlo::NuclearReaction> nuclear_reaction;
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-void initializeAbsorptionReaction(
-			      Teuchos::RCP<MonteCarlo::NuclearReaction>& reaction )
-{
-  ace_file_handler.reset(new Data::ACEFileHandler( test_basic_ace_file_name,
-						     test_basic_ace_table_name,
-						     1u ) );
-  xss_data_extractor.reset(
-   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
-				        ace_file_handler->getTableJXSArray(),
-				        ace_file_handler->getTableXSSArray()));
-
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
-
-  Teuchos::ArrayRCP<double> cross_section;
-  cross_section.deepCopy( xss_data_extractor->extractElasticCrossSection() );
-
-  nuclear_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction(
-				       MonteCarlo::N__N_ELASTIC_REACTION,
-			               ace_file_handler->getTableTemperature(),
-				       0.0,
-				       0u,
-				       energy_grid,
-				       cross_section ) );
-}
+std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> nuclear_reaction;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the number of emitted neutrons can be returned
-TEUCHOS_UNIT_TEST( NeutronAbsorptionReaction,
-		   getNumberOfEmittedNeutrons )
+FRENSIE_UNIT_TEST( NeutronAbsorptionReaction,
+		   getNumberOfEmittedParticles )
 {
-  initializeAbsorptionReaction( nuclear_reaction );
-
-  TEST_EQUALITY_CONST( nuclear_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0);
+  FRENSIE_CHECK_EQUAL( nuclear_reaction->getNumberOfEmittedParticles( 0.0 ), 0);
 }
 
 //---------------------------------------------------------------------------//
 // Check that the reaction can be simulated
-TEUCHOS_UNIT_TEST( NeutronAbsorptionReaction,
+FRENSIE_UNIT_TEST( NeutronAbsorptionReaction,
 		   react )
 {
   MonteCarlo::ParticleBank bank;
 
   {
-    Teuchos::RCP<MonteCarlo::NeutronState> neutron( new MonteCarlo::NeutronState(0ull) );
+    std::shared_ptr<MonteCarlo::NeutronState>
+      neutron( new MonteCarlo::NeutronState(0ull) );
 
     neutron->setDirection( 0.0, 0.0, 1.0 );
     neutron->setEnergy( 1.0 );
@@ -90,29 +51,55 @@ TEUCHOS_UNIT_TEST( NeutronAbsorptionReaction,
   nuclear_reaction->react( dynamic_cast<MonteCarlo::NeutronState&>(bank.top()),
 			   bank );
 
-  TEST_ASSERT( bank.top().isGone() );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-
-  std::cout << std::endl << std::endl << bank.top() << std::endl;
+  FRENSIE_CHECK( bank.top().isGone() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_basic_ace_file_name;
+std::string test_basic_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_basic_ace_file",
-		 &test_basic_ace_file_name,
-		 "Test basic ACE file name" );
-  clp.setOption( "test_basic_ace_table",
-		 &test_basic_ace_table_name,
-		 "Test basic ACE table name in basic ACE file" );
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_basic_ace_file",
+                                        test_basic_ace_file_name, "",
+                                        "Test basic ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_basic_ace_table",
+                                        test_basic_ace_table_name, "",
+                                        "Test basic ACE table name in basic ACE file" );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
+                           new Data::ACEFileHandler( test_basic_ace_file_name,
+						     test_basic_ace_table_name,
+						     1u ) );
+  std::unique_ptr<Data::XSSNeutronDataExtractor> xss_data_extractor(
+   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
+				        ace_file_handler->getTableJXSArray(),
+				        ace_file_handler->getTableXSSArray()));
+
+  std::shared_ptr<const std::vector<double> > energy_grid(
+          new std::vector<double>( xss_data_extractor->extractEnergyGrid() ) );
+
+  std::shared_ptr<const std::vector<double> > cross_section(
+          new std::vector<double>( xss_data_extractor->extractElasticCrossSection() ) );
+
+  nuclear_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction(
+                           energy_grid,
+                           cross_section,
+                           0u,
+                           MonteCarlo::N__N_ELASTIC_REACTION,
+                           0.0,
+                           ace_file_handler->getTableTemperature().value() ) );
+}
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNeutronAbsorptionReaction.cpp

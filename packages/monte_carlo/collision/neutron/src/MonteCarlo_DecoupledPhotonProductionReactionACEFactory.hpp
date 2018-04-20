@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 #include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
-#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearReactionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "Utility_UnivariateDistribution.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
@@ -34,7 +34,7 @@ namespace MonteCarlo{
  * The array parameters used in the class constructor have the same name as
  * the corresponding ACE data block.
  */
-class DecoupledPhotonProductionReactionACEFactory : public NuclearReactionACEFactory
+class DecoupledPhotonProductionReactionACEFactory : public NeutronNuclearReactionACEFactory
 {
 
 public:
@@ -76,6 +76,8 @@ protected:
 
   //! Parse the SIGP Block
   static void parseSIGP(
+    const std::string& table_name,
+    const size_t energy_grid_size,
     const Utility::ArrayView<const double>& lsigp_block,
     const Utility::ArrayView<const double>& sigp_block,
     const boost::unordered_map<unsigned,unsigned>& reaction_ordering,
@@ -146,5 +148,5 @@ private:
 #endif // end MONTE_CARLONUCLEAR_REACTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NuclearReactionACEFactory.hpp
+// end MonteCarlo_NeutronNuclearReactionACEFactory.hpp
 //---------------------------------------------------------------------------//

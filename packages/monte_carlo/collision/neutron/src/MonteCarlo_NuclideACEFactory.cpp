@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclideACEFactory.hpp"
-#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
@@ -33,7 +33,7 @@ void NuclideACEFactory::createNuclide(
              new std::vector<double>( raw_nuclide_data.extractEnergyGrid() ) );
 
   std::shared_ptr<const Utility::HashBasedGridSearcher<double> > grid_searcher(
-         new Utility::StandardHashBasedGridSearcher<std::vector<double>, true>(
+         new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                                energy_grid,
                                properties.getNumberOfNeutronHashGridBins() ) );
 

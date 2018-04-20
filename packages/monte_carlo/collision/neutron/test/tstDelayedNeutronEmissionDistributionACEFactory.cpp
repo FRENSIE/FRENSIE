@@ -10,15 +10,11 @@
 #include <string>
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -29,14 +25,14 @@ public:
   TestDelayedNeutronEmissionDistributionACEFactory(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
-			   const Teuchos::ArrayView<const double>& bdd_block,
-			   const Teuchos::ArrayView<const double>& dnedl_block,
-		           const Teuchos::ArrayView<const double>& dned_block )
+			   const Utility::ArrayView<const double>& bdd_block,
+			   const Utility::ArrayView<const double>& dnedl_block,
+		           const Utility::ArrayView<const double>& dned_block )
     : MonteCarlo::DelayedNeutronEmissionDistributionACEFactory( table_name,
-							 atomic_weight_ratio,
-							 bdd_block,
-							 dnedl_block,
-							 dned_block )
+                                                                atomic_weight_ratio,
+                                                                bdd_block,
+                                                                dnedl_block,
+                                                                dned_block )
   { /* ... */ }
 
   ~TestDelayedNeutronEmissionDistributionACEFactory()
@@ -50,145 +46,138 @@ public:
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-Teuchos::RCP<TestDelayedNeutronEmissionDistributionACEFactory> factory;
+
+std::shared_ptr<const Data::XSSNeutronDataExtractor> xss_data_extractor;
+std::shared_ptr<TestDelayedNeutronEmissionDistributionACEFactory> factory;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the precursor group decay constants are correct
-TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
+FRENSIE_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   getPrecursorGroupDecayConsts )
 {
-  const Teuchos::Array<double>& group_consts =
+  const std::vector<double>& group_consts =
     factory->getPrecursorGroupDecayConsts();
 
-  TEST_EQUALITY_CONST( group_consts.size(), 6 );
-  TEST_FLOATING_EQUALITY( group_consts[0], 1.24942300000e-2, 1e-15 );
-  TEST_FLOATING_EQUALITY( group_consts[1], 3.02552000000e-2, 1e-15 );
-  TEST_FLOATING_EQUALITY( group_consts[2], 1.15937600000e-1, 1e-15 );
-  TEST_FLOATING_EQUALITY( group_consts[3], 3.41476400000e-1, 1e-15 );
-  TEST_FLOATING_EQUALITY( group_consts[4], 1.31863000000e+0, 1e-15 );
-  TEST_FLOATING_EQUALITY( group_consts[5], 9.97902700000e+0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( group_consts.size(), 6 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( group_consts[0], 1.24942300000e-2, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( group_consts[1], 3.02552000000e-2, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( group_consts[2], 1.15937600000e-1, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( group_consts[3], 3.41476400000e-1, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( group_consts[4], 1.31863000000e+0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( group_consts[5], 9.97902700000e+0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the precursor group probability distributions are correct
-TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
+FRENSIE_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   getPrecursorGroupProbDists )
 {
-  const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& prob_dists =
+  const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >& prob_dists =
     factory->getPrecursorGroupProbDists();
 
-  TEST_ASSERT( !prob_dists[0].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[0]->evaluate( 1e-11 ), 1.03412800000e-02, 1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[0]->evaluate( 1.0 ), 1.03412800000e-02, 1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[0]->evaluate( 30.0 ), 1.03412800000e-02, 1e-15 );
+  FRENSIE_CHECK( prob_dists[0].get() != NULL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[0]->evaluate( 1e-11 ), 1.03412800000e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[0]->evaluate( 1.0 ), 1.03412800000e-02, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[0]->evaluate( 30.0 ), 1.03412800000e-02, 1e-15 );
 
-  TEST_ASSERT( !prob_dists[1].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1e-11 ),
+  FRENSIE_CHECK( prob_dists[1].get() != NULL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1e-11 ),
 			  1.14819800000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1.0 ),
 			  1.14819800000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 30.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[1]->evaluate( 30.0 ),
 			  1.14819800000e-01,
 			  1e-15 );
 
-  TEST_ASSERT( !prob_dists[2].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1e-11 ),
+  FRENSIE_CHECK( prob_dists[2].get() != NULL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1e-11 ),
 			  1.27807200000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1.0 ),
 			  1.27807200000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 30.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[2]->evaluate( 30.0 ),
 			  1.27807200000e-01,
 			  1e-15 );
 
-  TEST_ASSERT( !prob_dists[3].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1e-11 ),
+  FRENSIE_CHECK( prob_dists[3].get() != NULL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1e-11 ),
 			  4.51836500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1.0 ),
 			  4.51836500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 30.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[3]->evaluate( 30.0 ),
 			  4.51836500000e-01,
 			  1e-15 );
 
-  TEST_ASSERT( !prob_dists[4].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1e-11 ),
+  FRENSIE_CHECK( prob_dists[4].get() != NULL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1e-11 ),
 			  2.33506500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1.0 ),
 			  2.33506500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 30.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[4]->evaluate( 30.0 ),
 			  2.33506500000e-01,
 			  1e-15 );
 
-  TEST_ASSERT( !prob_dists[5].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1e-11 ),
+  FRENSIE_CHECK( prob_dists[5].get() != NULL );
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1e-11 ),
 			  6.16886800000e-02,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1.0 ),
 			  6.16886800000e-02,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 30.0 ),
+  FRENSIE_CHECK_FLOATING_EQUALITY( prob_dists[5]->evaluate( 30.0 ),
 			  6.16886800000e-02,
 			  1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the emission distribution can be constructed
-TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
+FRENSIE_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   createEmissionDistribution )
 {
-  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
+  std::shared_ptr<const MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     distribution;
 
   factory->createEmissionDistribution( distribution );
 
-  TEST_ASSERT( !distribution.is_null() );
+  FRENSIE_CHECK( distribution.get() != NULL );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_u238_ace_file_name;
+std::string test_u238_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_u238_ace_file",
+                                        test_u238_ace_file_name, "",
+                                        "Test U238 ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_u238_ace_table",
+                                        test_u238_ace_table_name, "",
+                                        "Test U238 ACE table name in basic ACE file" );
+}
 
-  std::string test_u238_ace_file_name;
-  std::string test_u238_ace_table_name;
-
-  clp.setOption( "test_u238_ace_file",
-		 &test_u238_ace_file_name,
-		 "Test U238 ACE file name" );
-  clp.setOption( "test_u238_ace_table",
-		 &test_u238_ace_table_name,
-		 "Test U238 ACE table name in basic ACE file" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Initialize ace file handler, data extractor and multiplicity factory
-  Teuchos::RCP<Data::ACEFileHandler>
-  ace_file_handler( new Data::ACEFileHandler( test_u238_ace_file_name,
-					      test_u238_ace_table_name,
-					      1u ) );
+  std::unique_ptr<Data::ACEFileHandler>
+    ace_file_handler( new Data::ACEFileHandler( test_u238_ace_file_name,
+                                                test_u238_ace_table_name,
+                                                1u ) );
 
-  Teuchos::RCP<Data::XSSNeutronDataExtractor>
-  xss_data_extractor(
+  xss_data_extractor.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -199,21 +188,9 @@ int main( int argc, char** argv )
 				 xss_data_extractor->extractBDDBlock(),
 				 xss_data_extractor->extractDNEDLBlock(),
 				 xss_data_extractor->extractDNEDBlock() ) );
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstDelayedNeutronEmissionDistributionACEFactory.cpp

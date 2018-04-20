@@ -8,13 +8,7 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_AceLaw3NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
@@ -22,19 +16,19 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 void initializeScatteringDistribution(
   const double atomic_weight_ratio,
-  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >& scattering_dist )
+  std::shared_ptr<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >& scattering_dist )
 {
-  Teuchos::RCP<Utility::TabularOneDDistribution> delta_dist(
+  std::shared_ptr<Utility::TabularUnivariateDistribution> delta_dist(
 			  new Utility::DeltaDistribution( 0.0 ) );
 
-  Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  std::vector<std::pair<double,std::shared_ptr<const Utility::TabularUnivariateDistribution> > >
     raw_scattering_distribution( 2 );
 
   raw_scattering_distribution[0].first = 1e-11;
@@ -42,14 +36,14 @@ void initializeScatteringDistribution(
   raw_scattering_distribution[1].first = 2e1;
   raw_scattering_distribution[1].second = delta_dist;
 
-  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> angular_dist(
+  std::shared_ptr<MonteCarlo::NuclearScatteringAngularDistribution> angular_dist(
                          new MonteCarlo::NuclearScatteringAngularDistribution(
 					       raw_scattering_distribution ) );
 
   // Q value is 1 and A is 1
   // param_a = (A + 1)/A * |Q| = 2.0
   // param_b = (A/(A + 1)^2 = 0.25
-  Teuchos::RCP<MonteCarlo::NuclearScatteringEnergyDistribution> energy_dist(
+  std::shared_ptr<MonteCarlo::NuclearScatteringEnergyDistribution> energy_dist(
        new MonteCarlo::AceLaw3NuclearScatteringEnergyDistribution( 6.516454, 0.8848775 ) );
 
   scattering_dist.reset(
@@ -63,10 +57,10 @@ void initializeScatteringDistribution(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an incoming neutron can be scattered
-TEUCHOS_UNIT_TEST( InelasticLevelNeutronScatteringDistribution,
+FRENSIE_UNIT_TEST( InelasticLevelNeutronScatteringDistribution,
 		   scatterParticle_hydrogen )
 {
-  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
+  std::shared_ptr<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
 
   initializeScatteringDistribution( 15.857510, scattering_dist );
 
@@ -81,33 +75,33 @@ TEUCHOS_UNIT_TEST( InelasticLevelNeutronScatteringDistribution,
 
   scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 
-  TEST_FLOATING_EQUALITY( neutron.getEnergy(), 0.452512, 1e-6);
+  FRENSIE_CHECK_FLOATING_EQUALITY( neutron.getEnergy(), 0.452512, 1e-6);
 
   double angle = Utility::calculateCosineOfAngleBetweenVectors(
 					      initial_angle,
 					      neutron.getDirection() );
-  TEST_FLOATING_EQUALITY( angle, 0.233314, 1e-6);
+  FRENSIE_CHECK_FLOATING_EQUALITY( angle, 0.233314, 1e-6);
 
 //  start_energy = 5.0;
 //  neutron.setEnergy( start_energy );
 //
 //  scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 //
-//  TEST_FLOATING_EQUALITY( neutron.getEnergy(), 2.0, 1e-15 );
+//  FRENSIE_CHECK_FLOATING_EQUALITY( neutron.getEnergy(), 2.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // tstInelasticLevelNeutronScatteringDistribution.cpp

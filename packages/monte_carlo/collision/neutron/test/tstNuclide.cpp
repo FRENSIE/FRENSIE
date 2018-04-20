@@ -9,268 +9,253 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
-#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearReactionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::Nuclide> h1_nuclide;
-Teuchos::RCP<MonteCarlo::Nuclide> o16_nuclide;
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
-			const std::string& ace_file_name,
-			const std::string& ace_table_name )
-{
-  
-}
+std::shared_ptr<const MonteCarlo::Nuclide> h1_nuclide;
+std::shared_ptr<const MonteCarlo::Nuclide> o16_nuclide;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the nuclide name can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getName )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getName )
 {
-  TEST_EQUALITY_CONST( h1_nuclide->getName(), "1001.70c" );
+  FRENSIE_CHECK_EQUAL( h1_nuclide->getName(), "1001.70c" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the nuclide id can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getId )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getId )
 {
-  TEST_EQUALITY_CONST( h1_nuclide->getId(), 100170u );
+  FRENSIE_CHECK_EQUAL( h1_nuclide->getId(), 100170u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the nuclide atomic number can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getAtomicNumber )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getAtomicNumber )
 {
-  TEST_EQUALITY_CONST( h1_nuclide->getAtomicMassNumber(), 1u );
+  FRENSIE_CHECK_EQUAL( h1_nuclide->getAtomicMassNumber(), 1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the nuclide atomic mass number can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getAtomicMassNumber )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getAtomicMassNumber )
 {
-  TEST_EQUALITY_CONST( h1_nuclide->getAtomicMassNumber(), 1u );
+  FRENSIE_CHECK_EQUAL( h1_nuclide->getAtomicMassNumber(), 1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the nuclide isomer number can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getIsomerNumber )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getIsomerNumber )
 {
-  TEST_EQUALITY_CONST( h1_nuclide->getIsomerNumber(), 0u );
+  FRENSIE_CHECK_EQUAL( h1_nuclide->getIsomerNumber(), 0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atomic weight ratio can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getAtomicWeightRatio )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getAtomicWeightRatio )
 {
-  TEST_EQUALITY_CONST( h1_nuclide->getAtomicWeightRatio(), 0.999167 );
+  FRENSIE_CHECK_EQUAL( h1_nuclide->getAtomicWeightRatio(), 0.999167 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the temperature can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getTemperature )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getTemperature )
 {
-  TEST_EQUALITY_CONST( h1_nuclide->getTemperature(), 2.53010e-8 );
+  FRENSIE_CHECK_EQUAL( h1_nuclide->getTemperature(), 2.53010e-8 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the total cross section can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getTotalCrossSection )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getTotalCrossSection )
 {
   double cross_section = h1_nuclide->getTotalCrossSection( 1.0e-11 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.17724711e3 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.17724711e3 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.015625e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.168262615e3, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.168262615e3, 1e-15 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.03125e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.15927812e3, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.15927812e3, 1e-15 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.046875e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.15069229e3, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.15069229e3, 1e-9 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.0625e-11 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.14210646e3 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.14210646e3 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.90e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.08805961e-1, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.08805961e-1, 1e-9 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.925e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.02148202e-1, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.02148202e-1, 1e-9 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.95e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.95490443e-1, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.95490443e-1, 1e-9 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 1.975e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.891319335e-1, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.891319335e-1, 1e-9 );
 
   cross_section = h1_nuclide->getTotalCrossSection( 2.0e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.82773424e-1, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.82773424e-1, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the absorption cross section can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getAbsorptionCrossSection )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getAbsorptionCrossSection )
 {
   double cross_section = h1_nuclide->getAbsorptionCrossSection(1.0e-11 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.670111e1 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.015625e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.6573615e1, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6573615e1, 1e-15 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.03125e-11 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.644612e1 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.644612e1 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.046875e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.632429e1, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.632429e1, 1e-15 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.0625e-11 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.620246e1 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.620246e1 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.90e1 );
 
-  TEST_EQUALITY_CONST( cross_section, 2.766095e-5 );
+  FRENSIE_CHECK_EQUAL( cross_section, 2.766095e-5 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.925e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.755177e-5, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.755177e-5, 1e-15 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.95e1 );
 
-  TEST_EQUALITY_CONST( cross_section, 2.744259e-5 );
+  FRENSIE_CHECK_EQUAL( cross_section, 2.744259e-5 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 1.975e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.7333065e-5, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.7333065e-5, 1e-15 );
 
   cross_section = h1_nuclide->getAbsorptionCrossSection( 2.0e1 );
 
-  TEST_EQUALITY_CONST( cross_section, 2.722354e-5 );
+  FRENSIE_CHECK_EQUAL( cross_section, 2.722354e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the survival probability can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getSurvivalProbability )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getSurvivalProbability )
 {
   double survival_prob = h1_nuclide->getSurvivalProbability( 1.0e-11 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.98581342025975, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.98581342025975, 1e-13 );
 
   survival_prob = h1_nuclide->getSurvivalProbability( 1.03125e-11 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.98581348192787, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.98581348192787, 1e-13 );
 
   survival_prob = h1_nuclide->getSurvivalProbability( 1.0625e-11 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.98581352915209, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.98581352915209, 1e-13 );
 
   survival_prob = h1_nuclide->getSurvivalProbability( 1.90e1 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.99994563556224, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.99994563556224, 1e-13 );
 
   survival_prob = h1_nuclide->getSurvivalProbability( 1.95e1 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.99994461529907, 1e-13  );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.99994461529907, 1e-13  );
 
   survival_prob = h1_nuclide->getSurvivalProbability( 2.0e1 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.99994361011057, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.99994361011057, 1e-13 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a reaction cross section can be returned
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getReactionCrossSection )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, getReactionCrossSection )
 {
   double cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__TOTAL_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 1.17724711e3 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.17724711e3 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__TOTAL_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.82773424e-1, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 4.82773424e-1, 1e-9 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__N_ELASTIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 1.160546e3 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.160546e3 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__N_ELASTIC_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 4.827462e-1 );
+  FRENSIE_CHECK_EQUAL( cross_section, 4.827462e-1 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__GAMMA_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.670111e1 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__GAMMA_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 2.722354e-5 );
+  FRENSIE_CHECK_EQUAL( cross_section, 2.722354e-5 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__TOTAL_D_PRODUCTION );
 
-  TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
+  FRENSIE_CHECK_EQUAL( cross_section, 1.670111e1 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__TOTAL_D_PRODUCTION );
 
-  TEST_EQUALITY_CONST( cross_section, 2.722354e-5 );
+  FRENSIE_CHECK_EQUAL( cross_section, 2.722354e-5 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__DPA );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__DPA );
 
-  TEST_EQUALITY_CONST( cross_section, 3.067696e-4 );
+  FRENSIE_CHECK_EQUAL( cross_section, 3.067696e-4 );
 
   cross_section =
     h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__FISSION_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the a neutron can collide with a nuclide
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideAnalogue )
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, collideAnalogue )
 {
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -281,15 +266,15 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideAnalogue )
 
   h1_nuclide->collideAnalogue( neutron, bank );
 
-  TEST_EQUALITY_CONST( neutron.getWeight(), 1.0 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK_EQUAL( neutron.getWeight(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   std::cout << neutron << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Check that a neutron can collide with a nuclide
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
+FRENSIE_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
 {
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -300,15 +285,15 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
 
   h1_nuclide->collideSurvivalBias( neutron, bank );
 
-  TEST_FLOATING_EQUALITY( neutron.getWeight(), 0.98581348192787, 1e-14 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( neutron.getWeight(), 0.98581348192787, 1e-14 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   std::cout << neutron << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Check that a neutron can collide with a nuclide
-// TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
+// FRENSIE_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
 // {
   // double energy;
   // for( unsigned i = 0; i < 1e6; ++i )
@@ -358,81 +343,81 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
 // }
 
 //---------------------------------------------------------------------------//
-// Custom setup
+// Custom Setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-std::string test_h1_ace_file_name;
-std::string test_h1_ace_table_name;
-std::string test_o16_ace_file_name;
-std::string test_o16_ace_table_name;
-// std::string test_fission_ace_file_name;
-// std::string test_ptable_ace_file_name;
-// std::string test_fission_ptable_ace_file_name;
+std::string test_h1_ace_file_name, test_h1_ace_table_name;
+std::string test_o16_ace_file_name, test_o16_ace_table_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_h1_ace_file",
-                   &test_h1_ace_file_name,
-                   "Test h1 ACE file name" );
-  clp().setOption( "test_h1_ace_table",
-                   &test_h1_ace_table_name,
-                   "Test h1 ACE table name in h1 ACE file" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_file",
+                                         test_h1_ace_file_name, "",
+                                         "Test h1 ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_h1_ace_table",
+                                        test_h1_ace_table_name, "",
+                                        "Test ACE table name in h1 ACE file" );
 
-  clp().setOption( "test_o16_ace_file",
-                   &test_o16_ace_file_name,
-                   "Test o16 ACE file name" );
-  clp().setOption( "test_o16_ace_table",
-                   &test_o16_ace_table_name,
-                   "Test o16 ACE table name in o16 ACE file" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_file",
+                                        test_o16_ace_file_name, "",
+                                        "Test o16 ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_o16_ace_table",
+                                        test_o16_ace_table_name, "",
+                                        "Test ACE table name in o16 ACE file" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Initialize H-1
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler;
   ace_file_handler.reset( new Data::ACEFileHandler( test_h1_ace_file_name,
                                                     test_h1_ace_table_name,
                                                     1u ) );
 
-  Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-
-  xss_data_extractor.reset(
+  std::unique_ptr<Data::XSSNeutronDataExtractor> xss_data_extractor(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray()));
 
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
+  std::shared_ptr<const std::vector<double> > energy_grid(
+          new std::vector<double>( xss_data_extractor->extractEnergyGrid() ) );
+
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> > energy_grid_searcher(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
+                                                  energy_grid,
+                                                  energy_grid->size()/100+1) );
 
   MonteCarlo::SimulationProperties properties;
 
-  Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> reaction_factory(
-                          new MonteCarlo::NuclearReactionACEFactory(
-				 test_h1_ace_table_name,
-				 ace_file_handler->getTableAtomicWeightRatio(),
-				 ace_file_handler->getTableTemperature(),
-				 energy_grid,
-                                 properties,
-				 *xss_data_extractor ) );
+  std::unique_ptr<MonteCarlo::NeutronNuclearReactionACEFactory> reaction_factory(
+                          new MonteCarlo::NeutronNuclearReactionACEFactory(
+			       test_h1_ace_table_name,
+                               ace_file_handler->getTableAtomicWeightRatio(),
+			       ace_file_handler->getTableTemperature().value(),
+                               energy_grid,
+                               energy_grid_searcher,
+                               properties,
+                               *xss_data_extractor ) );
 
-  MonteCarlo::Nuclide::ReactionMap standard_scattering_reactions;
+  MonteCarlo::Nuclide::ConstReactionMap standard_scattering_reactions;
   reaction_factory->createScatteringReactions( standard_scattering_reactions );
   reaction_factory->createFissionReactions( standard_scattering_reactions );
 
-  MonteCarlo::Nuclide::ReactionMap standard_absorption_reactions;
+  MonteCarlo::Nuclide::ConstReactionMap standard_absorption_reactions;
   reaction_factory->createAbsorptionReactions( standard_absorption_reactions );
 
   h1_nuclide.reset( new MonteCarlo::Nuclide(
-				 test_h1_ace_table_name,
-				 1u,
-				 1u,
-				 0u,
-				 ace_file_handler->getTableAtomicWeightRatio(),
-				 ace_file_handler->getTableTemperature(),
-				 energy_grid,
-				 standard_scattering_reactions,
-				 standard_absorption_reactions ) );
+			       test_h1_ace_table_name,
+                               1u,
+                               1u,
+                               0u,
+                               ace_file_handler->getTableAtomicWeightRatio(),
+			       ace_file_handler->getTableTemperature().value(),
+                               energy_grid,
+                               energy_grid_searcher,
+                               standard_scattering_reactions,
+                               standard_absorption_reactions ) );
 
   // Initialize O-16
   ace_file_handler.reset(new Data::ACEFileHandler( test_o16_ace_file_name,
@@ -444,17 +429,25 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray()));
 
-  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
+  energy_grid.reset(
+          new std::vector<double>( xss_data_extractor->extractEnergyGrid() ) );
 
-  reaction_factory.reset( new MonteCarlo::NuclearReactionACEFactory(
-				 test_o16_ace_table_name,
-				 ace_file_handler->getTableAtomicWeightRatio(),
-				 ace_file_handler->getTableTemperature(),
-				 energy_grid,
-                                 properties,
-				 *xss_data_extractor ) );
+  energy_grid_searcher.reset(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
+                                                  energy_grid,
+                                                  energy_grid->size()/100+1) );
 
-  standard_scattering_reactions.clear();;
+  reaction_factory.reset(
+                          new MonteCarlo::NeutronNuclearReactionACEFactory(
+			       test_h1_ace_table_name,
+                               ace_file_handler->getTableAtomicWeightRatio(),
+			       ace_file_handler->getTableTemperature().value(),
+                               energy_grid,
+                               energy_grid_searcher,
+                               properties,
+                               *xss_data_extractor ) );
+
+  standard_scattering_reactions.clear();
   reaction_factory->createScatteringReactions( standard_scattering_reactions );
   reaction_factory->createFissionReactions( standard_scattering_reactions );
 
@@ -462,21 +455,22 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   reaction_factory->createAbsorptionReactions( standard_absorption_reactions );
 
   o16_nuclide.reset( new MonteCarlo::Nuclide(
-				 test_o16_ace_table_name,
-				 1u,
-				 1u,
-				 0u,
-				 ace_file_handler->getTableAtomicWeightRatio(),
-				 ace_file_handler->getTableTemperature(),
-				 energy_grid,
-				 standard_scattering_reactions,
-				 standard_absorption_reactions ) );
+			       test_o16_ace_table_name,
+                               1u,
+                               1u,
+                               0u,
+                               ace_file_handler->getTableAtomicWeightRatio(),
+			       ace_file_handler->getTableTemperature().value(),
+                               energy_grid,
+                               energy_grid_searcher,
+                               standard_scattering_reactions,
+                               standard_absorption_reactions ) );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNuclide.cpp

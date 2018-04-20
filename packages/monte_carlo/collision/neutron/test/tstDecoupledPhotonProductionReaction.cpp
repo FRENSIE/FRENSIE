@@ -9,11 +9,6 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 #include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
@@ -21,11 +16,12 @@
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReaction> nuclear_reaction;
+std::shared_ptr<const MonteCarlo::DecoupledPhotonProductionReaction> nuclear_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -37,103 +33,121 @@ public:
       const MonteCarlo::NuclearReactionType base_reaction_type,
       const unsigned photon_production_id,
       const double temperature,
-      const Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >&
+      const std::shared_ptr<const MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >&
         photon_production_distribution,
-      const Teuchos::RCP<MonteCarlo::NuclearReaction>& total_reaction,
-      const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
+      const std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& total_reaction,
+      const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >& total_mt_yield_array )
     : MonteCarlo::DecoupledPhotonProductionReaction( base_reaction_type,
-			       photon_production_id,
-			       temperature,
-			       photon_production_distribution,
-			       total_reaction,
-			       total_mt_yield_array )
+                                                     photon_production_id,
+                                                     temperature,
+                                                     photon_production_distribution,
+                                                     total_reaction,
+                                                     total_mt_yield_array )
   { /* ... */ }
 
   ~TestDecoupledPhotonProductionReaction()
   { /* ... */ }
 
+  // Test if two Atomic reactions share the same energy grid
+  bool isEnergyGridShared( const NuclearReaction& other_reaction ) const final override
+  { return false; }
+
+  // Test if the energy falls within the energy grid
+  bool isEnergyWithinEnergyGrid( const double energy ) const final override
+  { return false; }
+
   // Return the threshold energy
-  double getThresholdEnergy() const
-  { /* ... */ }
+  double getThresholdEnergy() const final override
+  { return 0.0; }
+
+  //! Return the max energy
+  double getMaxEnergy() const final override
+  { return 0.0; }
 
   // Return the base reaction cross section at a given energy
-  double getBaseReactionCrossSection( const double energy ) const
-  { /* ... */ }
+  double getBaseReactionCrossSection( const double energy ) const final override
+  { return 0.0; }
 
   // Return the cross section at a given energy
-  double getCrossSection( const double energy ) const
-  { /* ... */ }
+  double getCrossSection( const double energy ) const final override
+  { return 0.0; }
+
+  // Return the cross section at a given energy
+  double getCrossSection( const double energy, size_t bin_index ) const final override
+  { return 0.0; }
+
+  // Return the average number of emitted photons
+  double getAverageNumberOfEmittedParticles( const double energy ) const final override
+  { return 0.0; }
 
   void react( MonteCarlo::NeutronState& neutron, MonteCarlo::ParticleBank& bank, double total_pp_xs ) const
   { /* ... */ }
+
+protected:
+
+  // Return the head of the energy grid
+  const double* getEnergyGridHead() const final override
+  { return NULL; }
 };
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the base photon production ID can be returned
-TEUCHOS_UNIT_TEST( DecoupledPhotonProductionReaction, getPhotonProductionId )
+FRENSIE_UNIT_TEST( DecoupledPhotonProductionReaction, getPhotonProductionId )
 {
-  TEST_EQUALITY_CONST( nuclear_reaction->getPhotonProductionId(),
+  FRENSIE_CHECK_EQUAL( nuclear_reaction->getPhotonProductionId(),
 		       MonteCarlo::N__GAMMA_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the base reaction type can be returned
-TEUCHOS_UNIT_TEST( DecoupledPhotonProductionReaction, getBaseReactionType )
+FRENSIE_UNIT_TEST( DecoupledPhotonProductionReaction, getBaseReactionType )
 {
-  TEST_EQUALITY_CONST( nuclear_reaction->getBaseReactionType(),
+  FRENSIE_CHECK_EQUAL( nuclear_reaction->getBaseReactionType(),
 		       MonteCarlo::N__GAMMA_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the photon production reaction ID can be returned
-TEUCHOS_UNIT_TEST( DecoupledPhotonProductionReaction, getPhotonProductionReactionId )
+FRENSIE_UNIT_TEST( DecoupledPhotonProductionReaction, getPhotonProductionReactionId )
 {
-  TEST_EQUALITY_CONST( nuclear_reaction->getPhotonProductionReactionId(), 102001u );
+  FRENSIE_CHECK_EQUAL( nuclear_reaction->getPhotonProductionReactionId(), 102001u );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
+
+std::string test_basic_ace_file_name;
+std::string test_basic_ace_table_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  std::string test_basic_ace_file_name;
-  std::string test_basic_ace_table_name;
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_basic_ace_file",
+                                        test_basic_ace_file_name, "",
+                                        "Test basic ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_basic_ace_table",
+                                        test_basic_ace_table_name, "",
+                                        "Test basic ACE table name in basic ACE file" );
+}
 
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_basic_ace_file",
-		 &test_basic_ace_file_name,
-		 "Test basic ACE file name" );
-  clp.setOption( "test_basic_ace_table",
-		 &test_basic_ace_table_name,
-		 "Test basic ACE table name in basic ACE file" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
-
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
   // Initialize the reaction
   {
     // Reaction type
     unsigned reaction_type = 102001u;
 
     // Create the ace file handler
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
                            new Data::ACEFileHandler( test_basic_ace_file_name,
 						     test_basic_ace_table_name,
 						     1u ) );
 
     // Create the XSS data extractor
-    Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor(
+    std::unique_ptr<Data::XSSNeutronDataExtractor> xss_data_extractor(
      new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				        ace_file_handler->getTableJXSArray(),
 				        ace_file_handler->getTableXSSArray()));
@@ -149,18 +163,18 @@ int main( int argc, char** argv )
     MonteCarlo::SimulationProperties properties;
 
     // Create the photon production nuclear scattering distribution
-    Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >
+    std::shared_ptr<const MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >
       photon_production_distribution;
     photon_production_dist_factory.createScatteringDistribution(
 					      reaction_type,
                                               properties,
 					      photon_production_distribution );
 
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
+    std::shared_ptr<const std::vector<double> > energy_grid(
+          new std::vector<double>( xss_data_extractor->extractEnergyGrid() ) );
 
-    Teuchos::ArrayRCP<double> cross_section;
-    cross_section.deepCopy( xss_data_extractor->extractTotalCrossSection() );
+    std::shared_ptr<const std::vector<double> > cross_section(
+          new std::vector<double>( xss_data_extractor->extractTotalCrossSection() ) );
 
     // Construct the yield energy grid and yield data
     std::vector<double> yield_energy_grid = { 1.00000000000E-11,
@@ -168,50 +182,38 @@ int main( int argc, char** argv )
     std::vector<double> yield_energy_values = { 2.00000000000E+00,
                                                 2.00000000000E+00 };
 
-    std::shared_ptr<Utility::OneDDistribution> d_mtp_yield(
+    std::shared_ptr<const Utility::UnivariateDistribution> d_mtp_yield(
         new Utility::TabularDistribution<Utility::LinLin>(
                               yield_energy_grid,
                               yield_energy_values ) );
 
-    Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >
+    std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
       total_mt_yield_array;
     total_mt_yield_array.push_back( d_mtp_yield );
 
-    Teuchos::RCP<MonteCarlo::NuclearReaction> total_reaction(
+    std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> total_reaction(
           new MonteCarlo::NeutronAbsorptionReaction(
-                                       MonteCarlo::N__TOTAL_REACTION,
-                                       ace_file_handler->getTableTemperature(),
-				       0.0,
-				       0u,
-				       energy_grid,
-				       cross_section ) );
+                           energy_grid,
+                           cross_section,
+                           0u,
+                           MonteCarlo::N__TOTAL_REACTION,
+                           0.0,
+                           ace_file_handler->getTableTemperature().value() ) );
 
     nuclear_reaction.reset( new TestDecoupledPhotonProductionReaction(
-			               MonteCarlo::N__GAMMA_REACTION,
-                                       reaction_type,
-                                       ace_file_handler->getTableTemperature(),
-                                       photon_production_distribution,
-                                       total_reaction,
-                                       total_mt_yield_array ) );
+			       MonteCarlo::N__GAMMA_REACTION,
+                               reaction_type,
+                               ace_file_handler->getTableTemperature().value(),
+                               photon_production_distribution,
+                               total_reaction,
+                               total_mt_yield_array ) );
   }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-
-  clp.printFinalTimerSummary(out.ptr());
-
-  return (success ? 0 : 1);
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNuclearReaction.cpp

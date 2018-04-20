@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NuclearReactionACEFactory.cpp
+//! \file   MonteCarlo_NeutronNuclearReactionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Nuclear reaction factory class declaration
 //!
@@ -16,6 +16,7 @@
 #include "MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -36,13 +37,13 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
           grid_searcher,
           const SimulationProperties& properties,
           const Data::XSSNeutronDataExtractor& raw_nuclide_data )
-  : NuclearReactionACEFactory( table_name,
-                               atomic_weight_ratio,
-                               temperature,
-                               energy_grid,
-                               grid_searcher,
-                               properties,
-                               raw_nuclide_data )
+  : NeutronNuclearReactionACEFactory( table_name,
+                                      atomic_weight_ratio,
+                                      temperature,
+                                      energy_grid,
+                                      grid_searcher,
+                                      properties,
+                                      raw_nuclide_data )
 {
   // Create the scattering distribution factory
   PhotonProductionNuclearScatteringDistributionACEFactory
@@ -60,8 +61,9 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
 
   // Create a map of the reaction types and their table ordering
   boost::unordered_map<unsigned,unsigned> reaction_ordering;
-  DecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap( mtrp_block,
-							reaction_ordering );
+  DecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap(
+                                                           mtrp_block,
+                                                           reaction_ordering );
 
   // Parse the SIGP data and create the necessary data maps
   boost::unordered_map<unsigned,Utility::ArrayView<const double> > yield_energy_map;
@@ -71,6 +73,8 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
   boost::unordered_map<unsigned,NuclearReactionType> base_reaction_type_map;
 
   DecoupledPhotonProductionReactionACEFactory::parseSIGP(
+                                                     table_name,
+                                                     energy_grid->size(),
                                                      lsigp_block,
                                                      sigp_block,
                                                      reaction_ordering,
@@ -174,6 +178,8 @@ void DecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap(
 // Parse the SIGP to create the yield energy map, yield values, xs map, and
 //   threshold energy map
 void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
+  const std::string& table_name,
+  const size_t energy_grid_size,
   const Utility::ArrayView<const double>& lsigp_block,
   const Utility::ArrayView<const double>& sigp_block,
   const boost::unordered_map<unsigned,unsigned>& reaction_ordering,
@@ -191,14 +197,32 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
   unsigned cs_index;
   unsigned cs_array_size;
   unsigned energy_array_size;
-
+  
   while( reaction != end_reaction )
   {
     cs_index = static_cast<unsigned>( lsigp_block[reaction->second] ) - 1u;
 
     if ( static_cast<unsigned>( sigp_block[cs_index] ) == 13u )
     {
+      threshold_energy_map[reaction->first] =
+        static_cast<unsigned>( sigp_block[cs_index + 1u] );
+
+      // Convert to C-style index
+      if( threshold_energy_map[reaction->first] > 0u )
+        --threshold_energy_map[reaction->first];
+      
       cs_array_size = static_cast<unsigned>( sigp_block[cs_index + 2u] );
+
+      FRENSIE_LOG_TAGGED_WARNING( "DecoupledPhotoProductionReactionACEFactory",
+                                  "SIGP reaction " << reaction->first <<
+                                  " specifies a threshold energy index of "
+                                  << threshold_energy_map[reaction->first] <<
+                                  " and a cross section size of "
+                                  << cs_array_size << ", which implies an "
+                                  "energy grid of size "
+                                  << threshold_energy_map[reaction->first] + cs_array_size <<
+                                  ". The expected energy grid size is "
+                                  << energy_grid_size << "!" );
 
       std::shared_ptr<std::vector<double> >& cross_section =
 	                                    xs_based_map[reaction->first];
@@ -206,11 +230,8 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
       cross_section.reset( new std::vector<double>(
                                 sigp_block( cs_index + 3u, cs_array_size ) ) );
 
-      threshold_energy_map[reaction->first] =
-                      static_cast<unsigned>( sigp_block[cs_index + 1u] ) ;
-
       base_reaction_type_map[reaction->first] =
-	          convertUnsignedToNuclearReactionType( reaction->first/1000u );
+	         convertUnsignedToNuclearReactionType( reaction->first/1000u );
     }
     else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
               static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
@@ -413,5 +434,5 @@ void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPho
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NuclearReactionACEFactory.cpp
+// end MonteCarlo_NeutronNuclearReactionACEFactory.cpp
 //---------------------------------------------------------------------------//

@@ -196,19 +196,23 @@ StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::Sta
        const size_t threshold_energy_index )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index )
+    d_threshold_energy_index( threshold_energy_index ),
+    d_max_energy_index()
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid->size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
                         incoming_energy_grid->begin(),
                         incoming_energy_grid->end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section->size() > 0 );
-  testPrecondition( cross_section->size() ==
-                    incoming_energy_grid->size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid->size() );
+  // Make sure the cross section is valid
+  testPrecondition( cross_section->size() > 0 );
+  testPrecondition( cross_section->size() + threshold_energy_index <=
+                    incoming_energy_grid->size() );
+
+  // Set the max energy index
+  this->setMaxEnergyIndex();
 
   // Construct the grid searcher
   d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<std::vector<double>,processed_cross_section>(
@@ -239,15 +243,18 @@ StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::Sta
   testPrecondition( Utility::Sort::isSortedAscending(
                         incoming_energy_grid->begin(),
                         incoming_energy_grid->end() ) );
+  // Make sure the threshold energy is valid
+  testPrecondition( threshold_energy_index < incoming_energy_grid->size() );
   // Make sure the cross section is valid
   testPrecondition( cross_section.get() );
   testPrecondition( cross_section->size() > 0 );
-  testPrecondition( cross_section->size() ==
-            incoming_energy_grid->size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid->size() );
+  testPrecondition( cross_section->size() + threshold_energy_index <=
+                    incoming_energy_grid->size() );
   // Make sure the grid searcher is valid
   testPrecondition( grid_searcher.get() );
+
+  // Set the max energy index
+  this->setMaxEnergyIndex();
 }
 
 // Test if the energy falls within the energy grid
@@ -289,14 +296,19 @@ double StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_sectio
 
   if( bin_index >= d_threshold_energy_index )
   {
-    size_t cs_index = bin_index - d_threshold_energy_index;
+    if( bin_index < d_max_energy_index )
+    {
+      size_t cs_index = bin_index - d_threshold_energy_index;
 
-    return Details::StandardReactionBaseImplGetCrossSectionHelper<InterpPolicy>:: template getCrossSectionImpl<processed_cross_section>(
+      return Details::StandardReactionBaseImplGetCrossSectionHelper<InterpPolicy>:: template getCrossSectionImpl<processed_cross_section>(
                                         (*d_incoming_energy_grid)[bin_index],
                                         (*d_incoming_energy_grid)[bin_index+1],
                                         energy,
                                         (*d_cross_section)[cs_index],
                                         (*d_cross_section)[cs_index+1] );
+    }
+    else
+      return 0.0;
   }
   else
     return 0.0;
@@ -308,7 +320,7 @@ template<typename ReactionBase,
          bool processed_cross_section>
 double StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::getMaxEnergy() const
 {
-  return Details::StandardReactionBaseImplInterpPolicyHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( d_incoming_energy_grid->back() );
+  return Details::StandardReactionBaseImplInterpPolicyHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( (*d_incoming_energy_grid)[d_max_energy_index] );
 }
 
 // Return the threshold energy
@@ -327,6 +339,15 @@ template<typename ReactionBase,
 const double* StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::getEnergyGridHead() const
 {
   return d_incoming_energy_grid->data();
+}
+
+// Set the max energy index
+template<typename ReactionBase,
+         typename InterpPolicy,
+         bool processed_cross_section>
+void StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_section>::setMaxEnergyIndex()
+{
+  d_max_energy_index = d_threshold_energy_index + d_cross_section->size() - 1;
 }
 
 } // end MonteCarlo namespace

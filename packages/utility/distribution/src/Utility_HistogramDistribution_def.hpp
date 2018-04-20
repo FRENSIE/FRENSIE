@@ -752,7 +752,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
   typename Utility::ArrayView<const InputDepQuantity>::const_iterator bad_bin_value =
     std::find_if( bin_values.begin(),
                   bin_values.end(),
-                  [](const InputDepQuantity& element){ return InputDQT::isnaninf( element ) || element <= InputDQT::zero(); } );
+                  [](const InputDepQuantity& element){ return InputDQT::isnaninf( element ) || element < InputDQT::zero(); } );
 
   TEST_FOR_EXCEPTION(  bad_bin_value != bin_values.end(),
                        Utility::BadUnivariateDistributionParameter,

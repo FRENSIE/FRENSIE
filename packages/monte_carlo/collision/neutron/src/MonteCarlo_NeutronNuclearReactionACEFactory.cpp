@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NuclearReactionACEFactory.cpp
+//! \file   MonteCarlo_NeutronNuclearReactionACEFactory.cpp
 //! \author Alex Robinson
-//! \brief  Nuclear reaction factory class declaration
+//! \brief  Neutron nuclear reaction factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,7 +10,7 @@
 #include <limits>
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearReactionACEFactory.hpp"
 #include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringReaction.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
@@ -30,7 +30,7 @@ namespace MonteCarlo{
  * \param[in] raw_nuclide_data The necessary data blocks will be extracted
  * using the data extractor.
  */
-NuclearReactionACEFactory::NuclearReactionACEFactory(
+NeutronNuclearReactionACEFactory::NeutronNuclearReactionACEFactory(
           const std::string& table_name,
           const double atomic_weight_ratio,
           const double temperature,
@@ -80,12 +80,12 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 
   // Create a map of the reaction types and their table ordering
   boost::unordered_map<NuclearReactionType,unsigned> reaction_ordering;
-  NuclearReactionACEFactory::createReactionOrderingMap( mtr_block,
+  NeutronNuclearReactionACEFactory::createReactionOrderingMap( mtr_block,
 							reaction_ordering );
 
   // Create a map of the reaction types and the corresponding Q-value
   boost::unordered_map<NuclearReactionType,double> reaction_q_value;
-  NuclearReactionACEFactory::createReactionQValueMap( lqr_block,
+  NeutronNuclearReactionACEFactory::createReactionQValueMap( lqr_block,
 						      reaction_ordering,
 						      reaction_q_value );
 
@@ -94,7 +94,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
     reaction_multiplicity;
   boost::unordered_map<NuclearReactionType,Utility::ArrayView<const double> >
     reaction_energy_dependent_multiplicity;
-  NuclearReactionACEFactory::createReactionMultiplicityMap(
+  NeutronNuclearReactionACEFactory::createReactionMultiplicityMap(
 				      table_name,
 				      tyr_block,
 				      dlw_block,
@@ -104,7 +104,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 
   // Create a map of the reaction types and the corresponding threshold index
   boost::unordered_map<NuclearReactionType,unsigned> reaction_threshold_index;
-  NuclearReactionACEFactory::createReactionThresholdMap(
+  NeutronNuclearReactionACEFactory::createReactionThresholdMap(
 						    lsig_block,
 						    sig_block,
 						    reaction_ordering,
@@ -113,7 +113,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
   // Create a map of the reaction types and the corresponding cross section
   boost::unordered_map<NuclearReactionType,std::shared_ptr<std::vector<double> > >
     reaction_cross_section;
-  NuclearReactionACEFactory::createReactionCrossSectionMap(
+  NeutronNuclearReactionACEFactory::createReactionCrossSectionMap(
 						      lsig_block,
 						      sig_block,
 						      elastic_cross_section,
@@ -187,7 +187,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 }
 
 // Create the scattering reactions
-void NuclearReactionACEFactory::createScatteringReactions(
+void NeutronNuclearReactionACEFactory::createScatteringReactions(
       boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       scattering_reactions ) const
 {
@@ -196,7 +196,7 @@ void NuclearReactionACEFactory::createScatteringReactions(
 }
 
 // Create the absorption reactions
-void NuclearReactionACEFactory::createAbsorptionReactions(
+void NeutronNuclearReactionACEFactory::createAbsorptionReactions(
       boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       absorption_reactions ) const
 {
@@ -205,7 +205,7 @@ void NuclearReactionACEFactory::createAbsorptionReactions(
 }
 
 // Create the fission reactions
-void NuclearReactionACEFactory::createFissionReactions(
+void NeutronNuclearReactionACEFactory::createFissionReactions(
       boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       fission_reactions ) const
 {
@@ -214,7 +214,7 @@ void NuclearReactionACEFactory::createFissionReactions(
 }
 
 // Create the reaction type ordering map
-void NuclearReactionACEFactory::createReactionOrderingMap(
+void NeutronNuclearReactionACEFactory::createReactionOrderingMap(
         const Utility::ArrayView<const double>& mtr_block,
         boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering )
 
@@ -235,7 +235,7 @@ void NuclearReactionACEFactory::createReactionOrderingMap(
 }
 
 // Create the reaction type Q-value map
-void NuclearReactionACEFactory::createReactionQValueMap(
+void NeutronNuclearReactionACEFactory::createReactionQValueMap(
    const Utility::ArrayView<const double>& lqr_block,
    const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
    boost::unordered_map<NuclearReactionType,double>& reaction_q_value )
@@ -265,7 +265,7 @@ void NuclearReactionACEFactory::createReactionQValueMap(
  * values in the TYR block. The reaction_energy_dependent_multiplicity stores
  * the raw ACE table array that provides the energy dependent multiplicity
  */
-void NuclearReactionACEFactory::createReactionMultiplicityMap(
+void NeutronNuclearReactionACEFactory::createReactionMultiplicityMap(
    const std::string& table_name,
    const Utility::ArrayView<const double>& tyr_block,
    const Utility::ArrayView<const double>& dlw_block,
@@ -325,7 +325,7 @@ void NuclearReactionACEFactory::createReactionMultiplicityMap(
 // Create the reaction type threshold and cross section map
 // NOTE: All LSIG block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
-void NuclearReactionACEFactory::createReactionThresholdMap(
+void NeutronNuclearReactionACEFactory::createReactionThresholdMap(
    const Utility::ArrayView<const double>& lsig_block,
    const Utility::ArrayView<const double>& sig_block,
    const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
@@ -346,7 +346,11 @@ void NuclearReactionACEFactory::createReactionThresholdMap(
       cs_index = static_cast<unsigned>( lsig_block[reaction->second] ) - 1u;
 
       reaction_threshold_index[reaction->first] =
-	static_cast<unsigned>( sig_block[cs_index] ) - 1u;
+	static_cast<unsigned>( sig_block[cs_index] );
+
+      // Convert to C-style index
+      if( reaction_threshold_index[reaction->first] > 0u )
+        --reaction_threshold_index[reaction->first];
     }
     // Elastic scattering must be handled separately: it never appears in block
     else
@@ -359,7 +363,7 @@ void NuclearReactionACEFactory::createReactionThresholdMap(
 // Create the reaction type threshold and cross section map
 // NOTE: All LSIG block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
-void NuclearReactionACEFactory::createReactionCrossSectionMap(
+void NeutronNuclearReactionACEFactory::createReactionCrossSectionMap(
    const Utility::ArrayView<const double>& lsig_block,
    const Utility::ArrayView<const double>& sig_block,
    const Utility::ArrayView<const double>& elastic_cross_section,
@@ -403,7 +407,7 @@ void NuclearReactionACEFactory::createReactionCrossSectionMap(
 }
 
 // Get the reaction from a reaction type
-void NuclearReactionACEFactory::getReactionFromReactionType(
+void NeutronNuclearReactionACEFactory::getReactionFromReactionType(
            NuclearReactionType reaction_type,
            std::shared_ptr<const NeutronNuclearReaction>& base_reaction )
 {
@@ -430,7 +434,7 @@ void NuclearReactionACEFactory::getReactionFromReactionType(
 }
 
 // Initialize the scattering reactions
-void NuclearReactionACEFactory::initializeScatteringReactions(
+void NeutronNuclearReactionACEFactory::initializeScatteringReactions(
     const double temperature,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
@@ -529,7 +533,7 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
 }
 
 // Initialize the absorption reactions
-void NuclearReactionACEFactory::initializeAbsorptionReactions(
+void NeutronNuclearReactionACEFactory::initializeAbsorptionReactions(
     const double temperature,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
@@ -581,7 +585,7 @@ void NuclearReactionACEFactory::initializeAbsorptionReactions(
 }
 
 // Initialize the fission reactions
-void NuclearReactionACEFactory::initializeFissionReactions(
+void NeutronNuclearReactionACEFactory::initializeFissionReactions(
     const double temperature,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
@@ -672,5 +676,5 @@ void NuclearReactionACEFactory::initializeFissionReactions(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NuclearReactionACEFactory.cpp
+// end MonteCarlo_NeutronNuclearReactionACEFactory.cpp
 //---------------------------------------------------------------------------//
