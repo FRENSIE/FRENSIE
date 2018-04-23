@@ -125,10 +125,11 @@ FRENSIE_ADD_TEST(NuclideFactory
 ## Material tests
 ##---------------------------------------------------------------------------##
 
-ADD_EXECUTABLE(tstNeutronMaterial
-  tstNeutronMaterial.cpp)
-TARGET_LINK_LIBRARIES(tstNeutronMaterial monte_carlo_collision_native)
-ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS neutron)
+FRENSIE_ADD_TEST_EXECUTABLE(NeutronMaterial
+  DEPENDS tstNeutronMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(NeutronMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_neutron)
