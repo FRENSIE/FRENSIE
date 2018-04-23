@@ -12,32 +12,63 @@
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic constructor
 DetailedNeutronFissionReaction::DetailedNeutronFissionReaction(
-       const NuclearReactionType reaction_type,
-       const double temperature,
-       const double q_value,
-       const unsigned threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
        const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
        fission_neutron_multiplicity_distribution,
        const std::shared_ptr<const ScatteringDistribution>&
        prompt_neutron_emission_distribution,
        const std::shared_ptr<const ScatteringDistribution>&
        delayed_neutron_emission_distribution )
-  : NeutronFissionReaction( reaction_type,
-			    temperature,
-			    q_value,
-			    threshold_energy_index,
-			    incoming_energy_grid,
-			    cross_section,
-			    fission_neutron_multiplicity_distribution,
-			    prompt_neutron_emission_distribution ),
+  : NeutronFissionReaction( incoming_energy_grid,
+                            cross_section,
+                            threshold_energy_index,
+                            reaction_type,
+                            q_value,
+                            temperature,
+                            fission_neutron_multiplicity_distribution,
+                            prompt_neutron_emission_distribution ),
     d_delayed_neutron_emission_distribution( delayed_neutron_emission_distribution )
 {
   // Make sure the distribution is valid
-  testPrecondition( !delayed_neutron_emission_distribution.is_null() );
+  testPrecondition( delayed_neutron_emission_distribution.get() );
+}
+
+// Constructor
+DetailedNeutronFissionReaction::DetailedNeutronFissionReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
+       const std::shared_ptr<const FissionNeutronMultiplicityDistribution>&
+       fission_neutron_multiplicity_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       prompt_neutron_emission_distribution,
+       const std::shared_ptr<const ScatteringDistribution>&
+       delayed_neutron_emission_distribution )
+  : NeutronFissionReaction( incoming_energy_grid,
+                            cross_section,
+                            threshold_energy_index,
+                            grid_searcher,
+                            reaction_type,
+                            q_value,
+                            temperature,
+                            fission_neutron_multiplicity_distribution,
+                            prompt_neutron_emission_distribution ),
+    d_delayed_neutron_emission_distribution( delayed_neutron_emission_distribution )
+{
+  // Make sure the distribution is valid
+  testPrecondition( delayed_neutron_emission_distribution.get() );
 }
 
 // Simulate the reaction
@@ -47,7 +78,7 @@ void DetailedNeutronFissionReaction::react( NeutronState& neutron,
   neutron.incrementCollisionNumber();
 
   unsigned num_delayed_neutrons =
-    this->getNumberOfDelayedNeutrons( neutron.getEnergy() );
+    this->getNumberOfDelayedParticles( neutron.getEnergy() );
 
   // Create the additional delayed neutrons
   for( unsigned i = 0; i < num_delayed_neutrons; ++i )

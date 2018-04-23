@@ -20,6 +20,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+using Utility::Units::amu;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -49,12 +51,20 @@ FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, fileType )
   FRENSIE_CHECK_EQUAL( properties->fileType(),
                        Data::PhotoatomicDataProperties::ACE_EPR_FILE );
 
-  Data::ACEPhotoatomicDataProperties local_properties( "photoatomic_data/h_data.txt",
+  Data::ACEPhotoatomicDataProperties local_properties( 1.0*amu,
+                                                       "photoatomic_data/h_data.txt",
                                                        10,
                                                        "1000.04p" );
 
   FRENSIE_CHECK_EQUAL( local_properties.fileType(),
                        Data::PhotoatomicDataProperties::ACE_FILE );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic weight can be returned
+FRENSIE_UNIT_TEST( ACEPhotoatomicDataProperties, atomicWeight )
+{
+  FRENSIE_CHECK_EQUAL( properties->atomicWeight(), 1.0*amu );
 }
 
 //---------------------------------------------------------------------------//
@@ -118,7 +128,8 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotoatomicDataProperties,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    Data::ACEPhotoatomicDataProperties local_properties( "photoatomic_data/he_data.txt",
+    Data::ACEPhotoatomicDataProperties local_properties( 2.0*amu,
+                                                         "photoatomic_data/he_data.txt",
                                                           2,
                                                           "2000.04p" );
 
@@ -138,11 +149,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotoatomicDataProperties,
   createIArchive( archive_istream, iarchive );
 
   Data::ACEPhotoatomicDataProperties
-    local_properties( "dummy", 100000, "1000.00p" );
+    local_properties( 10.0*amu, "dummy", 100000, "1000.00p" );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
   FRENSIE_CHECK_EQUAL( local_properties.atom(), Data::He_ATOM );
   FRENSIE_CHECK_EQUAL( local_properties.atomicNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( local_properties.atomicWeight(), 2.0*amu );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(),
                        "photoatomic_data/he_data.txt" );
   FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 2 );
@@ -155,6 +167,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ACEPhotoatomicDataProperties,
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
   FRENSIE_CHECK_EQUAL( shared_properties->atom(), Data::H_ATOM );
   FRENSIE_CHECK_EQUAL( shared_properties->atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( shared_properties->atomicWeight(), 1.0*amu );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(),
                        "photoatomic_data/h_data.txt" );
   FRENSIE_CHECK_EQUAL( shared_properties->fileStartLine(), 10 );
@@ -169,7 +182,8 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
-  properties.reset( new Data::ACEPhotoatomicDataProperties( "photoatomic_data/h_data.txt",
+  properties.reset( new Data::ACEPhotoatomicDataProperties( 1.0*amu,
+                                                            "photoatomic_data/h_data.txt",
                                                             10,
                                                             "1000.12p" ) );
 }

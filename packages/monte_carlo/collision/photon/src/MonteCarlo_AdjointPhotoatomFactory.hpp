@@ -17,7 +17,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatom.hpp"
+#include "MonteCarlo_AdjointPhotonMaterial.hpp"
+#include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
+#include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
@@ -25,45 +30,49 @@ namespace MonteCarlo{
 class AdjointPhotoatomFactory
 {
 
-// public:
+public:
 
-//   //! Constructor
-//   AdjointPhotoatomFactory(
-//               const std::string& cross_sections_xml_directory,
-//               const Teuchos::ParameterList& cross_section_table_info,
-//               const std::unordered_set<std::string>& adjoint_photoatom_aliases,
-//               const SimulationAdjointPhotonProperties& properties,
-//               std::ostream* os_message = &std::cout );
+  //! The photoatom name map
+  typedef AdjointPhotonMaterial::AdjointPhotoatomNameMap AdjointPhotoatomNameMap;
 
-//   //! Destructor
-//   ~AdjointPhotoatomFactory()
-//   { /* ... */ }
+  //! The scattering center name set
+  typedef MaterialDefinitionDatabase::ScatteringCenterNameSet ScatteringCenterNameSet;
 
-//   //! Create the map of adjoint photoatoms
-//   void createAdjointPhotoatomMap(
-//                std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >&
-//                adjoint_photoatom_map ) const;
+  //! Constructor
+  AdjointPhotoatomFactory(
+       const boost::filesystem::path& data_directory,
+       const ScatteringCenterNameSet& adjoint_aphotoatom_names,
+       const ScatteringCenterDefinitionDatabase& adjoint_photoatom_definitions,
+       const SimulationAdjointPhotonProperties& properties,
+       const bool verbose = false );
 
-// private:
+  //! Destructor
+  ~AdjointPhotoatomFactory()
+  { /* ... */ }
 
-//   // Create an adjoint photoatom from a Native table
-//   void createAdjointPhotoatomFromNativeTable(
-//                    const std::string& cross_sections_xml_directory,
-//                    const std::string& adjoint_photoatom_alias,
-//                    const std::string& native_file_path,
-//                    const double atomic_weight,
-//                    const SimulationAdjointPhotonProperties& properties );
+  //! Create the map of adjoint photoatoms
+  void createAdjointPhotoatomMap(
+                        AdjointPhotoatomNameMap& adjoint_photoatom_map ) const;
 
-//   // The adjoint photoatom map
-//   std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
-//   d_adjoint_photoatom_name_map;
+private:
 
-//   // The table map
-//   std::unordered_map<std::string,std::shared_ptr<const AdjointPhotoatom> >
-//   d_adjoint_photoatomic_table_name_map;
+  // Create an adjoint photoatom from a Native table
+  void createAdjointPhotoatomFromNativeTable(
+                 const boost::filesystem::path& data_directory,
+                 const std::string& adjoint_photoatom_name,
+                 const double atomic_weight,
+                 const Data::AdjointPhotoatomicDataProperties& data_properties,
+                 const SimulationAdjointPhotonProperties& properties );
 
-//   // The message output stream
-//   std::ostream* d_os_message;
+  // The adjoint photoatom map
+  AdjointPhotoatomNameMap d_adjoint_photoatom_name_map;
+
+  // The table map
+  std::map<Data::AdjointPhotoatomicDataProperties::FileType,AdjointPhotoatomNameMap>
+  d_adjoint_photoatomic_table_name_map;
+
+  // Verbose adjoint photoatom construction
+  bool d_verbose;
 };
 
 } // end MonteCarlo namespace

@@ -23,7 +23,7 @@
 #include "MonteCarlo_CachedStateParticleSource.hpp"
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_CommHelpers.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -143,7 +143,7 @@ void CachedStateParticleSource::exportDataImpl(
 void CachedStateParticleSource::printSummary( std::ostream& os ) const
 { 
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Print the source sampling statistics
   this->printStandardSummary( "Cached State Source",

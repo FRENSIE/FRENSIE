@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "Utility_SerialCommunicator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 
 namespace Utility{
 
@@ -98,7 +98,7 @@ std::shared_ptr<const Communicator> SerialCommunicator::split( int color, int ke
 // Create a timer
 std::shared_ptr<Timer> SerialCommunicator::createTimer() const
 {
-  return GlobalOpenMPSession::createTimer();
+  return OpenMPProperties::createTimer();
 }
 
 // Method for placing the object in an output stream

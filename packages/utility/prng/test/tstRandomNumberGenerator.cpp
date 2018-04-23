@@ -12,7 +12,7 @@
 
 // FRENSIE Includes
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_GlobalMPISession.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
@@ -86,19 +86,19 @@ FRENSIE_UNIT_TEST_TEMPLATE( RandomNumberGenerator, setFakeStream,
 FRENSIE_UNIT_TEST( RandomNumberGenerator, initialize_history )
 {
   std::vector<unsigned long long> local_random_numbers(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   // Initialize the generator to a particular history depending on the process
-#pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+#pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
   {
     unsigned history_number = Utility::GlobalMPISession::rank()*
-      Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() +
-      Utility::GlobalOpenMPSession::getThreadId();
+      Utility::OpenMPProperties::getRequestedNumberOfThreads() +
+      Utility::OpenMPProperties::getThreadId();
 
     Utility::RandomNumberGenerator::initialize( history_number );
 
     // Generate a random number
-    local_random_numbers[Utility::GlobalOpenMPSession::getThreadId()] =
+    local_random_numbers[Utility::OpenMPProperties::getThreadId()] =
       Utility::RandomNumberGenerator::getRandomNumber<unsigned long long>();
   }
 
@@ -150,8 +150,8 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();

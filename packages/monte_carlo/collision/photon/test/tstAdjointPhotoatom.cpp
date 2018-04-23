@@ -9,7 +9,6 @@
 // Std Lib Includes
 #include <iostream>
 
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatom.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReactionNativeFactory.hpp"

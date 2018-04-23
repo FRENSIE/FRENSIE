@@ -32,7 +32,7 @@
 #include "MonteCarlo_ObserverPhaseSpaceDiscretization.hpp"
 #include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_SampleMomentCollection.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -318,7 +318,7 @@ inline double Estimator::evaluateResponseFunction(
 inline bool Estimator::hasUncommittedHistoryContribution() const
 {
   return this->hasUncommittedHistoryContribution(
-				 Utility::GlobalOpenMPSession::getThreadId() );
+				 Utility::OpenMPProperties::getThreadId() );
 }
 
 } // end MonteCarlo namespace

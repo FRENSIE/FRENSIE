@@ -37,6 +37,7 @@ FRENSIE_UNIT_TEST( SimulationNeutronProperties, defaults )
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMinNeutronEnergy(), 1e-11 );
   FRENSIE_CHECK_EQUAL( properties.getMinNeutronEnergy(), 1e-11 );
   FRENSIE_CHECK_EQUAL( properties.getMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfNeutronHashGridBins(), 1000u );
   FRENSIE_CHECK_EQUAL( properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( properties.getFreeGasThreshold(), 400.0 );
   FRENSIE_CHECK( properties.isUnresolvedResonanceProbabilityTableModeOn() );
@@ -62,6 +63,18 @@ FRENSIE_UNIT_TEST( SimulationNeutronProperties, setMaxNeutronEnergy )
   properties.setMaxNeutronEnergy( 15.0 );
 
   FRENSIE_CHECK_EQUAL( properties.getMaxNeutronEnergy(), 15.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the number of hash grid bins can be set
+FRENSIE_UNIT_TEST( SimulationNeutronProperties,
+                   getNumberOfNeutronHashGridBins )
+{
+  MonteCarlo::SimulationNeutronProperties properties;
+
+  properties.setNumberOfNeutronHashGridBins( 150u );
+
+  FRENSIE_CHECK_EQUAL( properties.getNumberOfNeutronHashGridBins(), 150u );
 }
 
 //---------------------------------------------------------------------------//
@@ -116,6 +129,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationNeutronProperties,
     MonteCarlo::SimulationNeutronProperties custom_properties;
     custom_properties.setMinNeutronEnergy( 1e-8 );
     custom_properties.setMaxNeutronEnergy( 15.0 );
+    custom_properties.setNumberOfNeutronHashGridBins( 150u );
     custom_properties.setFreeGasThreshold( 1000.0 );
     custom_properties.setUnresolvedResonanceProbabilityTableModeOff();
 
@@ -139,6 +153,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationNeutronProperties,
   FRENSIE_CHECK_EQUAL( default_properties.getMinNeutronEnergy(), 1e-11 );
   FRENSIE_CHECK_EQUAL( default_properties.getMaxNeutronEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( default_properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( default_properties.getNumberOfNeutronHashGridBins(), 1000u );
   FRENSIE_CHECK_EQUAL( default_properties.getFreeGasThreshold(), 400.0 );
   FRENSIE_CHECK( default_properties.isUnresolvedResonanceProbabilityTableModeOn() );
 
@@ -150,6 +165,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( SimulationNeutronProperties,
   FRENSIE_CHECK_EQUAL( custom_properties.getMinNeutronEnergy(), 1e-8 );
   FRENSIE_CHECK_EQUAL( custom_properties.getMaxNeutronEnergy(), 15.0 );
   FRENSIE_CHECK_EQUAL( custom_properties.getAbsoluteMaxNeutronEnergy(), 20.0 );
+  FRENSIE_CHECK_EQUAL( custom_properties.getNumberOfNeutronHashGridBins(), 150u );
   FRENSIE_CHECK_EQUAL( custom_properties.getFreeGasThreshold(), 1000.0 );
   FRENSIE_CHECK( !custom_properties.isUnresolvedResonanceProbabilityTableModeOn() );
 }

@@ -55,11 +55,11 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
   // Enable geometry thread support
   GMI::enableThreadSupport(
-	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+	         Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   // Enable estimator thread support
   EMI::enableThreadSupport(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
   d_comm->barrier();
 

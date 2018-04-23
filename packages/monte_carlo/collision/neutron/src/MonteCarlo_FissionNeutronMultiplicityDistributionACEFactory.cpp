@@ -105,7 +105,7 @@ void FissionNeutronMultiplicityDistributionACEFactory::createDistribution(
 void FissionNeutronMultiplicityDistributionACEFactory::createPartialDistribution(
 	  const std::string& table_name,
 	  const Utility::ArrayView<const double>& distribution_array,
-	  std::shared_ptr<const Utility::OneDDistribution>& partial_distribution ) const
+	  std::shared_ptr<const Utility::UnivariateDistribution>& partial_distribution ) const
 {
   unsigned form_flag = static_cast<unsigned>( distribution_array[0] );
 
@@ -177,21 +177,21 @@ bool FissionNeutronMultiplicityDistributionACEFactory::doesTotalDistExist() cons
 }
 
 // Return the prompt multiplicity distribution
-const std::shared_ptr<const Utility::OneDDistribution>&
+const std::shared_ptr<const Utility::UnivariateDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getPromptMultDist() const
 {
   return d_prompt_multiplicity_distribution;
 }
 
 // Return the delayed multiplicity distribution
-const std::shared_ptr<const Utility::OneDDistribution>&
+const std::shared_ptr<const Utility::UnivariateDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getDelayedMultDist() const
 {
   return d_delayed_multiplicity_distribution;
 }
 
 // Return the total multiplicity distribution
-const std::shared_ptr<const Utility::OneDDistribution>&
+const std::shared_ptr<const Utility::UnivariateDistribution>&
 FissionNeutronMultiplicityDistributionACEFactory::getTotalMultDist() const
 {
   return d_total_multiplicity_distribution;

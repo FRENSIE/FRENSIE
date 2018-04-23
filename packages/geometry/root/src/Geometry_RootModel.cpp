@@ -27,7 +27,7 @@
 #include "Utility_HDF5OArchive.hpp"
 #include "Utility_Set.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 
 namespace Geometry{
 

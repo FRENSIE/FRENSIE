@@ -51,7 +51,7 @@ AdjointPhotoatom::AdjointPhotoatom(
                                           line_energy_reactions ) );
 
   // Make sure the reactions have a shared energy grid
-  testPostcondition( d_core.hasSharedEnergyGrid() );
+  testPostcondition( this->getCore().hasSharedEnergyGrid() );
 }
 
 // Check if the energy corresponds to a line energy reaction
@@ -62,8 +62,8 @@ bool AdjointPhotoatom::doesEnergyHaveLineEnergyReaction(
   testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  return d_core.getLineEnergyReactions().find( energy ) !=
-         d_core.getLineEnergyReactions().end();
+  return this->getCore().getLineEnergyReactions().find( energy ) !=
+    this->getCore().getLineEnergyReactions().end();
 }
 
 // Return the total cross section at the desired line energy
@@ -82,9 +82,9 @@ double AdjointPhotoatom::getTotalLineEnergyCrossSection(
   double cross_section = 0.0;
   
   ConstLineEnergyReactionMap::const_iterator line_energy_reactions =
-    d_core.getLineEnergyReactions().find( energy );
+    this->getCore().getLineEnergyReactions().find( energy );
   
-  if( line_energy_reactions != d_core.getLineEnergyReactions().end() )
+  if( line_energy_reactions != this->getCore().getLineEnergyReactions().end() )
   {
     ConstReactionMap::const_iterator reaction_it =
       line_energy_reactions->second.begin();
@@ -113,7 +113,7 @@ double AdjointPhotoatom::getAtomicTotalForwardCrossSection(
   testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
   
-  return d_core.getTotalForwardReaction().getCrossSection( energy );
+  return this->getCore().getTotalForwardReaction().getCrossSection( energy );
 }
 
 // Return the adjoint weight factor at the desired energy
@@ -244,15 +244,15 @@ double AdjointPhotoatom::getReactionCrossSection(
     return this->getAtomicTotalCrossSection( energy );
   default:
     ConstReactionMap::const_iterator adjoint_photoatomic_reaction =
-      d_core.getScatteringReactions().find( reaction );
+      this->getCore().getScatteringReactions().find( reaction );
 
-    if( adjoint_photoatomic_reaction != d_core.getScatteringReactions().end() )
+    if( adjoint_photoatomic_reaction != this->getCore().getScatteringReactions().end() )
       return adjoint_photoatomic_reaction->second->getCrossSection( energy );
 
     adjoint_photoatomic_reaction =
-      d_core.getAbsorptionReactions().find( reaction );
+      this->getCore().getAbsorptionReactions().find( reaction );
 
-    if( adjoint_photoatomic_reaction != d_core.getAbsorptionReactions().end() )
+    if( adjoint_photoatomic_reaction != this->getCore().getAbsorptionReactions().end() )
       return adjoint_photoatomic_reaction->second->getCrossSection( energy );
     else
       return 0.0;
@@ -266,8 +266,8 @@ void AdjointPhotoatom::collideAtLineEnergy( AdjointPhotonState& adjoint_photon,
   // Make sure the particle is a probe
   testPrecondition( adjoint_photon.isProbe() );
   // Make sure there are line energy reactions at the particle's energy
-  testPrecondition( d_core.getLineEnergyReactions().find( adjoint_photon.getEnergy() ) !=
-                    d_core.getLineEnergyReactions().end() );
+  testPrecondition( this->getCore().getLineEnergyReactions().find( adjoint_photon.getEnergy() ) !=
+                    this->getCore().getLineEnergyReactions().end() );
 
   // Create a scaled random number for sampling the reaction
   double scaled_random_number =
@@ -286,14 +286,14 @@ void AdjointPhotoatom::sampleLineEnergyReaction(
                                             ParticleBank& bank ) const
 {
   // Make sure a line energy reaction exists at the particle's energy
-  testPrecondition( d_core.getLineEnergyReactions().find( adjoint_photon.getEnergy() ) !=
-                    d_core.getLineEnergyReactions().end() );
+  testPrecondition( this->getCore().getLineEnergyReactions().find( adjoint_photon.getEnergy() ) !=
+                    this->getCore().getLineEnergyReactions().end() );
   
   // Check if the probe is at a critical energy
   ConstLineEnergyReactionMap::const_iterator line_energy_reactions =
-    d_core.getLineEnergyReactions().find( adjoint_photon.getEnergy() );
+    this->getCore().getLineEnergyReactions().find( adjoint_photon.getEnergy() );
       
-  if( line_energy_reactions != d_core.getLineEnergyReactions().end() )
+  if( line_energy_reactions != this->getCore().getLineEnergyReactions().end() )
   {
     double partial_cross_section = 0.0;
     

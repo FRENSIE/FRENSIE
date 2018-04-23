@@ -62,9 +62,6 @@ public:
   virtual ~Atom()
   { /* ... */ }
 
-  //! Set the atomic core
-  void setCore( const AtomCore& core );
-
   //! Return the atom name
   const std::string& getAtomName() const;
 
@@ -131,8 +128,11 @@ public:
 
 protected:
 
-  // The atom core (storing all reactions, relaxation model)
-  AtomCore d_core;
+  //! Set the atomic core
+  void setCore( const AtomCore& core );
+
+  //! Return the core
+  AtomCore& getCore();
 
 private:
 
@@ -184,6 +184,9 @@ private:
 
   // The atomic weight of the atom
   double d_atomic_weight;
+
+  // The atom core (storing all reactions, relaxation model)
+  AtomCore d_core;
 };
 
 // Return the nuclide name
@@ -318,6 +321,13 @@ Atom<AtomCore>::getNuclearAbsorptionCrossSection(
 // Return the core
 template<typename AtomCore>
 inline const AtomCore& Atom<AtomCore>::getCore() const
+{
+  return d_core;
+}
+
+// Return the core
+template<typename AtomCore>
+inline AtomCore& Atom<AtomCore>::getCore()
 {
   return d_core;
 }

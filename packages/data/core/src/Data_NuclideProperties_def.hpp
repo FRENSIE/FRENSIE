@@ -101,7 +101,7 @@ bool NuclideProperties::dataAvailable(
     properties.find( name );
 
   if( properties_it != properties.end() )
-    return AtomProperties::dataAvailable( properties_it->second, file_type );
+    return BaseType::dataAvailable( properties_it->second, file_type );
   else
     return false;
 }
@@ -119,9 +119,9 @@ bool NuclideProperties::dataAvailable(
 
   if( properties_it != properties.end() )
   {
-    return AtomProperties::dataAvailable( properties_it->second,
-                                          file_type,
-                                          table_version );
+    return BaseType::dataAvailable( properties_it->second,
+                                    file_type,
+                                    table_version );
   }
   else
     return false;
@@ -179,9 +179,9 @@ unsigned NuclideProperties::getMaxDataFileVersion(
 
   if( properties_it != properties.end() )
   {
-    return AtomProperties::getMaxDataFileVersion( properties_it->second,
-                                                  file_type,
-                                                  name + " " + type_name );
+    return BaseType::getMaxDataFileVersion( properties_it->second,
+                                            file_type,
+                                            name + " " + type_name );
   }
   else
   {
@@ -202,7 +202,7 @@ NuclideProperties::getDataFileTypes( const PropertiesMap& properties,
     properties.find( name );
 
   if( properties_it != properties.end() )
-    return AtomProperties::getDataFileTypes( properties_it->second );
+    return BaseType::getDataFileTypes( properties_it->second );
   else
     return std::set<typename PropertiesMap::mapped_type::key_type>();
 }
@@ -219,8 +219,8 @@ std::set<unsigned> NuclideProperties::getDataFileVersions(
 
   if( properties_it != properties.end() )
   {
-    return AtomProperties::getDataFileVersions( properties_it->second,
-                                                file_type );
+    return BaseType::getDataFileVersions( properties_it->second,
+                                          file_type );
   }
   else
     return std::set<unsigned>();
@@ -359,6 +359,25 @@ const Properties& NuclideProperties::getProperties(
                               const bool find_exact,
                               const std::string& type_name )
 {
+  return *NuclideProperties::getSharedProperties<Properties>( properties,
+                                                              file_type,
+                                                              table_version,
+                                                              evaluation_temp,
+                                                              find_exact,
+                                                              type_name );
+}
+
+// Get the data properties
+template<typename Properties, typename PropertiesMap>
+const std::shared_ptr<const Properties>&
+NuclideProperties::getSharedProperties(
+                              const PropertiesMap& properties,
+                              const typename PropertiesMap::key_type file_type,
+                              const unsigned table_version,
+                              const Energy evaluation_temp,
+                              const bool find_exact,
+                              const std::string& type_name )
+{
   typename PropertiesMap::const_iterator file_type_it =
     properties.find( file_type );
 
@@ -445,7 +464,7 @@ const Properties& NuclideProperties::getProperties(
         }
       }
 
-      return *Utility::get<1>(*temp_grid_it);
+      return Utility::get<1>(*temp_grid_it);
     }
     else
     {
@@ -484,7 +503,48 @@ const Properties& NuclideProperties::getProperties(
 
 // Get the data properties
 template<typename Properties, typename PropertiesMap>
+const std::shared_ptr<const Properties>&
+NuclideProperties::getSharedProperties(
+                              const PropertiesMap& properties,
+                              const typename PropertiesMap::key_type file_type,
+                              const unsigned table_version,
+                              const Temperature evaluation_temp,
+                              const bool find_exact,
+                              const std::string& type_name )
+{
+  return NuclideProperties::getSharedProperties<Properties>(
+              properties,
+              file_type,
+              table_version,
+              evaluation_temp*Utility::PhysicalConstants::boltzmann_constant_q,
+              find_exact,
+              type_name );
+}
+
+// Get the data properties
+template<typename Properties, typename PropertiesMap>
 inline const Properties& NuclideProperties::getProperties(
+                 const PropertiesMap& properties,
+                 const std::string& name,
+                 const typename PropertiesMap::mapped_type::key_type file_type,
+                 const unsigned table_version,
+                 const Energy evaluation_temp,
+                 const bool find_exact,
+                 const std::string& type_name )
+{
+  return *NuclideProperties::getSharedProperties<Properties>( properties,
+                                                              name,
+                                                              file_type,
+                                                              table_version,
+                                                              evaluation_temp,
+                                                              find_exact,
+                                                              type_name );
+}
+
+// Get the data properties
+template<typename Properties, typename PropertiesMap>
+inline const std::shared_ptr<const Properties>&
+NuclideProperties::getSharedProperties(
                  const PropertiesMap& properties,
                  const std::string& name,
                  const typename PropertiesMap::mapped_type::key_type file_type,
@@ -498,12 +558,13 @@ inline const Properties& NuclideProperties::getProperties(
 
   if( name_it != properties.end() )
   {
-    return NuclideProperties::getProperties<Properties>( name_it->second,
-                                                         file_type,
-                                                         table_version,
-                                                         evaluation_temp,
-                                                         find_exact,
-                                                         name + " " + type_name );
+    return NuclideProperties::getSharedProperties<Properties>(
+                                                      name_it->second,
+                                                      file_type,
+                                                      table_version,
+                                                      evaluation_temp,
+                                                      find_exact,
+                                                      name + " " + type_name );
   }
   else
   {
@@ -525,6 +586,28 @@ inline const Properties& NuclideProperties::getProperties(
                  const std::string& type_name )
 {
   return NuclideProperties::getProperties<Properties>(
+              properties,
+              name,
+              file_type,
+              table_version,
+              evaluation_temp*Utility::PhysicalConstants::boltzmann_constant_q,
+              find_exact,
+              type_name );
+}
+
+// Get the data properties
+template<typename Properties, typename PropertiesMap>
+inline const std::shared_ptr<const Properties>&
+NuclideProperties::getSharedProperties(
+                 const PropertiesMap& properties,
+                 const std::string& name,
+                 const typename PropertiesMap::mapped_type::key_type file_type,
+                 const unsigned table_version,
+                 const Temperature evaluation_temp,
+                 const bool find_exact,
+                 const std::string& type_name )
+{
+  return NuclideProperties::getSharedProperties<Properties>(
               properties,
               name,
               file_type,
@@ -655,75 +738,10 @@ void NuclideProperties::setPhotonuclearProperties(
                         "this nuclide (" << new_properties->zaid() << " != "
                         << expected_zaid << ")!" );
 
-    AtomProperties::setPropertiesImpl( properties,
-                                       new_properties,
-                                       warning_tag,
-                                       type_name );
-  }
-}
-
-// Clone the nuclear properties map
-template<typename PropertiesMap>
-void NuclideProperties::cloneNuclearProperties(
-                                      const PropertiesMap& original_properties,
-                                      PropertiesMap& new_properties )
-{
-  new_properties.clear();
-
-  typename PropertiesMap::const_iterator properties_it =
-    original_properties.begin();
-
-  while( properties_it != original_properties.end() )
-  {
-    typename PropertiesMap::mapped_type& new_properties_map =
-      new_properties[properties_it->first];
-
-    typename PropertiesMap::mapped_type::const_iterator version_it =
-      properties_it->second.begin();
-
-    while( version_it != properties_it->second.end() )
-    {
-      typename PropertiesMap::mapped_type::mapped_type& new_temp_grid =
-        new_properties_map[version_it->first];
-      
-      typename PropertiesMap::mapped_type::mapped_type::const_iterator
-        temp_grid_it = version_it->second.begin();
-
-      while( temp_grid_it != version_it->second.end() )
-      {
-        new_temp_grid.push_back( std::make_pair( 
-                                          Utility::get<0>( *temp_grid_it ),
-                                          Utility::get<1>( *temp_grid_it ) ) );
-
-        Utility::get<1>( new_temp_grid.back() ).reset(
-                                   Utility::get<1>( *temp_grid_it )->clone() );
-        
-        ++temp_grid_it;
-      }
-
-      ++version_it;
-    }
-
-    ++properties_it;
-  }
-}
-
-// Clone the thermal nuclear properties map
-template<typename PropertiesMap>
-void NuclideProperties::cloneThermalNuclearProperties(
-                                      const PropertiesMap& original_properties,
-                                      PropertiesMap& new_properties )
-{
-  new_properties.clear();
-
-  typename PropertiesMap::const_iterator name_it =
-    original_properties.begin();
-
-  while( name_it != original_properties.end() )
-  {
-    NuclideProperties::cloneNuclearProperties( name_it->second,
-                                               new_properties[name_it->first] );
-    ++name_it;
+    BaseType::setPropertiesImpl( properties,
+                                 new_properties,
+                                 warning_tag,
+                                 type_name );
   }
 }
 
@@ -799,10 +817,8 @@ void NuclideProperties::printThermalNuclearProperties(
 template<typename Archive>
 void NuclideProperties::save( Archive& ar, const unsigned version ) const
 {
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AtomProperties );
-
-  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_zaid );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
   ar & BOOST_SERIALIZATION_NVP( d_nuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_thermal_nuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_nuclear_data_properties );
@@ -815,10 +831,8 @@ void NuclideProperties::save( Archive& ar, const unsigned version ) const
 template<typename Archive>
 void NuclideProperties::load( Archive& ar, const unsigned version )
 {
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( AtomProperties );
-
-  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_zaid );
+  ar & BOOST_SERIALIZATION_NVP( d_atomic_weight_ratio );
   ar & BOOST_SERIALIZATION_NVP( d_nuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_thermal_nuclear_data_properties );
   ar & BOOST_SERIALIZATION_NVP( d_adjoint_nuclear_data_properties );

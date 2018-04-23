@@ -304,6 +304,7 @@ private:
   // Create the photoatomic and electroatomic table properties
   void createAtomicTableProperties(
            ScatteringCenterPropertiesDatabase& database,
+           const double atomic_weight_ratio,
            const boost::filesystem::path& table_file_path,
            const size_t file_start_line,
            const std::tuple<std::string,unsigned,char> table_name_components ) const ;

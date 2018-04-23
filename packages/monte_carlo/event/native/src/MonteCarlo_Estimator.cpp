@@ -45,7 +45,7 @@ bool Estimator::hasUncommittedHistoryContribution(
 void Estimator::enableThreadSupport( const unsigned num_threads )
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   d_has_uncommitted_history_contribution.resize( num_threads, false );
 }
@@ -56,7 +56,7 @@ void Estimator::exportData(
                     const bool process_data ) const
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure this estimator has not been exported yet
   remember( EstimatorHDF5FileHandler test_estimator_hdf5_file( hdf5_file ) );
   testPrecondition(
@@ -99,7 +99,7 @@ void Estimator::assignDiscretization(
                            const DimensionDiscretizationPoint& discretization )
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   d_phase_space_discretization.assignDiscretizationToDimension( discretization );
 }
@@ -112,7 +112,7 @@ void Estimator::assignResponseFunction(
                              const ResponseFunctionPointer& response_function )
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure that the response function pointer is valid
   testPrecondition( response_function.get() );
   
@@ -126,7 +126,7 @@ void Estimator::assignResponseFunction(
 void Estimator::assignParticleType( const ParticleType particle_type )
 {
   // Make sure only the master thread calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   d_particle_types.insert( particle_type );
 }

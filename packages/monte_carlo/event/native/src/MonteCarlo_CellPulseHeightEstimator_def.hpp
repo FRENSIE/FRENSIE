@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -103,7 +103,7 @@ inline void CellPulseHeightEstimator<
 {
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+    unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
     double contribution = particle.getWeight()*particle.getEnergy();
 
@@ -128,7 +128,7 @@ inline void CellPulseHeightEstimator<
 {
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+    unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
     double contribution = -particle.getWeight()*particle.getEnergy();
 
@@ -144,7 +144,7 @@ template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<
 		     ContributionMultiplierPolicy>::commitHistoryContribution()
 {
-  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
   typename SerialUpdateTracker::const_iterator
     cell_data, end_cell_data;
@@ -237,7 +237,7 @@ template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
 {
   // Make sure only the root thread calls this
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   EntityEstimator<CellPulseHeightEstimator::cellIdType>::resetData();
 

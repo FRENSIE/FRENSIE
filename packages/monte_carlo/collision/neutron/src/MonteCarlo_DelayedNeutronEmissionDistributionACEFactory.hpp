@@ -20,7 +20,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
@@ -55,7 +55,7 @@ protected:
   const std::vector<double>& getPrecursorGroupDecayConsts() const;
 
   //! Return the precursor group probability distributions
-  const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+  const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
   getPrecursorGroupProbDists() const;
 
   //! Return the precursor group emission distributions
@@ -83,7 +83,7 @@ private:
   std::vector<double> d_precursor_group_decay_consts;
 
   // The precursor group probability distributions
-  std::vector<std::shared_ptr<const Utility::OneDDistribution> >
+  std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >
   d_precursor_group_prob_distributions;
 
   // The precursor group emission distributions

@@ -10,14 +10,14 @@
 #define MONTE_CARLO_NEUTRON_SCATTERING_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReaction.hpp"
+#include "MonteCarlo_StandardNeutronNuclearReaction.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The neutron-in, neutron-out scattering reaction class
-class NeutronScatteringReaction : public NuclearReaction
+class NeutronScatteringReaction : public StandardNeutronNuclearReaction
 {
   // Typedef for QuantityTraits
   typedef Utility::QuantityTraits<double> QT;
@@ -27,23 +27,38 @@ public:
   //! The scattering distribution type
   typedef NuclearScatteringDistribution<NeutronState,NeutronState> ScatteringDistribution;
 
-  //! Constructor
+  //! Basic Constructor
   NeutronScatteringReaction(
-       const NuclearReactionType reaction_type,
-       const double temperature,
-       const double q_value,
-       const unsigned multiplicity,
-       const unsigned threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const std::shared_ptr<const ScatteringDistribution>& scattering_distribution );
+       const size_t threshold_energy_index,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
+       const unsigned multiplicity,
+       const std::shared_ptr<const ScatteringDistribution>&
+       scattering_distribution );
+
+  //! Constructor
+  NeutronScatteringReaction(
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
+       const NuclearReactionType reaction_type,
+       const double q_value,
+       const double temperature,
+       const unsigned multiplicity,
+       const std::shared_ptr<const ScatteringDistribution>&
+       scattering_distribution );
 
   //! Destructor
   ~NeutronScatteringReaction()
   { /* ... */ }
 
   //! Return the number of neutrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedNeutrons( const double energy ) const override;
+  unsigned getNumberOfEmittedParticles( const double energy ) const override;
 
   //! Simulate the reaction
   void react( NeutronState& neutron, ParticleBank& bank ) const override;

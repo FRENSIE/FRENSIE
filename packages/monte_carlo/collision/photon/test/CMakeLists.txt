@@ -289,62 +289,47 @@ FRENSIE_ADD_TEST(AdjointPhotoatom
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
-ADD_EXECUTABLE(tstPhotoatomACEFactory
-  tstPhotoatomACEFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhotoatomACEFactory monte_carlo_collision_native)
-ADD_TEST(PhotoatomACEFactory_test tstPhotoatomACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PhotoatomACEFactory_test PROPERTY LABELS photon ace)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomACEFactory DEPENDS tstPhotoatomACEFactory.cpp)
+FRENSIE_ADD_TEST(PhotoatomACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstAdjointPhotoatomNativeFactory
-  tstAdjointPhotoatomNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotoatomNativeFactory monte_carlo_collision_native)
-ADD_TEST(AdjointPhotoatomNativeFactory_test tstAdjointPhotoatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml")
-SET_PROPERTY(TEST AdjointPhotoatomNativeFactory_test PROPERTY LABELS photon adjoint native)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomNativeFactory DEPENDS tstAdjointPhotoatomNativeFactory.cpp)
+  FRENSIE_ADD_TEST(AdjointPhotoatomNativeFactory
+    EXTRA_ARGS
+    --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
-ADD_EXECUTABLE(tstPhotoatomFactory
-  tstPhotoatomFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhotoatomFactory monte_carlo_collision_native)
-ADD_TEST(PhotoatomFactory_test tstPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PhotoatomFactory_test PROPERTY LABELS photon)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomFactory
+  DEPENDS tstPhotoatomFactory.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(PhotoatomFactory
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstAdjointPhotoatomFactory
-  tstAdjointPhotoatomFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotoatomFactory monte_carlo_collision_native)
-ADD_TEST(AdjointPhotoatomFactory_test tstAdjointPhotoatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointPhotoatomFactory_test PROPERTY LABELS photon adjoint native)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatomFactory
+  DEPENDS tstAdjointPhotoatomFactory.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(AdjointPhotoatomFactory
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 ##---------------------------------------------------------------------------##
 ## Material tests
 ##---------------------------------------------------------------------------##
 
-ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
-TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
-ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PhotonMaterial_test PROPERTY LABELS photon)
+FRENSIE_ADD_TEST_EXECUTABLE(PhotonMaterial
+  DEPENDS tstPhotonMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(PhotonMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstAdjointPhotonMaterial
-  tstAdjointPhotonMaterial.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonMaterial monte_carlo_collision_native)
-ADD_TEST(AdjointPhotonMaterial_test tstAdjointPhotonMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointPhotonMaterial_test PROPERTY LABELS photon adjoint native)
-
-ADD_EXECUTABLE(tstPhotonCollisionHandler
-  tstPhotonCollisionHandler.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhotonCollisionHandler monte_carlo_collision_native)
-ADD_TEST(PhotonCollisionHandler_test tstPhotonCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PhotonCollisionHandler_test PROPERTY LABELS photon)
-
-ADD_EXECUTABLE(tstAdjointPhotonCollisionHandler
-  tstAdjointPhotonCollisionHandler.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointPhotonCollisionHandler monte_carlo_collision_native)
-ADD_TEST(AdjointPhotonCollisionHandler_test tstAdjointPhotonCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointPhotonCollisionHandler_test PROPERTY LABELS photon adjoint native)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotonMaterial
+  DEPENDS tstAdjointPhotonMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(AdjointPhotonMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_photon)

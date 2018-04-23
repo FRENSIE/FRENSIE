@@ -17,7 +17,8 @@
 #include <boost/unordered_set.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReaction.hpp"
+#include "MonteCarlo_NeutronNuclearReaction.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_QuantityTraits.hpp"
 
@@ -34,13 +35,17 @@ class Nuclide
 
 public:
 
+  //! The reaction enum type
+  typedef NuclearReactionType ReactionEnumType;
+
+  //! The particle state type
+  typedef NeutronState ParticleStateType;
+
   //! Typedef for the reaction map
-  typedef boost::unordered_map<NuclearReactionType,
-			       std::shared_ptr<NuclearReaction> > ReactionMap;
+  typedef boost::unordered_map<NuclearReactionType,std::shared_ptr<NeutronNuclearReaction> > ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<NuclearReactionType,
-			       std::shared_ptr<const NuclearReaction> >
+  typedef boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >
   ConstReactionMap;
 
   //! Set the nuclear reaction types that will be considered as absorption
@@ -55,15 +60,18 @@ public:
   static unsigned getUniqueIdFromName( const std::string& name );
 
   //! Constructor
-  Nuclide( const std::string& name,
-	   const unsigned atomic_number,
-	   const unsigned atomic_mass_number,
-	   const unsigned isomer_number,
-	   const double atomic_weight_ratio,
-	   const double temperature,
-	   const std::shared_ptr<std::vector<double> >& energy_grid,
-	   const ReactionMap& standard_scattering_reactions,
-	   const ReactionMap& standard_absorption_reactions );
+  Nuclide(
+          const std::string& name,
+          const unsigned atomic_number,
+          const unsigned atomic_mass_number,
+          const unsigned isomer_number,
+          const double atomic_weight_ratio,
+          const double temperature,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const ConstReactionMap& standard_scattering_reactions,
+          const ConstReactionMap& standard_absorption_reactions );
 
   //! Destructor
   virtual ~Nuclide()
@@ -86,6 +94,9 @@ public:
 
   //! Return the atomic weight ratio
   double getAtomicWeightRatio() const;
+
+  //! Return the atomic weight
+  double getAtomicWeight() const;
 
   //! Return the temperature of the nuclide (in MeV)
   double getTemperature() const;
@@ -117,11 +128,15 @@ private:
 
   // Calculate the total absorption cross section
   void calculateTotalAbsorptionReaction(
-		    const std::shared_ptr<std::vector<double> >& energy_grid );
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher );
 
   // Calculate the total cross section
   void calculateTotalReaction(
-                    const std::shared_ptr<std::vector<double> >& energy_grid );
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher );
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
@@ -158,10 +173,10 @@ private:
   double d_temperature;
 
   // The total reaction
-  std::unique_ptr<const NuclearReaction> d_total_reaction;
+  std::unique_ptr<const NeutronNuclearReaction> d_total_reaction;
 
   // The total absorption reaction
-  std::unique_ptr<const NuclearReaction> d_total_absorption_reaction;
+  std::unique_ptr<const NeutronNuclearReaction> d_total_absorption_reaction;
 
   // The scattering reactions
   ConstReactionMap d_scattering_reactions;

@@ -13,7 +13,7 @@
 
 // FRENSIE Includes
 #include "Utility_GlobalMPISession.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "FRENSIE_config.hpp"
 
@@ -542,7 +542,7 @@ bool GlobalMPISession::isMPIUsed()
 /*! \details If MPI has been configured for use with FRENSIE (HAVE_FRENSIE_MPI
  * is defined) and MPI has been initialized, a Utility::MPITimer object will
  * be created. Otherwise, an OpenMP timer will be created
- * (see Utility::GlobalOpenMPSession::createTimer).
+ * (see Utility::OpenMPProperties::createTimer).
  */
 std::shared_ptr<Timer> GlobalMPISession::createTimer()
 {
@@ -551,7 +551,7 @@ std::shared_ptr<Timer> GlobalMPISession::createTimer()
     return std::shared_ptr<Timer>( new MPITimer() );
 #endif
 
-  return GlobalOpenMPSession::createTimer();
+  return OpenMPProperties::createTimer();
 }
 
 // Abort all MPI processes

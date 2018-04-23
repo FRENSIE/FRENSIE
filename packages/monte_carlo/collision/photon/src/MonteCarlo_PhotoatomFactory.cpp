@@ -14,215 +14,260 @@
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// // Constructor
-// PhotoatomFactory::PhotoatomFactory(
-// 		    const std::string& cross_sections_xml_directory,
-// 		    const Teuchos::ParameterList& cross_section_table_info,
-// 		    const std::unordered_set<std::string>& photoatom_aliases,
-// 		    const std::shared_ptr<AtomicRelaxationModelFactory>&
-// 		    atomic_relaxation_model_factory,
-// 		    const SimulationProperties& properties,
-// 		    std::ostream* os_message )
-//   : d_os_message( os_message )
-// {
-//   // Make sure the message output stream is valid
-//   testPrecondition( os_message != NULL );
+// Constructor
+PhotoatomFactory::PhotoatomFactory(
+       const boost::filesystem::path& data_directory,
+       const ScatteringCenterNameSet& photoatom_names,
+       const ScatteringCenterDefinitionDatabase& photoatom_definitions,
+       const std::shared_ptr<AtomicRelaxationModelFactory>&
+       atomic_relaxation_model_factory,
+       const SimulationProperties& properties,
+       const bool verbose )
+  : d_photoatom_name_map(),
+    d_photoatomic_table_name_map(),
+    d_verbose( verbose )
+{
+  // Create each photoatom in the set
+  ScatteringCenterNameSet::const_iterator photoatom_name =
+    photoatom_names.begin();
 
-//   // Create each photoatom in the set
-//   std::unordered_set<std::string>::const_iterator photoatom_name =
-//     photoatom_aliases.begin();
+  while( photoatom_name != photoatom_names.end() )
+  {
+    TEST_FOR_EXCEPTION( !photoatom_definitions.doesDefinitionExist( *photoatom_name ),
+                        std::runtime_error,
+                        "Photoatom " << *photoatom_name << " cannot be "
+                        "created because its definition has not been "
+                        "specified!" );
 
-//   std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
-//   int photoatom_file_start_line;
-//   double atomic_weight;
+    const ScatteringCenterDefinition& photoatom_definition =
+      photoatom_definitions.getDefinition( *photoatom_name );
 
-//   while( photoatom_name != photoatom_aliases.end() )
-//   {
+    TEST_FOR_EXCEPTION( !photoatom_definition.hasPhotoatomicDataProperties(),
+                        std::runtime_error,
+                        "Photoatom " << *photoatom_name << " cannot be "
+                        "created because its definition does not specify "
+                        "any photoatomic data properties!" );
 
-//     Data::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
-// 						  cross_sections_xml_directory,
-// 						  *photoatom_name,
-// 						  cross_section_table_info,
-// 						  photoatom_file_path,
-// 						  photoatom_file_type,
-// 						  photoatom_table_name,
-// 						  photoatom_file_start_line,
-// 						  atomic_weight );
+    double atomic_weight;
 
-//     if( photoatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
-//     {
-//       createPhotoatomFromACETable( cross_sections_xml_directory,
-// 				   *photoatom_name,
-// 				   photoatom_file_path,
-// 				   photoatom_table_name,
-// 				   photoatom_file_start_line,
-// 				   atomic_weight,
-// 				   atomic_relaxation_model_factory,
-// 				   properties );
-//     }
-//     else if( photoatom_file_type == Data::CrossSectionsXMLProperties::native_file )
-//     {
-//       createPhotoatomFromNativeTable( cross_sections_xml_directory,
-// 				      *photoatom_name,
-// 				      photoatom_file_path,
-// 				      atomic_weight,
-// 				      atomic_relaxation_model_factory,
-// 				      properties );
-//     }
-//     else
-//     {
-//       THROW_EXCEPTION( std::logic_error,
-// 		       "photoatomic file type "
-// 		       << photoatom_file_type <<
-// 		       " is not supported!" );
-//     }
+    const Data::PhotoatomicDataProperties& photoatom_data_properties =
+      photoatom_definition.getPhotoatomicDataProperties( &atomic_weight );
 
-//     ++photoatom_name;
-//   }
+    if( photoatom_data_properties.fileType() ==
+        Data::PhotoatomicDataProperties::ACE_EPR_FILE )
+    {
+      // Initialize the photoatomic table name map for ACE_EPR files
+      if( d_photoatomic_table_name_map.find( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) ==
+          d_photoatomic_table_name_map.end() )
+      {
+        d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE];
+      }
+        
+      this->createPhotoatomFromACETable( data_directory,
+                                         *photoatom_name,
+                                         atomic_weight,
+                                         photoatom_data_properties,
+                                         atomic_relaxation_model_factory,
+                                         properties );
+    }
+    else if( photoatom_data_properties.fileType() ==
+             Data::PhotoatomicDataProperties::Native_EPR_FILE )
+    {
+      // Initialize the photoatomic table name map for Native EPR files
+      if( d_photoatomic_table_name_map.find( Data::PhotoatomicDataProperties::Native_EPR_FILE ) ==
+          d_photoatomic_table_name_map.end() )
+      {
+        d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE];
+      }
+      
+      this->createPhotoatomFromNativeTable( data_directory,
+                                            *photoatom_name,
+                                            atomic_weight,
+                                            photoatom_data_properties,
+                                            atomic_relaxation_model_factory,
+                                            properties );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Photoatom " << *photoatom_name << " cannot be "
+                       "created because its definition specifies the use of a "
+                       "photoatomic data file of type "
+                       << photoatom_data_properties.fileType() <<
+                       ", which is currently unsupported!" );
+    }
 
-//   // Make sure that every photoatom has been created
-//   testPostcondition( d_photoatom_name_map.size() == photoatom_aliases.size() );
-// }
+    ++photoatom_name;
+  }
 
-// // Create the map of photoatoms
-// void PhotoatomFactory::createPhotoatomMap(
-// 		    std::unordered_map<std::string,std::shared_ptr<Photoatom> >&
-// 		    photoatom_map ) const
-// {
-//   // Reset the photoatom map
-//   photoatom_map.clear();
+  // Make sure that every photoatom has been created
+  testPostcondition( d_photoatom_name_map.size() == photoatom_names.size() );
+}
 
-//   // Copy the stored map
-//   photoatom_map.insert( d_photoatom_name_map.begin(),
-// 			d_photoatom_name_map.end() );
-// }
+// Create the map of photoatoms
+void PhotoatomFactory::createPhotoatomMap(
+                                        PhotoatomNameMap& photoatom_map ) const
+{
+  photoatom_map = d_photoatom_name_map;
+}
 
-// // Create a photoatom from an ACE table
-// void PhotoatomFactory::createPhotoatomFromACETable(
-// 			  const std::string& cross_sections_xml_directory,
-// 			  const std::string& photoatom_alias,
-// 			  const std::string& ace_file_path,
-// 			  const std::string& photoatomic_table_name,
-// 			  const int photoatomic_file_start_line,
-// 			  const double atomic_weight,
-// 			  const std::shared_ptr<AtomicRelaxationModelFactory>&
-// 			  atomic_relaxation_model_factory,
-// 			  const SimulationProperties& properties )
-// {
-//   *d_os_message << "Loading ACE photoatomic cross section table "
-// 		<< photoatomic_table_name << " (" << photoatom_alias << ") ... ";
-
-//   // Check if the table has already been loaded
-//   if( d_photoatomic_table_name_map.find( photoatomic_table_name ) ==
-//       d_photoatomic_table_name_map.end() )
-//   {
-//     // Create the ACEFileHandler
-//     Data::ACEFileHandler ace_file_handler( ace_file_path,
-// 					   photoatomic_table_name,
-// 					   photoatomic_file_start_line,
-// 					   true );
-
-//     // Create the XSS data extractor
-//     Data::XSSEPRDataExtractor xss_data_extractor(
-// 					 ace_file_handler.getTableNXSArray(),
-// 					 ace_file_handler.getTableJXSArray(),
-// 					 ace_file_handler.getTableXSSArray() );
-
-//     // Create the atomic relaxation model
-//     std::shared_ptr<AtomicRelaxationModel> atomic_relaxation_model;
-
-//     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
-//                                xss_data_extractor,
-//                                atomic_relaxation_model,
-//                                properties.getMinPhotonEnergy(),
-//                                properties.getMinElectronEnergy(),
-// 			       properties.isAtomicRelaxationModeOn( PHOTON ) );
-
-//     // Initialize the new photoatom
-//     std::shared_ptr<Photoatom>& photoatom = d_photoatom_name_map[photoatom_alias];
-
-//     // Create the new photoatom
-//     PhotoatomACEFactory::createPhotoatom( xss_data_extractor,
-// 					  photoatomic_table_name,
-// 					  atomic_weight,
-// 					  atomic_relaxation_model,
-//                                           properties,
-// 					  photoatom );
+// Create a photoatom from an ACE table
+void PhotoatomFactory::createPhotoatomFromACETable(
+			const boost::filesystem::path& data_directory,
+                        const std::string& photoatom_name,
+                        const double atomic_weight,
+			const Data::PhotoatomicDataProperties& data_properties,
+                        const std::shared_ptr<AtomicRelaxationModelFactory>&
+                        atomic_relaxation_model_factory,
+                        const SimulationProperties& properties )
+{
+  // Check if the table has already been loaded
+  if( d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE].find( data_properties.tableName() ) ==
+      d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE].end() )
+  {
+    // Construct the the path to the data file
+    boost::filesystem::path ace_file_path = data_directory;
+    ace_file_path /= data_properties.filePath();
+    ace_file_path.make_preferred();
     
-//     // Cache the new photoatom in the table name map
-//     d_photoatomic_table_name_map[photoatomic_table_name] = photoatom;
-//   }
-//   // The table has already been loaded
-//   else
-//   {
-//     d_photoatom_name_map[photoatom_alias] =
-//       d_photoatomic_table_name_map[photoatomic_table_name];
-//   }
+    if( d_verbose )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                   "Loading ACE EPR photoatomic cross section "
+                                   "table " << data_properties.tableName() <<
+                                   " from " << ace_file_path.string() <<
+                                   " ... " );
+    }
+    
+    // Create the ACEFileHandler
+    Data::ACEFileHandler ace_file_handler( ace_file_path,
+					   data_properties.tableName(),
+					   data_properties.fileStartLine(),
+					   true );
 
-//   *d_os_message << "done." << std::endl;
-// }
+    // Create the XSS data extractor
+    Data::XSSEPRDataExtractor xss_data_extractor(
+					 ace_file_handler.getTableNXSArray(),
+					 ace_file_handler.getTableJXSArray(),
+					 ace_file_handler.getTableXSSArray() );
 
-// // Create a photoatom from a Native table
-// void PhotoatomFactory::createPhotoatomFromNativeTable(
-// 			  const std::string& cross_sections_xml_directory,
-// 			  const std::string& photoatom_alias,
-// 			  const std::string& native_file_path,
-// 			  const double atomic_weight,
-// 			  const std::shared_ptr<AtomicRelaxationModelFactory>&
-// 			  atomic_relaxation_model_factory,
-// 			  const SimulationProperties& properties )
-// {
-//   *d_os_message << "Loading native photoatomic cross section table "
-//                 << photoatom_alias << " ... " << std::flush;
+    // Create the atomic relaxation model
+    std::shared_ptr<const AtomicRelaxationModel> atomic_relaxation_model;
 
-//   // Check if the table has already been loaded
-//   if( d_photoatomic_table_name_map.find( native_file_path ) ==
-//       d_photoatomic_table_name_map.end() )
-//   {
-//     // Create the epr data container
-//     Data::ElectronPhotonRelaxationDataContainer
-//       data_container( native_file_path );
+    atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
+                               xss_data_extractor,
+                               atomic_relaxation_model,
+                               properties.getMinPhotonEnergy(),
+                               properties.getMinElectronEnergy(),
+			       properties.isAtomicRelaxationModeOn( PHOTON ) );
 
-//     // Create the atomic relaxation model
-//     std::shared_ptr<AtomicRelaxationModel> atomic_relaxation_model;
+    // Initialize the new photoatom
+    PhotoatomNameMap::mapped_type& photoatom =
+      d_photoatom_name_map[photoatom_name];
 
-//     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
-//                                data_container,
-//                                atomic_relaxation_model,
-//                                properties.getMinPhotonEnergy(),
-//                                properties.getMinElectronEnergy(),
-//                                properties.isAtomicRelaxationModeOn( PHOTON ) );
+    // Create the new photoatom
+    PhotoatomACEFactory::createPhotoatom(
+                                        xss_data_extractor,
+                                        data_properties.tableName(),
+                                        atomic_weight,
+                                        atomic_relaxation_model,
+                                        properties,
+                                        photoatom );
+    
+    // Cache the new photoatom in the table name map
+    d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE][data_properties.tableName()] = photoatom;
 
-//     // Initialize the new photoatom
-//     std::shared_ptr<Photoatom>& photoatom =
-//       d_photoatom_name_map[photoatom_alias];
+    if( d_verbose )
+    {
+      FRENSIE_LOG_NOTIFICATION( "done." );
+    }
+  }
+  // The table has already been loaded
+  else
+  {
+    d_photoatom_name_map[photoatom_name] =
+      d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::ACE_EPR_FILE][data_properties.tableName()];
+  }
+}
 
-//     // Create the new photoatom
-//     PhotoatomNativeFactory::createPhotoatom( data_container,
-// 					     native_file_path,
-// 					     atomic_weight,
-// 					     atomic_relaxation_model,
-//                                              properties,
-// 					     photoatom );
+// Create a photoatom from a Native table
+void PhotoatomFactory::createPhotoatomFromNativeTable(
+			const boost::filesystem::path& data_directory,
+                        const std::string& photoatom_name,
+                        const double atomic_weight,
+                        const Data::PhotoatomicDataProperties& data_properties,
+                        const std::shared_ptr<AtomicRelaxationModelFactory>&
+                        atomic_relaxation_model_factory,
+                        const SimulationProperties& properties )
+{
+  // Check if the table has already been loaded
+  if( d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE].find( data_properties.filePath().string() ) ==
+      d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE].end() )
+  {
+    // Construct the path to the native file
+    boost::filesystem::path native_file_path = data_directory;
+    native_file_path /= data_properties.filePath();
+    native_file_path.make_preferred();
 
-//     // Cache the new photoatom in the table name map
-//     d_photoatomic_table_name_map[native_file_path] = photoatom;
-//   }
-//   // The table has already been loaded
-//   else
-//   {
-//     d_photoatom_name_map[photoatom_alias] =
-//       d_photoatomic_table_name_map[native_file_path];
-//   }
+    if( d_verbose )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                "Loading native EPR cross section table "
+                                "(v " << data_properties.fileVersion() <<
+                                ") for " << data_properties.atom() <<
+                                "from " << native_file_path.string() <<
+                                " ... " );
+    }
+    
+    // Create the epr data container
+    Data::ElectronPhotonRelaxationDataContainer
+      data_container( native_file_path );
 
-//   *d_os_message << "done." << std::endl;
-// }
+    // Create the atomic relaxation model
+    std::shared_ptr<const AtomicRelaxationModel> atomic_relaxation_model;
+
+    atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
+                               data_container,
+                               atomic_relaxation_model,
+                               properties.getMinPhotonEnergy(),
+                               properties.getMinElectronEnergy(),
+                               properties.isAtomicRelaxationModeOn( PHOTON ) );
+
+    // Initialize the new photoatom
+    PhotoatomNameMap::mapped_type& photoatom =
+      d_photoatom_name_map[photoatom_name];
+
+    // Create the new photoatom
+    PhotoatomNativeFactory::createPhotoatom(
+                                           data_container,
+                                           data_properties.filePath().string(),
+                                           atomic_weight,
+                                           atomic_relaxation_model,
+                                           properties,
+                                           photoatom );
+
+    // Cache the new photoatom in the table name map
+    d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()] = photoatom;
+
+    if( d_verbose )
+    {
+      FRENSIE_LOG_NOTIFICATION( "done." );
+    }
+  }
+  // The table has already been loaded
+  else
+  {
+    d_photoatom_name_map[photoatom_name] =
+      d_photoatomic_table_name_map[Data::PhotoatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()];
+  }
+}
 
 } // end MonteCarlo namespace
 

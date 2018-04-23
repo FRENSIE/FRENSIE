@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 #include "Utility_ArrayView.hpp"
 
 namespace MonteCarlo{
@@ -45,7 +45,7 @@ protected:
   void createPartialDistribution(
 	 const std::string& table_name,
 	 const Utility::ArrayView<const double>& distribution_array,
-	 std::shared_ptr<const Utility::OneDDistribution>& partial_distribution ) const;
+	 std::shared_ptr<const Utility::UnivariateDistribution>& partial_distribution ) const;
 
   //! Return if a prompt distribution exists
   bool doesPromptDistExist() const;
@@ -57,13 +57,13 @@ protected:
   bool doesTotalDistExist() const;
 
   //! Return the prompt multiplicity distribution
-  const std::shared_ptr<const Utility::OneDDistribution>& getPromptMultDist() const;
+  const std::shared_ptr<const Utility::UnivariateDistribution>& getPromptMultDist() const;
 
   //! Return the delayed multiplicity distribution
-  const std::shared_ptr<const Utility::OneDDistribution>& getDelayedMultDist() const;
+  const std::shared_ptr<const Utility::UnivariateDistribution>& getDelayedMultDist() const;
 
   //! Return the total multiplicity distribution
-  const std::shared_ptr<const Utility::OneDDistribution>& getTotalMultDist() const;
+  const std::shared_ptr<const Utility::UnivariateDistribution>& getTotalMultDist() const;
 
 private:
 
@@ -77,13 +77,13 @@ private:
   bool d_total_dist_exists;
 
   // The prompt multiplicity distribution
-  std::shared_ptr<const Utility::OneDDistribution> d_prompt_multiplicity_distribution;
+  std::shared_ptr<const Utility::UnivariateDistribution> d_prompt_multiplicity_distribution;
 
   // The delayed multiplicity distribution
-  std::shared_ptr<const Utility::OneDDistribution> d_delayed_multiplicity_distribution;
+  std::shared_ptr<const Utility::UnivariateDistribution> d_delayed_multiplicity_distribution;
 
   // The total multiplicity distribution
-  std::shared_ptr<const Utility::OneDDistribution> d_total_multiplicity_distribution;
+  std::shared_ptr<const Utility::UnivariateDistribution> d_total_multiplicity_distribution;
 };
 
 } // end MonteCarlo namespace

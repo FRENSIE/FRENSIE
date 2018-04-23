@@ -570,11 +570,11 @@ TEUCHOS_UNIT_TEST( Estimator, hasUncommittedHistoryContribution_parallel_safe )
   TestEstimator estimator( 0, 1.0 );
 
   estimator.enableThreadSupport(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
 
-  #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+  #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
   {
-    unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+    unsigned thread_id = Utility::OpenMPProperties::getThreadId();
 
     #pragma omp critical(thread_check)
     {
@@ -990,8 +990,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

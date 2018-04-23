@@ -43,7 +43,6 @@ BOOST_AUTO_TEST_CASE( log_error )
   FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_ERROR( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
   
@@ -66,7 +65,6 @@ BOOST_AUTO_TEST_CASE( log_tagged_error )
   FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_TAGGED_ERROR( "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
   
@@ -92,7 +90,6 @@ BOOST_AUTO_TEST_CASE( log_scope_error )
   FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os_array );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_SCOPE_ERROR( "TestScope", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
   
@@ -119,7 +116,6 @@ BOOST_AUTO_TEST_CASE( log_tagged_scope_error )
   FRENSIE_SETUP_ASYNCHRONOUS_ERROR_LOG( os_array );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_TAGGED_SCOPE_ERROR( "TestScope", "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -149,7 +145,6 @@ BOOST_AUTO_TEST_CASE( log_error_with_logger )
   FRENSIE_ADD_TAG_TO_LOGGER( "Custom Logger", custom_logger );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_ERROR_WITH_LOGGER( custom_logger, "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
   
@@ -178,7 +173,6 @@ BOOST_AUTO_TEST_CASE( log_scope_error_with_logger )
   FRENSIE_ADD_TAG_TO_LOGGER( "Custom Logger", custom_logger );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_SCOPE_ERROR_WITH_LOGGER( custom_logger, "TestScope", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
   
@@ -202,7 +196,6 @@ BOOST_AUTO_TEST_CASE( log_nested_error )
   FRENSIE_SETUP_SYNCHRONOUS_ERROR_LOG( std::cout );
 
   // Log a nested error
-  std::cout << std::endl;
   FRENSIE_LOG_NESTED_ERROR( "Error: testing\n  Location: dummy.hpp:111" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -252,7 +245,6 @@ BOOST_AUTO_TEST_CASE( log_tagged_warning )
   FRENSIE_SETUP_ASYNCHRONOUS_WARNING_LOG( os_array );
 
   // Log a warning
-  std::cout << std::endl;
   FRENSIE_LOG_TAGGED_WARNING( "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -284,7 +276,6 @@ BOOST_AUTO_TEST_CASE( log_warning_with_logger )
   FRENSIE_ADD_TAG_TO_LOGGER( "Custom Logger", custom_logger );
 
   // Log a warning
-  std::cout << std::endl;
   FRENSIE_LOG_WARNING_WITH_LOGGER( custom_logger, "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -307,12 +298,38 @@ BOOST_AUTO_TEST_CASE( log_notification )
   FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( std::cout );
 
   // Log a notification
-  std::cout << std::endl;
   FRENSIE_LOG_NOTIFICATION( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the notification was logged
-  BOOST_CHECK( os_ptr->str().find( "testing" ) < os_ptr->str().size() );
+  BOOST_CHECK_EQUAL( os_ptr->str(), "testing\n\n" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a partial notification can be logged
+BOOST_AUTO_TEST_CASE( log_partial_notification )
+{
+  // Make sure that all sinks have been removed from the log
+  FRENSIE_REMOVE_ALL_LOGS();
+
+  // Setup the notification log
+  boost::shared_ptr<std::stringstream> os_ptr( new std::stringstream );
+
+  FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_ptr );
+  FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( std::cout );
+
+  // Log a partial notification
+  FRENSIE_LOG_PARTIAL_NOTIFICATION( "test" );
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  // Check that the partial notification was logged
+  BOOST_CHECK_EQUAL( os_ptr->str(), "test" );
+
+  FRENSIE_LOG_NOTIFICATION( "ing" );
+  FRENSIE_FLUSH_ALL_LOGS();
+
+  // Check that the notification was logged
+  BOOST_CHECK_EQUAL( os_ptr->str(), "testing\n\n" );
 }
 
 //---------------------------------------------------------------------------//
@@ -332,12 +349,11 @@ BOOST_AUTO_TEST_CASE( log_tagged_notification )
   FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Log a notification
-  std::cout << std::endl;
   FRENSIE_LOG_TAGGED_NOTIFICATION( "Tag", "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
   // Check that the notification was logged
-  BOOST_CHECK( os_ptr->str().find( "Tag: testing" ) < os_ptr->str().size() );
+  BOOST_CHECK_EQUAL( os_ptr->str(), "Tag: testing\n\n" );
 }
 
 //---------------------------------------------------------------------------//
@@ -363,7 +379,6 @@ BOOST_AUTO_TEST_CASE( log_notification_with_logger )
   FRENSIE_ADD_TAG_TO_LOGGER( "Custom Logger", custom_logger );
 
   // Log a notification
-  std::cout << std::endl;
   FRENSIE_LOG_NOTIFICATION_WITH_LOGGER( custom_logger, "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -385,7 +400,6 @@ BOOST_AUTO_TEST_CASE( log_detail )
   FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( std::cout );
 
   // Log a detail
-  std::cout << std::endl;
   FRENSIE_LOG_DETAILS( "testing detail" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -414,7 +428,6 @@ BOOST_AUTO_TEST_CASE( log_tagged_detail )
   FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Log a detail
-  std::cout << std::endl;
   FRENSIE_LOG_TAGGED_DETAILS( "Tag", "testing detail" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -449,7 +462,6 @@ BOOST_AUTO_TEST_CASE( log_detail_with_logger )
   FRENSIE_ADD_TAG_TO_LOGGER( "Custom Logger", custom_logger );
 
   // Log a detail
-  std::cout << std::endl;
   FRENSIE_LOG_DETAILS_WITH_LOGGER( custom_logger, "testing detail" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -475,7 +487,6 @@ BOOST_AUTO_TEST_CASE( log_pedantic_detail )
   FRENSIE_SETUP_SYNCHRONOUS_NOTIFICATION_LOG( std::cout );
 
   // Log a detail
-  std::cout << std::endl;
   FRENSIE_LOG_PEDANTIC_DETAILS( "testing extra detail" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -505,7 +516,6 @@ BOOST_AUTO_TEST_CASE( log_tagged_pedantic_detail )
   FRENSIE_SETUP_ASYNCHRONOUS_NOTIFICATION_LOG( os_array );
 
   // Log a detail
-  std::cout << std::endl;
   FRENSIE_LOG_TAGGED_PEDANTIC_DETAILS( "Tag", "testing extra detail" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -532,7 +542,6 @@ BOOST_AUTO_TEST_CASE( setup_all_logs )
   FRENSIE_SETUP_STANDARD_SYNCHRONOUS_LOGS( std::cout );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_ERROR( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 
@@ -677,7 +686,6 @@ BOOST_AUTO_TEST_CASE( set_global_filter )
   FRENSIE_SET_GLOBAL_LOG_FILTER( record_type_log_attr >= Utility::WARNING_RECORD || (boost::log::expressions::has_attr(tag_log_attr) && tag_log_attr == "Important") );
 
   // Log an error
-  std::cout << std::endl;
   FRENSIE_LOG_ERROR( "testing" );
   FRENSIE_FLUSH_ALL_LOGS();
 

@@ -47,6 +47,15 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setAtomicNumber
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atomic weight can be set
+FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setAtomicWeight )
+{
+  epr_data_container.setAtomicWeight( 1.0 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAtomicWeight(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the min photon energy can be set
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer, setMinPhotonEnergy )
 {
@@ -1950,7 +1959,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    export_importData_ascii )
 {
-  const std::string test_ascii_file_name( "test_epr_data_container.txt" );
+  const std::string test_ascii_file_name( "test_aepr_data_container.txt" );
 
   epr_data_container.saveToFile( test_ascii_file_name, true );
 
@@ -1959,6 +1968,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   // Table Tests
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
@@ -2083,7 +2093,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
                    export_importData_xml )
 {
-  const std::string test_xml_file_name( "test_epr_data_container.xml" );
+  const std::string test_xml_file_name( "test_aepr_data_container.xml" );
 
   epr_data_container.saveToFile( test_xml_file_name, true );
 
@@ -2092,6 +2102,7 @@ FRENSIE_UNIT_TEST( AdjointElectronPhotonRelaxationDataContainer,
 
   // Table Tests
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );

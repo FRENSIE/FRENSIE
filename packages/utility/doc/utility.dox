@@ -50,7 +50,7 @@
  *  <li>Teuchos Unit Test Harness extension 
  *      (Utility_UnitTestHarnessExtensions.hpp)</li>
  *  <li>kinematic equations (Utility::KinematicHelpers)</li>
- *  <li>omp helper functions (Utility::GlobalOpenMPSession)</li>
+ *  <li>omp helper functions (Utility::OpenMPProperties)</li>
  *  <li>exception testing (Utility::ExceptionTestMacros)</li>
  *  <li>exception catching (Utility::ExceptionCatchMacros)</li>
  *  <li>direction helper functions (Utility::DirectionHelpers)</li>

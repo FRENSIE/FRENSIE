@@ -59,15 +59,29 @@ unsigned ENDLDataContainer::getAtomicNumber() const
   return d_atomic_number;
 }
 
+// Return the atomic weight
+double ENDLDataContainer::getAtomicWeight() const
+{
+  return d_atomic_weight;
+}
+
 // Set the atomic number
-void ENDLDataContainer::setAtomicNumber(
-						 const unsigned atomic_number )
+void ENDLDataContainer::setAtomicNumber( const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0 );
   testPrecondition( atomic_number <= 100 );
 
   d_atomic_number = atomic_number;
+}
+
+// Set the atomic weight
+void ENDLDataContainer::setAtomicWeight( const double atomic_weight )
+{
+  // Make sure that the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0 );
+
+  d_atomic_weight = atomic_weight;
 }
 
 EXPLICIT_DATA_CLASS_SAVE_LOAD_INST( ENDLDataContainer );

@@ -53,6 +53,12 @@ public:
   //! Return the absolute maximum neutron
   static double getAbsoluteMaxNeutronEnergy();
 
+  //! Set the number of neutron hash grid bins
+  void setNumberOfNeutronHashGridBins( const unsigned bins );
+
+  //! Get the number of neutron hash grid bins
+  unsigned getNumberOfNeutronHashGridBins() const;
+
   //! Set the free gas thermal treatment temperature threshold
   void setFreeGasThreshold( const double threshold );
 
@@ -89,6 +95,9 @@ private:
   // The maximum neutron energy (MeV)
   double d_max_neutron_energy;
 
+  // The number of neutron hash grid bins
+  unsigned d_num_neutron_hash_grid_bins;
+
   // The free gas thermal treatment temperature threshold
   // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
   double d_free_gas_threshold;
@@ -105,6 +114,7 @@ void SimulationNeutronProperties::serialize( Archive& ar,
 {
   ar & BOOST_SERIALIZATION_NVP( d_min_neutron_energy );
   ar & BOOST_SERIALIZATION_NVP( d_max_neutron_energy );
+  ar & BOOST_SERIALIZATION_NVP( d_num_neutron_hash_grid_bins );
   ar & BOOST_SERIALIZATION_NVP( d_free_gas_threshold );
   ar & BOOST_SERIALIZATION_NVP( d_unresolved_resonance_probability_table_mode_on );
 }

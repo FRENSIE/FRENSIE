@@ -12,7 +12,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionReactionACEFactory.hpp"
-#include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_DecoupledYieldBasedPhotonProductionReaction.hpp"
 #include "MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
@@ -29,18 +28,21 @@ namespace MonteCarlo{
  * using the data extractor.
  */
 DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionACEFactory(
-		 const std::string& table_name,
-		 const double atomic_weight_ratio,
-		 const double temperature,
-		 const std::shared_ptr<const std::vector<double> >& energy_grid,
-                 const SimulationProperties& properties,
-		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
-		 : NuclearReactionACEFactory( table_name,
-		                              atomic_weight_ratio,
-		                              temperature,
-		                              energy_grid,
-                                              properties,
-		                              raw_nuclide_data )
+          const std::string& table_name,
+          const double atomic_weight_ratio,
+          const double temperature,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const SimulationProperties& properties,
+          const Data::XSSNeutronDataExtractor& raw_nuclide_data )
+  : NuclearReactionACEFactory( table_name,
+                               atomic_weight_ratio,
+                               temperature,
+                               energy_grid,
+                               grid_searcher,
+                               properties,
+                               raw_nuclide_data )
 {
   // Create the scattering distribution factory
   PhotonProductionNuclearScatteringDistributionACEFactory
@@ -79,7 +81,7 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
                                                      base_reaction_type_map );
 
   // Construct a map of required base reaction classes
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> > base_reaction_map;
+  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> > base_reaction_map;
 
   DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
                                                     base_reaction_type_map,
@@ -100,24 +102,28 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
   DecoupledPhotonProductionReactionACEFactory::createTotalReaction(
                                    raw_nuclide_data.extractTotalCrossSection(),
                                    energy_grid,
+                                   grid_searcher,
                                    temperature );
 
   // Create the yield based photon production reactions
-  initializeYieldBasedPhotonProductionReactions( base_reaction_type_map,
-                                                 temperature,
-                                                 yield_energy_map,
-                                                 base_reaction_map,
-                                                 properties,
-                                                 photon_production_dist_factory );
+  this->initializeYieldBasedPhotonProductionReactions(
+                                              base_reaction_type_map,
+                                              temperature,
+                                              yield_energy_map,
+                                              base_reaction_map,
+                                              properties,
+                                              photon_production_dist_factory );
 
-	// Create the cross section based photon production reactions
-  initializeCrossSectionBasedPhotonProductionReactions( base_reaction_type_map,
-                                                        temperature,
-                                                        threshold_energy_map,
-                                                        xs_based_map,
-                                                        energy_grid,
-                                                        properties,
-                                                        photon_production_dist_factory );
+  // Create the cross section based photon production reactions
+  this->initializeCrossSectionBasedPhotonProductionReactions(
+                                              base_reaction_type_map,
+                                              temperature,
+                                              threshold_energy_map,
+                                              xs_based_map,
+                                              energy_grid,
+                                              grid_searcher,
+                                              properties,
+                                              photon_production_dist_factory );
 }
 
 // Create the photon production reactions
@@ -131,19 +137,22 @@ void DecoupledPhotonProductionReactionACEFactory::createPhotonProductionReaction
 
 // Create the total reaction for weight normalization
 void DecoupledPhotonProductionReactionACEFactory::createTotalReaction(
-                       const Utility::ArrayView<const double>& total_xs_block,
-                       const std::shared_ptr<const std::vector<double> >& energy_grid,
-                       const double temperature )
+          const Utility::ArrayView<const double>& total_xs_block,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const double temperature )
 {
-  std::shared_ptr<std::vector<double> > total_cross_section;
-  total_cross_section.deepCopy(total_xs_block);
+  std::shared_ptr<const std::vector<double> > total_cross_section(
+                                   new std::vector<double>( total_xs_block ) );
 
-  d_total_reaction.reset( new NeutronAbsorptionReaction( N__TOTAL_REACTION,
-							 temperature,
-							 0.0,
-							 0u,
-							 energy_grid,
-							 total_cross_section ) );
+  d_total_reaction.reset( new NeutronAbsorptionReaction( energy_grid,
+                                                         total_cross_section,
+                                                         0u,
+                                                         grid_searcher,
+                                                         N__TOTAL_REACTION,
+                                                         0.0,
+							 temperature ) );
 }
 
 // Create the reaction type ordering map
@@ -187,50 +196,50 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
   {
     cs_index = static_cast<unsigned>( lsigp_block[reaction->second] ) - 1u;
 
-	  if ( static_cast<unsigned>( sigp_block[cs_index] ) == 13u )
-	  {
+    if ( static_cast<unsigned>( sigp_block[cs_index] ) == 13u )
+    {
       cs_array_size = static_cast<unsigned>( sigp_block[cs_index + 2u] );
 
       std::shared_ptr<std::vector<double> >& cross_section =
 	                                    xs_based_map[reaction->first];
 
-      cross_section.deepCopy( sigp_block( cs_index + 3u, cs_array_size ) );
+      cross_section.reset( new std::vector<double>(
+                                sigp_block( cs_index + 3u, cs_array_size ) ) );
 
       threshold_energy_map[reaction->first] =
                       static_cast<unsigned>( sigp_block[cs_index + 1u] ) ;
 
       base_reaction_type_map[reaction->first] =
 	          convertUnsignedToNuclearReactionType( reaction->first/1000u );
-	  }
-	  else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
-	            static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
-	  {
-	  
-	    TEST_FOR_EXCEPTION( static_cast<unsigned>( sigp_block[cs_index + 2u] ) != 0,
-	                        std::runtime_error,
-	                        "multiple interpolation regions were defined "
-	                        "in the ACE table for MT " << reaction->first <<
-	                        "." );
+    }
+    else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
+              static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
+    {
+      TEST_FOR_EXCEPTION( static_cast<unsigned>( sigp_block[cs_index + 2u] ) != 0,
+                          std::runtime_error,
+                          "multiple interpolation regions were defined "
+                          "in the ACE table for MT " << reaction->first <<
+                          "." );
 
-	    energy_array_size =  static_cast<unsigned>( sigp_block[cs_index + 3u] );
+      energy_array_size =  static_cast<unsigned>( sigp_block[cs_index + 3u] );
 
-	    yield_energy_map[reaction->first] =
-	                              sigp_block( cs_index + 4u, energy_array_size );
+      yield_energy_map[reaction->first] =
+        sigp_block( cs_index + 4u, energy_array_size );
 
-	    yield_values_map[reaction->first] =
-	          sigp_block( cs_index + 4u + energy_array_size, energy_array_size );
+      yield_values_map[reaction->first] =
+        sigp_block( cs_index + 4u + energy_array_size, energy_array_size );
 
-	    base_reaction_type_map[reaction->first] =
-	          convertUnsignedToNuclearReactionType( reaction->first/1000u );
-	  }
-	  else
-	  {
-	    THROW_EXCEPTION( std::runtime_error,
-	                     "MFTYPE was found to be " <<
-	                     static_cast<unsigned>( sigp_block[cs_index + 2u] ) <<
-	                     " which is not equal to 12, 13, or 16 (only allowable"
-	                     " entries).");
-	  }
+      base_reaction_type_map[reaction->first] =
+        convertUnsignedToNuclearReactionType( reaction->first/1000u );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "MFTYPE was found to be " <<
+                       static_cast<unsigned>( sigp_block[cs_index + 2u] ) <<
+                       " which is not equal to 12, 13, or 16 (only allowable"
+                       " entries).");
+    }
     ++reaction;
   }
 }
@@ -238,7 +247,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
 // Create the base reaction map
 void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
   boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >& base_reaction_map,
+  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
   boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
 {
   boost::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
@@ -246,7 +255,7 @@ void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
   reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
 
-  std::shared_ptr<const NuclearReaction> base_reaction;
+  std::shared_ptr<const NeutronNuclearReaction> base_reaction;
 
   while( reaction != end_reaction )
   {
@@ -274,7 +283,7 @@ void DecoupledPhotonProductionReactionACEFactory::constructMTPYieldDistributions
   {
     unsigned reaction_type = iter_reaction->first;
 
-    std::shared_ptr<Utility::OneDDistribution> tabular_yield_pointer(
+    std::shared_ptr<Utility::UnivariateDistribution> tabular_yield_pointer(
         new Utility::TabularDistribution<Utility::LinLin>(
                               yield_energy_map.find(reaction_type)->second,
                               yield_values_map.find(reaction_type)->second ) );
@@ -314,9 +323,9 @@ void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProd
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
        const double temperature,
        const boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
-       const boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >& base_reaction_map,
+       const boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
        const SimulationProperties& properties,
-       PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )
+       PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory )
 {
   boost::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
@@ -360,8 +369,10 @@ void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPho
   const boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
   const boost::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
   const std::shared_ptr<const std::vector<double> >& energy_grid,
+  const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+  grid_searcher,
   const SimulationProperties& properties,
-  PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )
+  PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory )
 {
   boost::unordered_map<unsigned,unsigned>::const_iterator
     iter_reaction, end_reaction;
@@ -390,11 +401,12 @@ void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPho
 		  threshold_energy_map.find(reaction_type)->second,
 		  energy_grid,
 		  xs_based_map.find(reaction_type)->second,
+                  grid_searcher,
 		  photon_production_distribution,
 		  d_total_reaction,
-		  std::vector<std::shared_ptr<Utility::OneDDistribution> >() ) );
+		  std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >() ) );
 
-	  ++iter_reaction;
+    ++iter_reaction;
   }
 }
 

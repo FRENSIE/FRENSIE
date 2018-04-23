@@ -4,6 +4,7 @@
 <N4Data45ElectronPhotonRelaxationVolatileDataContainerE class_id="0" tracking_level="0" version="0">
 	<notes>This table was generated on Thu Jan 18 11:16:16 CST 2018. It is for testing only!</notes>
 	<atomic_number>13</atomic_number>
+        <atomic_weight>2.69820000000000000e+01</atomic_weight>
 	<min_photon_energy>1.00000000000000002e-03</min_photon_energy>
 	<max_photon_energy>2.00000000000000000e+01</max_photon_energy>
 	<min_electron_energy>1.00000000000000008e-05</min_electron_energy>

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GlobalOpenMPSession.hpp
+//! \file   Utility_OpenMPProperties.hpp
 //! \author Alex Robinson
 //! \brief  Global OpenMP session details
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_GLOBAL_OPEN_MP_SESSION_HPP
-#define UTILITY_GLOBAL_OPEN_MP_SESSION_HPP
+#ifndef UTILITY_OPEN_MP_PROPERTIES_HPP
+#define UTILITY_OPEN_MP_PROPERTIES_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -18,7 +18,7 @@
 namespace Utility{
 
 //! Global OpenMP session details
-class GlobalOpenMPSession
+class OpenMPProperties
 {
 public:
 
@@ -34,7 +34,7 @@ public:
   //! Get the thread id within the current scope
   static unsigned getThreadId();
 
-  //! Create a timer
+  //! Create a timer using the OpenMP interface
   static std::shared_ptr<Timer> createTimer();
 
   //! Return if OpenMP has been configured for use
@@ -48,8 +48,8 @@ private:
 
 } // end Utility namespace
 
-#endif // end UTILITY_GLOBAL_OPEN_MP_SESSION_HPP
+#endif // end UTILITY_OPEN_MP_PROPERTIES_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_GlobalOpenMPSession.hpp
+// end Utility_OpenMPProperties.hpp
 //---------------------------------------------------------------------------//

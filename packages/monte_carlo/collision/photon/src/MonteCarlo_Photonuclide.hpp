@@ -134,10 +134,10 @@ private:
   double d_temperature;
 
   // The total nuclear reaction
-  std::shared_ptr<PhotonuclearReaction> d_total_reaction;
+  std::shared_ptr<const PhotonuclearReaction> d_total_reaction;
 
   // The total absorption reaction
-  std::shared_ptr<PhotonuclearReaction> d_total_absorption_reaction;
+  std::shared_ptr<const PhotonuclearReaction> d_total_absorption_reaction;
 
   // The nuclear scattering reactions
   NuclearReactionMap d_scattering_reactions;

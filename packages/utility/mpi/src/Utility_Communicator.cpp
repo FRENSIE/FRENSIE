@@ -11,7 +11,7 @@
 #include "Utility_SerialCommunicator.hpp"
 #include "Utility_MPICommunicator.hpp"
 #include "Utility_GlobalMPISession.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 
 namespace Utility{
 
@@ -82,7 +82,7 @@ public:
 
   //! Create a timer
   std::shared_ptr<Timer> createTimer() const override
-  { return GlobalOpenMPSession::createTimer(); }
+  { return OpenMPProperties::createTimer(); }
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const override

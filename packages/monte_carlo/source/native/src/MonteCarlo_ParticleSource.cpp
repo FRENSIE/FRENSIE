@@ -21,7 +21,7 @@
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Geometry_InfiniteMediumModel.hpp"
 #include "Utility_CommHelpers.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -43,7 +43,7 @@ ParticleSource::ParticleSource()
 void ParticleSource::enableThreadSupport( const size_t threads )
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure a valid number of threads has been requested
   testPrecondition( threads > 0 );
 
@@ -68,7 +68,7 @@ void ParticleSource::enableThreadSupport( const size_t threads )
 void ParticleSource::resetData()
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   for( unsigned i = 0; i < d_number_of_trials.size(); ++i )
   {
@@ -88,7 +88,7 @@ void ParticleSource::reduceData(
             const int root_process )
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure the communicator is valid
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
@@ -330,7 +330,7 @@ void ParticleSource::exportData(
              const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure the hdf5 file is valid
   testPrecondition( hdf5_file.get() != NULL );
 
@@ -395,7 +395,7 @@ void ParticleSource::setRejectionCell(
                         const Geometry::ModuleTraits::InternalCellHandle cell )
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure the cell is valid
   testPrecondition( d_model->doesCellExist( cell ) );
 
@@ -414,19 +414,19 @@ void ParticleSource::sampleParticleState(
 					     const unsigned long long history )
 {
   // Make sure thread support has been set up correctly
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+  testPrecondition( Utility::OpenMPProperties::getThreadId() <
                     d_number_of_samples.size() );
 
   // Cache some data for this thread in case they need to be
   // accessed multiple times
   ModuleTraits::InternalCounter& trial_counter =
-    d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
+    d_number_of_trials[Utility::OpenMPProperties::getThreadId()];
 
   ModuleTraits::InternalCounter& sample_counter =
-    d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
+    d_number_of_samples[Utility::OpenMPProperties::getThreadId()];
 
   std::set<Geometry::ModuleTraits::InternalCellHandle>& start_cell_cache =
-    d_start_cell_cache[Utility::GlobalOpenMPSession::getThreadId()];
+    d_start_cell_cache[Utility::OpenMPProperties::getThreadId()];
 
   // Determine the number of samples that must be made
   unsigned long long num_samples =
@@ -510,7 +510,7 @@ auto ParticleSource::getNumberOfTrials() const
   -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   
   return this->reduceLocalTrialCounters();
 }
@@ -521,7 +521,7 @@ auto ParticleSource::getNumberOfTrials() const
 auto ParticleSource::getNumberOfSamples() const -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   return this->reduceLocalSampleCounters();
 }
@@ -532,7 +532,7 @@ auto ParticleSource::getNumberOfSamples() const -> ModuleTraits::InternalCounter
 double ParticleSource::getSamplingEfficiency() const
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Reduce the number of samples
   ModuleTraits::InternalCounter total_samples = this->reduceLocalSampleCounters();

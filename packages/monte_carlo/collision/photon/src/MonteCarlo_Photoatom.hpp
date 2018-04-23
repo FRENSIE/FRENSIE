@@ -108,9 +108,9 @@ inline void Photoatom::relaxAtom( const Data::SubshellType vacancy_shell,
                                   ParticleBank& bank ) const
 {
   // Relax the atom
-  d_core.getAtomicRelaxationModel().relaxAtom( vacancy_shell,
-                                               photon,
-                                               bank );
+  this->getCore().getAtomicRelaxationModel().relaxAtom( vacancy_shell,
+                                                        photon,
+                                                        bank );
 }
 
 } // end MonteCarlo namespace

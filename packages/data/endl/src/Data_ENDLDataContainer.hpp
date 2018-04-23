@@ -48,6 +48,9 @@ public:
   //! Return the atomic number
   unsigned getAtomicNumber() const;
 
+  //! Return the atomic weight
+  double getAtomicWeight() const;
+
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -453,6 +456,9 @@ protected:
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
+
+  //! Set the atomic weight
+  void setAtomicWeight( const double atomic_weight );
 
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
@@ -962,6 +968,9 @@ private:
 
   // The atomic number
   unsigned d_atomic_number;
+
+  // The atomic weight
+  double d_atomic_weight;
 
 //---------------------------------------------------------------------------//
 // RELAXATION DATA

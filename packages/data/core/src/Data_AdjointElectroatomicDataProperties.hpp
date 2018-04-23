@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "Data_AtomType.hpp"
+#include "Utility_AtomicMassUnit.hpp"
 #include "Utility_ToStringTraits.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -39,6 +40,12 @@ public:
     Native_EPR_FILE = 0
   };
 
+  //! The atomic mass unit
+  typedef Utility::Units::AtomicMass AtomicMassUnit;
+
+  //! The atomic mass quantity
+  typedef boost::units::quantity<AtomicMassUnit> AtomicWeight;
+
   //! Default constructor
   AdjointElectroatomicDataProperties();
 
@@ -52,6 +59,9 @@ public:
   //! Get the atomic number that the file specifies data for
   virtual unsigned atomicNumber() const
   { return this->atom(); }
+
+  //! Get the atomic weight of the nuclide that the file specifies data for
+  virtual AtomicWeight atomicWeight() const = 0;
 
   //! Get the electroatomic data file type
   virtual FileType fileType() const = 0;

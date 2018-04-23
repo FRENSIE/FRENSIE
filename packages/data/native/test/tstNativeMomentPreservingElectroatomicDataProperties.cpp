@@ -20,6 +20,8 @@
 // Testing Types
 //---------------------------------------------------------------------------//
 
+using Utility::Units::amu;
+
 typedef std::tuple<
   std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
   std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
@@ -48,6 +50,13 @@ FRENSIE_UNIT_TEST( NativeMomentPreservingElectroatomicDataProperties, fileType )
 {
   FRENSIE_CHECK_EQUAL( properties->fileType(),
                        Data::ElectroatomicDataProperties::Native_Moment_Preserving_FILE );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic weight can be returned
+FRENSIE_UNIT_TEST( NativeMomentPreservingElectroatomicDataProperties, atomicWeight )
+{
+  FRENSIE_CHECK_EQUAL( properties->atomicWeight(), 1.0*amu );
 }
 
 //---------------------------------------------------------------------------//
@@ -103,9 +112,11 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( NativeMomentPreservingElectroatomicDataProper
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    Data::NativeMomentPreservingElectroatomicDataProperties local_properties( "electroatomic_data/he_data.xml",
-                                                          1,
-                                                          Data::He_ATOM );
+    Data::NativeMomentPreservingElectroatomicDataProperties local_properties(
+                                              4.0*amu,
+                                              "electroatomic_data/he_data.xml",
+                                              1,
+                                              Data::He_ATOM );
 
     std::shared_ptr<const Data::ElectroatomicDataProperties>
       shared_properties( properties->clone() );
@@ -123,11 +134,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( NativeMomentPreservingElectroatomicDataProper
   createIArchive( archive_istream, iarchive );
 
   Data::NativeMomentPreservingElectroatomicDataProperties
-    local_properties( "dummy", 10, Data::Pb_ATOM );
+    local_properties( 10.0*amu, "dummy", 10, Data::Pb_ATOM );
 
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( local_properties ) );
   FRENSIE_CHECK_EQUAL( local_properties.atom(), Data::He_ATOM );
   FRENSIE_CHECK_EQUAL( local_properties.atomicNumber(), 2 );
+  FRENSIE_CHECK_EQUAL( local_properties.atomicWeight(), 4.0*amu );
   FRENSIE_CHECK_EQUAL( local_properties.filePath().string(),
                        "electroatomic_data/he_data.xml" );
   FRENSIE_CHECK_EQUAL( local_properties.fileStartLine(), 0 );
@@ -140,6 +152,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( NativeMomentPreservingElectroatomicDataProper
   FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_properties ) );
   FRENSIE_CHECK_EQUAL( shared_properties->atom(), Data::H_ATOM );
   FRENSIE_CHECK_EQUAL( shared_properties->atomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( shared_properties->atomicWeight(), 1.0*amu );
   FRENSIE_CHECK_EQUAL( shared_properties->filePath().string(),
                        "electroatomic_data/h_data.xml" );
   FRENSIE_CHECK_EQUAL( shared_properties->fileStartLine(), 0 );
@@ -155,6 +168,7 @@ FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   properties.reset( new Data::NativeMomentPreservingElectroatomicDataProperties(
+                                               1.0*amu,
                                                "electroatomic_data/h_data.xml",
                                                0,
                                                Data::H_ATOM ) );

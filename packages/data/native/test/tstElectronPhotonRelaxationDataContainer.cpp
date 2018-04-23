@@ -45,6 +45,15 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setAtomicNumber )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atomic weight can be set
+FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setAtomicWeight )
+{
+  epr_data_container.setAtomicWeight( 1.0 );
+
+  FRENSIE_CHECK_EQUAL( epr_data_container.getAtomicWeight(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the min photon energy can be set
 FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setMinPhotonEnergy )
 {
@@ -1488,6 +1497,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   // Table Tests
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNotes(), notes );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
@@ -1711,6 +1721,7 @@ FRENSIE_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   // Table Tests
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getNotes(), notes );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( epr_data_container_copy.getAtomicWeight(), 1.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
   FRENSIE_CHECK_EQUAL( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );

@@ -31,12 +31,14 @@ namespace MonteCarlo{
  * using the data extractor.
  */
 NuclearReactionACEFactory::NuclearReactionACEFactory(
-		 const std::string& table_name,
-		 const double atomic_weight_ratio,
-		 const double temperature,
-		 const std::shared_ptr<const std::vector<double> >& energy_grid,
-                 const SimulationProperties& properties,
-		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
+          const std::string& table_name,
+          const double atomic_weight_ratio,
+          const double temperature,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
+          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+          grid_searcher,
+          const SimulationProperties& properties,
+          const Data::XSSNeutronDataExtractor& raw_nuclide_data )
 {
   // Create the scattering distribution factory
   NeutronNuclearScatteringDistributionACEFactory
@@ -119,7 +121,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 						      reaction_cross_section );
 
   // Create the fission neutron multiplicity distribution
-  std::shared_ptr<FissionNeutronMultiplicityDistribution>
+  std::shared_ptr<const FissionNeutronMultiplicityDistribution>
     fission_neutron_multiplicity_dist;
 
   if( nu_block.size() > 0 )
@@ -134,7 +136,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
   }
 
   // Create the delayed neutron emission distributions
-  std::shared_ptr<NuclearScatteringDistribution<NeutronState,NeutronState> >
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >
     delayed_neutron_emission_dist;
 
   if( dnedl_block.size() > 0 )
@@ -153,6 +155,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
   // Create the nuclear reactions
   this->initializeScatteringReactions( temperature,
                                        energy_grid,
+                                       grid_searcher,
                                        properties,
                                        reaction_q_value,
                                        reaction_multiplicity,
@@ -163,6 +166,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 
   this->initializeAbsorptionReactions( temperature,
                                        energy_grid,
+                                       grid_searcher,
                                        reaction_q_value,
                                        reaction_multiplicity,
                                        reaction_energy_dependent_multiplicity,
@@ -171,6 +175,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 
   this->initializeFissionReactions( temperature,
                                     energy_grid,
+                                    grid_searcher,
                                     properties,
                                     reaction_q_value,
                                     reaction_multiplicity,
@@ -183,7 +188,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 
 // Create the scattering reactions
 void NuclearReactionACEFactory::createScatteringReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >&
+      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       scattering_reactions ) const
 {
   scattering_reactions.insert( d_scattering_reactions.begin(),
@@ -192,7 +197,7 @@ void NuclearReactionACEFactory::createScatteringReactions(
 
 // Create the absorption reactions
 void NuclearReactionACEFactory::createAbsorptionReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >&
+      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       absorption_reactions ) const
 {
   absorption_reactions.insert( d_absorption_reactions.begin(),
@@ -201,7 +206,7 @@ void NuclearReactionACEFactory::createAbsorptionReactions(
 
 // Create the fission reactions
 void NuclearReactionACEFactory::createFissionReactions(
-      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NuclearReaction> >&
+      boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >&
       fission_reactions ) const
 {
   fission_reactions.insert( d_fission_reactions.begin(),
@@ -381,7 +386,8 @@ void NuclearReactionACEFactory::createReactionCrossSectionMap(
       std::shared_ptr<std::vector<double> >& cross_section =
 	reaction_cross_section[reaction->first];
 
-      cross_section.deepCopy( sig_block( cs_index+2u, cs_array_size ) );
+      cross_section.reset(
+          new std::vector<double>( sig_block( cs_index+2u, cs_array_size ) ) );
     }
     // Elastic scattering must be handled separately: it never appears in block
     else
@@ -389,7 +395,7 @@ void NuclearReactionACEFactory::createReactionCrossSectionMap(
       std::shared_ptr<std::vector<double> >& cross_section =
 	reaction_cross_section[reaction->first];
 
-      cross_section.deepCopy( elastic_cross_section );
+      cross_section.reset( new std::vector<double>( elastic_cross_section ) );
     }
 
     ++reaction;
@@ -398,8 +404,8 @@ void NuclearReactionACEFactory::createReactionCrossSectionMap(
 
 // Get the reaction from a reaction type
 void NuclearReactionACEFactory::getReactionFromReactionType(
-                               NuclearReactionType reaction_type,
-                               std::shared_ptr<const NuclearReaction>& base_reaction )
+           NuclearReactionType reaction_type,
+           std::shared_ptr<const NeutronNuclearReaction>& base_reaction )
 {
   // Check for the reaction amongst the absorptions, scatters, and fissions
   if ( d_absorption_reactions.find(reaction_type) != d_absorption_reactions.end() )
@@ -418,7 +424,7 @@ void NuclearReactionACEFactory::getReactionFromReactionType(
   {
     THROW_EXCEPTION(std::runtime_error, "photon production requested "
                     "MT number " << (int)reaction_type << " which was not "
-                    "found amongst the neutron absorption, scattering, or "
+                    "found among the neutron absorption, scattering, or "
                     "fission reactions.");
   }
 }
@@ -426,7 +432,9 @@ void NuclearReactionACEFactory::getReactionFromReactionType(
 // Initialize the scattering reactions
 void NuclearReactionACEFactory::initializeScatteringReactions(
     const double temperature,
-    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
@@ -453,7 +461,7 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
 
   NuclearReactionType reaction_type;
 
-  std::shared_ptr<NuclearScatteringDistribution<NeutronState,NeutronState> >
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >
     scattering_distribution;
 
   while( reaction_type_multiplicity != end_reaction_type_multiplicity )
@@ -465,7 +473,7 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
     {
       reaction_type = reaction_type_multiplicity->first;
 
-      std::shared_ptr<NuclearReaction>& reaction =
+      std::shared_ptr<const NeutronNuclearReaction>& reaction =
 	d_scattering_reactions[reaction_type];
 
       scattering_dist_factory.createScatteringDistribution(
@@ -474,21 +482,22 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
 						     scattering_distribution );
 
       reaction.reset( new NeutronScatteringReaction(
-			  reaction_type,
-			  temperature,
-			  reaction_q_value.find(reaction_type)->second,
-			  reaction_type_multiplicity->second,
-			  reaction_threshold_index.find(reaction_type)->second,
-			  energy_grid,
-			  reaction_cross_section.find(reaction_type)->second,
-			  scattering_distribution ) );
+                          energy_grid,
+                          reaction_cross_section.find(reaction_type)->second,
+                          reaction_threshold_index.find(reaction_type)->second,
+                          grid_searcher,
+                          reaction_type,
+                          reaction_q_value.find(reaction_type)->second,
+                          temperature,
+                          reaction_type_multiplicity->second,
+                          scattering_distribution ) );
     }
     // Create an energy dependent neutron multiplicity reaction
     else if( reaction_type_multiplicity->second >= 100u )
     {
       reaction_type = reaction_type_multiplicity->first;
 
-      std::shared_ptr<NuclearReaction>& reaction =
+      std::shared_ptr<const NeutronNuclearReaction>& reaction =
 	d_scattering_reactions[reaction_type];
 
       scattering_dist_factory.createScatteringDistribution(
@@ -503,15 +512,16 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
       unsigned number_of_energies = (unsigned)raw_multiplicity_array[1];
 
       reaction.reset( new EnergyDependentNeutronMultiplicityReaction(
-	    reaction_type,
-	    temperature,
-	    reaction_q_value.find(reaction_type)->second,
-	    raw_multiplicity_array( 1, number_of_energies ),
-	    raw_multiplicity_array( 1+number_of_energies, number_of_energies ),
-	    reaction_threshold_index.find(reaction_type)->second,
-	    energy_grid,
-	    reaction_cross_section.find(reaction_type)->second,
-	    scattering_distribution ) );
+        energy_grid,
+        reaction_cross_section.find(reaction_type)->second,
+        reaction_threshold_index.find(reaction_type)->second,
+        grid_searcher,
+        reaction_type,
+        reaction_q_value.find(reaction_type)->second,
+        temperature,
+        scattering_distribution,
+        raw_multiplicity_array( 1, number_of_energies ),
+        raw_multiplicity_array( 1+number_of_energies, number_of_energies ) ) );
     }
 
     ++reaction_type_multiplicity;
@@ -521,7 +531,9 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
 // Initialize the absorption reactions
 void NuclearReactionACEFactory::initializeAbsorptionReactions(
     const double temperature,
-    const std::shared_ptr<const std::vector<double> > energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
@@ -551,16 +563,17 @@ void NuclearReactionACEFactory::initializeAbsorptionReactions(
     {
       reaction_type = reaction_type_multiplicity->first;
 
-      std::shared_ptr<NuclearReaction>& reaction =
+      std::shared_ptr<const NeutronNuclearReaction>& reaction =
 	d_absorption_reactions[reaction_type];
 
       reaction.reset( new NeutronAbsorptionReaction(
-			reaction_type,
-			temperature,
-			reaction_q_value.find(reaction_type)->second,
-			reaction_threshold_index.find(reaction_type)->second,
-			energy_grid,
-			reaction_cross_section.find(reaction_type)->second ) );
+                        energy_grid,
+                        reaction_cross_section.find(reaction_type)->second,
+                        reaction_threshold_index.find(reaction_type)->second,
+                        grid_searcher,
+                        reaction_type,
+                        reaction_q_value.find(reaction_type)->second,
+                        temperature ) );
     }
 
     ++reaction_type_multiplicity;
@@ -571,6 +584,8 @@ void NuclearReactionACEFactory::initializeAbsorptionReactions(
 void NuclearReactionACEFactory::initializeFissionReactions(
     const double temperature,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+    grid_searcher,
     const SimulationProperties& properties,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
@@ -598,7 +613,7 @@ void NuclearReactionACEFactory::initializeFissionReactions(
 
   NuclearReactionType reaction_type;
 
-  std::shared_ptr<NuclearScatteringDistribution<NeutronState,NeutronState> >
+  std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> >
     prompt_neutron_emission_distribution;
 
   while( reaction_type_multiplicity != end_reaction_type_multiplicity )
@@ -607,7 +622,7 @@ void NuclearReactionACEFactory::initializeFissionReactions(
     {
       // Make sure the fission neutron multiplicity distribution has been
       // created
-      testPrecondition( !fission_neutron_multiplicity_distribution.is_null() );
+      testPrecondition( fission_neutron_multiplicity_distribution.get() );
 
       reaction_type = reaction_type_multiplicity->first;
 
@@ -616,35 +631,37 @@ void NuclearReactionACEFactory::initializeFissionReactions(
                                         properties,
 					prompt_neutron_emission_distribution );
 
-      std::shared_ptr<const NuclearReaction>& reaction =
+      std::shared_ptr<const NeutronNuclearReaction>& reaction =
 	d_fission_reactions[reaction_type];
 
       // Create a basic neutron fission reaction (no delayed info)
-      if( delayed_neutron_emission_distribution.is_null() )
+      if( !delayed_neutron_emission_distribution.get() )
       {
 	reaction.reset( new NeutronFissionReaction(
-			  reaction_type,
-			  temperature,
-			  reaction_q_value.find(reaction_type)->second,
-			  reaction_threshold_index.find(reaction_type)->second,
-			  energy_grid,
-			  reaction_cross_section.find(reaction_type)->second,
-			  fission_neutron_multiplicity_distribution,
+                          energy_grid,
+                          reaction_cross_section.find(reaction_type)->second,
+                          reaction_threshold_index.find(reaction_type)->second,
+                          grid_searcher,
+                          reaction_type,
+                          reaction_q_value.find(reaction_type)->second,
+                          temperature,
+                          fission_neutron_multiplicity_distribution,
 			  prompt_neutron_emission_distribution ) );
       }
       // Create a detailed neutron fission reaction (with delayed info)
       else
       {
 	reaction.reset( new DetailedNeutronFissionReaction(
-			reaction_type,
-			temperature,
-			reaction_q_value.find(reaction_type)->second,
-			reaction_threshold_index.find(reaction_type)->second,
-			energy_grid,
-			reaction_cross_section.find(reaction_type)->second,
-			fission_neutron_multiplicity_distribution,
-			prompt_neutron_emission_distribution,
-			delayed_neutron_emission_distribution ) );
+                          energy_grid,
+                          reaction_cross_section.find(reaction_type)->second,
+                          reaction_threshold_index.find(reaction_type)->second,
+                          grid_searcher,
+                          reaction_type,
+                          reaction_q_value.find(reaction_type)->second,
+                          temperature,
+                          fission_neutron_multiplicity_distribution,
+                          prompt_neutron_emission_distribution,
+                          delayed_neutron_emission_distribution ) );
       }
     }
 

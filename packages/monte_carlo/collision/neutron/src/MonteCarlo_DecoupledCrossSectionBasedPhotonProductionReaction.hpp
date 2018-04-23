@@ -16,57 +16,55 @@
 namespace MonteCarlo{
 
 //! The photon production reaction with cross section data (MFTYPE=13)
-class DecoupledCrossSectionBasedPhotonProductionReaction : public DecoupledPhotonProductionReaction
+class DecoupledCrossSectionBasedPhotonProductionReaction : public StandardReactionBaseImpl<DecoupledPhotonProductionReaction,Utility::LinLin,false>
 {
   // Typedef for QuantityTraits
   typedef Utility::QuantityTraits<double> QT;
+
+  // The base type
+  typedef StandardReactionBaseImpl<DecoupledPhotonProductionReaction,Utility::LinLin,false> BaseType;
 
 public:
 
   //! The scattering distribution type
   typedef DecoupledPhotonProductionReaction::ScatteringDistribution ScatteringDistribution;
 
+  //! Basic Constructor
+  DecoupledCrossSectionBasedPhotonProductionReaction(
+       const NuclearReactionType base_reaction_type,
+       const unsigned photon_production_id,
+       const double temperature,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
+       const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const ScatteringDistribution>&
+       photon_production_distribution,
+       const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
+       const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
+       total_mt_yield_array );
+
   //! Constructor
   DecoupledCrossSectionBasedPhotonProductionReaction(
        const NuclearReactionType base_reaction_type,
        const unsigned photon_production_id,
        const double temperature,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
+       grid_searcher,
        const std::shared_ptr<const ScatteringDistribution>&
        photon_production_distribution,
-       const std::shared_ptr<const NuclearReaction>& total_reaction,
-       const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+       const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
+       const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
        total_mt_yield_array );
-
-  //! Return the threshold energy
-  double getThresholdEnergy() const override;
 
   //! Return the base reaction cross section at a given energy
   double getBaseReactionCrossSection( const double energy ) const override;
 
-  //! Return the cross section at a given energy
-  double getCrossSection( const double energy ) const override;
-
-private:
-
-  // The threshold energy index
-  unsigned d_threshold_energy_index;
-
-  // The incoming energy grid
-  std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
-
-  // The cross section
-  std::shared_ptr<const std::vector<double> > d_cross_section;
+  //! Return the average number of emitted photons
+  double getAverageNumberOfEmittedParticles( const double energy ) const final override;
 };
-
-// Return the threshold energy
-inline double
-DecoupledCrossSectionBasedPhotonProductionReaction::getThresholdEnergy() const
-{
-  return (*d_incoming_energy_grid)[d_threshold_energy_index];
-}
 
 } // end MonteCarlo namespace
 

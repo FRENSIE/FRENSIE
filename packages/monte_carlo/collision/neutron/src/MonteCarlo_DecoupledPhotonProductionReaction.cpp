@@ -13,16 +13,20 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction()
+{ /* ... */ }
+  
 // Constructor
 DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
-          const NuclearReactionType base_reaction_type,
-          const unsigned photon_production_id,
-          const double temperature,
-          const std::shared_ptr<const ScatteringDistribution>&
-          photon_production_distribution,
-          const std::shared_ptr<const NuclearReaction>& total_reaction,
-          const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
-          total_mt_yield_array )
+    const NuclearReactionType base_reaction_type,
+    const unsigned photon_production_id,
+    const double temperature,
+    const std::shared_ptr<const ScatteringDistribution>&
+    photon_production_distribution,
+    const std::shared_ptr<const NeutronNuclearReaction>& total_reaction,
+    const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
+    total_mt_yield_array )
   : d_base_reaction_type( base_reaction_type ),
     d_photon_production_id( photon_production_id ),
     d_temperature( temperature ),
@@ -32,10 +36,42 @@ DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
 {
   // Make sure the photon production distribution is valid
   testPrecondition( photon_production_distribution.get() != NULL );
-
   // Make sure the total reaction is valid
   testPrecondition( d_total_neutron_reaction.get() != NULL );
 
+  this->verifyValidTotalReaction();
+}
+
+// Initialize the distribution
+void DecoupledPhotonProductionReaction::initialize(
+    const NuclearReactionType base_reaction_type,
+    const unsigned photon_production_id,
+    const double temperature,
+    const std::shared_ptr<const ScatteringDistribution>&
+    photon_production_distribution,
+    const std::shared_ptr<const NeutronNuclearReaction>&
+    total_reaction,
+    const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
+    total_mt_yield_array )
+{
+  // Make sure the photon production distribution is valid
+  testPrecondition( photon_production_distribution.get() != NULL );
+  // Make sure the total reaction is valid
+  testPrecondition( d_total_neutron_reaction.get() != NULL );
+  
+  d_base_reaction_type = base_reaction_type;
+  d_photon_production_id = photon_production_id;
+  d_temperature = temperature;
+  d_photon_production_distribution = photon_production_distribution;
+  d_total_neutron_reaction = total_reaction;
+  d_total_mt_yield_array = total_mt_yield_array;
+
+  this->verifyValidTotalReaction();
+}
+
+// Verify that the total reaction is valid
+void DecoupledPhotonProductionReaction::verifyValidTotalReaction()
+{
   TEST_FOR_EXCEPTION(
        d_total_neutron_reaction->getReactionType() != N__TOTAL_REACTION,
        std::runtime_error,
@@ -55,6 +91,15 @@ double DecoupledPhotonProductionReaction::getTemperature() const
   return d_temperature;
 }
 
+// Return the reaction Q value
+/*! \details Due to the stochastic nature of this production reaction the
+ * Q value is not available - 0.0 will be returned.
+ */
+double DecoupledPhotonProductionReaction::getQValue() const
+{
+  return 0.0;
+}
+
 // Return the total neutron reaction cross section
 double DecoupledPhotonProductionReaction::getTotalCrossSection(
                                                    const double energy ) const
@@ -62,8 +107,8 @@ double DecoupledPhotonProductionReaction::getTotalCrossSection(
   return d_total_neutron_reaction->getCrossSection( energy );
 }
 
-// Return the total yield for this photon production reaction
-double DecoupledPhotonProductionReaction::getTotalYield(
+// Return the total average number of emitted photons
+double DecoupledPhotonProductionReaction::getTotalAverageNumberOfEmittedParticles(
                                                    const double energy ) const
 {
   if ( d_total_mt_yield_array.size() == 0 )
@@ -83,10 +128,23 @@ double DecoupledPhotonProductionReaction::getTotalYield(
   }
 }
 
+// Return the number of emitted photons
+unsigned DecoupledPhotonProductionReaction::getNumberOfEmittedParticles(
+                                                    const double energy ) const
+{
+  return this->sampleNumberOfEmittedParticles(
+                          this->getAverageNumberOfEmittedParticles( energy ) );
+}
+
 // Simulate the reaction
-void DecoupledPhotonProductionReaction::react( const NeutronState& neutron,
-                           ParticleBank& bank,
-			   double total_photon_production_cross_section ) const
+/*! \details Only one photon will be generated. The average yield of this
+ * reaction is taken into account by adjusting the created photon's weight: 
+ * Wp = Wn*(total photon production cs)/(total cs)
+ */
+void DecoupledPhotonProductionReaction::react(
+                     const NeutronState& neutron,
+                     ParticleBank& bank,
+		     const double total_photon_production_cross_section ) const
 {
   std::shared_ptr<PhotonState> new_photon(
 			   new PhotonState( neutron, true, false ) );
@@ -100,6 +158,9 @@ void DecoupledPhotonProductionReaction::react( const NeutronState& neutron,
 
   bank.push( new_photon );
 }
+
+EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<DecoupledPhotonProductionReaction,Utility::LinLin,false> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<DecoupledPhotonProductionReaction,Utility::LinLin,true> );
 
 } // end MonteCarlo namespace
 

@@ -11,7 +11,9 @@
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionReactionACEFactory.hpp"
 #include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_LoggingMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -24,57 +26,55 @@ void NuclideACEFactory::createNuclide(
 			 const double atomic_weight_ratio,
 			 const double temperature,
                          const SimulationProperties& properties,
-			 std::shared_ptr<Nuclide>& nuclide,
-                         std::ostream* os_message )
+			 std::shared_ptr<const Nuclide>& nuclide )
 {
   // Extract the common energy grid used for this nuclide
-  std::shared_ptr<std::vector<double> > energy_grid(
+  std::shared_ptr<const std::vector<double> > energy_grid(
              new std::vector<double>( raw_nuclide_data.extractEnergyGrid() ) );
 
-  // Create the nuclear reaction factory
-  NuclearReactionACEFactory reaction_factory( nuclide_alias,
-					      atomic_weight_ratio,
-					      temperature,
-					      energy_grid.getConst(),
-                                              properties,
-					      raw_nuclide_data );
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double> > grid_searcher(
+         new Utility::StandardHashBasedGridSearcher<std::vector<double>, true>(
+                               energy_grid,
+                               properties.getNumberOfNeutronHashGridBins() ) );
 
+  // Create the photon production reaction factory
+  DecoupledPhotonProductionReactionACEFactory
+    reaction_factory( nuclide_alias,
+                      atomic_weight_ratio,
+                      temperature,
+                      energy_grid,
+                      grid_searcher,
+                      properties,
+                      raw_nuclide_data );
+  
   // Create the standard scattering reactions
-  Nuclide::ReactionMap standard_scattering_reactions;
+  Nuclide::ConstReactionMap standard_scattering_reactions;
 
   reaction_factory.createScatteringReactions( standard_scattering_reactions );
   reaction_factory.createFissionReactions( standard_scattering_reactions );
 
   // Create the standard absorption reactions
-  Nuclide::ReactionMap standard_absorption_reactions;
+  Nuclide::ConstReactionMap standard_absorption_reactions;
 
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
 
   if( properties.isUnresolvedResonanceProbabilityTableModeOn() )
   {
-    *os_message << std::endl
-                << "Warning: Unresolved resonance data has been requested. "
-                << "This feature is not currently supported!"
-                << std::endl;
+    FRENSIE_LOG_TAGGED_WARNING( "NuclideACEFactory",
+                                "Unresolved resonance data has been "
+                                "requested. This feature is not currently "
+                                "supported!" );
   }
 
   if( properties.getParticleMode() == NEUTRON_PHOTON_MODE ||
       properties.getParticleMode() == NEUTRON_PHOTON_ELECTRON_MODE )
   {
-    // Create the photon production reaction factory
-    DecoupledPhotonProductionReactionACEFactory photon_production_reaction_factory(
-                                                        nuclide_alias,
-                                                        atomic_weight_ratio,
-                                                        temperature,
-                                                        energy_grid.getConst(),
-                                                        properties,
-                                                        raw_nuclide_data );
 
     // Create the photon production reactions
-    DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
+    DecoupledPhotonProductionNuclide::ConstPhotonProductionReactionMap
       photon_production_reactions;
 
-    photon_production_reaction_factory.createPhotonProductionReactions(
+    reaction_factory.createPhotonProductionReactions(
                                                  photon_production_reactions );
 
     nuclide.reset( new DecoupledPhotonProductionNuclide(
@@ -85,6 +85,7 @@ void NuclideACEFactory::createNuclide(
                                                atomic_weight_ratio,
                                                temperature,
                                                energy_grid,
+                                               grid_searcher,
                                                standard_scattering_reactions,
                                                standard_absorption_reactions,
                                                photon_production_reactions ) );
@@ -98,6 +99,7 @@ void NuclideACEFactory::createNuclide(
 			        atomic_weight_ratio,
 			        temperature,
 			        energy_grid,
+                                grid_searcher,
 			        standard_scattering_reactions,
 			        standard_absorption_reactions ) );
   }

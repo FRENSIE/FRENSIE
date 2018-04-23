@@ -41,8 +41,11 @@
 // Special tag attribute values
 //---------------------------------------------------------------------------//
 
-//! The tag value used in FRENSIE Error Logs to report nested error data
+//! The tag value used in FRENSIE Error logs to report nested error data
 #define FRENSIE_LOG_NESTED_ERROR_TAG "__NESTED__"
+
+//! The tag value used in FRENSIE Notification logs to report a partial entry
+#define FRENSIE_LOG_PARTIAL_NOTIFICATION_TAG "__PARTIAL__"
 
 //---------------------------------------------------------------------------//
 // Error log message strings

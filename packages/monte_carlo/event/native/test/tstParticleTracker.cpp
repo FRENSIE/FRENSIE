@@ -21,7 +21,7 @@
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -41,7 +41,7 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker,
 
   #pragma omp parallel num_threads( threads )
   {
-    MonteCarlo::PhotonState particle( Utility::GlobalOpenMPSession::getThreadId() );
+    MonteCarlo::PhotonState particle( Utility::OpenMPProperties::getThreadId() );
 
     // Initial particle state
     particle.setPosition( 1.0, 1.0, 1.0 );
@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testcommitParticleTrackData )
 {
   #pragma omp parallel num_threads( threads )
   {
-    MonteCarlo::PhotonState particle( Utility::GlobalOpenMPSession::getThreadId() );
+    MonteCarlo::PhotonState particle( Utility::OpenMPProperties::getThreadId() );
 
     // Final particle state
     particle.setPosition( 2.0, 1.0, 1.0 );
@@ -217,7 +217,7 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testDataPackaging )
 {
   #pragma omp parallel num_threads( threads )
   {
-    MonteCarlo::PhotonState particle( Utility::GlobalOpenMPSession::getThreadId() );
+    MonteCarlo::PhotonState particle( Utility::OpenMPProperties::getThreadId() );
 
     // Final particle state
     particle.setPosition( 2.0, 1.0, 1.0 );
@@ -320,8 +320,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

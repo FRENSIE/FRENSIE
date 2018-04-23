@@ -34,6 +34,15 @@ FRENSIE_UNIT_TEST( ENDLDataContainer, setAtomicNumber )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atomic weight can be set
+FRENSIE_UNIT_TEST( ENDLDataContainer, setAtomicWeight )
+{
+  endl_data_container.setAtomicWeight( 1.0 );
+
+  FRENSIE_CHECK_EQUAL( endl_data_container.getAtomicWeight(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // TEST RELAXATION DATA
 //---------------------------------------------------------------------------//
 // Check that the subshells can be set
@@ -2043,6 +2052,7 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy( test_ascii_file_name );
 
   FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicWeight(), 1.0 );
 
 //---------------------------------------------------------------------------//
 // TEST RELAXATION DATA
@@ -2815,6 +2825,7 @@ FRENSIE_UNIT_TEST( ENDLDataContainer,
 
   FRENSIE_CHECK_EQUAL(
     endl_data_container_copy.getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( endl_data_container_copy.getAtomicWeight(), 1.0 );
 
 //---------------------------------------------------------------------------//
 // TEST RELAXATION DATA

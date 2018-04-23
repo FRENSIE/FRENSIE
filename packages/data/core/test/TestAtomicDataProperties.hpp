@@ -51,6 +51,10 @@ public:
   AtomType atom() const override
   { return d_atom; }
 
+  // Get the atomic weight of the nuclide that the file specifies data for
+  typename BaseProperties::AtomicWeight atomicWeight() const override
+  { return this->atomicNumber()*1.0*Utility::Units::amu; }
+
   //! Get the photoatomic data file type
   typename BaseProperties::FileType fileType() const override
   { return d_file_type; }

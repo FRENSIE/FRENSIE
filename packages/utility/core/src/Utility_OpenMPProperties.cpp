@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GlobalOpenMPSession.cpp
+//! \file   Utility_OpenMPProperties.cpp
 //! \author Alex Robinson
 //! \brief  Global OpenMP session definition.
 //!
@@ -10,7 +10,7 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_OpenMPProperties.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "FRENSIE_config.hpp"
 
@@ -104,20 +104,20 @@ private:
 #endif // end HAVE_FRENSIE_OPENMP
 
 // Initialize static member data
-unsigned GlobalOpenMPSession::threads = 1u;
+unsigned OpenMPProperties::threads = 1u;
 
 // Set the number of threads to use in parallel blocks
 /*! \details This function will set the number of threads that will usually
  * be used by omp parallel blocks.
  */
-void GlobalOpenMPSession::setNumberOfThreads( const unsigned number_of_threads)
+void OpenMPProperties::setNumberOfThreads( const unsigned number_of_threads)
 {
 #ifdef HAVE_FRENSIE_OPENMP
-  GlobalOpenMPSession::threads = number_of_threads;
+  OpenMPProperties::threads = number_of_threads;
 #else
   if( number_of_threads > 1u )
   {
-    FRENSIE_LOG_TAGGED_WARNING( "GlobalOpenMPSession",
+    FRENSIE_LOG_TAGGED_WARNING( "OpenMPProperties",
                                 "call to setNumberOfThreads ignored since "
                                 "FRENSIE has not been configured to use "
                                 "OpenMP (only a single thread can be used)!" );
@@ -129,16 +129,16 @@ void GlobalOpenMPSession::setNumberOfThreads( const unsigned number_of_threads)
 /*! \details The return value from this function can be used to manually set
  * the number of threads that are active within omp parallel blocks.
  */
-unsigned GlobalOpenMPSession::getRequestedNumberOfThreads()
+unsigned OpenMPProperties::getRequestedNumberOfThreads()
 {
-  return GlobalOpenMPSession::threads;
+  return OpenMPProperties::threads;
 }
 
 // Get the default number of threads used in the current parallel scope
 /*! \details If OpenMP is not used or if the program execution state is not
  * within an omp parallel block only the master thread will be active
  */
-unsigned GlobalOpenMPSession::getNumberOfThreads()
+unsigned OpenMPProperties::getNumberOfThreads()
 {
 #ifdef HAVE_FRENSIE_OPENMP
   return omp_get_num_threads();
@@ -151,7 +151,7 @@ unsigned GlobalOpenMPSession::getNumberOfThreads()
 /*! \details If OpenMP is not used or if the program execution state is not
  *  within an omp parallel block the master thread id (0) will be returned.
  */
-unsigned GlobalOpenMPSession::getThreadId()
+unsigned OpenMPProperties::getThreadId()
 {
 #ifdef HAVE_FRENSIE_OPENMP
   return omp_get_thread_num();
@@ -161,7 +161,7 @@ unsigned GlobalOpenMPSession::getThreadId()
 }
 
 // Return if OpenMP has been configured for use
-bool GlobalOpenMPSession::isOpenMPUsed()
+bool OpenMPProperties::isOpenMPUsed()
 {
 #ifdef HAVE_FRENSIE_OPENMP
   return true;
@@ -171,7 +171,7 @@ bool GlobalOpenMPSession::isOpenMPUsed()
 }
 
 // Create a timer
-std::shared_ptr<Timer> GlobalOpenMPSession::createTimer()
+std::shared_ptr<Timer> OpenMPProperties::createTimer()
 {
 #ifdef HAVE_FRENSIE_OPENMP
   return std::shared_ptr<Timer>( new OpenMPTimer() );
@@ -183,5 +183,5 @@ std::shared_ptr<Timer> GlobalOpenMPSession::createTimer()
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_GlobalOpenMPSession.cpp
+// end Utility_OpenMPProperties.cpp
 //---------------------------------------------------------------------------//

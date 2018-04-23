@@ -706,18 +706,18 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
     estimator_2->setParticleTypes( particle_types );
 
     estimator_1->enableThreadSupport(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
     estimator_2->enableThreadSupport(
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+		 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
   }
 
   unsigned threads =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
 
   #pragma omp parallel num_threads( threads )
   {
     MonteCarlo::PhotonState particle(
-				 Utility::GlobalOpenMPSession::getThreadId() );
+				 Utility::OpenMPProperties::getThreadId() );
     particle.setWeight( 1.0 );
     particle.setEnergy( 1.0 );
 
@@ -902,8 +902,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

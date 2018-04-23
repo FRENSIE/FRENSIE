@@ -20,7 +20,7 @@ namespace MonteCarlo{
 DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
       const double atomic_weight_ratio,
       const std::vector<double>& precursor_group_decay_consts,
-      const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+      const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
       precursor_group_prob_distributions,
       const std::vector<std::shared_ptr<const NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions )

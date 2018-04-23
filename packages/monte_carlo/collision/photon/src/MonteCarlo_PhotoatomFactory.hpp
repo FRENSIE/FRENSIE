@@ -12,13 +12,19 @@
 // Std Lib Includes
 #include <string>
 #include <memory>
-#include <unordered_set>
-#include <unordered_map>
+
+// Boost Includes
+#include <boost/filesystem.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
+#include "MonteCarlo_PhotonMaterial.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
+#include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
@@ -26,60 +32,62 @@ namespace MonteCarlo{
 class PhotoatomFactory
 {
 
-// public:
+public:
 
-//   //! Constructor
-//   PhotoatomFactory( const std::string& cross_sections_xml_directory,
-//                     const Teuchos::ParameterList& cross_section_table_info,
-//                     const std::unordered_set<std::string>& photoatom_aliases,
-// 		    const std::shared_ptr<AtomicRelaxationModelFactory>&
-// 		    atomic_relaxation_model_factory,
-// 		    const SimulationProperties& properties,
-// 		    std::ostream* os_message = &std::cout );
+  //! The photoatom name map
+  typedef PhotonMaterial::PhotoatomNameMap PhotoatomNameMap;
 
-//   //! Destructor
-//   ~PhotoatomFactory()
-//   { /* ... */ }
+  //! The scattering center name set
+  typedef MaterialDefinitionDatabase::ScatteringCenterNameSet ScatteringCenterNameSet;
 
-//   //! Create the map of photoatoms
-//   void createPhotoatomMap(
-// 		    std::unordered_map<std::string,std::shared_ptr<Photoatom> >&
-// 		    photoatom_map ) const;
+  //! Constructor
+  PhotoatomFactory(
+       const boost::filesystem::path& data_directory,
+       const ScatteringCenterNameSet& photoatom_names,
+       const ScatteringCenterDefinitionDatabase& photoatom_definitions,
+       const std::shared_ptr<AtomicRelaxationModelFactory>&
+       atomic_relaxation_model_factory,
+       const SimulationProperties& properties,
+       const bool verbose = false );
 
-// private:
+  //! Destructor
+  ~PhotoatomFactory()
+  { /* ... */ }
 
-//   // Create a photoatom from an ACE table
-//   void createPhotoatomFromACETable(
-// 			  const std::string& cross_sections_xml_directory,
-// 			  const std::string& photoatom_alias,
-// 			  const std::string& ace_file_path,
-// 			  const std::string& photoatomic_table_name,
-// 			  const int photoatomic_file_start_line,
-// 			  const double atomic_weight,
-// 			  const std::shared_ptr<AtomicRelaxationModelFactory>&
-// 			  atomic_relaxation_model_factory,
-// 			  const SimulationProperties& properties );
+  //! Create the map of photoatoms
+  void createPhotoatomMap( PhotoatomNameMap& photoatom_name_map ) const;
 
-//   // Create a photoatom from a Native table
-//   void createPhotoatomFromNativeTable(
-// 			  const std::string& cross_sections_xml_directory,
-// 			  const std::string& photoatom_alias,
-// 			  const std::string& native_file_path,
-// 			  const double atomic_weight,
-// 			  const std::shared_ptr<AtomicRelaxationModelFactory>&
-// 			  atomic_relaxation_model_factory,
-// 			  const SimulationProperties& properties );
+private:
 
-//   // The photoatom map
-//   std::unordered_map<std::string,std::shared_ptr<Photoatom> >
-//   d_photoatom_name_map;
+  // Create a photoatom from an ACE table
+  void createPhotoatomFromACETable(
+                        const boost::filesystem::path& data_directory,
+                        const std::string& photoatom_name,
+                        const double atomic_weight,
+			const Data::PhotoatomicDataProperties& data_properties,
+                        const std::shared_ptr<AtomicRelaxationModelFactory>&
+                        atomic_relaxation_model_factory,
+                        const SimulationProperties& properties );
 
-//   // The table map
-//   std::unordered_map<std::string,std::shared_ptr<Photoatom> >
-//   d_photoatomic_table_name_map;
+  // Create a photoatom from a Native table
+  void createPhotoatomFromNativeTable(
+			const boost::filesystem::path& data_directory,
+                        const std::string& photoatom_name,
+                        const double atomic_weight,
+                        const Data::PhotoatomicDataProperties& data_properties,
+                        const std::shared_ptr<AtomicRelaxationModelFactory>&
+                        atomic_relaxation_model_factory,
+                        const SimulationProperties& properties );
 
-//   // The message output stream
-//   std::ostream* d_os_message;
+  // The photoatom map
+  PhotoatomNameMap d_photoatom_name_map;
+
+  // The table map (used to prevent multiple reads of the same data file)
+  std::map<Data::PhotoatomicDataProperties::FileType,PhotoatomNameMap>
+  d_photoatomic_table_name_map;
+
+  // Verbose photoatom construction
+  bool d_verbose;
 };
 
 } // end MonteCarlo namespace

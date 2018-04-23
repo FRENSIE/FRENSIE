@@ -63,11 +63,11 @@ namespace MonteCarlo{                                                 \
   __EXTERN_EXPLICIT_MONTE_CARLO_FORWARD_DECLARES__();           \
                                                                 \
 namespace MonteCarlo{                        \
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) ); \
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::xml_oarchive>( boost::archive::xml_oarchive& ar, const unsigned version ) ); \
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::binary_oarchive>( boost::archive::binary_oarchive& ar, const unsigned version ) ); \
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::polymorphic_oarchive>( boost::archive::polymorphic_oarchive& ar, const unsigned version ) ); \
-  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<Utility::HDF5OArchive>( Utility::HDF5OArchive& ar, const unsigned version ) ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::text_oarchive>( boost::archive::text_oarchive& ar, const unsigned version ) const ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::xml_oarchive>( boost::archive::xml_oarchive& ar, const unsigned version ) const ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::binary_oarchive>( boost::archive::binary_oarchive& ar, const unsigned version ) const ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<boost::archive::polymorphic_oarchive>( boost::archive::polymorphic_oarchive& ar, const unsigned version ) const ); \
+  EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::save<Utility::HDF5OArchive>( Utility::HDF5OArchive& ar, const unsigned version ) const ); \
                                                                         \
   EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<boost::archive::text_iarchive>( boost::archive::text_iarchive& ar, const unsigned version ) ); \
   EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( void __VA_ARGS__::load<boost::archive::xml_iarchive>( boost::archive::xml_iarchive& ar, const unsigned version ) ); \

@@ -59,7 +59,7 @@ ParticleType StandardParticleSource::getParticleType() const
 void StandardParticleSource::enableThreadSupportImpl( const size_t threads )
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure a valid number of threads has been requested
   testPrecondition( threads > 0 );
 
@@ -77,7 +77,7 @@ void StandardParticleSource::enableThreadSupportImpl( const size_t threads )
 void StandardParticleSource::resetDataImpl()
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   
   this->initializeDimensionSampleCounters();
   this->initializeDimensionTrialCounters();
@@ -91,7 +91,7 @@ void StandardParticleSource::reduceDataImpl(
             const int root_process )
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
   // Make sure the communicator is valid
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
@@ -181,7 +181,7 @@ void StandardParticleSource::exportDataImpl(
                                        SourceHDF5FileHandler& hdf5_file ) const
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Set the number of trials in each dimension
   DimensionCounterMap dimension_counters;
@@ -225,7 +225,7 @@ void StandardParticleSource::exportDataImpl(
 void StandardParticleSource::printSummary( std::ostream& os ) const
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Print the source sampling statistics
   this->printStandardSummary( "Standard Source",
@@ -350,10 +350,10 @@ bool StandardParticleSource::sampleParticleStateImpl(
   testPrecondition( history_state_id < this->getNumberOfParticleStateSamples(particle->getHistoryNumber()) );
 
   DimensionCounterMap& dimension_trial_counters =
-    d_dimension_trial_counters[Utility::GlobalOpenMPSession::getThreadId()];
+    d_dimension_trial_counters[Utility::OpenMPProperties::getThreadId()];
 
   DimensionCounterMap& dimension_sample_counters =
-    d_dimension_sample_counters[Utility::GlobalOpenMPSession::getThreadId()];
+    d_dimension_sample_counters[Utility::OpenMPProperties::getThreadId()];
   
   if( history_state_id == 0 )
   {
@@ -383,7 +383,7 @@ auto StandardParticleSource::getNumberOfDimensionTrials(
   -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   if( d_dimension_trial_counters.front().count( dimension ) )
     return this->reduceLocalDimensionTrialCounters( dimension );
@@ -398,7 +398,7 @@ auto StandardParticleSource::getNumberOfDimensionSamples(
            const PhaseSpaceDimension dimension ) const -> ModuleTraits::InternalCounter
 {
   // Make sure that only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   if( d_dimension_trial_counters.front().count( dimension ) )
     return this->reduceLocalDimensionSampleCounters( dimension );
@@ -413,7 +413,7 @@ double StandardParticleSource::getDimensionSamplingEfficiency(
                                     const PhaseSpaceDimension dimension ) const
 {
   // Make sure only the root process calls this function
-  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  testPrecondition( Utility::OpenMPProperties::getThreadId() == 0 );
 
   // Reduce the number of samples for the dimension
   ModuleTraits::InternalCounter total_samples =

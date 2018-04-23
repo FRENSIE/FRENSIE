@@ -378,17 +378,11 @@ void Xsdir::parseEntryTokensAndInitializeDataPropertiesObject(
     const double atomic_weight_ratio =
       Utility::get<1>( zaids_and_atomic_weight_ratios[i] );
 
-    if( database.doPropertiesExist( zaid ) )
-    {
-      FRENSIE_LOG_TAGGED_WARNING( "Xsdir",
-                                  "A database entry for zaid " << zaid <<
-                                  " already exists! The old entry will be "
-                                  "overwritten." );
+    if( !database.doAtomPropertiesExist( zaid ) )
+      database.initializeAtomProperties( zaid, atomic_weight_ratio );
 
-      database.removeProperties( zaid );
-    }
-
-    database.initializeNuclideProperties( zaid, atomic_weight_ratio );
+    if( !database.doNuclidePropertiesExist( zaid ) )
+      database.initializeNuclideProperties( zaid, atomic_weight_ratio );
   }
 }
 
@@ -455,6 +449,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
     case 'p':
     {
       this->createAtomicTableProperties( database,
+                                         atomic_weight_ratio,
                                          table_file_path,
                                          file_start_line,
                                          table_name_components );
@@ -463,6 +458,7 @@ void Xsdir::parseEntryTokensAndCreateDataPropertiesObject(
     case 'e':
     {
       this->createAtomicTableProperties( database,
+                                         atomic_weight_ratio,
                                          table_file_path,
                                          file_start_line,
                                          table_name_components );
@@ -512,7 +508,7 @@ void Xsdir::createContinuousEnergyNeutronTableProperties(
 
   // Add the nuclear properties to the corresponding nuclide properties entry
   // in the database
-  TEST_FOR_EXCEPTION( !database.doPropertiesExist( table_name.zaid() ),
+  TEST_FOR_EXCEPTION( !database.doNuclidePropertiesExist( table_name.zaid() ),
                       std::runtime_error,
                       "The database entry for zaid " << table_name.zaid() <<
                       " was not initialized during the initialization "
@@ -560,7 +556,7 @@ void Xsdir::createSABTableProperties(
   {
     // Add the thermal nuclear properties to the corresponding nuclide
     // properties in the database
-    TEST_FOR_EXCEPTION( !database.doPropertiesExist( *zaid_it ),
+    TEST_FOR_EXCEPTION( !database.doNuclidePropertiesExist( *zaid_it ),
                         std::runtime_error,
                         "The database entry for zaid " << *zaid_it << 
                         " was not initialized during the initialization "
@@ -610,7 +606,7 @@ void Xsdir::createPhotonuclearTableProperties(
 
   // Add the photonuclear properties to the corresponding nuclide properties
   // in the database
-  TEST_FOR_EXCEPTION( !database.doPropertiesExist( table_name.zaid() ),
+  TEST_FOR_EXCEPTION( !database.doNuclidePropertiesExist( table_name.zaid() ),
                       std::runtime_error,
                       "The database entry for zaid " << table_name.zaid() << 
                       " was not initialized during the initialization step!" );
@@ -630,6 +626,7 @@ void Xsdir::createPhotonuclearTableProperties(
 // Create the photoatomic and electroatomic table properties
 void Xsdir::createAtomicTableProperties(
             ScatteringCenterPropertiesDatabase& database,
+            const double atomic_weight_ratio,
             const boost::filesystem::path& table_file_path,
             const size_t file_start_line,
             const std::tuple<std::string,unsigned,char> table_name_components ) const
@@ -645,10 +642,15 @@ void Xsdir::createAtomicTableProperties(
                       " does not exist at the specified path ("
                       << complete_table_file_path.string() << ")!" );
 
+  // Convert the atomic weight ratio to the atomic weight
+  const auto atomic_weight =
+    atomic_weight_ratio*Utility::PhysicalConstants::neutron_rest_mass_amu_q;
+
   if( Utility::get<2>( table_name_components ) == 'p' )
   {
     std::shared_ptr<const PhotoatomicDataProperties> photoatomic_properties(
-                   new ACEPhotoatomicDataProperties( table_file_path,
+                   new ACEPhotoatomicDataProperties( atomic_weight,
+                                                     table_file_path,
                                                      file_start_line,
                                                      table_name_components ) );
 
@@ -658,7 +660,8 @@ void Xsdir::createAtomicTableProperties(
     if( Utility::get<1>( table_name_components ) == 12 )
     {
       std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
-                 new ACEElectroatomicDataProperties( table_file_path,
+                 new ACEElectroatomicDataProperties( atomic_weight,
+                                                     table_file_path,
                                                      file_start_line,
                                                      table_name_components ) );
 
@@ -669,7 +672,8 @@ void Xsdir::createAtomicTableProperties(
   else if( Utility::get<2>( table_name_components ) == 'e' )
   {
     std::shared_ptr<const ElectroatomicDataProperties> electroatomic_properties(
-                 new ACEElectroatomicDataProperties( table_file_path,
+                 new ACEElectroatomicDataProperties( atomic_weight,
+                                                     table_file_path,
                                                      file_start_line,
                                                      table_name_components ) );
 
@@ -690,7 +694,7 @@ void Xsdir::addPhotoatomicPropertiesToDatabase(
                         const std::shared_ptr<const PhotoatomicDataProperties>&
                         photoatomic_properties )
 {
-  TEST_FOR_EXCEPTION( !database.doPropertiesExist( photoatomic_properties->atom() ),
+  TEST_FOR_EXCEPTION( !database.doAtomPropertiesExist( photoatomic_properties->atom() ),
                       std::runtime_error,
                       "The database entry for zaid "
                       << Data::ZAID(photoatomic_properties->atom()) <<
@@ -714,7 +718,7 @@ void Xsdir::addElectroatomicPropertiesToDatabase(
                       const std::shared_ptr<const ElectroatomicDataProperties>&
                       electroatomic_properties )
 {
-  TEST_FOR_EXCEPTION( !database.doPropertiesExist( electroatomic_properties->atom() ),
+  TEST_FOR_EXCEPTION( !database.doAtomPropertiesExist( electroatomic_properties->atom() ),
                       std::runtime_error,
                       "The database entry for zaid "
                       << Data::ZAID(electroatomic_properties->atom()) <<
@@ -1262,7 +1266,7 @@ void Xsdir::exportData( ScatteringCenterPropertiesDatabase& database ) const
   }
 
   // Clean up the database
-  database.removeEmptyProperties( false );
+  database.removeEmptyProperties( true );
 }
 
 } // end Data namespace

@@ -17,52 +17,60 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
+#include "MonteCarlo_NeutronMaterial.hpp"
+#include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
+#include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
 //! The nuclide factory class
 class NuclideFactory
 {
+
 public:
 
+  //! The nuclide name map
+  typedef NeutronMaterial::NuclideNameMap NuclideNameMap;
+
+  //! The scattering center name set
+  typedef MaterialDefinitionDatabase::ScatteringCenterNameSet ScatteringCenterNameSet;
+
   //! Constructor
-  NuclideFactory( const std::string& cross_sections_xml_directory,
-		  const Teuchos::ParameterList& cross_section_table_info,
-		  const std::unordered_set<std::string>& nuclide_aliases,
+  NuclideFactory( const boost::filesystem::path& data_directory,
+                  const ScatteringCenterNameSet& nuclide_names,
+                  const ScatteringCenterDefinitionDatabase& nuclide_definitions,
                   const SimulationProperties& properties,
-		  std::ostream* os_message = &std::cout );
+                  const bool verbose = false );
 
   //! Destructor
   ~NuclideFactory()
   { /* ... */ }
 
   //! Create the map of nuclides
-  void createNuclideMap(
-                    std::unordered_map<std::string,std::shared_ptr<Nuclide> >&
-                    nuclide_map ) const;
+  void createNuclideMap( NuclideNameMap& nuclide_map ) const;
 
 private:
 
   // Create a nuclide from an ACE table
   void createNuclideFromACETable(
-			      const std::string& cross_sections_xml_directory,
-			      const std::string& nuclide_alias,
-			      const std::string& ace_file_path,
-			      const std::string& nuclear_table_name,
-			      const int nuclide_file_start_line,
-			      const int atomic_number,
-			      const int atomic_mass_number,
-			      const int isomer_number,
-			      const double atomic_weight_ratio,
-			      const double temperature,
-                              const SimulationProperties& properties );
+                            const boost::filesystem::path& data_directory,
+                            const std::string& nuclide_name,
+                            const double atomic_weight_ratio,
+                            const Data::NuclearDataProperties& data_properties,
+                            const SimulationProperties& properties );
 
-  // The nuclide id map
-  std::unordered_map<std::string,std::shared_ptr<Nuclide> > d_nuclide_name_map;
+  // The nuclide  map
+  NuclideNameMap d_nuclide_name_map;
 
-  // The message output stream
-  std::ostream* d_os_message;
+  // The table map (used to prevent multiple reads of the same data file
+  std::map<Data::NuclearDataProperties::FileType,NuclideNameMap>
+  d_nuclear_table_name_map;
+
+  // Verbose nuclide construction
+  bool d_verbose;
 };
 
 } // end MonteCarlo namespace

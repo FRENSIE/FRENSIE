@@ -1276,7 +1276,7 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
   FRENSIE_CHECK_NO_THROW( test_xsdir.exportData( database ) );
 
   // Check the H atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 1000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 1000 ) );
   
   {
     const Data::AtomProperties& atom_properties =
@@ -1290,9 +1290,11 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                            Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 1 );
@@ -1307,9 +1309,11 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 1 );
@@ -1318,7 +1322,7 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
   }
 
   // Check the H1 nuclide properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 1001 ) );
+  FRENSIE_REQUIRE( database.doNuclidePropertiesExist( 1001 ) );
 
   {
     const Data::NuclideProperties& nuclide_properties =
@@ -1453,26 +1457,10 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
     FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 72 );
     FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "1001.72c" );
-
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
-    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::H_ATOM ).getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
-                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::H_ATOM ).getElectroatomicDataProperties(
-                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
   }
 
   // Check the H2 nuclide properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 1002 ) );
+  FRENSIE_REQUIRE( database.doNuclidePropertiesExist( 1002 ) );
 
   {
     const Data::NuclideProperties& nuclide_properties =
@@ -1644,32 +1632,16 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( photonuclear_properties->fileStartLine(), 1 );
     FRENSIE_CHECK_EQUAL( photonuclear_properties->fileVersion(), 70u );
     FRENSIE_CHECK_EQUAL( photonuclear_properties->tableName(), "1002.70u" );
-
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
-    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::H_ATOM ).getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
-                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::H_ATOM ).getElectroatomicDataProperties(
-                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 1003 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 1004 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 1005 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 1006 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 1007 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 1003 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 1004 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 1005 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 1006 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 1007 ) );
 
   // Check the He atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 2000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 2000 ) );
 
   {
     const Data::AtomProperties& atom_properties =
@@ -1683,9 +1655,11 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                            Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         3.968220*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 3020 );
@@ -1700,9 +1674,11 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                            Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_EPR_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         3.968220*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(),
                          "eprdata12" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 3020 );
@@ -1711,7 +1687,7 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
   }
 
   // Check the He3 nuclide properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 2003 ) );
+  FRENSIE_REQUIRE( database.doNuclidePropertiesExist( 2003 ) );
 
   {
     const Data::NuclideProperties& nuclide_properties =
@@ -1849,26 +1825,10 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
     FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 72 );
     FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2003.72c" );
-
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
-    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::He_ATOM ).getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
-                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::He_ATOM ).getElectroatomicDataProperties(
-                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
   }
 
   // Check he He4 nuclide properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 2004 ) );
+  FRENSIE_REQUIRE( database.doNuclidePropertiesExist( 2004 ) );
 
   {
     const Data::NuclideProperties& nuclide_properties =
@@ -2006,53 +1966,30 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( nuclear_properties->fileMajorVersion(), 7 );
     FRENSIE_CHECK_EQUAL( nuclear_properties->fileVersion(), 72 );
     FRENSIE_CHECK_EQUAL( nuclear_properties->tableName(), "2004.72c" );
-
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.photoatomicDataAvailable( Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-    
-    FRENSIE_CHECK( &nuclide_properties.getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::He_ATOM ).getPhotoatomicDataProperties(
-                         Data::PhotoatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) );
-    FRENSIE_REQUIRE( nuclide_properties.electroatomicDataAvailable( Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
-
-    FRENSIE_CHECK( &nuclide_properties.getElectroatomicDataProperties(
-                      Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) ==
-                   &database.getAtomProperties( Data::He_ATOM ).getElectroatomicDataProperties(
-                       Data::ElectroatomicDataProperties::ACE_EPR_FILE, 12 ) );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 2005 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 2006 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 2007 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 2008 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 2009 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 2010 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 2005 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 2006 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 2007 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 2008 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 2009 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 2010 ) );
 
   // There is an entry in the test xsdir file for Li6 - it should be ignored
   // since the entry states that the table is binary, which is not currently
   // supported
-  FRENSIE_CHECK( !database.doPropertiesExist( 3006 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 3006 ) );
 
   // Check the Be atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 4000 ) );
-
-  {
-    const Data::AtomProperties& atom_properties =
-      database.getAtomProperties( Data::Be_ATOM );
-
-    FRENSIE_CHECK( atom_properties.empty() );
-  }
+  FRENSIE_CHECK( !database.doAtomPropertiesExist( 4000 ) );
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 4005 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4006 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4007 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4008 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4005 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4006 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4007 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4008 ) );
 
   // Check the Be9 nuclide properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 4009 ) );
+  FRENSIE_REQUIRE( database.doNuclidePropertiesExist( 4009 ) );
   
   {
     const Data::NuclideProperties& nuclide_properties =
@@ -2105,31 +2042,24 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( thermal_nuclear_properties->tableName(), "be.21t" );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 4010 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4011 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4012 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4013 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4014 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4015 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 4016 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4010 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4011 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4012 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4013 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4014 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4015 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 4016 ) );
 
   // Check the C atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 6000 ) );
-
-  {
-    const Data::AtomProperties& atom_properties =
-      database.getAtomProperties( Data::C_ATOM );
-
-    FRENSIE_CHECK( atom_properties.empty() );
-  }
+  FRENSIE_CHECK( !database.doAtomPropertiesExist( 6000 ) );
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 6008 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6009 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6010 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6011 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6008 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6009 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6010 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6011 ) );
 
   // Check the C12 nuclide properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 6012 ) );
+  FRENSIE_REQUIRE( database.doNuclidePropertiesExist( 6012 ) );
 
   {
     const Data::NuclideProperties& nuclide_properties =
@@ -2172,19 +2102,19 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( photonuclear_properties->tableName(), "6012.70u" );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 6013 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6014 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6015 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6016 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6017 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6018 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6019 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6020 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6021 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 6022 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6013 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6014 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6015 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6016 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6017 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6018 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6019 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6020 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6021 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 6022 ) );
 
   // Check the Pm atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 61000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 61000 ) );
 
   {
     const Data::AtomProperties& atom_properties =
@@ -2198,21 +2128,23 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                               Data::ElectroatomicDataProperties::ACE_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         143.667877*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 7921 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "61000.01e" );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 61126 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 61127 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 61128 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 61126 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 61127 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 61128 ) );
 
   // Check the Sm atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 62000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 62000 ) );
 
   {
     const Data::AtomProperties& atom_properties =
@@ -2226,21 +2158,23 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                               Data::ElectroatomicDataProperties::ACE_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         149.060207*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 8053 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "62000.01e" );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 62128 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 62129 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 62130 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 62128 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 62129 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 62130 ) );
 
   // Check the Eu atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 63000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 63000 ) );
 
   {
     const Data::AtomProperties& atom_properties =
@@ -2254,21 +2188,23 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                               Data::ElectroatomicDataProperties::ACE_FILE, 1 );
 
     FRENSIE_CHECK_EQUAL( electroatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileType(),
                          Data::ElectroatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( electroatomic_properties.atomicWeight(),
+                         150.657141*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.filePath().string(), "el" );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileStartLine(), 8185 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.fileVersion(), 1 );
     FRENSIE_CHECK_EQUAL( electroatomic_properties.tableName(), "63000.01e" );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 63138 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 63139 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 63140 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 63138 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 63139 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 63140 ) );
 
   // Check the Ra atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 88000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 88000 ) );
 
   {
     const Data::AtomProperties& atom_properties =
@@ -2282,9 +2218,11 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 4 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         224.084000*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "mcplib04" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 158629 );
@@ -2292,12 +2230,12 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "88000.04p" );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 88202 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 88203 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 88204 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 88202 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 88203 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 88204 ) );
 
   // Check the Ac atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 89000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 89000 ) );
 
   {
     const Data::AtomProperties& atom_properties =
@@ -2311,9 +2249,11 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 4 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         225.050000*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "mcplib04" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 161228 );
@@ -2321,12 +2261,12 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "89000.04p" );
   }
 
-  FRENSIE_CHECK( !database.doPropertiesExist( 89206 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 89207 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 89208 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 89206 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 89207 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 89208 ) );
 
   // Check the Th atom properties
-  FRENSIE_REQUIRE( database.doPropertiesExist( 90000 ) );
+  FRENSIE_REQUIRE( database.doAtomPropertiesExist( 90000 ) );
 
   {
     const Data::AtomProperties& atom_properties =
@@ -2340,9 +2280,11 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
                                 Data::PhotoatomicDataProperties::ACE_FILE, 4 );
 
     FRENSIE_CHECK_EQUAL( photoatomic_properties.atom(),
-                         atom_properties.zaid().atom() );
+                         atom_properties.atom() );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileType(),
                          Data::PhotoatomicDataProperties::ACE_FILE );
+    FRENSIE_CHECK_EQUAL( photoatomic_properties.atomicWeight(),
+                         230.045000*Utility::PhysicalConstants::neutron_rest_mass_amu_q );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.filePath().string(),
                          "mcplib04" );
     FRENSIE_CHECK_EQUAL( photoatomic_properties.fileStartLine(), 163774 );
@@ -2350,9 +2292,9 @@ FRENSIE_UNIT_TEST( Xsdir, exportData )
     FRENSIE_CHECK_EQUAL( photoatomic_properties.tableName(), "90000.04p" );
   }
   
-  FRENSIE_CHECK( !database.doPropertiesExist( 90209 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 90210 ) );
-  FRENSIE_CHECK( !database.doPropertiesExist( 90211 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 90209 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 90210 ) );
+  FRENSIE_CHECK( !database.doNuclidePropertiesExist( 90211 ) );
 }
 
 //---------------------------------------------------------------------------//

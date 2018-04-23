@@ -56,7 +56,7 @@ DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupDecayConsts() con
 }
 
 // Return the precursor group probability distributions
-const std::vector<std::shared_ptr<const Utility::OneDDistribution> >&
+const std::vector<std::shared_ptr<const Utility::UnivariateDistribution> >&
 DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupProbDists() const
 {
   return d_precursor_group_prob_distributions;
@@ -121,7 +121,7 @@ void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutron
     bdd_loc += number_of_energies;
 
     // Create the group probability distribution
-    std::shared_ptr<const Utility::OneDDistribution> group_prob_dist(
+    std::shared_ptr<const Utility::UnivariateDistribution> group_prob_dist(
 	               new Utility::TabularDistribution<Utility::LinLin>(
 						    precursor_prob_energy_grid,
 						    precursor_prob_values ) );

@@ -1043,12 +1043,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
   {
     for( unsigned i = 0u; i < num_estimator_bins; ++i )
     {
-      #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+      #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
       {
 	entity_estimator->commitHistoryContributionToBinOfEntity(
 			     *entity_id,
 			     i,
-			     Utility::GlobalOpenMPSession::getThreadId()+1.0 );
+			     Utility::OpenMPProperties::getThreadId()+1.0 );
       }
     }
 
@@ -1056,7 +1056,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
   }
 
   unsigned histories =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( histories );
   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
@@ -1232,15 +1232,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
   // Commit one contribution to every bin of the estimator
   for( unsigned i = 0u; i < num_estimator_bins; ++i )
   {
-    #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+    #pragma omp parallel num_threads( Utility::OpenMPProperties::getRequestedNumberOfThreads() )
     {
       entity_estimator->commitHistoryContributionToBinOfTotal(
-		        i, Utility::GlobalOpenMPSession::getThreadId() + 1.0 );
+		        i, Utility::OpenMPProperties::getThreadId() + 1.0 );
     }
   }
 
   unsigned histories =
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+    Utility::OpenMPProperties::getRequestedNumberOfThreads();
 
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( histories );
   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
@@ -1412,8 +1412,8 @@ int main( int argc, char** argv )
   }
 
   // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+  if( Utility::OpenMPProperties::isOpenMPUsed() )
+    Utility::OpenMPProperties::setNumberOfThreads( threads );
 
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

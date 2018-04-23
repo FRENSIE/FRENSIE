@@ -394,6 +394,13 @@
 #define FRENSIE_LOG_NOTIFICATION( msg )                         \
   __FRENSIE_LOG_MSG__( Utility::NOTIFICATION_RECORD, msg )
 
+/*! Log a partial notification
+ * \details No newline characters will be added to the end of the log entry
+ * \ingroup logging_macros
+ */
+#define FRENSIE_LOG_PARTIAL_NOTIFICATION( msg ) \
+  __FRENSIE_LOG_MSG_WITH_TAG__( Utility::NOTIFICATION_RECORD, FRENSIE_LOG_PARTIAL_NOTIFICATION_TAG, msg )
+
 /*! Log a tagged notification
  * \ingroup logging_macros
  */

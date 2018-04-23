@@ -14,20 +14,20 @@ namespace MonteCarlo{
 
 // Constructor
 CompleteFissionNeutronMultiplicityDistribution::CompleteFissionNeutronMultiplicityDistribution(
-                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        const std::shared_ptr<const Utility::UnivariateDistribution>&
                         prompt_multiplicity_distribution,
-                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        const std::shared_ptr<const Utility::UnivariateDistribution>&
                         delayed_multiplicity_distribution,
-                        const std::shared_ptr<const Utility::OneDDistribution>&
+                        const std::shared_ptr<const Utility::UnivariateDistribution>&
                         total_multiplicity_distribution )
   : d_prompt_multiplicity_distribution( prompt_multiplicity_distribution ),
     d_delayed_multiplicity_distribution( delayed_multiplicity_distribution ),
     d_total_multiplicity_distribution( total_multiplicity_distribution )
 {
   // Make sure the distributions are valid
-  testPrecondition( !prompt_multiplicity_distribution.is_null() );
-  testPrecondition( !delayed_multiplicity_distribution.is_null() );
-  testPrecondition( !total_multiplicity_distribution.is_null() );
+  testPrecondition( prompt_multiplicity_distribution.get() );
+  testPrecondition( delayed_multiplicity_distribution.get() );
+  testPrecondition( total_multiplicity_distribution.get() );
 }
 
 // Return the average number of neutrons emitted

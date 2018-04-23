@@ -73,6 +73,12 @@ unsigned ElectronPhotonRelaxationDataContainer::getAtomicNumber() const
   return d_atomic_number;
 }
 
+// Return the atomic weight
+double ElectronPhotonRelaxationDataContainer::getAtomicWeight() const
+{
+  return d_atomic_weight;
+}
+
 // Return the minimum photon energy
 double ElectronPhotonRelaxationDataContainer::getMinPhotonEnergy() const
 {
@@ -893,6 +899,16 @@ void ElectronPhotonRelaxationDataContainer::setAtomicNumber(
   testPrecondition( atomic_number <= 100 );
 
   d_atomic_number = atomic_number;
+}
+
+// Set the atomic weight
+void ElectronPhotonRelaxationDataContainer::setAtomicWeight(
+                                                   const double atomic_weight )
+{
+  // Make sure that the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0 );
+
+  d_atomic_weight = atomic_weight;
 }
 
 // Set the minimum photon energy
