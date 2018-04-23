@@ -144,6 +144,9 @@ typedef Geometry::UnitAwareRay<void>::Length Length;
 // Add support for the Navigator class
 //---------------------------------------------------------------------------//
 
+// Include the Navigator helpers
+%include "Geometry_NavigatorHelpers.i"
+
 %feature("docstring")
 Geometry::Navigator
 "
@@ -176,87 +179,7 @@ class is shown below:
    reflected, normal = navigator.advanceToCellBoundaryAndGetSurfaceNormal()
 "
 
-%feature("autodoc",
-"getPointLocation(Navigator self, Sequence position, Sequence direction, Long cell_id ) -> PointLocation
-getPointLocation(Navigator self, Ray ray, Long cell_id) -> PointLocation
-
-The position and direction sequences must have a size of three. The point
-location returned can be one of three values:
-   1. PyFrensie.Geometry.POINT_INSIDE_CELL
-   2. PyFrensie.Geometry.POINT_ON_CELL
-   3. PyFrensie.Geometry.POINT_OUTSIDE_CELL
-" )
-Geometry::Navigator::getPointLocation;
-
-%feature("autodoc",
-"getSurfaceNormal(Navigator self, Long surface_id, Sequence position, Sequence direction) -> Numpy Array
-getSurfaceNormal(Navigator self, Long surface_id, Ray ray) -> Numpy Array
-
-The position and direction sequences must have a size of three. The returned
-value is a Numpy Array of size three.
-" )
-Geometry::Navigator::getSurfaceNormal;
-
-%feature("autodoc",
-"findCellContainingRay(Navigator self, Sequence position, Sequence direction) -> cell_id(Long)
-findCellContainingRay(Navigator self, Ray ray) -> cell_id(Long)
-
-The position and direction sequences must have a size of three.
-" )
-Geometry::Navigator::findCellContainingRay;
-
-%feature("autodoc",
-"setRay(Navigator self, Float x_position, Float y_position, Float z_position, Float x_direction, Float y_direction, Float z_direction)
-setRay(Navigator self, Sequence position, Sequence direction)
-setRay(Navigator self, Ray ray)
-
-setRay(Navigator self, Float x_position, Float y_position, Float z_position, Float x_direction, Float y_direction, Float z_direction, Long cell_id)
-setRay(Navigator self, Sequence position, Sequence direction, Long cell_id)
-setRay(Navigator self, Ray ray, Long cell_id)
-
-The position and direction sequences must have a size of three.
-" )
-Geometry::Navigator::setState;
-
-%feature("autodoc", "getPosition(Navigator self) -> Numpy Array")
-Geometry::Navigator::getPosition;
-
-%feature("autodoc", "getDirection(Navigator self) -> Numpy Array")
-Geometry::Navigator::getDirection;
-
-%feature("docstring")
-Geometry::Navigator::fireRay
-"
-The distance to the surface that was hit will be returned.
-"
-
-%feature("autdoc",
-"fireRayAndGetSurfaceHit(Navigator self) -> [distance_to_surface(Float), surface_hit(Long)]
-" )
-Geometry::Navigator::fireRayAndGetSurfaceHit;
-
-%feature("docstring")
-Geometry::Navigator::advanceToCellBoundary
-"
-If a reflecting surface was encountered at the cell boundary True will be
-returned. False will be returned if a normal surface was encountered.
-"
-
-%feature("autodoc",
-"advanceToCellBoundaryAndGetSurfaceNormal(Navigator self) -> [reflecting_surface(Bool),surface_normal(Numpy Array)]
-" )
-Geometry::Navigator::advanceToCellBoundaryAndGetSurfaceNormal;
-
-%feature("autodoc",
-"changeInternalRayDirection(Navigator self, Float x_direction, Float y_direction, Float z_direction)
-changeInternalRayDirection(Navigator self, Sequence direction)
-
-The direction sequence must have a size of three.
-" )
-Geometry::Navigator::changeDirection;
-
-// Allow shared pointers of Navigator objects
-%shared_ptr(Geometry::Navigator);
+%navigator_interface_setup( Navigator )
 
 // Ignore the findCellContainingRay methods that take a cache
 %ignore Geometry::Navigator::findCellContainingRay( const double[3], const double[3], Geometry::Navigator::CellIdSet& );
@@ -337,6 +260,9 @@ Geometry::Navigator::changeDirection;
 // Add support for the Model class
 //---------------------------------------------------------------------------//
 
+// Include the model helpers
+%include "Geometry_ModelHelpers.i"
+
 // Add more detailed docstrings for the Model class
 %feature("docstring")
 Geometry::Model
@@ -358,36 +284,12 @@ A brief usage tutorial for this class is shown below:
    navigator = model.createNavigator()
 "
 
-%feature("autodoc", "getMaterialIds(Model self) -> set[material_id]" )
-Geometry::Model::getMaterialIds;
+%model_interface_setup( Model )
 
-%feature("autodoc", "getCells(Model self, bool include_void_cells, bool include_termination_cells) -> set[cell_id]")
-Geometry::Model::getCells;
+// Add a few Geometry::Model typemaps
+%typemap(out) Geometry::Model::Volume {
+    $result = PyFloat_FromDouble( Utility::getRawQuantity($1) ); }
 
-%feature("autodoc","getCellMaterialIds(Model self) -> dictionary[cell_id,material_id]" )
-Geometry::Model::getCellMaterialIds;
-
-%feature("autodoc", "getCellDensities(Model self) -> dictionary[cell_id,density(float)]" )
-Geometry::Model::getCellDensities;
-
-%feature("autodoc",
-"getCellEstimatorData(Model self) -> dictionary[estimator_id,estimator_data]
-
-The mapped value (estimator_data) is a tuple of size three with the following
-elements:
-   1. Estimator type (e.g. Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR)
-   2. Particle type (e.g. Geometry.NEUTRON)
-   3. Numpy array of cells assigned to this estimator
-" )
-Geometry::Model::getCellEstimatorData;
-
-%feature("autodoc", "createNavigator(Model self) -> Navigator" )
-Geometry::Model::createNavigator;
-
-// Allow shared pointers of Model objects
-%shared_ptr(Geometry::Model);
-
-// Add a few general typemaps
 %typemap(in,numinputs=0) Geometry::Model::MaterialIdSet& (Geometry::Model::MaterialIdSet temp) "$1 = &temp;"
 
 %typemap(argout) Geometry::Model::MaterialIdSet& {
@@ -406,65 +308,61 @@ Geometry::Model::createNavigator;
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
-// %typemap(in,numinputs=0) Geometry::Model::CellIdDensityMap& (Geometry::Model::CellIdDensityMap temp) "$1 = &temp;"
+%typemap(in,numinputs=0) Geometry::Model::CellIdDensityMap& (Geometry::Model::CellIdDensityMap temp) "$1 = &temp;"
 
-// %typemap(argout) Geometry::Model::CellIdDensityMap& {
-//   std::map<Geometry::Model::InternalCellHandle,double> density_map;
+%typemap(argout) Geometry::Model::CellIdDensityMap& {
+  std::map<Geometry::Model::InternalCellHandle,double> density_map;
 
-//   Geometry::Model::CellIdDensityMap::const_iterator it = ($1)->begin();
+  Geometry::Model::CellIdDensityMap::const_iterator it = ($1)->begin();
 
-//   while( it != ($1)->end() )
+  while( it != ($1)->end() )
+  {
+    // insert raw elements in density_map
+    density_map.insert(std::pair<Geometry::Model::InternalCellHandle,double> (it->first, it->second.value()));
+
+    ++it;
+  }
+
+  %append_output(PyFrensie::convertToPython( density_map ));
+}
+
+%typemap(in,numinputs=0) Geometry::Model::CellEstimatorIdDataMap& (Geometry::Model::CellEstimatorIdDataMap temp) "$1 = &temp;"
+
+%typemap(argout) Geometry::Model::CellEstimatorIdDataMap& {
+  %append_output(PyFrensie::convertToPython( *$1 ) );
+}
+
+// // Add some useful methods to the Model class
+// %extend Geometry::Model
+// {
+//   // String conversion method
+//   PyObject* __str__() const
 //   {
-//     // insert raw elements in density_map
-//     density_map.insert(std::pair<Geometry::Model::InternalCellHandle,double> (it->first, it->second.value()));
-
-//     ++it;
+//     return PyFrensie::convertToPython( $self->getName() );
 //   }
 
-//   %append_output(PyFrensie::convertToPython( density_map ));
-// }
+//   // String representation method
+//   PyObject* __repr__() const
+//   {
+//     std::string string_rep( "Model(" );
+//     string_rep += $self->getName();
+//     string_rep += ")";
 
-// %typemap(in,numinputs=0) Geometry::Model::CellEstimatorIdDataMap& (Geometry::Model::CellEstimatorIdDataMap temp) "$1 = &temp;"
+//     return PyFrensie::convertToPython( string_rep );
+//   }
 
-// %typemap(argout) Geometry::Model::CellEstimatorIdDataMap& {
-//   std::map<Geometry::Model::InternalEstimatorHandle,Geometry::Model::CellEstimatorData> temp;
+//   // Model comparison method
+//   bool __eq__( const Geometry::Model& that ) const
+//   {
+//     return $self == &that;
+//   }
 
-//   // %append_output(PyFrensie::convertToPython( temp ));
-//   PyObject* py_array;
-//   return py_array;
-// }
-
-// Add some useful methods to the Model class
-%extend Geometry::Model
-{
-  // String conversion method
-  PyObject* __str__() const
-  {
-    return PyFrensie::convertToPython( $self->getName() );
-  }
-
-  // String representation method
-  PyObject* __repr__() const
-  {
-    std::string string_rep( "Model(" );
-    string_rep += $self->getName();
-    string_rep += ")";
-
-    return PyFrensie::convertToPython( string_rep );
-  }
-
-  // Model comparison method
-  bool __eq__( const Geometry::Model& that ) const
-  {
-    return $self == &that;
-  }
-
-  // Model comparison method
-  bool __ne__( const Geometry::Model& that ) const
-  {
-    return $self != &that;
-  }
-};
+//   // Model comparison method
+//   bool __ne__( const Geometry::Model& that ) const
+//   {
+//     return $self != &that;
+//   }
+// };
 
 // Include the Model class
 %include "Geometry_Model.hpp"
@@ -513,54 +411,59 @@ An brief usage tutorial for this class is shown below:
    navigator = model.createNavigator()
 "
 
-%feature("autodoc", "getSurfaces(Model self) -> set[surface_id]" )
-Geometry::AdvancedModel::getSurfaces;
+%advanced_model_interface_setup( AdvancedModel )
 
-%feature("autodoc",
-"getSurfaceEstimatorData(Model self) -> dictionary[estimator_id,estimator_data]
-The mapped value (estimator_data) is a tuple of size three with the following
-elements:
-   1. Estimator type (e.g. Geometry.SURFACE_FLUX_ESTIMATOR)
-   2. Particle type (e.g. Geometry.NEUTRON)
-   3. Numpy array of surfaces assigned to this estimator
-" )
-Geometry::AdvancedModel::getSurfaceEstimatorData;
+// %feature("autodoc", "getSurfaces(Model self) -> set[surface_id]" )
+// Geometry::AdvancedModel::getSurfaces;
 
-// Allow shared pointers of AdvancedModel objects
-%shared_ptr(Geometry::AdvancedModel);
+// %feature("autodoc",
+// "getSurfaceEstimatorData(Model self) -> dictionary[estimator_id,estimator_data]
+// The mapped value (estimator_data) is a tuple of size three with the following
+// elements:
+//    1. Estimator type (e.g. Geometry.SURFACE_FLUX_ESTIMATOR)
+//    2. Particle type (e.g. Geometry.NEUTRON)
+//    3. Numpy array of surfaces assigned to this estimator
+// " )
+// Geometry::AdvancedModel::getSurfaceEstimatorData;
 
-// Add a few general typemaps
+// // Allow shared pointers of AdvancedModel objects
+// %shared_ptr(Geometry::AdvancedModel);
+
 %typemap(in,numinputs=0) Geometry::AdvancedModel::SurfaceIdSet& (Geometry::AdvancedModel::SurfaceIdSet temp) "$1 = &temp;"
 
 %typemap(argout) Geometry::AdvancedModel::SurfaceIdSet& {
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
-// %typemap(in,numinputs=0) Geometry::AdvancedModel::SurfaceEstimatorIdDataMap& (Geometry::AdvancedModel::SurfaceEstimatorIdDataMap temp) "$1 = &temp;"
+// Add a few AdvancedModel typemaps
+%typemap(out) Geometry::AdvancedModel::Area {
+    $result = PyFloat_FromDouble( Utility::getRawQuantity($1) ); }
 
-// %typemap(argout) Geometry::AdvancedModel::SurfaceEstimatorIdDataMap& {
-//   %append_output(PyFrensie::convertToPython( *$1 ));
-// }
+%typemap(in,numinputs=0) Geometry::AdvancedModel::SurfaceEstimatorIdDataMap& (Geometry::AdvancedModel::SurfaceEstimatorIdDataMap temp) "$1 = &temp;"
 
-// Add some useful methods to the Model class
-%extend Geometry::AdvancedModel
-{
-  // String conversion method
-  PyObject* __str__() const
-  {
-    return PyFrensie::convertToPython( $self->getName() );
-  }
-
-  // String representation method
-  PyObject* __repr__() const
-  {
-    std::string string_rep( "Advanced Model(" );
-    string_rep += $self->getName();
-    string_rep += ")";
-
-    return PyFrensie::convertToPython( string_rep );
-  }
+%typemap(argout) Geometry::AdvancedModel::SurfaceEstimatorIdDataMap& {
+  %append_output(PyFrensie::convertToPython( *$1 ) );
 }
+
+// // Add some useful methods to the Model class
+// %extend Geometry::AdvancedModel
+// {
+//   // String conversion method
+//   PyObject* __str__() const
+//   {
+//     return PyFrensie::convertToPython( $self->getName() );
+//   }
+
+//   // String representation method
+//   PyObject* __repr__() const
+//   {
+//     std::string string_rep( "Advanced Model(" );
+//     string_rep += $self->getName();
+//     string_rep += ")";
+
+//     return PyFrensie::convertToPython( string_rep );
+//   }
+// }
 
 // Include the AdvancedModel class
 %include "Geometry_AdvancedModel.hpp"

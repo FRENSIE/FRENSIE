@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_CoordinateHelpers.i
 //! \author Luke Kersting
-//! \brief  The distribution helper macros
+//! \brief  The coordinate helper macros
 //!
 //---------------------------------------------------------------------------//
 
@@ -23,85 +23,85 @@
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+%define %basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
-%feature("docstring") Utility::DISTRIBUTION
-"The DISTRIBUTION proxy class. This class can convert spatial coordinates."
-
-%feature("autodoc",
-"getLocalSpatialCoordinateSystemType(DISTRIBUTION self) -> SpatialCoordinateSystemType" )
-Utility::DISTRIBUTION::getLocalSpatialCoordinateSystemType;
+%feature("docstring") Utility::SYSTEM
+"The SYSTEM proxy class. This class can convert spatial coordinates."
 
 %feature("autodoc",
-"isPrimarySpatialCoordinateValid(DISTRIBUTION self, double coordinate ) -> bool" )
-Utility::DISTRIBUTION::isPrimarySpatialCoordinateValid;
+"getLocalSpatialCoordinateSystemType(SYSTEM self) -> SpatialCoordinateSystemType" )
+Utility::SYSTEM::getLocalSpatialCoordinateSystemType;
 
 %feature("autodoc",
-"isSecondarySpatialCoordinateValid(DISTRIBUTION self, double coordinate ) -> bool" )
-Utility::DISTRIBUTION::isSecondarySpatialCoordinateValid;
+"isPrimarySpatialCoordinateValid(SYSTEM self, double coordinate ) -> bool" )
+Utility::SYSTEM::isPrimarySpatialCoordinateValid;
 
 %feature("autodoc",
-"isTertiarySpatialCoordinateValid(DISTRIBUTION self, double coordinate ) -> bool" )
-Utility::DISTRIBUTION::isTertiarySpatialCoordinateValid;
+"isSecondarySpatialCoordinateValid(SYSTEM self, double coordinate ) -> bool" )
+Utility::SYSTEM::isSecondarySpatialCoordinateValid;
 
 %feature("autodoc",
-"convertToCartesianSpatialCoordinates(DISTRIBUTION self, double primary_spatial_coord, double secondary_spatial_coord, double tertiary_spatial_coord ) -> double, double, double
+"isTertiarySpatialCoordinateValid(SYSTEM self, double coordinate ) -> bool" )
+Utility::SYSTEM::isTertiarySpatialCoordinateValid;
+
+%feature("autodoc",
+"convertToCartesianSpatialCoordinates(SYSTEM self, double primary_spatial_coord, double secondary_spatial_coord, double tertiary_spatial_coord ) -> double, double, double
 
 Convert the spatial coordinates to cartesian coordinates. The first element of
 the returned tuple is the x_spatial_coord. The first element of
 the returned tuple is the y_spatial_coord. The first element of
 the returned tuple is the z_spatial_coord. ")
-Utility::DISTRIBUTION::convertToCartesianSpatialCoordinates;
+Utility::SYSTEM::convertToCartesianSpatialCoordinates;
 
-%ignore Utility::DISTRIBUTION::convertToCartesianSpatialCoordinates( double[3], double[3] );
+%ignore Utility::SYSTEM::convertToCartesianSpatialCoordinates( double[3], double[3] );
 
 %feature("autodoc",
-"convertFromCartesianSpatialCoordinates(DISTRIBUTION self, double x_spatial_coord, double y_spatial_coord, double z_spatial_coord ) -> double, double, double
+"convertFromCartesianSpatialCoordinates(SYSTEM self, double x_spatial_coord, double y_spatial_coord, double z_spatial_coord ) -> double, double, double
 
 Convert the spatial coordinates to cartesian coordinates. The first element of
 the returned tuple is the primary_spatial_coord. The first element of
 the returned tuple is the secondary_spatial_coord. The first element of
 the returned tuple is the tertiary_spatial_coord. ")
-Utility::DISTRIBUTION::convertFromCartesianSpatialCoordinates;
+Utility::SYSTEM::convertFromCartesianSpatialCoordinates;
 
-%ignore Utility::DISTRIBUTION::convertFromCartesianSpatialCoordinates( double[3], double[3] );
+%ignore Utility::SYSTEM::convertFromCartesianSpatialCoordinates( double[3], double[3] );
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic DirectionalCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %basic_directional_coordinate_interface_setup_helper( DISTRIBUTION )
+%define %basic_directional_coordinate_interface_setup_helper( SYSTEM )
 
-%feature("docstring") Utility::DISTRIBUTION
-"The DISTRIBUTION proxy class. This class can convert directional coordinates."
-
-%feature("autodoc",
-"getLocalDirectionalCoordinateSystemType(DISTRIBUTION self) -> DirectionalCoordinateSystemType" )
-Utility::DISTRIBUTION::getLocalDirectionalCoordinateSystemType;
+%feature("docstring") Utility::SYSTEM
+"The SYSTEM proxy class. This class can convert directional coordinates."
 
 %feature("autodoc",
-"isPrimaryDirectionalCoordinateValid(DISTRIBUTION self, double coordinate ) -> bool" )
-Utility::DISTRIBUTION::isPrimaryDirectionalCoordinateValid;
+"getLocalDirectionalCoordinateSystemType(SYSTEM self) -> DirectionalCoordinateSystemType" )
+Utility::SYSTEM::getLocalDirectionalCoordinateSystemType;
 
 %feature("autodoc",
-"isSecondaryDirectionalCoordinateValid(DISTRIBUTION self, double coordinate ) -> bool" )
-Utility::DISTRIBUTION::isSecondaryDirectionalCoordinateValid;
+"isPrimaryDirectionalCoordinateValid(SYSTEM self, double coordinate ) -> bool" )
+Utility::SYSTEM::isPrimaryDirectionalCoordinateValid;
 
 %feature("autodoc",
-"isTertiaryDirectionalCoordinateValid(DISTRIBUTION self, double coordinate ) -> bool" )
-Utility::DISTRIBUTION::isTertiaryDirectionalCoordinateValid;
+"isSecondaryDirectionalCoordinateValid(SYSTEM self, double coordinate ) -> bool" )
+Utility::SYSTEM::isSecondaryDirectionalCoordinateValid;
 
 %feature("autodoc",
-"normalizeLocalDirectionalCoordinates(DISTRIBUTION self, double primary_directional_coord, double secondary_directional_coord, double tertiary_directional_coord ) -> double, double, double" )
-Utility::DISTRIBUTION::normalizeLocalDirectionalCoordinates;
+"isTertiaryDirectionalCoordinateValid(SYSTEM self, double coordinate ) -> bool" )
+Utility::SYSTEM::isTertiaryDirectionalCoordinateValid;
 
-%ignore Utility::DISTRIBUTION::normalizeLocalDirectionalCoordinate( double [3] ) const;
+%feature("autodoc",
+"normalizeLocalDirectionalCoordinates(SYSTEM self, double primary_directional_coord, double secondary_directional_coord, double tertiary_directional_coord ) -> double, double, double" )
+Utility::SYSTEM::normalizeLocalDirectionalCoordinates;
 
-%extend Utility::DISTRIBUTION
+%ignore Utility::SYSTEM::normalizeLocalDirectionalCoordinate( double [3] ) const;
+
+%extend Utility::SYSTEM
 {
   // Normalize the local directional coordinates
-  void Utility::DISTRIBUTION::normalizeLocalDirectionalCoordinates(
+  void Utility::SYSTEM::normalizeLocalDirectionalCoordinates(
             const double raw_primary_directional_coord,
             const double raw_secondary_directional_coord,
             const double raw_tertiary_directional_coord,
@@ -120,15 +120,15 @@ Utility::DISTRIBUTION::normalizeLocalDirectionalCoordinates;
 }
 
 %feature("autodoc",
-"normalizeCartesianDirectionalCoordinates(DISTRIBUTION self, double x_directional_coord, double y_directional_coord, double z_directional_coord ) -> double, double, double" )
-Utility::DISTRIBUTION::normalizeCartesianDirectionalCoordinates;
+"normalizeCartesianDirectionalCoordinates(SYSTEM self, double x_directional_coord, double y_directional_coord, double z_directional_coord ) -> double, double, double" )
+Utility::SYSTEM::normalizeCartesianDirectionalCoordinates;
 
-%ignore Utility::DISTRIBUTION::normalizeCartesianDirectionalCoordinates( double [3] ) const;
+%ignore Utility::SYSTEM::normalizeCartesianDirectionalCoordinates( double [3] ) const;
 
-%extend Utility::DISTRIBUTION
+%extend Utility::SYSTEM
 {
   // Normalize the Cartesian directional coordinates
-  void Utility::DISTRIBUTION::normalizeCartesianDirectionalCoordinates(
+  void Utility::SYSTEM::normalizeCartesianDirectionalCoordinates(
             const double raw_x_directional_coord,
             const double raw_y_directional_coord,
             const double raw_z_directional_coord,
@@ -147,38 +147,38 @@ Utility::DISTRIBUTION::normalizeCartesianDirectionalCoordinates;
 }
 
 %feature("autodoc",
-"convertToCartesianDirectionalCoordinates(DISTRIBUTION self, double primary_directional_coord, double secondary_directional_coord, double tertiary_directional_coord ) -> double, double, double
+"convertToCartesianDirectionalCoordinates(SYSTEM self, double primary_directional_coord, double secondary_directional_coord, double tertiary_directional_coord ) -> double, double, double
 
 Convert the directional coordinates to cartesian coordinates. The first element of
 the returned tuple is the x_directional_coord. The first element of
 the returned tuple is the y_directional_coord. The first element of
 the returned tuple is the z_directional_coord. ")
-DISTRIBUTION::convertToCartesianDirectionalCoordinates;
+SYSTEM::convertToCartesianDirectionalCoordinates;
 
-%ignore Utility::DISTRIBUTION::convertToCartesianDirectionalCoordinates( double[3], double[3] );
+%ignore Utility::SYSTEM::convertToCartesianDirectionalCoordinates( double[3], double[3] );
 
 %feature("autodoc",
-"convertFromCartesianDirectionalCoordinates(DISTRIBUTION self, double x_directional_coord, double y_directional_coord, double z_directional_coord ) -> double, double, double
+"convertFromCartesianDirectionalCoordinates(SYSTEM self, double x_directional_coord, double y_directional_coord, double z_directional_coord ) -> double, double, double
 
 Convert the directional coordinates to cartesian coordinates. The first element of
 the returned tuple is the primary_directional_coord. The first element of
 the returned tuple is the secondary_directional_coord. The first element of
 the returned tuple is the tertiary_directional_coord. ")
-Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
+Utility::SYSTEM::convertFromCartesianDirectionalCoordinates;
 
-%ignore Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates( double[3], double[3] );
+%ignore Utility::SYSTEM::convertFromCartesianDirectionalCoordinates( double[3], double[3] );
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Macro for extending the rotation CoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %extend_rotation_coordinate_interface_setup_helper( DISTRIBUTION )
+%define %extend_rotation_coordinate_interface_setup_helper( SYSTEM )
 
 // Extend constructor to use std::vector<double>
-%extend Utility::DISTRIBUTION
+%extend Utility::SYSTEM
 {
-   DISTRIBUTION(
+   SYSTEM(
     const std::vector<double> axis )
   {
     // Make sure the sequence has 3 elements
@@ -188,7 +188,7 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
                       "The input axis must have 3 elements." );
     }
 
-    return new Utility::DISTRIBUTION(
+    return new Utility::SYSTEM(
       axis.data() );
   }
 }
@@ -198,22 +198,22 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
 //---------------------------------------------------------------------------//
 // Macro for setting up a basic SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %basic_spatial_coordinate_interface_setup( DISTRIBUTION )
+%define %basic_spatial_coordinate_interface_setup( SYSTEM )
 
 // Set up basic spatial interface
-%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Macro for setting up a translation SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %translation_spatial_coordinate_interface_setup( DISTRIBUTION )
+%define %translation_spatial_coordinate_interface_setup( SYSTEM )
 
 // Extend constructor to use std::vector<double>
-%extend Utility::DISTRIBUTION
+%extend Utility::SYSTEM
 {
-   DISTRIBUTION(
+   SYSTEM(
     const std::vector<double> origin )
   {
     // Make sure the sequence has 3 elements
@@ -223,25 +223,25 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
                       "The input origin must have 3 elements." );
     }
 
-    return new Utility::DISTRIBUTION(
+    return new Utility::SYSTEM(
       origin.data() );
   }
 }
 
 // Set up basic spatial interface
-%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Macro for setting up a general SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %general_spatial_coordinate_interface_setup( DISTRIBUTION )
+%define %general_spatial_coordinate_interface_setup( SYSTEM )
 
 // Extend constructor to use std::vector<double>
-%extend Utility::DISTRIBUTION
+%extend Utility::SYSTEM
 {
-   DISTRIBUTION(
+   SYSTEM(
     const std::vector<double> origin,
     const std::vector<double> axis )
   {
@@ -252,65 +252,65 @@ Utility::DISTRIBUTION::convertFromCartesianDirectionalCoordinates;
                       "The input origin and axis must have 3 elements." );
     }
 
-    return new Utility::DISTRIBUTION(
+    return new Utility::SYSTEM(
       origin.data(), axis.data() );
   }
 }
 
 // Set up basic spatial interface
-%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Macro for setting up a rotation SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %rotation_spatial_coordinate_interface_setup( DISTRIBUTION )
+%define %rotation_spatial_coordinate_interface_setup( SYSTEM )
 
 // Extend the constructor
-%extend_rotation_coordinate_interface_setup_helper( DISTRIBUTION )
+%extend_rotation_coordinate_interface_setup_helper( SYSTEM )
 
 // Set up basic spatial interface
-%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Macro for setting up a basic DirectionalCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %basic_directional_coordinate_interface_setup( DISTRIBUTION )
+%define %basic_directional_coordinate_interface_setup( SYSTEM )
 
 // Set up basic directional interface
-%basic_directional_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_directional_coordinate_interface_setup_helper( SYSTEM )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Macro for setting up a basic CoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %basic_coordinate_interface_setup( DISTRIBUTION )
+%define %basic_coordinate_interface_setup( SYSTEM )
 
 // Set up basic spatial interface
-%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
 // Set up basic directional interface
-%basic_directional_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_directional_coordinate_interface_setup_helper( SYSTEM )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Macro for setting up a rotation DirectionalCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
-%define %rotation_coordinate_interface_setup( DISTRIBUTION )
+%define %rotation_coordinate_interface_setup( SYSTEM )
 
 // Extend the constructor
-%extend_rotation_coordinate_interface_setup_helper( DISTRIBUTION )
+%extend_rotation_coordinate_interface_setup_helper( SYSTEM )
 
 // Set up basic spatial interface
-%basic_spatial_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
 // Set up basic directional interface
-%basic_directional_coordinate_interface_setup_helper( DISTRIBUTION )
+%basic_directional_coordinate_interface_setup_helper( SYSTEM )
 
 %enddef
 

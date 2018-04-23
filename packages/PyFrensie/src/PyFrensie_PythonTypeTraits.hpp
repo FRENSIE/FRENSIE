@@ -397,11 +397,11 @@ struct PythonTypeTraits<std::tuple<Types...> >
 template<typename KeyType, typename ValueType>
 struct PythonTypeTraits<std::map<KeyType,ValueType> >
 {
-  //! Create a Python (NumPy) object from a Teuchos::Array<T> object
+  //! Create a Python (NumPy) object from a std::map<KeyType,ValueType> object
   static inline PyObject* convertToPython( const std::map<KeyType,ValueType>& obj )
   { return Details::convertMapToPython( obj ); }
 
-  //! Create a Teuchos::Array<T> object from a Python object
+  //! Create a std::map<KeyType,ValueType> object from a Python object
   static inline std::map<KeyType,ValueType> convertFromPython( PyObject* py_obj )
   { return Details::convertPythonToMap<std::map<KeyType,ValueType> >( py_obj ); }
 
@@ -417,11 +417,11 @@ struct PythonTypeTraits<std::map<KeyType,ValueType> >
 template<typename KeyType, typename ValueType>
 struct PythonTypeTraits<std::unordered_map<KeyType,ValueType> >
 {
-  //! Create a Python (NumPy) object from a Teuchos::Array<T> object
+  //! Create a Python (NumPy) object from a std::unordered_map<KeyType,ValueType> object
   static inline PyObject* convertToPython( const std::unordered_map<KeyType,ValueType>& obj )
   { return Details::convertMapToPython( obj ); }
 
-  //! Create a Teuchos::Array<T> object from a Python object
+  //! Create a std::unordered_map<KeyType,ValueType> object from a Python object
   static inline std::unordered_map<KeyType,ValueType> convertFromPython( PyObject* py_obj )
   { return Details::convertPythonToMap<std::unordered_map<KeyType,ValueType> >( py_obj ); }
 

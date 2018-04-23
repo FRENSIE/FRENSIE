@@ -99,9 +99,9 @@ geometries.
 //   }
 // }
 
-// // General ignore directives
-// %ignore *::LengthUnit;
-// %ignore *::Length;
+// General ignore directives
+%ignore *::Volume;
+%ignore *::Area;
 // %ignore *::Ray;
 // %ignore *::AdvanceCompleteCallback;
 
@@ -157,87 +157,7 @@ class is shown below:
    reflected, normal = navigator.advanceToCellBoundaryAndGetSurfaceNormal()
 "
 
-%feature("autodoc",
-"getPointLocation(DagMCNavigator self, Sequence position, Sequence direction, Long cell_id ) -> PointLocation
-getPointLocation(DagMCNavigator self, Ray ray, Long cell_id) -> PointLocation
-
-The position and direction sequences must have a size of three. The point
-location returned can be one of three values:
-   1. PyFrensie.Geometry.POINT_INSIDE_CELL
-   2. PyFrensie.Geometry.POINT_ON_CELL
-   3. PyFrensie.Geometry.POINT_OUTSIDE_CELL
-" )
-Geometry::DagMCNavigator::getPointLocation;
-
-%feature("autodoc",
-"getSurfaceNormal(DagMCNavigator self, Long surface_id, Sequence position, Sequence direction) -> Numpy Array
-getSurfaceNormal(DagMCNavigator self, Long surface_id, Ray ray) -> Numpy Array
-
-The position and direction sequences must have a size of three. The returned
-value is a Numpy Array of size three.
-" )
-Geometry::DagMCNavigator::getSurfaceNormal;
-
-%feature("autodoc",
-"findCellContainingRay(DagMCNavigator self, Sequence position, Sequence direction) -> cell_id(Long)
-findCellContainingRay(DagMCNavigator self, Ray ray) -> cell_id(Long)
-
-The position and direction sequences must have a size of three.
-" )
-Geometry::DagMCNavigator::findCellContainingRay;
-
-%feature("autodoc",
-"setRay(DagMCNavigator self, Float x_position, Float y_position, Float z_position, Float x_direction, Float y_direction, Float z_direction)
-setRay(DagMCNavigator self, Sequence position, Sequence direction)
-setRay(DagMCNavigator self, Ray ray)
-
-setRay(DagMCNavigator self, Float x_position, Float y_position, Float z_position, Float x_direction, Float y_direction, Float z_direction, Long cell_id)
-setRay(DagMCNavigator self, Sequence position, Sequence direction, Long cell_id)
-setRay(DagMCNavigator self, Ray ray, Long cell_id)
-
-The position and direction sequences must have a size of three.
-" )
-Geometry::DagMCNavigator::setState;
-
-%feature("autodoc", "getPosition(DagMCNavigator self) -> Numpy Array")
-Geometry::DagMCNavigator::getPosition;
-
-%feature("autodoc", "getDirection(DagMCNavigator self) -> Numpy Array")
-Geometry::DagMCNavigator::getDirection;
-
-%feature("docstring")
-Geometry::DagMCNavigator::fireRay
-"
-The distance to the surface that was hit will be returned.
-"
-
-%feature("autdoc",
-"fireRayAndGetSurfaceHit(DagMCNavigator self) -> [distance_to_surface(Float), surface_hit(Long)]
-" )
-Geometry::DagMCNavigator::fireRayAndGetSurfaceHit;
-
-%feature("docstring")
-Geometry::DagMCNavigator::advanceToCellBoundary
-"
-If a reflecting surface was encountered at the cell boundary True will be
-returned. False will be returned if a normal surface was encountered.
-"
-
-%feature("autodoc",
-"advanceToCellBoundaryAndGetSurfaceNormal(DagMCNavigator self) -> [reflecting_surface(Bool),surface_normal(Numpy Array)]
-" )
-Geometry::DagMCNavigator::advanceToCellBoundaryAndGetSurfaceNormal;
-
-%feature("autodoc",
-"changeInternalRayDirection(DagMCNavigator self, Float x_direction, Float y_direction, Float z_direction)
-changeInternalRayDirection(DagMCNavigator self, Sequence direction)
-
-The direction sequence must have a size of three.
-" )
-Geometry::DagMCNavigator::changeDirection;
-
-// Allow shared pointers of DagMCNavigator objects
-%shared_ptr(Geometry::DagMCNavigator);
+%navigator_interface_setup( DagMCNavigator )
 
 // Ignore the findCellContainingRay methods that take a cache
 %ignore Geometry::DagMCNavigator::findCellContainingRay( const double[3], const double[3], Geometry::Navigator::CellIdSet& );
@@ -322,14 +242,14 @@ Geometry::DagMCNavigator::changeDirection;
 %feature("docstring")
 Geometry::DagMCModel
 "
-The DagMCModel class stores a geometric model, which can be from a CAD (.sat) file
-or a Root (.root) file. It can be used for querying properties of the geometry
+The DagMCModel class stores a geometric model, from a CAD (.sat).
+It can be used for querying properties of the geometry
 and for creating navigators, which can be used to traverse the geometry.
 A brief usage tutorial for this class is shown below:
 
    import PyFrensie.Geometry, numpy
 
-   model = PyFrensie.Geometry.createModel( 'my_geom.xml' )
+   model = PyFrensie.Geometry.createModel( 'my_geom.sat' )
 
    cells = model.getCells( True, True )
    materials = model.getMaterialIds()
@@ -339,120 +259,7 @@ A brief usage tutorial for this class is shown below:
    navigator = model.createNavigator()
 "
 
-
-%feature("autodoc", "getInstance() -> shared_ptr<DagMCModel>" )
-Geometry::DagMCModel::getInstance;
-
-%feature("autodoc", "isInitialized() -> bool" )
-Geometry::DagMCModel::isInitialized;
-
-%feature("autodoc", "getMaterialIds(DagMCModel self) -> set[material_id]" )
-Geometry::DagMCModel::getMaterialIds;
-
-%feature("autodoc", "getCells(DagMCModel self, bool include_void_cells, bool include_termination_cells) -> set[cell_id]")
-Geometry::DagMCModel::getCells;
-
-%feature("autodoc","getCellMaterialIds(DagMCModel self) -> dictionary[cell_id,material_id]" )
-Geometry::DagMCModel::getCellMaterialIds;
-
-%feature("autodoc", "getCellDensities(DagMCModel self) -> dictionary[cell_id,density(float)]" )
-Geometry::DagMCModel::getCellDensities;
-
-%feature("autodoc",
-"getCellEstimatorData(DagMCModel self) -> dictionary[estimator_id,estimator_data]
-
-The mapped value (estimator_data) is a tuple of size three with the following
-elements:
-   1. Estimator type (e.g. Geometry.CELL_TRACK_LENGTH_FLUX_ESTIMATOR)
-   2. Particle type (e.g. Geometry.NEUTRON)
-   3. Numpy array of cells assigned to this estimator
-" )
-Geometry::DagMCModel::getCellEstimatorData;
-
-%feature("autodoc", "createNavigator(DagMCModel self) -> Navigator" )
-Geometry::DagMCModel::createNavigator;
-
-// Allow shared pointers of DagMCNavigator objects
-%shared_ptr(Geometry::DagMCModel);
-
-// Add a few general typemaps
-%typemap(in,numinputs=0) Geometry::Model::MaterialIdSet& (Geometry::Model::MaterialIdSet temp) "$1 = &temp;"
-
-%typemap(argout) Geometry::Model::MaterialIdSet& {
-  %append_output(PyFrensie::convertToPython( *$1 ));
-}
-
-%typemap(in,numinputs=0) Geometry::Model::CellIdSet& (Geometry::Model::CellIdSet temp) "$1 = &temp;"
-
-%typemap(argout) Geometry::Model::CellIdSet& {
-  %append_output(PyFrensie::convertToPython( *$1 ));
-}
-
-%typemap(in,numinputs=0) Geometry::Model::CellIdMatIdMap& (Geometry::Model::CellIdMatIdMap temp) "$1 = &temp;"
-
-%typemap(argout) Geometry::Model::CellIdMatIdMap& {
-  %append_output(PyFrensie::convertToPython( *$1 ));
-}
-
-%typemap(in,numinputs=0) Geometry::Model::CellIdDensityMap& (Geometry::Model::CellIdDensityMap temp) "$1 = &temp;"
-
-%typemap(argout) Geometry::Model::CellIdDensityMap& {
-  std::map<Geometry::Model::InternalCellHandle,double> density_map;
-
-  Geometry::Model::CellIdDensityMap::const_iterator it = ($1)->begin();
-
-  while( it != ($1)->end() )
-  {
-    // insert raw elements in density_map
-    density_map.insert(std::pair<Geometry::Model::InternalCellHandle,double> (it->first, it->second.value()));
-
-    ++it;
-  }
-
-  %append_output(PyFrensie::convertToPython( density_map ));
-}
-
-// %typemap(in,numinputs=0) Geometry::Model::CellEstimatorIdDataMap& (Geometry::Model::CellEstimatorIdDataMap temp) "$1 = &temp;"
-
-// %typemap(argout) Geometry::Model::CellEstimatorIdDataMap& {
-//   std::map<Geometry::Model::InternalEstimatorHandle,Geometry::Model::CellEstimatorData> temp;
-
-//   // %append_output(PyFrensie::convertToPython( temp ));
-//   PyObject* py_array;
-//   return py_array;
-// }
-
-// Add some useful methods to the DagMCModel class
-%extend Geometry::DagMCModel
-{
-  // String conversion method
-  PyObject* __str__() const
-  {
-    return PyFrensie::convertToPython( $self->getName() );
-  }
-
-  // String representation method
-  PyObject* __repr__() const
-  {
-    std::string string_rep( "Model(" );
-    string_rep += $self->getName();
-    string_rep += ")";
-
-    return PyFrensie::convertToPython( string_rep );
-  }
-
-  // DagMCModel comparison method
-  bool __eq__( const Geometry::DagMCModel& that ) const
-  {
-    return $self == &that;
-  }
-
-  // DagMCModel comparison method
-  bool __ne__( const Geometry::DagMCModel& that ) const
-  {
-    return $self != &that;
-  }
-};
+%advanced_model_interface_setup( DagMCModel )
 
 // Include the DagMCModel class
 %include "Geometry_DagMCModel.hpp"

@@ -13,9 +13,7 @@ utility/distribution subpackage.
 
 The purpose of Distribution is to provide a variety of 1-D distributions and
 a variety of higher dimension distributions that can be used for both
-evaluation and sampling. All distributions are compatible with the
-Teuchos::ParameterList and its Python wrapper
-(PyTrilinos.Teuchos.ParameterList).
+evaluation and sampling.
 "
 %enddef
 

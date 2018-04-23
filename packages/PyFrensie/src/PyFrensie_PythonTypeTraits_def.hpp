@@ -529,7 +529,7 @@ inline PyObject* convertTupleToPython( const std::tuple<Types...>& obj )
   PyObject* py_tuple =
     PyTuple_New( Utility::TupleSize<std::tuple<Types...> >::value );
 
-  ConvertTupleElementsToPythonHelper<Types...>::convert<0>( obj, py_tuple );
+  ConvertTupleElementsToPythonHelper<Types...>::template convert<0>( obj, py_tuple );
 
   return py_tuple;
 }
