@@ -60,7 +60,6 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 #include "Geometry_Exceptions.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
-
 %}
 
 // C++ STL support
@@ -116,11 +115,16 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 %ignore *::Ray;
 %ignore *::AdvanceCompleteCallback;
 
-// Add a few general typemaps
-typedef unsigned long long InternalMaterialHandle;
-typedef unsigned long long InternalEstimatorHandle;
-typedef std::set<InternalCellHandle> CellIdSet;
-typedef Geometry::UnitAwareRay<void>::Length Length;
+// // Add a few general typedefs
+// typedef unsigned long long InternalCellHandle;
+// typedef unsigned long long InternalMaterialHandle;
+// typedef unsigned long long InternalEstimatorHandle;
+// typedef std::set<InternalCellHandle> CellIdSet;
+// typedef Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length Length;
+// typedef Geometry::Navigator::Length Length2;
+
+// Add a few general templates
+%template(DoubleVector) std::vector<double>;
 
 //---------------------------------------------------------------------------//
 // Add support for the PointLocation enum
@@ -139,6 +143,178 @@ typedef Geometry::UnitAwareRay<void>::Length Length;
 //---------------------------------------------------------------------------//
 // Include the ParticleType enum
 %include "Geometry_ParticleType.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the Ray class
+//---------------------------------------------------------------------------//
+// Include the Ray class
+%include "Geometry_Ray.hpp"
+
+// Add more detailed docstrings for the Ray class
+%feature("docstring")
+Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>
+"
+The Ray stores the state of a ray object (position and direction). A brief
+usage tutorial for this class is shown below:
+
+   import PyFrensie.Geometry, numpy
+
+   ray1 = PyFrensie.Geometry.Ray( 0, 0, 0, 0, 0, 1 )
+   ray2 = PyFrensie.Geometry.Ray( (0.,0.,0.), (0.,0.,1.) )
+   ray3 = PyFrensie.Geometry.Ray( [0.,0.,0.], [0.,0.,1.] )
+   ray4 = PyFrensie.Geometry.Ray( numpy.array( [0,0,0], dtype=numpy.dtype('d') ), numpy.array( [0,0,1], dtype=numpy.dtype('d') ) )
+
+   ray1.getPosition()
+   ray1.getDirection()
+
+   ray1.advanceHead( 1 )
+   ray1.changeDirection( 0, 1, 0 )
+   ray1.advanceHead( 1 )
+"
+
+%feature("docstring")
+Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::UnitAwareRay
+"
+The Ray object can be constructed with 6 doubles or two sequences (list,
+tuple, numpy.array or a combination). Make sure that the direction is valid
+(If Design-by-Contract is turned on in FRENSIE it will do the check for you.)
+"
+
+%feature("docstring")
+Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::getPosition
+"
+A NumPy array will be returned.
+"
+
+%feature("docstring")
+Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::getDirection
+"
+A NumPy array will be returned.
+"
+
+// Ignore the extra contructors
+// %ignore Geometry::UnitAwareRay<void>::UnitAwareRay( double[3], double[3], const bool );
+// %ignore Geometry::UnitAwareRay<void>::UnitAwareRay( double[3], double[3] );
+
+// Ignore the toStream method
+%ignore Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::toStream;
+
+
+
+// Add typemaps for converting Length to and from Python float
+%typemap(in) const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length {
+  $1 = Geometry::Navigator::Length::from_value( PyFrensie::convertFromPython<double>( $input ) );
+}
+
+%typemap(out) Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length {
+  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
+}
+
+%typemap(typecheck, precedence=90) (const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length) {
+  $1 = (PyFloat_Check($input)) ? 1 : 0;
+}
+
+// Add typemaps for converting Length* to and from Python array
+%typemap(in) const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length[3] (std::vector<Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length> temp_position){
+  std::vector<double> raw_position = PyFrensie::convertFromPython<std::vector<double> >( $input );
+
+  // Make sure the sequence has 3 elements
+  if( raw_position.size() != 3 )
+  {
+    PyErr_SetString( PyExc_TypeError,
+                     "The input position must have 3 elements." );
+  }
+  else
+  {
+    temp_position.resize(3);
+    temp_position[0] = Geometry::Navigator::Length::from_value( raw_position[0] );
+    temp_position[1] = Geometry::Navigator::Length::from_value( raw_position[1] );
+    temp_position[2] = Geometry::Navigator::Length::from_value( raw_position[2] );
+
+    $1 = temp_position.data();
+  }
+}
+
+%typemap(out) const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length* {
+  std::vector<double> raw_length(3);
+
+  raw_length[0] = Utility::getRawQuantity($1[0]);
+  raw_length[1] = Utility::getRawQuantity($1[1]);
+  raw_length[2] = Utility::getRawQuantity($1[2]);
+
+  %append_output(PyFrensie::convertToPython( raw_length ));
+
+  // Utility::ArrayView<const double> output_view( raw_length.data(), 3 );
+  // npy_intp dims[1] = { output_view.size() };
+
+  // $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+
+  // if( !$result )
+  //   SWIG_fail;
+}
+
+%typemap(typecheck, precedence=1050) (const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length[3]) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
+
+// Add typemaps for converting direction (double*) to and from Python array
+%typemap(in) const double direction[3] (std::vector<double> temp_direction){
+  temp_direction =
+    PyFrensie::convertFromPython<std::vector<double> >( $input );
+
+  // Make sure the sequence has 3 elements
+  if( temp_direction.size() != 3 )
+  {
+    PyErr_SetString( PyExc_TypeError,
+                     "The input direction must have 3 elements." );
+  }
+
+  $1 = temp_direction.data();
+}
+
+%typemap(out) const double* {
+  Utility::ArrayView<const double> output_view( $1, 3 );
+
+  npy_intp dims[1] = { output_view.size() };
+
+  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+
+  if( !$result )
+    SWIG_fail;
+}
+
+// Add typecheck out for the Ray class
+%typemap(typecheck, precedence=1050) (const double[3]) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
+
+// Add some useful methods to the Ray class
+%extend Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>
+{
+  // String conversion method
+  PyObject* __str__() const
+  {
+    std::ostringstream oss;
+
+    $self->toStream( oss );
+
+    return PyFrensie::convertToPython( oss.str() );
+  }
+
+  // String representation method
+  PyObject* __repr__() const
+  {
+    std::ostringstream oss;
+
+    $self->toStream( oss );
+
+    return PyFrensie::convertToPython( oss.str() );
+  }
+};
+
+%template(Ray) Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>;
 
 //---------------------------------------------------------------------------//
 // Add support for the Navigator class
@@ -191,32 +367,14 @@ class is shown below:
 %rename(fireRayAndGetSurfaceHit2) Geometry::Navigator::fireRay( InternalSurfaceHandle& );
 %rename(advanceToCellBoundaryAndGetSurfaceNormal) Geometry::Navigator::advanceToCellBoundary( double* );
 
-// Add a few general type maps
+// Add typemaps for the InternalSurfaceHandle
 %typemap(in,numinputs=0) Geometry::Navigator::InternalSurfaceHandle* (Geometry::Navigator::InternalSurfaceHandle temp) "$1 = &temp;"
 
 %typemap(argout) Geometry::Navigator::InternalSurfaceHandle* {
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
-%typemap(in,numinputs=0) double normal[3] (std::vector<double> temp)
-{
-  temp.resize( 3 );
-  $1 = temp.data();
-}
-
-%typemap(argout) double normal[3] {
-  Utility::ArrayView<const double> output_view( $1, 3 );
-
-  npy_intp dims[1] = { output_view.size() };
-
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
-
-  if( !$result )
-    SWIG_fail;
-
-  // %append_output(PyFrensie::convertToPython( output_view ));
-}
-
+// Add typemaps for the surface_normal
 %typemap(in,numinputs=0) double* surface_normal (std::vector<double> temp)
 {
   temp.resize( 3 );
@@ -224,22 +382,28 @@ class is shown below:
 }
 
 %typemap(argout) double* surface_normal {
-  Utility::ArrayView<const double> output_view( $1, 3 );
+  std::vector<double> normal(3);
 
-  npy_intp dims[1] = { output_view.size() };
+  normal[0] = $1[0];
+  normal[1] = $1[1];
+  normal[2] = $1[2];
 
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+  %append_output(PyFrensie::convertToPython( normal ));
 
-  if( !$result )
-    SWIG_fail;
+  // Utility::ArrayView<const double> output_view( $1, 3 );
+  // npy_intp dims[1] = { output_view.size() };
 
-  // %append_output(PyFrensie::convertToPython( output_view ));
+  // $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+
+  // if( !$result )
+  //   SWIG_fail;
+
+  // // %append_output(PyFrensie::convertToPython( output_view ));
 }
 
+// Add typemaps for the CellIdSet
 %typemap(in) Geometry::Navigator::CellIdSet& (std::set<unsigned long long> temp)
 {
-  std::cout << std::setprecision(16) << std::scientific << "Typemap called" << std::endl;
-
   $1 = &temp;
 }
 
@@ -247,11 +411,37 @@ class is shown below:
   %append_output(PyFrensie::convertToPython( *$1 ));
 }
 
+// Add typemaps for normal[3]
 %typemap(in,numinputs=0) double normal[3] (std::vector<double> temp)
 {
   temp.resize( 3 );
   $1 = temp.data();
 }
+
+%typemap(argout) double normal[3] {
+  std::vector<double> temp_normal(3);
+
+  temp_normal[0] = $1[0];
+  temp_normal[1] = $1[1];
+  temp_normal[2] = $1[2];
+
+  %append_output(PyFrensie::convertToPython( temp_normal ));
+
+  // Utility::ArrayView<const double> output_view( $1, 3 );
+
+  // npy_intp dims[1] = { output_view.size() };
+
+  // $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+
+  // if( !$result )
+  //   SWIG_fail;
+}
+
+// Add typemaps for converting the Length to and from a Python float/array
+%apply const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length[3] { const Geometry::Navigator::Length[3] };
+%apply const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length* { const Geometry::Navigator::Length* };
+%apply const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length { const Geometry::Navigator::Length };
+%apply Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length { Geometry::Navigator::Length };
 
 // Include the Navigator class
 %include "Geometry_Navigator.hpp"
@@ -540,196 +730,6 @@ An brief usage tutorial for this class is shown below:
 // //   return model;
 // // }
 // // %}
-
-//---------------------------------------------------------------------------//
-// Add support for the Ray class
-//---------------------------------------------------------------------------//
-// Include the Ray class
-%include "Geometry_Ray.hpp"
-
-// Add more detailed docstrings for the Ray class
-%feature("docstring")
-Geometry::UnitAwareRay<void>
-"
-The Ray stores the state of a ray object (position and direction). A brief
-usage tutorial for this class is shown below:
-
-   import PyFrensie.Geometry, numpy
-
-   ray1 = PyFrensie.Geometry.Ray( 0, 0, 0, 0, 0, 1 )
-   ray2 = PyFrensie.Geometry.Ray( (0.,0.,0.), (0.,0.,1.) )
-   ray3 = PyFrensie.Geometry.Ray( [0.,0.,0.], [0.,0.,1.] )
-   ray4 = PyFrensie.Geometry.Ray( numpy.array( [0,0,0], dtype=numpy.dtype('d') ), numpy.array( [0,0,1], dtype=numpy.dtype('d') ) )
-
-   ray1.getPosition()
-   ray1.getDirection()
-
-   ray1.advanceHead( 1 )
-   ray1.changeDirection( 0, 1, 0 )
-   ray1.advanceHead( 1 )
-"
-
-%feature("docstring")
-Geometry::UnitAwareRay<void>::UnitAwareRay
-"
-The Ray object can be constructed with 6 doubles or two sequences (list,
-tuple, numpy.array or a combination). Make sure that the direction is valid
-(If Design-by-Contract is turned on in FRENSIE it will do the check for you.)
-"
-
-%feature("docstring")
-Geometry::UnitAwareRay<void>::getPosition
-"
-A NumPy array will be returned.
-"
-
-%feature("docstring")
-Geometry::UnitAwareRay<void>::getDirection
-"
-A NumPy array will be returned.
-"
-
-// Ignore the extra contructors
-// %ignore Geometry::UnitAwareRay<void>::UnitAwareRay( double[3], double[3], const bool );
-// %ignore Geometry::UnitAwareRay<void>::UnitAwareRay( double[3], double[3] );
-
-// Ignore the toStream method
-%ignore Geometry::UnitAwareRay<void>::toStream;
-
-// Add a general typemap that will convert the input distance from a Python
-// Array object to a Geometry::UnitAwareRay<void>::Length.
-%typemap(in) const Geometry::UnitAwareRay<void>::Length distance (Geometry::UnitAwareRay<void>::Length temp_distance){
-  temp_distance =
-    PyFrensie::convertFromPython<Geometry::UnitAwareRay<void>::Length>( $input );
-
-  $1 = temp_distance;
-}
-
-// Add a general typemap that will convert the input position from a Python
-// Array object to a double*.
-%typemap(in) const Geometry::UnitAwareRay<void>::Length position[3] (std::vector<Geometry::UnitAwareRay<void>::Length> temp_position){
-  temp_position =
-    PyFrensie::convertFromPython<std::vector<Geometry::UnitAwareRay<void>::Length> >( $input );
-
-  // Make sure the sequence has 3 elements
-  if( temp_position.size() != 3 )
-  {
-    PyErr_SetString( PyExc_TypeError,
-                     "The input position must have 3 elements." );
-  }
-
-  $1 = temp_position.data();
-}
-
-// Add a general typemap that will convert the input direction from a Python
-// array object to a double*
-%typemap(in) const double direction[3] (std::vector<double> temp_direction){
-  temp_direction =
-    PyFrensie::convertFromPython<std::vector<double> >( $input );
-
-  // Make sure the sequence has 3 elements
-  if( temp_direction.size() != 3 )
-  {
-    PyErr_SetString( PyExc_TypeError,
-                     "The input direction must have 3 elements." );
-  }
-
-  $1 = temp_direction.data();
-}
-
-// The typecheck precedence, which is used by SWIG to determine which
-// overloaded method should be called, should be set to
-// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the C double arrays. You will get a
-// Python error when calling the overloaded method in Python without this
-// typecheck
-%typemap(typecheck, precedence=1050) (const double[3]) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
-
-%typemap(typecheck, precedence=1050) (const Geometry::UnitAwareRay<void>::Length[3]) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
-
-%typemap(typecheck, precedence=90) (const Geometry::UnitAwareRay<void>::Length) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
-
-// Add a general typemap that will convert the output position
-// from a double* to a Python array object
-%typemap(out) const Geometry::UnitAwareRay<void>::Length* {
-  Utility::ArrayView<const double> output_view( $1, 3 );
-
-  npy_intp dims[1] = { output_view.size() };
-
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
-
-  if( !$result )
-    SWIG_fail;
-}
-
-// Add a general typemap that will convert the output direction
-// from a double* to a Python array object
-%typemap(out) const double* {
-  Utility::ArrayView<const double> output_view( $1, 3 );
-
-  npy_intp dims[1] = { output_view.size() };
-
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
-
-  if( !$result )
-    SWIG_fail;
-}
-
-// Add a general typemap that will convert the output position or direction
-// from a double* to a Python array object
-%typemap(out) Geometry::UnitAwareRay<void>::Length {
-  $result = PyFloat_FromDouble($1);
-
-  if( !$result )
-    SWIG_fail;
-}
-
-// Add some useful methods to the Ray class
-%extend Geometry::UnitAwareRay<void>
-{
-  // Constructor
-  UnitAwareRay<void>( const double x_position,
-                      const double y_position,
-                      const double z_position,
-                      const double x_direction,
-                      const double y_direction,
-                      const double z_direction )
-  {
-    return new Geometry::UnitAwareRay<void>( x_position,
-                                             y_position,
-                                             z_position,
-                                             x_direction,
-                                             y_direction,
-                                             z_direction );
-  }
-
-  // String conversion method
-  PyObject* __str__() const
-  {
-    std::ostringstream oss;
-
-    $self->toStream( oss );
-
-    return PyFrensie::convertToPython( oss.str() );
-  }
-
-  // String representation method
-  PyObject* __repr__() const
-  {
-    std::ostringstream oss;
-
-    $self->toStream( oss );
-
-    return PyFrensie::convertToPython( oss.str() );
-  }
-};
-
-%template(Ray) Geometry::UnitAwareRay<void>;
 
 // Specific geometry type support
 // %include "Geometry_DagMC.i"

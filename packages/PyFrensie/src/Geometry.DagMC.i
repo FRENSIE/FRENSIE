@@ -159,77 +159,81 @@ class is shown below:
 
 %navigator_interface_setup( DagMCNavigator )
 
-// Ignore the findCellContainingRay methods that take a cache
-%ignore Geometry::DagMCNavigator::findCellContainingRay( const double[3], const double[3], Geometry::Navigator::CellIdSet& );
-%ignore Geometry::DagMCNavigator::findCellContainingRay( const Ray&, Geometry::Navigator::CellIdSet& );
-%ignore Geometry::DagMCNavigator::findCellContainingRay( const Ray&, Geometry::Navigator::CellIdSet& ) const;
+// // Ignore the findCellContainingRay methods that take a cache
+// %ignore Geometry::DagMCNavigator::findCellContainingRay( const double[3], const double[3], Geometry::Navigator::CellIdSet& );
+// %ignore Geometry::DagMCNavigator::findCellContainingRay( const Ray&, Geometry::Navigator::CellIdSet& );
+// %ignore Geometry::DagMCNavigator::findCellContainingRay( const Ray&, Geometry::Navigator::CellIdSet& ) const;
 
-// Rename a few overloaded methods
-%rename(fireRayAndGetSurfaceHit) Geometry::DagMCNavigator::fireRay( InternalSurfaceHandle* );
-%rename(fireRayAndGetSurfaceHit2) Geometry::DagMCNavigator::fireRay( InternalSurfaceHandle& );
-%rename(advanceToCellBoundaryAndGetSurfaceNormal) Geometry::DagMCNavigator::advanceToCellBoundary( double* );
+// // Rename a few overloaded methods
+// %rename(fireRayAndGetSurfaceHit) Geometry::DagMCNavigator::fireRay( InternalSurfaceHandle* );
+// %rename(fireRayAndGetSurfaceHit2) Geometry::DagMCNavigator::fireRay( InternalSurfaceHandle& );
+// %rename(advanceToCellBoundaryAndGetSurfaceNormal) Geometry::DagMCNavigator::advanceToCellBoundary( double* );
 
-// Add a few general type maps
-%typemap(in,numinputs=0) Geometry::DagMCNavigator::InternalSurfaceHandle* (Geometry::Navigator::InternalSurfaceHandle temp) "$1 = &temp;"
+// // Add a few general type maps
+// %typemap(in,numinputs=0) Geometry::DagMCNavigator::InternalSurfaceHandle* (Geometry::Navigator::InternalSurfaceHandle temp) "$1 = &temp;"
 
-%typemap(argout) Geometry::Navigator::InternalSurfaceHandle* {
-  %append_output(PyFrensie::convertToPython( *$1 ));
-}
+// %typemap(argout) Geometry::Navigator::InternalSurfaceHandle* {
+//   %append_output(PyFrensie::convertToPython( *$1 ));
+// }
 
-%typemap(in,numinputs=0) double normal[3] (std::vector<double> temp)
-{
-  temp.resize( 3 );
-  $1 = temp.data();
-}
+// %typemap(in,numinputs=0) double normal[3] (std::vector<double> temp)
+// {
+//   temp.resize( 3 );
+//   $1 = temp.data();
+// }
 
-%typemap(argout) double normal[3] {
-  Utility::ArrayView<const double> output_view( $1, 3 );
+// %typemap(argout) double normal[3] {
+//   Utility::ArrayView<const double> output_view( $1, 3 );
 
-  npy_intp dims[1] = { output_view.size() };
+//   npy_intp dims[1] = { output_view.size() };
 
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+//   $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
 
-  if( !$result )
-    SWIG_fail;
+//   if( !$result )
+//     SWIG_fail;
 
-  // %append_output(PyFrensie::convertToPython( output_view ));
-}
+//   // %append_output(PyFrensie::convertToPython( output_view ));
+// }
 
-%typemap(in,numinputs=0) double* surface_normal (std::vector<double> temp)
-{
-  temp.resize( 3 );
-  $1 = temp.data();
-}
+// %typemap(in,numinputs=0) double* surface_normal (std::vector<double> temp)
+// {
+//   temp.resize( 3 );
+//   $1 = temp.data();
+// }
 
-%typemap(argout) double* surface_normal {
-  Utility::ArrayView<const double> output_view( $1, 3 );
+// %typemap(argout) double* surface_normal {
+//   Utility::ArrayView<const double> output_view( $1, 3 );
 
-  npy_intp dims[1] = { output_view.size() };
+//   npy_intp dims[1] = { output_view.size() };
 
-  $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
+//   $result = PyArray_SimpleNewFromData( 1, dims, NPY_DOUBLE, (void*)output_view.data() );
 
-  if( !$result )
-    SWIG_fail;
+//   if( !$result )
+//     SWIG_fail;
 
-  // %append_output(PyFrensie::convertToPython( output_view ));
-}
+//   // %append_output(PyFrensie::convertToPython( output_view ));
+// }
 
-%typemap(in) Geometry::Navigator::CellIdSet& (std::set<unsigned long long> temp)
-{
-  std::cout << std::setprecision(16) << std::scientific << "Typemap called" << std::endl;
+// %typemap(in) Geometry::Navigator::CellIdSet& (std::set<unsigned long long> temp)
+// {
+//   std::cout << std::setprecision(16) << std::scientific << "Typemap called" << std::endl;
 
-  $1 = &temp;
-}
+//   $1 = &temp;
+// }
 
-%typemap(argout) Geometry::Navigator::InternalSurfaceHandle* {
-  %append_output(PyFrensie::convertToPython( *$1 ));
-}
+// %typemap(argout) Geometry::Navigator::InternalSurfaceHandle* {
+//   %append_output(PyFrensie::convertToPython( *$1 ));
+// }
 
-%typemap(in,numinputs=0) double normal[3] (std::vector<double> temp)
-{
-  temp.resize( 3 );
-  $1 = temp.data();
-}
+// %typemap(in,numinputs=0) double normal[3] (std::vector<double> temp)
+// {
+//   temp.resize( 3 );
+//   $1 = temp.data();
+// }
+
+// // %apply const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length position[3] { const Geometry::DagMCNavigator::Length position[3] };
+// // %apply const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length[3] { const Geometry::DagMCNavigator::Length[3] };
+// // %apply const Geometry::UnitAwareRay<Geometry::Navigator::LengthUnit>::Length* { const Geometry::DagMCNavigator::Length* };
 
 // Include the DagMCNavigator class
 %include "Geometry_DagMCNavigator.hpp"
