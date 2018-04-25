@@ -84,6 +84,7 @@ class DagMCNavigatorTestCase(unittest.TestCase):
     def testFindCellContainingRay(self):
         "*Test Geometry.Navigator findCellContainingRay"
         navigator = self.model.createNavigator()
+        cell_ids = self.model.getCells(True, True)
 
         ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
         cell = navigator.findCellContainingRay( ray )
@@ -97,6 +98,21 @@ class DagMCNavigatorTestCase(unittest.TestCase):
 
         ray = Geometry.Ray( -40.0, -40.0, 64.0, 0.0, 0.0, 1.0 )
         cell = navigator.findCellContainingRay( ray.getPosition(), ray.getDirection() )
+
+        self.assertEqual( cell, 55 )
+
+        ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+        cell = navigator.findCellContainingRay( ray, cell_ids )
+
+        self.assertEqual( cell, 53 )
+
+        ray = Geometry.Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 )
+        cell = navigator.findCellContainingRay( ray, cell_ids )
+
+        self.assertEqual( cell, 54 )
+
+        ray = Geometry.Ray( -40.0, -40.0, 64.0, 0.0, 0.0, 1.0 )
+        cell = navigator.findCellContainingRay( ray.getPosition(), ray.getDirection(), cell_ids )
 
         self.assertEqual( cell, 55 )
 

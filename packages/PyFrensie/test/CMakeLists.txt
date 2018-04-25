@@ -76,21 +76,6 @@ PyFrensie_MAKE_TEST(tstGeometry.Ray)
 ADD_TEST(PyFrensie.Geometry.Ray_test ${PYTHON_EXECUTABLE} tstGeometry.Ray.py)
 SET_PROPERTY(TEST PyFrensie.Geometry.Ray_test PROPERTY LABELS pyfrensie)
 
-# # Add the Geometry.createModel unit tests
-# IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
-#   PyFrensie_MAKE_TEST(tstGeometry.createModel)
-
-#   IF(FRENSIE_ENABLE_DAGMC)
-#     ADD_TEST(PyFrensie.Geometry.createModel_DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.createModel.py --dagmc_sat_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_dagmc_geom.sat)
-#     SET_PROPERTY(TEST PyFrensie.Geometry.createModel_DagMC_test PROPERTY LABELS pyfrensie dagmc)
-#   ENDIF()
-
-#   IF(FRENSIE_ENABLE_ROOT)
-#     ADD_TEST(PyFrensie.Geometry.createModel_Root_test ${PYTHON_EXECUTABLE} tstGeometry.createModel.py --root_xmlfile=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_root_geom.xml)
-#     SET_PROPERTY(TEST PyFrensie.Geometry.createModel_DagMC_test PROPERTY LABELS pyfrensie root)
-#   ENDIF()
-# ENDIF()
-
 # Add the Geometry.ModelProperties unit tests
 IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
   PyFrensie_MAKE_TEST(tstGeometry.ModelProperties)
