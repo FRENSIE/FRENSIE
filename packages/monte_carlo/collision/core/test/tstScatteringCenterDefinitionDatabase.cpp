@@ -190,6 +190,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinitionDatabase,
     {
       std::shared_ptr<const Data::PhotoatomicDataProperties> properties(
                new Data::NativeEPRPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -201,6 +202,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinitionDatabase,
     {
       std::shared_ptr<const Data::AdjointPhotoatomicDataProperties> properties(
                new Data::NativeEPRAdjointPhotoatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -212,6 +214,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinitionDatabase,
     {
       std::shared_ptr<const Data::ElectroatomicDataProperties> properties(
                new Data::NativeEPRElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );
@@ -223,6 +226,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ScatteringCenterDefinitionDatabase,
     {
       std::shared_ptr<const Data::AdjointElectroatomicDataProperties> properties(
                new Data::NativeEPRAdjointElectroatomicDataProperties(
+                                             1.0*amu,
                                              boost::filesystem::current_path(),
                                              0,
                                              Data::H_ATOM ) );

@@ -25,7 +25,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::Photoatom> ace_photoatom;
+std::shared_ptr<const MonteCarlo::Photoatom> ace_photoatom;
 
 //---------------------------------------------------------------------------//
 // Tests.

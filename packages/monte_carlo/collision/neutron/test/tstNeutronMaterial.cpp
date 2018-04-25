@@ -9,199 +9,157 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NeutronMaterial.hpp"
+#include "Data_ScatteringCenterPropertiesDatabase.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+using Utility::Units::MeV;
+using boost::units::si::kelvin;
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_cross_sections_xml_directory;
 
-Teuchos::RCP<MonteCarlo::NeutronMaterial> material;
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-void initializeSolidHydrogen()
-{
-  // Assign the name of the cross_sections.xml file with path
-  std::string cross_section_xml_file = test_cross_sections_xml_directory;
-  cross_section_xml_file += "/cross_sections.xml";
-
-  // Read in the xml file storing the cross section table information
-  Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile(
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
-
-  std::unordered_set<std::string> nuclide_aliases;
-  nuclide_aliases.insert( "H-1_293.6K" );
-
-  MonteCarlo::SimulationProperties properties;
-
-  MonteCarlo::NuclideFactory nuclide_factory(test_cross_sections_xml_directory,
-					     cross_section_table_info,
-					     nuclide_aliases,
-                                             properties );
-
-  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> >
-    nuclide_map;
-
-  nuclide_factory.createNuclideMap( nuclide_map );
-
-  Teuchos::Array<double> nuclide_fractions( 1 );
-  Teuchos::Array<std::string> nuclide_names( 1 );
-
-  nuclide_fractions[0] = -1.0; // weight fraction
-  nuclide_names[0] = "H-1_293.6K";
-
-  material.reset( new MonteCarlo::NeutronMaterial( 0,
-					       -1.0, // mass density (g/cm^3)
-					       nuclide_map,
-					       nuclide_fractions,
-					       nuclide_names ) );
-}
+std::shared_ptr<const MonteCarlo::NeutronMaterial> material;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the material id can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getId )
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getId )
 {
-  initializeSolidHydrogen();
-
-  TEST_EQUALITY_CONST( material->getId(), 0 );
+  FRENSIE_CHECK_EQUAL( material->getId(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number density can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getNumberDensity )
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getNumberDensity )
 {
-  TEST_FLOATING_EQUALITY(material->getNumberDensity(), 0.5975385703365, 1e-13);
+  FRENSIE_CHECK_FLOATING_EQUALITY(material->getNumberDensity(), 0.5975385703365, 1e-13);
 }
 
 //---------------------------------------------------------------------------//
 // Check that the macroscopic total cross section can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getMacroscopicTotalCrossSection )
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getMacroscopicTotalCrossSection )
 {
   double cross_section = material->getMacroscopicTotalCrossSection( 1.0e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 703.45055504218, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 703.45055504218, 1e-13 );
 
   cross_section = material->getMacroscopicTotalCrossSection( 2.0e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.28847574157342, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.28847574157342, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the macroscopic absorption cross section can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen,
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen,
 		   getMacroscopicAbsorptionCrossSection )
 {
   double cross_section =
     material->getMacroscopicAbsorptionCrossSection( 1.0e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
 
   cross_section = material->getMacroscopicAbsorptionCrossSection( 2.0e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the survival probability can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, getSurvivalProbability )
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getSurvivalProbability )
 {
   double survival_prob = material->getSurvivalProbability( 1.0e-11 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.98581342025975, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.98581342025975, 1e-13 );
 
   survival_prob = material->getSurvivalProbability( 2.0e1 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.99994361011057, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( survival_prob, 0.99994361011057, 1e-13 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a reaction cross section can be returned
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen,
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen,
 		   getMacroscopicReationCrossSection )
 {
   double cross_section =
     material->getMacroscopicReactionCrossSection( 1.0e-11,
 						  MonteCarlo::N__TOTAL_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 703.45055504218, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 703.45055504218, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 						   2.0e1,
 						   MonteCarlo::N__TOTAL_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.28847574157342, 1e-9 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.28847574157342, 1e-9 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					       1.0e-11,
 					       MonteCarlo::N__N_ELASTIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 693.47099764974, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 693.47099764974, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					       2.0e1,
 					       MonteCarlo::N__N_ELASTIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.28845947418338, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.28845947418338, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					           1.0e-11,
 					           MonteCarlo::N__GAMMA_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					           2.0e1,
 					           MonteCarlo::N__GAMMA_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					       1.0e-11,
 					       MonteCarlo::N__TOTAL_D_PRODUCTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 9.9795573924326, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					       2.0e1,
 					       MonteCarlo::N__TOTAL_D_PRODUCTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6267115171099e-5, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					                      1.0e-11,
 					                      MonteCarlo::N__DPA );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					                      2.0e1,
 					                      MonteCarlo::N__DPA );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.833066682067e-4, 1e-13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.833066682067e-4, 1e-13 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
 					         1.0e-11,
 					         MonteCarlo::N__FISSION_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a neutron can collide with a material
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, collideAnalogue )
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, collideAnalogue )
 {
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -212,15 +170,13 @@ TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, collideAnalogue )
 
   material->collideAnalogue( neutron, bank );
 
-  TEST_EQUALITY_CONST( neutron.getWeight(), 1.0 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
-
-  std::cout << neutron << std::endl;
+  FRENSIE_CHECK_EQUAL( neutron.getWeight(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a neutron can collide with a material
-TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, collideSurvivalBias )
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, collideSurvivalBias )
 {
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -231,29 +187,88 @@ TEUCHOS_UNIT_TEST( NeutronMaterial_hydrogen, collideSurvivalBias )
 
   material->collideSurvivalBias( neutron, bank );
 
-  TEST_FLOATING_EQUALITY( neutron.getWeight(), 0.98581348192787, 1e-14 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
-
-  std::cout << neutron << std::endl;
+  FRENSIE_CHECK_FLOATING_EQUALITY( neutron.getWeight(), 0.98581348192787, 1e-14 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom main function
+// Custom Setup
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-  clp.setOption( "test_cross_sections_xml_directory",
-		 &test_cross_sections_xml_directory,
-		 "Test cross_sections.xml file name" );
+std::string test_scattering_center_database_name;
+
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
+{
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_database",
+                                        test_scattering_center_database_name, "",
+                                        "Test scattering center database name "
+                                        "with path" );
+}
+
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
+{
+  MonteCarlo::NuclideFactory::NuclideNameMap nuclide_map;
+
+  {
+    // Determine the database directory
+    boost::filesystem::path database_path =
+      test_scattering_center_database_name;
+    
+    boost::filesystem::path data_directory = database_path.parent_path();
+
+    // Load the database
+    const Data::ScatteringCenterPropertiesDatabase database( database_path );
+    
+    const Data::NuclideProperties& h1_properties =
+      database.getNuclideProperties( 1001 );
+
+    // Initialize the nuclide definitions
+    MonteCarlo::ScatteringCenterDefinitionDatabase nuclide_definitions;
+
+    MonteCarlo::ScatteringCenterDefinition& h1_293K_definition =
+      nuclide_definitions.createDefinition( "H-1_293.6K", 1001 );
+
+    h1_293K_definition.setNuclearDataProperties(
+                                 h1_properties.getSharedNuclearDataProperties(
+                                         Data::NuclearDataProperties::ACE_FILE,
+                                         7,
+                                         2.53010E-08*MeV,
+                                         true ) );
+  
+    MonteCarlo::NuclideFactory::ScatteringCenterNameSet nuclides_to_create;
+    nuclides_to_create.insert( "H-1_293.6K" );
+
+    MonteCarlo::SimulationProperties properties;
+    properties.setNumberOfNeutronHashGridBins( 100 );
+    properties.setUnresolvedResonanceProbabilityTableModeOn();
+    properties.setParticleMode( MonteCarlo::NEUTRON_MODE );
+
+    MonteCarlo::NuclideFactory nuclide_factory( data_directory,
+                                                nuclides_to_create,
+                                                nuclide_definitions,
+                                                properties,
+                                                true );
+
+  
+
+    nuclide_factory.createNuclideMap( nuclide_map );
+  }
+
+  std::vector<double> nuclide_fractions( {-1.0} ); // weight fraction
+  std::vector<std::string> nuclide_names( {"H-1_293.6K"} );
+
+  material.reset( new MonteCarlo::NeutronMaterial( 0,
+                                                   -1.0, // mass density (g/cm^3)
+                                                   nuclide_map,
+                                                   nuclide_fractions,
+                                                   nuclide_names ) );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
+
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstNeutronMaterial.cpp

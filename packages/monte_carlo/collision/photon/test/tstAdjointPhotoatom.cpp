@@ -22,7 +22,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::AdjointPhotoatom> adjoint_photoatom;
+std::shared_ptr<const MonteCarlo::AdjointPhotoatom> adjoint_photoatom;
 
 //---------------------------------------------------------------------------//
 // Tests.

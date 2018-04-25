@@ -57,7 +57,7 @@ void DecoupledPhotonProductionReaction::initialize(
   // Make sure the photon production distribution is valid
   testPrecondition( photon_production_distribution.get() != NULL );
   // Make sure the total reaction is valid
-  testPrecondition( d_total_neutron_reaction.get() != NULL );
+  testPrecondition( total_reaction.get() != NULL );
   
   d_base_reaction_type = base_reaction_type;
   d_photon_production_id = photon_production_id;

@@ -81,14 +81,20 @@ protected:
 
 private:
 
+  // Set the max energy index
+  void setMaxEnergyIndex();
+
   // The processed incoming energy grid
   std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
 
   // The processed cross section values evaluated on the incoming e. grid
   std::shared_ptr<const std::vector<double> > d_cross_section;
 
-  // The threshold energy
+  // The threshold energy index
   size_t d_threshold_energy_index;
+
+  // The max energy index
+  size_t d_max_energy_index;
 
   // The hash-based grid searcher
   std::shared_ptr<const Utility::HashBasedGridSearcher<double> >

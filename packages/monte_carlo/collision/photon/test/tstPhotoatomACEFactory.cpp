@@ -36,7 +36,7 @@ double atomic_weight;
 // Check that a basic photoatom can be created
 FRENSIE_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 {
-  std::shared_ptr<MonteCarlo::Photoatom> atom;
+  std::shared_ptr<const MonteCarlo::Photoatom> atom;
 
   MonteCarlo::SimulationProperties properties;
   properties.setNumberOfPhotonHashGridBins( 100 );
@@ -227,7 +227,7 @@ FRENSIE_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 // Check that a photoatom with Doppler broadening data can be created
 FRENSIE_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 {
-  std::shared_ptr<MonteCarlo::Photoatom> atom;
+  std::shared_ptr<const MonteCarlo::Photoatom> atom;
   
   MonteCarlo::SimulationProperties properties;
   properties.setNumberOfPhotonHashGridBins( 100 );
@@ -431,7 +431,7 @@ FRENSIE_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 // Check that a photoatom with subshell photoelectric data can be created
 FRENSIE_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 {
-  std::shared_ptr<MonteCarlo::Photoatom> atom;
+  std::shared_ptr<const MonteCarlo::Photoatom> atom;
   
   MonteCarlo::SimulationProperties properties;
   properties.setNumberOfPhotonHashGridBins( 100 );

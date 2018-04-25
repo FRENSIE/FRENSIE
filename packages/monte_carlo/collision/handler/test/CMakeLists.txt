@@ -14,6 +14,13 @@ TARGET_LINK_LIBRARIES(tstAdjointPhotonCollisionHandler monte_carlo_collision_nat
 ADD_TEST(AdjointPhotonCollisionHandler_test tstAdjointPhotonCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
 SET_PROPERTY(TEST AdjointPhotonCollisionHandler_test PROPERTY LABELS photon adjoint native)
 
+ADD_EXECUTABLE(tstNeutronCollisionHandler
+  tstNeutronCollisionHandler.cpp
+  ${FRENSIE_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNeutronCollisionHandler monte_carlo_collision_native)
+ADD_TEST(NeutronCollisionHandler_test tstNeutronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
+SET_PROPERTY(TEST NeutronCollisionHandler_test PROPERTY LABELS neutron)
+
 ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})

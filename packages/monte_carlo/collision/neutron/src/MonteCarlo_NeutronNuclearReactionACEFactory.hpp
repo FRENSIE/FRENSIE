@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NuclearReactionACEFactory.hpp
+//! \file   MonteCarlo_NeutronNuclearReactionACEFactory.hpp
 //! \author Alex Robinson
-//! \brief  Nuclear reaction factory class declaration
+//! \brief  Neutron nuclear reaction factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NUCLEAR_REACTION_ACE_FACTORY_HPP
-#define MONTE_CARLO_NUCLEAR_REACTION_ACE_FACTORY_HPP
+#ifndef MONTE_CARLO_NEUTRON_NUCLEAR_REACTION_ACE_FACTORY_HPP
+#define MONTE_CARLO_NEUTRON_NUCLEAR_REACTION_ACE_FACTORY_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -35,13 +35,13 @@ namespace MonteCarlo{
  * The array parameters used in the class constructor have the same name as
  * the corresponding ACE data block.
  */
-class NuclearReactionACEFactory
+class NeutronNuclearReactionACEFactory
 {
 
 public:
 
   //! Constructor
-  NuclearReactionACEFactory(
+  NeutronNuclearReactionACEFactory(
           const std::string& table_name,
           const double atomic_weight_ratio,
           const double temperature,
@@ -52,7 +52,7 @@ public:
           const Data::XSSNeutronDataExtractor& raw_nuclide_data );
 
   //! Destructor
-  virtual ~NuclearReactionACEFactory()
+  virtual ~NeutronNuclearReactionACEFactory()
   { /* ... */ }
 
   //! Create the scattering reactions
@@ -187,8 +187,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLONUCLEAR_REACTION_ACE_FACTORY_HPP
+#endif // end MONTE_CARLO_NEUTRON_NUCLEAR_REACTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NuclearReactionACEFactory.hpp
+// end MonteCarlo_NeutronNuclearReactionACEFactory.hpp
 //---------------------------------------------------------------------------//
