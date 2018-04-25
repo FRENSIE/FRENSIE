@@ -29,10 +29,10 @@
 namespace Geometry{
 
 /*! The Root geometry model
- * \details This class is a singleton since Root currently does not allow 
- * multiple geometries to be initialized in a single program. Once a Root 
+ * \details This class is a singleton since Root currently does not allow
+ * multiple geometries to be initialized in a single program. Once a Root
  * model is initialized cell properties can be queried and navigators can be
- * created. 
+ * created.
  */
 class RootModel : public Model
 {
@@ -70,10 +70,14 @@ public:
                  const bool include_void_cells,
                  const bool include_termination_cells ) const override;
 
+  // SWIG has a difficult time dealing with template templates and will throw a
+  // Error: Syntax error in input(3).
+  #if !defined SWIG
   //! Get the cell materials
   template<template<typename,typename,typename...> class MapType>
   void getCellMaterialNames( MapType<InternalCellHandle,std::string>&
                              cell_id_mat_name_map ) const;
+  #endif // end !defined SWIG
 
   //! Get the cell material ids
   void getCellMaterialIds( CellIdMatIdMap& cell_id_mat_id_map ) const override;
@@ -101,7 +105,7 @@ public:
   RootNavigator* createNavigatorAdvanced(
                                     const Navigator::AdvanceCompleteCallback&
                                     advance_complete_callback ) const override;
-  
+
   //! Create a raw, heap-allocated navigator
   RootNavigator* createNavigatorAdvanced() const override;
 
@@ -181,9 +185,11 @@ public:
 
 } // end Geometry namespace
 
+#if !defined SWIG
 BOOST_SERIALIZATION_CLASS_VERSION( RootModel, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootModel, Geometry );
 EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModel );
+#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template Includes

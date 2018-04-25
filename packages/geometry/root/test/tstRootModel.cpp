@@ -45,7 +45,7 @@ FRENSIE_UNIT_TEST( RootModel, initialize )
 {
   std::shared_ptr<Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   FRENSIE_CHECK( !model->isInitialized() );
   FRENSIE_CHECK_NO_THROW( model->initialize( *model_properties ) );
   FRENSIE_CHECK( model->isInitialized() );
@@ -62,7 +62,7 @@ FRENSIE_UNIT_TEST( RootModel, getModelProperties )
     model->getModelProperties();
 
   FRENSIE_CHECK( properties.getModelFileName().find( "basic_root_geometry.root" ) < properties.getModelFileName().size() );
-  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "mat" );
+  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "material" );
   FRENSIE_CHECK_EQUAL( properties.getVoidMaterialName(), "void" );
   FRENSIE_CHECK_EQUAL( properties.getTerminalMaterialName(), "graveyard" );
 }
@@ -92,7 +92,7 @@ FRENSIE_UNIT_TEST( RootModel, getCells )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   Geometry::Model::CellIdSet cells;
 
   // Get all cells except the termination cells
@@ -140,7 +140,7 @@ FRENSIE_UNIT_TEST( RootModel, getCellMaterialNames )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   std::map<Geometry::Model::InternalCellHandle,std::string>
     cell_id_material_name_map;
 
@@ -178,7 +178,7 @@ FRENSIE_UNIT_TEST( RootModel, getCellDensities )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   Geometry::Model::CellIdDensityMap cell_id_density_map;
 
   model->getCellDensities( cell_id_density_map );
@@ -209,7 +209,7 @@ FRENSIE_UNIT_TEST( RootModel, doesCellExist )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   FRENSIE_CHECK( model->doesCellExist( 1 ) );
   FRENSIE_CHECK( model->doesCellExist( 2 ) );
   FRENSIE_CHECK( model->doesCellExist( 3 ) );
@@ -223,7 +223,7 @@ FRENSIE_UNIT_TEST( RootModel, isTerminationCell )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   FRENSIE_CHECK( !model->isTerminationCell( 1 ) );
   FRENSIE_CHECK( !model->isTerminationCell( 2 ) );
   FRENSIE_CHECK( model->isTerminationCell( 3 ) );
@@ -235,7 +235,7 @@ FRENSIE_UNIT_TEST( RootModel, isVoidCell )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   FRENSIE_CHECK( model->isVoidCell( 1 ) );
   FRENSIE_CHECK( !model->isVoidCell( 2 ) );
   FRENSIE_CHECK( !model->isVoidCell( 3 ) );
@@ -247,7 +247,7 @@ FRENSIE_UNIT_TEST( RootModel, getCellVolume )
 {
   std::shared_ptr<const Geometry::RootModel> model =
     Geometry::RootModel::getInstance();
-  
+
   FRENSIE_CHECK_FLOATING_EQUALITY( model->getCellVolume( 1 ),
                                    934.550153050213*cgs::cubic_centimeter,
                                    1e-9 );
@@ -315,7 +315,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( RootModel, archive, TestArchives )
   if( cache_test_archive && archive_name.find(".h5a") >= archive_name.size() )
   {
     std::unique_ptr<std::ofstream> ofstream;
-    
+
     if( archive_name.find( ".bin" ) < archive_name.size() )
     {
       ofstream.reset( new std::ofstream( archive_name, std::ofstream::binary ) );

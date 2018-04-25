@@ -120,7 +120,6 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 
 // Add a few general templates
 %template(DoubleVector) std::vector<double>;
-// %template(CellIdSet) std::set<unsigned long long>;
 
 //---------------------------------------------------------------------------//
 // Add support for the PointLocation enum
@@ -538,9 +537,6 @@ for this class is shown below:
 
    navigator = model.createNavigator()
    navigator = model.createNavigatorAdvanced()
-
-Note that if your geometry does not support the AdvancedModel interface
-attempting to create an advanced navigator will result in an exception.
 "
 
 %advanced_model_interface_setup( AdvancedModel )

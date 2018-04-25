@@ -47,7 +47,7 @@ FRENSIE_UNIT_TEST( RootModel, iarchive )
 
   // Get all cells
   Geometry::Model::CellIdSet cells;
-  
+
   model->getCells( cells, true, true );
 
   FRENSIE_REQUIRE_EQUAL( cells.size(), 3 );
@@ -68,7 +68,7 @@ FRENSIE_UNIT_TEST( RootModel, iarchive )
                                    1e-9 );
 
   FRENSIE_CHECK( model->getModelProperties().getModelFileName().find( "basic_root_geometry.root" ) < model->getModelProperties().getModelFileName().size() );
-  FRENSIE_CHECK_EQUAL( model->getModelProperties().getMaterialPropertyName(), "mat" );
+  FRENSIE_CHECK_EQUAL( model->getModelProperties().getMaterialPropertyName(), "material" );
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getVoidMaterialName(), "void" );
   FRENSIE_CHECK_EQUAL( model->getModelProperties().getTerminalMaterialName(), "graveyard" );
 }

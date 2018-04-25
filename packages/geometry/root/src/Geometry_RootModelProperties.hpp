@@ -85,12 +85,14 @@ private:
   // The terminal material name
   std::string d_terminal_material_name;
 };
-  
+
 } // end Geometry namespace
 
+#if !defined SWIG
 BOOST_SERIALIZATION_CLASS_VERSION( RootModelProperties, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootModelProperties, Geometry );
 EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModelProperties );
+#endif // end !defined SWIG
 
 #endif // end GEOMETRY_ROOT_MODEL_PROPERTIES_HPP
 
