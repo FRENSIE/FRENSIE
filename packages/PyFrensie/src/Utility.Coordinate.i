@@ -48,6 +48,9 @@ using namespace Utility;
 %include "stl.i"
 %include "std_except.i"
 
+// General ignore directives
+%ignore *::operator<<;
+
 // Include the coordinate helpers
 %include "Utility_CoordinateHelpers.i"
 
@@ -60,9 +63,6 @@ using namespace Utility;
 %include "Utility_DirectionalCoordinateSystemType.hpp"
 %include "Utility_DirectionalCoordinateSystemTraitsDecl.hpp"
 %include "Utility_DirectionalCoordinateSystemTraits.hpp"
-
-// General ignore directives
-// %ignore *::operator<<;
 
 // General exception handling
 %exception

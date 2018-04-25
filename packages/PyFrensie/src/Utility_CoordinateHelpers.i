@@ -20,6 +20,25 @@
 %apply double& OUTPUT { double& y_directional_coord };
 %apply double& OUTPUT { double& z_directional_coord };
 
+// Add typemaps for converting double[3] to and from Python array
+%typemap(in) const double[3] (std::vector<double> temp){
+  temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
+
+  // Make sure the sequence has 3 elements
+  if( temp.size() != 3 )
+  {
+    PyErr_SetString( PyExc_TypeError, "The input must have 3 elements." );
+    SWIG_fail;
+  }
+
+  $1 = temp.data();
+}
+
+// Add typecheck out for the Ray class
+%typemap(typecheck, precedence=1050) (const double[3]) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
@@ -171,31 +190,6 @@ Utility::SYSTEM::convertFromCartesianDirectionalCoordinates;
 %enddef
 
 //---------------------------------------------------------------------------//
-// Macro for extending the rotation CoordinateConversionPolicy class python interface
-//---------------------------------------------------------------------------//
-%define %extend_rotation_coordinate_interface_setup_helper( SYSTEM )
-
-// Extend constructor to use std::vector<double>
-%extend Utility::SYSTEM
-{
-   SYSTEM(
-    const std::vector<double> axis )
-  {
-    // Make sure the sequence has 3 elements
-    if( axis.size() != 3 )
-    {
-      PyErr_SetString( PyExc_TypeError,
-                      "The input axis must have 3 elements." );
-    }
-
-    return new Utility::SYSTEM(
-      axis.data() );
-  }
-}
-
-%enddef
-
-//---------------------------------------------------------------------------//
 // Macro for setting up a basic SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
 %define %basic_spatial_coordinate_interface_setup( SYSTEM )
@@ -210,24 +204,6 @@ Utility::SYSTEM::convertFromCartesianDirectionalCoordinates;
 //---------------------------------------------------------------------------//
 %define %translation_spatial_coordinate_interface_setup( SYSTEM )
 
-// Extend constructor to use std::vector<double>
-%extend Utility::SYSTEM
-{
-   SYSTEM(
-    const std::vector<double> origin )
-  {
-    // Make sure the sequence has 3 elements
-    if( origin.size() != 3 )
-    {
-      PyErr_SetString( PyExc_TypeError,
-                      "The input origin must have 3 elements." );
-    }
-
-    return new Utility::SYSTEM(
-      origin.data() );
-  }
-}
-
 // Set up basic spatial interface
 %basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
@@ -238,25 +214,6 @@ Utility::SYSTEM::convertFromCartesianDirectionalCoordinates;
 //---------------------------------------------------------------------------//
 %define %general_spatial_coordinate_interface_setup( SYSTEM )
 
-// Extend constructor to use std::vector<double>
-%extend Utility::SYSTEM
-{
-   SYSTEM(
-    const std::vector<double> origin,
-    const std::vector<double> axis )
-  {
-    // Make sure the sequence has 3 elements
-    if( origin.size() != 3 || axis.size() != 3 )
-    {
-      PyErr_SetString( PyExc_TypeError,
-                      "The input origin and axis must have 3 elements." );
-    }
-
-    return new Utility::SYSTEM(
-      origin.data(), axis.data() );
-  }
-}
-
 // Set up basic spatial interface
 %basic_spatial_coordinate_interface_setup_helper( SYSTEM )
 
@@ -266,9 +223,6 @@ Utility::SYSTEM::convertFromCartesianDirectionalCoordinates;
 // Macro for setting up a rotation SpatialCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
 %define %rotation_spatial_coordinate_interface_setup( SYSTEM )
-
-// Extend the constructor
-%extend_rotation_coordinate_interface_setup_helper( SYSTEM )
 
 // Set up basic spatial interface
 %basic_spatial_coordinate_interface_setup_helper( SYSTEM )
@@ -302,9 +256,6 @@ Utility::SYSTEM::convertFromCartesianDirectionalCoordinates;
 // Macro for setting up a rotation DirectionalCoordinateConversionPolicy class python interface
 //---------------------------------------------------------------------------//
 %define %rotation_coordinate_interface_setup( SYSTEM )
-
-// Extend the constructor
-%extend_rotation_coordinate_interface_setup_helper( SYSTEM )
 
 // Set up basic spatial interface
 %basic_spatial_coordinate_interface_setup_helper( SYSTEM )

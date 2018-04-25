@@ -73,22 +73,6 @@ typedef unsigned int size_t;
 %apply Utility::DistributionTraits::Counter& INOUT { Utility::DistributionTraits::Counter& trials };
 %apply unsigned& OUTPUT { unsigned& sampled_bin_index };
 
-// %typemap(in) const std::vector<double>& (std::vector<double> temp)
-// {
-//   temp = PyFrensie::convertFromPython<std::vector<double> >( $input );
-
-//   $1 = &temp;
-// }
-
-// // The typecheck precedence, which is used by SWIG to determine which
-// // overloaded method should be called, should be set to
-// // SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the std::vector<double>&. You will
-// // get a Python error when calling the overloaded method in Python without this
-// // typecheck
-// %typemap(typecheck, precedence=1050) (const std::vector<double>&) {
-//   $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-// }
-
 // General ignore directives
 %ignore *::IndepUnit;
 %ignore *::DepUnit;

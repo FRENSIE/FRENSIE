@@ -36,24 +36,6 @@ debugging geometries.
 #include "Geometry_Exceptions.hpp"
 #include "Utility_SerializationHelpers.hpp"
 // #include "Utility_ContractException.hpp"
-
-
-// Std Lib Includes
-#include <string>
-#include <stdexcept>
-
-// Root Includes
-#include <TGeoManager.h>
-#include <TError.h>
-
-// FRENSIE Includes
-#include "Geometry_RootModelProperties.hpp"
-#include "Geometry_RootNavigator.hpp"
-#include "Geometry_PointLocation.hpp"
-#include "Geometry_Model.hpp"
-#include "Utility_Map.hpp"
-#include "Utility_Vector.hpp"
-#include "Utility_ContractException.hpp"
 %}
 
 // // C++ STL support
