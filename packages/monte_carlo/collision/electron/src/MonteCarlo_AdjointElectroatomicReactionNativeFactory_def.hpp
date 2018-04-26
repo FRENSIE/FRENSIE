@@ -29,23 +29,23 @@
 namespace MonteCarlo{
 
 // Create the coupled elastic scattering adjoint electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
         const CoupledElasticSamplingMethod& sampling_method,
         const double evaluation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
+                    energy_grid->size() );
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().back() >=
-                    energy_grid[energy_grid.size()-1] );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->back() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Cutoff elastic cross section
   std::shared_ptr<std::vector<double> >
@@ -63,7 +63,7 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 
   // Create the coupled elastic scattering distribution
   std::shared_ptr<const CoupledElasticElectronScatteringDistribution> distribution;
-  ElasticFactory::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     distribution,
     energy_grid,
     cutoff_cross_section,
@@ -82,20 +82,20 @@ void AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction(
 }
 
 // Create the decoupled elastic scattering adjoint electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
         const double evaluation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Cutoff elastic cross section
   std::shared_ptr<std::vector<double> >
@@ -113,14 +113,14 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
     raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSection().end() );
 
   // Total elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_adjoint_electroatom_data.getAdjointTotalElasticCrossSectionThresholdEnergyIndex();
 
   // Calculate sampling ratios
   std::shared_ptr<std::vector<double> >
-    sampling_ratios( new std::vector<double>( total_cross_section.size() ) );
+    sampling_ratios( new std::vector<double>( total_cross_section->size() ) );
   
-  for( unsigned i = 0; i < sampling_ratios.size(); ++i )
+  for( unsigned i = 0; i < sampling_ratios->size(); ++i )
   {
     (*sampling_ratios)[i] =
       (*cutoff_cross_section)[i]/(*total_cross_section)[i];
@@ -128,7 +128,7 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 
   // Create the tabular cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> tabular_distribution;
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     tabular_distribution,
     raw_adjoint_electroatom_data,
     Utility::ElasticElectronTraits::mu_peak,
@@ -153,23 +153,23 @@ void AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction(
 }
 
 // Create a hybrid elastic scattering adjoint electroatomic reaction
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
+                    energy_grid->size() );
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().back() >=
-                    energy_grid[energy_grid.size()-1] );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->back() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Cutoff elastic cross section
   std::shared_ptr<std::vector<double> >
@@ -180,71 +180,72 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSection().end() );
 
   // Cutoff elastic cross section threshold energy bin index
-  unsigned cutoff_threshold_energy_index =
+  size_t cutoff_threshold_energy_index =
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Moment preserving elastic cross section
   std::shared_ptr<std::vector<double> >
     mp_cross_section( new std::vector<double> );
   
-  unsigned mp_threshold_energy_index;
-  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
-                                *mp_cross_section,
-                                mp_threshold_energy_index,
-                                raw_adjoint_electroatom_data,
-                                energy_grid,
-                                evaluation_tol );
+  size_t mp_threshold_energy_index;
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDGridPolicy>(
+                                                  *mp_cross_section,
+                                                  mp_threshold_energy_index,
+                                                  raw_adjoint_electroatom_data,
+                                                  energy_grid,
+                                                  evaluation_tol );
   // Create the hybrid elastic scattering distribution
   std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
 
-  ElasticFactory::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-    distribution,
-    energy_grid,
-    cutoff_cross_section,
-    mp_cross_section,
-    raw_adjoint_electroatom_data,
-    cutoff_angle_cosine,
-    evaluation_tol );
+  ElasticFactory::createHybridElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
+                                                  distribution,
+                                                  energy_grid,
+                                                  cutoff_cross_section,
+                                                  mp_cross_section,
+                                                  raw_adjoint_electroatom_data,
+                                                  cutoff_angle_cosine,
+                                                  evaluation_tol );
 
   // Create the cutoff elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> cutoff_distribution;
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
             cutoff_distribution,
             raw_adjoint_electroatom_data,
             cutoff_angle_cosine,
             evaluation_tol );
 
   // Calculate the hybrid cross section
-  unsigned hybrid_threshold_energy_index =
+  size_t hybrid_threshold_energy_index =
     std::min( mp_threshold_energy_index, cutoff_threshold_energy_index );
 
-  unsigned mp_threshold_diff =
+  size_t mp_threshold_diff =
     mp_threshold_energy_index - hybrid_threshold_energy_index;
-  unsigned cutoff_threshold_diff =
+  size_t cutoff_threshold_diff =
     cutoff_threshold_energy_index - hybrid_threshold_energy_index;
 
   std::vector<double> combined_cross_section(
-                           energy_grid.size() - hybrid_threshold_energy_index );
+                           energy_grid->size() - hybrid_threshold_energy_index );
 
-  for (unsigned i = 0; i < combined_cross_section.size(); ++i )
+  for (size_t i = 0; i < combined_cross_section.size(); ++i )
   {
-    double energy = energy_grid[i + hybrid_threshold_energy_index];
+    double energy = (*energy_grid)[i + hybrid_threshold_energy_index];
     double reduced_cutoff_ratio =
                 cutoff_distribution->evaluateCutoffCrossSectionRatio( energy );
 
     if ( i < mp_threshold_diff )
     {
-      combined_cross_section[i] = cutoff_cross_section[i]*reduced_cutoff_ratio;
+      combined_cross_section[i] =
+        (*cutoff_cross_section)[i]*reduced_cutoff_ratio;
     }
     else if ( i < cutoff_threshold_diff )
     {
-      combined_cross_section[i] = mp_cross_section[i];
+      combined_cross_section[i] = (*mp_cross_section)[i];
     }
     else
     {
       combined_cross_section[i] =
-        cutoff_cross_section[i-cutoff_threshold_diff]*reduced_cutoff_ratio +
-        mp_cross_section[i-mp_threshold_diff];
+        (*cutoff_cross_section)[i-cutoff_threshold_diff]*reduced_cutoff_ratio +
+        (*mp_cross_section)[i-mp_threshold_diff];
     }
   }
 
@@ -252,7 +253,7 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
     hybrid_cross_section( new std::vector<double> );
   
   hybrid_cross_section->assign( combined_cross_section.begin(),
-                               combined_cross_section.end() );
+                                combined_cross_section.end() );
 
 
   // Create the hybrid elastic reaction
@@ -267,28 +268,28 @@ void AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction(
 }
 
 // Create the cutoff elastic scattering adjoint electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
         const double cutoff_angle_cosine,
         const double evaluation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
+                    energy_grid->size() );
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().back() >=
-                    energy_grid[energy_grid.size()-1] );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->back() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Create the cutoff elastic scattering distribution using the cutoff angle cosine
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
-  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -302,7 +303,7 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSection().end() );
 
   // Cutoff elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_adjoint_electroatom_data.getAdjointCutoffElasticCrossSectionThresholdEnergyIndex();
 
   elastic_reaction.reset(
@@ -315,29 +316,29 @@ void AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 }
 
 // Create the moment preserving elastic scattering adjoint electroatomic reaction
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
         const double cutoff_angle_cosine,
         const double evaluation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
+                    energy_grid->size() );
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().back() >=
-                    energy_grid[energy_grid.size()-1] );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->back() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Create the moment preserving elastic scattering distribution
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     distribution,
     raw_adjoint_electroatom_data,
     cutoff_angle_cosine,
@@ -345,8 +346,8 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
 
   // Moment preserving elastic cross section
   std::vector<double> moment_preserving_cross_sections;
-  unsigned threshold_energy_index;
-  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+  size_t threshold_energy_index;
+  ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDGridPolicy>(
                                 moment_preserving_cross_sections,
                                 threshold_energy_index,
                                 raw_adjoint_electroatom_data,
@@ -370,11 +371,11 @@ void AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticRea
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const unsigned subshell,
     std::shared_ptr<const AdjointElectroatomicReaction>& electroionization_subshell_reaction,
     const double evaluation_tol )
@@ -391,7 +392,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
       raw_adjoint_electroatom_data.getAdjointElectroionizationCrossSection( subshell ).end() );
 
   // Electroionization cross section threshold energy bin index
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
       raw_adjoint_electroatom_data.getAdjointElectroionizationCrossSectionThresholdEnergyIndex(
       subshell );
 
@@ -400,7 +401,7 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
       electroionization_subshell_distribution;
 
   // Create the electroionization subshell distribution
-  ElectroionizationFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElectroionizationFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_adjoint_electroatom_data,
         subshell,
         raw_adjoint_electroatom_data.getSubshellBindingEnergy( subshell ),
@@ -420,11 +421,11 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 }
 
 // Create the subshell electroionization electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >&
         electroionization_subshell_reactions,
     const double evaluation_tol )
@@ -434,13 +435,14 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
   // Extract the subshell information
   std::set<unsigned> subshells = raw_adjoint_electroatom_data.getSubshells();
 
-  std::shared_ptr<AdjointElectroatomicReaction> electroionization_subshell_reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction>
+    electroionization_subshell_reaction;
 
   std::set<unsigned>::iterator shell = subshells.begin();
 
   for( shell; shell != subshells.end(); ++shell )
   {
-    ThisType::createSubshellElectroionizationReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ThisType::createSubshellElectroionizationReaction<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_adjoint_electroatom_data,
         energy_grid,
         grid_searcher,
@@ -457,36 +459,36 @@ void AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationR
 }
 
 // Create a bremsstrahlung electroatomic reactions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
         const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         std::shared_ptr<const AdjointElectroatomicReaction>& bremsstrahlung_reaction,
         const double evaluation_tol )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Bremsstrahlung cross section
   std::shared_ptr<std::vector<double> >
-    bremsstrahlung_cross_section( std::vector<double> );
+    bremsstrahlung_cross_section( new std::vector<double> );
   bremsstrahlung_cross_section->assign(
    raw_adjoint_electroatom_data.getAdjointBremsstrahlungElectronCrossSection().begin(),
    raw_adjoint_electroatom_data.getAdjointBremsstrahlungElectronCrossSection().end() );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_adjoint_electroatom_data.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
   // Create bremsstrahlung scattering distribution
   std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>
     bremsstrahlung_distribution;
 
-  BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  BremsstrahlungFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_adjoint_electroatom_data,
         raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid(),
         bremsstrahlung_distribution,
@@ -508,7 +510,7 @@ void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
       const Data::AdjointElectronPhotonRelaxationDataContainer&
         raw_adjoint_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const std::shared_ptr<const ReactionType>& elastic_reaction,
       std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction )
 {
@@ -520,11 +522,11 @@ void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
     raw_adjoint_electroatom_data.getForwardInelasticElectronCrossSection();
 
   // Add the inelastic and elastic cross section together
-  std::vector<double> total_forward_cross_section( energy_grid.size() );
-  for( size_t i = 0; i < energy_grid.size(); ++i )
+  std::vector<double> total_forward_cross_section( energy_grid->size() );
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     total_forward_cross_section[i] = inelastic_cross_section[i] +
-        elastic_reaction->getCrossSection( energy_grid[i] );
+      elastic_reaction->getCrossSection( (*energy_grid)[i] );
   }
 
   // Assign the total forward cross section

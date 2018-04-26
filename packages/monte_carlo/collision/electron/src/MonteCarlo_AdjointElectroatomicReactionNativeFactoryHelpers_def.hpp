@@ -14,10 +14,10 @@ namespace MonteCarlo{
 
 //! Create an coupled elastic scattering adjoint electroatomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createCoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
-    const std::string sampling_method,
+    const CoupledElasticSamplingMethod method,
     const double evaluation_tol )
 {
   // Extract the common energy grid
@@ -26,17 +26,13 @@ createCoupledElasticReaction(
                        raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
-
-  // Convert sampling method
-  CoupledElasticSamplingMethod method =
-    convertStringToCoupledElasticSamplingMethod( sampling_method );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
@@ -54,7 +50,7 @@ createCoupledElasticReaction(
 
 //! Create a decoupled elastic scattering adjoint electroatomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createDecoupledElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double evaluation_tol )
@@ -65,13 +61,13 @@ createDecoupledElasticReaction(
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
@@ -88,7 +84,7 @@ createDecoupledElasticReaction(
 
 //! Create a hybrid elastic scattering adjoint electroatomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createHybridElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
@@ -100,13 +96,13 @@ createHybridElasticReaction(
                        raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
@@ -123,7 +119,7 @@ createHybridElasticReaction(
 
 //! Create an cutoff elastic scattering adjoint electroatomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createCutoffElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
@@ -135,13 +131,13 @@ createCutoffElasticReaction(
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
@@ -158,7 +154,7 @@ createCutoffElasticReaction(
 
 //! Create the moment preserving elastic scattering adjoint electroatomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createMomentPreservingElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double cutoff_angle_cosine,
@@ -170,13 +166,13 @@ createMomentPreservingElasticReaction(
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
@@ -197,7 +193,7 @@ createMomentPreservingElasticReaction(
 
 //! Create the subshell electroionization adjoint electroatomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createSubshellElectroionizationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const unsigned subshell,
@@ -209,13 +205,13 @@ createSubshellElectroionizationReaction(
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
@@ -232,7 +228,7 @@ createSubshellElectroionizationReaction(
 
 //! Create the subshell electroionization adjoint electroatomic reactions
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
+std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >
 createSubshellElectroionizationReactions(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const double evaluation_tol )
@@ -243,13 +239,13 @@ createSubshellElectroionizationReactions(
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::vector<std::shared_ptr<AdjointElectroatomicReaction> > reactions;
+  std::vector<std::shared_ptr<const AdjointElectroatomicReaction> > reactions;
   AdjointElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,
@@ -266,7 +262,7 @@ createSubshellElectroionizationReactions(
 
 //! Create the bremsstrahlung adjoint electroatomic reaction
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createBremsstrahlungReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data,
     const bool dipole_distribution_mode_on,
@@ -278,13 +274,13 @@ createBremsstrahlungReaction(
                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createBremsstrahlungReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
       raw_adjoint_electroatom_data,
       energy_grid,

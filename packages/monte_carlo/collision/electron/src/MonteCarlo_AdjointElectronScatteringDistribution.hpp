@@ -14,6 +14,7 @@
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Data_SubshellType.hpp"
+#include "Utility_DistributionTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -22,6 +23,9 @@ class AdjointElectronScatteringDistribution : public virtual ScatteringDistribut
 {
 
 public:
+
+  //! The trials counter type
+  typedef Utility::DistributionTraits::Counter Counter;
 
   //! Constructor
   AdjointElectronScatteringDistribution()
@@ -48,7 +52,7 @@ public:
   virtual void sampleAndRecordTrials( const double incoming_energy,
                                       double& outgoing_energy,
                                       double& scattering_angle_cosine,
-                                      unsigned& trials ) const = 0;
+                                      Counter& trials ) const = 0;
 
   //! Randomly scatter the electron and return the shell that was interacted with
   virtual void scatterAdjointElectron(

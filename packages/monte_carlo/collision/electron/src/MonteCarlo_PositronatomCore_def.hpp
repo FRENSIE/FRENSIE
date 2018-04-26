@@ -26,11 +26,11 @@ namespace MonteCarlo{
  */
 template<typename InterpPolicy>
 PositronatomCore::PositronatomCore(
-        const std::shared_ptr<std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        const ReactionMap& standard_scattering_reactions,
-        const ReactionMap& standard_absorption_reactions,
-        const std::shared_ptr<AtomicRelaxationModel>& relaxation_model,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        const ConstReactionMap& standard_scattering_reactions,
+        const ConstReactionMap& standard_absorption_reactions,
+        const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
         const bool processed_atomic_cross_sections,
         const InterpPolicy policy )
   : d_total_reaction(),
@@ -42,19 +42,19 @@ PositronatomCore::PositronatomCore(
     d_grid_searcher( grid_searcher )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+  testPrecondition( energy_grid->size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   // There must be at least one reaction specified
   testPrecondition( standard_scattering_reactions.size() +
                     standard_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !relaxation_model.is_null() );
+  testPrecondition( relaxation_model.get() );
   // Make sure the hash-based grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
+  testPrecondition( grid_searcher.get() );
 
   // Place reactions in the appropriate group
-  ReactionMap::const_iterator rxn_type_pointer =
+  ConstReactionMap::const_iterator rxn_type_pointer =
     standard_absorption_reactions.begin();
 
   while( rxn_type_pointer != standard_absorption_reactions.end() )
@@ -79,9 +79,6 @@ PositronatomCore::PositronatomCore(
     ++rxn_type_pointer;
   }
   // Create the total absorption and total reactions
-  std::shared_ptr<PositronatomicReaction> total_absorption_reaction;
-  std::shared_ptr<PositronatomicReaction> total_reaction;
-
   if( processed_atomic_cross_sections )
   {
     if( d_absorption_reactions.size() > 0 )
@@ -89,24 +86,20 @@ PositronatomCore::PositronatomCore(
       PositronatomCore::createProcessedTotalAbsorptionReaction<InterpPolicy>(
                                                  energy_grid,
                                                  d_absorption_reactions,
-                                                 total_absorption_reaction );
+                                                 d_total_absorption_reaction );
     }
     else
     {
        // Create void absorption reaction
-       total_absorption_reaction.reset(
+       d_total_absorption_reaction.reset(
          new VoidAbsorptionPositronatomicReaction() );
     }
-
-    d_total_absorption_reaction = total_absorption_reaction;
 
     PositronatomCore::createProcessedTotalReaction<InterpPolicy>(
                                                    energy_grid,
                                                    d_scattering_reactions,
                                                    d_total_absorption_reaction,
-                                                   total_reaction );
-
-    d_total_reaction = total_reaction;
+                                                   d_total_reaction );
   }
   else
   {
@@ -115,24 +108,20 @@ PositronatomCore::PositronatomCore(
       PositronatomCore::createTotalAbsorptionReaction<InterpPolicy>(
                                                  energy_grid,
                                                  d_absorption_reactions,
-                                                 total_absorption_reaction );
+                                                 d_total_absorption_reaction );
     }
     else
     {
-       // Create void absorption reaction
-       total_absorption_reaction.reset(
+      // Create void absorption reaction
+      d_total_absorption_reaction.reset(
          new VoidAbsorptionPositronatomicReaction() );
     }
-
-    d_total_absorption_reaction = total_absorption_reaction;
 
     PositronatomCore::createTotalReaction<InterpPolicy>(
                                                   energy_grid,
                                                   d_scattering_reactions,
                                                   d_total_absorption_reaction,
-                                                  total_reaction );
-
-    d_total_reaction = total_reaction;
+                                                  d_total_reaction );
   }
 
   // Make sure the reactions have been organized appropriately
@@ -142,12 +131,12 @@ PositronatomCore::PositronatomCore(
 // Create the total absorption reaction
 template<typename InterpPolicy>
 void PositronatomCore::createTotalAbsorptionReaction(
-             const std::shared_ptr<std::vector<double> >& energy_grid,
-             const ConstReactionMap& absorption_reactions,
-             std::shared_ptr<PositronatomicReaction>& total_absorption_reaction )
+     const std::shared_ptr<const std::vector<double> >& energy_grid,
+     const ConstReactionMap& absorption_reactions,
+     std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
 
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
@@ -156,7 +145,7 @@ void PositronatomCore::createTotalAbsorptionReaction(
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     double raw_cross_section = 0.0;
 
@@ -165,7 +154,7 @@ void PositronatomCore::createTotalAbsorptionReaction(
     while( absorption_reaction != absorption_reactions.end() )
     {
       raw_cross_section +=
-        absorption_reaction->second->getCrossSection( energy_grid[i] );
+        absorption_reaction->second->getCrossSection( (*energy_grid)[i], i );
 
       ++absorption_reaction;
     }
@@ -205,12 +194,12 @@ void PositronatomCore::createTotalAbsorptionReaction(
 // Create the processed total absorption reaction
 template<typename InterpPolicy>
 void PositronatomCore::createProcessedTotalAbsorptionReaction(
-             const std::shared_ptr<std::vector<double> >& energy_grid,
-             const ConstReactionMap& absorption_reactions,
-             std::shared_ptr<PositronatomicReaction>& total_absorption_reaction )
+     const std::shared_ptr<const std::vector<double> >& energy_grid,
+     const ConstReactionMap& absorption_reactions,
+     std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
 
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
@@ -219,19 +208,19 @@ void PositronatomCore::createProcessedTotalAbsorptionReaction(
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     absorption_reaction = absorption_reactions.begin();
 
     double raw_cross_section = 0.0;
 
     const double raw_energy =
-      InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+      InterpPolicy::recoverProcessedIndepVar( (*energy_grid)[i] );
 
     while( absorption_reaction != absorption_reactions.end() )
     {
       raw_cross_section +=
-        absorption_reaction->second->getCrossSection( raw_energy );
+        absorption_reaction->second->getCrossSection( raw_energy, i );
 
       ++absorption_reaction;
     }
@@ -272,13 +261,13 @@ void PositronatomCore::createProcessedTotalAbsorptionReaction(
 // Create the total reaction
 template<typename InterpPolicy>
 void PositronatomCore::createTotalReaction(
-      const std::shared_ptr<std::vector<double> >& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<PositronatomicReaction>& total_reaction )
+      std::shared_ptr<const PositronatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
   // Make sure the absorption reaction has been created
   testPrecondition( total_absorption_reaction.use_count() > 0 );
 
@@ -289,17 +278,17 @@ void PositronatomCore::createTotalReaction(
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
     double raw_cross_section =
-      total_absorption_reaction->getCrossSection( energy_grid[i] );
+      total_absorption_reaction->getCrossSection( (*energy_grid)[i], i );
 
     while( scattering_reaction != scattering_reactions.end() )
     {
       raw_cross_section +=
-        scattering_reaction->second->getCrossSection( energy_grid[i] );
+        scattering_reaction->second->getCrossSection( (*energy_grid)[i], i );
 
       ++scattering_reaction;
     }
@@ -339,13 +328,13 @@ void PositronatomCore::createTotalReaction(
 // Calculate the processed total absorption cross section
 template<typename InterpPolicy>
 void PositronatomCore::createProcessedTotalReaction(
-    const std::shared_ptr<std::vector<double> >& energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const ConstReactionMap& scattering_reactions,
     const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
-    std::shared_ptr<PositronatomicReaction>& total_reaction )
+    std::shared_ptr<const PositronatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
   // Make sure the absorption reaction has been created
   testPrecondition( total_absorption_reaction.use_count() > 0 );
 
@@ -356,20 +345,20 @@ void PositronatomCore::createProcessedTotalReaction(
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( unsigned i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
     const double raw_energy =
-      InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+      InterpPolicy::recoverProcessedIndepVar( (*energy_grid)[i] );
 
     double raw_cross_section =
-      total_absorption_reaction->getCrossSection( raw_energy );
+      total_absorption_reaction->getCrossSection( raw_energy, i );
 
     while( scattering_reaction != scattering_reactions.end() )
     {
       raw_cross_section +=
-        scattering_reaction->second->getCrossSection( raw_energy );
+        scattering_reaction->second->getCrossSection( raw_energy, i );
 
       ++scattering_reaction;
     }

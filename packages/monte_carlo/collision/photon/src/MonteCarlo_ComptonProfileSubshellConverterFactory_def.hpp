@@ -331,7 +331,7 @@ void ComptonProfileSubshellConverterFactory::createConverter(
     break;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: Z " << atomic_number << " is invalid!" );
+		     "Z " << atomic_number << " is invalid!" );
   }
 }
 

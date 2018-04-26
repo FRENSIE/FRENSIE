@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_PositronScatteringDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -23,8 +23,11 @@ class AtomicExcitationElectronScatteringDistribution : public ElectronScattering
 
 public:
 
+  //! Typedef for the counter type
+  typedef ElectronScatteringDistribution::Counter Counter;
+
   //! Typedef for the atomic excitation distribution
-  typedef std::shared_ptr<const Utility::OneDDistribution> AtomicDistribution;
+  typedef std::shared_ptr<const Utility::UnivariateDistribution> AtomicDistribution;
 
   //! Constructor
   AtomicExcitationElectronScatteringDistribution(
@@ -36,46 +39,44 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle_cosine ) const
+                   const double scattering_angle_cosine ) const override
   { /*...*/}
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const
+                      const double scattering_angle_cosine ) const override
   { /*...*/}
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const
+                      const double scattering_angle_cosine ) const override
   { /* ... */ }
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& scattering_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const override;
 
   //! Randomly scatter the electron
   void scatterElectron( MonteCarlo::ElectronState& electron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
   //! Randomly scatter the positron
   void scatterPositron( MonteCarlo::PositronState& positron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 
   // Atomic excitation energy loss table
   AtomicDistribution d_energy_loss_distribution;
-
-
 };
 
 } // end MonteCarlo namespace

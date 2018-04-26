@@ -73,7 +73,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
 
 
   // Subshell distribution
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> subshell_distribution;
 
   // Create the subshell distribution
   createSubshellDistribution( subshell_info,
@@ -105,7 +105,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
         const double evaluation_tol )
 {
   // Subshell distribution
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> subshell_distribution;
 
   // Create the subshell distribution
   createSubshellDistribution( table_info_location,
@@ -131,7 +131,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
     const unsigned number_of_tables,
     const bool is_eprdata14,
     const Utility::ArrayView<const double>& raw_electroionization_data,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
             subshell_distribution,
     const double evaluation_tol )
 {
@@ -151,17 +151,18 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
                                        number_of_tables ) );
 
   // Create the scattering function
-  Utility::FullyTabularTwoDDistribution::DistributionType
-     function_data( number_of_tables );
+  std::vector<double> primary_grid( number_of_tables );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( number_of_tables );
 
   // Check if the file version is eprdata14 or eprdata12
   if ( is_eprdata14 )
   {
-    for( unsigned n = 0; n < number_of_tables; ++n )
+    for( size_t n = 0; n < number_of_tables; ++n )
     {
-      function_data[n].first = table_energy_grid[n];
+      primary_grid[n] = table_energy_grid[n];
 
-      function_data[n].second.reset(
+      secondary_dists[n].reset(
         new Utility::TabularCDFDistribution<Utility::LogLog>(
           raw_electroionization_data( table_location + table_offset[n], table_length[n] ),
           raw_electroionization_data( table_location + table_offset[n] + table_length[n],
@@ -171,18 +172,19 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
 
     // Create the scattering function with LogLogLog interp (eprdata14)
     subshell_distribution.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
-            function_data,
-            1e-6,
-            evaluation_tol ) );
+     new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LogLogLog> >(
+                                                    primary_grid,
+                                                    secondary_dists,
+                                                    1e-6,
+                                                    evaluation_tol ) );
   }
   else
   {
-    for( unsigned n = 0; n < number_of_tables; ++n )
+    for( size_t n = 0; n < number_of_tables; ++n )
     {
-      function_data[n].first = table_energy_grid[n];
+      primary_grid[n] = table_energy_grid[n];
 
-      function_data[n].second.reset(
+      secondary_dists[n].reset(
         new Utility::TabularCDFDistribution<Utility::LinLin>(
           raw_electroionization_data( table_location + table_offset[n], table_length[n] ),
           raw_electroionization_data( table_location + table_offset[n] + table_length[n],
@@ -191,10 +193,11 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
     }
     // Create the scattering function with LinLinLin interp (eprdata12)
     subshell_distribution.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
-            function_data,
-            1e-6,
-            evaluation_tol ) );
+      new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                                                        primary_grid,
+                                                        secondary_dists,
+                                                        1e-6,
+                                                        evaluation_tol ) );
   }
 }
 

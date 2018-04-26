@@ -146,7 +146,7 @@ PositronatomCore::PositronatomCore(
       const ConstReactionMap& absorption_reactions,
       const ConstReactionMap& miscellaneous_reactions,
       const std::shared_ptr<const AtomicRelaxationModel> relaxation_model,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher )
   : d_total_reaction( total_reaction ),
     d_total_absorption_reaction( total_absorption_reaction ),
     d_scattering_reactions( d_scattering_reactions ),
@@ -164,9 +164,9 @@ PositronatomCore::PositronatomCore(
   // Make sure the absorption reactions map is valid
   testPrecondition( absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !relaxation_model.is_null() );
+  testPrecondition( relaxation_model.get() );
   // Make sure the grid searcher is valid
-  testPrecondition( !d_grid_searcher.is_null() );
+  testPrecondition( d_grid_searcher.get() );
 }
 
 //! Copy constructor
@@ -187,9 +187,9 @@ PositronatomCore::PositronatomCore( const PositronatomCore& instance )
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !instance.d_relaxation_model.is_null() );
+  testPrecondition( instance.d_relaxation_model.get() );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 }
 
 //! Assignment Operator
@@ -203,9 +203,9 @@ PositronatomCore& PositronatomCore::operator=( const PositronatomCore& instance 
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !instance.d_relaxation_model.is_null() );
+  testPrecondition( instance.d_relaxation_model.get() );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 
   // Avoid self-assignment
   if( this != &instance )

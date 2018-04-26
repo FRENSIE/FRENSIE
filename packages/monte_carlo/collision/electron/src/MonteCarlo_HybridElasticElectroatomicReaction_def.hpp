@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& cross_section,
-      const unsigned threshold_energy_index,
+      const size_t threshold_energy_index,
       const double cutoff_angle_cosine,
       const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution )
@@ -29,18 +30,6 @@ HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Hybrid
               threshold_energy_index ),
     d_hybrid_distribution( hybrid_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross sections are valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index <
-                    incoming_energy_grid.size() );
   // Make sure the distribution are valid
   testPrecondition( hybrid_distribution.use_count() > 0 );
 }
@@ -50,8 +39,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticElectroatomicReaction(
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& cross_section,
-      const unsigned threshold_energy_index,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const size_t threshold_energy_index,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const double cutoff_angle_cosine,
       const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution )
@@ -61,22 +50,8 @@ HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Hybrid
               grid_searcher ),
     d_hybrid_distribution( hybrid_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross sections are valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energies are valid
-  testPrecondition( threshold_energy_index <
-                    incoming_energy_grid.size() );
   // Make sure the distribution are valid
   testPrecondition( hybrid_distribution.use_count() > 0 );
-  // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -135,6 +110,18 @@ void HybridElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::r
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticElectroatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

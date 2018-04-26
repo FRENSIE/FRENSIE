@@ -26,27 +26,27 @@ namespace MonteCarlo{
  * requested, a electroionization reaction for each subshell will be created.
  * Otherwise a single total electroionization reaction will be created.
  */
-template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template <typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 void PositronatomNativeFactory::createPositronatomCore(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-        const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-        const SimulationElectronProperties& properties,
-        std::shared_ptr<PositronatomCore>& positronatom_core )
+   const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationElectronProperties& properties,
+   std::shared_ptr<const PositronatomCore>& positronatom_core )
 {
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
   positronatom_core.reset( new PositronatomCore() );
 
-  Positronatom::ReactionMap scattering_reactions, absorption_reactions;
+  Positronatom::ConstReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
   std::shared_ptr<const std::vector<double> > energy_grid(
-      new std::vector( raw_positronatom_data.getElectronEnergyGrid().begin(),
-                       raw_positronatom_data.getElectronEnergyGrid().end() ) );
+    new std::vector<double>( raw_positronatom_data.getElectronEnergyGrid().begin(),
+                             raw_positronatom_data.getElectronEnergyGrid().end() ) );
 
   // Construct the hash-based grid searcher for this atom
-  std::shared_ptr<Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
        new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
                               properties.getNumberOfElectronHashGridBins() ) );
@@ -54,9 +54,9 @@ void PositronatomNativeFactory::createPositronatomCore(
   // Create the elastic scattering reaction
   if ( properties.isElasticModeOn() )
   {
-    if( TwoDInterpPolicy::name() == "LogLogLog" )
+    if( std::is_same<TwoDInterpPolicy,Utility::LogLogLog>::value )
     {
-      ThisType::createElasticPositronatomCore<Utility::LogLogCosLog,TwoDSamplePolicy>(
+      ThisType::createElasticPositronatomCore<Utility::LogLogCosLog,TwoDGridPolicy>(
                                               raw_positronatom_data,
                                               energy_grid,
                                               grid_searcher,
@@ -65,7 +65,7 @@ void PositronatomNativeFactory::createPositronatomCore(
     }
     else
     {
-      ThisType::createElasticPositronatomCore<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ThisType::createElasticPositronatomCore<TwoDInterpPolicy,TwoDGridPolicy>(
                                               raw_positronatom_data,
                                               energy_grid,
                                               grid_searcher,
@@ -77,10 +77,10 @@ void PositronatomNativeFactory::createPositronatomCore(
   // Create the bremsstrahlung scattering reaction
   if ( properties.isBremsstrahlungModeOn() )
   {
-    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+    Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_POSITRONATOMIC_REACTION];
 
-    PositronatomicReactionNativeFactory::createBremsstrahlungReaction<PositronatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
+    PositronatomicReactionNativeFactory::createBremsstrahlungReaction<PositronatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
                   raw_positronatom_data,
                   energy_grid,
                   grid_searcher,
@@ -92,7 +92,7 @@ void PositronatomNativeFactory::createPositronatomCore(
   // Create the atomic excitation scattering reaction
   if ( properties.isAtomicExcitationModeOn() )
   {
-    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+    Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_POSITRONATOMIC_REACTION];
 
     PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
@@ -105,9 +105,9 @@ void PositronatomNativeFactory::createPositronatomCore(
   // Create the subshell electroionization reactions
   if ( properties.isElectroionizationModeOn() )
   {
-    std::vector<std::shared_ptr<PositronatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<const PositronatomicReaction> > reaction_pointers;
 
-    PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<PositronatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
+    PositronatomicReactionNativeFactory::createSubshellPositronionizationReactions<PositronatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
                       raw_positronatom_data,
                       energy_grid,
                       grid_searcher,
@@ -132,13 +132,13 @@ void PositronatomNativeFactory::createPositronatomCore(
 }
 
 // Create the elastic reaction for a positron-atom core
-template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template <typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 void PositronatomNativeFactory::createElasticPositronatomCore(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-        const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<Utility::HashBasedGridSearcher>& grid_searcher,
-        const SimulationElectronProperties& properties,
-        Positronatom::ReactionMap& scattering_reactions )
+      const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      const SimulationElectronProperties& properties,
+      Positronatom::ConstReactionMap& scattering_reactions )
 {
   // Get the elastic distribution type
   ElasticElectronDistributionType distribution_type =
@@ -146,10 +146,10 @@ void PositronatomNativeFactory::createElasticPositronatomCore(
 
   if( distribution_type == COUPLED_DISTRIBUTION )
   {
-    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+    Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COUPLED_ELASTIC_POSITRONATOMIC_REACTION];
 
-    PositronatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    PositronatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_positronatom_data,
                         energy_grid,
                         grid_searcher,
@@ -159,10 +159,10 @@ void PositronatomNativeFactory::createElasticPositronatomCore(
   }
   else if( distribution_type == DECOUPLED_DISTRIBUTION )
   {
-    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+    Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION];
 
-    PositronatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    PositronatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_positronatom_data,
                         energy_grid,
                         grid_searcher,
@@ -174,10 +174,10 @@ void PositronatomNativeFactory::createElasticPositronatomCore(
     // Create the coupled elastic scattering reaction (no moment preserving elastic scattering)
     if ( properties.getElasticCutoffAngleCosine() == 1.0 )
     {
-      Positronatom::ReactionMap::mapped_type& reaction_pointer =
+      Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION];
 
-      PositronatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      PositronatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_positronatom_data,
                         energy_grid,
                         grid_searcher,
@@ -187,10 +187,10 @@ void PositronatomNativeFactory::createElasticPositronatomCore(
     // Create the moment preserving elastic scattering reaction (no coupled elastic scattering)
     else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
     {
-      Positronatom::ReactionMap::mapped_type& reaction_pointer =
+      Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_POSITRONATOMIC_REACTION];
 
-      PositronatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      PositronatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_positronatom_data,
                         energy_grid,
                         grid_searcher,
@@ -201,10 +201,10 @@ void PositronatomNativeFactory::createElasticPositronatomCore(
     // Create the hybrid elastic scattering reaction (if cutoff is within range)
     else
     {
-      Positronatom::ReactionMap::mapped_type& reaction_pointer =
+      Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_POSITRONATOMIC_REACTION];
 
-      PositronatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      PositronatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_positronatom_data,
                         energy_grid,
                         grid_searcher,
@@ -215,10 +215,10 @@ void PositronatomNativeFactory::createElasticPositronatomCore(
   }
   else if( distribution_type == CUTOFF_DISTRIBUTION )
   {
-    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+    Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[CUTOFF_ELASTIC_POSITRONATOMIC_REACTION];
 
-    PositronatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    PositronatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_positronatom_data,
                         energy_grid,
                         grid_searcher,

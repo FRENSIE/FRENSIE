@@ -26,7 +26,7 @@ public:
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBase>
+            template<typename> class TwoDGridPolicy = Utility::UnitBase>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double>& bremsstrahlung_energy_grid,
@@ -36,7 +36,7 @@ public:
 
   //! Create a simple dipole bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
@@ -45,7 +45,7 @@ public:
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
@@ -55,7 +55,7 @@ public:
 
   //! Create a detailed 2BS bremsstrahlung distribution
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
@@ -66,11 +66,11 @@ public:
 
   //! Create the energy loss function
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::vector<double> bremsstrahlung_energy_grid,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
         energy_loss_function,
     const double evaluation_tol = 1e-7 );
 

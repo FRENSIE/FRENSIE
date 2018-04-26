@@ -33,33 +33,33 @@ public:
 
   //! Create a positron-atom core (using the provided atomic relaxation model)
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createPositronatomCore(
-      const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-      const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-      const SimulationElectronProperties& properties,
-      std::shared_ptr<PositronatomCore>& positronatom_core );
+   const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationElectronProperties& properties,
+   std::shared_ptr<const PositronatomCore>& positronatom_core );
   
   //! Create a positron-atom (using the provided atomic relaxation model)
   static void createPositronatom(
-      const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-      const std::string& positronatom_name,
-      const double atomic_weight,
-      const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-      const SimulationElectronProperties& properties,
-      std::shared_ptr<Positronatom>& positronatom );
+   const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+   const std::string& positronatom_name,
+   const double atomic_weight,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationElectronProperties& properties,
+   std::shared_ptr<const Positronatom>& positronatom );
 
 private:
 
   //! Create the elastic reaction for a positron-atom core
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   static void createElasticPositronatomCore(
       const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const SimulationElectronProperties& properties,
-      Positronatom::ReactionMap& scattering_reactions );
+      Positronatom::ConstReactionMap& scattering_reactions );
 
   // Constructor
   PositronatomNativeFactory();

@@ -10,128 +10,160 @@
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_ElectroatomNativeFactory.hpp"
-#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 ElectroatomFactory::ElectroatomFactory(
-    const std::string& cross_sections_xml_directory,
-    const Teuchos::ParameterList& cross_section_table_info,
-    const std::unordered_set<std::string>& electroatom_aliases,
-    const std::shared_ptr<const AtomicRelaxationModelFactory>&
-    atomic_relaxation_model_factory,
-    const SimulationProperties& properties,
-    std::ostream* os_message )
-  :d_os_message( os_message )
+             const boost::filesystem::path& data_directory,
+             const ScatteringCenterNameSet& electroatom_names,
+             const ScatteringCenterDefinitionDatabase& electroatom_definitions,
+             const std::shared_ptr<AtomicRelaxationModelFactory>&
+             atomic_relaxation_model_factory,
+             const SimulationProperties& properties,
+             const bool verbose )
+  : d_electroatom_name_map(),
+    d_electroatomic_table_name_map(),
+    d_verbose( verbose )  
 {
-  // Make sure the message stream is valid
-  testPrecondition( os_message != NULL );
-
+  FRENSIE_LOG_NOTIFICATION( "Starting to load electroatom data tables ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   // Create each electroatom in the set
-  std::unordered_set<std::string>::const_iterator electroatom_name =
-    electroatom_aliases.begin();
-
-  std::string electroatom_file_path, electroatom_file_type, electroatom_table_name;
-  int electroatom_file_start_line;
-  double atomic_weight;
-
-  while( electroatom_name != electroatom_aliases.end() )
+  ScatteringCenterNameSet::const_iterator electroatom_name =
+    electroatom_names.begin();
+  
+  while( electroatom_name != electroatom_names.end() )
   {
-    Data::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
-                          cross_sections_xml_directory,
-                          *electroatom_name,
-                          cross_section_table_info,
-                          electroatom_file_path,
-                          electroatom_file_type,
-                          electroatom_table_name,
-                          electroatom_file_start_line,
-                          atomic_weight );
+    TEST_FOR_EXCEPTION( !electroatom_definitions.doesDefinitionExist( *electroatom_name ),
+                        std::runtime_error,
+                        "Electroatom " << *electroatom_name << " cannot be "
+                        "created because its definition has not been "
+                        "specified!" );
 
-    if( electroatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
+    const ScatteringCenterDefinition& electroatom_definition =
+      electroatom_definitions.getDefinition( *electroatom_name );
+
+    TEST_FOR_EXCEPTION( !electroatom_definition.hasElectroatomicDataProperties(),
+                        std::runtime_error,
+                        "Electroatom " << *electroatom_name << " cannot be "
+                        "created because its definition does not specify "
+                        "any electroatomic data properties!" );
+
+    double atomic_weight;
+
+    const Data::ElectroatomicDataProperties& electroatom_data_properties =
+      electroatom_definition.getElectroatomicDataProperties( &atomic_weight );
+
+    if( electroatom_data_properties.fileType() ==
+        Data::ElectroatomicDataProperties::ACE_EPR_FILE )
     {
-      this->createElectroatomFromACETable( *electroatom_name,
-                                           electroatom_file_path,
-                                           electroatom_table_name,
-                                           electroatom_file_start_line,
+      // Initialize the electroatomic table name map for ACE_EPR files
+      if( d_electroatomic_table_name_map.find( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) ==
+          d_electroatomic_table_name_map.end() )
+      {
+        d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE];
+      }
+      
+      this->createElectroatomFromACETable( data_directory,
+                                           *electroatom_name,
                                            atomic_weight,
+                                           electroatom_data_properties,
                                            atomic_relaxation_model_factory,
                                            properties );
     }
-    else if( electroatom_file_type == Data::CrossSectionsXMLProperties::native_file )
+    else if( electroatom_data_properties.fileType() ==
+             Data::ElectroatomicDataProperties::Native_EPR_FILE )
     {
-      this->createElectroatomFromNativeTable( *electroatom_name,
-                                              electroatom_file_path,
+      // Initialize the electroatomic table name map for Native_EPR files
+      if( d_electroatomic_table_name_map.find( Data::ElectroatomicDataProperties::Native_EPR_FILE ) ==
+          d_electroatomic_table_name_map.end() )
+      {
+        d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE];
+      }
+      
+      this->createElectroatomFromNativeTable( data_directory,
+                                              *electroatom_name,
                                               atomic_weight,
+                                              electroatom_data_properties,
                                               atomic_relaxation_model_factory,
                                               properties );
     }
     else
     {
-      THROW_EXCEPTION( std::logic_error,
-               "electroatomic file type "
-               << electroatom_file_type <<
-               " is not supported!" );
+      THROW_EXCEPTION( std::runtime_error,
+                       "Electroatom " << *electroatom_name << " cannot be "
+                       "created because its definition specifies the use of "
+                       "an electroatomic data file of type "
+                       << electroatom_data_properties.fileType() <<
+                       ", which is currently unsupported!" );
     }
 
     ++electroatom_name;
   }
 
   // Make sure that every electroatom has been created
-  testPostcondition( d_electroatom_name_map.size() == electroatom_aliases.size() );
+  testPostcondition( d_electroatom_name_map.size() == electroatom_names.size() );
 
+  FRENSIE_LOG_NOTIFICATION( "Finished loading electroatom data tables." );
+  FRENSIE_FLUSH_ALL_LOGS();
 }
 
 // Create the map of electroatoms
 void ElectroatomFactory::createElectroatomMap(
-            std::unordered_map<std::string,std::shared_ptr<const Electroatom> >&
-            electroatom_map ) const
+                               ElectroatomNameMap& electroatom_name_map ) const
 {
-  // Reset the electroatom map
-  electroatom_map.clear();
-
-  // Copy the stored map
-  electroatom_map.insert( d_electroatom_name_map.begin(),
-                          d_electroatom_name_map.end() );
+  electroatom_name_map = d_electroatom_name_map;
 }
 
 // Create a electroatom from an ACE table
 void ElectroatomFactory::createElectroatomFromACETable(
-                              const std::string& electroatom_alias,
-                              const std::string& ace_file_path,
-                              const std::string& electroatomic_table_name,
-                              const int electroatomic_file_start_line,
-                              const double atomic_weight,
-                              const std::shared_ptr<const AtomicRelaxationModelFactory>&
-                              atomic_relaxation_model_factory,
-                              const SimulationProperties& properties )
+                      const boost::filesystem::path& data_directory,
+                      const std::string& electroatom_name,
+                      const double atomic_weight,
+		      const Data::ElectroatomicDataProperties& data_properties,
+                      const std::shared_ptr<AtomicRelaxationModelFactory>&
+                      atomic_relaxation_model_factory,
+                      const SimulationProperties& properties )
 {
-  *d_os_message << "Loading ACE electroatomic cross section table "
-        << electroatomic_table_name << " (" << electroatom_alias << ") ... ";
-
-
   // Check if the table has already been loaded
-  if( d_electroatomic_table_name_map.find( electroatomic_table_name ) ==
-      d_electroatomic_table_name_map.end() )
+  if( d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE].find( data_properties.tableName() ) ==
+      d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE].end() )
   {
+    // Construct the the path to the data file
+    boost::filesystem::path ace_file_path = data_directory;
+    ace_file_path /= data_properties.filePath();
+    ace_file_path.make_preferred();
+    
+    if( d_verbose )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                 "Loading ACE EPR electroatomic cross section "
+                                 "table " << data_properties.tableName() <<
+                                 " from " << ace_file_path.string() <<
+                                 " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
+    
     // Create the ACEFileHandler
     Data::ACEFileHandler ace_file_handler( ace_file_path,
-                       electroatomic_table_name,
-                       electroatomic_file_start_line,
-                       true );
+                                           data_properties.tableName(),
+                                           data_properties.fileStartLine(),
+                                           true );
 
     // Create the XSS data extractor
     Data::XSSEPRDataExtractor xss_data_extractor(
-                     ace_file_handler.getTableNXSArray(),
-                     ace_file_handler.getTableJXSArray(),
-                     ace_file_handler.getTableXSSArray() );
+                                         ace_file_handler.getTableNXSArray(),
+                                         ace_file_handler.getTableJXSArray(),
+                                         ace_file_handler.getTableXSSArray() );
 
     // Create the atomic relaxation model
     std::shared_ptr<const AtomicRelaxationModel> atomic_relaxation_model;
@@ -144,48 +176,66 @@ void ElectroatomFactory::createElectroatomFromACETable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new electroatom
-    std::shared_ptr<const Electroatom>& electroatom =
-      d_electroatom_name_map[electroatom_alias];
+    ElectroatomNameMap::mapped_type& electroatom =
+      d_electroatom_name_map[electroatom_name];
 
     // Create the new electroatom
     ElectroatomACEFactory::createElectroatom( xss_data_extractor,
-                                              electroatomic_table_name,
+                                              data_properties.tableName(),
                                               atomic_weight,
                                               atomic_relaxation_model,
                                               properties,
                                               electroatom );
 
     // Cache the new electroatom in the table name map
-    d_electroatomic_table_name_map[electroatomic_table_name] = electroatom;
+    d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE][data_properties.tableName()] = electroatom;
+
+    if( d_verbose )
+    {
+      FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
   }
   // The table has already been loaded
   else
   {
-    d_electroatom_name_map[electroatom_alias] =
-      d_electroatomic_table_name_map[electroatomic_table_name];
+    d_electroatom_name_map[electroatom_name] =
+      d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE][data_properties.tableName()];
   }
-
-  *d_os_message << "done." << std::endl;
 }
 
 
-// Create a electroatom from a Native table
+// Create an electroatom from a Native table
 void ElectroatomFactory::createElectroatomFromNativeTable(
-                              const std::string& electroatom_alias,
-                              const std::string& native_file_path,
-                              const double atomic_weight,
-                              const std::shared_ptr<const AtomicRelaxationModelFactory>&
-                              atomic_relaxation_model_factory,
-                              const SimulationProperties& properties )
+                      const boost::filesystem::path& data_directory,
+                      const std::string& electroatom_name,
+                      const double atomic_weight,
+                      const Data::ElectroatomicDataProperties& data_properties,
+                      const std::shared_ptr<AtomicRelaxationModelFactory>&
+                      atomic_relaxation_model_factory,
+                      const SimulationProperties& properties )
 {
-  std::cout << "Loading native electroatomic cross section table "
-            << electroatom_alias << " ... ";
-
   // Check if the table has already been loaded
-  if( d_electroatomic_table_name_map.find( native_file_path ) ==
-      d_electroatomic_table_name_map.end() )
+  if( d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE].find( data_properties.filePath().string() ) ==
+      d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE].end() )
   {
-    // Create the eedl data container
+    // Construct the path to the native file
+    boost::filesystem::path native_file_path = data_directory;
+    native_file_path /= data_properties.filePath();
+    native_file_path.make_preferred();
+
+    if( d_verbose )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                "Loading native EPR cross section table "
+                                "(v " << data_properties.fileVersion() <<
+                                ") for " << data_properties.atom() <<
+                                "from " << native_file_path.string() <<
+                                " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
+
+    // Create the native epr data container
     Data::ElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
 
@@ -200,28 +250,32 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new electroatom
-    std::shared_ptr<const Electroatom>& electroatom =
-      d_electroatom_name_map[electroatom_alias];
+    ElectroatomNameMap::mapped_type& electroatom =
+      d_electroatom_name_map[electroatom_name];
 
     // Create the new electroatom
     ElectroatomNativeFactory::createElectroatom( data_container,
-                                                 native_file_path,
+                                                 data_properties.filePath().string(),
                                                  atomic_weight,
                                                  atomic_relaxation_model,
                                                  properties,
                                                  electroatom );
 
     // Cache the new electroatom in the table name map
-    d_electroatomic_table_name_map[native_file_path] = electroatom;
+    d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()] = electroatom;
+
+    if( d_verbose )
+    {
+      FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
   }
   // The table has already been loaded
   else
   {
-    d_electroatom_name_map[electroatom_alias] =
-      d_electroatomic_table_name_map[native_file_path];
+    d_electroatom_name_map[electroatom_name] =
+      d_electroatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()];
   }
-
-  std::cout << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

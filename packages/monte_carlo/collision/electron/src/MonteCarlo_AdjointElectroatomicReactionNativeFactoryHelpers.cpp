@@ -16,23 +16,23 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create a screened Rutherford elastic scattering adjoint electroatomic reaction
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createScreenedRutherfordElasticReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data )
 {
   // Extract the common energy grid
   std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
-  energy_grid.assign( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
-                      raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
+  energy_grid->assign( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
+                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
   AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
         raw_adjoint_electroatom_data,
         energy_grid,
@@ -50,23 +50,23 @@ createScreenedRutherfordElasticReaction(
 //----------------------------------------------------------------------------//
 
 //! Create an atomic excitation scattering adjoint electroatomic reaction
-std::shared_ptr<AdjointElectroatomicReaction>
+std::shared_ptr<const AdjointElectroatomicReaction>
 createAtomicExcitationReaction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_adjoint_electroatom_data )
 {
   // Extract the common energy grid
   std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
-  energy_grid.assign( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
-                      raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
+  energy_grid->assign( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().begin(),
+                       raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<AdjointElectroatomicReaction> reaction;
+  std::shared_ptr<const AdjointElectroatomicReaction> reaction;
 
   AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
         raw_adjoint_electroatom_data,

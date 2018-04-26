@@ -41,7 +41,7 @@ protected:
   //! Create the energy loss function
   static void createScatteringFunction(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
         scattering_function,
     const double evaluation_tol );
 };

@@ -17,8 +17,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
-#include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
-#include "Utility_Vector.hpp"
+#include "MonteCarlo_AdjointElectronMaterial.hpp"
+#include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
+#include "MonteCarlo_MaterialDefinitionDatabase.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
@@ -28,13 +32,19 @@ class AdjointElectroatomFactory
 
 public:
 
+  //! The adjoint electroatom name map
+  typedef AdjointElectronMaterial::AdjointElectroatomNameMap AdjointElectroatomNameMap;
+
+  //! The scattering center name set
+  typedef MaterialDefinitionDatabase::ScatteringCenterNameSet ScatteringCenterNameSet;
+
   //! Constructor
   AdjointElectroatomFactory(
-    const std::string& cross_sections_xml_directory,
-    const Teuchos::ParameterList& cross_section_table_info,
-    const std::unordered_set<std::string>& adjoint_electroatom_aliases,
-    const SimulationAdjointElectronProperties& properties,
-    std::ostream* os_message = &std::cout );
+     const boost::filesystem::path& data_directory,
+     const ScatteringCenterNameSet& adjoint_electroatom_names,
+     const ScatteringCenterDefinitionDatabase& adjoint_electroatom_definitions,
+     const SimulationProperties& properties,
+     const bool verbose = false );
 
   //! Destructor
   ~AdjointElectroatomFactory()
@@ -42,29 +52,27 @@ public:
 
   //! Create the map of adjoint electroatoms
   void createAdjointElectroatomMap(
-            std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >&
-            adjoint_electroatom_map ) const;
+               AdjointElectroatomNameMap& adjoint_electroatom_name_map ) const;
 
 private:
 
   // Create a adjoint electroatom from a Native table
   void createAdjointElectroatomFromNativeTable(
-                    const std::string& cross_sections_xml_directory,
-                    const std::string& adjoint_electroatom_alias,
-                    const std::string& native_file_path,
-                    const double atomic_weight,
-                    const SimulationAdjointElectronProperties& properties );
-
+               const boost::filesystem::path& data_directory,
+               const std::string& adjoint_electroatom_name,
+               const double atomic_weight,
+               const Data::AdjointElectroatomicDataProperties& data_properties,
+               const SimulationProperties& properties );
+  
   // The adjoint electroatom map
-  std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >
-  d_adjoint_electroatom_name_map;
+  AdjointElectroatomNameMap d_adjoint_electroatom_name_map;
 
   // The table map
-  std::unordered_map<std::string,std::shared_ptr<const AdjointElectroatom> >
+  std::map<Data::AdjointElectroatomicDataProperties::FileType,AdjointElectroatomNameMap>
   d_adjoint_electroatomic_table_name_map;
 
-  // The message output stream
-  std::ostream* d_os_message;
+  // Verbose adjoint electroatom construction
+  bool d_verbose;
 };
 
 } // end MonteCarlo namespace

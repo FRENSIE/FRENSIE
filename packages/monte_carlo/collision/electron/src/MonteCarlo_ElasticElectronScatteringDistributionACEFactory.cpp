@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_TabularCDFDistribution.hpp"
-#include "Utility_ElasticTwoDDistribution.hpp"
+#include "Utility_ElasticBasicBivariateDistribution.hpp"
 #include "Utility_ArrayView.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_ContractException.hpp"
@@ -23,7 +23,7 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
     const Data::XSSEPRDataExtractor& raw_electroatom_data )
 {
   // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function;
 
   ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
     raw_electroatom_data,
@@ -54,7 +54,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordEl
  */
 void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+        std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
             scattering_function )
 {
   // Extract the elastic scattering information data block (ELASI)
@@ -65,7 +65,9 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   int size = elasi_block.size()/3;
 
   // Get the distribution data
-  Utility::FullyTabularTwoDDistribution::DistributionType function_data(size);
+  std::vector<double> primary_grid( size );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( size );
 
   // Extract the energy grid for elastic scattering angular distributions
   std::vector<double> angular_energy_grid(elasi_block(0,size));
@@ -83,11 +85,11 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   // Check if the file version is eprdata14 or eprdata12
   if ( raw_electroatom_data.isEPRVersion14() )
   {
-    for( unsigned n = 0; n < size; ++n )
+    for( size_t n = 0; n < size; ++n )
     {
-      function_data[n].first = angular_energy_grid[n];
+      primary_grid[n] = angular_energy_grid[n];
 
-      function_data[n].second.reset(
+      secondary_dists[n].reset(
         new const Utility::TabularCDFDistribution<Utility::LogLogCos>(
           elas_block( offset[n], table_length[n] ),
           elas_block( offset[n] + table_length[n], table_length[n] ),
@@ -96,17 +98,18 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 
     // Set the scattering function with LogLogCosLog interp (eprdata14)
     scattering_function.reset(
-      new Utility::ElasticTwoDDistribution<Utility::LogLogCosLog,Utility::Correlated>(
-        function_data,
-        0.999999 ) );
+      new Utility::ElasticBasicBivariateDistribution<Utility::Correlated<Utility::LogLogCosLog> >(
+                                                         primary_grid,
+                                                         secondary_dists,
+                                                         0.999999 ) );
   }
   else
   {
-    for( unsigned n = 0; n < size; ++n )
+    for( size_t n = 0; n < size; ++n )
     {
-      function_data[n].first = angular_energy_grid[n];
+      primary_grid[n] = angular_energy_grid[n];
 
-      function_data[n].second.reset(
+      secondary_dists[n].reset(
         new const Utility::TabularCDFDistribution<Utility::LinLin>(
           elas_block( offset[n], table_length[n] ),
           elas_block( offset[n] + table_length[n], table_length[n] ),
@@ -115,8 +118,9 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 
     // Set the scattering function with LinLinLin interp (eprdata12)
     scattering_function.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
-        function_data ) );
+     new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                                                           primary_grid,
+                                                           secondary_dists ) );
   }
 
 }

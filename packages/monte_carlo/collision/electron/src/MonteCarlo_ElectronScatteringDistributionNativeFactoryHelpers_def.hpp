@@ -16,19 +16,16 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 // Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const std::string sampling_method,
+    const MonteCarlo::CoupledElasticSamplingMethod method,
     const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     distribution;
 
-  MonteCarlo::CoupledElasticSamplingMethod method =
-    MonteCarlo::convertStringToCoupledElasticSamplingMethod( sampling_method );
-
-  ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       distribution,
       data_container,
       method,
@@ -41,7 +38,7 @@ std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCouple
 }
 
 //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
@@ -60,14 +57,14 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
     data_container.getCutoffElasticCrossSection().end() );
 
   // Cutoff elastic cross section threshold energy bin index
-  unsigned cutoff_threshold_energy_index =
+  size_t cutoff_threshold_energy_index =
     data_container.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Moment preserving elastic cross section
   std::shared_ptr<std::vector<double> >
     mp_cross_section( new std::vector<double> );
-  unsigned mp_threshold_energy_index;
-  ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDSamplePolicy>(
+  size_t mp_threshold_energy_index;
+  ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDGridPolicy>(
                                *mp_cross_section,
                                mp_threshold_energy_index,
                                data_container,
@@ -78,7 +75,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
   std::shared_ptr<const HybridElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       distribution,
       energy_grid,
       cutoff_cross_section,
@@ -94,7 +91,7 @@ std::shared_ptr<const HybridElasticElectronScatteringDistribution> createHybridE
 }
 
 // Create a cutoff elastic distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
@@ -103,7 +100,7 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       distribution,
       data_container,
       cutoff_angle_cosine,
@@ -116,7 +113,7 @@ std::shared_ptr<const CutoffElasticElectronScatteringDistribution> createCutoffE
 }
 
 // Create a moment preserving elastic distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution> createMomentPreservingElasticDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine,
@@ -125,7 +122,7 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
   std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       distribution,
       data_container,
       cutoff_angle_cosine,
@@ -142,7 +139,7 @@ std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistr
 //----------------------------------------------------------------------------//
 
 // Create a simple dipole bremsstrahlung distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double evaluation_tol )
@@ -150,7 +147,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
 
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       data_container,
       distribution,
       evaluation_tol );
@@ -162,7 +159,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
 }
 
 //! Create a detailed 2BS bremsstrahlung distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const int atomic_number,
@@ -171,7 +168,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
   std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     distribution;
 
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       data_container,
       data_container.getAtomicNumber(),
       distribution,
@@ -188,7 +185,7 @@ std::shared_ptr<const BremsstrahlungElectronScatteringDistribution> createBremss
 //----------------------------------------------------------------------------//
 
 //! Create a electroionization subshell distribution
-template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const unsigned subshell,
@@ -198,7 +195,7 @@ std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution> c
   std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
     distribution;
 
-  ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
       data_container,
       subshell,
       binding_energy,

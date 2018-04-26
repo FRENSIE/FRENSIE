@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "Utility_CoupledElasticDistribution.hpp"
 #include "Utility_HybridElasticDistribution.hpp"
-#include "Utility_ElasticTwoDDistribution.hpp"
+#include "Utility_ElasticBasicBivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -21,7 +21,7 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 // Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -37,13 +37,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
   cutoff_cross_section->assign(
         data_container.getCutoffElasticCrossSection().begin(),
         data_container.getCutoffElasticCrossSection().end() );
-  total_cross_section.->assign(
+  total_cross_section->assign(
         data_container.getTotalElasticCrossSection().begin(),
         data_container.getTotalElasticCrossSection().end() );
   energy_grid->assign( data_container.getElectronEnergyGrid().begin(),
                        data_container.getElectronEnergyGrid().end() );
 
-  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     coupled_elastic_distribution,
     cutoff_cross_section,
     total_cross_section,
@@ -57,7 +57,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
 }
 
 // Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -68,7 +68,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol )
 {
-  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     coupled_elastic_distribution,
     cutoff_cross_section,
     total_cross_section,
@@ -82,7 +82,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
 }
 
 // Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -95,7 +95,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
 {
   testPostcondition( data_container.hasMomentPreservingData() );
 
-  ThisType::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createHybridElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     hybrid_elastic_distribution,
     energy_grid,
     cutoff_cross_section,
@@ -110,7 +110,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
 }
 
 // Create a cutoff elastic distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -118,7 +118,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
     const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
-  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     cutoff_elastic_distribution,
     data_container.getCutoffElasticAngles(),
     data_container.getCutoffElasticPDF(),
@@ -128,7 +128,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
 }
 
 // Create a moment preserving elastic distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -138,7 +138,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 {
   testPostcondition( data_container.hasMomentPreservingData() );
 
-  ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     moment_preserving_elastic_distribution,
     data_container.getElasticAngularEnergyGrid(),
     data_container.getMomentPreservingElasticDiscreteAngles(),
@@ -148,10 +148,10 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 }
 
 // Calculate the moment preserving cross section
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections(
     std::vector<double>& cross_sections,
-    unsigned& threshold_energy_index,
+    size_t& threshold_energy_index,
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const double evaluation_tol )
@@ -159,20 +159,20 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
   // Make sure there is moment preserving data
   testPrecondition( data_container.hasMomentPreservingData() );
   //Make sure the energy grid and cross sections are valid
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   //Make sure the evaluation tolerance is valid
   testPrecondition( evaluation_tol > 0.0 );
 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> cutoff_distribution;
-  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     cutoff_distribution,
     data_container,
     0.999999,
     evaluation_tol );
 
   // Create the elastic cross section reduction distribution
-  std::shared_ptr<const Utility::OneDDistribution> reduction_distribution(
+  std::shared_ptr<const Utility::UnivariateDistribution> reduction_distribution(
         new Utility::TabularDistribution<Utility::LogLog>(
             data_container.getElasticAngularEnergyGrid(),
             data_container.getMomentPreservingCrossSectionReduction() ) );
@@ -202,7 +202,7 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
 
   testPostcondition( threshold_energy_index >= 0u );
   testPostcondition( cross_sections.size() + threshold_energy_index ==
-                     energy_grid.size() );
+                     energy_grid->size() );
 }
 
 //----------------------------------------------------------------------------//
@@ -210,7 +210,7 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
 //----------------------------------------------------------------------------//
 
 // Create the coupled elastic distribution ( combined Cutoff and Screened Rutherford )
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -221,7 +221,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol )
 {
-  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCoupledElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     coupled_elastic_distribution,
     cutoff_cross_section,
     total_cross_section,
@@ -235,7 +235,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
 }
 
 // Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -248,7 +248,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
 {
   testPostcondition( data_container.hasAdjointMomentPreservingData() );
 
-ThisType::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+ThisType::createHybridElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     hybrid_elastic_distribution,
     energy_grid,
     cutoff_cross_section,
@@ -263,7 +263,7 @@ ThisType::createHybridElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
 }
 
 // Create a cutoff elastic distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -271,7 +271,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
     const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
-  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     cutoff_elastic_distribution,
     data_container.getAdjointCutoffElasticAngles(),
     data_container.getAdjointCutoffElasticPDF(),
@@ -281,7 +281,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
 }
 
 // Create a moment preserving elastic distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -291,7 +291,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 {
   testPostcondition( data_container.hasAdjointMomentPreservingData() );
 
-ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     moment_preserving_elastic_distribution,
     data_container.getAdjointElasticAngularEnergyGrid(),
     data_container.getAdjointMomentPreservingElasticDiscreteAngles(),
@@ -301,10 +301,10 @@ ThisType::createMomentPreservingElasticDistribution<TwoDInterpPolicy,TwoDSampleP
 }
 
 // Calculate the moment preserving cross section
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservingCrossSections(
     std::vector<double>& cross_sections,
-    unsigned& threshold_energy_index,
+    size_t& threshold_energy_index,
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const double evaluation_tol )
@@ -312,20 +312,20 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
   // Make sure there is moment preserving data
   testPrecondition( data_container.hasAdjointMomentPreservingData() );
   //Make sure the energy grid and cross sections are valid
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   //Make sure the evaluation tolerance is valid
   testPrecondition( evaluation_tol > 0.0 );
 
   std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution> cutoff_distribution;
-  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createCutoffElasticDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     cutoff_distribution,
     data_container,
     0.999999,
     evaluation_tol );
 
   // Create the elastic cross section reduction distribution
-  std::shared_ptr<const Utility::OneDDistribution> reduction_distribution(
+  std::shared_ptr<const Utility::UnivariateDistribution> reduction_distribution(
         new Utility::TabularDistribution<Utility::LogLog>(
             data_container.getAdjointElasticAngularEnergyGrid(),
             data_container.getAdjointMomentPreservingCrossSectionReduction() ) );
@@ -355,7 +355,7 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
 
   testPrecondition( threshold_energy_index >= 0u );
   testPostcondition( cross_sections.size() + threshold_energy_index ==
-                     energy_grid.size() );
+                     energy_grid->size() );
 }
 
 //----------------------------------------------------------------------------//
@@ -367,7 +367,7 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
  *  the native data container. This functionality is necessary for generating
  *  native moment preserving data without first creating native data files.
  */
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDistribution(
     std::shared_ptr<const CoupledElasticElectronScatteringDistribution>&
         coupled_elastic_distribution,
@@ -382,24 +382,24 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     const double evaluation_tol )
 {
   // Make sure the cross sections are valid
-  testPrecondition( Data::ValuesGreaterThanOrEqualToZero( cutoff_cross_section ) );
-  testPrecondition( Data::ValuesGreaterThanOrEqualToZero( total_cross_section ) );
-  testPrecondition( total_cross_section.size() == cutoff_cross_section.size() );
+  testPrecondition( Data::valuesGreaterThanOrEqualToZero( *cutoff_cross_section ) );
+  testPrecondition( Data::valuesGreaterThanOrEqualToZero( *total_cross_section ) );
+  testPrecondition( total_cross_section->size() == cutoff_cross_section->size() );
   // Make sure the maps are valid
   testPrecondition( cutoff_elastic_pdf.size() == angular_energy_grid.size() );
   testPrecondition( cutoff_elastic_angles.size() == angular_energy_grid.size() );
 
   // Make sure the energy grids are valid
-//  testPrecondition( energy_grid.back() > 0 );
+//  testPrecondition( energy_grid->back() > 0 );
   testPrecondition(
-        Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                          energy_grid.end() ) );
-  testPrecondition( Data::ValuesGreaterThanZero( energy_grid ) );
+        Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                          energy_grid->end() ) );
+  testPrecondition( Data::valuesGreaterThanZero( *energy_grid ) );
   testPrecondition( angular_energy_grid.back() > 0 );
   testPrecondition(
         Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
                                           angular_energy_grid.end() ) );
-  testPrecondition( Data::ValuesGreaterThanZero( angular_energy_grid ) );
+  testPrecondition( Data::valuesGreaterThanZero( angular_energy_grid ) );
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0 );
   testPrecondition( atomic_number <= 100 );
@@ -412,7 +412,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
   std::vector<double> etas( angular_energy_grid.size() );
 
   // Create the cross section ratios
-  std::shared_ptr<const Utility::OneDDistribution> cross_section_ratios;
+  std::shared_ptr<const Utility::UnivariateDistribution> cross_section_ratios;
   createCutoffCrossSectionRatios( energy_grid,
                                   cutoff_cross_section,
                                   total_cross_section,
@@ -423,8 +423,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
     new ElasticTraits( atomic_number ) );
 
   // Create the scattering function
-  std::shared_ptr<TwoDDist> scattering_function;
-  ThisType::createCoupledScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  std::shared_ptr<BasicBivariateDist> scattering_function;
+  ThisType::createCoupledScatteringFunction<TwoDInterpPolicy,TwoDGridPolicy>(
         cross_section_ratios,
         elastic_traits,
         cutoff_elastic_angles,
@@ -443,7 +443,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledElasticDis
 }
 
 // Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
     std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
@@ -464,7 +464,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
         Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
                                           angular_energy_grid.end() ) );
 
-  testPrecondition( Data::ValuesGreaterThanZero( angular_energy_grid ) );
+  testPrecondition( Data::valuesGreaterThanZero( angular_energy_grid ) );
   // Make sure the cutoff angle cosine is valid
   testPrecondition( cutoff_angle_cosine > -1.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
@@ -473,8 +473,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
   testPrecondition( evaluation_tol < 1.0 );
 
   // Create the full continuous scattering function
-  std::shared_ptr<TwoDDist> full_continuous_function;
-  ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  std::shared_ptr<BasicBivariateDist> full_continuous_function;
+  ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDGridPolicy>(
                 cutoff_elastic_angles,
                 cutoff_elastic_pdf,
                 angular_energy_grid,
@@ -484,7 +484,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
                 false );
 
   // Create the cross section ratios
-  std::shared_ptr<const Utility::OneDDistribution> cross_section_ratios;
+  std::shared_ptr<const Utility::UnivariateDistribution> cross_section_ratios;
   createHybridCrossSectionRatios(
                 energy_grid,
                 cutoff_cross_section,
@@ -494,8 +494,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
                 cross_section_ratios );
 
   // Create the hybrid scattering function
-  std::shared_ptr<TwoDDist> hybrid_function;
-    ThisType::createHybridScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  std::shared_ptr<BasicBivariateDist> hybrid_function;
+    ThisType::createHybridScatteringFunction<TwoDInterpPolicy,TwoDGridPolicy>(
                 cross_section_ratios,
                 cutoff_elastic_angles,
                 cutoff_elastic_pdf,
@@ -515,7 +515,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
 }
 
 // Create a cutoff elastic distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
     std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -531,7 +531,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
         Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
                                           angular_energy_grid.end() ) );
 
-  testPrecondition( Data::ValuesGreaterThanZero( angular_energy_grid ) );
+  testPrecondition( Data::valuesGreaterThanZero( angular_energy_grid ) );
   // Make sure the cutoff angle cosine is valid
   testPrecondition( cutoff_angle_cosine > -1.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
@@ -540,8 +540,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   testPrecondition( evaluation_tol < 1.0 );
 
   // Create the full scattering function
-  std::shared_ptr<TwoDDist> full_scattering_function;
-    ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  std::shared_ptr<BasicBivariateDist> full_scattering_function;
+    ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDGridPolicy>(
         cutoff_elastic_angles,
         cutoff_elastic_pdf,
         angular_energy_grid,
@@ -559,8 +559,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   else
   {
     // Create the scattering function below the cutoff angle cosine
-    std::shared_ptr<TwoDDist> scattering_function;
-    ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    std::shared_ptr<BasicBivariateDist> scattering_function;
+    ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDGridPolicy>(
         cutoff_elastic_angles,
         cutoff_elastic_pdf,
         angular_energy_grid,
@@ -578,7 +578,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
 }
 
 // Create a moment preserving elastic distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
     std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
@@ -594,7 +594,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
         Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
                                           angular_energy_grid.end() ) );
 
-  testPrecondition( Data::ValuesGreaterThanZero( angular_energy_grid ) );
+  testPrecondition( Data::valuesGreaterThanZero( angular_energy_grid ) );
   // Make sure the cutoff angle cosine is valid
   testPrecondition( cutoff_angle_cosine > -1.0 );
   testPrecondition( cutoff_angle_cosine <= 1.0 );
@@ -603,8 +603,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
   testPrecondition( evaluation_tol < 1.0 );
 
   // Create the scattering function
-  std::shared_ptr<TwoDDist> scattering_function;
-  ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  std::shared_ptr<BasicBivariateDist> scattering_function;
+  ThisType::createScatteringFunction<TwoDInterpPolicy,TwoDGridPolicy>(
     discrete_angles,
     discrete_weights,
     angular_energy_grid,
@@ -621,7 +621,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 }
 
 // Return angle cosine grid with the evaluated pdf for the given energy
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     std::vector<double>& angular_grid,
     std::vector<double>& evaluated_pdf,
@@ -658,16 +658,17 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     --lower_bin;
 
     // Get the distribution data
-    TwoDDist::DistributionType function_data( 2 );
+    std::vector<double> primary_grid( 2 );
+    std::vector<std::shared_ptr<const TabularDist> > secondary_dists( 2 );
 
     // Get the lower angular distributions
-    function_data[0].first = lower_bin->first;
-    function_data[0].second.reset(
+    primary_grid[0] = lower_bin->first;
+    secondary_dists[0].reset(
       new const TabularDist( lower_bin->second, pdf.at( lower_bin->first ) ) );
 
     // Get the upper angular distributions
-    function_data[1].first = upper_bin->first;
-    function_data[1].second.reset(
+    primary_grid[1] = upper_bin->first;
+    secondary_dists[1].reset(
       new const TabularDist( upper_bin->second, pdf.at( upper_bin->first ) ) );
 
     // Max scattering angle cosine
@@ -677,13 +678,14 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
     // Fuzzy bound tolerance
     double fuzzy_bound_tol = 1e-6;
 
-    // Create the TwoDDistribution between the two distributions
-    std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::ElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-        function_data,
-        max_angle_cosine,
-        fuzzy_bound_tol,
-        evaluation_tol ) );
+    // Create the BasicBivariateDistribution between the two distributions
+    std::shared_ptr<BasicBivariateDist> scattering_function(
+       new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+                                                            primary_grid,
+                                                            secondary_dists,
+                                                            max_angle_cosine,
+                                                            fuzzy_bound_tol,
+                                                            evaluation_tol ) );
 
     // Use the angular grid for the energy bin closes to the energy
     if ( energy - lower_bin->first <= upper_bin->first - energy )
@@ -715,12 +717,12 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 //----------------------------------------------------------------------------//
 
 // // Create the ratio of the cutoff to the total elastic cross section
-// template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+// template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 // void ElasticElectronScatteringDistributionNativeFactory::createCutoffCrossSectionRatios(
 //     const std::shared_ptr<const std::vector<double> > raw_energy_grid,
 //     const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
 //     const std::shared_ptr<const std::vector<double> > total_cross_section,
-//     std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios )
+//     std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_ratios )
 // {
 //   // Calculate the ratio of the cutoff to the total cross section
 //   std::vector<double> cross_section_ratio( raw_energy_grid.size() );
@@ -739,22 +741,22 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 // }
 
 // Create the ratio of the cutoff to the moment preserving cross section
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectionRatios(
     const std::shared_ptr<const std::vector<double> > raw_energy_grid,
     const std::shared_ptr<const std::vector<double> > cutoff_cross_section,
     const std::shared_ptr<const std::vector<double> > moment_preserving_cross_section,
-    const std::shared_ptr<TwoDDist>& cutoff_scattering_function,
+    const std::shared_ptr<BasicBivariateDist>& cutoff_scattering_function,
     const double cutoff_angle_cosine,
-    std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios )
+    std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_ratios )
 {
   // Calculate the ratio of the cutoff to the moment preserving cross section
-  std::vector<double> cross_section_ratio( raw_energy_grid.size() );
-  std::vector<double> energy_grid( raw_energy_grid.size() );
+  std::vector<double> cross_section_ratio( raw_energy_grid->size() );
+  std::vector<double> energy_grid( raw_energy_grid->size() );
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
     // Get the energy
-    energy_grid[n] = raw_energy_grid[n];
+    energy_grid[n] = (*raw_energy_grid)[n];
 
     // Get the cutoff cdf value at the angle cosine cutoff
     double cutoff_cdf =
@@ -763,11 +765,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
                                                         cutoff_angle_cosine );
 
     // Get the reduced cutoff cross section
-    double reduced_cross_section = cutoff_cross_section[n]*cutoff_cdf;
+    double reduced_cross_section = (*cutoff_cross_section)[n]*cutoff_cdf;
 
     // Get the ratio of the cutoff to the moment preserving cross section
     cross_section_ratio[n] =
-      reduced_cross_section/(reduced_cross_section + moment_preserving_cross_section[n] );
+      reduced_cross_section/(reduced_cross_section + (*moment_preserving_cross_section)[n] );
   }
     // Create cross section ratios
     cross_section_ratios.reset(
@@ -775,56 +777,59 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridCrossSectio
 }
 
 // Create the hybrid elastic scattering functions
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
-    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_ratios,
     const std::map<double,std::vector<double> >& elastic_angles,
     const std::map<double,std::vector<double> >& elastic_pdf,
     const std::map<double,std::vector<double> >& moment_preserving_angles,
     const std::map<double,std::vector<double> >& moment_preserving_weights,
     const std::vector<double>& energy_grid,
-    std::shared_ptr<TwoDDist>& hybrid_function,
+    std::shared_ptr<BasicBivariateDist>& hybrid_function,
     const double cutoff_angle_cosine,
     const double evaluation_tol )
 {
   // Get the distribution data
-  TwoDDist::DistributionType function_data( energy_grid.size() );
+  std::vector<double> primary_grid( energy_grid.size() );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( energy_grid.size() );
 
   // Loop through all energies below the max energy
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  for( size_t n = 0; n < energy_grid.size(); ++n )
   {
     // Create the cutoff elastic scattering function
-    function_data[n].first = energy_grid[n];
+    primary_grid[n] = energy_grid[n];
 
     // Create hybrid elastic distribution
-    function_data[n].second.reset(
+    secondary_dists[n].reset(
       new const Utility::HybridElasticDistribution<Utility::LinLin>(
-                        elastic_angles.find( energy_grid[n] )->second,
-                        elastic_pdf.find( energy_grid[n] )->second,
-                        moment_preserving_angles.find( energy_grid[n] )->second,
-                        moment_preserving_weights.find( energy_grid[n] )->second,
-                        cutoff_angle_cosine,
-                        cross_section_ratios->evaluate( energy_grid[n] ) ) );
+                      elastic_angles.find( energy_grid[n] )->second,
+                      elastic_pdf.find( energy_grid[n] )->second,
+                      moment_preserving_angles.find( energy_grid[n] )->second,
+                      moment_preserving_weights.find( energy_grid[n] )->second,
+                      cutoff_angle_cosine,
+                      cross_section_ratios->evaluate( energy_grid[n] ) ) );
   }
 
   // Set the hybrid function
   hybrid_function.reset(
-    new Utility::ElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-        function_data,
-        1.0,
-        1e-6,
-        evaluation_tol ) );
+    new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+                                                            primary_grid,
+                                                            secondary_dists,
+                                                            1.0,
+                                                            1e-6,
+                                                            evaluation_tol ) );
 }
 
 // Create the coupled scattering function
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createCoupledScatteringFunction(
-    const std::shared_ptr<const Utility::OneDDistribution>& cross_section_ratios,
+    const std::shared_ptr<const Utility::UnivariateDistribution>& cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const std::map<double,std::vector<double> >& elastic_angles,
     const std::map<double,std::vector<double> >& elastic_pdf,
     const std::vector<double>& energy_grid,
-    std::shared_ptr<TwoDDist>& scattering_function,
+    std::shared_ptr<BasicBivariateDist>& scattering_function,
     const double evaluation_tol )
 {
   // Make sure the energy grid is valid
@@ -832,15 +837,17 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
-  testPrecondition( Data::ValuesGreaterThanZero( energy_grid ) );
+  testPrecondition( Data::valuesGreaterThanZero( energy_grid ) );
 
   // Get the distribution data
-  TwoDDist::DistributionType function_data( energy_grid.size() );
+  std::vector<double> primary_grid( energy_grid.size() );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( energy_grid.size() );
 
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  for( size_t n = 0; n < energy_grid.size(); ++n )
   {
     // Set the energy
-    function_data[n].first = energy_grid[n];
+    primary_grid[n] = energy_grid[n];
 
     // Get the value of moliere's eta
     double eta = elastic_traits->evaluateMoliereScreeningConstant( energy_grid[n] );
@@ -849,9 +856,9 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
     double cutoff_ratio = cross_section_ratios->evaluate( energy_grid[n] );
 
 
-  // Create coupled elastic distribution
-  function_data[n].second.reset(
-    new const Utility::CoupledElasticDistribution<Utility::LinLin>(
+    // Create coupled elastic distribution
+    secondary_dists[n].reset(
+               new const Utility::CoupledElasticDistribution<Utility::LinLin>(
                                 elastic_angles.find( energy_grid[n] )->second,
                                 elastic_pdf.find( energy_grid[n] )->second,
                                 eta,
@@ -860,11 +867,12 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
 
   // Set the scattering function
   scattering_function.reset(
-    new Utility::ElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-        function_data,
-        1.0,
-        1e-6,
-        evaluation_tol ) );
+    new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+                                                            primary_grid,
+                                                            secondary_dists,
+                                                            1.0,
+                                                            1e-6,
+                                                            evaluation_tol ) );
 }
 
 // Create the scattering function
@@ -872,12 +880,12 @@ void ElasticElectronScatteringDistributionNativeFactory::createCoupledScattering
  *  the native data container. This functionality is necessary for generating
  *  native moment preserving data without first creating native data files.
  */
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
         const std::map<double,std::vector<double> >& elastic_angles,
         const std::map<double,std::vector<double> >& elastic_pdf,
         const std::vector<double>& energy_grid,
-        std::shared_ptr<TwoDDist>& scattering_function,
+        std::shared_ptr<BasicBivariateDist>& scattering_function,
         const double cutoff_angle_cosine,
         const double evaluation_tol,
         const bool discrete_function )
@@ -887,12 +895,14 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
-  testPrecondition( Data::ValuesGreaterThanZero( energy_grid ) );
+  testPrecondition( Data::valuesGreaterThanZero( energy_grid ) );
 
   // Get the distribution data
-  TwoDDist::DistributionType function_data( energy_grid.size() );
+  std::vector<double> primary_grid( energy_grid.size() );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( energy_grid.size() );
 
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  for( size_t n = 0; n < energy_grid.size(); ++n )
   {
     if( cutoff_angle_cosine < elastic_angles.find( energy_grid[n] )->second.back() )
     {
@@ -904,7 +914,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
         elastic_pdf.find( energy_grid[n] )->second,
         energy_grid[n],
         cutoff_angle_cosine,
-        function_data[n] );
+        primary_grid[n],
+        secondary_dists[n] );
     }
     else
     {
@@ -912,18 +923,20 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
         elastic_angles.find( energy_grid[n] )->second,
         elastic_pdf.find( energy_grid[n] )->second,
         energy_grid[n],
-        function_data[n],
+        primary_grid[n],
+        secondary_dists[n],
         discrete_function );
     }
   }
 
   // Set the scattering function
   scattering_function.reset(
-    new Utility::ElasticTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-        function_data,
-        cutoff_angle_cosine,
-        1e-6,
-        evaluation_tol ) );
+    new Utility::ElasticBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+                                                           primary_grid,
+                                                           secondary_dists,
+                                                           cutoff_angle_cosine,
+                                                           1e-6,
+                                                           evaluation_tol ) );
 }
 
 } // end MonteCarlo namespace

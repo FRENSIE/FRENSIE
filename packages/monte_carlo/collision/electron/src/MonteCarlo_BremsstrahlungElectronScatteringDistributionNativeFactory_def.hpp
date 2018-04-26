@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Create a simple dipole bremsstrahlung distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& bremsstrahlung_energy_grid,
@@ -27,9 +27,10 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   testPrecondition( evaluation_tol > 0.0 );
 
   // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
+  std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>
+    energy_loss_function;
 
-  ThisType::createEnergyLossFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createEnergyLossFunction<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_electroatom_data,
         bremsstrahlung_energy_grid,
         energy_loss_function,
@@ -40,7 +41,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 }
 
 // Create a simple dipole bremsstrahlung distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
@@ -54,7 +55,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   std::vector<double> bremsstrahlung_energy_grid =
         raw_electroatom_data.getBremsstrahlungEnergyGrid();
 
-  ThisType::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     raw_electroatom_data,
     bremsstrahlung_energy_grid,
     scattering_distribution,
@@ -62,7 +63,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
-template <typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template <typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const int atomic_number,
@@ -75,9 +76,9 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   testPrecondition( evaluation_tol > 0.0 );
 
   // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_loss_function;
+  std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution> energy_loss_function;
 
-  ThisType::createEnergyLossFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createEnergyLossFunction<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_electroatom_data,
         bremsstrahlung_energy_grid,
         energy_loss_function,
@@ -89,7 +90,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 }
 
 // Create a detailed 2BS bremsstrahlung distribution
-template <typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template <typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const int atomic_number,
@@ -101,7 +102,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   testPrecondition( evaluation_tol > 0.0 );
 
 
-  ThisType::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createBremsstrahlungDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
     raw_electroatom_data,
     atomic_number,
     raw_electroatom_data.getBremsstrahlungEnergyGrid(),
@@ -110,23 +111,24 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 }
 
 // Create the energy loss function
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>& energy_loss_function,
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>& energy_loss_function,
     const double evaluation_tol )
 {
   // Make sure the evaluation tol is valid
   testPrecondition( evaluation_tol > 0.0 );
 
   // Get the function data
-  Utility::FullyTabularTwoDDistribution::DistributionType
-    function_data( energy_grid.size() );
+  std::vector<double> primary_grid( energy_grid.size() );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( energy_grid.size() );
 
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  for( size_t n = 0; n < energy_grid.size(); ++n )
   {
-    function_data[n].first = energy_grid[n];
+    primary_grid[n] = energy_grid[n];
 
     // Get the energy of the bremsstrahlung photon at the incoming energy
     std::vector<double> photon_energy(
@@ -136,15 +138,16 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
     std::vector<double> pdf(
         raw_electroatom_data.getBremsstrahlungPhotonPDF( energy_grid[n] ) );
 
-    function_data[n].second.reset(
+    secondary_dists[n].reset(
       new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
                                                                pdf ) );
   }
 
   // Create the scattering function
   energy_loss_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-            function_data,
+    new Utility::InterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+            primary_grid,
+            secondary_dists,
             1e-6,
             evaluation_tol ) );
 }

@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 ScreenedRutherfordElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::ScreenedRutherfordElasticAdjointElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -37,8 +38,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 ScreenedRutherfordElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::ScreenedRutherfordElasticAdjointElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -90,6 +91,18 @@ void ScreenedRutherfordElasticAdjointElectroatomicReaction<InterpPolicy,processe
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

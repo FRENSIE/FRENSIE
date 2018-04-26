@@ -34,6 +34,12 @@ private:
 
 public:
 
+  //! The reaction enum type
+  typedef ElectroatomicReactionType ReactionEnumType;
+
+  //! The particle state type
+  typedef ElectronState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef ElectroatomCore::ReactionMap ReactionMap;
 
@@ -50,10 +56,10 @@ public:
       const std::string& name,
       const unsigned atomic_number,
       const double atomic_weight,
-      const std::shared_ptr<std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const ReactionMap& standard_scattering_reactions,
-      const ReactionMap& standard_absorption_reactions,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      const ConstReactionMap& standard_scattering_reactions,
+      const ConstReactionMap& standard_absorption_reactions,
       const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
       const bool processed_cross_sections,
       const InterpPolicy policy );
@@ -88,9 +94,9 @@ inline void Electroatom::relaxAtom( const Data::SubshellType vacancy_shell,
                                     ParticleBank& bank ) const
 {
   // Relax the atom
-  d_core.getAtomicRelaxationModel().relaxAtom( vacancy_shell,
-                                               electron,
-                                               bank );
+  this->getCore().getAtomicRelaxationModel().relaxAtom( vacancy_shell,
+                                                        electron,
+                                                        bank );
 }
 
 } // end MonteCarlo namespace

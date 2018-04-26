@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 
@@ -19,10 +19,10 @@ namespace MonteCarlo{
 
 //! The decoupled (cutoff and screened Rutherford) elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class DecoupledElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class DecoupledElasticElectroatomicReaction : public StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+  typedef StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -32,7 +32,7 @@ public:
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& total_cross_section,
       const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
-      const unsigned threshold_energy_index,
+      const size_t threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
@@ -43,8 +43,8 @@ public:
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& total_cross_section,
       const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
-      const unsigned threshold_energy_index,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const size_t threshold_energy_index,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
@@ -96,7 +96,7 @@ private:
   unsigned d_threshold_energy_index;
 
   // The hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> d_grid_searcher;
 };
 
 } // end MonteCarlo namespace

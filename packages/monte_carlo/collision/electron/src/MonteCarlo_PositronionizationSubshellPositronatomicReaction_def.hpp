@@ -25,7 +25,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_section>::PositronionizationSubshellPositronatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
@@ -45,7 +45,7 @@ PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_se
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
 
   // Make sure the threshold energy isn't less than the binding energy
-  testPrecondition( incoming_energy_grid[threshold_energy_index] >=
+  testPrecondition( (*incoming_energy_grid)[threshold_energy_index] >=
                     d_electroionization_subshell_distribution->getBindingEnergy() );
 }
 
@@ -55,8 +55,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_section>::PositronionizationSubshellPositronatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
@@ -78,7 +78,7 @@ PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_se
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
 
   // Make sure the threshold energy isn't less than the binding energy
-  testPrecondition( incoming_energy_grid[threshold_energy_index] >=
+  testPrecondition( (*incoming_energy_grid)[threshold_energy_index] >=
                     d_electroionization_subshell_distribution->getBindingEnergy() );
 }
 

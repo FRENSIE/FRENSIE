@@ -17,7 +17,7 @@ namespace MonteCarlo{
 
 // Constructor with simple analytical photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& bremsstrahlung_scattering_distribution,
     const bool bank_secondary_particles )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
     d_bank_secondary_particles( bank_secondary_particles )
@@ -36,7 +36,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 // Constructor with detailed 2BS photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& bremsstrahlung_scattering_distribution,
     const bool bank_secondary_particles )
   : d_atomic_number( atomic_number ),
     d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
@@ -144,7 +144,7 @@ void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials(
                             const double incoming_energy,
                             double& photon_energy,
                             double& photon_angle_cosine,
-                            unsigned& trials ) const
+                            Counter& trials ) const
 {
   trials++;
 

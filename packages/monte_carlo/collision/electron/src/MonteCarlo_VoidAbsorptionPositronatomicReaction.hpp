@@ -32,40 +32,43 @@ public:
   { /* ... */ }
 
   //! Test if the energy falls within the energy grid
-  bool isEnergyWithinEnergyGrid( const double energy ) const;
+  bool isEnergyWithinEnergyGrid( const double energy ) const override;
 
   //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const;
+  double getCrossSection( const double energy ) const override;
 
   //! Return the cross section at the given energy (efficient)
   double getCrossSection( const double energy,
-                          const unsigned bin_index ) const;
+                          const size_t bin_index ) const override;
 
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,
-                                      const double outgoing_energy ) const;
+                                      const double outgoing_energy ) const override;
 
   //! Return the threshold energy
-  double getThresholdEnergy() const;
+  double getThresholdEnergy() const override;
+
+  //! Return the max energy
+  double getMaxEnergy() const override;
 
   //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
   //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
 
   //! Return the reaction type
-  PositronatomicReactionType getReactionType() const;
+  PositronatomicReactionType getReactionType() const override;
 
   //! Simulate the reaction
   void react( PositronState& positron,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const;
+              Data::SubshellType& shell_of_interaction ) const override;
 
 protected:
 
   //! Return the head of the energy grid
-  const double* getEnergyGridHead() const;
+  const double* getEnergyGridHead() const override;
 };
 
 // Test if the energy falls within the energy grid
@@ -85,7 +88,7 @@ inline double VoidAbsorptionPositronatomicReaction::getCrossSection(
 // Return the cross section at the given energy (efficient)
 inline double VoidAbsorptionPositronatomicReaction::getCrossSection(
     const double energy,
-    const unsigned bin_index ) const
+    const size_t bin_index ) const
 {
   return 0.0;
 }
@@ -98,10 +101,16 @@ inline double VoidAbsorptionPositronatomicReaction::getDifferentialCrossSection(
   return 0.0;
 }
 
-//! Return the threshold energy
+// Return the threshold energy
 inline double VoidAbsorptionPositronatomicReaction::getThresholdEnergy() const
 {
   return 1.00000e-5;
+}
+
+// Return the max energy
+inline double VoidAbsorptionPositronatomicReaction::getMaxEnergy() const
+{
+  return 100.0;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy

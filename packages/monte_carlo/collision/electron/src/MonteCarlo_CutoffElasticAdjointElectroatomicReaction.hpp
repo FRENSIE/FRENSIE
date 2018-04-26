@@ -11,17 +11,17 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The cutoff elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class CutoffElasticAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
+class CutoffElasticAdjointElectroatomicReaction : public StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
+  typedef StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
     BaseType;
 
 public:
@@ -30,7 +30,7 @@ public:
   CutoffElasticAdjointElectroatomicReaction(
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& cross_section,
-      const unsigned threshold_energy_index,
+      const size_t threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
       scattering_distribution );
 
@@ -38,8 +38,8 @@ public:
   CutoffElasticAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
     scattering_distribution );
   
@@ -67,7 +67,7 @@ public:
 
   //! Return the cross section at the given energy (efficient)
   double getCrossSection( const double energy,
-                          const unsigned bin_index ) const override;
+                          const size_t bin_index ) const override;
 
 private:
 

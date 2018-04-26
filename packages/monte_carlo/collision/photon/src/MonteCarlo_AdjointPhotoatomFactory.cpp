@@ -29,6 +29,9 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
     d_adjoint_photoatomic_table_name_map(),
     d_verbose( verbose )
 {
+  FRENSIE_LOG_NOTIFICATION( "Starting to load adjoint photoatom data tables ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   // Create each adjoint photoatom in the set
   ScatteringCenterNameSet::const_iterator adjoint_photoatom_name =
     adjoint_photoatom_names.begin();
@@ -96,6 +99,9 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
   // Make sure that every adjoint photoatom has been created
   testPostcondition( d_adjoint_photoatom_name_map.size() ==
                      adjoint_photoatom_names.size() );
+
+  FRENSIE_LOG_NOTIFICATION( "Finished loading adjoint photoatom data tables." );
+  FRENSIE_FLUSH_ALL_LOGS();
 }
 
 // Create the map of adjoint photoatoms
@@ -130,6 +136,7 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
                            ") for " << data_properties.atom() <<
                            " from " << native_file_path.string() <<
                            " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
     
     // Create the aepr data container
@@ -154,6 +161,7 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
     if( d_verbose )
     {
       FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
   }
   // The table has already been loaded

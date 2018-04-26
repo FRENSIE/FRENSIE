@@ -25,7 +25,7 @@ namespace MonteCarlo{
  * requested, a electroionization reaction for each subshell will be created.
  * Otherwise a single total electroionization reaction will be created.
  */
-template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template <typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 void ElectroatomNativeFactory::createElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
@@ -33,11 +33,11 @@ void ElectroatomNativeFactory::createElectroatomCore(
         std::shared_ptr<const ElectroatomCore>& electroatom_core )
 {
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
   electroatom_core.reset( new ElectroatomCore() );
 
-  Electroatom::ReactionMap scattering_reactions, absorption_reactions;
+  Electroatom::ConstReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
   std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double> );
@@ -45,7 +45,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher for this atom
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
         new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
                               properties.getNumberOfElectronHashGridBins() ) );
@@ -53,9 +53,9 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the elastic scattering reaction
   if ( properties.isElasticModeOn() )
   {
-    if( TwoDInterpPolicy::name() == "LogLogLog" )
+    if( std::is_same<TwoDInterpPolicy,Utility::LogLogLog>::value )
     {
-      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,TwoDSamplePolicy>(
+      ThisType::createElasticElectroatomCore<Utility::LogLogCosLog,TwoDGridPolicy>(
                                               raw_electroatom_data,
                                               energy_grid,
                                               grid_searcher,
@@ -64,7 +64,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     }
     else
     {
-      ThisType::createElasticElectroatomCore<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ThisType::createElasticElectroatomCore<TwoDInterpPolicy,TwoDGridPolicy>(
                                               raw_electroatom_data,
                                               energy_grid,
                                               grid_searcher,
@@ -76,10 +76,10 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the bremsstrahlung scattering reaction
   if ( properties.isBremsstrahlungModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createBremsstrahlungReaction<ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
                   raw_electroatom_data,
                   energy_grid,
                   grid_searcher,
@@ -91,7 +91,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the atomic excitation scattering reaction
   if ( properties.isAtomicExcitationModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
@@ -104,9 +104,9 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the subshell electroionization reactions
   if ( properties.isElectroionizationModeOn() )
   {
-    std::vector<std::shared_ptr<ElectroatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<const ElectroatomicReaction> > reaction_pointers;
 
-    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions<ElectroatomicReaction,TwoDInterpPolicy,TwoDGridPolicy>(
                       raw_electroatom_data,
                       energy_grid,
                       grid_searcher,
@@ -131,13 +131,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
 }
 
 // Create the elastic reaction for a electroatom core
-template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template <typename TwoDInterpPolicy,template<typename> class TwoDGridPolicy>
 void ElectroatomNativeFactory::createElasticElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         const SimulationElectronProperties& properties,
-        Electroatom::ReactionMap& scattering_reactions )
+        Electroatom::ConstReactionMap& scattering_reactions )
 {
   // Get the elastic distribution type
   ElasticElectronDistributionType distribution_type =
@@ -145,10 +145,10 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
 
   if( distribution_type == COUPLED_DISTRIBUTION )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -158,10 +158,10 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
   }
   else if( distribution_type == DECOUPLED_DISTRIBUTION )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -173,10 +173,10 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     // Create the coupled elastic scattering reaction (no moment preserving elastic scattering)
     if ( properties.getElasticCutoffAngleCosine() == 1.0 )
     {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+      Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -186,10 +186,10 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     // Create the moment preserving elastic scattering reaction (no coupled elastic scattering)
     else if ( properties.getElasticCutoffAngleCosine() == -1.0 )
     {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+      Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -200,10 +200,10 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
     // Create the hybrid elastic scattering reaction (if cutoff is within range)
     else
     {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+      Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      ElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -214,10 +214,10 @@ void ElectroatomNativeFactory::createElasticElectroatomCore(
   }
   else if( distribution_type == CUTOFF_DISTRIBUTION )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,

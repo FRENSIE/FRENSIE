@@ -12,13 +12,19 @@
 // Std Lib Includes
 #include <string>
 #include <memory>
-#include <unordered_set>
-#include <unordered_map>
+
+// Boost Includes
+#include <boost/filesystem.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
+#include "MonteCarlo_ElectronMaterial.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
+#include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
@@ -28,57 +34,60 @@ class ElectroatomFactory
 
 public:
 
+  //! The electroatom name map
+  typedef ElectronMaterial::ElectroatomNameMap ElectroatomNameMap;
+
+  //! The scattering center name set
+  typedef MaterialDefinitionDatabase::ScatteringCenterNameSet ScatteringCenterNameSet;
+
   //! Constructor
   ElectroatomFactory(
-    const std::string& cross_sections_xml_directory,
-    const Teuchos::ParameterList& cross_section_table_info,
-    const std::unordered_set<std::string>& electroatom_aliases,
-    const std::shared_ptr<const AtomicRelaxationModelFactory>&
-    atomic_relaxation_model_factory,
-    const SimulationProperties& properties,
-    std::ostream* os_message = &std::cout );
+             const boost::filesystem::path& data_directory,
+             const ScatteringCenterNameSet& electroatom_names,
+             const ScatteringCenterDefinitionDatabase& electroatom_definitions,
+             const std::shared_ptr<AtomicRelaxationModelFactory>&
+             atomic_relaxation_model_factory,
+             const SimulationProperties& properties,
+             const bool verbose = false );
 
   //! Destructor
   ~ElectroatomFactory()
   { /* ... */ }
 
   //! Create the map of electroatoms
-  void createElectroatomMap(
-            std::unordered_map<std::string,std::shared_ptr<const Electroatom> >&
-            electroatom_map ) const;
+  void createElectroatomMap( ElectroatomNameMap& electroatom_name_map ) const;
 
 private:
 
   // Create a electroatom from an ACE table
   void createElectroatomFromACETable(
-              const std::string& electroatom_alias,
-              const std::string& ace_file_path,
-              const std::string& electroatomic_table_name,
-              const int electroatomic_file_start_line,
-              const double atomic_weight,
-              const std::shared_ptr<const AtomicRelaxationModelFactory>&
-                          atomic_relaxation_model_factory,
-              const SimulationProperties& properties );
+                      const boost::filesystem::path& data_directory,
+                      const std::string& electroatom_name,
+                      const double atomic_weight,
+		      const Data::ElectroatomicDataProperties& data_properties,
+                      const std::shared_ptr<AtomicRelaxationModelFactory>&
+                      atomic_relaxation_model_factory,
+                      const SimulationProperties& properties );
 
   // Create a electroatom from a Native table
   void createElectroatomFromNativeTable(
-              const std::string& electroatom_alias,
-              const std::string& ace_file_path,
-              const double atomic_weight,
-              const std::shared_ptr<const AtomicRelaxationModelFactory>&
-                          atomic_relaxation_model_factory,
-              const SimulationProperties& properties );
+                      const boost::filesystem::path& data_directory,
+                      const std::string& electroatom_name,
+                      const double atomic_weight,
+                      const Data::ElectroatomicDataProperties& data_properties,
+                      const std::shared_ptr<AtomicRelaxationModelFactory>&
+                      atomic_relaxation_model_factory,
+                      const SimulationProperties& properties );
 
   // The electroatom map
-  std::unordered_map<std::string,std::shared_ptr<const Electroatom> >
-  d_electroatom_name_map;
+  ElectroatomNameMap d_electroatom_name_map;
 
   // The table map
-  std::unordered_map<std::string,std::shared_ptr<const Electroatom> >
+  std::map<Data::ElectroatomicDataProperties::FileType,ElectroatomNameMap>
   d_electroatomic_table_name_map;
 
-  // The message output stream
-  std::ostream* d_os_message;
+  // Verbose electroatom construction
+  bool d_verbose;
 };
 
 } // end MonteCarlo namespace

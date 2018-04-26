@@ -20,7 +20,7 @@ void AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createA
         scattering_distribution )
 {
   // Create the scattering function
-  std::shared_ptr<Utility::OneDDistribution> energy_gain_function;
+  std::shared_ptr<Utility::UnivariateDistribution> energy_gain_function;
   AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction(
         raw_electroatom_data,
         energy_gain_function );
@@ -32,7 +32,7 @@ void AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createA
 // Create the energy gain function
 void AtomicExcitationAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    std::shared_ptr<Utility::OneDDistribution>& energy_gain_function )
+    std::shared_ptr<Utility::UnivariateDistribution>& energy_gain_function )
 {
   // Get the adjoint atomic excitation energy grid
   std::vector<double> energy_grid(

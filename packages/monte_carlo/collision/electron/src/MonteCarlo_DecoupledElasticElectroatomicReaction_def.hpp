@@ -10,6 +10,7 @@
 #define MONTE_CARLO_DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& total_cross_section,
       const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
-      const unsigned threshold_energy_index,
+      const size_t threshold_energy_index,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
@@ -34,15 +35,6 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
     d_tabular_distribution( tabular_distribution ),
     d_analytical_distribution( analytical_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                                                incoming_energy_grid.begin(),
-                                                incoming_energy_grid.end() ) );
-  // Make sure the sampling ratio is valid
-  testPrecondition( cutoff_cross_section.size() > 0 );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distributions are valid
   testPrecondition( tabular_distribution.use_count() > 0 );
   testPrecondition( analytical_distribution.use_count() > 0 );
@@ -50,9 +42,9 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
   // Construct the grid searcher
   d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<std::vector<double>,processed_cross_section>(
                             incoming_energy_grid,
-                            incoming_energy_grid[0],
-                            incoming_energy_grid[incoming_energy_grid.size()-1],
-                            incoming_energy_grid.size()/10+1 ) );
+                            incoming_energy_grid->front(),
+                            incoming_energy_grid->back(),
+                            incoming_energy_grid->size()/10+1 ) );
 }
 
 // Constructor
@@ -61,8 +53,8 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& total_cross_section,
       const std::shared_ptr<const std::vector<double> >& cutoff_cross_section,
-      const unsigned threshold_energy_index,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const size_t threshold_energy_index,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             tabular_distribution,
       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
@@ -78,15 +70,6 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
     d_tabular_distribution( tabular_distribution ),
     d_analytical_distribution( analytical_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                                                incoming_energy_grid.begin(),
-                                                incoming_energy_grid.end() ) );
-  // Make sure the sampling ratio is valid
-  testPrecondition( cutoff_cross_section.size() > 0 );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distributions are valid
   testPrecondition( tabular_distribution.use_count() > 0 );
   testPrecondition( analytical_distribution.use_count() > 0 );
@@ -129,14 +112,10 @@ double DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_sectio
   {
     unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
 
-    unsigned r_index = energy_index - d_threshold_energy_index;
-
-    double cutoff_cross_section = StandardGenericAtomicReactionHelper<InterpPolicy,processed_cross_section>::calculateInterpolatedCrossSection(
-                                        d_incoming_energy_grid[energy_index],
-                                        d_incoming_energy_grid[energy_index+1],
-                                        energy,
-                                        d_cutoff_cross_section[r_index],
-                                        d_cutoff_cross_section[r_index+1] );
+    double cutoff_cross_section = this->getCrossSectionImpl(
+                                                       *d_cutoff_cross_section,
+                                                       energy,
+                                                       energy_index );
 
     double total_cross_section = this->getCrossSection( energy, energy_index );
 
@@ -219,6 +198,18 @@ void DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( DecoupledElasticElectroatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

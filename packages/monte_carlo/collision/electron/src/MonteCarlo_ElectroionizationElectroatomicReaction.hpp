@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 
 namespace MonteCarlo{
 
@@ -21,10 +21,10 @@ namespace MonteCarlo{
 */
 
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ElectroionizationElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class ElectroionizationElectroatomicReaction : public StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+typedef StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -33,17 +33,17 @@ public:
   ElectroionizationElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::vector<std::shared_ptr<ElectroatomicReaction> >&
+    const size_t threshold_energy_index,
+    const std::vector<std::shared_ptr<const ElectroatomicReaction> >&
         subshell_reactions );
 
   //! Constructor
   ElectroionizationElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const std::vector<std::shared_ptr<ElectroatomicReaction> >&
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    const std::vector<std::shared_ptr<const ElectroatomicReaction> >&
         subshell_reactions );
 
 
@@ -72,7 +72,7 @@ public:
 private:
 
   // Electroionization subshell reactions
-  std::vector<std::shared_ptr<ElectroatomicReaction> >
+  std::vector<std::shared_ptr<const ElectroatomicReaction> >
         d_subshell_reactions;
 };
 

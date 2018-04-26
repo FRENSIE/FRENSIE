@@ -13,7 +13,7 @@ namespace MonteCarlo{
 
 // Constructor
 BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& adjoint_brem_scatter_dist )
+    const std::shared_ptr<const BasicBivariateDist>& adjoint_brem_scatter_dist )
   : d_adjoint_brem_scatter_dist( adjoint_brem_scatter_dist )
 {
   // Make sure the array is valid
@@ -100,7 +100,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sampleAndRecordTrials(
                             const double incoming_energy,
                             double& outgoing_energy,
                             double& scattering_angle_cosine,
-                            unsigned& trials ) const
+                            Counter& trials ) const
 {
   trials++;
 

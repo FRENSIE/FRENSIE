@@ -23,7 +23,7 @@ namespace MonteCarlo{
  * given as: 1/2(incoming energy - binding energy).
  */
 ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>&
+    const std::shared_ptr<const BasicBivariateDist>&
       electroionization_subshell_scattering_distribution,
     const double binding_energy,
     const bool bank_secondary_particles,
@@ -54,7 +54,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMinSecondaryE
   if ( energy > d_binding_energy )
   {
     double min_energy =
-      d_electroionization_shell_distribution->getLowerBoundOfConditionalIndepVar( energy );
+      d_electroionization_shell_distribution->getLowerBoundOfSecondaryConditionalIndepVar( energy );
 
     double max_energy = 0.5*( energy - d_binding_energy );
 
@@ -279,7 +279,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTri
                               const double incoming_energy,
                               double& knock_on_energy,
                               double& knock_on_angle_cosine,
-                              unsigned& trials ) const
+                              Counter& trials ) const
 {
   trials++;
 

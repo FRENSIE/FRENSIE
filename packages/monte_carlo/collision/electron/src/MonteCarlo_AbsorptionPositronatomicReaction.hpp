@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 
 namespace MonteCarlo{
 
@@ -20,10 +20,10 @@ namespace MonteCarlo{
  * absorption reactions (e.g. heating).
  */
 template<typename InterpPolicy, bool processed_cross_section = false>
-class AbsorptionPositronatomicReaction : public StandardGenericAtomicReaction<PositronatomicReaction,InterpPolicy,processed_cross_section>
+class AbsorptionPositronatomicReaction : public StandardReactionBaseImpl<PositronatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<PositronatomicReaction,InterpPolicy,processed_cross_section>
+  typedef StandardReactionBaseImpl<PositronatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -32,15 +32,15 @@ public:
   AbsorptionPositronatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const PositronatomicReactionType reaction );
 
   //! Constructor
   AbsorptionPositronatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const PositronatomicReactionType reaction );
 
   //! Destructor

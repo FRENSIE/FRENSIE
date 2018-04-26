@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -28,17 +29,6 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
               threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( scattering_distribution.use_count() > 0 );
 }
@@ -48,8 +38,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
        const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -58,21 +48,8 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
               grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( scattering_distribution.use_count() > 0 );
-  // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -110,11 +87,7 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
-  double cross_section;
-
-  cross_section =
-    StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
-    energy );
+  double cross_section = BaseType::getCrossSection( energy );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
@@ -129,18 +102,13 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 template<typename InterpPolicy, bool processed_cross_section>
 double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
     const double energy,
-    const unsigned bin_index ) const
+    const size_t bin_index ) const
 {
   // Get the cross section ratio for the cutoff angle cosine
   double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
-  double cross_section;
-
-  cross_section =
-    StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
-    energy,
-    bin_index );
+  double cross_section = BaseType::getCrossSection( energy, bin_index );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
@@ -182,6 +150,18 @@ void CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::r
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticElectroatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

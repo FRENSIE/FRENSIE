@@ -23,17 +23,16 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
+                    energy_grid->size() );
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().back() >=
-                    energy_grid[energy_grid.size()-1] );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
-
+                    energy_grid->back() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Create the screened Rutherford elastic scattering distribution
   std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
@@ -51,7 +50,7 @@ void AdjointElectroatomicReactionNativeFactory::createScreenedRutherfordElasticR
     raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSection().end() );
 
   // Screened Rutherford elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_adjoint_electroatom_data.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
 
@@ -69,14 +68,14 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
             const Data::AdjointElectronPhotonRelaxationDataContainer&
                 raw_adjoint_electroatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
-            const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
             std::shared_ptr<const AdjointElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Atomic Excitation cross section
   std::shared_ptr<std::vector<double> >
@@ -87,7 +86,7 @@ void AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
     raw_adjoint_electroatom_data.getAdjointAtomicExcitationCrossSection().end() );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_adjoint_electroatom_data.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
 
   // Create the energy loss distribution

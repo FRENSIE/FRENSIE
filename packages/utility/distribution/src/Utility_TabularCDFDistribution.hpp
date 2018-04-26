@@ -312,7 +312,7 @@ template<typename InterpolationPolicy> using TabularCDFDistribution =
 
 BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareTabularCDFDistribution, Utility, 0 );
 
-#define BOOST_SERIALIZATION_TABULAR_DISRIBUTION_EXPORT_STANDARD_KEY()   \
+#define BOOST_SERIALIZATION_TABULAR_CDF_DISRIBUTION_EXPORT_STANDARD_KEY()   \
   BOOST_SERIALIZATION_CLASS3_EXPORT_STANDARD_KEY( UnitAwareTabularCDFDistribution, Utility ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_EXPORT_KEY_IMPL(                   \
     UnitAwareTabularCDFDistribution, Utility,                                \
@@ -320,7 +320,7 @@ BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareTabularCDFDistribution, Utility, 0 
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( typename InterpPolicy ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void ) )
 
-BOOST_SERIALIZATION_TABULAR_DISRIBUTION_EXPORT_STANDARD_KEY();
+BOOST_SERIALIZATION_TABULAR_CDF_DISRIBUTION_EXPORT_STANDARD_KEY();
 
 //---------------------------------------------------------------------------//
 // Template includes.

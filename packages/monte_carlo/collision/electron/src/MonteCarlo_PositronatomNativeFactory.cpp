@@ -23,19 +23,19 @@ namespace MonteCarlo{
  * Otherwise a single total electroionization reaction will be created.
  */
 void PositronatomNativeFactory::createPositronatom(
-       const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
-       const std::string& positronatom_name,
-       const double atomic_weight,
-       const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-       const SimulationElectronProperties& properties,
-       std::shared_ptr<Positronatom>& positronatom )
+   const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
+   const std::string& positronatom_name,
+   const double atomic_weight,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationElectronProperties& properties,
+   std::shared_ptr<const Positronatom>& positronatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
-  std::shared_ptr<PositronatomCore> core;
+  std::shared_ptr<const PositronatomCore> core;
 
   TwoDInterpolationType electron_interp =
                           properties.getElectronTwoDInterpPolicy();
@@ -154,9 +154,9 @@ void PositronatomNativeFactory::createPositronatom(
 
   // Create the positron-atom
   positronatom.reset( new Positronatom( positronatom_name,
-                                      raw_positronatom_data.getAtomicNumber(),
-                                      atomic_weight,
-                                      *core ) );
+                                        raw_positronatom_data.getAtomicNumber(),
+                                        atomic_weight,
+                                        *core ) );
 }
 
 } // end MonteCarlo namespace

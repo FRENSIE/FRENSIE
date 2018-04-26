@@ -10,6 +10,7 @@
 #define MONTE_CARLO_POSITRONIONIZATION_POSITRONATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -19,7 +20,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_section>::PositronionizationPositronatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index )
+       const size_t threshold_energy_index )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index )
@@ -30,8 +31,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_section>::PositronionizationPositronatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher )
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
@@ -64,7 +65,7 @@ double PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_sec
                 const double outgoing_energy ) const
 {
   THROW_EXCEPTION( std::logic_error,
-                   "Error! The total electroionization reaction differential "
+                   "The total electroionization reaction differential "
                    "cross section function has not been implemented");
 }
 
@@ -87,9 +88,21 @@ void PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_secti
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   THROW_EXCEPTION( std::logic_error,
-                   "Error! The total electroionization reaction scatter "
+                   "The total electroionization reaction scatter "
                    "function has not been implemented");
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PositronionizationPositronatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

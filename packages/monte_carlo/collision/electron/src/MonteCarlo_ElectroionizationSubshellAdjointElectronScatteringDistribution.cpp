@@ -8,14 +8,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistribution.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 ElectroionizationSubshellAdjointElectronScatteringDistribution::ElectroionizationSubshellAdjointElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>&
+    const std::shared_ptr<const BasicBivariateDist>&
         electroionization_subshell_distribution,
     const double& binding_energy )
   : d_ionization_subshell_dist( electroionization_subshell_distribution ),
@@ -94,7 +94,7 @@ void ElectroionizationSubshellAdjointElectronScatteringDistribution::sampleAndRe
                               const double incoming_energy,
                               double& outgoing_energy,
                               double& outgoing_angle_cosine,
-                              unsigned& trials ) const
+                              Counter& trials ) const
 {
   trials++;
 

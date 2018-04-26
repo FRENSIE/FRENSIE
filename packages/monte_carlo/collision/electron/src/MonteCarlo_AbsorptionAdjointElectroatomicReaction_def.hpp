@@ -10,6 +10,7 @@
 #define MONTE_CARLO_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -19,7 +20,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionAdjointElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const AdjointElectroatomicReactionType reaction )
   : BaseType( incoming_energy_grid, cross_section, threshold_energy_index ),
     d_reaction( reaction )
@@ -30,8 +31,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 AbsorptionAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const AdjointElectroatomicReactionType reaction )
   : BaseType( incoming_energy_grid,
               cross_section,
@@ -72,6 +73,18 @@ void AbsorptionAdjointElectroatomicReaction<InterpPolicy,processed_cross_section
 
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( AbsorptionAdjointElectroatomicReaction<Utility::LogLog,true> );
   
 } // end MonteCarlo namespace
 

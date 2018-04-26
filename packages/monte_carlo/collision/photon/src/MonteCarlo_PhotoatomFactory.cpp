@@ -34,6 +34,9 @@ PhotoatomFactory::PhotoatomFactory(
     d_photoatomic_table_name_map(),
     d_verbose( verbose )
 {
+  FRENSIE_LOG_NOTIFICATION( "Starting to load photoatom data tables ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   // Create each photoatom in the set
   ScatteringCenterNameSet::const_iterator photoatom_name =
     photoatom_names.begin();
@@ -109,6 +112,9 @@ PhotoatomFactory::PhotoatomFactory(
 
   // Make sure that every photoatom has been created
   testPostcondition( d_photoatom_name_map.size() == photoatom_names.size() );
+
+  FRENSIE_LOG_NOTIFICATION( "Finished loading photoatom data tables." );
+  FRENSIE_FLUSH_ALL_LOGS();
 }
 
 // Create the map of photoatoms
@@ -144,6 +150,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
                                    "table " << data_properties.tableName() <<
                                    " from " << ace_file_path.string() <<
                                    " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
     
     // Create the ACEFileHandler
@@ -187,6 +194,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
     if( d_verbose )
     {
       FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
   }
   // The table has already been loaded
@@ -224,6 +232,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
                                 ") for " << data_properties.atom() <<
                                 "from " << native_file_path.string() <<
                                 " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
     
     // Create the epr data container
@@ -259,6 +268,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
     if( d_verbose )
     {
       FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
   }
   // The table has already been loaded

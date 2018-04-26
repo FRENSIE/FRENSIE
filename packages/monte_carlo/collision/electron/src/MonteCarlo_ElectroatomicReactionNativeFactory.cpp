@@ -19,14 +19,14 @@ namespace MonteCarlo{
 void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
-            const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+            const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+            std::shared_ptr<const ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
 
   // Create the screened Rutherford elastic scattering distribution
@@ -43,7 +43,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
     raw_electroatom_data.getScreenedRutherfordElasticCrossSection().end() );
 
   // Screened Rutherford elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_electroatom_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
 
@@ -60,14 +60,14 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
             const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
             const std::shared_ptr<const std::vector<double> >& energy_grid,
-            const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-            std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction )
+            const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+            std::shared_ptr<const ElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Atomic Excitation cross section
   std::shared_ptr<std::vector<double> >
@@ -77,7 +77,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
     raw_electroatom_data.getAtomicExcitationCrossSection().end() );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_electroatom_data.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
   // Create the energy loss distribution
@@ -99,7 +99,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 
 // Create a void absorption electroatomic reaction
 void ElectroatomicReactionNativeFactory::createVoidAbsorptionReaction(
-      std::shared_ptr<ElectroatomicReaction>& void_absorption_reaction )
+      std::shared_ptr<const ElectroatomicReaction>& void_absorption_reaction )
 {
   // Create the void absorption reaction
   void_absorption_reaction.reset(

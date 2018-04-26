@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticAdjointElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -28,17 +29,6 @@ CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>:
               threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( scattering_distribution.use_count() > 0 );
 }
@@ -48,8 +38,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::CutoffElasticAdjointElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
        const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -58,21 +48,8 @@ CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>:
               grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( scattering_distribution.use_count() > 0 );
-  // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -88,7 +65,7 @@ unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
-  return 0u;
+  return 1u;
 }
 
 // Return the reaction type
@@ -129,9 +106,7 @@ double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_se
 
   double cross_section;
 
-  cross_section =
-    StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
-    energy );
+  cross_section = BaseType::getCrossSection( energy );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
@@ -146,7 +121,7 @@ double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_se
 template<typename InterpPolicy, bool processed_cross_section>
 double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
     const double energy,
-    const unsigned bin_index ) const
+    const size_t bin_index ) const
 {
   // Get the cross section ratio for the cutoff angle cosine
   double cross_section_ratio =
@@ -154,10 +129,7 @@ double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_se
 
   double cross_section;
 
-  cross_section =
-    StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>::getCrossSection(
-    energy,
-    bin_index );
+  cross_section = BaseType::getCrossSection( energy, bin_index );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
@@ -165,6 +137,18 @@ double CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_se
 
   return cross_section*cross_section_ratio;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CutoffElasticAdjointElectroatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 
