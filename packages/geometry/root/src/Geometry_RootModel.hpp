@@ -185,11 +185,9 @@ public:
 
 } // end Geometry namespace
 
-#if !defined SWIG
 BOOST_SERIALIZATION_CLASS_VERSION( RootModel, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( RootModel, Geometry );
 EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( RootModel );
-#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template Includes

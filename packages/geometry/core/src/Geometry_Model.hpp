@@ -206,10 +206,8 @@ inline std::shared_ptr<Geometry::Navigator> Model::createNavigator(
 
 } // end Geometry namespace
 
-#if !defined SWIG
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( Model, Geometry );
 BOOST_SERIALIZATION_CLASS_VERSION( Model, Geometry, 0 );
-#endif // end !defined SWIG
 
 #endif // end GEOMETRY_MODEL_HPP
 

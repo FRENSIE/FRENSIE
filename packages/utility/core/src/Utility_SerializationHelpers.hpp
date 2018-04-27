@@ -34,6 +34,11 @@ struct GuidStringWrapper
 } // end Detail namespace
 } // end Utility namespace
 
+/*! Note that swig doesn't like the extern template declaration
+ * so these macros will be turned off when SWIG is processing files.
+ */
+#if !defined SWIG
+
 /*! Forward a complicated argument to another macro as a single argument
  * \ingroup boost_serialization_helpers
  */
@@ -64,11 +69,6 @@ namespace serialization{                            \
   };                                                                    \
 }                                                                       \
 }
-
-/*! Note that swig doesn't like the extern template declaration
- * so these macros will be turned off when SWIG is processing files.
- */
-#if !defined SWIG
 
 /*! Declare the version of a class with no template parameters
  *
@@ -499,6 +499,9 @@ namespace extra_detail{ \
 
 
 #else // !defined SWIG
+
+#define __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( ... )
+#define BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL( ... )
 
 #define BOOST_SERIALIZATION_CLASS_VERSION( ... )
 #define BOOST_SERIALIZATION_CLASS1_VERSION( ... )

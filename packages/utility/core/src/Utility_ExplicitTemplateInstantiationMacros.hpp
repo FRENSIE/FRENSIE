@@ -21,7 +21,7 @@
  * so these macros will be turned off when SWIG is processing files.
  */
 
-#if HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION //&& !defined SWIG
+#if HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION && !defined SWIG
 
 /*! Declare an external explicit instantiation of template class
  * \details This can only be called once for a given instantiation. It is

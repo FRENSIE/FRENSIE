@@ -94,10 +94,8 @@ private:
 
 } // end Geometry namespace
 
-#if !defined SWIG
 BOOST_SERIALIZATION_ASSUME_ABSTRACT_CLASS( AdvancedModel, Geometry );
 BOOST_SERIALIZATION_CLASS_VERSION( AdvancedModel, Geometry, 0 );
-#endif // end !defined SWIG
 
 #endif // end GEOMETRY_ADVANCED_MODEL_HPP
 

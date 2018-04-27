@@ -47,6 +47,7 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 #include "Geometry_Ray.hpp"
 #include "Geometry_Navigator.hpp"
 #include "Geometry_Exceptions.hpp"
+#include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
 %}
@@ -62,6 +63,12 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 
 // Include typemaps support
 %include <typemaps.i>
+
+// Include the serialization helpers for macros
+%include "Utility_SerializationHelpers.hpp"
+
+// Import the explicit template instantiation helpers
+%include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 
 // Include the geometry helpers
 %include "Geometry_Helpers.i"

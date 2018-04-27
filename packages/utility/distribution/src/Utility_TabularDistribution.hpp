@@ -301,7 +301,6 @@ template<typename InterpolationPolicy> using TabularDistribution =
 
 } // end Utility namespace
 
-#if !defined SWIG
 BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareTabularDistribution, Utility, 0 );
 
 #define BOOST_SERIALIZATION_TABULAR_DISRIBUTION_EXPORT_STANDARD_KEY()   \
@@ -313,7 +312,6 @@ BOOST_SERIALIZATION_CLASS3_VERSION( UnitAwareTabularDistribution, Utility, 0 );
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( InterpPolicy, void, void ) )
 
 BOOST_SERIALIZATION_TABULAR_DISRIBUTION_EXPORT_STANDARD_KEY();
-#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template includes.

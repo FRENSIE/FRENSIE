@@ -257,7 +257,7 @@ template<typename TwoDGridPolicy> using InterpolatedFullyTabularBasicBivariateDi
 UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy,void,void,void>;
 
 } // end Utility namespace
-#if !defined SWIG
+
 BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareInterpolatedFullyTabularBasicBivariateDistribution, 0 );
 
 #define BOOST_SERIALIZATION_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY() \
@@ -269,7 +269,6 @@ BOOST_SERIALIZATION_DISTRIBUTION4_VERSION( UnitAwareInterpolatedFullyTabularBasi
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( GridPolicy, void, void, void ) )
 
 BOOST_SERIALIZATION_INTERPOLATED_FULLY_TABULAR_BASIC_BIVARIATE_DISTRIBUTION_EXPORT_STANDARD_KEY();
-#endif // end !defined SWIG
 
 //---------------------------------------------------------------------------//
 // Template Includes

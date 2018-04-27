@@ -53,6 +53,19 @@ evaluation and sampling.
   }
 }
 
+%{
+// FRENSIE Includes
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_DistributionSerializationHelpers.hpp"
+%}
+
+// Include the serialization helpers
+%include "Utility_SerializationHelpers.hpp"
+%include "Utility_DistributionSerializationHelpers.hpp"
+
+// Import the explicit template instantiation helpers
+%import "Utility_ExplicitTemplateInstantiationMacros.hpp"
+
 // Distribution support
 %include "Utility_UnivariateDistribution.i"
 %include "Utility_BivariateDistribution.i"

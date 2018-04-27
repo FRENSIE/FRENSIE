@@ -250,11 +250,9 @@ private:
 
 } // end Geometry namespace
 
-#if !defined SWIG
 BOOST_SERIALIZATION_CLASS_VERSION( DagMCModelProperties, Geometry, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( DagMCModelProperties, Geometry );
 EXTERN_EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( DagMCModelProperties );
-#endif // end !defined SWIG
 
 #endif // end GEOMETRY_DAGMC_MODEL_PROPERTIES_HPP
 
