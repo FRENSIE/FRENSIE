@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility.__init__.i
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The utility module swig interface file
 //!
 //---------------------------------------------------------------------------//

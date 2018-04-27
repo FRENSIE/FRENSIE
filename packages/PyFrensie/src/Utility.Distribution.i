@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility.Distribution.i
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The Utility.Distribution sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//

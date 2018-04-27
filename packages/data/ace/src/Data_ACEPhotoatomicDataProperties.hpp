@@ -22,7 +22,7 @@ class ACEPhotoatomicDataProperties : public PhotoatomicDataProperties
 
 public:
 
-  //! Constructor 
+  //! Constructor
   ACEPhotoatomicDataProperties( const AtomicWeight atomic_weight,
                                 const boost::filesystem::path& file_path,
                                 const size_t file_start_line,

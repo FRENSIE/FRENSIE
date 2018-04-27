@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_UnivariateDistributionHelpers.i
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The distribution helper macros
 //!
 //---------------------------------------------------------------------------//

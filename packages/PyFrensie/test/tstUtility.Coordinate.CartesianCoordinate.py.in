@@ -31,12 +31,12 @@ class TranslationCartesianSpatialCoordinateConversionPolicyTestCase(unittest.Tes
 
     def setUp(self):
         self.policy= Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0] )
-        with self.assertRaises(TypeError):
-            Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0] )
 
     def testConstructor(self):
         "*Test Utility.Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy constructor"
         self.assertTrue(isinstance(self.policy, Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0] )
 
     def testGetLocalSpatialCoordinateSystemType(self):
         "*Test Utility.Coordinate.TranslationCartesianSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
@@ -75,14 +75,14 @@ class GeneralCartesianSpatialCoordinateConversionPolicyTestCase(unittest.TestCas
 
     def setUp(self):
         self.policy= Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0, 2.0])
-        with self.assertRaises(TypeError):
-            Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0], [2.0, 1.0, 2.0] )
-        with self.assertRaises(TypeError):
-            Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0] )
 
     def testConstructor(self):
         "*Test Utility.Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy constructor"
         self.assertTrue(isinstance(self.policy, Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0], [2.0, 1.0, 2.0] )
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0] )
 
     def testGetLocalSpatialCoordinateSystemType(self):
         "*Test Utility.Coordinate.GeneralCartesianSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
@@ -121,12 +121,12 @@ class RotationCartesianCoordinateConversionPolicyTestCase(unittest.TestCase):
 
     def setUp(self):
         self.policy= Coordinate.RotationCartesianCoordinateConversionPolicy([1.0, 1.0, 1.0])
-        with self.assertRaises(TypeError):
-            Coordinate.RotationCartesianCoordinateConversionPolicy( [1.0, 2.0] )
 
     def testConstructor(self):
         "*Test Utility.Coordinate.RotationCartesianCoordinateConversionPolicy constructor"
         self.assertTrue(isinstance(self.policy, Coordinate.RotationCartesianCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.RotationCartesianCoordinateConversionPolicy( [1.0, 2.0] )
 
     def testGetLocalSpatialCoordinateSystemType(self):
         "*Test Utility.Coordinate.RotationCartesianCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"

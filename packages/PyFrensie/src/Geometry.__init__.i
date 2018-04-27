@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Geometry.__init__.i
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The geometry module swig interface file
 //!
 //---------------------------------------------------------------------------//
@@ -31,17 +31,6 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 %}
 
 %include "Geometry_Config.i"
-
-// // Set the special python variables
-// %pythoncode
-// %{
-// # Remove the local current directory from the sys path (added to help
-// # import code - see comment above)
-// sys.path.pop(0)
-
-// __all__ = ['DagMC'
-//            ]
-// %}
 
 %{
 // Std Lib Includes

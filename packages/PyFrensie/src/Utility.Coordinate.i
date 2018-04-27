@@ -100,7 +100,6 @@ using namespace Utility;
 // Import the DirectionalCoordinateSystemPolicy
 %include "Utility_DirectionalCoordinateConversionPolicy.hpp"
 
-
 %basic_directional_coordinate_interface_setup( DirectionalCoordinateConversionPolicy )
 
 

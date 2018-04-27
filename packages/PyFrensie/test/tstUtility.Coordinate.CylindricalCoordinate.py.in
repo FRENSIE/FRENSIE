@@ -31,12 +31,12 @@ class TranslationCylindricalSpatialCoordinateConversionPolicyTestCase(unittest.T
 
     def setUp(self):
         self.policy= Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0] )
-        with self.assertRaises(TypeError):
-            Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0] )
 
     def testConstructor(self):
         "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy constructor"
         self.assertTrue(isinstance(self.policy, Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0] )
 
     def testGetLocalSpatialCoordinateSystemType(self):
         "*Test Utility.Coordinate.TranslationCylindricalSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
@@ -75,14 +75,14 @@ class GeneralCylindricalSpatialCoordinateConversionPolicyTestCase(unittest.TestC
 
     def setUp(self):
         self.policy= Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [1.0, 2.0, 3.0], [2.0, 1.0, 2.0])
-        with self.assertRaises(TypeError):
-            Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0], [2.0, 1.0, 2.0])
-        with self.assertRaises(TypeError):
-            Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0, 2.0], [2.0, 1.0])
 
     def testConstructor(self):
         "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy constructor"
         self.assertTrue(isinstance(self.policy, Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0], [2.0, 1.0, 2.0])
+        with self.assertRaises(TypeError):
+            Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0, 2.0], [2.0, 1.0])
 
     def testGetLocalSpatialCoordinateSystemType(self):
         "*Test Utility.Coordinate.GeneralCylindricalSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"
@@ -121,12 +121,12 @@ class RotationCylindricalSpatialCoordinateConversionPolicyTestCase(unittest.Test
 
     def setUp(self):
         self.policy= Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy([1.0, 1.0, 1.0])
-        with self.assertRaises(TypeError):
-            Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0])
 
     def testConstructor(self):
         "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy constructor"
         self.assertTrue(isinstance(self.policy, Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy) )
+        with self.assertRaises(TypeError):
+            Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy( [2.0, 1.0])
 
     def testGetLocalSpatialCoordinateSystemType(self):
         "*Test Utility.Coordinate.RotationCylindricalSpatialCoordinateConversionPolicy getLocalSpatialCoordinateSystemType"

@@ -50,6 +50,16 @@ PyFrensie_MAKE_TEST(tstUtility.Coordinate.CylindricalCoordinate)
 ADD_TEST(PyFrensie.Utility.Coordinate.CylindricalCoordinate_test ${PYTHON_EXECUTABLE} tstUtility.Coordinate.CylindricalCoordinate.py)
 SET_PROPERTY(TEST PyFrensie.Utility.Coordinate.CylindricalCoordinate_test PROPERTY LABELS pyfrensie)
 
+# Add the Data.AtomProperties unit tests
+PyFrensie_MAKE_TEST(tstData.AtomProperties)
+ADD_TEST(PyFrensie.Data.AtomProperties_test ${PYTHON_EXECUTABLE} tstData.AtomProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.AtomProperties_test PROPERTY LABELS pyfrensie )
+
+# Add the Data.ACE.ACEElectroatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.ACEElectroatomicDataProperties)
+ADD_TEST(PyFrensie.Data.ACE.ACEElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEElectroatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.ACEElectroatomicDataProperties_test PROPERTY LABELS pyfrensie ace)
+
 # # Add the Data.ACE.ACEFileHandler unit tests
 # PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)
 # ADD_TEST(PyFrensie.Data.ACE.ACEFileHandler_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEFileHandler.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)

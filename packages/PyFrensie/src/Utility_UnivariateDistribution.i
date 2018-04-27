@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_UnivariateDistribution.i
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The UnivariateDistribution class interface file
 //!
 //---------------------------------------------------------------------------//
