@@ -82,6 +82,18 @@ PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_se
                     d_electroionization_subshell_distribution->getBindingEnergy() );
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details A knock-on electron from this subshell will be emitted.
+ */
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
+    return 0u;
+}
+
 // Return the differential cross section
 template<typename InterpPolicy, bool processed_cross_section>
 double PositronionizationSubshellPositronatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(

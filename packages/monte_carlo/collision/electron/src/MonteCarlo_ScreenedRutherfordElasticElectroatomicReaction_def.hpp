@@ -65,6 +65,13 @@ unsigned ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_c
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
+  return 1u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
   return 0u;
 }
 

@@ -47,11 +47,14 @@ public:
   ~VoidElectroatomicReaction()
   { /* ... */ }
 
+    //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const override;
@@ -89,6 +92,15 @@ VoidElectroatomicReaction<InterpPolicy,processed_cross_section>::VoidElectroatom
               grid_searcher )
   { /* ... */ }
 
+// Return the number of photons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+inline unsigned
+VoidElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons(
+    const double energy ) const
+{
+  return 0u;
+}
+
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 inline unsigned
@@ -98,10 +110,10 @@ VoidElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmit
   return 0u;
 }
 
-// Return the number of photons emitted from the rxn at the given energy
+// Return the number of positrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 inline unsigned
-VoidElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons(
+VoidElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons(
     const double energy ) const
 {
   return 0u;

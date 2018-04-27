@@ -53,19 +53,24 @@ CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>:
 }
 
 // Return the number of photons emitted from the rxn at the given energy
-/*! \details This does not include photons from atomic relaxation.
- */
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedAdjointPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedAdjointElectrons( const double energy ) const
 {
   return 1u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned CutoffElasticAdjointElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedAdjointPositrons( const double energy ) const
+{
+  return 0u;
 }
 
 // Return the reaction type

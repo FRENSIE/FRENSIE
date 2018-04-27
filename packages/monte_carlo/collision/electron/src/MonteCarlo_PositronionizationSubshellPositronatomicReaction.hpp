@@ -49,6 +49,9 @@ public:
   ~PositronionizationSubshellPositronatomicReaction()
   { /* ... */ }
 
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const final override;
+
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,
                                       const double outgoing_energy ) const override;

@@ -67,6 +67,13 @@ unsigned CoupledElasticPositronatomicReaction<InterpPolicy,processed_cross_secti
   return 0u;
 }
 
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned CoupledElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  return 1u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PositronatomicReactionType CoupledElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const

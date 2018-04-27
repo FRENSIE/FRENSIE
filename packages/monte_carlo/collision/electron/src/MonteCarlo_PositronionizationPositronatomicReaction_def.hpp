@@ -49,8 +49,19 @@ unsigned PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_s
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
+/*! \details The knock-on electron cannot be emitted unless we know the
+ * subshell that was interacted with. The value returned does not include 
+ * electrons from atomic relaxation.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned PositronionizationPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
     return 1u;

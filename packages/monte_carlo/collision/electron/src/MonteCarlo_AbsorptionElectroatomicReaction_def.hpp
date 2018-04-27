@@ -45,6 +45,13 @@ AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::Absorptio
     d_reaction( reaction )
 { /* ... */ }
 
+// Return the number of photons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+{
+  return 0u;
+}
+
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
@@ -52,9 +59,9 @@ unsigned AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::
   return 0u;
 }
 
-// Return the number of photons emitted from the rxn at the given energy
+// Return the number of positrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned AbsorptionElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
 {
   return 0u;
 }

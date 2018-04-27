@@ -51,11 +51,14 @@ public:
   //! Return the max energy
   double getMaxEnergy() const override;
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const override;
@@ -113,6 +116,13 @@ inline double VoidAbsorptionElectroatomicReaction::getMaxEnergy() const
   return 100.0;
 }
 
+// Return the number of photons emitted from the rxn at the given energy
+inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPhotons(
+                                                     const double energy ) const
+{
+  return 0u;
+}
+
 // Return the number of electrons emitted from the rxn at the given energy
 inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedElectrons(
                                                      const double energy ) const
@@ -120,8 +130,8 @@ inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedElectrons
   return 0u;
 }
 
-// Return the number of photons emitted from the rxn at the given energy
-inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPhotons(
+// Return the number of positrons emitted from the rxn at the given energy
+inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPositrons(
                                                      const double energy ) const
 {
   return 0u;

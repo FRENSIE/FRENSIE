@@ -151,8 +151,16 @@ void ElectroatomCore::createTotalAbsorptionReaction(
 
     while( absorption_reaction != absorption_reactions.end() )
     {
-      raw_cross_section +=
-        absorption_reaction->second->getCrossSection( (*energy_grid)[i] );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++absorption_reaction;
     }
@@ -278,13 +286,31 @@ void ElectroatomCore::createTotalReaction(
   {
     scattering_reaction = scattering_reactions.begin();
 
-    double raw_cross_section =
-      total_absorption_reaction->getCrossSection( (*energy_grid)[i] );
+    double raw_cross_section = 0.0;
+
+    if( i < energy_grid->size() - 1 )
+    {
+      raw_cross_section = 
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i );
+    }
+    else
+    {
+      raw_cross_section = 
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i-1 );
+    }
 
     while( scattering_reaction != scattering_reactions.end() )
     {
-      raw_cross_section +=
-        scattering_reaction->second->getCrossSection( (*energy_grid)[i] );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++scattering_reaction;
     }

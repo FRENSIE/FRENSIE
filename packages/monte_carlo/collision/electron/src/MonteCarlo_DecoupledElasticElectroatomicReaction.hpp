@@ -55,11 +55,14 @@ public:
   ~DecoupledElasticElectroatomicReaction()
   { /* ... */ }
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;

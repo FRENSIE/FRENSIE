@@ -53,8 +53,6 @@ MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_secti
 }
 
 // Return the number of photons emitted from the rxn at the given energy
-/*! \details This does not include photons from atomic relaxation.
- */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
@@ -66,6 +64,13 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned MomentPreservingElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  return 1u;
 }
 
 // Return the reaction type
