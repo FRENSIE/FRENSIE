@@ -124,6 +124,13 @@ inline unsigned VoidAbsorptionPositronatomicReaction::getNumberOfEmittedPhotons(
 }
 
 // Return the number of positrons emitted from the rxn at the given energy
+inline unsigned VoidAbsorptionPositronatomicReaction::getNumberOfEmittedElectrons(
+                                                     const double energy ) const
+{
+  return 0u;
+}
+  
+// Return the number of positrons emitted from the rxn at the given energy
 inline unsigned VoidAbsorptionPositronatomicReaction::getNumberOfEmittedPositrons(
                                                      const double energy ) const
 {

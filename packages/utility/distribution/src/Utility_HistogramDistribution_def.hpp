@@ -735,16 +735,16 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::verifyValidV
                         "constructed because the bin cdf values "
                         " are not sorted!" );
 
-    typename Utility::ArrayView<const InputDepQuantity>::const_iterator repeat_bin_value =
-      std::adjacent_find( bin_values.begin(), bin_values.end() );
+    // typename Utility::ArrayView<const InputDepQuantity>::const_iterator repeat_bin_value =
+    //   std::adjacent_find( bin_values.begin(), bin_values.end() );
     
-    TEST_FOR_EXCEPTION( repeat_bin_value != bin_values.end(),
-                        Utility::BadUnivariateDistributionParameter,
-                        "The histogram distribution cannot be "
-                        "constructed because there is a repeated bin cdf "
-                        "value at index "
-                        << std::distance( bin_values.begin(), repeat_bin_value ) <<
-                        " (" << *repeat_bin_value << ")!" );
+    // TEST_FOR_EXCEPTION( repeat_bin_value != bin_values.end(),
+    //                     Utility::BadUnivariateDistributionParameter,
+    //                     "The histogram distribution cannot be "
+    //                     "constructed because there is a repeated bin cdf "
+    //                     "value at index "
+    //                     << std::distance( bin_values.begin(), repeat_bin_value ) <<
+    //                     " (" << *repeat_bin_value << ")!" );
   }
 
   typedef Utility::QuantityTraits<InputDepQuantity> InputDQT;
