@@ -230,7 +230,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
                                 "Loading native EPR cross section table "
                                 "(v " << data_properties.fileVersion() <<
                                 ") for " << data_properties.atom() <<
-                                "from " << native_file_path.string() <<
+                                " from " << native_file_path.string() <<
                                 " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }

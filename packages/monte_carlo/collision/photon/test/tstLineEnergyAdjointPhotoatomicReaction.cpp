@@ -106,27 +106,37 @@ FRENSIE_UNIT_TEST( LineEnergyAdjointPhotoatomicReaction, getThresholdEnergy )
 // Check that the number of adjoint photons emitted from the reaction can be
 // returned
 FRENSIE_UNIT_TEST( LineEnergyAdjointPhotoatomicReaction,
-                   getNumberOfEmittedPhotons )
+                   getNumberOfEmittedAdjointPhotons )
 {
-  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedPhotons( 0.5 ), 0 );
-  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedPhotons( Utility::PhysicalConstants::electron_rest_mass_energy ), 1 );
-  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedPhotons( 0.52 ), 0 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointPhotons( 0.5 ), 0 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointPhotons( Utility::PhysicalConstants::electron_rest_mass_energy ), 1 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointPhotons( 0.52 ), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of adjoint electrons emitted from the reaction can be
 // returned
 FRENSIE_UNIT_TEST( LineEnergyAdjointPhotoatomicReaction,
-                   getNumberOfEmittedElectrons )
+                   getNumberOfEmittedAdjointElectrons )
 {
-  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedElectrons( 0.5 ), 0 );
-  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedElectrons( Utility::PhysicalConstants::electron_rest_mass_energy ), 0 );
-  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedElectrons( 0.52 ), 0 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointElectrons( 0.5 ), 0 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointElectrons( Utility::PhysicalConstants::electron_rest_mass_energy ), 0 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointElectrons( 0.52 ), 0 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the number of adjoint electrons emitted from the reaction can
-// be returned
+// Check that the number of adjoint positrons emitted from the reaction can be
+// returned
+FRENSIE_UNIT_TEST( LineEnergyAdjointPhotoatomicReaction,
+                   getNumberOfEmittedAdjointPositrons )
+{
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointPositrons( 0.5 ), 0 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointPositrons( Utility::PhysicalConstants::electron_rest_mass_energy ), 0 );
+  FRENSIE_CHECK_EQUAL( reaction->getNumberOfEmittedAdjointPositrons( 0.52 ), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction type can be returned
 FRENSIE_UNIT_TEST( LineEnergyAdjointPhotoatomicReaction, getReactionType )
 {
   FRENSIE_CHECK_EQUAL( reaction->getReactionType(),

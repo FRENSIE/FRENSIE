@@ -20,9 +20,6 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class SubshellIncoherentPhotoatomicReaction : public StandardReactionBaseImpl<PhotoatomicReaction,InterpPolicy,processed_cross_section>
 {
-
-private:
-
   // Typedef for the base class type
   typedef StandardReactionBaseImpl<PhotoatomicReaction,InterpPolicy,processed_cross_section> BaseType;
 
@@ -55,6 +52,9 @@ public:
 
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
+
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const override;

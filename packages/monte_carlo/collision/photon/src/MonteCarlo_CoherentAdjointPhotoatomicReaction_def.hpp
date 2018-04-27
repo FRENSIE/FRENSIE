@@ -54,7 +54,7 @@ CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::Cohere
 
 // Return the number of adjoint photons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedAdjointPhotons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() && energy <= this->getMaxEnergy() )
     return 1u;
@@ -64,7 +64,14 @@ unsigned CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section
 
 // Return the number of adjoint electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedAdjointElectrons( const double energy ) const
+{
+  return 0u;
+}
+
+// Return the number of adjoint positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned CoherentAdjointPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedAdjointPositrons( const double energy ) const
 {
   return 0u;
 }

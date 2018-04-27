@@ -53,6 +53,9 @@ public:
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
+
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const override;
 
@@ -71,23 +74,17 @@ protected:
   static void detailedInteraction( PhotonState& photon,
                                    ParticleBank& bank );
 
-  //! The number of photons emitted from triplet prod. using simple model
-  static unsigned basicInteractionPhotonEmission();
-
-  //! The number of photons emitted from triplet prod. using detailed model
-  static unsigned detailedInteractionPhotonEmission();
-
 private:
 
   // Initialize interaction models
   void initializeInteractionModels(
                            const bool use_detailed_electron_emission_physics );
 
+  // Check if a detailed model is being used
+  bool d_detailed_electron_emission_model;
+
   // The triplet production model
   boost::function<void (PhotonState&,ParticleBank&)> d_interaction_model;
-
-  // The number of photons emitted from the interaction (model dependent)
-  boost::function<unsigned (void)> d_interaction_model_emission;
 };
 
 } // end MonteCarlo namespace

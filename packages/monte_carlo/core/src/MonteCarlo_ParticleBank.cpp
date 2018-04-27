@@ -72,6 +72,18 @@ void ParticleBank::push( const ParticleState& particle )
   d_particle_states.emplace_back( particle.clone() );
 }
 
+// Insert a neutron into the bank after an interaction (Most Efficient/Recommended)
+/*! \details This function behaves identically to the push member function
+ * that takes a MonteCarlo::ParticleState base class pointer. It can be
+ * overridden in a derived class that needs to store a neutron in a secondary
+ * bank if a specific reaction occurs (i.e. fission bank).
+ */
+void ParticleBank::push( std::shared_ptr<NeutronState>& neutron,
+                         const NuclearReactionType reaction )
+{
+  this->push( neutron );
+}
+
 // Push a neutron to the bank
 /*! \details This function behaves identically to the push member function
  * that takes a MonteCarlo::ParticleState base class pointer. It can be

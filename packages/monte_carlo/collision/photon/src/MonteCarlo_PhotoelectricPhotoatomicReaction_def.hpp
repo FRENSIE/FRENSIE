@@ -59,6 +59,13 @@ unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>:
   return 0u;
 }
 
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const

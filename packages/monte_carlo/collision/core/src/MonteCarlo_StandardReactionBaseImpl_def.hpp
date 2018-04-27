@@ -402,6 +402,7 @@ double StandardReactionBaseImpl<ReactionBase,InterpPolicy,processed_cross_sectio
                                       const size_t bin_index ) const
 {
   // Make sure the bin index is valid
+  testPrecondition( bin_index < d_incoming_energy_grid->size() - 1 );
   testPrecondition( (Details::StandardReactionBaseImplInterpPolicyHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( (*d_incoming_energy_grid)[bin_index] ) <= energy) );
   testPrecondition( (Details::StandardReactionBaseImplInterpPolicyHelper<InterpPolicy,processed_cross_section>::returnEnergyOfInterest( (*d_incoming_energy_grid)[bin_index+1] ) >= energy) );
 

@@ -15,6 +15,7 @@
 #include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -29,7 +30,8 @@ TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::Trip
        const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
-              threshold_energy_index )
+              threshold_energy_index ),
+    d_detailed_electron_emission_model( use_detailed_electron_emission_physics )
 {
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
@@ -46,7 +48,8 @@ TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::Trip
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
-              grid_searcher )
+              grid_searcher ),
+    d_detailed_electron_emission_model( use_detailed_electron_emission_physics )
 {
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
@@ -56,7 +59,12 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
-    return d_interaction_model_emission();
+  { 
+    if( d_detailed_electron_emission_model )
+      return 0u;
+    else
+      return 2u; 
+  }
   else
     return 0u;
 }
@@ -66,7 +74,24 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
+  {
     return 2u;
+  }
+  else
+    return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+  {
+    if( d_detailed_electron_emission_model )
+      return 1u;
+    else
+      return 0u;
+  }
   else
     return 0u;
 }
@@ -179,20 +204,6 @@ void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>:
                    "The detailed triplet production model has not been "
                    "implemented yet!" );
 }
-  
-// The number of photons emitted from triplet production using simple model
-template<typename InterpPolicy, bool processed_cross_section>
-unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteractionPhotonEmission()
-{
-  return 2u;
-}
-
-// The number of photons emitted from triplet production using detailed model
-template<typename InterpPolicy, bool processed_cross_section>
-unsigned TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteractionPhotonEmission()
-{
-  return 0u;
-}
 
 // Initialize interaction models
 template<typename InterpPolicy, bool processed_cross_section>
@@ -201,8 +212,15 @@ void TripletProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 {
   // Note: Detailed electron emission is not currently supported. Positron
   //       transport must be implemented first
+  if( use_detailed_electron_emission_physics )
+  {
+    FRENSIE_LOG_TAGGED_WARNING( "TripletProductionPhotoatomicReaction",
+                                "The detailed triplet production model is "
+                                "not currently supported! The basic model "
+                                "will be used instead" );
+  }
+  
   d_interaction_model = basicInteraction;
-  d_interaction_model_emission = basicInteractionPhotonEmission;
 }
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TripletProductionPhotoatomicReaction<Utility::LinLin,false> );

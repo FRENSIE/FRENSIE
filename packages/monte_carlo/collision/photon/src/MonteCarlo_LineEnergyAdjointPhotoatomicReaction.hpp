@@ -61,10 +61,13 @@ public:
   double getThresholdEnergy() const override;
 
   //! Return the number of adjoint photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  unsigned getNumberOfEmittedAdjointPhotons( const double energy ) const override;
 
   //! Return the number of adjoint electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
+  unsigned getNumberOfEmittedAdjointElectrons( const double energy ) const override;
+
+  //! Return the number of adjoint positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedAdjointPositrons( const double energy ) const override;
 
   //! Return the reaction type
   AdjointPhotoatomicReactionType getReactionType() const;

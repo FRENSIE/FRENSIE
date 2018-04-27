@@ -80,7 +80,7 @@ FRENSIE_UNIT_TEST( PairProductionPhotoatomicReaction,
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
 FRENSIE_UNIT_TEST( PairProductionPhotoatomicReaction,
-                   getNumberOfEmittedElectrons )
+                   getNumberOfEmittedElectrons_basic )
 {
   FRENSIE_CHECK_EQUAL(
               ace_basic_pp_reaction->getNumberOfEmittedElectrons( 1e-4 ), 0u );
@@ -91,6 +91,54 @@ FRENSIE_UNIT_TEST( PairProductionPhotoatomicReaction,
 
   FRENSIE_CHECK_EQUAL(
               ace_basic_pp_reaction->getNumberOfEmittedElectrons( 20.0 ), 1u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of electrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( PairProductionPhotoatomicReaction,
+                   getNumberOfEmittedElectrons_detailed )
+{
+  FRENSIE_CHECK_EQUAL(
+              ace_detailed_pp_reaction->getNumberOfEmittedElectrons( 1e-4 ), 0u );
+
+  FRENSIE_CHECK_EQUAL( ace_detailed_pp_reaction->getNumberOfEmittedElectrons(
+                         ace_detailed_pp_reaction->getThresholdEnergy() ),
+                       1u );
+
+  FRENSIE_CHECK_EQUAL(
+              ace_detailed_pp_reaction->getNumberOfEmittedElectrons( 20.0 ), 1u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( PairProductionPhotoatomicReaction,
+                   getNumberOfEmittedPositrons_basic )
+{
+  FRENSIE_CHECK_EQUAL(
+              ace_basic_pp_reaction->getNumberOfEmittedPositrons( 1e-4 ), 0u );
+
+  FRENSIE_CHECK_EQUAL( ace_basic_pp_reaction->getNumberOfEmittedPositrons(
+                         ace_basic_pp_reaction->getThresholdEnergy() ),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL(
+              ace_basic_pp_reaction->getNumberOfEmittedPositrons( 20.0 ), 0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( PairProductionPhotoatomicReaction,
+                   getNumberOfEmittedPositrons_detailed )
+{
+  FRENSIE_CHECK_EQUAL(
+              ace_detailed_pp_reaction->getNumberOfEmittedPositrons( 1e-4 ), 0u );
+
+  FRENSIE_CHECK_EQUAL( ace_detailed_pp_reaction->getNumberOfEmittedPositrons(
+                         ace_detailed_pp_reaction->getThresholdEnergy() ),
+                       1u );
+
+  FRENSIE_CHECK_EQUAL(
+           ace_detailed_pp_reaction->getNumberOfEmittedPositrons( 20.0 ), 1u );
 }
 
 //---------------------------------------------------------------------------//

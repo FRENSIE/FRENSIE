@@ -56,6 +56,9 @@ public:
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
+
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const override;
 

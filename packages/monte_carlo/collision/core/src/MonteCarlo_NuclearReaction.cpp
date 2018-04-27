@@ -16,13 +16,6 @@
 
 namespace MonteCarlo{
 
-// Test if two Atomic reactions share the same energy grid
-bool NuclearReaction::isEnergyGridShared(
-                                  const NuclearReaction& other_reaction ) const
-{
-  return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
-}
-
 // Return the average number of emitted primary outgoing particles
 /*! \details If the average number of emitted particles for the reaction is not
  * an integer at the desired energy, this function should be overridden in the 
