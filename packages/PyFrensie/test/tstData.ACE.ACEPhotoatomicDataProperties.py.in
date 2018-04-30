@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Data.ACEElectroatomicDataProperties class unit tests
-#  \file   tstData.ACE.ACEElectroatomicDataProperties.py
+## Data.ACEPhotoatomicDataProperties class unit tests
+#  \file   tstData.ACE.ACEPhotoatomicDataProperties.py
 #  \author Luke Kersting
-#  \brief  Unit tests for the Data.ACE.ACEElectroatomicDataProperties class
+#  \brief  Unit tests for the Data.ACE.ACEPhotoatomicDataProperties class
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -26,74 +26,73 @@ ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the ACEElectroatomicDataProperties class
-class ACEElectroatomicDataPropertiesTestCase(unittest.TestCase):
-    "TestCase class for Data.ACE.ACEElectroatomicDataProperties class"
+# Test the ACEPhotoatomicDataProperties class
+class ACEPhotoatomicDataPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.ACE.ACEPhotoatomicDataProperties class"
 
     @classmethod
     def setUpClass(cls):
-        cls.properties = ACE.ACEElectroatomicDataProperties(
+        cls.properties = ACE.ACEPhotoatomicDataProperties(
                                               1.0,
-                                              "electroatomic_data/h_data.txt",
+                                              "photoatomic_data/h_data.txt",
                                               10,
                                               "1000.12p" )
 
     def testConstructor(self):
-        "*Test Data.ACEElectroatomicDataProperties constructor"
+        "*Test Data.ACEPhotoatomicDataProperties constructor"
         with self.assertRaises(ValueError):
-            ACE.ACEElectroatomicDataProperties( -1.0,
-                                                "electroatomic_data/h_data.txt",
+            ACE.ACEPhotoatomicDataProperties( -1.0,
+                                                "photoatomic_data/h_data.txt",
                                                 10,
                                                 "1000.12p" )
 
     def testAtom(self):
-        "*Test Data.ACEElectroatomicDataProperties atom"
+        "*Test Data.ACEPhotoatomicDataProperties atom"
         self.assertEqual( self.properties.atom(), Data.H_ATOM )
 
     def testFileType(self):
-        "*Test Data.ACEElectroatomicDataProperties fileType"
+        "*Test Data.ACEPhotoatomicDataProperties fileType"
         self.assertEqual( self.properties.fileType(),
-                          Data.ElectroatomicDataProperties.ACE_EPR_FILE )
+                          Data.PhotoatomicDataProperties.ACE_EPR_FILE )
 
-        with self.assertRaises(RuntimeError) as err:
-            ACE.ACEElectroatomicDataProperties(
+        local_properties = ACE.ACEPhotoatomicDataProperties(
                                               1.0,
                                               "photoatomic_data/h_data.txt",
                                               10,
                                               "1000.04p" )
 
-        self.assertEqual( 'Error: The electroatomic table version is not supported',
-                          err.exception.message.split('!')[0] )
+        self.assertEqual( local_properties.fileType(),
+                          Data.PhotoatomicDataProperties.ACE_FILE )
 
     def testAtomicWeight(self):
-        "*Test Data.ACEElectroatomicDataProperties atomicWeight"
+        "*Test Data.ACEPhotoatomicDataProperties atomicWeight"
         self.assertEqual( self.properties.atomicWeight(), 1.0 )
 
     def testFilePath(self):
-        "*Test Data.ACEElectroatomicDataProperties filePath"
+        "*Test Data.ACEPhotoatomicDataProperties filePath"
         self.assertEqual( self.properties.filePath(),
-                          "electroatomic_data/h_data.txt" )
+                          "photoatomic_data/h_data.txt" )
 
     def testFileStartLine(self):
-        "*Test Data.ACEElectroatomicDataProperties fileStartLine"
+        "*Test Data.ACEPhotoatomicDataProperties fileStartLine"
         self.assertEqual( self.properties.fileStartLine(), 10 )
 
     def testFileVersion(self):
-        "*Test Data.ACEElectroatomicDataProperties fileVersion"
+        "*Test Data.ACEPhotoatomicDataProperties fileVersion"
         self.assertEqual( self.properties.fileVersion(), 12 )
 
     def testTableName(self):
-        "*Test Data.ACEElectroatomicDataProperties tableName"
+        "*Test Data.ACEPhotoatomicDataProperties tableName"
         self.assertEqual( self.properties.tableName(), "1000.12p" )
 
     def testClone(self):
-        "*Test Data.ACEElectroatomicDataProperties constructor"
+        "*Test Data.ACEPhotoatomicDataProperties constructor"
         properties_clone = self.properties.clone()
 
         self.assertTrue( properties_clone )
         self.assertEqual( properties_clone.atomicWeight(), 1.0 )
         self.assertEqual( properties_clone.filePath(),
-                          "electroatomic_data/h_data.txt" )
+                          "photoatomic_data/h_data.txt" )
         self.assertEqual( properties_clone.fileStartLine(), 10 )
         self.assertEqual( properties_clone.fileVersion(), 12 )
         self.assertEqual( properties_clone.tableName(), "1000.12p" )
@@ -108,7 +107,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the testSuite
-    suite.addTest(unittest.makeSuite(ACEElectroatomicDataPropertiesTestCase))
+    suite.addTest(unittest.makeSuite(ACEPhotoatomicDataPropertiesTestCase))
 
     print >>sys.stderr, \
         "\n**************************************\n" + \
@@ -128,5 +127,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstData.ACEElectroatomicDataProperties.py
+# end tstData.ACEPhotoatomicDataProperties.py
 #-----------------------------------------------------------------------------#

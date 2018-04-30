@@ -55,10 +55,20 @@ PyFrensie_MAKE_TEST(tstData.AtomProperties)
 ADD_TEST(PyFrensie.Data.AtomProperties_test ${PYTHON_EXECUTABLE} tstData.AtomProperties.py)
 SET_PROPERTY(TEST PyFrensie.Data.AtomProperties_test PROPERTY LABELS pyfrensie )
 
+# Add the Data.NuclideProperties unit tests
+PyFrensie_MAKE_TEST(tstData.NuclideProperties)
+ADD_TEST(PyFrensie.Data.NuclideProperties_test ${PYTHON_EXECUTABLE} tstData.NuclideProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.NuclideProperties_test PROPERTY LABELS pyfrensie )
+
 # Add the Data.ACE.ACEElectroatomicDataProperties unit tests
 PyFrensie_MAKE_TEST(tstData.ACE.ACEElectroatomicDataProperties)
 ADD_TEST(PyFrensie.Data.ACE.ACEElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEElectroatomicDataProperties.py)
 SET_PROPERTY(TEST PyFrensie.Data.ACE.ACEElectroatomicDataProperties_test PROPERTY LABELS pyfrensie ace)
+
+# Add the Data.ACE.ACEPhotoatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.ACEPhotoatomicDataProperties)
+ADD_TEST(PyFrensie.Data.ACE.ACEPhotoatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEPhotoatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.ACEPhotoatomicDataProperties_test PROPERTY LABELS pyfrensie ace)
 
 # # Add the Data.ACE.ACEFileHandler unit tests
 # PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)

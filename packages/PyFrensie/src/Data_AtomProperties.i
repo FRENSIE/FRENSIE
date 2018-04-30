@@ -177,9 +177,9 @@ using namespace Data;
 
 
 // Add typemaps for converting AtomicWeight to and from Python float
-// %typemap(in) const Data::AtomProperties::AtomicWeight {
-//   $1 = Geometry::Navigator::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
-// }
+%typemap(in) const Data::AtomProperties::AtomicWeight {
+  $1 = Data::AtomProperties::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
+}
 
 %typemap(out) Data::AtomProperties::AtomicWeight {
   %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
@@ -189,9 +189,18 @@ using namespace Data;
   $1 = (PyFloat_Check($input)) ? 1 : 0;
 }
 
-// typemap(out) Data::AtomProperties::AtomicWeight {
-//   $result = Utility::getRawQuantity( $1 )
-// }
+// Apply AtomicWeight typemaps to other classes
+%apply const Data::AtomProperties::AtomicWeight {
+  const Data::PhotoatomicDataProperties::AtomicWeight,
+  const Data::AdjointPhotoatomicDataProperties::AtomicWeight,
+  const Data::ElectroatomicDataProperties::AtomicWeight,
+  const Data::AdjointElectroatomicDataProperties::AtomicWeight };
+
+%apply Data::AtomProperties::AtomicWeight {
+  Data::PhotoatomicDataProperties::AtomicWeight,
+  Data::AdjointPhotoatomicDataProperties::AtomicWeight,
+  Data::ElectroatomicDataProperties::AtomicWeight,
+  Data::AdjointElectroatomicDataProperties::AtomicWeight };
 
 // Import the AtomProperties
 %include "Data_AtomProperties.hpp"

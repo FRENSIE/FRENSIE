@@ -82,43 +82,7 @@ and extracting data blocks from the XSS array.
   }
 }
 
-//---------------------------------------------------------------------------//
-// Add support for the ACETableName
-//---------------------------------------------------------------------------//
-// Import the ACETableName
-%include "Data_ACETableName.hpp"
-
-
-//---------------------------------------------------------------------------//
-// Add support for the ACEPhotoatomicDataProperties
-//---------------------------------------------------------------------------//
-
-// Allow shared pointers of ACEPhotoatomicDataProperties objects
-%shared_ptr( Data::ACEPhotoatomicDataProperties );
-
-// Add typemaps for converting AtomicWeight to and from Python float
-%typemap(in) const Data::ElectroatomicDataProperties::AtomicWeight {
-  $1 = Data::ElectroatomicDataProperties::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
-}
-
-%typemap(out) Data::ElectroatomicDataProperties::AtomicWeight {
-  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
-}
-
-%typemap(typecheck, precedence=90) (const Data::ElectroatomicDataProperties::AtomicWeight) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
-
-
-// Add typemaps for converting file_path to and from Python string
-%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
-  temp = PyFrensie::convertFromPython<std::string>( $input );
-  $1 = &temp;
-}
-
-%typemap(typecheck, precedence=90) (const boost::filesystem::path&) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
+// Add some general typemaps
 
 // Add typemaps for converting file_path to and from Python string
 %typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
@@ -130,18 +94,32 @@ and extracting data blocks from the XSS array.
   %append_output(PyFrensie::convertToPython( $1.string() ) );
 }
 
-%typemap(typecheck, precedence=90) (const boost::filesystem::path&) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
+%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
+  $1 = (PyString_Check($input)) ? 1 : 0;
 }
 
+//---------------------------------------------------------------------------//
+// Add support for the ACETableName
+//---------------------------------------------------------------------------//
+// Import the ACETableName
+%include "Data_ACETableName.hpp"
+
+// Add typemap for converting ACETableName to and from python string
 %typemap(in) const Data::ACETableName& (Data::ACETableName temp){
   temp = PyFrensie::convertFromPython<std::string>( $input );
   $1 = &temp;
 }
 
-%typename(typecheck, precedence=90) (const Data::ACETableName& ) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
+%typename(typecheck, precedence=1140) (const Data::ACETableName& ) {
+  $1 = (PyString_Check($input)) ? 1 : 0;
 }
+
+//---------------------------------------------------------------------------//
+// Add support for the ACEPhotoatomicDataProperties
+//---------------------------------------------------------------------------//
+
+// Allow shared pointers of ACEPhotoatomicDataProperties objects
+%shared_ptr( Data::ACEPhotoatomicDataProperties );
 
 // Import the ACEPhotoatomicDataProperties
 %include "Data_ACEPhotoatomicDataProperties.hpp"
