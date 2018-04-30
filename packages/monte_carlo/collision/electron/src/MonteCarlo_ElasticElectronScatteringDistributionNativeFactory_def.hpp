@@ -178,16 +178,12 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
             data_container.getMomentPreservingCrossSectionReduction() ) );
 
   // Get the cutoff elastic cross sections
-  std::shared_ptr<std::vector<double> > cutoff_cross_sections;
-  cutoff_cross_sections->assign(
-        data_container.getCutoffElasticCrossSection().begin(),
-        data_container.getCutoffElasticCrossSection().end() );
+  std::shared_ptr<const std::vector<double> > cutoff_cross_sections(
+    new std::vector<double>( data_container.getCutoffElasticCrossSection() ) );
 
   // Get the total elastic cross sections
-  std::shared_ptr<std::vector<double> > total_cross_sections;
-  total_cross_sections->assign(
-        data_container.getTotalElasticCrossSection().begin(),
-        data_container.getTotalElasticCrossSection().end() );
+  std::shared_ptr<std::vector<double> > total_cross_sections(
+     new std::vector<double>( data_container.getTotalElasticCrossSection() ) );
 
   ThisType::calculateMomentPreservingCrossSections(
               cutoff_distribution,
@@ -331,16 +327,12 @@ void ElasticElectronScatteringDistributionNativeFactory::calculateMomentPreservi
             data_container.getAdjointMomentPreservingCrossSectionReduction() ) );
 
   // Get the cutoff elastic cross sections
-  std::shared_ptr<std::vector<double> > cutoff_cross_sections;
-  cutoff_cross_sections->assign(
-        data_container.getAdjointCutoffElasticCrossSection().begin(),
-        data_container.getAdjointCutoffElasticCrossSection().end() );
+  std::shared_ptr<const std::vector<double> > cutoff_cross_sections(
+     new std::vector<double>( data_container.getAdjointCutoffElasticCrossSection() ) );
 
   // Get the total elastic cross sections
-  std::shared_ptr<std::vector<double> > total_cross_sections;
-  total_cross_sections->assign(
-        data_container.getAdjointTotalElasticCrossSection().begin(),
-        data_container.getAdjointTotalElasticCrossSection().end() );
+  std::shared_ptr<const std::vector<double> > total_cross_sections(
+     new std::vector<double>( data_container.getAdjointTotalElasticCrossSection() ) );
 
   ThisType::calculateMomentPreservingCrossSections(
               cutoff_distribution,

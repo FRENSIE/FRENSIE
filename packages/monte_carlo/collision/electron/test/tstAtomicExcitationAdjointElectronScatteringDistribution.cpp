@@ -9,11 +9,6 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribution.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
@@ -21,7 +16,7 @@
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -37,7 +32,7 @@ std::shared_ptr<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributio
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                    sample_ace )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
@@ -52,14 +47,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                                scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                    sample_native )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
@@ -75,14 +70,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                                   scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                    sampleAndRecordTrials_ace )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
@@ -90,7 +85,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double outgoing_energy,scattering_angle_cosine;
-  unsigned trials = 10;
+  MonteCarlo::AdjointElectronScatteringDistribution::Counter trials = 10;
 
   // sample distribution
   ace_ae_distribution->sampleAndRecordTrials( electron.getEnergy(),
@@ -99,14 +94,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                                               trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1e-3, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                    sampleAndRecordTrials_native )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
@@ -115,7 +110,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
 
   double outgoing_energy,scattering_angle_cosine;
   double final_energy = electron.getEnergy() + 2.10088e-5;
-  unsigned trials = 10;
+  MonteCarlo::AdjointElectronScatteringDistribution::Counter trials = 10;
 
   // sample distribution
   native_ae_distribution->sampleAndRecordTrials( electron.getEnergy(),
@@ -124,14 +119,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                                                  trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the scattering angle can be evaluated
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                    scatterAdjointElectron_ace )
 {
   MonteCarlo::ParticleBank bank;
@@ -148,14 +143,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                                                shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1e-3, 1e-12 );
-  TEST_EQUALITY_CONST( adjoint_electron.getZDirection(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1e-3, 1e-12 );
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the scattering angle can be evaluated
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                    scatterAdjointElectron_native )
 {
   MonteCarlo::ParticleBank bank;
@@ -173,61 +168,61 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution,
                                                   shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), final_energy, 1e-12 );
-  TEST_EQUALITY_CONST( adjoint_electron.getZDirection(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), final_energy, 1e-12 );
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_ace_file_name, test_ace_table_name, test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_ace_file",
-                   &test_ace_file_name,
-                   "Test ACE file name" );
-  clp().setOption( "test_ace_table",
-                   &test_ace_table_name,
-                   "Test ACE table name" );
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the ACE distribution
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+    std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
       new Data::ACEFileHandler( test_ace_file_name,
                                 test_ace_table_name,
                                 1u ) );
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+    std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor(
             ace_file_handler->getTableNXSArray(),
             ace_file_handler->getTableJXSArray(),
             ace_file_handler->getTableXSSArray() ) );
 
     // Extract the atomic excitation information data block (EXCIT)
-    Teuchos::ArrayView<const double> excit_block(
+    Utility::ArrayView<const double> excit_block(
             xss_data_extractor->extractEXCITBlock() );
 
     // Extract the number of tabulated energies
     int size = excit_block.size()/2;
 
     // Extract the energy grid for atomic excitation energy loss
-    Teuchos::Array<double> energy_grid(excit_block(0,size));
+    std::vector<double> energy_grid(excit_block(0,size));
 
     // Extract the energy loss for atomic excitation
-    Teuchos::Array<double> energy_loss(excit_block(size,size));
+    std::vector<double> energy_loss(excit_block(size,size));
 
     // Evaluate the adjoint energy grid for atomic excitation energy gain
-    Teuchos::Array<double> adjoint_energy_grid( size );
+    std::vector<double> adjoint_energy_grid( size );
 
     // Loop through the energy grid
     for ( unsigned n = 0; n < size; ++n )
@@ -236,7 +231,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     }
 
     // Create the energy gain distributions
-    std::shared_ptr<Utility::OneDDistribution> energy_gain_function(
+    std::shared_ptr<Utility::UnivariateDistribution> energy_gain_function(
       new Utility::TabularDistribution<Utility::LinLin>( adjoint_energy_grid,
                                                          energy_loss ) );
 
@@ -266,7 +261,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       data_container->getAdjointAtomicExcitationEnergyGain() );
 
     // Create the energy gain distribution
-    std::shared_ptr<Utility::OneDDistribution> energy_gain_function(
+    std::shared_ptr<Utility::UnivariateDistribution> energy_gain_function(
       new Utility::TabularDistribution<Utility::LinLin>( energy_grid,
                                                          energy_gain ) );
 
@@ -280,7 +275,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END(); 
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicExcitationAdjointElectronScatteringDistribution.cpp

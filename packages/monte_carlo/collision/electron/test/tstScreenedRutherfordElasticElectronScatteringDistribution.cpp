@@ -9,17 +9,12 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -54,7 +49,7 @@ std::shared_ptr<TestScreenedRutherfordElasticElectronScatteringDistribution>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    evaluate )
 {
   // Set energy in MeV
@@ -64,17 +59,17 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   // Evaluate the pdf
   double pdf_value =
     native_pb_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 9.999999999424890E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 9.999999999424890E-01, 1e-12 );
 
   scattering_angle_cosine = 9.999995E-01; // delta_mu = 5e-7;
   pdf_value =
     native_pb_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.999999668748010, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 3.999999668748010, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   pdf_value =
     native_pb_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 5.809502154347930E+14, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 5.809502154347930E+14, 1e-12 );
 
   // Test with a different energy
   energy = 1.00E-04;
@@ -82,22 +77,22 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   scattering_angle_cosine = 0.999999;
   pdf_value =
     native_pb_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.0, 1e-12 );
 
   scattering_angle_cosine = 9.999995E-01; // delta_mu = 5e-7;
   pdf_value =
     native_pb_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.000000012384330E+00, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.000000012384330E+00, 1e-12 );
 
   scattering_angle_cosine = 1.0; // delta_mu = 0.0;
   pdf_value =
     native_pb_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.000000024768670E+00, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.000000024768670E+00, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    evaluatePDF )
 {
   // Set energy in MeV
@@ -107,17 +102,17 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   // Evaluate the pdf
   double pdf_value =
     native_pb_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 9.999999999424890E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 9.999999999424890E-01, 1e-12 );
 
   scattering_angle_cosine = 9.999995E-01; // delta_mu = 5e-7;
   pdf_value =
     native_pb_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 3.999999668748010, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 3.999999668748010, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   pdf_value =
     native_pb_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 5.809502154347930E+14, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 5.809502154347930E+14, 1e-12 );
 
   // Test with a different energy
   energy = 1.00E-04;
@@ -125,22 +120,22 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   scattering_angle_cosine = 0.999999;
   pdf_value =
     native_pb_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.0, 1e-12 );
 
   scattering_angle_cosine = 9.999995E-01; // delta_mu = 5e-7;
   pdf_value =
     native_pb_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.000000012384330E+00, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.000000012384330E+00, 1e-12 );
 
   scattering_angle_cosine = 1.0; // delta_mu = 0.0;
   pdf_value =
     native_pb_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  TEST_FLOATING_EQUALITY( pdf_value, 1.000000024768670E+00, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.000000024768670E+00, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cdf can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    evaluateCDF )
 {
   // Set energy in MeV
@@ -152,21 +147,21 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
     native_pb_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   scattering_angle_cosine = 9.999995000000E-01;
   cdf_value =
     native_pb_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
   // Test 2 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 9.99999958511234000E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 9.99999958511234000E-01, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   cdf_value =
     native_pb_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
   // Test 3 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
 
 
   // Test with a different energy
@@ -177,26 +172,26 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
     native_pb_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
   // Test 1  energy 2
-  TEST_FLOATING_EQUALITY( cdf_value, 1.00000000002876E+00, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 1.00000000002876E+00, 1e-12 );
 
   scattering_angle_cosine = 9.999995000000E-01;
   cdf_value =
     native_pb_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
   // Test 2 energy 2
-  TEST_FLOATING_EQUALITY( cdf_value, 5.00000003054950E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 5.00000003054950E-01, 1e-12 );
 
   scattering_angle_cosine = 1.0;
   cdf_value =
     native_pb_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle_cosine );
   // Test 3  energy 2
-  TEST_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl )
 {
   // Set fake random number stream
@@ -210,7 +205,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double scattering_angle_cosine;
-  unsigned trials = 10;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
   test_native_pb_elastic_distribution->sampleAndRecordTrialsImpl(
@@ -219,13 +214,13 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                                                 trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 }
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    sample )
 {
   // Set fake random number stream
@@ -246,13 +241,13 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    sampleAndRecordTrials )
 {
   // Set fake random number stream
@@ -266,7 +261,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double scattering_angle_cosine, outgoing_energy;
-  unsigned trials = 10;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
   native_pb_elastic_distribution->sampleAndRecordTrials(
@@ -276,13 +271,13 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                                           trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    ScatterElectron )
 {
   // Set fake random number stream
@@ -304,14 +299,14 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                                                    shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.99999500000093E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 9.99999500000093E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    ScatterPositron )
 {
   // Set fake random number stream
@@ -333,14 +328,14 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                                                    shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.99999500000093E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.99999500000093E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                    ScatterAdjointElectron )
 {
   // Set fake random number stream
@@ -363,30 +358,30 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
         shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
                           9.99999500000093E-01,
                           1e-12 );
-  TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0e-3, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
-// Custom setup
+// Custom Setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_pb_file_name, test_native_al_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_pb_file",
-                   &test_native_pb_file_name,
-                   "Test Native Pb file name" );
-  clp().setOption( "test_native_al_file",
-                   &test_native_al_file_name,
-                   "Test NATIVE Al file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_pb_file",
+                                        test_native_pb_file_name, "",
+                                        "Test Native Pb file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_al_file",
+                                        test_native_al_file_name, "",
+                                        "Test NATIVE Al file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // create Native Pb distributions
   {
@@ -422,7 +417,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstScreenedRutherfordElasticElectronScatteringDistribution.cpp
