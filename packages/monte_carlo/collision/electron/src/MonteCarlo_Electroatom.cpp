@@ -34,19 +34,19 @@ double Electroatom::getReactionCrossSection(
     return this->getAbsorptionCrossSection( energy );
   default:
     ConstReactionMap::const_iterator electroatomic_reaction =
-      d_core.getScatteringReactions().find( reaction );
+      this->getCore().getScatteringReactions().find( reaction );
 
-    if( electroatomic_reaction != d_core.getScatteringReactions().end() )
+    if( electroatomic_reaction != this->getCore().getScatteringReactions().end() )
       return electroatomic_reaction->second->getCrossSection( energy );
 
-    electroatomic_reaction = d_core.getAbsorptionReactions().find( reaction );
+    electroatomic_reaction = this->getCore().getAbsorptionReactions().find( reaction );
 
-    if( electroatomic_reaction != d_core.getAbsorptionReactions().end() )
+    if( electroatomic_reaction != this->getCore().getAbsorptionReactions().end() )
       return electroatomic_reaction->second->getCrossSection( energy );
 
-    electroatomic_reaction = d_core.getMiscReactions().find( reaction );
+    electroatomic_reaction = this->getCore().getMiscReactions().find( reaction );
 
-    if( electroatomic_reaction != d_core.getMiscReactions().end() )
+    if( electroatomic_reaction != this->getCore().getMiscReactions().end() )
       return electroatomic_reaction->second->getCrossSection( energy );
     else // If the reaction does not exist for an atom, return 0
       return 0.0;

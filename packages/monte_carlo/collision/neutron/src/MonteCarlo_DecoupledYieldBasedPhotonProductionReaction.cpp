@@ -46,7 +46,7 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
  * to conduct the test.
  */
 bool DecoupledYieldBasedPhotonProductionReaction::isEnergyGridShared(
-                                  const NuclearReaction& other_reaction ) const
+                                         const Reaction& other_reaction ) const
 {
   return d_base_reaction->isEnergyGridShared( other_reaction );
 }

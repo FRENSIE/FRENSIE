@@ -10,7 +10,7 @@
 #include "MonteCarlo_CoupledElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_3DCartesianVectorHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -18,8 +18,8 @@ namespace MonteCarlo{
 
 // Constructor
 CoupledElasticElectronScatteringDistribution::CoupledElasticElectronScatteringDistribution(
-    const std::shared_ptr<const TwoDDist> &coupled_elastic_distribution,
-    const std::shared_ptr<const OneDDist> &cutoff_cross_section_ratios,
+    const std::shared_ptr<const BasicBivariateDist> &coupled_elastic_distribution,
+    const std::shared_ptr<const UnivariateDist> &cutoff_cross_section_ratios,
     const std::shared_ptr<const ElasticTraits> &screened_rutherford_traits,
     const CoupledElasticSamplingMethod& sampling_method )
     : d_coupled_dist(coupled_elastic_distribution),
@@ -281,7 +281,7 @@ void CoupledElasticElectronScatteringDistribution::sample(
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
@@ -294,7 +294,7 @@ void CoupledElasticElectronScatteringDistribution::sampleAndRecordTrials(
         const double incoming_energy,
         double& outgoing_energy,
         double& scattering_angle_cosine,
-        unsigned& trials ) const
+        Counter& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -313,7 +313,7 @@ void CoupledElasticElectronScatteringDistribution::scatterElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
@@ -335,7 +335,7 @@ void CoupledElasticElectronScatteringDistribution::scatterPositron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( positron.getEnergy(),
@@ -357,7 +357,7 @@ void CoupledElasticElectronScatteringDistribution::scatterAdjointElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
@@ -375,7 +375,7 @@ void CoupledElasticElectronScatteringDistribution::scatterAdjointElectron(
 void CoupledElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
                                                 double& scattering_angle_cosine,
-                                                unsigned& trials ) const
+                                                Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

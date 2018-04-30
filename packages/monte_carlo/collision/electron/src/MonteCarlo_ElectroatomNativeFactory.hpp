@@ -34,7 +34,7 @@ public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createElectroatomCore(
        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
        const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
@@ -54,13 +54,13 @@ private:
 
   //! Create the elastic reaction for a electroatom core
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   static void createElasticElectroatomCore(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         const SimulationElectronProperties& properties,
-        Electroatom::ReactionMap& scattering_reactions );
+        Electroatom::ConstReactionMap& scattering_reactions );
 
   // Constructor
   ElectroatomNativeFactory();

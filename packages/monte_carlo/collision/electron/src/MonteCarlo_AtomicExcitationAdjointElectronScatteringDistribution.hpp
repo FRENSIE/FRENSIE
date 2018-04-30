@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronState.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -23,7 +23,7 @@ class AtomicExcitationAdjointElectronScatteringDistribution : public AdjointElec
 public:
 
   //! Typedef for the adjoint atomic excitation distribution
-  typedef std::shared_ptr<const Utility::OneDDistribution> AtomicDistribution;
+  typedef std::shared_ptr<const Utility::UnivariateDistribution> AtomicDistribution;
 
   //! Constructor
   AtomicExcitationAdjointElectronScatteringDistribution(
@@ -52,7 +52,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const;
 
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& electron,

@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistribution.hpp"
 
 
@@ -19,10 +19,10 @@ namespace MonteCarlo{
 
 //! The pair production photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class BremsstrahlungAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
+class BremsstrahlungAdjointElectroatomicReaction : public StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
+  typedef StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
     BaseType;
 
 public:
@@ -31,7 +31,7 @@ public:
   BremsstrahlungAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
             bremsstrahlung_distribution );
 
@@ -39,8 +39,8 @@ public:
   BremsstrahlungAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const std::shared_ptr<const BremsstrahlungAdjointElectronScatteringDistribution>&
             bremsstrahlung_distribution );
 
@@ -48,11 +48,14 @@ public:
   ~BremsstrahlungAdjointElectroatomicReaction()
   { /* ... */ }
 
-  //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
+  //! Return the number of adjoint photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedAdjointPhotons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of adjoint electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedAdjointElectrons( const double energy ) const override;
+
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedAdjointPositrons( const double energy ) const override;
 
   //! Return the reaction type
   AdjointElectroatomicReactionType getReactionType() const override;

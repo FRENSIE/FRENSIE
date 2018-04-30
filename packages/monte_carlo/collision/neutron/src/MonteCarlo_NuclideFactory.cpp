@@ -25,6 +25,9 @@ NuclideFactory::NuclideFactory(
                  const SimulationProperties& properties,
                  const bool verbose )
 {
+  FRENSIE_LOG_NOTIFICATION( "Starting to load nuclide data tables ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
+  
   // Create each nuclide in the set
   ScatteringCenterNameSet::const_iterator nuclide_name =
     nuclide_names.begin();
@@ -82,6 +85,9 @@ NuclideFactory::NuclideFactory(
 
   // Make sure that every nuclide has been created
   testPostcondition( d_nuclide_name_map.size() == nuclide_names.size() );
+
+  FRENSIE_LOG_NOTIFICATION( "Finished loading nuclide data tables." );
+  FRENSIE_FLUSH_ALL_LOGS();
 }
 
 // Create the map of nuclides
@@ -113,6 +119,7 @@ void NuclideFactory::createNuclideFromACETable(
                                         << data_properties.tableName() <<
                                         " from " << ace_file_path.string() <<
                                         " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
 
     // The ACE table reader
@@ -148,6 +155,7 @@ void NuclideFactory::createNuclideFromACETable(
     if( d_verbose )
     {
       FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
     }
   }
   // The table has already been loaded

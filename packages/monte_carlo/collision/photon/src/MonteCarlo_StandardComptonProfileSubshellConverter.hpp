@@ -45,7 +45,7 @@ struct ComptonProfileTraits
   static unsigned convertToIndex( const Data::SubshellType subshell )
   {
     THROW_EXCEPTION( std::logic_error,
-		     "Error: Z (" << Z << ") is invalid!" )
+		     "Z (" << Z << ") is invalid!" )
   }
 };
 

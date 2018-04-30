@@ -23,17 +23,17 @@ namespace MonteCarlo{
  * Otherwise a single total electroionization reaction will be created.
  */
 void PositronatomACEFactory::createPositronatomCore(
-    const Data::XSSEPRDataExtractor& raw_positronatom_data,
-    const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-    const SimulationElectronProperties& properties,
-    std::shared_ptr<PositronatomCore>& positronatom_core )
+   const Data::XSSEPRDataExtractor& raw_positronatom_data,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationElectronProperties& properties,
+   std::shared_ptr<const PositronatomCore>& positronatom_core )
 {
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
   positronatom_core.reset( new PositronatomCore() );
 
-  Positronatom::ReactionMap scattering_reactions, absorption_reactions;
+  Positronatom::ConstReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
   std::shared_ptr<const std::vector<double> > energy_grid(
@@ -41,7 +41,7 @@ void PositronatomACEFactory::createPositronatomCore(
                               raw_positronatom_data.extractElectronEnergyGrid().end() ) );
 
   // Create a hash based energy grid searcher
-  std::shared_ptr<Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                       energy_grid,
                       properties.getNumberOfElectronHashGridBins() ) );
@@ -52,7 +52,7 @@ void PositronatomACEFactory::createPositronatomCore(
     // Check the ACE file version
     if( raw_positronatom_data.isEPRVersion14() )
     {
-      Positronatom::ReactionMap::mapped_type& reaction_pointer =
+      Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION];
 
       PositronatomicReactionACEFactory::createDecoupledElasticReaction(
@@ -63,7 +63,7 @@ void PositronatomACEFactory::createPositronatomCore(
     }
     else // Create the cutoff elastic scattering reaction
     {
-      Positronatom::ReactionMap::mapped_type& reaction_pointer =
+      Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[CUTOFF_ELASTIC_POSITRONATOMIC_REACTION];
 
       PositronatomicReactionACEFactory::createCutoffElasticReaction(
@@ -77,7 +77,7 @@ void PositronatomACEFactory::createPositronatomCore(
   // Create the bremsstrahlung scattering reaction
   if ( properties.isBremsstrahlungModeOn() )
   {
-    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+    Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_POSITRONATOMIC_REACTION];
 
     PositronatomicReactionACEFactory::createBremsstrahlungReaction(
@@ -91,7 +91,7 @@ void PositronatomACEFactory::createPositronatomCore(
   // Create the atomic excitation scattering reaction
   if ( properties.isAtomicExcitationModeOn() )
   {
-    Positronatom::ReactionMap::mapped_type& reaction_pointer =
+    Positronatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_POSITRONATOMIC_REACTION];
 
     PositronatomicReactionACEFactory::createAtomicExcitationReaction(
@@ -104,7 +104,7 @@ void PositronatomACEFactory::createPositronatomCore(
   // Create the subshell electroionization reaction(s)
   if ( properties.isElectroionizationModeOn() )
   {
-    std::vector<std::shared_ptr<PositronatomicReaction> > reaction_pointers;
+    std::vector<std::shared_ptr<const PositronatomicReaction> > reaction_pointers;
 
     PositronatomicReactionACEFactory::createSubshellPositronionizationReactions(
         raw_positronatom_data,
@@ -123,22 +123,22 @@ void PositronatomACEFactory::createPositronatomCore(
   if( raw_positronatom_data.isEPRVersion14() )
   {
     positronatom_core.reset( new PositronatomCore( energy_grid,
-                                                 grid_searcher,
-                                                 scattering_reactions,
-                                                 absorption_reactions,
-                                                 atomic_relaxation_model,
-                                                 false,
-                                                 Utility::LogLog() ) );
+                                                   grid_searcher,
+                                                   scattering_reactions,
+                                                   absorption_reactions,
+                                                   atomic_relaxation_model,
+                                                   false,
+                                                   Utility::LogLog() ) );
   }
   else
   {
     positronatom_core.reset( new PositronatomCore( energy_grid,
-                                                 grid_searcher,
-                                                 scattering_reactions,
-                                                 absorption_reactions,
-                                                 atomic_relaxation_model,
-                                                 false,
-                                                 Utility::LinLin() ) );
+                                                   grid_searcher,
+                                                   scattering_reactions,
+                                                   absorption_reactions,
+                                                   atomic_relaxation_model,
+                                                   false,
+                                                   Utility::LinLin() ) );
   }
 }
 
@@ -150,24 +150,24 @@ void PositronatomACEFactory::createPositronatomCore(
  * Otherwise a single total electroionization reaction will be created.
  */
 void PositronatomACEFactory::createPositronatom(
-            const Data::XSSEPRDataExtractor& raw_positronatom_data,
-            const std::string& positronatom_name,
-            const double atomic_weight,
-            const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
-            const SimulationElectronProperties& properties,
-            std::shared_ptr<Positronatom>& positronatom )
+   const Data::XSSEPRDataExtractor& raw_positronatom_data,
+   const std::string& positronatom_name,
+   const double atomic_weight,
+   const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
+   const SimulationElectronProperties& properties,
+   std::shared_ptr<const Positronatom>& positronatom )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
-  std::shared_ptr<PositronatomCore> core;
+  std::shared_ptr<const PositronatomCore> core;
 
   PositronatomACEFactory::createPositronatomCore( raw_positronatom_data,
-                                                atomic_relaxation_model,
-                                                properties,
-                                                core );
+                                                  atomic_relaxation_model,
+                                                  properties,
+                                                  core );
 
   // Create the positron-atom
   positronatom.reset(

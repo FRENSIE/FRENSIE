@@ -35,14 +35,14 @@ namespace MonteCarlo{
 void PositronatomicReactionACEFactory::createDecoupledElasticReaction(
     const Data::XSSEPRDataExtractor& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PositronatomicReaction>& elastic_reaction )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const PositronatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   // Make sure the ACE file version is valid
   testPrecondition( raw_positronatom_data.isEPRVersion14() );
 
@@ -60,14 +60,14 @@ void PositronatomicReactionACEFactory::createDecoupledElasticReaction(
     raw_positronatom_data.extractAtomicNumber() );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   std::shared_ptr<std::vector<double> >
     total_elastic_cross_section( new std::vector<double> );
   
   PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-                      energy_grid,
+                      *energy_grid,
                       raw_positronatom_data.extractElasticTotalCrossSection(),
                       *total_elastic_cross_section,
                       threshold_energy_index );
@@ -79,12 +79,12 @@ void PositronatomicReactionACEFactory::createDecoupledElasticReaction(
   std::shared_ptr<std::vector<double> > sampling_ratios(
               new std::vector<double>( total_elastic_cross_section->size() ) );
   
-  for( unsigned i = 0; i < sampling_ratios.size(); ++i )
+  for( size_t i = 0; i < sampling_ratios->size(); ++i )
   {
     double relative_diff =
       ((*total_elastic_cross_section)[i] -
-       (*cutoff_elastic_cross_section)[i+threshold_energy_index])/
-      (*cutoff_elastic_cross_section)[i+threshold_energy_index];
+       cutoff_elastic_cross_section[i+threshold_energy_index])/
+      cutoff_elastic_cross_section[i+threshold_energy_index];
 
     // Check for cross sections below roundoff error
     if( relative_diff < 1e-8 )
@@ -92,11 +92,11 @@ void PositronatomicReactionACEFactory::createDecoupledElasticReaction(
     else
     {
       (*sampling_ratios)[i] =
-        (*cutoff_elastic_cross_section)[i+threshold_energy_index]/
+        cutoff_elastic_cross_section[i+threshold_energy_index]/
         (*total_elastic_cross_section)[i];
     }
 
-    testPostcondition( sampling_ratios[i] <= 1.0 );
+    testPostcondition( (*sampling_ratios)[i] <= 1.0 );
   }
 
   elastic_reaction.reset(
@@ -114,14 +114,14 @@ void PositronatomicReactionACEFactory::createDecoupledElasticReaction(
 void PositronatomicReactionACEFactory::createCutoffElasticReaction(
         const Data::XSSEPRDataExtractor& raw_positronatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<PositronatomicReaction>& elastic_reaction )
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::shared_ptr<const PositronatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Create the elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
@@ -135,11 +135,11 @@ void PositronatomicReactionACEFactory::createCutoffElasticReaction(
     elastic_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-                      energy_grid,
+                      *energy_grid,
                       raw_positronatom_data.extractElasticCutoffCrossSection(),
                       *elastic_cross_section,
                       threshold_energy_index );
@@ -168,14 +168,14 @@ void PositronatomicReactionACEFactory::createCutoffElasticReaction(
 void PositronatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& elastic_reaction )
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   // Make sure the ACE file version is valid
   testPrecondition( raw_positronatom_data.isEPRVersion14() );
 
@@ -198,31 +198,31 @@ void PositronatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
   std::shared_ptr<std::vector<double> > elastic_cross_section(
               new std::vector<double>( cutoff_elastic_cross_section.size() ) );
   
-  for ( unsigned i = 0; i < elastic_cross_section.size(); ++i )
+  for ( size_t i = 0; i < elastic_cross_section->size(); ++i )
   {
-    (*elastic_cross_section)[i] = (*total_elastic_cross_section)[i] -
-      (*cutoff_elastic_cross_section)[i];
+    (*elastic_cross_section)[i] = total_elastic_cross_section[i] -
+      cutoff_elastic_cross_section[i];
 
     // Check for cross sections below roundoff error
     if( (*elastic_cross_section)[i] != 0.0 &&
-        (*elastic_cross_section)[i]/(*cutoff_elastic_cross_section)[i] < 1e-8 )
+        (*elastic_cross_section)[i]/cutoff_elastic_cross_section[i] < 1e-8 )
     {
       (*elastic_cross_section)[i] = 0.0;
     }
 
-    testPostcondition( elastic_cross_section[i] >= 0.0 );
+    testPostcondition( (*elastic_cross_section)[i] >= 0.0 );
   }
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   std::shared_ptr<std::vector<double> >
     sr_elastic_cross_section( new std::vector<double> );
   
   PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-                              energy_grid,
-                              elastic_cross_section,
+                              *energy_grid,
+                              *elastic_cross_section,
                               *sr_elastic_cross_section,
                               threshold_energy_index );
 
@@ -239,25 +239,25 @@ void PositronatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
 void PositronatomicReactionACEFactory::createAtomicExcitationReaction(
     const Data::XSSEPRDataExtractor& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const PositronatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Atomic Excitation cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     atomic_excitation_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-                         energy_grid,
+                         *energy_grid,
                          raw_positronatom_data.extractExcitationCrossSection(),
                          *atomic_excitation_cross_section,
                          threshold_energy_index );
@@ -295,25 +295,25 @@ void PositronatomicReactionACEFactory::createAtomicExcitationReaction(
 void PositronatomicReactionACEFactory::createTotalPositronionizationReaction(
         const Data::XSSEPRDataExtractor& raw_positronatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<PositronatomicReaction>& total_electroionization_reaction )
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::shared_ptr<const PositronatomicReaction>& total_electroionization_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Positron-ionization cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     total_electroionization_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-                  energy_grid,
+                  *energy_grid,
                   raw_positronatom_data.extractElectroionizationCrossSection(),
                   *total_electroionization_cross_section,
                   threshold_energy_index );
@@ -340,15 +340,15 @@ void PositronatomicReactionACEFactory::createTotalPositronionizationReaction(
 void PositronatomicReactionACEFactory::createSubshellPositronionizationReaction(
     const Data::XSSEPRDataExtractor& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PositronatomicReaction>& electroionization_subshell_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const PositronatomicReaction>& electroionization_subshell_reaction,
     const unsigned subshell )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Extract the subshell information
   Utility::ArrayView<const double> subshell_endf_designators =
@@ -374,18 +374,18 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReaction(
 
   // Subshell cross section without zeros removed
   Utility::ArrayView<const double> raw_subshell_cross_section =
-  raw_subshell_cross_sections( shell_index*energy_grid.size(),energy_grid.size() );
+  raw_subshell_cross_sections( shell_index*energy_grid->size(),energy_grid->size() );
 
   // Positron-ionization cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     subshell_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-                          energy_grid,
+                          *energy_grid,
                           raw_subshell_cross_section,
                           *subshell_cross_section,
                           threshold_energy_index );
@@ -427,15 +427,15 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReaction(
 void PositronatomicReactionACEFactory::createSubshellPositronionizationReactions(
         const Data::XSSEPRDataExtractor& raw_positronatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::vector<std::shared_ptr<PositronatomicReaction> >&
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::vector<std::shared_ptr<const PositronatomicReaction> >&
         electroionization_subshell_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   electroionization_subshell_reactions.clear();
 
@@ -460,7 +460,7 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReactions
   unsigned num_subshells = subshell_order.size();
 
   // Extract the number of points in the energy grid
-  unsigned num_energy_points = energy_grid.size();
+  unsigned num_energy_points = energy_grid->size();
 
   // Extract the subshell cross sections
   Utility::ArrayView<const double> raw_subshell_cross_sections =
@@ -497,24 +497,24 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReactions
 
     // Subshell cross section without zeros removed
     Utility::ArrayView<const double> raw_subshell_cross_section =
-    raw_subshell_cross_sections( shell_index*energy_grid.size(),energy_grid.size() );
+    raw_subshell_cross_sections( shell_index*energy_grid->size(),energy_grid->size() );
 
     // Electroionization cross section with zeros removed
     std::shared_ptr<std::vector<double> >
       subshell_cross_section( new std::vector<double> );
 
     // Index of first non zero cross section in the energy grid
-    unsigned threshold_energy_index;
+    size_t threshold_energy_index;
 
     // Remove all cross sections equal to zero
     PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-                           energy_grid,
+                           *energy_grid,
                            raw_subshell_cross_section,
                            *subshell_cross_section,
                            threshold_energy_index );
 
     // Make sure the threshold energy is at least the binding energy
-    testPrecondition( energy_grid[threshold_energy_index] >=
+    testPrecondition( (*energy_grid)[threshold_energy_index] >=
                       binding_energies[shell_index] );
 
     // The electroionization subshell distribution
@@ -565,25 +565,25 @@ void PositronatomicReactionACEFactory::createSubshellPositronionizationReactions
 void PositronatomicReactionACEFactory::createBremsstrahlungReaction(
         const Data::XSSEPRDataExtractor& raw_positronatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<PositronatomicReaction>& bremsstrahlung_reaction,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::shared_ptr<const PositronatomicReaction>& bremsstrahlung_reaction,
         BremsstrahlungAngularDistributionType photon_distribution_function )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Bremsstrahlung cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     bremsstrahlung_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-            energy_grid,
+            *energy_grid,
             raw_positronatom_data.extractBremsstrahlungCrossSection(),
             *bremsstrahlung_cross_section,
             threshold_energy_index );
@@ -601,7 +601,7 @@ void PositronatomicReactionACEFactory::createBremsstrahlungReaction(
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
   {
   THROW_EXCEPTION( std::logic_error,
-        "Error! The detailed bremsstrahlung reaction has not been implemented");
+        "The detailed bremsstrahlung reaction has not been implemented");
   }
   else if( photon_distribution_function = TWOBS_DISTRIBUTION )
   {
@@ -614,7 +614,7 @@ void PositronatomicReactionACEFactory::createBremsstrahlungReaction(
   else
   {
     THROW_EXCEPTION( std::logic_error,
-                     "Error! The photon distribution function: " <<
+                     "The photon distribution function: " <<
                      photon_distribution_function <<
                      " is not recognized");
   }
@@ -642,7 +642,7 @@ void PositronatomicReactionACEFactory::createBremsstrahlungReaction(
 
 // Create a void absorption positron-atomic reaction
 void PositronatomicReactionACEFactory::createVoidAbsorptionReaction(
-      std::shared_ptr<PositronatomicReaction>& void_absorption_reaction )
+      std::shared_ptr<const PositronatomicReaction>& void_absorption_reaction )
 {
   // Create the void absorption reaction
   void_absorption_reaction.reset(
@@ -651,16 +651,16 @@ void PositronatomicReactionACEFactory::createVoidAbsorptionReaction(
 
 // Remove the zeros from a cross section
 void PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-             const std::shared_ptr<const std::vector<double> >& energy_grid,
-             const Utility::ArrayView<const double>& raw_cross_section,
-             std::vector<double>& cross_section,
-             unsigned& threshold_energy_index )
+                     const std::vector<double>& energy_grid,
+                     const Utility::ArrayView<const double>& raw_cross_section,
+                     std::vector<double>& cross_section,
+                     size_t& threshold_energy_index )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid->size() > 1 );
+  testPrecondition( energy_grid.size() > 1 );
 
   // Make sure the raw cross section is valid
-  testPrecondition( raw_cross_section->size() == energy_grid->size() );
+  testPrecondition( raw_cross_section.size() == energy_grid.size() );
 
   cross_section.clear();
 
@@ -674,7 +674,7 @@ void PositronatomicReactionACEFactory::removeZerosFromCrossSection(
   cross_section.assign( start, raw_cross_section.end() );
 
   // Determine the threshold energy index of the reaction
-  threshold_energy_index = energy_grid->size() - cross_section.size();
+  threshold_energy_index = energy_grid.size() - cross_section.size();
 
   // Make sure the cross section is valid
   testPostcondition( cross_section.size() > 1 );
@@ -682,30 +682,30 @@ void PositronatomicReactionACEFactory::removeZerosFromCrossSection(
 
 // Remove the zeros from a cross section
 void PositronatomicReactionACEFactory::removeZerosFromCrossSection(
-          const std::shared_ptr<const std::vector<double> >& energy_grid,
-          const std::shared_ptr<const std::vector<double> >& raw_cross_section,
-          std::vector<double>& cross_section,
-          unsigned& threshold_energy_index )
+                                  const std::vector<double>& energy_grid,
+                                  const std::vector<double>& raw_cross_section,
+                                  std::vector<double>& cross_section,
+                                  size_t& threshold_energy_index )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
 
   // Make sure the raw cross section is valid
-  testPrecondition( raw_cross_section->size() == energy_grid->size() );
+  testPrecondition( raw_cross_section.size() == energy_grid.size() );
 
   cross_section.clear();
 
   // Find the first non-zero cross section value
-  std::vector<double>::iterator start =
-    std::find_if( raw_cross_section->begin(),
-                  raw_cross_section->end(),
+  std::vector<double>::const_iterator start =
+    std::find_if( raw_cross_section.begin(),
+                  raw_cross_section.end(),
                   PositronatomicReactionACEFactory::notEqualZero );
 
   // Remove the zeros from the cross section
   cross_section.assign( start, raw_cross_section.end() );
 
   // Determine the threshold energy index of the reaction
-  threshold_energy_index = energy_grid->size() - cross_section.size();
+  threshold_energy_index = energy_grid.size() - cross_section.size();
 
   // Make sure the cross section is valid
   testPostcondition( cross_section.size() > 1 );

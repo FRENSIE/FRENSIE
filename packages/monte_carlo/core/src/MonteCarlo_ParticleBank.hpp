@@ -55,17 +55,25 @@ public:
   //! Access the top element
   const ParticleState& top() const;
 
-  //! Push a particle to the bank
+  //! Insert a particle into the bank
   template<template<typename> class SmartPointer, typename State>
   void push( SmartPointer<State>& particle );
 
-  //! Insert a particle to the bank
-  virtual void push( const ParticleState& particle );
+  //! Insert a particle into the bank (Most Efficient/Recommended)
+  template<typename State>
+  void push( std::shared_ptr<State>& particle );
 
-  //! Push a neutron into the bank after an interaction
+  //! Insert a particle into the bank
+  void push( const ParticleState& particle );
+
+  //! Insert a neutron into the bank after an interaction
   template<template<typename> class SmartPointer>
   void push( SmartPointer<NeutronState>& neutron,
 	     const NuclearReactionType reaction );
+
+  //! Insert a neutron into the bank after an interaction (Most Efficient/Recommended)
+  virtual void push( std::shared_ptr<NeutronState>& neutron,
+                     const NuclearReactionType reaction );
 
   //! Insert a neutron into the bank after an interaction
   virtual void push( const NeutronState& neutron,
@@ -91,6 +99,11 @@ public:
   //! Splice the bank with another bank
   virtual void splice( ParticleBank& other_bank );
 
+protected:
+
+  //! The bank container type
+  typedef std::list<std::shared_ptr<ParticleState> > BankContainerType;
+  
 private:
 
   // Dereference a smart ptr
@@ -108,7 +121,7 @@ private:
   friend class boost::serialization::access;
 
   // A list of particle states
-  std::list<std::shared_ptr<ParticleState> > d_particle_states;
+  BankContainerType d_particle_states;
 };
 
 // Dereference a smart pointer

@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
@@ -19,10 +19,10 @@ namespace MonteCarlo{
 //! \todo Write Unit Test once ENDL Data is available
 //! The screened rutherford elastic positron-atomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ScreenedRutherfordElasticPositronatomicReaction : public StandardGenericAtomicReaction<PositronatomicReaction,InterpPolicy,processed_cross_section>
+class ScreenedRutherfordElasticPositronatomicReaction : public StandardReactionBaseImpl<PositronatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<PositronatomicReaction,InterpPolicy,processed_cross_section>
+typedef StandardReactionBaseImpl<PositronatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -31,7 +31,7 @@ public:
   ScreenedRutherfordElasticPositronatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
             scattering_distribution );
 
@@ -39,8 +39,8 @@ public:
   ScreenedRutherfordElasticPositronatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
             scattering_distribution );
 
@@ -49,11 +49,14 @@ public:
   ~ScreenedRutherfordElasticPositronatomicReaction()
   { /* ... */ }
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the reaction type
   PositronatomicReactionType getReactionType() const override;

@@ -58,10 +58,10 @@ public:
 
   //! Constructor
   AdjointElectroatomCore(
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
-      const ReactionMap& scattering_reactions,
-      const ReactionMap& absorption_reactions );
+      const ConstReactionMap& scattering_reactions,
+      const ConstReactionMap& absorption_reactions );
 
   //! Copy constructor
   AdjointElectroatomCore( const AdjointElectroatomCore& instance );
@@ -83,7 +83,7 @@ public:
   const ConstReactionMap& getAbsorptionReactions() const;
 
   //! Return the hash-based grid searcher
-  const Utility::HashBasedGridSearcher& getGridSearcher() const;
+  const Utility::HashBasedGridSearcher<double>& getGridSearcher() const;
 
   //! Test if all of the reactions share a common energy grid
   bool hasSharedEnergyGrid() const;
@@ -100,7 +100,7 @@ private:
   ConstReactionMap d_absorption_reactions;
 
   // The hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> d_grid_searcher;
 };
 
 // Return the total forward reaction
@@ -122,7 +122,7 @@ inline auto AdjointElectroatomCore::getAbsorptionReactions() const -> const Cons
 }
 
 // Return the hash-based grid searcher
-inline const Utility::HashBasedGridSearcher& AdjointElectroatomCore::getGridSearcher() const
+inline const Utility::HashBasedGridSearcher<double>& AdjointElectroatomCore::getGridSearcher() const
 {
   return *d_grid_searcher;
 }

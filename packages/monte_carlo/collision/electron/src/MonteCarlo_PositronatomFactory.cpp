@@ -10,131 +10,156 @@
 #include "MonteCarlo_PositronatomFactory.hpp"
 #include "MonteCarlo_PositronatomACEFactory.hpp"
 #include "MonteCarlo_PositronatomNativeFactory.hpp"
-#include "Data_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 PositronatomFactory::PositronatomFactory(
-    const std::string& cross_sections_xml_directory,
-    const Teuchos::ParameterList& cross_section_table_info,
-    const std::unordered_set<std::string>& positronatom_aliases,
-    const std::shared_ptr<AtomicRelaxationModelFactory>&
-    atomic_relaxation_model_factory,
-    const SimulationProperties& properties,
-    std::ostream* os_message )
-  :d_os_message( os_message )
+            const boost::filesystem::path& data_directory,
+            const ScatteringCenterNameSet& positronatom_names,
+            const ScatteringCenterDefinitionDatabase& positronatom_definitions,
+            const std::shared_ptr<AtomicRelaxationModelFactory>&
+            atomic_relaxation_model_factory,
+            const SimulationProperties& properties,
+            const bool verbose )
+  : d_positronatom_name_map(),
+    d_positronatomic_table_name_map(),
+    d_verbose( verbose )
 {
-  // Make sure the message stream is valid
-  testPrecondition( os_message != NULL );
+  FRENSIE_LOG_NOTIFICATION( "Starting to load positronatom data tables ... " );
+  FRENSIE_FLUSH_ALL_LOGS();
 
   // Create each positron-atom in the set
-  std::unordered_set<std::string>::const_iterator positronatom_name =
-    positronatom_aliases.begin();
+  ScatteringCenterNameSet::const_iterator positronatom_name =
+    positronatom_names.begin();
 
-  std::string positronatom_file_path, positronatom_file_type, positronatom_table_name;
-  int positronatom_file_start_line;
-  double atomic_weight;
-
-  while( positronatom_name != positronatom_aliases.end() )
+  while( positronatom_name != positronatom_names.end() )
   {
-    Data::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
-                          cross_sections_xml_directory,
-                          *positronatom_name,
-                          cross_section_table_info,
-                          positronatom_file_path,
-                          positronatom_file_type,
-                          positronatom_table_name,
-                          positronatom_file_start_line,
-                          atomic_weight );
+    TEST_FOR_EXCEPTION( !positronatom_definitions.doesDefinitionExist( *positronatom_name ),
+                        std::runtime_error,
+                        "Positronatom " << *positronatom_name << " cannot be "
+                        "created because its definition has not been "
+                        "specified!" );
 
-    if( positronatom_file_type == Data::CrossSectionsXMLProperties::ace_file )
+    const ScatteringCenterDefinition& positronatom_definition =
+      positronatom_definitions.getDefinition( *positronatom_name );
+
+    TEST_FOR_EXCEPTION( !positronatom_definition.hasElectroatomicDataProperties(),
+                        std::runtime_error,
+                        "Positronatom " << *positronatom_name << " cannot be "
+                        "created because its definition does not specify "
+                        "any positronatomic data properties!" );
+
+    double atomic_weight;
+
+    const Data::ElectroatomicDataProperties& electroatom_data_properties =
+      positronatom_definition.getElectroatomicDataProperties( &atomic_weight );
+    
+    if( electroatom_data_properties.fileType() ==
+        Data::ElectroatomicDataProperties::ACE_EPR_FILE )
     {
-      this->createPositronatomFromACETable( *positronatom_name,
-                                           positronatom_file_path,
-                                           positronatom_table_name,
-                                           positronatom_file_start_line,
-                                           atomic_weight,
-                                           atomic_relaxation_model_factory,
-                                           properties );
+      // Initialize the electroatomic table name map for ACE_EPR files
+      if( d_positronatomic_table_name_map.find( Data::ElectroatomicDataProperties::ACE_EPR_FILE ) ==
+          d_positronatomic_table_name_map.end() )
+      {
+        d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE];
+      }
+      
+      this->createPositronatomFromACETable( data_directory,
+                                            *positronatom_name,
+                                            atomic_weight,
+                                            electroatom_data_properties,
+                                            atomic_relaxation_model_factory,
+                                            properties );
     }
-    else if( positronatom_file_type == Data::CrossSectionsXMLProperties::native_file )
+    else if( electroatom_data_properties.fileType() ==
+             Data::ElectroatomicDataProperties::Native_EPR_FILE )
     {
-      this->createPositronatomFromNativeTable( *positronatom_name,
-                                              positronatom_file_path,
-                                              atomic_weight,
-                                              atomic_relaxation_model_factory,
-                                              properties );
+      this->createPositronatomFromNativeTable( data_directory,
+                                               *positronatom_name,
+                                               atomic_weight,
+                                               electroatom_data_properties,
+                                               atomic_relaxation_model_factory,
+                                               properties );
     }
     else
     {
-      THROW_EXCEPTION( std::logic_error,
-                       "positron-atomic file type "
-                       << positronatom_file_type <<
-                       " is not supported!" );
+      THROW_EXCEPTION( std::runtime_error,
+                       "Positronatom " << *positronatom_name << " cannot be "
+                       "created because its definition specifies the use of "
+                       "an electroatomic data file of type "
+                       << electroatom_data_properties.fileType() <<
+                       ", which is currently unsupported!" );
     }
 
     ++positronatom_name;
   }
 
   // Make sure that every positron-atom has been created
-  testPostcondition( d_positronatom_name_map.size() == positronatom_aliases.size() );
+  testPostcondition( d_positronatom_name_map.size() == positronatom_names.size() );
 
+  FRENSIE_LOG_NOTIFICATION( "Finished loading positronatom data tables." );
+  FRENSIE_FLUSH_ALL_LOGS();
 }
 
 // Create the map of positron-atoms
 void PositronatomFactory::createPositronatomMap(
-            std::unordered_map<std::string,std::shared_ptr<Positronatom> >&
-            positronatom_map ) const
+                             PositronatomNameMap& positronatom_name_map ) const
 {
-  // Reset the positron-atom map
-  positronatom_map.clear();
-
-  // Copy the stored map
-  positronatom_map.insert( d_positronatom_name_map.begin(),
-                          d_positronatom_name_map.end() );
+  positronatom_name_map = d_positronatom_name_map;
 }
 
 // Create a positron-atom from an ACE table
 void PositronatomFactory::createPositronatomFromACETable(
-                              const std::string& positronatom_alias,
-                              const std::string& ace_file_path,
-                              const std::string& positronatomic_table_name,
-                              const int positronatomic_file_start_line,
-                              const double atomic_weight,
-                              const std::shared_ptr<AtomicRelaxationModelFactory>&
-                              atomic_relaxation_model_factory,
-                              const SimulationProperties& properties )
+                      const boost::filesystem::path& data_directory,
+                      const std::string& positronatom_name,
+                      const double atomic_weight,
+		      const Data::ElectroatomicDataProperties& data_properties,
+                      const std::shared_ptr<AtomicRelaxationModelFactory>&
+                      atomic_relaxation_model_factory,
+                      const SimulationProperties& properties )
 {
-  *d_os_message << "Loading ACE positron-atomic cross section table "
-        << positronatomic_table_name << " (" << positronatom_alias << ") ... ";
-
-
   // Check if the table has already been loaded
-  if( d_positronatomic_table_name_map.find( positronatomic_table_name ) ==
-      d_positronatomic_table_name_map.end() )
+  if( d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE].find( data_properties.tableName() ) ==
+      d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE].end() )
   {
+    // Construct the the path to the data file
+    boost::filesystem::path ace_file_path = data_directory;
+    ace_file_path /= data_properties.filePath();
+    ace_file_path.make_preferred();
+    
+    if( d_verbose )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                 "Loading ACE EPR electroatomic cross section "
+                                 "table " << data_properties.tableName() <<
+                                 " from " << ace_file_path.string() <<
+                                 " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
+
     // Create the ACEFileHandler
     Data::ACEFileHandler ace_file_handler( ace_file_path,
-                       positronatomic_table_name,
-                       positronatomic_file_start_line,
-                       true );
+                                           data_properties.tableName(),
+                                           data_properties.fileStartLine(),
+                                           true );
 
     // Create the XSS data extractor
     Data::XSSEPRDataExtractor xss_data_extractor(
-                     ace_file_handler.getTableNXSArray(),
-                     ace_file_handler.getTableJXSArray(),
-                     ace_file_handler.getTableXSSArray() );
+                                         ace_file_handler.getTableNXSArray(),
+                                         ace_file_handler.getTableJXSArray(),
+                                         ace_file_handler.getTableXSSArray() );
 
     // Create the atomic relaxation model
-    std::shared_ptr<AtomicRelaxationModel> atomic_relaxation_model;
+    std::shared_ptr<const AtomicRelaxationModel> atomic_relaxation_model;
 
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
                              xss_data_extractor,
@@ -144,53 +169,71 @@ void PositronatomFactory::createPositronatomFromACETable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new positron-atom
-    std::shared_ptr<Positronatom>& positronatom =
-      d_positronatom_name_map[positronatom_alias];
+    PositronatomNameMap::mapped_type& positronatom =
+      d_positronatom_name_map[positronatom_name];
 
     // Create the new positron-atom
     PositronatomACEFactory::createPositronatom( xss_data_extractor,
-                                              positronatomic_table_name,
-                                              atomic_weight,
-                                              atomic_relaxation_model,
-                                              properties,
-                                              positronatom );
+                                                data_properties.tableName(),
+                                                atomic_weight,
+                                                atomic_relaxation_model,
+                                                properties,
+                                                positronatom );
 
     // Cache the new positron-atom in the table name map
-    d_positronatomic_table_name_map[positronatomic_table_name] = positronatom;
+    d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE][data_properties.tableName()] = positronatom;
+
+    if( d_verbose )
+    {
+      FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
   }
   // The table has already been loaded
   else
   {
-    d_positronatom_name_map[positronatom_alias] =
-      d_positronatomic_table_name_map[positronatomic_table_name];
+    d_positronatom_name_map[positronatom_name] =
+      d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::ACE_EPR_FILE][data_properties.tableName()];
   }
-
-  *d_os_message << "done." << std::endl;
 }
 
 
 // Create a positron-atom from a Native table
 void PositronatomFactory::createPositronatomFromNativeTable(
-                              const std::string& positronatom_alias,
-                              const std::string& native_file_path,
-                              const double atomic_weight,
-                              const std::shared_ptr<AtomicRelaxationModelFactory>&
-                              atomic_relaxation_model_factory,
-                              const SimulationProperties& properties )
+                      const boost::filesystem::path& data_directory,
+                      const std::string& positronatom_name,
+                      const double atomic_weight,
+                      const Data::ElectroatomicDataProperties& data_properties,
+                      const std::shared_ptr<AtomicRelaxationModelFactory>&
+                      atomic_relaxation_model_factory,
+                      const SimulationProperties& properties  )
 {
-  std::cout << "Loading native positron-atomic cross section table "
-            << positronatom_alias << " ... ";
-
   // Check if the table has already been loaded
-  if( d_positronatomic_table_name_map.find( native_file_path ) ==
-      d_positronatomic_table_name_map.end() )
+  if( d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE].find( data_properties.filePath().string() ) ==
+      d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE].end() )
   {
+    // Construct the path to the native file
+    boost::filesystem::path native_file_path = data_directory;
+    native_file_path /= data_properties.filePath();
+    native_file_path.make_preferred();
+
+    if( d_verbose )
+    {
+      FRENSIE_LOG_PARTIAL_NOTIFICATION(
+                                "Loading native EPR cross section table "
+                                "(v " << data_properties.fileVersion() <<
+                                ") for " << data_properties.atom() <<
+                                "from " << native_file_path.string() <<
+                                " ... " );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
+
     // Create the eedl data container
     Data::ElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
 
     // Create the atomic relaxation model
-    std::shared_ptr<AtomicRelaxationModel> atomic_relaxation_model;
+    std::shared_ptr<const AtomicRelaxationModel> atomic_relaxation_model;
 
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
                              data_container,
@@ -200,28 +243,32 @@ void PositronatomFactory::createPositronatomFromNativeTable(
                              properties.isAtomicRelaxationModeOn( ELECTRON ) );
 
     // Initialize the new positron-atom
-    std::shared_ptr<Positronatom>& positronatom =
-      d_positronatom_name_map[positronatom_alias];
+    PositronatomNameMap::mapped_type& positronatom =
+      d_positronatom_name_map[positronatom_name];
 
     // Create the new positron-atom
     PositronatomNativeFactory::createPositronatom( data_container,
-                                                 native_file_path,
-                                                 atomic_weight,
-                                                 atomic_relaxation_model,
-                                                 properties,
-                                                 positronatom );
+                                                   data_properties.filePath().string(),
+                                                   atomic_weight,
+                                                   atomic_relaxation_model,
+                                                   properties,
+                                                   positronatom );
 
     // Cache the new positron-atom in the table name map
-    d_positronatomic_table_name_map[native_file_path] = positronatom;
+    d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()] = positronatom;
+
+    if( d_verbose )
+    {
+      FRENSIE_LOG_NOTIFICATION( "done." );
+      FRENSIE_FLUSH_ALL_LOGS();
+    }
   }
   // The table has already been loaded
   else
   {
-    d_positronatom_name_map[positronatom_alias] =
-      d_positronatomic_table_name_map[native_file_path];
+    d_positronatom_name_map[positronatom_name] =
+      d_positronatomic_table_name_map[Data::ElectroatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()];
   }
-
-  std::cout << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

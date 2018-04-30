@@ -13,7 +13,7 @@
 namespace MonteCarlo{
 
 // Create a bremsstrahlung adjoint distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double>& adjoint_energy_grid,
@@ -26,9 +26,9 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBre
   testPrecondition( evaluation_tol > 0.0 );
 
   // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> energy_gain_function;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> energy_gain_function;
 
-  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction<TwoDInterpPolicy,TwoDSamplePolicy>(
+  BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction<TwoDInterpPolicy,TwoDGridPolicy>(
         raw_electroatom_data,
         adjoint_energy_grid,
         energy_gain_function,
@@ -40,20 +40,21 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createBre
 }
 
 // Create the energy gain function
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
+template<typename TwoDInterpPolicy, template<typename> class TwoDGridPolicy>
 void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEnergyGainFunction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>& energy_gain_function,
+    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>& energy_gain_function,
     const double evaluation_tol )
 {
   // Get the function data
-  Utility::FullyTabularTwoDDistribution::DistributionType
-    function_data( energy_grid.size() );
+  std::vector<double> primary_grid( energy_grid.size() );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( energy_grid.size() );
 
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  for( size_t n = 0; n < energy_grid.size(); ++n )
   {
-    function_data[n].first = energy_grid[n];
+    primary_grid[n] = energy_grid[n];
 
     // Get the outgoing energy of the adjoint bremsstrahlung electron at the incoming energy
     std::vector<double> outgoing_energy(
@@ -63,17 +64,18 @@ void BremsstrahlungAdjointElectronScatteringDistributionNativeFactory::createEne
     std::vector<double> pdf(
       raw_electroatom_data.getAdjointElectronBremsstrahlungPDF( energy_grid[n] ) );
 
-    function_data[n].second.reset(
+    secondary_dists[n].reset(
       new const Utility::TabularDistribution<Utility::LinLin>( outgoing_energy,
                                                                pdf ) );
   }
 
   // Create the scattering function
   energy_gain_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-            function_data,
-            1e-6,
-            evaluation_tol ) );
+    new Utility::InterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+                                                            primary_grid,
+                                                            secondary_dists,
+                                                            1e-6,
+                                                            evaluation_tol ) );
 }
 
 } // end MonteCarlo namespace

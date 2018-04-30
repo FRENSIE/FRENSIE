@@ -13,7 +13,7 @@
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_PositronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,18 +27,21 @@ public:
   //! Typedef for this type
   typedef BremsstrahlungElectronScatteringDistribution ThisType;
 
+  //! Typedef for the counter
+  typedef ElectronScatteringDistribution::Counter Counter;
+
   //! Typedef for the two d distributions
-  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+  typedef Utility::FullyTabularBasicBivariateDistribution BasicBivariateDist;
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& bremsstrahlung_scattering_distribution,
     const bool bank_secondary_particles = true );
 
   //! Constructor with detailed 2BS photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const int atomic_number,
-    const std::shared_ptr<TwoDDist>& bremsstrahlung_scattering_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& bremsstrahlung_scattering_distribution,
     const bool bank_secondary_particles = true );
 
   //! Destructor
@@ -53,36 +56,36 @@ public:
 
   //! Evaluate the distribution for a given incoming and photon energy
   double evaluate( const double incoming_energy,
-                   const double photon_energy ) const;
+                   const double photon_energy ) const override;
 
   //! Evaluate the PDF value for a given incoming and photon energy
   double evaluatePDF( const double incoming_energy,
-                      const double photon_energy ) const;
+                      const double photon_energy ) const override;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const;
+                      const double scattering_angle ) const override;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& photon_energy,
-               double& photon_angle_cosine ) const;
+               double& photon_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& photon_energy,
                               double& photon_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const override;
 
   //! Randomly scatter the electron
   void scatterElectron( MonteCarlo::ElectronState& electron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
   //! Randomly scatter the positron
   void scatterPositron( MonteCarlo::PositronState& positron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
 private:
 
@@ -104,7 +107,7 @@ private:
   double d_atomic_number;
 
   // bremsstrahlung scattering distribution
-  std::shared_ptr<TwoDDist> d_bremsstrahlung_scattering_distribution;
+  std::shared_ptr<const BasicBivariateDist> d_bremsstrahlung_scattering_distribution;
 
   // The outgoing angle function pointer
   std::function<double ( const double, const double )>

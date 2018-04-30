@@ -1,11 +1,15 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_electron)
 
-ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
-  tstCutoffElasticElectronScatteringDistribution.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCutoffElasticElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(CutoffElasticElectronScatteringDistribution_test tstCutoffElasticElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST CutoffElasticElectronScatteringDistribution_test PROPERTY LABELS electron)
+##---------------------------------------------------------------------------##
+## Scattering distribution test
+##---------------------------------------------------------------------------##
+
+FRENSIE_ADD_TEST_EXECUTABLE(CutoffElasticElectronScatteringDistribution DEPENDS tstCutoffElasticElectronScatteringDistribution.cpp)
+FRENSIE_ADD_TEST(CutoffElasticElectronScatteringDistribution
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
 ADD_EXECUTABLE(tstScreenedRutherfordElasticElectronScatteringDistribution
   tstScreenedRutherfordElasticElectronScatteringDistribution.cpp
@@ -158,7 +162,9 @@ TARGET_LINK_LIBRARIES(tstElectroionizationSubshellAdjointElectronScatteringDistr
 ADD_TEST(ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory_test tstElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml" )
 SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory_test PROPERTY LABELS electron native adjoint)
 
-##      electroatomic reaction tests
+##---------------------------------------------------------------------------##
+## Reaction tests
+##---------------------------------------------------------------------------##
 
 ADD_EXECUTABLE(tstPositronatomicReaction
   tstPositronatomicReaction.cpp
@@ -447,7 +453,9 @@ TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactoryHelpers monte_carlo_c
 ADD_TEST(ElectroatomicReactionNativeFactoryHelpers_test tstElectroatomicReactionNativeFactoryHelpers --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
 SET_PROPERTY(TEST ElectroatomicReactionNativeFactoryHelpers_test PROPERTY LABELS electron native)
 
-##      electroatom tests
+##---------------------------------------------------------------------------##
+## Scattering center tests
+##---------------------------------------------------------------------------##
 
 ADD_EXECUTABLE(tstElectroatomCore
   tstElectroatomCore.cpp
@@ -561,7 +569,10 @@ TARGET_LINK_LIBRARIES(tstAdjointElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(AdjointElectroatomFactory_test tstAdjointElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST AdjointElectroatomFactory_test PROPERTY LABELS electron adjoint)
 
-## electron materials tests
+##---------------------------------------------------------------------------##
+## Material tests
+##---------------------------------------------------------------------------##
+
 ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp
   ${FRENSIE_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
@@ -579,26 +590,5 @@ ADD_EXECUTABLE(tstAdjointElectronMaterial tstAdjointElectronMaterial.cpp
 TARGET_LINK_LIBRARIES(tstAdjointElectronMaterial monte_carlo_collision_native)
 ADD_TEST(AdjointElectronMaterial_test tstAdjointElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
 SET_PROPERTY(TEST AdjointElectronMaterial_test PROPERTY LABELS electron adjoint)
-
-ADD_EXECUTABLE(tstElectronCollisionHandler
-  tstElectronCollisionHandler.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectronCollisionHandler monte_carlo_collision_native)
-ADD_TEST(ElectronCollisionHandler_test tstElectronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST ElectronCollisionHandler_test PROPERTY LABELS electron)
-
-ADD_EXECUTABLE(tstPositronCollisionHandler
-  tstPositronCollisionHandler.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronCollisionHandler monte_carlo_collision_native)
-ADD_TEST(PositronCollisionHandler_test tstPositronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PositronCollisionHandler_test PROPERTY LABELS positron)
-
-ADD_EXECUTABLE(tstAdjointElectronCollisionHandler
-  tstAdjointElectronCollisionHandler.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronCollisionHandler monte_carlo_collision_native)
-ADD_TEST(AdjointElectronCollisionHandler_test tstAdjointElectronCollisionHandler --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}")
-SET_PROPERTY(TEST AdjointElectronCollisionHandler_test PROPERTY LABELS electron adjoint native)
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_electron)

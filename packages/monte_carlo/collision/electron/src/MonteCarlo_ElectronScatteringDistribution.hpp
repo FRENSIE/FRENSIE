@@ -15,11 +15,12 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_ScatteringDistribution.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "MonteCarlo_ScatteringDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
+#include "Utility_DistributionTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -28,6 +29,9 @@ class ElectronScatteringDistribution : public virtual ScatteringDistribution
 {
 
 public:
+
+  //! The trials counter type
+  typedef Utility::DistributionTraits::Counter Counter;
 
   //! Constructor
   ElectronScatteringDistribution()
@@ -58,11 +62,11 @@ public:
   virtual void sampleAndRecordTrials( const double incoming_energy,
                                       double& outgoing_energy,
                                       double& scattering_angle_cosine,
-                                      unsigned& trials ) const = 0;
+                                      Counter& trials ) const = 0;
 
   //! Randomly scatter the electron
   virtual void scatterElectron( ElectronState& electron,
-			                    ParticleBank& bank,
+                                ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const = 0;
 };
 

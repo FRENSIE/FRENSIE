@@ -750,8 +750,11 @@ template<typename TwoDGridPolicy,
          typename DependentUnit>
 void UnitAwareElasticBasicBivariateDistribution<TwoDGridPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::verifyValidSecondIndepVarProcessingType()
 {
-  testStaticPrecondition( (std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
-                           std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value) );
+  TEST_FOR_EXCEPTION( !(std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LogCosIndepVarProcessingTag>::value ||
+                        std::is_same<typename TwoDGridPolicy::TwoDInterpPolicy::SecondIndepVarProcessingTag,LinIndepVarProcessingTag>::value),
+                      std::runtime_error,
+                      "The interpolation type used must be either Z-LogCos-X "
+                      "or Z-Lin-X!" );
 }
 
 // Method for placing the object in an output stream

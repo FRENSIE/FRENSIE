@@ -11,17 +11,17 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The electroionization electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ElectroionizationSubshellElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class ElectroionizationSubshellElectroatomicReaction : public StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+  typedef StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
     BaseType;
 
 public:
@@ -30,7 +30,7 @@ public:
   ElectroionizationSubshellElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
@@ -39,8 +39,8 @@ public:
   ElectroionizationSubshellElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const Data::SubshellType interaction_subshell,
     const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
@@ -50,11 +50,14 @@ public:
   ~ElectroionizationSubshellElectroatomicReaction()
   { /* ... */ }
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,

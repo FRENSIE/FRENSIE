@@ -8,9 +8,9 @@
 
 //// FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomNativeFactory.hpp"
-//#include "Utility_StandardHashBasedGridSearcher.hpp"
-//#include "Utility_SortAlgorithms.hpp"
-//#include "Utility_ContractException.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
+#include "Utility_SortAlgorithms.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -28,22 +28,23 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     raw_adjoint_electroatom_data.getAdjointElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher for this atom
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
          new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
                      energy_grid,
                      properties.getNumberOfAdjointElectronHashGridBins() ) );
 
+  std::shared_ptr<const ElectroatomicReaction> total_forward_reaction;
+
   // Create the scattering reactions
-  AdjointElectroatomCore::ReactionMap scattering_reactions;
-  std::shared_ptr<ElectroatomicReaction> total_forward_reaction;
+  AdjointElectroatomCore::ConstReactionMap scattering_reactions;
 
   std::string electron_interp =
-            raw_adjoint_electroatom_data.getElectronTwoDInterpPolicy();
+    raw_adjoint_electroatom_data.getElectronTwoDInterpPolicy();
 
   // Create the elastic scattering reaction
   if ( properties.isAdjointElasticModeOn() )
   {
-    std::shared_ptr<AdjointElectroatomicReaction> elastic_reaction;
+    std::shared_ptr<const AdjointElectroatomicReaction> elastic_reaction;
 
     if( electron_interp == "Log-Log-Log" )
     {
@@ -95,7 +96,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   // Create the bremsstrahlung scattering reaction
   if ( properties.isAdjointBremsstrahlungModeOn() )
   {
-    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
+    AdjointElectroatomCore::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION];
 
     if( electron_interp == "Log-Log-Log" )
@@ -137,7 +138,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   // Create the atomic excitation scattering reaction
   if ( properties.isAdjointAtomicExcitationModeOn() )
   {
-    AdjointElectroatomCore::ReactionMap::mapped_type& reaction_pointer =
+    AdjointElectroatomCore::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION];
 
     AdjointElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
@@ -150,7 +151,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   // Create the subshell electroionization reactions
   if ( properties.isAdjointElectroionizationModeOn() )
   {
-    std::vector<std::shared_ptr<AdjointElectroatomicReaction> >
+    std::vector<std::shared_ptr<const AdjointElectroatomicReaction> >
         electroionization_reactions;
 
     if( electron_interp == "Log-Log-Log" )
@@ -200,7 +201,7 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
     new AdjointElectroatomCore( grid_searcher,
                                 total_forward_reaction,
                                 scattering_reactions,
-                                AdjointElectroatomCore::ReactionMap() ) );
+                                AdjointElectroatomCore::ConstReactionMap() ) );
 }
 
 // Create a adjoint electroatom

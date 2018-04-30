@@ -34,19 +34,19 @@ double Positronatom::getReactionCrossSection(
     return this->getAbsorptionCrossSection( energy );
   default:
     ConstReactionMap::const_iterator positronatomic_reaction =
-      d_core.getScatteringReactions().find( reaction );
+      this->getCore().getScatteringReactions().find( reaction );
 
-    if( positronatomic_reaction != d_core.getScatteringReactions().end() )
+    if( positronatomic_reaction != this->getCore().getScatteringReactions().end() )
       return positronatomic_reaction->second->getCrossSection( energy );
 
-    positronatomic_reaction = d_core.getAbsorptionReactions().find( reaction );
+    positronatomic_reaction = this->getCore().getAbsorptionReactions().find( reaction );
 
-    if( positronatomic_reaction != d_core.getAbsorptionReactions().end() )
+    if( positronatomic_reaction != this->getCore().getAbsorptionReactions().end() )
       return positronatomic_reaction->second->getCrossSection( energy );
 
-    positronatomic_reaction = d_core.getMiscReactions().find( reaction );
+    positronatomic_reaction = this->getCore().getMiscReactions().find( reaction );
 
-    if( positronatomic_reaction != d_core.getMiscReactions().end() )
+    if( positronatomic_reaction != this->getCore().getMiscReactions().end() )
       return positronatomic_reaction->second->getCrossSection( energy );
     else // If the reaction does not exist for an atom, return 0
       return 0.0;

@@ -125,16 +125,16 @@ private:
   // Create the total absorption reaction
   template<typename InterpPolicy>
   static void createTotalAbsorptionReaction(
-		const std::shared_ptr<const std::vector<double> >& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction );
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const ConstReactionMap& absorption_reactions,
+       std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction );
 
   // Create the processed total absorption reaction
   template<typename InterpPolicy>
   static void createProcessedTotalAbsorptionReaction(
-		const std::shared_ptr<const std::vector<double> >& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction );
+       const std::shared_ptr<const std::vector<double> >& energy_grid,
+       const ConstReactionMap& absorption_reactions,
+       std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction );
 
   // Create the total reaction
   template<typename InterpPolicy>
@@ -142,7 +142,7 @@ private:
       const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<PhotoatomicReaction>& total_reaction );
+      std::shared_ptr<const PhotoatomicReaction>& total_reaction );
 
   // Calculate the processed total absorption cross section
   template<typename InterpPolicy>
@@ -150,7 +150,7 @@ private:
       const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<PhotoatomicReaction>& total_reaction );
+      std::shared_ptr<const PhotoatomicReaction>& total_reaction );
 
   // The total reaction
   std::shared_ptr<const PhotoatomicReaction> d_total_reaction;

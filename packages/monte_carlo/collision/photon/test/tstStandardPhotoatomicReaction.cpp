@@ -49,6 +49,9 @@ public:
   unsigned getNumberOfEmittedElectrons( const double energy ) const override
   { return 0u; }
 
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override
+  { return 0u; }
+
   MonteCarlo::PhotoatomicReactionType getReactionType() const override
   { return MonteCarlo::TOTAL_PHOTOATOMIC_REACTION; }
 

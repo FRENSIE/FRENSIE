@@ -140,6 +140,38 @@ FRENSIE_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
+		   getNumberOfEmittedPositrons_ace )
+{
+  FRENSIE_CHECK_EQUAL(
+	     ace_k_photoelectric_reaction->getNumberOfEmittedPositrons( 1e-3 ),
+             0u );
+
+  FRENSIE_CHECK_EQUAL(
+             ace_k_photoelectric_reaction->getNumberOfEmittedPositrons(
+                          ace_k_photoelectric_reaction->getThresholdEnergy() ),
+             0u );
+
+  FRENSIE_CHECK_EQUAL(
+	     ace_k_photoelectric_reaction->getNumberOfEmittedPositrons( 20.0 ),
+             0u );
+
+  FRENSIE_CHECK_EQUAL(
+            ace_l1_photoelectric_reaction->getNumberOfEmittedPositrons( 1e-3 ),
+            0u );
+
+  FRENSIE_CHECK_EQUAL(
+            ace_l1_photoelectric_reaction->getNumberOfEmittedPositrons(
+                         ace_l1_photoelectric_reaction->getThresholdEnergy() ),
+            0u );
+
+  FRENSIE_CHECK_EQUAL(
+            ace_l1_photoelectric_reaction->getNumberOfEmittedPositrons( 20.0 ),
+            0u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 FRENSIE_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
 		   getCrossSection_ace )

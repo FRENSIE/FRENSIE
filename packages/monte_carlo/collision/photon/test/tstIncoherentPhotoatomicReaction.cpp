@@ -105,6 +105,28 @@ FRENSIE_UNIT_TEST( IncoherentPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( IncoherentPhotoatomicReaction,
+		   getNumberOfEmittedPositrons_ace )
+{
+  FRENSIE_CHECK_EQUAL(
+	    ace_basic_incoherent_reaction->getNumberOfEmittedPositrons( 1e-3 ),
+            0u );
+
+  FRENSIE_CHECK_EQUAL(
+	    ace_basic_incoherent_reaction->getNumberOfEmittedPositrons( 20.0 ),
+            0u );
+
+  FRENSIE_CHECK_EQUAL(
+	 ace_detailed_incoherent_reaction->getNumberOfEmittedPositrons( 1e-3 ),
+         0u );
+
+  FRENSIE_CHECK_EQUAL(
+	 ace_detailed_incoherent_reaction->getNumberOfEmittedPositrons( 20.0 ),
+         0u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 FRENSIE_UNIT_TEST( IncoherentPhotoatomicReaction, getCrossSection_ace )
 {

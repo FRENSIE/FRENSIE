@@ -32,80 +32,80 @@ public:
   static void createDecoupledElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& elastic_reaction );
 
   //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& elastic_reaction );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
   static void createScreenedRutherfordElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& elastic_reaction );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the total electroionization electroatomic reaction
   static void createTotalElectroionizationReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& electroionization_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& electroionization_reaction );
 
   //! Create the subshell electroionization electroatomic reaction
   static void createSubshellElectroionizationReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& electroionization_subshell_reaction,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& electroionization_subshell_reaction,
       const unsigned endf_subshell_designator );
 
   //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::vector<std::shared_ptr<ElectroatomicReaction> >&
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::vector<std::shared_ptr<const ElectroatomicReaction> >&
         electroionization_subshell_reactions );
 
   //! Create the bremsstrahlung electroatomic reaction
   static void createBremsstrahlungReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reaction,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& bremsstrahlung_reaction,
       BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(
-      std::shared_ptr<ElectroatomicReaction>& void_absorption_reaction );
+      std::shared_ptr<const ElectroatomicReaction>& void_absorption_reaction );
 
 //protected:
 
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::vector<double>& energy_grid,
       const Utility::ArrayView<const double>& raw_cross_section,
       std::vector<double>& cross_section,
-      unsigned& threshold_energy_index );
+      size_t& threshold_energy_index );
 
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const std::vector<double> >& raw_cross_section,
+      const std::vector<double>& energy_grid,
+      const std::vector<double>& raw_cross_section,
       std::vector<double>& cross_section,
-      unsigned& threshold_energy_index );
+      size_t& threshold_energy_index );
 
 private:
 

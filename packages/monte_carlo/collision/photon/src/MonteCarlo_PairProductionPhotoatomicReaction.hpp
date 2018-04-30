@@ -54,6 +54,9 @@ public:
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
+
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const override;
 
@@ -69,41 +72,34 @@ protected:
                                 ParticleBank& bank );
 
   //! The detailed pair production model
-  void detailedInteraction( PhotonState& photon,
-                            ParticleBank& bank ) const;
-
-  //! The number of photons emitted from pair production using simple model
-  static unsigned basicInteractionPhotonEmission();
-
-  //! The number of photons emitted from pair production using detailed model
-  static unsigned detailedInteractionPhotonEmission();
+  static void detailedInteraction( PhotonState& photon,
+                                   ParticleBank& bank );
 
 private:
 
   // Sample the polar angle of the emitted electron/positron
   static double sampleEmittedPolarAngle( const double energy );
 
+  // Create the secondary energy distribution
+  static Utility::FullyTabularBasicBivariateDistribution*
+  initializeSecondaryEnergyDistribution();
+
   // Initialize interaction models
   void initializeInteractionModels(
                            const bool use_detailed_electron_emission_physics );
 
-  // Create the secondary energy distribution
-  void initializeSecondaryEnergyDistribution();
+  // The pair production secondary energy distribution (in a ratio form)
+  static std::unique_ptr<const Utility::FullyTabularBasicBivariateDistribution>
+  s_secondary_energy_distribution;
+
+  // Check if a detailed model is being used
+  bool d_detailed_electron_emission_model;
 
   // The pair production model
   boost::function<void (PhotonState&,ParticleBank&)> d_interaction_model;
 
-  // The number of photons emitted from the interaction (model dependent)
-  boost::function<unsigned (void)> d_interaction_model_emission;
-
   // pair production secondary energy distribution (in a ratio form)
   std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> d_secondary_energy_distribution;
-
-  // The photon energy grid
-  static std::vector<double> s_photon_energy_grid;
-
-  // The ratios of the available kinetic energy given to the positron/electron
-  static std::vector< std::vector<double> > s_outgoing_energy_ratio;
 };
 
 } // end MonteCarlo namespace

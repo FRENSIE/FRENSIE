@@ -16,7 +16,7 @@ namespace MonteCarlo{
 //----------------------------------------------------------------------------//
 
 //! Create a screened Rutherford elastic scattering electroatomic reaction
-std::shared_ptr<ElectroatomicReaction>
+std::shared_ptr<const ElectroatomicReaction>
 createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data )
 {
@@ -26,13 +26,13 @@ createScreenedRutherfordElasticReaction(
                        raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<ElectroatomicReaction> reaction;
+  std::shared_ptr<const ElectroatomicReaction> reaction;
   ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
         raw_electroatom_data,
         energy_grid,
@@ -50,7 +50,7 @@ createScreenedRutherfordElasticReaction(
 //----------------------------------------------------------------------------//
 
 //! Create an atomic excitation scattering electroatomic reaction
-std::shared_ptr<ElectroatomicReaction>
+std::shared_ptr<const ElectroatomicReaction>
 createAtomicExcitationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data )
 {
@@ -60,13 +60,13 @@ createAtomicExcitationReaction(
                        raw_electroatom_data.getElectronEnergyGrid().end() );
 
   // Construct the hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                               energy_grid,
-                              energy_grid.size()/10 ) );
+                              energy_grid->size()/10 ) );
 
   // Create the reaction
-  std::shared_ptr<ElectroatomicReaction> reaction;
+  std::shared_ptr<const ElectroatomicReaction> reaction;
 
   ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
         raw_electroatom_data,

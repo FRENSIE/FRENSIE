@@ -26,7 +26,7 @@ namespace MonteCarlo{
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const std::string sampling_method,
+    const CoupledElasticSamplingMethod method,
     const double evaluation_tol );
 
 //! Create an adjoint hybrid elastic distribution ( combined Cutoff and Moment Preserving )

@@ -68,11 +68,11 @@ public:
   //! Basic constructor
   template<typename InterpPolicy>
   PositronatomCore(
-    const std::shared_ptr<std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const ReactionMap& standard_scattering_reactions,
-    const ReactionMap& standard_absorption_reactions,
-    const std::shared_ptr<AtomicRelaxationModel>& relaxation_model,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    const ConstReactionMap& standard_scattering_reactions,
+    const ConstReactionMap& standard_absorption_reactions,
+    const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
     const bool processed_atomic_cross_sections,
     const InterpPolicy policy );
 
@@ -84,7 +84,7 @@ public:
     const ConstReactionMap& absorption_reactions,
     const ConstReactionMap& miscellaneous_reactions,
     const std::shared_ptr<const AtomicRelaxationModel> relaxation_model,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher );
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher );
 
   //! Copy constructor
   PositronatomCore( const PositronatomCore& instance );
@@ -115,7 +115,7 @@ public:
   const AtomicRelaxationModel& getAtomicRelaxationModel() const;
 
   //! Return the hash-based grid searcher
-  const Utility::HashBasedGridSearcher& getGridSearcher() const;
+  const Utility::HashBasedGridSearcher<double>& getGridSearcher() const;
 
   //! Test if all of the reactions share a common energy grid
   bool hasSharedEnergyGrid() const;
@@ -129,32 +129,32 @@ private:
   // Create the total absorption reaction
   template<typename InterpPolicy>
   static void createTotalAbsorptionReaction(
-        const std::shared_ptr<std::vector<double> >& energy_grid,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
         const ConstReactionMap& absorption_reactions,
-        std::shared_ptr<PositronatomicReaction>& total_absorption_reaction );
+        std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction );
 
   // Create the processed total absorption reaction
   template<typename InterpPolicy>
   static void createProcessedTotalAbsorptionReaction(
-        const std::shared_ptr<std::vector<double> >& energy_grid,
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
         const ConstReactionMap& absorption_reactions,
-        std::shared_ptr<PositronatomicReaction>& total_absorption_reaction );
+        std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction );
 
   // Create the total reaction
   template<typename InterpPolicy>
   static void createTotalReaction(
-      const std::shared_ptr<std::vector<double> >& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<PositronatomicReaction>& total_reaction );
+      std::shared_ptr<const PositronatomicReaction>& total_reaction );
 
   // Calculate the processed total absorption cross section
   template<typename InterpPolicy>
   static void createProcessedTotalReaction(
-      const std::shared_ptr<std::vector<double> >& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<PositronatomicReaction>& total_reaction );
+      std::shared_ptr<const PositronatomicReaction>& total_reaction );
 
   // The total reaction
   std::shared_ptr<const PositronatomicReaction> d_total_reaction;
@@ -175,7 +175,7 @@ private:
   std::shared_ptr<const AtomicRelaxationModel> d_relaxation_model;
 
   // The hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> d_grid_searcher;
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> d_grid_searcher;
 };
 
 // Return the total reaction
@@ -220,7 +220,7 @@ PositronatomCore::getAtomicRelaxationModel() const
 }
 
 // Return the hash-based grid searcher
-inline const Utility::HashBasedGridSearcher& PositronatomCore::getGridSearcher() const
+inline const Utility::HashBasedGridSearcher<double>& PositronatomCore::getGridSearcher() const
 {
   return *d_grid_searcher;
 }

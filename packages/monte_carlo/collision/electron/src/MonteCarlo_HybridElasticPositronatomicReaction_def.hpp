@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticPositronatomicReaction(
       const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
       const std::shared_ptr<const std::vector<double> >& cross_section,
-      const unsigned threshold_energy_index,
+      const size_t threshold_energy_index,
       const double cutoff_angle_cosine,
       const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution )
@@ -38,8 +39,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 HybridElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::HybridElasticPositronatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const double cutoff_angle_cosine,
     const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
     hybrid_distribution )
@@ -56,8 +57,6 @@ HybridElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::Hybri
 }
 
 // Return the number of photons emitted from the rxn at the given energy
-/*! \details This does not include photons from atomic relaxation.
- */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned HybridElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
@@ -69,6 +68,13 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned HybridElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned HybridElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  return 1u;
 }
 
 // Return the reaction type
@@ -111,6 +117,18 @@ void HybridElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( HybridElasticPositronatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

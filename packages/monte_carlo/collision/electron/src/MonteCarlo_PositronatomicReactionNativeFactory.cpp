@@ -19,14 +19,14 @@ namespace MonteCarlo{
 void PositronatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
       const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& elastic_reaction )
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
 
   // Create the screened Rutherford elastic scattering distribution
@@ -41,7 +41,7 @@ void PositronatomicReactionNativeFactory::createScreenedRutherfordElasticReactio
                               raw_positronatom_data.getScreenedRutherfordElasticCrossSection().end() ) );
 
   // Screened Rutherford elastic cross section threshold energy bin index
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_positronatom_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
 
@@ -58,14 +58,14 @@ void PositronatomicReactionNativeFactory::createScreenedRutherfordElasticReactio
 void PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_positronatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const PositronatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_positronatom_data.getElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Atomic Excitation cross section
   std::shared_ptr<const std::vector<double> > atomic_excitation_cross_section(
@@ -73,7 +73,7 @@ void PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
                               raw_positronatom_data.getAtomicExcitationCrossSection().end() ) );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index =
+  size_t threshold_energy_index =
     raw_positronatom_data.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
   // Create the energy loss distribution
@@ -95,7 +95,7 @@ void PositronatomicReactionNativeFactory::createAtomicExcitationReaction(
 
 // Create a void absorption positron-atomic reaction
 void PositronatomicReactionNativeFactory::createVoidAbsorptionReaction(
-      std::shared_ptr<PositronatomicReaction>& void_absorption_reaction )
+      std::shared_ptr<const PositronatomicReaction>& void_absorption_reaction )
 {
   // Create the void absorption reaction
   void_absorption_reaction.reset(

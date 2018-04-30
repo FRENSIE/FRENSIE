@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 // Constructor
 MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& discrete_scattering_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& discrete_scattering_distribution,
     const double cutoff_angle_cosine )
   : d_discrete_scattering_distribution( discrete_scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
@@ -110,7 +110,7 @@ void MomentPreservingElasticElectronScatteringDistribution::sample(
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
@@ -123,7 +123,7 @@ void MomentPreservingElasticElectronScatteringDistribution::sampleAndRecordTrial
                 const double incoming_energy,
                 double& outgoing_energy,
                 double& scattering_angle_cosine,
-                unsigned& trials ) const
+                Counter& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -142,7 +142,7 @@ void MomentPreservingElasticElectronScatteringDistribution::scatterElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
@@ -164,7 +164,7 @@ void MomentPreservingElasticElectronScatteringDistribution::scatterPositron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( positron.getEnergy(),
@@ -186,7 +186,7 @@ void MomentPreservingElasticElectronScatteringDistribution::scatterAdjointElectr
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
@@ -204,7 +204,7 @@ void MomentPreservingElasticElectronScatteringDistribution::scatterAdjointElectr
 void MomentPreservingElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                 const double incoming_energy,
                 double& scattering_angle_cosine,
-                unsigned& trials ) const
+                Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

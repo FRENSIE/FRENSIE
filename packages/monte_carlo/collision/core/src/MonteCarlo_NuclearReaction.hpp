@@ -9,10 +9,13 @@
 #ifndef MONTE_CARLO_NUCLEAR_REACTION_HPP
 #define MONTE_CARLO_NUCLEAR_REACTION_HPP
 
+// FRENSIE Includes
+#include "MonteCarlo_Reaction.hpp"
+
 namespace MonteCarlo{
 
 //! The nuclear reaction base class
-class NuclearReaction
+class NuclearReaction : public Reaction
 {
 
 public:
@@ -25,27 +28,8 @@ public:
   virtual ~NuclearReaction()
   { /* ... */ }
 
-  //! Test if two Atomic reactions share the same energy grid
-  virtual bool isEnergyGridShared( const NuclearReaction& other_reaction ) const;
-
-  //! Test if the energy falls within the energy grid
-  virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
-
   //! Return the reaction Q value
   virtual double getQValue() const = 0;
-
-  //! Return the threshold energy
-  virtual double getThresholdEnergy() const = 0;
-
-  //! Return the max energy
-  virtual double getMaxEnergy() const = 0;
-
-  //! Return the cross section at the given energy
-  virtual double getCrossSection( const double energy ) const = 0;
-
-  //! Return the cross section at the given energy (efficient)
-  virtual double getCrossSection( const double energy,
-                                  const size_t bin_index ) const = 0;
 
   //! Return the number of emitted primary outgoing particles
   virtual unsigned getNumberOfEmittedParticles( const double energy ) const = 0;
@@ -58,9 +42,6 @@ protected:
   //! Return an integer number of emitted particles given an average value
   unsigned sampleNumberOfEmittedParticles(
                       const double average_number_of_emitted_particles ) const;
-
-  //! Return the head of the energy grid
-  virtual const double* getEnergyGridHead() const = 0;
 };
   
 } // end MonteCarlo namespace

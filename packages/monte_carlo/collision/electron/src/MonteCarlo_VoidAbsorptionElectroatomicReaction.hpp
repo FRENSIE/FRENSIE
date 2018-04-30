@@ -32,40 +32,46 @@ public:
   { /* ... */ }
 
   //! Test if the energy falls within the energy grid
-  bool isEnergyWithinEnergyGrid( const double energy ) const;
+  bool isEnergyWithinEnergyGrid( const double energy ) const override;
 
   //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const;
+  double getCrossSection( const double energy ) const override;
 
   //! Return the cross section at the given energy (efficient)
   double getCrossSection( const double energy,
-                          const unsigned bin_index ) const;
+                          const size_t bin_index ) const override;
 
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,
-                                      const double outgoing_energy ) const;
+                                      const double outgoing_energy ) const override;
 
   //! Return the threshold energy
-  double getThresholdEnergy() const;
+  double getThresholdEnergy() const override;
 
-  //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+  //! Return the max energy
+  double getMaxEnergy() const override;
 
   //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
+
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the reaction type
-  ElectroatomicReactionType getReactionType() const;
+  ElectroatomicReactionType getReactionType() const override;
 
   //! Simulate the reaction
   void react( ElectronState& electron,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const;
+              Data::SubshellType& shell_of_interaction ) const override;
 
 protected:
 
   //! Return the head of the energy grid
-  const double* getEnergyGridHead() const;
+  const double* getEnergyGridHead() const override;
 };
 
 // Test if the energy falls within the energy grid
@@ -85,7 +91,7 @@ inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
 // Return the cross section at the given energy (efficient)
 inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
     const double energy,
-    const unsigned bin_index ) const
+    const size_t bin_index ) const
 {
   return 0.0;
 }
@@ -104,6 +110,19 @@ inline double VoidAbsorptionElectroatomicReaction::getThresholdEnergy() const
   return 1.00000e-5;
 }
 
+//! Return the max energy
+inline double VoidAbsorptionElectroatomicReaction::getMaxEnergy() const
+{
+  return 100.0;
+}
+
+// Return the number of photons emitted from the rxn at the given energy
+inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPhotons(
+                                                     const double energy ) const
+{
+  return 0u;
+}
+
 // Return the number of electrons emitted from the rxn at the given energy
 inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedElectrons(
                                                      const double energy ) const
@@ -111,8 +130,8 @@ inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedElectrons
   return 0u;
 }
 
-// Return the number of photons emitted from the rxn at the given energy
-inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPhotons(
+// Return the number of positrons emitted from the rxn at the given energy
+inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPositrons(
                                                      const double energy ) const
 {
   return 0u;

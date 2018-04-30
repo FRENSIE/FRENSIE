@@ -13,7 +13,7 @@
 #include "MonteCarlo_AdjointElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -30,11 +30,11 @@ public:
   typedef ElectroionizationSubshellAdjointElectronScatteringDistribution ThisType;
 
   //! Typedef for the two d distributions
-  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+  typedef Utility::FullyTabularBasicBivariateDistribution BasicBivariateDist;
 
   //! Constructor
   ElectroionizationSubshellAdjointElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>&
+    const std::shared_ptr<const BasicBivariateDist>&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy );
 
@@ -66,7 +66,7 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& outgoing_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const;
 
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& electron,
@@ -76,7 +76,7 @@ public:
 private:
 
   // adjoint electroionization subshell scattering cross sections
-  std::shared_ptr<TwoDDist> d_ionization_subshell_dist;
+  std::shared_ptr<const BasicBivariateDist> d_ionization_subshell_dist;
 
   // Subshell binding energy
   double d_binding_energy;

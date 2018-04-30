@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_AtomicReaction.hpp"
+#include "MonteCarlo_AdjointAtomicReaction.hpp"
 #include "MonteCarlo_AdjointPhotoatomicReactionType.hpp"
 #include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "Data_SubshellType.hpp"
@@ -22,7 +22,7 @@
 namespace MonteCarlo{
 
 //! The adjoint photoatomic reaction base class
-class AdjointPhotoatomicReaction : public AtomicReaction
+class AdjointPhotoatomicReaction : public AdjointAtomicReaction
 {
 
 public:

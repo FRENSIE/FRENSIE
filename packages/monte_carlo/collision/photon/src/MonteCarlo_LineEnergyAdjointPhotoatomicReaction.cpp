@@ -84,7 +84,7 @@ double LineEnergyAdjointPhotoatomicReaction::getThresholdEnergy() const
 }
 
 // Return the number of adjoint photons emitted from the rxn at the given energy
-unsigned LineEnergyAdjointPhotoatomicReaction::getNumberOfEmittedPhotons(
+unsigned LineEnergyAdjointPhotoatomicReaction::getNumberOfEmittedAdjointPhotons(
                                                     const double energy ) const
 {
   if( energy == d_scattering_distribution->getLineEnergy() )
@@ -94,7 +94,14 @@ unsigned LineEnergyAdjointPhotoatomicReaction::getNumberOfEmittedPhotons(
 }
 
 // Return the number of adjoint electrons emitted from the rxn at the given energy
-unsigned LineEnergyAdjointPhotoatomicReaction::getNumberOfEmittedElectrons(
+unsigned LineEnergyAdjointPhotoatomicReaction::getNumberOfEmittedAdjointElectrons(
+                                                    const double energy ) const
+{
+  return 0u;
+}
+
+// Return the number of adjoint positrons emitted from the rxn at the given energy
+unsigned LineEnergyAdjointPhotoatomicReaction::getNumberOfEmittedAdjointPositrons(
                                                     const double energy ) const
 {
   return 0u;

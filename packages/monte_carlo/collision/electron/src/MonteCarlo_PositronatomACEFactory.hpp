@@ -30,18 +30,18 @@ public:
   //! Create a positron-atom core (using the provided atomic relaxation model)
   static void createPositronatomCore(
          const Data::XSSEPRDataExtractor& raw_positronatom_data,
-         const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+         const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
          const SimulationElectronProperties& properties,
-         std::shared_ptr<PositronatomCore>& positronatom_core );
+         std::shared_ptr<const PositronatomCore>& positronatom_core );
 
   //! Create a positron-atom (using the provided atomic relaxation model)
   static void createPositronatom(
          const Data::XSSEPRDataExtractor& raw_positronatom_data,
          const std::string& positronatom_name,
          const double atomic_weight,
-         const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+         const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
          const SimulationElectronProperties& properties,
-         std::shared_ptr<Positronatom>& positronatom );
+         std::shared_ptr<const Positronatom>& positronatom );
 
 private:
 

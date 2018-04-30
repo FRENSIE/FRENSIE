@@ -26,10 +26,10 @@ namespace MonteCarlo{
  */
 template<typename InterpPolicy>
 ElectroatomCore::ElectroatomCore(
-    const std::shared_ptr<std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const ReactionMap& standard_scattering_reactions,
-    const ReactionMap& standard_absorption_reactions,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    const ConstReactionMap& standard_scattering_reactions,
+    const ConstReactionMap& standard_absorption_reactions,
     const std::shared_ptr<const AtomicRelaxationModel>& relaxation_model,
     const bool processed_atomic_cross_sections,
     const InterpPolicy policy )
@@ -42,19 +42,19 @@ ElectroatomCore::ElectroatomCore(
     d_grid_searcher( grid_searcher )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+  testPrecondition( energy_grid->size() > 1 );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   // There must be at least one reaction specified
   testPrecondition( standard_scattering_reactions.size() +
                     standard_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
-  testPrecondition( !relaxation_model.is_null() );
+  testPrecondition( relaxation_model.get() );
   // Make sure the hash-based grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
+  testPrecondition( grid_searcher.get() );
 
   // Place reactions in the appropriate group
-  ReactionMap::const_iterator rxn_type_pointer =
+  ConstReactionMap::const_iterator rxn_type_pointer =
     standard_absorption_reactions.begin();
 
   while( rxn_type_pointer != standard_absorption_reactions.end() )
@@ -79,60 +79,48 @@ ElectroatomCore::ElectroatomCore(
     ++rxn_type_pointer;
   }
   // Create the total absorption and total reactions
-  std::shared_ptr<ElectroatomicReaction> total_absorption_reaction;
-  std::shared_ptr<ElectroatomicReaction> total_reaction;
-
   if( processed_atomic_cross_sections )
   {
     if( d_absorption_reactions.size() > 0 )
     {
-      ElectroatomCore::createProcessedTotalAbsorptionReaction<InterpPolicy>(
+      this->createProcessedTotalAbsorptionReaction<InterpPolicy>(
                                                  energy_grid,
                                                  d_absorption_reactions,
-                                                 total_absorption_reaction );
+                                                 d_total_absorption_reaction );
     }
     else
     {
        // Create void absorption reaction
-       total_absorption_reaction.reset(
+       d_total_absorption_reaction.reset(
          new VoidAbsorptionElectroatomicReaction() );
     }
 
-    d_total_absorption_reaction = total_absorption_reaction;
-
-    ElectroatomCore::createProcessedTotalReaction<InterpPolicy>(
+    this->createProcessedTotalReaction<InterpPolicy>(
                                                    energy_grid,
                                                    d_scattering_reactions,
                                                    d_total_absorption_reaction,
-                                                   total_reaction );
-
-    d_total_reaction = total_reaction;
+                                                   d_total_reaction );
   }
   else
   {
     if( d_absorption_reactions.size() > 0 )
     {
-      ElectroatomCore::createTotalAbsorptionReaction<InterpPolicy>(
+      this->createTotalAbsorptionReaction<InterpPolicy>(
                                                  energy_grid,
                                                  d_absorption_reactions,
-                                                 total_absorption_reaction );
+                                                 d_total_absorption_reaction );
     }
     else
     {
        // Create void absorption reaction
-       total_absorption_reaction.reset(
+      d_total_absorption_reaction.reset(
          new VoidAbsorptionElectroatomicReaction() );
     }
 
-    d_total_absorption_reaction = total_absorption_reaction;
-
-    ElectroatomCore::createTotalReaction<InterpPolicy>(
-                                                  energy_grid,
-                                                  d_scattering_reactions,
-                                                  d_total_absorption_reaction,
-                                                  total_reaction );
-
-    d_total_reaction = total_reaction;
+    this->createTotalReaction<InterpPolicy>( energy_grid,
+                                             d_scattering_reactions,
+                                             d_total_absorption_reaction,
+                                             d_total_reaction );
   }
 
   // Make sure the reactions have been organized appropriately
@@ -142,20 +130,20 @@ ElectroatomCore::ElectroatomCore(
 // Create the total absorption reaction
 template<typename InterpPolicy>
 void ElectroatomCore::createTotalAbsorptionReaction(
-             const std::shared_ptr<std::vector<double> >& energy_grid,
-             const ConstReactionMap& absorption_reactions,
-             std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction )
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const ConstReactionMap& absorption_reactions,
+      std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
 
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
-  unsigned absorption_threshold_energy_index = 0u;
+  size_t absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     double raw_cross_section = 0.0;
 
@@ -163,8 +151,16 @@ void ElectroatomCore::createTotalAbsorptionReaction(
 
     while( absorption_reaction != absorption_reactions.end() )
     {
-      raw_cross_section +=
-        absorption_reaction->second->getCrossSection( energy_grid[i] );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++absorption_reaction;
     }
@@ -204,27 +200,27 @@ void ElectroatomCore::createTotalAbsorptionReaction(
 // Create the processed total absorption reaction
 template<typename InterpPolicy>
 void ElectroatomCore::createProcessedTotalAbsorptionReaction(
-             const std::shared_ptr<std::vector<double> >& energy_grid,
-             const ConstReactionMap& absorption_reactions,
-             std::shared_ptr<ElectroatomicReaction>& total_absorption_reaction )
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const ConstReactionMap& absorption_reactions,
+      std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
 
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
-  unsigned absorption_threshold_energy_index = 0u;
+  size_t absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     absorption_reaction = absorption_reactions.begin();
 
     double raw_cross_section = 0.0;
 
     const double raw_energy =
-      InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+      InterpPolicy::recoverProcessedIndepVar( (*energy_grid)[i] );
 
     while( absorption_reaction != absorption_reactions.end() )
     {
@@ -270,33 +266,51 @@ void ElectroatomCore::createProcessedTotalAbsorptionReaction(
 // Create the total reaction
 template<typename InterpPolicy>
 void ElectroatomCore::createTotalReaction(
-      const std::shared_ptr<std::vector<double> >& energy_grid,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
       const ConstReactionMap& scattering_reactions,
       const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<ElectroatomicReaction>& total_reaction )
+      std::shared_ptr<const ElectroatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
   // Make sure the absorption reaction has been created
   testPrecondition( total_absorption_reaction.use_count() > 0 );
 
   std::shared_ptr<std::vector<double> >
     total_cross_section( new std::vector<double> );
-  unsigned total_threshold_energy_index = 0u;
+  size_t total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
-    double raw_cross_section =
-      total_absorption_reaction->getCrossSection( energy_grid[i] );
+    double raw_cross_section = 0.0;
+
+    if( i < energy_grid->size() - 1 )
+    {
+      raw_cross_section = 
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i );
+    }
+    else
+    {
+      raw_cross_section = 
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i-1 );
+    }
 
     while( scattering_reaction != scattering_reactions.end() )
     {
-      raw_cross_section +=
-        scattering_reaction->second->getCrossSection( energy_grid[i] );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++scattering_reaction;
     }
@@ -336,28 +350,28 @@ void ElectroatomCore::createTotalReaction(
 // Calculate the processed total absorption cross section
 template<typename InterpPolicy>
 void ElectroatomCore::createProcessedTotalReaction(
-    const std::shared_ptr<std::vector<double> >& energy_grid,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
     const ConstReactionMap& scattering_reactions,
     const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
-    std::shared_ptr<ElectroatomicReaction>& total_reaction )
+    std::shared_ptr<const ElectroatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
-  testPrecondition( energy_grid.size() > 1 );
+  testPrecondition( energy_grid->size() > 1 );
   // Make sure the absorption reaction has been created
   testPrecondition( total_absorption_reaction.use_count() > 0 );
 
-  std::vector<std::vector<double> >
+  std::shared_ptr<std::vector<double> >
     total_cross_section( new std::vector<double> );
-  unsigned total_threshold_energy_index = 0u;
+  size_t total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
     const double raw_energy =
-      InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+      InterpPolicy::recoverProcessedIndepVar( (*energy_grid)[i] );
 
     double raw_cross_section =
       total_absorption_reaction->getCrossSection( raw_energy );

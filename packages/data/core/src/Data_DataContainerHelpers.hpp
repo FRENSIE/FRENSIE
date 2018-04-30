@@ -33,23 +33,23 @@ namespace Data{
 
   // Test preconditions for energy grids
   template<typename Array>
-  bool EnergyGridValid( const Array& energy_grid );
+  bool energyGridValid( const Array& energy_grid );
 
   // Test preconditions for values in array greater than zero
   template<typename Array>
-  bool ValuesGreaterThanZero( const Array& values );
+  bool valuesGreaterThanZero( const Array& values );
 
   // Test preconditions for values in array greater than or equal to zero
   template<typename Array>
-  bool ValuesGreaterThanOrEqualToZero( const Array& values );
+  bool valuesGreaterThanOrEqualToZero( const Array& values );
 
   // Test preconditions for values in array less than one
   template<typename Array>
-  bool ValuesLessThanOne( const Array& values );
+  bool valuesLessThanOne( const Array& values );
 
   // Test preconditions for values in array less than or equal to one
   template<typename Array>
-  bool ValuesLessThanOrEqualToOne( const Array& values );
+  bool valuesLessThanOrEqualToOne( const Array& values );
 
   // Test if a value is less than or equal to zero
   bool isValueLessThanOrEqualToZero( const double value );

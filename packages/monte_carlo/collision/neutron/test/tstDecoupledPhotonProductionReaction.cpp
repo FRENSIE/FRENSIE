@@ -49,7 +49,7 @@ public:
   { /* ... */ }
 
   // Test if two Atomic reactions share the same energy grid
-  bool isEnergyGridShared( const NuclearReaction& other_reaction ) const final override
+  bool isEnergyGridShared( const Reaction& other_reaction ) const final override
   { return false; }
 
   // Test if the energy falls within the energy grid

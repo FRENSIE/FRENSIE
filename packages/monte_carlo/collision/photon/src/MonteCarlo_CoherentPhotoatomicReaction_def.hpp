@@ -74,10 +74,15 @@ unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getN
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
-/*! \details This does not include electrons from atomic relaxation.
- */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
 {
   return 0u;
 }

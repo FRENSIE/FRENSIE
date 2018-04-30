@@ -11,17 +11,17 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The cutoff elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class CutoffElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class CutoffElasticElectroatomicReaction : public StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
   // Typedef for the base class type
-  typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+  typedef StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
     BaseType;
 
 public:
@@ -30,7 +30,7 @@ public:
   CutoffElasticElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
     scattering_distribution );
 
@@ -38,8 +38,8 @@ public:
   CutoffElasticElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
     scattering_distribution );
   
@@ -48,11 +48,14 @@ public:
   ~CutoffElasticElectroatomicReaction()
   { /* ... */ }
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const override;
@@ -67,7 +70,7 @@ public:
 
   //! Return the cross section at the given energy (efficient)
   double getCrossSection( const double energy,
-                          const unsigned bin_index ) const override;
+                          const size_t bin_index ) const override;
 
   //! Return the differential cross section
   double getDifferentialCrossSection( const double incoming_energy,

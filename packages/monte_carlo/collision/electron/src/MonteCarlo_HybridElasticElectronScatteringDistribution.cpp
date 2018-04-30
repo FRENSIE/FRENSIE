@@ -18,7 +18,7 @@ namespace MonteCarlo{
 
 // Constructor
 HybridElasticElectronScatteringDistribution::HybridElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& hybrid_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& hybrid_distribution,
     const double cutoff_angle_cosine,
     const double evaluation_tol )
   : d_hybrid_distribution( hybrid_distribution ),
@@ -114,7 +114,7 @@ void HybridElasticElectronScatteringDistribution::sample(
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
@@ -127,7 +127,7 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrials(
                         const double incoming_energy,
                         double& outgoing_energy,
                         double& scattering_angle_cosine,
-                        unsigned& trials ) const
+                        Counter& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -146,7 +146,7 @@ void HybridElasticElectronScatteringDistribution::scatterElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
@@ -168,7 +168,7 @@ void HybridElasticElectronScatteringDistribution::scatterPositron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( positron.getEnergy(),
@@ -190,7 +190,7 @@ void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
@@ -214,7 +214,7 @@ void HybridElasticElectronScatteringDistribution::scatterAdjointElectron(
 void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
                                                 double& scattering_angle_cosine,
-                                                unsigned& trials ) const
+                                                Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

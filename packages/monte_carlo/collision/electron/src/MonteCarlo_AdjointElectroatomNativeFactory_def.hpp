@@ -19,14 +19,15 @@
 namespace MonteCarlo{
 
 // Create the elastic reaction for a electroatom core
-template <typename TwoDInterpPolicy,typename TwoDSamplePolicy>
+template <typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy>
 void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         const SimulationAdjointElectronProperties& properties,
         std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
-        AdjointElectroatom::ReactionMap& scattering_reactions )
+        AdjointElectroatom::ConstReactionMap& scattering_reactions )
 {
   // Get the elastic distribution type
   ElasticElectronDistributionType distribution_type =
@@ -34,10 +35,10 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
 
   if( distribution_type == COUPLED_DISTRIBUTION )
   {
-    AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+    AdjointElectroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    AdjointElectroatomicReactionNativeFactory::createCoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -49,10 +50,10 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
   }
   else if( distribution_type == DECOUPLED_DISTRIBUTION )
   {
-    AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+    AdjointElectroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -66,10 +67,10 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
     // Create the coupled elastic scattering reaction (no moment preserving elastic scattering)
     if ( properties.getAdjointElasticCutoffAngleCosine() == 1.0 )
     {
-      AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+      AdjointElectroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-      AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      AdjointElectroatomicReactionNativeFactory::createDecoupledElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -81,10 +82,10 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
     // Create the moment preserving elastic scattering reaction (no coupled elastic scattering)
     else if ( properties.getAdjointElasticCutoffAngleCosine() == -1.0 )
     {
-      AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+      AdjointElectroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[MOMENT_PRESERVING_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-      AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      AdjointElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -97,10 +98,10 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
     // Create the hybrid elastic scattering reaction (if cutoff is within range)
     else
     {
-      AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+      AdjointElectroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[HYBRID_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-      AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+      AdjointElectroatomicReactionNativeFactory::createHybridElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,
@@ -113,10 +114,10 @@ void AdjointElectroatomNativeFactory::createElasticElectroatomCore(
   }
   else if( distribution_type == CUTOFF_DISTRIBUTION )
   {
-    AdjointElectroatom::ReactionMap::mapped_type& reaction_pointer =
+    AdjointElectroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION];
 
-    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDSamplePolicy>(
+    AdjointElectroatomicReactionNativeFactory::createCutoffElasticReaction<TwoDInterpPolicy,TwoDGridPolicy>(
                         raw_electroatom_data,
                         energy_grid,
                         grid_searcher,

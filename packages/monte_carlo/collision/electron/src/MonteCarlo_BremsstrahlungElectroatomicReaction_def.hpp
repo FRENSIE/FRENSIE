@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::BremsstrahlungElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution )
   : BaseType( incoming_energy_grid,
@@ -28,17 +29,6 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
               threshold_energy_index ),
     d_bremsstrahlung_distribution( bremsstrahlung_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the bremsstrahlung scattering distribution data is valid
   testPrecondition( bremsstrahlung_distribution.use_count() > 0 );
 }
@@ -48,8 +38,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::BremsstrahlungElectroatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
        const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution )
   : BaseType( incoming_energy_grid,
@@ -58,24 +48,11 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
               grid_searcher ),
     d_bremsstrahlung_distribution( bremsstrahlung_distribution )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-                        incoming_energy_grid.begin(),
-                        incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() ==
-                    incoming_energy_grid.size() - threshold_energy_index );
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the bremsstrahlung scattering distribution data is valid
   testPrecondition( bremsstrahlung_distribution.use_count() > 0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
-/*! \details This does not include photons from atomic relaxation.
- */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
@@ -88,6 +65,16 @@ unsigned BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_sectio
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
+    return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
 {
   return 0u;
 }
@@ -145,6 +132,18 @@ void BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( BremsstrahlungElectroatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

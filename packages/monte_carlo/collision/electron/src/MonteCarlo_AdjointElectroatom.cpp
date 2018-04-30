@@ -17,10 +17,11 @@ AdjointElectroatom::AdjointElectroatom(
       const std::string& name,
       const unsigned atomic_number,
       const double atomic_weight,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& energy_grid,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
-      const ReactionMap& scattering_reactions,
-      const ReactionMap& absorption_reactions )
+      const ConstReactionMap& scattering_reactions,
+      const ConstReactionMap& absorption_reactions )
   : Atom<AdjointElectroatomCore>( name,
                                   atomic_number,
                                   atomic_weight,
@@ -34,7 +35,7 @@ AdjointElectroatom::AdjointElectroatom(
   testPrecondition( scattering_reactions.size() +
                     absorption_reactions.size() > 0 );
   // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
+  testPrecondition( grid_searcher.get() );
 
   // Populate the core
   Atom<AdjointElectroatomCore>::setCore(
@@ -44,7 +45,21 @@ AdjointElectroatom::AdjointElectroatom(
                                             absorption_reactions ) );
 
   // Make sure the reactions have a shared energy grid
-  testPostcondition( d_core.hasSharedEnergyGrid() );
+  testPostcondition( this->getCore().hasSharedEnergyGrid() );
+}
+
+// Check if the energy corresponds to a line energy reaction
+bool AdjointElectroatom::doesEnergyHaveLineEnergyReaction(
+                                                    const double energy ) const
+{
+  return false;
+}
+
+// Return the total cross section at the desired line energy
+double AdjointElectroatom::getTotalLineEnergyCrossSection(
+                                                    const double energy ) const
+{
+  return 0.0;
 }
 
 // Return the total forward cross section
@@ -52,10 +67,10 @@ double AdjointElectroatom::getTotalForwardCrossSection(
                                                     const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
   
-  return d_core.getTotalForwardReaction().getCrossSection( energy );
+  return this->getCore().getTotalForwardReaction().getCrossSection( energy );
 }
 
 // Return the adjoint weight factor at the desired energy
@@ -65,7 +80,7 @@ double AdjointElectroatom::getTotalForwardCrossSection(
 double AdjointElectroatom::getAdjointWeightFactor( const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( !QT::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
   double weight_factor;
@@ -98,15 +113,15 @@ double AdjointElectroatom::getReactionCrossSection(
     return this->getTotalCrossSection( energy );
   default:
     ConstReactionMap::const_iterator adjoint_electroatomic_reaction =
-      d_core.getScatteringReactions().find( reaction );
+      this->getCore().getScatteringReactions().find( reaction );
 
-    if( adjoint_electroatomic_reaction != d_core.getScatteringReactions().end() )
+    if( adjoint_electroatomic_reaction != this->getCore().getScatteringReactions().end() )
       return adjoint_electroatomic_reaction->second->getCrossSection( energy );
 
     adjoint_electroatomic_reaction =
-        d_core.getAbsorptionReactions().find( reaction );
+        this->getCore().getAbsorptionReactions().find( reaction );
 
-    if( adjoint_electroatomic_reaction != d_core.getAbsorptionReactions().end() )
+    if( adjoint_electroatomic_reaction != this->getCore().getAbsorptionReactions().end() )
       return adjoint_electroatomic_reaction->second->getCrossSection( energy );
     else // If the reaction does not exist for an atom, return 0
       return 0.0;

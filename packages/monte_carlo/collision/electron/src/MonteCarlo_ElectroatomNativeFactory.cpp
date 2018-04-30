@@ -33,7 +33,7 @@ void ElectroatomNativeFactory::createElectroatom(
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
   std::shared_ptr<const ElectroatomCore> core;
 

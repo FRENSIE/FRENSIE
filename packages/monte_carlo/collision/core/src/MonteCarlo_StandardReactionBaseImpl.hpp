@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <memory>
+#include <functional>
 
 // FRENSIE Includes
 #include "Utility_Vector.hpp"
@@ -79,10 +80,18 @@ protected:
   //! Return the head of the energy grid
   const double* getEnergyGridHead() const final override;
 
+  //! Return the cross section at the given energy
+  double getCrossSectionImpl( const std::vector<double>& cross_section,
+                              const double energy,
+                              const size_t bin_index ) const;
+    
 private:
 
   // Set the max energy index
   void setMaxEnergyIndex();
+
+  // Set the get cross section first bin implementation method
+  void setGetCrossSectionFirstBinMethod();
 
   // The processed incoming energy grid
   std::shared_ptr<const std::vector<double> > d_incoming_energy_grid;
@@ -99,6 +108,10 @@ private:
   // The hash-based grid searcher
   std::shared_ptr<const Utility::HashBasedGridSearcher<double> >
   d_grid_searcher;
+
+  // The get cross section first bin method
+  std::function<double(const double,const double,const double,const double,const double)>
+  d_get_cross_section_first_bin_impl;
 };
 
 } // end MonteCarlo namespace

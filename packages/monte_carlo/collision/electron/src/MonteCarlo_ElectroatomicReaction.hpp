@@ -12,9 +12,12 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Data_SubshellType.hpp"
 #include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
+#include "Data_SubshellType.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_DistributionTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -23,6 +26,9 @@ class ElectroatomicReaction : public AtomicReaction
 {
 
 public:
+
+  //! The trials counter type
+  typedef Utility::DistributionTraits::Counter Counter;
 
   //!Constructor
   ElectroatomicReaction()
@@ -48,7 +54,7 @@ public:
   virtual void react( ElectronState& electron,
                       ParticleBank& bank,
                       Data::SubshellType& shell_of_interaction,
-                      unsigned& trials ) const;
+                      Counter& trials ) const;
 
 };
 
@@ -57,12 +63,24 @@ inline void ElectroatomicReaction::react(
                 ElectronState& electron,
                 ParticleBank& bank,
                 Data::SubshellType& shell_of_interaction,
-                unsigned& trials ) const
+                Counter& trials ) const
 {
   ++trials;
 
   this->react( electron, bank, shell_of_interaction );
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<ElectroatomicReaction,Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

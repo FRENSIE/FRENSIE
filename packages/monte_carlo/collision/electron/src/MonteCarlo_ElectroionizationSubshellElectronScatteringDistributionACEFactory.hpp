@@ -51,7 +51,7 @@ protected:
     const unsigned number_of_tables,
     const bool is_eprdata14,
     const Utility::ArrayView<const double>& raw_electroionization_data,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
       subshell_distribution,
     const double evaluation_tol = 1e-7 );
 };

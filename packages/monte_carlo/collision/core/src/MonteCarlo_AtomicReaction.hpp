@@ -9,10 +9,13 @@
 #ifndef MONTE_CARLO_ATOMIC_REACTION_HPP
 #define MONTE_CARLO_ATOMIC_REACTION_HPP
 
+// FRENSIE Includes
+#include "MonteCarlo_Reaction.hpp"
+
 namespace MonteCarlo{
 
 //! The atomic reaction base class
-class AtomicReaction
+class AtomicReaction : public Reaction
 {
 
 public:
@@ -25,43 +28,15 @@ public:
   virtual ~AtomicReaction()
   { /* ... */ }
 
-  //! Test if two Atomic reactions share the same energy grid
-  bool isEnergyGridShared( const AtomicReaction& other_reaction ) const;
-
-  //! Test if the energy falls within the energy grid
-  virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
-
-  //! Return the threshold energy
-  virtual double getThresholdEnergy() const = 0;
-
-  //! Return the max energy
-  virtual double getMaxEnergy() const = 0;
-
-  //! Return the cross section at the given energy
-  virtual double getCrossSection( const double energy ) const = 0;
-
-  //! Return the cross section at the given energy (efficient)
-  virtual double getCrossSection( const double energy,
-                                  const size_t bin_index ) const = 0;
-
   //! Return the number of photons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
 
   //! Return the number of electrons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedElectrons( const double energy ) const = 0;
-
-protected:
-
-  //! Return the head of the energy grid
-  virtual const double* getEnergyGridHead() const = 0;
+  
+  //! Return the number of positrons emitted from the rxn at the given energy
+  virtual unsigned getNumberOfEmittedPositrons( const double energy ) const = 0;
 };
-
-// Test if two Atomic reactions share the same energy grid
-inline bool AtomicReaction::isEnergyGridShared(
-                                   const AtomicReaction& other_reaction ) const
-{
-  return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
-}
 
 } // end MonteCarlo namespace
 

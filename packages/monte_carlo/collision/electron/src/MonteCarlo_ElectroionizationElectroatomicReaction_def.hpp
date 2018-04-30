@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 namespace MonteCarlo{
@@ -20,8 +21,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationElectroatomicReaction(
   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
   const std::shared_ptr<const std::vector<double> >& cross_section,
-  const unsigned threshold_energy_index,
-  const std::vector<std::shared_ptr<ElectroatomicReaction> >& subshell_reactions )
+  const size_t threshold_energy_index,
+  const std::vector<std::shared_ptr<const ElectroatomicReaction> >& subshell_reactions )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index ),
@@ -33,9 +34,9 @@ template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationElectroatomicReaction(
   const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
   const std::shared_ptr<const std::vector<double> >& cross_section,
-  const unsigned threshold_energy_index,
-  const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-  const std::vector<std::shared_ptr<ElectroatomicReaction> >& subshell_reactions )
+  const size_t threshold_energy_index,
+  const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+  const std::vector<std::shared_ptr<const ElectroatomicReaction> >& subshell_reactions )
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
@@ -53,6 +54,8 @@ unsigned ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_sec
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include electrons from atomic relaxation.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
@@ -62,6 +65,13 @@ unsigned ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_sec
     return 0u;
 }
 
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  return 0u;
+}
+
 // Return the differential cross section
 template<typename InterpPolicy, bool processed_cross_section>
 double ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
@@ -69,7 +79,7 @@ double ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_secti
                 const double outgoing_energy ) const
 {
   THROW_EXCEPTION( std::logic_error,
-                   "Error! The total electroionization reaction differential "
+                   "The total electroionization reaction differential "
                    "cross section function has not been implemented");
 }
 
@@ -111,6 +121,18 @@ void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section
     }
   }
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ElectroionizationElectroatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

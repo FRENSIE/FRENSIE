@@ -27,80 +27,80 @@ public:
   static void createDecoupledElasticReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& elastic_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& elastic_reaction );
 
   //! Create an cutoff elastic scattering positron-atomic reaction
   static void createCutoffElasticReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& elastic_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& elastic_reaction );
 
   //! Create a screened Rutherford elastic scattering positron-atomic reaction
   static void createScreenedRutherfordElasticReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& elastic_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& elastic_reaction );
 
   //! Create an atomic excitation scattering positron-atomic reaction
   static void createAtomicExcitationReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& atomic_excitation_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& atomic_excitation_reaction );
 
   //! Create the total electroionization positron-atomic reaction
   static void createTotalPositronionizationReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& electroionization_reaction );
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& electroionization_reaction );
 
   //! Create the subshell electroionization positron-atomic reaction
   static void createSubshellPositronionizationReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& electroionization_subshell_reaction,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& electroionization_subshell_reaction,
       const unsigned endf_subshell_designator );
 
   //! Create the subshell electroionization positron-atomic reactions
   static void createSubshellPositronionizationReactions(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::vector<std::shared_ptr<PositronatomicReaction> >&
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::vector<std::shared_ptr<const PositronatomicReaction> >&
         electroionization_subshell_reactions );
 
   //! Create the bremsstrahlung positron-atomic reaction
   static void createBremsstrahlungReaction(
       const Data::XSSEPRDataExtractor& raw_positronatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<PositronatomicReaction>& bremsstrahlung_reaction,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const PositronatomicReaction>& bremsstrahlung_reaction,
       BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption positron-atomic reaction
   static void createVoidAbsorptionReaction(
-      std::shared_ptr<PositronatomicReaction>& void_absorption_reaction );
+      std::shared_ptr<const PositronatomicReaction>& void_absorption_reaction );
 
 //protected:
 
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const Utility::ArrayView<const double>& raw_cross_section,
-      std::vector<double>& cross_section,
-      unsigned& threshold_energy_index );
+                     const std::vector<double>& energy_grid,
+                     const Utility::ArrayView<const double>& raw_cross_section,
+                     std::vector<double>& cross_section,
+                     size_t& threshold_energy_index );
 
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const std::vector<double> >& raw_cross_section,
-      std::vector<double>& cross_section,
-      unsigned& threshold_energy_index );
+                                  const std::vector<double>& energy_grid,
+                                  const std::vector<double>& raw_cross_section,
+                                  std::vector<double>& cross_section,
+                                  size_t& threshold_energy_index );
 
 private:
 

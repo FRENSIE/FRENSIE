@@ -23,10 +23,10 @@ namespace MonteCarlo{
  *  when sampling from a subrange of the cutoff distribution.
  */
 CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& scattering_distribution )
+    const std::shared_ptr<const BasicBivariateDist>& scattering_distribution )
   : d_full_cutoff_distribution( scattering_distribution ),
     d_partial_cutoff_distribution( scattering_distribution ),
-    d_cutoff_angle_cosine( scattering_distribution->getUpperBoundOfConditionalIndepVar(
+    d_cutoff_angle_cosine( scattering_distribution->getUpperBoundOfSecondaryConditionalIndepVar(
         scattering_distribution->getLowerBoundOfPrimaryIndepVar() ) )
 {
   // Make sure the array is valid
@@ -42,8 +42,8 @@ CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDist
  *  calculating the partial cutoff cross section.
  */
 CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>& full_scattering_distribution,
-    const std::shared_ptr<TwoDDist>& partial_scattering_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& full_scattering_distribution,
+    const std::shared_ptr<const BasicBivariateDist>& partial_scattering_distribution,
     const double cutoff_angle_cosine )
   : d_full_cutoff_distribution( full_scattering_distribution ),
     d_partial_cutoff_distribution( partial_scattering_distribution ),
@@ -132,7 +132,7 @@ void CutoffElasticElectronScatteringDistribution::sample(
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
@@ -145,7 +145,7 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrials(
                         const double incoming_energy,
                         double& outgoing_energy,
                         double& scattering_angle_cosine,
-                        unsigned& trials ) const
+                        Counter& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -164,7 +164,7 @@ void CutoffElasticElectronScatteringDistribution::scatterElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
@@ -186,7 +186,7 @@ void CutoffElasticElectronScatteringDistribution::scatterPositron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( positron.getEnergy(),
@@ -208,7 +208,7 @@ void CutoffElasticElectronScatteringDistribution::scatterAdjointElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
@@ -226,7 +226,7 @@ void CutoffElasticElectronScatteringDistribution::scatterAdjointElectron(
 void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
         const double incoming_energy,
         double& scattering_angle_cosine,
-        unsigned& trials ) const
+        Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

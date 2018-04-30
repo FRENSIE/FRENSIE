@@ -27,7 +27,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;
 
   // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
                               raw_electroatom_data,
@@ -50,7 +50,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;
 
   // Create the scattering function
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> scattering_function;
+  std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution> scattering_function;
 
   BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
                               raw_electroatom_data,
@@ -69,7 +69,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
  */
 void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFunction(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>& scattering_function,
+    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>& scattering_function,
     const double evaluation_tol )
 {
   // Extract the bremsstrahlung scattering information data block (BREMI)
@@ -93,16 +93,18 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
     raw_electroatom_data.extractBREMEBlock();
 
   // Get the scattering data
-  Utility::FullyTabularTwoDDistribution::DistributionType function_data( N );
+  std::vector<double> primary_grid( N );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( N );
 
   // Check if the file version is eprdata14 or eprdata12
   if ( raw_electroatom_data.isEPRVersion14() )
   {
     for( unsigned n = 0; n < N; ++n )
     {
-      function_data[n].first = electron_energy_grid[n];
+      primary_grid[n] = electron_energy_grid[n];
 
-      function_data[n].second.reset(
+      secondary_dists[n].reset(
         new Utility::TabularCDFDistribution<Utility::LogLog>(
             breme_block( offset[n], table_length[n] ),
             breme_block( offset[n] + table_length[n], table_length[n] ),
@@ -111,18 +113,19 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
 
     // Create the scattering function with LogLogLog interp (eprdata14)
     scattering_function.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LogLogLog,Utility::Correlated>(
-            function_data,
-            1e-6,
-            evaluation_tol ) );
+       new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LogLogLog>>(
+                                                          primary_grid,
+                                                          secondary_dists,
+                                                          1e-6,
+                                                          evaluation_tol ) );
   }
   else
   {
     for( unsigned n = 0; n < N; ++n )
     {
-      function_data[n].first = electron_energy_grid[n];
+      primary_grid[n] = electron_energy_grid[n];
 
-      function_data[n].second.reset(
+      secondary_dists[n].reset(
         new Utility::TabularCDFDistribution<Utility::LinLin>(
             breme_block( offset[n], table_length[n] ),
             breme_block( offset[n] + table_length[n], table_length[n] ),
@@ -131,10 +134,11 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createScatteringFun
 
     // Create the scattering function with LinLinLin interp (eprdata12)
     scattering_function.reset(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
-            function_data,
-            1e-6,
-            evaluation_tol ) );
+       new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                                                        primary_grid,
+                                                        secondary_dists,
+                                                        1e-6,
+                                                        evaluation_tol ) );
   }
 }
 

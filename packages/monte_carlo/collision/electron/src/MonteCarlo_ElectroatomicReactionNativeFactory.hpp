@@ -53,44 +53,44 @@ public:
 
   //! Create an coupled elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   static void createCoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
     const CoupledElasticSamplingMethod& sampling_method,
     const double evaluation_tol );
 
   //! Create a hybrid elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   static void createHybridElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
   //! Create a decoupled elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   static void createDecoupledElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
     const double evaluation_tol );
 
   //! Create an cutoff elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
@@ -98,17 +98,17 @@ public:
   static void createScreenedRutherfordElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& elastic_reaction );
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& elastic_reaction );
 
   //! Create the moment preserving elastic scattering electroatomic reaction
   template< typename TwoDInterpPolicy = Utility::LogLogCosLog,
-            typename TwoDSamplePolicy = Utility::Correlated>
+            template<typename> class TwoDGridPolicy = Utility::Correlated>
   static void createMomentPreservingElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& elastic_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& elastic_reaction,
     const double cutoff_angle_cosine,
     const double evaluation_tol );
 
@@ -116,48 +116,48 @@ public:
   static void createAtomicExcitationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction );
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createSubshellElectroionizationReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const unsigned subshell,
-    std::shared_ptr<ReactionType>& electroionization_subshell_reaction,
+    std::shared_ptr<const ReactionType>& electroionization_subshell_reaction,
     const double evaluation_tol );
 
   //! Create the subshell electroionization electroatomic reactions
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createSubshellElectroionizationReactions(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::vector<std::shared_ptr<ReactionType> >&
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::vector<std::shared_ptr<const ReactionType> >&
         electroionization_subshell_reactions,
     const double evaluation_tol );
 
   //! Create the bremsstrahlung electroatomic reaction
   template< typename ReactionType = ElectroatomicReaction,
             typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createBremsstrahlungReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ReactionType>& bremsstrahlung_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ReactionType>& bremsstrahlung_reaction,
     BremsstrahlungAngularDistributionType photon_distribution_function,
     const double evaluation_tol );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(
-    std::shared_ptr<ElectroatomicReaction>& void_absorption_reaction );
+    std::shared_ptr<const ElectroatomicReaction>& void_absorption_reaction );
 
 private:
 

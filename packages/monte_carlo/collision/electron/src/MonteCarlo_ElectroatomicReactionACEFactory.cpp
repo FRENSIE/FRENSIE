@@ -35,14 +35,14 @@ namespace MonteCarlo{
 void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   // Make sure the ACE file version is valid
   testPrecondition( raw_electroatom_data.isEPRVersion14() );
 
@@ -60,13 +60,14 @@ void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
     raw_electroatom_data.extractAtomicNumber() );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   std::shared_ptr<std::vector<double> >
     total_elastic_cross_section( new std::vector<double> );
+  
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                      energy_grid,
+                      *energy_grid,
                       raw_electroatom_data.extractElasticTotalCrossSection(),
                       *total_elastic_cross_section,
                       threshold_energy_index );
@@ -92,14 +93,14 @@ void ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
 void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::shared_ptr<const ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Create the elastic scattering distribution
   std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
@@ -113,11 +114,11 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
     elastic_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                       energy_grid,
+                       *energy_grid,
                        raw_electroatom_data.extractElasticCutoffCrossSection(),
                        *elastic_cross_section,
                        threshold_energy_index );
@@ -148,14 +149,14 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
 void ElectroatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-      std::shared_ptr<ElectroatomicReaction>& elastic_reaction )
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      std::shared_ptr<const ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
   // Make sure the ACE file version is valid
   testPrecondition( raw_electroatom_data.isEPRVersion14() );
 
@@ -177,30 +178,31 @@ void ElectroatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
   // Calculate the screened Rutherford elastic cross section
   std::shared_ptr<std::vector<double> > elastic_cross_section(
               new std::vector<double>( cutoff_elastic_cross_section.size() ) );
-  for ( unsigned i = 0; i < elastic_cross_section.size(); ++i )
+  
+  for ( unsigned i = 0; i < elastic_cross_section->size(); ++i )
   {
     (*elastic_cross_section)[i] =
         total_elastic_cross_section[i] - cutoff_elastic_cross_section[i];
 
     // Check for cross sections below roundoff error
-    if( elastic_cross_section[i] != 0.0 &&
-        elastic_cross_section[i]/cutoff_elastic_cross_section[i] < 1e-8 )
+    if( (*elastic_cross_section)[i] != 0.0 &&
+        (*elastic_cross_section)[i]/cutoff_elastic_cross_section[i] < 1e-8 )
     {
       (*elastic_cross_section)[i] = 0.0;
     }
 
-    testPostcondition( elastic_cross_section[i] >= 0.0 );
+    testPostcondition( (*elastic_cross_section)[i] >= 0.0 );
   }
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   std::shared_ptr<std::vector<double> >
     sr_elastic_cross_section( new std::vector<double> );
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                              energy_grid,
-                              elastic_cross_section,
+                              *energy_grid,
+                              *elastic_cross_section,
                               *sr_elastic_cross_section,
                               threshold_energy_index );
 
@@ -217,25 +219,25 @@ void ElectroatomicReactionACEFactory::createScreenedRutherfordElasticReaction(
 void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& atomic_excitation_reaction )
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Atomic Excitation cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     atomic_excitation_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                          energy_grid,
+                          *energy_grid,
                           raw_electroatom_data.extractExcitationCrossSection(),
                           *atomic_excitation_cross_section,
                           threshold_energy_index );
@@ -275,31 +277,31 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
 void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<ElectroatomicReaction>& total_electroionization_reaction )
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::shared_ptr<const ElectroatomicReaction>& total_electroionization_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Electroionization cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     total_electroionization_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                           energy_grid,
+                           *energy_grid,
                            raw_electroatom_data.extractElectroionizationCrossSection(),
-                           total_electroionization_cross_section,
+                           *total_electroionization_cross_section,
                            threshold_energy_index );
 
   // Create the subshell reactions
-  std::vector<std::shared_ptr<ElectroatomicReaction> >
+  std::vector<std::shared_ptr<const ElectroatomicReaction> >
         subshell_reactions;
 
   ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
@@ -334,15 +336,15 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
     const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    std::shared_ptr<ElectroatomicReaction>& electroionization_subshell_reaction,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    std::shared_ptr<const ElectroatomicReaction>& electroionization_subshell_reaction,
     const unsigned subshell )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Extract the subshell information
   Utility::ArrayView<const double> subshell_endf_designators =
@@ -368,18 +370,18 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
 
   // Subshell cross section without zeros removed
   Utility::ArrayView<const double> raw_subshell_cross_section =
-  raw_subshell_cross_sections( shell_index*energy_grid.size(),energy_grid.size() );
+  raw_subshell_cross_sections( shell_index*energy_grid->size(),energy_grid->size() );
 
   // Electroionization cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     subshell_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   // Remove all cross sections equal to zero
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                          energy_grid,
+                          *energy_grid,
                           raw_subshell_cross_section,
                           *subshell_cross_section,
                           threshold_energy_index );
@@ -423,15 +425,15 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReaction(
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::vector<std::shared_ptr<ElectroatomicReaction> >&
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::vector<std::shared_ptr<const ElectroatomicReaction> >&
         electroionization_subshell_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   electroionization_subshell_reactions.clear();
 
@@ -456,7 +458,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
   unsigned num_subshells = subshell_order.size();
 
   // Extract the number of points in the energy grid
-  unsigned num_energy_points = energy_grid.size();
+  unsigned num_energy_points = energy_grid->size();
 
   // Extract the subshell cross sections
   Utility::ArrayView<const double> raw_subshell_cross_sections =
@@ -493,24 +495,24 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 
     // Subshell cross section without zeros removed
     Utility::ArrayView<const double> raw_subshell_cross_section =
-    raw_subshell_cross_sections( shell_index*energy_grid.size(),energy_grid.size() );
+    raw_subshell_cross_sections( shell_index*energy_grid->size(),energy_grid->size() );
 
     // Electroionization cross section with zeros removed
     std::shared_ptr<std::vector<double> >
       subshell_cross_section( new std::vector<double> );
 
     // Index of first non zero cross section in the energy grid
-    unsigned threshold_energy_index;
+    size_t threshold_energy_index;
 
     // Remove all cross sections equal to zero
     ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                           energy_grid,
+                           *energy_grid,
                            raw_subshell_cross_section,
                            *subshell_cross_section,
                            threshold_energy_index );
 
     // Make sure the threshold energy is at least the binding energy
-    testPrecondition( energy_grid[threshold_energy_index] >=
+    testPrecondition( (*energy_grid)[threshold_energy_index] >=
                       binding_energies[shell_index] );
 
     // The electroionization subshell distribution
@@ -563,25 +565,25 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-        std::shared_ptr<ElectroatomicReaction>& bremsstrahlung_reaction,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+        std::shared_ptr<const ElectroatomicReaction>& bremsstrahlung_reaction,
         BremsstrahlungAngularDistributionType photon_distribution_function )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() ==
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
+                    energy_grid->size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid->begin(),
+                                                      energy_grid->end() ) );
 
   // Bremsstrahlung cross section with zeros removed
   std::shared_ptr<std::vector<double> >
     bremsstrahlung_cross_section( new std::vector<double> );
 
   // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
+  size_t threshold_energy_index;
 
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-            energy_grid,
+            *energy_grid,
             raw_electroatom_data.extractBremsstrahlungCrossSection(),
             *bremsstrahlung_cross_section,
             threshold_energy_index );
@@ -599,7 +601,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
   {
   THROW_EXCEPTION( std::logic_error,
-        "Error! The detailed bremsstrahlung reaction has not been implemented");
+        "The detailed bremsstrahlung reaction has not been implemented");
   }
   else if( photon_distribution_function = TWOBS_DISTRIBUTION )
   {
@@ -612,7 +614,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   else
   {
     THROW_EXCEPTION( std::logic_error,
-                     "Error! The photon distribution function: " <<
+                     "The photon distribution function: " <<
                      photon_distribution_function <<
                      " is not recognized");
   }
@@ -642,7 +644,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 
 // Create a void absorption electroatomic reaction
 void ElectroatomicReactionACEFactory::createVoidAbsorptionReaction(
-      std::shared_ptr<ElectroatomicReaction>& void_absorption_reaction )
+      std::shared_ptr<const ElectroatomicReaction>& void_absorption_reaction )
 {
   // Create the void absorption reaction
   void_absorption_reaction.reset(
@@ -651,10 +653,10 @@ void ElectroatomicReactionACEFactory::createVoidAbsorptionReaction(
 
 // Remove the zeros from a cross section
 void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-             const std::shared_ptr<const std::vector<double> >& energy_grid,
+             const std::vector<double>& energy_grid,
              const Utility::ArrayView<const double>& raw_cross_section,
              std::vector<double>& cross_section,
-             unsigned& threshold_energy_index )
+             size_t& threshold_energy_index )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -682,10 +684,10 @@ void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
 
 // Remove the zeros from a cross section
 void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-             const std::shared_ptr<const std::vector<double> >& energy_grid,
-             const std::shared_ptr<const std::vector<double> >& raw_cross_section,
+             const std::vector<double>& energy_grid,
+             const std::vector<double>& raw_cross_section,
              std::vector<double>& cross_section,
-             unsigned& threshold_energy_index )
+             size_t& threshold_energy_index )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -696,10 +698,10 @@ void ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
   cross_section.clear();
 
   // Find the first non-zero cross section value
-  std::shared_ptr<const std::vector<double> >::iterator start =
+  std::vector<double>::const_iterator start =
     std::find_if( raw_cross_section.begin(),
-          raw_cross_section.end(),
-          ElectroatomicReactionACEFactory::notEqualZero );
+                  raw_cross_section.end(),
+                  ElectroatomicReactionACEFactory::notEqualZero );
 
   // Remove the zeros from the cross section
   cross_section.assign( start, raw_cross_section.end() );

@@ -72,6 +72,22 @@ FRENSIE_UNIT_TEST( TripletProductionPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( TripletProductionPhotoatomicReaction,
+                   getNumberOfEmittedPositrons )
+{
+  FRENSIE_CHECK_EQUAL( basic_tp_reaction->getNumberOfEmittedPositrons( 1e-4 ),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( basic_tp_reaction->getNumberOfEmittedPositrons(
+                                     basic_tp_reaction->getThresholdEnergy() ),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( basic_tp_reaction->getNumberOfEmittedPositrons( 20.0 ),
+                       0u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the triplet production cross section can be returned
 FRENSIE_UNIT_TEST( TripletProductionPhotoatomicReaction, getCrossSection )
 {

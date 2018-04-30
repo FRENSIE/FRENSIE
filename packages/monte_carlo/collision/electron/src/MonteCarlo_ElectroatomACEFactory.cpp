@@ -28,18 +28,18 @@ void ElectroatomACEFactory::createElectroatomCore(
     std::shared_ptr<const ElectroatomCore>& electroatom_core )
 {
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() )
 
   electroatom_core.reset( new ElectroatomCore() );
 
-  Electroatom::ReactionMap scattering_reactions, absorption_reactions;
+  Electroatom::ConstReactionMap scattering_reactions, absorption_reactions;
 
   // Extract the common energy grid used for this atom
   std::shared_ptr<std::vector<double> > energy_grid(
      new std::vector<double>( raw_electroatom_data.extractElectronEnergyGrid() ) );
 
   // Create a hash based energy grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher> grid_searcher(
+  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> grid_searcher(
         new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                       energy_grid,
                       properties.getNumberOfElectronHashGridBins() ) );
@@ -50,7 +50,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     // Check the ACE file version
     if( raw_electroatom_data.isEPRVersion14() )
     {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+      Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION];
 
       ElectroatomicReactionACEFactory::createDecoupledElasticReaction(
@@ -61,7 +61,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     }
     else // Create the cutoff elastic scattering reaction
     {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+      Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
         scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
       ElectroatomicReactionACEFactory::createCutoffElasticReaction(
@@ -75,7 +75,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the bremsstrahlung scattering reaction
   if ( properties.isBremsstrahlungModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
@@ -89,7 +89,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the atomic excitation scattering reaction
   if ( properties.isAtomicExcitationModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
@@ -102,7 +102,7 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the subshell electroionization reaction(s)
   if ( properties.isElectroionizationModeOn() )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+    Electroatom::ConstReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
@@ -153,9 +153,9 @@ void ElectroatomACEFactory::createElectroatom(
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
+  testPrecondition( atomic_relaxation_model.get() );
 
-  std::shared_ptr<ElectroatomCore> core;
+  std::shared_ptr<const ElectroatomCore> core;
 
   ElectroatomACEFactory::createElectroatomCore( raw_electroatom_data,
                                                 atomic_relaxation_model,

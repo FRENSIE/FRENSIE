@@ -47,7 +47,7 @@ void AtomicExcitationAdjointElectronScatteringDistribution::sampleAndRecordTrial
              const double incoming_energy,
              double& outgoing_energy,
              double& scattering_angle_cosine,
-             unsigned& trials ) const
+             Counter& trials ) const
 {
   // Update trial number
   trials++;

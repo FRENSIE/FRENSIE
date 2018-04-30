@@ -25,12 +25,16 @@ namespace MonteCarlo{
 
 //! The scattering distribution base class
 class ScreenedRutherfordElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
-    public PositronScatteringDistribution,
-    public AdjointElectronScatteringDistribution
+                                                                public PositronScatteringDistribution,
+                                                                public AdjointElectronScatteringDistribution
 {
 
 public:
 
+  //! The counter type
+  typedef ElectronScatteringDistribution::Counter Counter;
+  
+  //! The elastic distribution type
   typedef std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;
 
@@ -48,7 +52,7 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle_cosine ) const;
+                   const double scattering_angle_cosine ) const override;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
@@ -57,7 +61,7 @@ public:
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle_cosine ) const override;
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
@@ -66,7 +70,7 @@ public:
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle_cosine ) const override;
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle_cosine,
@@ -75,40 +79,40 @@ public:
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& scattering_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const override;
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
                         ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
   //! Randomly scatter the positron
   void scatterPositron( MonteCarlo::PositronState& positron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,
-                               Data::SubshellType& shell_of_interaction ) const;
+                               Data::SubshellType& shell_of_interaction ) const override;
 
 protected:
 
    //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
-                                  unsigned& trials ) const;
+                                  Counter& trials ) const;
 
 private:
 
   // Elastic electron traits
-  std::shared_ptr<ElasticTraits> d_elastic_traits;
+  std::shared_ptr<const ElasticTraits> d_elastic_traits;
 };
 
 } // end MonteCarlo namespace

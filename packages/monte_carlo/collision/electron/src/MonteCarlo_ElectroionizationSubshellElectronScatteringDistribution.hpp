@@ -14,7 +14,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_PositronScatteringDistribution.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -23,20 +23,23 @@ namespace MonteCarlo{
  *  calculating the outgoing energy and direction of the original electron
  */
 class ElectroionizationSubshellElectronScatteringDistribution : public ElectronScatteringDistribution,
-      public PositronScatteringDistribution
+                                                                public PositronScatteringDistribution
 {
 
 public:
+
+  //! Typedef for the counter type
+  typedef ElectronScatteringDistribution::Counter Counter;
 
   //! Typedef for this type
   typedef ElectroionizationSubshellElectronScatteringDistribution ThisType;
 
   //! Typedef for the two d distributions
-  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+  typedef Utility::FullyTabularBasicBivariateDistribution BasicBivariateDist;
 
   //! Constructor
   ElectroionizationSubshellElectronScatteringDistribution(
-    const std::shared_ptr<TwoDDist>&
+    const std::shared_ptr<const BasicBivariateDist>&
       electroionization_subshell_scattering_distribution,
     const double binding_energy,
     const bool bank_secondary_particles = true,
@@ -57,20 +60,20 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const;
+                   const double scattering_angle ) const override;
 
   //! Evaluate the PDF value for a given incoming and outgoing energy
   double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy_1 ) const;
+                      const double outgoing_energy_1 ) const override;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const;
+                      const double scattering_angle ) const override;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& knock_on_energy,
-               double& knock_on_angle_cosine  ) const;
+               double& knock_on_angle_cosine  ) const override;
 
   // Sample the distribution
   void samplePrimaryAndSecondary( const double incoming_energy,
@@ -83,17 +86,17 @@ public:
   void sampleAndRecordTrials( const double incoming_energy,
                               double& knock_on_energy,
                               double& knock_on_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const override;
 
   //! Randomly scatter the electron
   void scatterElectron( MonteCarlo::ElectronState& electron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
   //! Randomly scatter the positron
   void scatterPositron( MonteCarlo::PositronState& positron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
 protected:
 
@@ -109,7 +112,7 @@ private:
                        double& knock_on_angle_cosine ) const;
 
   // electroionization subshell scattering cross sections
-  std::shared_ptr<TwoDDist> d_electroionization_shell_distribution;
+  std::shared_ptr<const BasicBivariateDist> d_electroionization_shell_distribution;
 
   // Subshell binding energy
   double d_binding_energy;

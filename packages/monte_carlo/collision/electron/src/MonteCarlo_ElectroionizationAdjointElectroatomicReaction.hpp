@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 
 namespace MonteCarlo{
 
@@ -19,15 +19,14 @@ namespace MonteCarlo{
 * \details This class should be used to represent the total electroionization
 * reaction and not the reaction with individual subshells.
 */
-
 template<typename InterpPolicy, bool processed_cross_section = false>
-class ElectroionizationAdjointElectroatomicReaction : public StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
+class ElectroionizationAdjointElectroatomicReaction : public StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
 private:
 
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
+typedef StandardReactionBaseImpl<AdjointElectroatomicReaction,InterpPolicy,processed_cross_section> 
     BaseType;
 
 public:
@@ -36,25 +35,28 @@ public:
   ElectroionizationAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index );
+    const size_t threshold_energy_index );
 
   //! Constructor
   ElectroionizationAdjointElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher );
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher );
 
 
   //! Destructor
   ~ElectroionizationAdjointElectroatomicReaction()
   { /* ... */ }
 
-  //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
+  //! Return the number of adjoint photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedAdjointPhotons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of adjoint electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedAdjointElectrons( const double energy ) const override;
+  
+  //! Return the number of adjoint positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedAdjointPositrons( const double energy ) const override;
 
   //! Return the reaction type
   AdjointElectroatomicReactionType getReactionType() const override;

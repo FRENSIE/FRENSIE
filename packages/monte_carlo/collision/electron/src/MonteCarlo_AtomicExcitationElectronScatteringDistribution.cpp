@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -42,7 +42,7 @@ void AtomicExcitationElectronScatteringDistribution::sampleAndRecordTrials(
              const double incoming_energy,
              double& outgoing_energy,
              double& scattering_angle_cosine,
-             unsigned& trials ) const
+             Counter& trials ) const
 {
   // Update trial number
   trials++;

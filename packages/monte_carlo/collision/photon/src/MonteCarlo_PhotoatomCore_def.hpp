@@ -78,42 +78,31 @@ PhotoatomCore::PhotoatomCore(
   }
 
   // Create the total absorption and total reactions
-  std::shared_ptr<PhotoatomicReaction> total_absorption_reaction;
-  std::shared_ptr<PhotoatomicReaction> total_reaction;
-
   if( processed_atomic_cross_sections )
   {
     PhotoatomCore::createProcessedTotalAbsorptionReaction<InterpPolicy>(
 						 energy_grid,
 						 d_absorption_reactions,
-						 total_absorption_reaction );
-
-    d_total_absorption_reaction = total_absorption_reaction;
+						 d_total_absorption_reaction );
 
     PhotoatomCore::createProcessedTotalReaction<InterpPolicy>(
 						   energy_grid,
 						   d_scattering_reactions,
 						   d_total_absorption_reaction,
-						   total_reaction );
-
-    d_total_reaction = total_reaction;
+						   d_total_reaction );
   }
   else
   {
     PhotoatomCore::createTotalAbsorptionReaction<InterpPolicy>(
 						 energy_grid,
 						 d_absorption_reactions,
-						 total_absorption_reaction );
-
-    d_total_absorption_reaction = total_absorption_reaction;
+						 d_total_absorption_reaction );
 
     PhotoatomCore::createTotalReaction<InterpPolicy>(
 						  energy_grid,
 						  d_scattering_reactions,
 						  d_total_absorption_reaction,
-						  total_reaction );
-
-    d_total_reaction = total_reaction;
+						  d_total_reaction );
   }
 
   // Make sure the reactions have been organized appropriately
@@ -124,9 +113,9 @@ PhotoatomCore::PhotoatomCore(
 // Create the total absorption reaction
 template<typename InterpPolicy>
 void PhotoatomCore::createTotalAbsorptionReaction(
-		const std::shared_ptr<const std::vector<double> >& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction )
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const ConstReactionMap& absorption_reactions,
+	std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction )
 {
   // Make sure the absorption cross section is sized correctly
   testPrecondition( energy_grid->size() > 1 );
@@ -134,11 +123,11 @@ void PhotoatomCore::createTotalAbsorptionReaction(
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
   
-  unsigned absorption_threshold_energy_index = 0u;
+  size_t absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid->size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     double raw_cross_section = 0.0;
 
@@ -146,8 +135,16 @@ void PhotoatomCore::createTotalAbsorptionReaction(
 
     while( absorption_reaction != absorption_reactions.end() )
     {
-      raw_cross_section +=
-	absorption_reaction->second->getCrossSection( (*energy_grid)[i] );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++absorption_reaction;
     }
@@ -187,9 +184,9 @@ void PhotoatomCore::createTotalAbsorptionReaction(
 // Create the processed total absorption reaction
 template<typename InterpPolicy>
 void PhotoatomCore::createProcessedTotalAbsorptionReaction(
-		const std::shared_ptr<const std::vector<double> >& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		std::shared_ptr<PhotoatomicReaction>& total_absorption_reaction )
+        const std::shared_ptr<const std::vector<double> >& energy_grid,
+        const ConstReactionMap& absorption_reactions,
+	std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid->size() > 1 );
@@ -197,11 +194,11 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
   
-  unsigned absorption_threshold_energy_index = 0u;
+  size_t absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < energy_grid->size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     absorption_reaction = absorption_reactions.begin();
 
@@ -213,7 +210,7 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
     while( absorption_reaction != absorption_reactions.end() )
     {
       raw_cross_section +=
-	absorption_reaction->second->getCrossSection( raw_energy );
+        absorption_reaction->second->getCrossSection( raw_energy );
 
       ++absorption_reaction;
     }
@@ -254,10 +251,10 @@ void PhotoatomCore::createProcessedTotalAbsorptionReaction(
 // Create the total reaction
 template<typename InterpPolicy>
 void PhotoatomCore::createTotalReaction(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<PhotoatomicReaction>& total_reaction )
+   const std::shared_ptr<const std::vector<double> >& energy_grid,
+   const ConstReactionMap& scattering_reactions,
+   const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
+   std::shared_ptr<const PhotoatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid->size() > 1 );
@@ -267,21 +264,39 @@ void PhotoatomCore::createTotalReaction(
   std::shared_ptr<std::vector<double> >
     total_cross_section( new std::vector<double> );
   
-  unsigned total_threshold_energy_index = 0u;
+  size_t total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid->size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
-    double raw_cross_section =
-      total_absorption_reaction->getCrossSection( (*energy_grid)[i] );
+    double raw_cross_section = 0.0;
+
+    if( i < energy_grid->size() - 1 )
+    {
+      raw_cross_section =
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i );
+    }
+    else
+    {
+      raw_cross_section = 
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i-1 );
+    }
 
     while( scattering_reaction != scattering_reactions.end() )
     {
-      raw_cross_section +=
-	scattering_reaction->second->getCrossSection( (*energy_grid)[i] );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++scattering_reaction;
     }
@@ -324,7 +339,7 @@ void PhotoatomCore::createProcessedTotalReaction(
    const std::shared_ptr<const std::vector<double> >& energy_grid,
    const ConstReactionMap& scattering_reactions,
    const std::shared_ptr<const PhotoatomicReaction>& total_absorption_reaction,
-   std::shared_ptr<PhotoatomicReaction>& total_reaction )
+   std::shared_ptr<const PhotoatomicReaction>& total_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid->size() > 1 );
@@ -334,11 +349,11 @@ void PhotoatomCore::createProcessedTotalReaction(
   std::shared_ptr<std::vector<double> >
     total_cross_section( new std::vector<double> );
   
-  unsigned total_threshold_energy_index = 0u;
+  size_t total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < energy_grid->size(); ++i )
+  for( size_t i = 0; i < energy_grid->size(); ++i )
   {
     scattering_reaction = scattering_reactions.begin();
 
@@ -351,7 +366,7 @@ void PhotoatomCore::createProcessedTotalReaction(
     while( scattering_reaction != scattering_reactions.end() )
     {
       raw_cross_section +=
-	scattering_reaction->second->getCrossSection( raw_energy );
+        scattering_reaction->second->getCrossSection( raw_energy );
 
       ++scattering_reaction;
     }

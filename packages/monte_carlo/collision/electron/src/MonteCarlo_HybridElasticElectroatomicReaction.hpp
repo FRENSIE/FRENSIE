@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardGenericAtomicReaction.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
@@ -19,13 +19,13 @@ namespace MonteCarlo{
 //! The hybrid elastic electroatomic reaction class
 template<typename InterpPolicy,
          bool processed_cross_section = false>
-class HybridElasticElectroatomicReaction : public StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section>
+class HybridElasticElectroatomicReaction : public StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section>
 {
 
 private:
 
   // Typedef for the base class type
-typedef StandardGenericAtomicReaction<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
+typedef StandardReactionBaseImpl<ElectroatomicReaction,InterpPolicy,processed_cross_section> 
     BaseType;
 
 public:
@@ -34,7 +34,7 @@ public:
   HybridElasticElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
+    const size_t threshold_energy_index,
     const double cutoff_angle_cosine,
     const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution );
@@ -43,8 +43,8 @@ public:
   HybridElasticElectroatomicReaction(
     const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
     const std::shared_ptr<const std::vector<double> >& cross_section,
-    const unsigned threshold_energy_index,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const size_t threshold_energy_index,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const double cutoff_angle_cosine,
     const std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
             hybrid_distribution );
@@ -54,11 +54,14 @@ public:
   ~HybridElasticElectroatomicReaction()
   { /* ... */ }
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const override;
 
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
+  //! Return the number of positrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const override;

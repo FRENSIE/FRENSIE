@@ -16,14 +16,11 @@ namespace MonteCarlo{
 template<typename TwoDInterpPolicy,typename TwoDSamplePolicy>
 std::shared_ptr<const CoupledElasticElectronScatteringDistribution> createCoupledElasticDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& data_container,
-    const std::string sampling_method,
+    const CoupledElasticSamplingMethod method,
     const double evaluation_tol )
 {
   std::shared_ptr<const MonteCarlo::CoupledElasticElectronScatteringDistribution>
     distribution;
-
-  CoupledElasticSamplingMethod method =
-    convertStringToCoupledElasticSamplingMethod( sampling_method );
 
   // Assign the cutoff and total elastic cross section and electron energy grid
   std::shared_ptr<std::vector<double> >

@@ -87,15 +87,15 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
 // Check that the number of adjoint photons emitted from the reaction can
 // be returned
 FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
-                   getNumberOfEmittedPhotons )
+                   getNumberOfEmittedAdjointPhotons )
 {
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 9e-4 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 9e-4 ),
                        0u );
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 1e-3 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 1e-3 ),
                        1u );
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 20.0 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 20.0 ),
                        1u );
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedPhotons( 20.1 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPhotons( 20.1 ),
                        0u );
 }
 
@@ -103,15 +103,31 @@ FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
 // Check that the number of adjoint electrons emitted from the reaction can
 // be returned
 FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
-                   getNumberOfEmittedElectrons )
+                   getNumberOfEmittedAdjointElectrons )
 {
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 9e-4 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointElectrons( 9e-4 ),
                        0u );
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointElectrons( 1e-3 ),
                        0u );
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 20.0 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointElectrons( 20.0 ),
                        0u );
-  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedElectrons( 20.1 ),
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointElectrons( 20.1 ),
+                       0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of adjoint positrons emitted from the reaction can
+// be returned
+FRENSIE_UNIT_TEST( SubshellIncoherentAdjointPhotoatomicReaction,
+                   getNumberOfEmittedAdjointPositrons )
+{
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPositrons( 9e-4 ),
+                       0u );
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPositrons( 1e-3 ),
+                       0u );
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPositrons( 20.0 ),
+                       0u );
+  FRENSIE_CHECK_EQUAL( incoherent_adjoint_reaction->getNumberOfEmittedAdjointPositrons( 20.1 ),
                        0u );
 }
 

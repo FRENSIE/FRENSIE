@@ -149,7 +149,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sample(
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
@@ -162,7 +162,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
                         const double incoming_energy,
                         double& outgoing_energy,
                         double& scattering_angle_cosine,
-                        unsigned& trials ) const
+                        Counter& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -181,7 +181,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::scatterElectron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( electron.getEnergy(),
@@ -203,7 +203,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::scatterPositron(
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( positron.getEnergy(),
@@ -225,7 +225,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::scatterAdjointElec
 {
   double scattering_angle_cosine;
 
-  unsigned trial_dummy;
+  Counter trial_dummy;
 
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
@@ -247,7 +247,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::scatterAdjointElec
 void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
                                                 double& scattering_angle_cosine,
-                                                unsigned& trials ) const
+                                                Counter& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );

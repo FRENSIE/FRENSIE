@@ -17,9 +17,9 @@
 namespace MonteCarlo{
 
 // Create a electroionization subshell distribution
-template <typename TwoDInterpPolicy, typename TwoDSamplePolicy>
-void
-ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
+template <typename TwoDInterpPolicy,
+          template<typename> class TwoDGridPolicy>
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
@@ -39,10 +39,11 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
         raw_electroionization_data.getElectroionizationEnergyGrid( subshell );
 
   // Subshell distribution
-  std::shared_ptr<Utility::FullyTabularTwoDDistribution> subshell_distribution;
+  std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>
+    subshell_distribution;
 
   // Create the subshell distribution
-  ThisType::createSubshellDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
+  ThisType::createSubshellDistribution<TwoDInterpPolicy,TwoDGridPolicy>(
             raw_electroionization_data,
             energy_grid,
             subshell,
@@ -56,13 +57,13 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElec
 }
 
 // Create the subshell recoil distribution
-template<typename TwoDInterpPolicy, typename TwoDSamplePolicy>
-void
-ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
+template<typename TwoDInterpPolicy,
+         template<typename> class TwoDGridPolicy>
+void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
     const unsigned subshell,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+    std::shared_ptr<const Utility::FullyTabularBasicBivariateDistribution>&
         subshell_distribution,
     const double evaluation_tol )
 {
@@ -72,12 +73,13 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
   testPrecondition( evaluation_tol > 0.0 );
 
   // Create the scattering function
-  Utility::FullyTabularTwoDDistribution::DistributionType
-     function_data( energy_grid.size() );
-
-  for( unsigned n = 0; n < energy_grid.size(); ++n )
+  std::vector<double> primary_grid( energy_grid.size() );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( energy_grid.size() );
+  
+  for( size_t n = 0; n < energy_grid.size(); ++n )
   {
-    function_data[n].first = energy_grid[n];
+    primary_grid[n] = energy_grid[n];
 
     // Get the recoil energy distribution at the incoming energy
     std::vector<double> recoil_energy(
@@ -91,15 +93,16 @@ ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubs
             subshell,
             energy_grid[n] ) );
 
-    function_data[n].second.reset(
+    secondary_dists[n].reset(
       new const Utility::TabularDistribution<Utility::LogLog>( recoil_energy,
                                                                pdf ) );
   }
 
   // Create the scattering function
   subshell_distribution.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,TwoDSamplePolicy>(
-            function_data,
+    new Utility::InterpolatedFullyTabularBasicBivariateDistribution<TwoDGridPolicy<TwoDInterpPolicy> >(
+            primary_grid,
+            secondary_dists,
             1e-6,
             evaluation_tol ) );
 }

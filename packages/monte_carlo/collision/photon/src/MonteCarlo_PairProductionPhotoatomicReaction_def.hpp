@@ -26,47 +26,10 @@
 
 namespace MonteCarlo{
 
-// The photon energy grid
+// Initialize static member data
 template<typename InterpPolicy, bool processed_cross_section>
-std::vector<double> PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::s_photon_energy_grid =
-{ 2.0, 3.0, 4.0, 6.0, 10.0, 20.0, 40.0, 80.0, 200.0 };
-
-// The ratios of the available kinetic energy given to the positron/electron
-/*! \details The outgoing electron/positron ratio of energy to max available
- * energy. The ratio is symmetric and thus is only given to 1/2 and is
- * independent of electron or positron. The ratios are found using an
- * the Bethe-Heitler DCS which is fitted to be independent of the atomic
- * number of the material.
- */
-template<typename InterpPolicy, bool processed_cross_section>
-std::vector< std::vector<double> > PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::s_outgoing_energy_ratio =
-{ { .00000, .04245, .06816, .09196, .11495, .13762, .16023,
-    .18287, .20568, .22872, .25210, .27581, .29982, .32410,
-    .34863, .37338, .39836, .42358, .44894, .47443, .50000 },
-  { .00000, .04614, .07446, .10011, .12443, .14807, .17135,
-    .19441, .21735, .24027, .26323, .28629, .30944, .33274,
-    .35621, .37982, .40359, .42753, .45159, .47577, .50000 },
-  { .00000, .05237, .08217, .10857, .13336, .15727, .18069,
-    .20379, .22670, .24948, .27218, .29485, .31753, .34020,
-    .36288, .38560, .40838, .43123, .45413, .47705, .50000 },
-  { .00000, .05895, .09064, .11897, .14517, .16996, .19381,
-    .21699, .23967, .26204, .28417, .30614, .32793, .34962,
-    .37125, .39280, .41431, .43578, .45720, .47861, .50000 },
-  { .00000, .06325, .09752, .12696, .15390, .17918, .20330,
-    .22657, .24920, .27137, .29318, .31465, .33583, .35676,
-    .37751, .39813, .41864, .43907, .45943, .47973, .50000 },
-  { .00000, .06173, .09608, .12622, .15363, .17930, .20390,
-    .22764, .25049, .27275, .29454, .31587, .33692, .35772,
-    .37830, .39864, .41892, .43919, .45946, .47973, .50000 },
-  { .00000, .06496, .10020, .13011, .15717, .18221, .20625,
-    .22932, .25155, .27329, .29451, .31545, .33635, .35718,
-    .37777, .39812, .41850, .43887, .45925, .47962, .50000 },
-  { .00000, .05931, .09134, .12050, .14770, .17326, .19878,
-    .22301, .24600, .26904, .29120, .31248, .33318, .35403,
-    .37489, .39574, .41659, .43744, .45830, .47915, .50000 },
-  { .00000, .02500, .05000, .07500, .10000, .12500, .15000,
-    .17500, .20000, .22500, .25000, .27500, .30000, .32500,
-    .35000, .37500, .40000, .42500, .45000, .47500, .50000 } };
+std::unique_ptr<const Utility::FullyTabularBasicBivariateDistribution>
+PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::s_secondary_energy_distribution( PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::initializeSecondaryEnergyDistribution() );
 
 // Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
@@ -77,7 +40,8 @@ PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairPro
        const bool use_detailed_electron_emission_physics )
   : BaseType( incoming_energy_grid,
               cross_section,
-              threshold_energy_index )
+              threshold_energy_index ),
+    d_detailed_electron_emission_model( use_detailed_electron_emission_physics )
 {
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
@@ -94,7 +58,8 @@ PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairPro
   : BaseType( incoming_energy_grid,
               cross_section,
               threshold_energy_index,
-              grid_searcher )
+              grid_searcher ),
+    d_detailed_electron_emission_model( use_detailed_electron_emission_physics )
 {
   this->initializeInteractionModels( use_detailed_electron_emission_physics );
 }
@@ -104,7 +69,12 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
-    return d_interaction_model_emission();
+  {
+    if( d_detailed_electron_emission_model )
+      return 0u;
+    else
+      return 2u;
+  }
   else
     return 0u;
 }
@@ -114,7 +84,24 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
+  {
     return 1u;
+  }
+  else
+    return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  if( energy >= this->getThresholdEnergy() )
+  {
+    if( d_detailed_electron_emission_model )
+      return 1u;
+    else
+      return 0u;
+  }
   else
     return 0u;
 }
@@ -232,7 +219,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
 template<typename InterpPolicy, bool processed_cross_section>
 void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteraction(
 							   PhotonState& photon,
-							   ParticleBank& bank ) const
+							   ParticleBank& bank )
 {
   // Increment the photon collision number
   photon.incrementCollisionNumber();
@@ -249,7 +236,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::de
 
   // Max tabulated energy
   double max_tabulated_energy =
-    d_secondary_energy_distribution->getUpperBoundOfPrimaryIndepVar();
+    s_secondary_energy_distribution->getUpperBoundOfPrimaryIndepVar();
 
   // Make sure energy is within tabulated range
   if ( energy_in_mec > max_tabulated_energy )
@@ -260,7 +247,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::de
 
   // Sample the positron/electron emission energy ratio
   double energy_ratio =
-    d_secondary_energy_distribution->sampleSecondaryConditional( energy_in_mec );
+    s_secondary_energy_distribution->sampleSecondaryConditional( energy_in_mec );
 
   // Make sure the energy is valid
   testPostcondition( energy_ratio >= 0.0 );
@@ -380,20 +367,6 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::de
   bank.push( positron );
 }
 
-// The number of photons emitted from pair production using simple model
-template<typename InterpPolicy, bool processed_cross_section>
-unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::basicInteractionPhotonEmission()
-{
-  return 2u;
-}
-
-// The number of photons emitted from pair production using detailed model
-template<typename InterpPolicy, bool processed_cross_section>
-unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::detailedInteractionPhotonEmission()
-{
-  return 0u;
-}
-
 // Sample the polar angle of the emitted electron/positron
 /*! \details The sampling equation ( derived from Heitler, 1954; Motz et al.,
  *  1969 ) is given as:
@@ -443,39 +416,79 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::in
                             const bool use_detailed_electron_emission_physics )
 {
   if( use_detailed_electron_emission_physics )
-  {
-    this->initializeSecondaryEnergyDistribution();
-    d_interaction_model_emission = detailedInteractionPhotonEmission;
-    d_interaction_model = [this]( PhotonState& photon, ParticleBank& bank )
-    { return this->detailedInteraction( photon, bank ); };
-  }
+    d_interaction_model = detailedInteraction;
   else
-  {
     d_interaction_model = basicInteraction;
-    d_interaction_model_emission = basicInteractionPhotonEmission;
-  }
 }
 
-// create interaction models
+// Create the secondary energy distribution
+/*! \details The outgoing electron/positron ratio of energy to max available
+ * energy. The ratio is symmetric and thus is only given to 1/2 and is
+ * independent of electron or positron. The ratios are found using
+ * the Bethe-Heitler DCS which is fitted to be independent of the atomic
+ * number of the material.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
-void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::initializeSecondaryEnergyDistribution()
+Utility::FullyTabularBasicBivariateDistribution*
+PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::initializeSecondaryEnergyDistribution()
 {
-  // Get the function data
+  // Set the energy grid
+  std::vector<double> photon_energy_grid(
+                       { 2.0, 3.0, 4.0, 6.0, 10.0, 20.0, 40.0, 80.0, 200.0 } );
+  
+  // Set the secondary distributions
   std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
-    secondary_dists( s_photon_energy_grid.size() );
+    secondary_dists( photon_energy_grid.size() );
 
-  for( size_t n = 0; n < s_photon_energy_grid.size(); ++n )
-  {
-    // Set the secondary energy ratios at the incoming energy
-    secondary_dists[n].reset(
-      new Utility::EquiprobableBinDistribution( s_outgoing_energy_ratio[n] ) );
-  }
+  secondary_dists[0].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .04245, .06816, .09196, .11495, .13762, .16023,
+                  .18287, .20568, .22872, .25210, .27581, .29982, .32410,
+                  .34863, .37338, .39836, .42358, .44894, .47443, .50000 } ) );
 
+  secondary_dists[1].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .04614, .07446, .10011, .12443, .14807, .17135,
+                  .19441, .21735, .24027, .26323, .28629, .30944, .33274,
+                  .35621, .37982, .40359, .42753, .45159, .47577, .50000 } ) );
+
+  secondary_dists[2].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .05237, .08217, .10857, .13336, .15727, .18069,
+                  .20379, .22670, .24948, .27218, .29485, .31753, .34020,
+                  .36288, .38560, .40838, .43123, .45413, .47705, .50000 } ) );
+
+  secondary_dists[3].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .05895, .09064, .11897, .14517, .16996, .19381,
+                  .21699, .23967, .26204, .28417, .30614, .32793, .34962,
+                  .37125, .39280, .41431, .43578, .45720, .47861, .50000 } ) );
+
+  secondary_dists[4].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .06325, .09752, .12696, .15390, .17918, .20330,
+                  .22657, .24920, .27137, .29318, .31465, .33583, .35676,
+                  .37751, .39813, .41864, .43907, .45943, .47973, .50000 } ) );
+
+  secondary_dists[5].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .06173, .09608, .12622, .15363, .17930, .20390,
+                  .22764, .25049, .27275, .29454, .31587, .33692, .35772,
+                  .37830, .39864, .41892, .43919, .45946, .47973, .50000 } ) );
+
+  secondary_dists[6].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .06496, .10020, .13011, .15717, .18221, .20625,
+                  .22932, .25155, .27329, .29451, .31545, .33635, .35718,
+                  .37777, .39812, .41850, .43887, .45925, .47962, .50000 } ) );
+
+  secondary_dists[7].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .05931, .09134, .12050, .14770, .17326, .19878,
+                  .22301, .24600, .26904, .29120, .31248, .33318, .35403,
+                  .37489, .39574, .41659, .43744, .45830, .47915, .50000 } ) );
+
+  secondary_dists[8].reset( new Utility::EquiprobableBinDistribution(
+                { .00000, .02500, .05000, .07500, .10000, .12500, .15000,
+                  .17500, .20000, .22500, .25000, .27500, .30000, .32500,
+                  .35000, .37500, .40000, .42500, .45000, .47500, .50000 } ) );
+  
   // Create the distribution
-  d_secondary_energy_distribution.reset(
-   new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
-                                                          s_photon_energy_grid,
-                                                          secondary_dists ) );
+  return new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                                                          photon_energy_grid,
+                                                          secondary_dists );
 }
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( PairProductionPhotoatomicReaction<Utility::LinLin,false> );

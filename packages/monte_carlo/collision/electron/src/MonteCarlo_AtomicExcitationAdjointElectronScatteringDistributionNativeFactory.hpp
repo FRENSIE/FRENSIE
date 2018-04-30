@@ -30,7 +30,7 @@ public:
   //! Create the energy gain function
   static void createEnergyGainFunction(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    std::shared_ptr<Utility::OneDDistribution>& energy_gain_function );
+    std::shared_ptr<Utility::UnivariateDistribution>& energy_gain_function );
 };
 
 } // end MonteCarlo namespace

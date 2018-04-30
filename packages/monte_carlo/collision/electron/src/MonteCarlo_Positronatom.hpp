@@ -30,6 +30,12 @@ private:
 
 public:
 
+  //! The reaction enum type
+  typedef PositronatomicReactionType ReactionEnumType;
+
+  //! The particle state type
+  typedef PositronState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef PositronatomCore::ReactionMap ReactionMap;
 
@@ -46,11 +52,11 @@ public:
     const std::string& name,
     const unsigned atomic_number,
     const double atomic_weight,
-    const std::shared_ptr<std::vector<double> >& energy_grid,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const ReactionMap& standard_scattering_reactions,
-    const ReactionMap& standard_absorption_reactions,
-    const std::shared_ptr<AtomicRelaxationModel>& atomic_relaxation_model,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    const ConstReactionMap& standard_scattering_reactions,
+    const ConstReactionMap& standard_absorption_reactions,
+    const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
     const bool processed_cross_sections,
     const InterpPolicy policy );
 
@@ -84,9 +90,9 @@ inline void Positronatom::relaxAtom( const Data::SubshellType vacancy_shell,
                                      ParticleBank& bank ) const
 {
   // Relax the atom
-  d_core.getAtomicRelaxationModel().relaxAtom( vacancy_shell,
-                                               positron,
-                                               bank );
+  this->getCore().getAtomicRelaxationModel().relaxAtom( vacancy_shell,
+                                                        positron,
+                                                        bank );
 }
 
 } // end MonteCarlo namespace

@@ -25,10 +25,10 @@ AdjointElectroatomCore::AdjointElectroatomCore()
 
 // Constructor
 AdjointElectroatomCore::AdjointElectroatomCore(
-      const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
       const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
-      const ReactionMap& scattering_reactions,
-      const ReactionMap& absorption_reactions )
+      const ConstReactionMap& scattering_reactions,
+      const ConstReactionMap& absorption_reactions )
   : d_total_forward_reaction( total_forward_reaction ),
     d_scattering_reactions(),
     d_absorption_reactions(),
@@ -40,10 +40,10 @@ AdjointElectroatomCore::AdjointElectroatomCore(
   testPrecondition( scattering_reactions.size() +
                     absorption_reactions.size() > 0 );
   // Make sure the grid searcher is valid
-  testPrecondition( !d_grid_searcher.is_null() );
+  testPrecondition( d_grid_searcher.get() );
 
   // Assign the scattering reactions
-  ReactionMap::const_iterator reaction_it =
+  ConstReactionMap::const_iterator reaction_it =
     scattering_reactions.begin();
 
   while( reaction_it != scattering_reactions.end() )
@@ -82,7 +82,7 @@ AdjointElectroatomCore::AdjointElectroatomCore(
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 }
 
 // Assignment operator
@@ -95,7 +95,7 @@ AdjointElectroatomCore& AdjointElectroatomCore::operator=(
   testPrecondition( instance.d_scattering_reactions.size() +
                     instance.d_absorption_reactions.size() > 0 );
   // Make sure the grid searcher is valid
-  testPrecondition( !instance.d_grid_searcher.is_null() );
+  testPrecondition( instance.d_grid_searcher.get() );
 
   // Avoid self-assignment
   if( this != &instance )

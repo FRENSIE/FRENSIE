@@ -18,15 +18,15 @@
 #include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_CoupledElasticDistribution.hpp"
-#include "Utility_InterpolatedFullyTabularTwoDDistribution.hpp"
+#include "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 #include "Utility_ElasticElectronTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
 class CoupledElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
-    public PositronScatteringDistribution,
-    public AdjointElectronScatteringDistribution
+                                                     public PositronScatteringDistribution,
+                                                     public AdjointElectronScatteringDistribution
 {
 
 public:
@@ -34,19 +34,22 @@ public:
   //! Typedef for the this type
   typedef CoupledElasticElectronScatteringDistribution ThisType;
 
+  //! Typedef for the counter type
+  typedef ElectronScatteringDistribution::Counter Counter;
+
   //! Typedef for the Elastic electron traits
   typedef Utility::ElasticElectronTraits ElasticTraits;
 
   //! Typedef for the one d distributions
-  typedef Utility::OneDDistribution OneDDist;
+  typedef Utility::UnivariateDistribution UnivariateDist;
 
   //! Typedef for the two d distributions
-  typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+  typedef Utility::FullyTabularBasicBivariateDistribution BasicBivariateDist;
 
   //! Constructor
   CoupledElasticElectronScatteringDistribution(
-    const std::shared_ptr<const TwoDDist>& coupled_elastic_distribution,
-    const std::shared_ptr<const OneDDist>& cutoff_cross_section_ratios,
+    const std::shared_ptr<const BasicBivariateDist>& coupled_elastic_distribution,
+    const std::shared_ptr<const UnivariateDist>& cutoff_cross_section_ratios,
     const std::shared_ptr<const ElasticTraits>& elastic_traits,
     const MonteCarlo::CoupledElasticSamplingMethod& sampling_method );
 
@@ -59,41 +62,41 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle_cosine ) const;
+                   const double scattering_angle_cosine ) const override;
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle_cosine ) const override;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& scattering_angle_cosine ) const override;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
                               double& scattering_angle_cosine,
-                              unsigned& trials ) const;
+                              Counter& trials ) const override;
 
   //! Randomly scatter the electron
   void scatterElectron( MonteCarlo::ElectronState& electron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
   //! Randomly scatter the positron
   void scatterPositron( MonteCarlo::PositronState& positron,
                         MonteCarlo::ParticleBank& bank,
-                        Data::SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const override;
 
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( MonteCarlo::AdjointElectronState& adjoint_electron,
                                MonteCarlo::ParticleBank& bank,
-                               Data::SubshellType& shell_of_interaction ) const;
+                               Data::SubshellType& shell_of_interaction ) const override;
 
   //! Evaluate the distribution at the cutoff angle cosine
   double evaluateAtCutoff( const double incoming_energy ) const;
@@ -145,7 +148,7 @@ protected:
   //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
-                                  unsigned& trials ) const;
+                                  Counter& trials ) const;
 
   //! Evaluate the PDF
   double evaluateScreenedRutherfordPDF(
@@ -164,10 +167,10 @@ protected:
 private:
 
   // Cutoff elastic scattering distribution
-  std::shared_ptr<const TwoDDist> d_coupled_dist;
+  std::shared_ptr<const BasicBivariateDist> d_coupled_dist;
 
   // Cutoff elastic scattering distribution
-  std::shared_ptr<const OneDDist> d_cutoff_ratios;
+  std::shared_ptr<const UnivariateDist> d_cutoff_ratios;
 
   // Elastic electron traits
   std::shared_ptr<const ElasticTraits> d_elastic_traits;

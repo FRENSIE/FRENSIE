@@ -18,7 +18,7 @@
 #include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
-#include "Utility_TwoDSamplingPolicy.hpp"
+#include "Utility_TwoDGridPolicy.hpp"
 #include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
@@ -51,15 +51,15 @@ private:
 
   //! Create the elastic reaction for a electroatom core
   template <typename TwoDInterpPolicy = Utility::LogLogLog,
-            typename TwoDSamplePolicy = Utility::UnitBaseCorrelated>
+            template<typename> class TwoDGridPolicy = Utility::UnitBaseCorrelated>
   static void createElasticElectroatomCore(
         const Data::AdjointElectronPhotonRelaxationDataContainer&
             raw_adjoint_electroatom_data,
         const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+        const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
         const SimulationAdjointElectronProperties& properties,
         std::shared_ptr<const AdjointElectroatomicReaction>& elastic_reaction,
-        AdjointElectroatom::ReactionMap& scattering_reactions );
+        AdjointElectroatom::ConstReactionMap& scattering_reactions );
 };
 
 } // end MonteCarlo

@@ -27,6 +27,12 @@ class AdjointElectroatom : public Atom<AdjointElectroatomCore>
 
 public:
 
+  //! The reaction enum type
+  typedef AdjointElectroatomicReactionType ReactionEnumType;
+
+  //! The particle state type
+  typedef AdjointElectronState ParticleStateType;
+
   //! Typedef for the reaction map
   typedef AdjointElectroatomCore::ReactionMap ReactionMap;
 
@@ -38,10 +44,11 @@ public:
     const std::string& name,
     const unsigned atomic_number,
     const double atomic_weight,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const std::shared_ptr<const std::vector<double> >& energy_grid,
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
     const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
-    const ReactionMap& scattering_reactions,
-    const ReactionMap& absorption_reactions );
+    const ConstReactionMap& scattering_reactions,
+    const ConstReactionMap& absorption_reactions );
 
   //! Constructor (from a core)
   AdjointElectroatom( const std::string& name,
@@ -59,6 +66,12 @@ public:
   void relaxAtom( const Data::SubshellType vacancy_shell,
                   const AdjointElectronState& electron,
                   ParticleBank& bank ) const;
+
+  //! Check if the energy corresponds to a line energy reaction
+  bool doesEnergyHaveLineEnergyReaction( const double energy ) const;
+
+  //! Return the total cross section at the desired line energy
+  double getTotalLineEnergyCrossSection( const double energy ) const;
 
   //! Return the total forward cross section at the desired energy
   double getTotalForwardCrossSection( const double energy ) const;

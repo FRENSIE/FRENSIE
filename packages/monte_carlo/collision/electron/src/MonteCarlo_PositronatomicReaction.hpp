@@ -13,10 +13,13 @@
 #include "MonteCarlo_PositronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Data_SubshellType.hpp"
 #include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_PositronatomicReactionType.hpp"
+#include "MonteCarlo_StandardReactionBaseImpl.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_DistributionTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -25,6 +28,9 @@ class PositronatomicReaction : public AtomicReaction
 {
 
 public:
+
+  //! The trials counter type
+  typedef Utility::DistributionTraits::Counter Counter;
 
   //!Constructor
   PositronatomicReaction()
@@ -50,7 +56,7 @@ public:
   virtual void react( PositronState& positron,
                       ParticleBank& bank,
                       Data::SubshellType& shell_of_interaction,
-                      unsigned& trials ) const;
+                      Counter& trials ) const;
 
   //! Annihilate the positron
   static void producesAnnihilationPhotons( const PositronState& positron,
@@ -62,7 +68,7 @@ inline void PositronatomicReaction::react(
                 PositronState& positron,
                 ParticleBank& bank,
                 Data::SubshellType& shell_of_interaction,
-                unsigned& trials ) const
+                Counter& trials ) const
 {
   ++trials;
 
@@ -111,6 +117,18 @@ PositronatomicReaction::producesAnnihilationPhotons(
   // // Set the positron as gone
   // positron.setAsGone();
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardReactionBaseImpl<PositronatomicReaction,Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

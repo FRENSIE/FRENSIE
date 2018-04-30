@@ -24,7 +24,7 @@ class ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactor
 public:
 
   //! Create a electroionization subshell distribution
-  template <typename TwoDInterpPolicy = Utility::LogLogLog, typename TwoDSamplePolicy = Utility::UnitBase>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog, template<typename> class TwoDGridPolicy = Utility::UnitBase>
   static void createElectroionizationSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
@@ -37,12 +37,12 @@ public:
 
 
   //! Create the electroionization subshell distribution function
-  template <typename TwoDInterpPolicy = Utility::LogLogLog, typename TwoDSamplePolicy = Utility::UnitBase>
+  template <typename TwoDInterpPolicy = Utility::LogLogLog, template<typename> class TwoDGridPolicy = Utility::UnitBase>
   static void createSubshellDistribution(
     const Data::AdjointElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid,
     const unsigned subshell,
-    std::shared_ptr<Utility::FullyTabularTwoDDistribution>&
+    std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>&
       subshell_distribution,
     const double evaluation_tol );
 };

@@ -29,14 +29,21 @@ public:
   //! Constructor
   NuclearReactionBank( const std::vector<NuclearReactionType>& reactions );
 
-  //! Push a neutron to the bank
+  //! Insert a neutron into the bank after an interaction (Most Efficient/Recommended)
+  void push( std::shared_ptr<NeutronState>& neutron,
+             const NuclearReactionType reaction ) override;
+  
+  //! Insert a neutron into the bank after an interaction
   void push( const NeutronState& neutron,
-	     const NuclearReactionType reaction );
+	     const NuclearReactionType reaction ) override;
 
 private:
 
-  // The nuclear reactions of interest
-  std::unordered_map<NuclearReactionType,std::list<boost::scoped_ptr<ParticleState> >, std::hash<int> > d_nuclear_reaction_banks;
+  // The nuclear reactions type bank map
+  typedef std::map<NuclearReactionType, ParticleBank::BankContainerType>
+  NuclearReactionTypeBankMap;
+  
+  NuclearReactionTypeBankMap d_nuclear_reaction_banks;
 };
 
 } // end MonteCarlo namespace

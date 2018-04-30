@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 ScreenedRutherfordElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::ScreenedRutherfordElasticPositronatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
+       const size_t threshold_energy_index,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -37,8 +38,8 @@ template<typename InterpPolicy, bool processed_cross_section>
 ScreenedRutherfordElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::ScreenedRutherfordElasticPositronatomicReaction(
        const std::shared_ptr<const std::vector<double> >& incoming_energy_grid,
        const std::shared_ptr<const std::vector<double> >& cross_section,
-       const unsigned threshold_energy_index,
-       const std::shared_ptr<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const size_t threshold_energy_index,
+       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
        const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
   : BaseType( incoming_energy_grid,
@@ -61,10 +62,19 @@ unsigned ScreenedRutherfordElasticPositronatomicReaction<InterpPolicy,processed_
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include photons from atomic relaxation.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned ScreenedRutherfordElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
+}
+
+// Return the number of positrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned ScreenedRutherfordElasticPositronatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPositrons( const double energy ) const
+{
+  return 1u;
 }
 
 // Return the reaction type
@@ -107,6 +117,18 @@ void ScreenedRutherfordElasticPositronatomicReaction<InterpPolicy,processed_cros
   // The shell of interaction is currently ignored
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LinLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LinLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LinLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LinLog,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LogLin,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LogLin,true> );
+
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LogLog,false> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ScreenedRutherfordElasticPositronatomicReaction<Utility::LogLog,true> );
 
 } // end MonteCarlo namespace
 

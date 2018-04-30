@@ -55,6 +55,35 @@ FRENSIE_UNIT_TEST( AbsorptionPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of electrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( AbsorptionPhotoatomicReaction,
+		   getNumberOfEmittedElectrons_ace )
+{
+  FRENSIE_CHECK_EQUAL(
+		  ace_absorption_reaction->getNumberOfEmittedElectrons( 1e-3 ),
+                  0u );
+
+  FRENSIE_CHECK_EQUAL(
+		  ace_absorption_reaction->getNumberOfEmittedElectrons( 20.0 ),
+                  0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( AbsorptionPhotoatomicReaction,
+		   getNumberOfEmittedPositrons_ace )
+{
+  FRENSIE_CHECK_EQUAL(
+		  ace_absorption_reaction->getNumberOfEmittedPositrons( 1e-3 ),
+                  0u );
+
+  FRENSIE_CHECK_EQUAL(
+		  ace_absorption_reaction->getNumberOfEmittedPositrons( 20.0 ),
+                  0u );
+}
+
+
+//---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 FRENSIE_UNIT_TEST( AbsorptionPhotoatomicReaction, getCrossSection_ace )
 {

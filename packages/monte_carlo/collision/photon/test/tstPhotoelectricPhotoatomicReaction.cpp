@@ -69,6 +69,20 @@ FRENSIE_UNIT_TEST( PhotoelectricPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( PhotoelectricPhotoatomicReaction,
+		   getNumberOfEmittedPositrons_ace )
+{
+  FRENSIE_CHECK_EQUAL(
+	       ace_photoelectric_reaction->getNumberOfEmittedPositrons( 1e-3 ),
+               0u );
+
+  FRENSIE_CHECK_EQUAL(
+	       ace_photoelectric_reaction->getNumberOfEmittedPositrons( 20.0 ),
+               0u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 FRENSIE_UNIT_TEST( PhotoelectricPhotoatomicReaction, getCrossSection_ace )
 {
