@@ -9,18 +9,13 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -33,145 +28,145 @@ std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDis
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    getBindingEnergy )
 {
   // Get binding energy
   double binding_energy = ace_electroionization_distribution->getBindingEnergy();
-  TEST_EQUALITY_CONST( binding_energy, 8.829E-02 );
+  FRENSIE_CHECK_EQUAL( binding_energy, 8.829E-02 );
 
   // Get binding energy
   binding_energy = epr14_electroionization_distribution->getBindingEnergy();
-  TEST_EQUALITY_CONST( binding_energy, 8.829E-02 );
+  FRENSIE_CHECK_EQUAL( binding_energy, 8.829E-02 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the min secondary (knock-on) electron energy can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    getMinSecondaryEnergyAtIncomingEnergy )
 {
   // Get min energy
   double min_energy =
     ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  TEST_EQUALITY_CONST( min_energy, 0.0 );
+  FRENSIE_CHECK_EQUAL( min_energy, 0.0 );
 
   // Get min energy
   min_energy =
     ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
-  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 
   // Get min energy
   min_energy =
     ace_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 
 
   // Use eprdata14 file
   min_energy =
     epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  TEST_EQUALITY_CONST( min_energy, 0.0 );
+  FRENSIE_CHECK_EQUAL( min_energy, 0.0 );
 
   // Get min energy
   min_energy =
     epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 1e5 );
-  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 
   // Get min energy
   min_energy =
     epr14_electroionization_distribution->getMinSecondaryEnergyAtIncomingEnergy( 2.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( min_energy, 1e-7, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the max secondary (knock-on) electron energy can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    getMaxSecondaryEnergyAtIncomingEnergy )
 {
   // Get max energy
   double max_energy =
     ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  TEST_EQUALITY_CONST( max_energy, 0.0 );
+  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
 
   // Get max energy
   max_energy =
     ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
 
   // Get max energy
   max_energy =
     ace_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
 
   // Use eprdata14 file
   max_energy =
     epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 8.829E-02 );
-  TEST_EQUALITY_CONST( max_energy, 0.0 );
+  FRENSIE_CHECK_EQUAL( max_energy, 0.0 );
 
   // Get max energy
   max_energy =
     epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 1e5 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 4.9999955855E+04, 1e-12 );
 
   // Get max energy
   max_energy =
     epr14_electroionization_distribution->getMaxSecondaryEnergyAtIncomingEnergy( 2.0 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( max_energy, 9.55855E-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated for a given incoming and knock-on energy
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    evaluateCDF )
 {
   double cdf;
   cdf = ace_electroionization_distribution->evaluateCDF( 8.829e-2 + 1e-8, 1e-8 );
-  TEST_EQUALITY_CONST( cdf, 0.0 );
+  FRENSIE_CHECK_EQUAL( cdf, 0.0 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 8.829e-2 + 3e-8, 1.0001e-8 );
-  TEST_FLOATING_EQUALITY( cdf, 6.9444444444408311e-07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 6.9444444444408311e-07, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 9.12175e-2, 4.275e-4 );
-  TEST_FLOATING_EQUALITY( cdf, 2.9200970177296481e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 2.9200970177296481e-01, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 1e-1, 1e-2 );
-  TEST_FLOATING_EQUALITY( cdf, 6.7056932843167538e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 6.7056932843167538e-01, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 1.0, 1.33136131511529e-1 );
-  TEST_FLOATING_EQUALITY( cdf, 7.9924064234926140e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.9924064234926140e-01, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 1.0, 9.7163E-02 );
-  TEST_FLOATING_EQUALITY( cdf, 7.2991814550720002e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.2991814550720002e-01, 1e-12 );
 
   cdf = ace_electroionization_distribution->evaluateCDF( 1e5, 1.752970e2 );
-  TEST_FLOATING_EQUALITY( cdf, 9.9991238642799996e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9991238642799996e-01, 1e-12 );
 
   // Use eprdata14 file
   cdf = epr14_electroionization_distribution->evaluateCDF( 8.829e-2 + 1e-8, 1e-8 );
-  TEST_EQUALITY_CONST( cdf, 0.0 );
+  FRENSIE_CHECK_EQUAL( cdf, 0.0 );
 
   cdf = epr14_electroionization_distribution->evaluateCDF( 8.829e-2 + 3e-8, 1.0001e-8 );
-  TEST_FLOATING_EQUALITY( cdf, 8.3333333333244009e-06, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 8.3333333333244009e-06, 1e-12 );
 
   cdf = epr14_electroionization_distribution->evaluateCDF( 9.12175e-2, 4.275e-4 );
-  TEST_FLOATING_EQUALITY( cdf, 2.9200970177296481e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 2.9200970177296481e-01, 1e-12 );
 
   //! \todo Figure out why this test cannot be evaluated to the tolerance (1e-6)
   // cdf = epr14_electroionization_distribution->evaluateCDF( 1e-1, 1e-2 );
-  // TEST_FLOATING_EQUALITY( cdf, 6.7056932843167538e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 6.7056932843167538e-01, 1e-12 );
 
   cdf = epr14_electroionization_distribution->evaluateCDF( 1.0, 1.33136131511529e-1 );
-  TEST_FLOATING_EQUALITY( cdf, 7.9997181385885974e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.9997181385885974e-01, 1e-12 );
 
   cdf = epr14_electroionization_distribution->evaluateCDF( 1.0, 9.7163E-02 );
-  TEST_FLOATING_EQUALITY( cdf, 7.2991814550720002e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 7.2991814550720002e-01, 1e-12 );
 
   cdf = epr14_electroionization_distribution->evaluateCDF( 1e5, 1.752970e2 );
-  TEST_FLOATING_EQUALITY( cdf, 9.9991238642799996e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cdf, 9.9991238642799996e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    sample_knock_on )
 {
   // Set fake random number stream
@@ -190,8 +185,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                               knock_on_angle_cosine );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
 
 
   // sample the electron using eprdata14 file
@@ -202,14 +197,14 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                 knock_on_angle_cosine );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    samplePrimaryAndSecondary )
 {
   // Set fake random number stream
@@ -233,12 +228,12 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
         knock_on_angle_cosine );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.964446703542646, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 8.706573789423E-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 0.964446703542646, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 8.706573789423E-01, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
 
 
   // sample the electron using the eprdata14 file
@@ -252,18 +247,18 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
         knock_on_angle_cosine );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.6452810069913897e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 8.7092959303108897e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.6452810069913897e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 8.7092959303108897e-01, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials )
 {
   // Set fake random number stream
@@ -273,7 +268,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0.0;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 0;
   double incoming_energy = 1.0;
   double knock_on_energy, scattering_angle_cosine, knock_on_angle_cosine;
 
@@ -285,11 +280,11 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                         trials );
 
   // Test trials
-  TEST_EQUALITY_CONST( trials, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1.0 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.105262105768E-02, 1e-12 );
 
 
   // sample the electron using the eprdata14 file
@@ -300,17 +295,17 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                         trials );
 
   // Test trials
-  TEST_EQUALITY_CONST( trials, 2.0 );
+  FRENSIE_CHECK_EQUAL( trials, 2.0 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 2.7854463307465377e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 4.0780406968911040e-02, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    scatterElectron )
 {
   // Set fake random number stream
@@ -333,12 +328,12 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                        shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.3707352378289799, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.3707352378289799, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5457978376168189e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0974762171020106e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5457978376168189e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0974762171020106e-02, 1e-12 );
 
   bank.pop();
 
@@ -353,18 +348,18 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                          shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.3715157338528261, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.3715157338528261, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130300528e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147173835e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130300528e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147173835e-02, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFactory,
                    scatterPositron )
 {
   // Set fake random number stream
@@ -387,12 +382,12 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                        shell_of_interaction );
 
   // Test original positron
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.3707352378289799, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.8142335272952452e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.3707352378289799, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5457978376122531e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0974762170867221e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5457978376122531e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0974762170867221e-02, 1e-12 );
 
   bank.pop();
 
@@ -407,68 +402,67 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistributionACEFac
                                                          shell_of_interaction );
 
   // Test original positron
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.3715157338528261, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.8154265018847409e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.3715157338528261, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130255830e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147025766e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getZDirection(), 2.5223610130255830e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 4.0194266147025766e-02, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_ace12_file_name, test_ace12_table_name,
             test_ace14_file_name, test_ace14_table_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_ace12_file",
-                   &test_ace12_file_name,
-                   "Test ACE file name" );
-  clp().setOption( "test_ace12_table",
-                   &test_ace12_table_name,
-                   "Test ACE12 table name" );
-
-  clp().setOption( "test_ace14_file",
-                   &test_ace14_file_name,
-                   "Test ACE14 file name" );
-  clp().setOption( "test_ace14_table",
-                   &test_ace14_table_name,
-                   "Test ACE14 table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_file",
+                                        test_ace12_file_name, "",
+                                        "Test ACE12 file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_table",
+                                        test_ace12_table_name, "",
+                                        "Test ACE12 table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_file",
+                                        test_ace14_file_name, "",
+                                        "Test ACE14 file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_table",
+                                        test_ace14_table_name, "",
+                                        "Test ACE14 table name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create eprdata12 distribution
   {
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace12_file_name,
                                   test_ace12_table_name,
                                   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
 
   // Extract the cross sections energy grid
-  Teuchos::ArrayView<const double> energy_grid =
+  Utility::ArrayView<const double> energy_grid =
     xss_data_extractor->extractElectronEnergyGrid() ;
 
   // Extract the subshell information
-  Teuchos::ArrayView<const double> subshell_endf_designators =
+  Utility::ArrayView<const double> subshell_endf_designators =
     xss_data_extractor->extractSubshellENDFDesignators();
 
   // Extract the subshell binding energies
-  Teuchos::ArrayView<const double> binding_energies =
+  Utility::ArrayView<const double> binding_energies =
     xss_data_extractor->extractSubshellBindingEnergies();
 
   // Extract the electroionization data block (EION)
-  Teuchos::ArrayView<const double> eion_block(
+  Utility::ArrayView<const double> eion_block(
     xss_data_extractor->extractEIONBlock() );
 
   // Extract the location of info about first knock-on table relative to the EION block
@@ -478,13 +472,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   int num_shells = subshell_endf_designators.size();
 
   // Extract the number of knock-on tables by subshell (N_i)
-  Teuchos::Array<double> num_tables(eion_block(0,num_shells));
+  std::vector<double> num_tables(eion_block(0,num_shells));
 
   // Extract the location of info about knock-on tables by subshell
-  Teuchos::Array<double> table_info(eion_block(num_shells,num_shells));
+  std::vector<double> table_info(eion_block(num_shells,num_shells));
 
   // Extract the location of knock-on tables by subshell
-  Teuchos::Array<double> table_loc(eion_block(2*num_shells,num_shells));
+  std::vector<double> table_loc(eion_block(2*num_shells,num_shells));
 
   // Subshell index
   unsigned shell_index = 0;
@@ -496,16 +490,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   unsigned subshell_loc = table_loc[shell_index]- eion_loc - 1;
 
   // Extract the energies for which knock-on sampling tables are given
-  Teuchos::Array<double> table_energy_grid(eion_block( subshell_info,
+  std::vector<double> table_energy_grid(eion_block( subshell_info,
                                                        num_tables[shell_index] ) );
 
   // Extract the length of the knock-on sampling tables
-  Teuchos::Array<double> table_length(eion_block(
+  std::vector<double> table_length(eion_block(
                                subshell_info + num_tables[shell_index],
                                num_tables[shell_index] ) );
 
   // Extract the offset of the knock-on sampling tables
-  Teuchos::Array<double> table_offset(eion_block(
+  std::vector<double> table_offset(eion_block(
                              subshell_info + 2*num_tables[shell_index],
                              num_tables[shell_index] ) );
 
@@ -529,29 +523,29 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create eprdata14 distribution
   {
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace14_file_name,
                                   test_ace14_table_name,
                                   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
 
   // Extract the cross sections energy grid
-  Teuchos::ArrayView<const double> energy_grid =
+  Utility::ArrayView<const double> energy_grid =
     xss_data_extractor->extractElectronEnergyGrid() ;
 
   // Extract the subshell information
-  Teuchos::ArrayView<const double> subshell_endf_designators =
+  Utility::ArrayView<const double> subshell_endf_designators =
     xss_data_extractor->extractSubshellENDFDesignators();
 
   // Extract the subshell binding energies
-  Teuchos::ArrayView<const double> binding_energies =
+  Utility::ArrayView<const double> binding_energies =
     xss_data_extractor->extractSubshellBindingEnergies();
 
   // Extract the electroionization data block (EION)
-  Teuchos::ArrayView<const double> eion_block(
+  Utility::ArrayView<const double> eion_block(
     xss_data_extractor->extractEIONBlock() );
 
   // Extract the location of info about first knock-on table relative to the EION block
@@ -561,13 +555,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   int num_shells = subshell_endf_designators.size();
 
   // Extract the number of knock-on tables by subshell (N_i)
-  Teuchos::Array<double> num_tables(eion_block(0,num_shells));
+  std::vector<double> num_tables(eion_block(0,num_shells));
 
   // Extract the location of info about knock-on tables by subshell
-  Teuchos::Array<double> table_info(eion_block(num_shells,num_shells));
+  std::vector<double> table_info(eion_block(num_shells,num_shells));
 
   // Extract the location of knock-on tables by subshell
-  Teuchos::Array<double> table_loc(eion_block(2*num_shells,num_shells));
+  std::vector<double> table_loc(eion_block(2*num_shells,num_shells));
 
   // Subshell index
   unsigned shell_index = 0;
@@ -579,16 +573,16 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   unsigned subshell_loc = table_loc[shell_index]- eion_loc - 1;
 
   // Extract the energies for which knock-on sampling tables are given
-  Teuchos::Array<double> table_energy_grid(eion_block( subshell_info,
+  std::vector<double> table_energy_grid(eion_block( subshell_info,
                                                        num_tables[shell_index] ) );
 
   // Extract the length of the knock-on sampling tables
-  Teuchos::Array<double> table_length(eion_block(
+  std::vector<double> table_length(eion_block(
                                subshell_info + num_tables[shell_index],
                                num_tables[shell_index] ) );
 
   // Extract the offset of the knock-on sampling tables
-  Teuchos::Array<double> table_offset(eion_block(
+  std::vector<double> table_offset(eion_block(
                              subshell_info + 2*num_tables[shell_index],
                              num_tables[shell_index] ) );
 
@@ -612,7 +606,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstElectroionizationSubshellElectronScatteringDistributionACEFactory.cpp

@@ -9,17 +9,13 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -32,7 +28,7 @@ std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
                    sample )
 {
   double incoming_energy = 1e-3;
@@ -43,16 +39,16 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
                               outgoing_energy,
                               scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 
   incoming_energy = 1.05;
   epr12_distribution->sample( incoming_energy,
                               outgoing_energy,
                               scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.04998928662, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.04998928662, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" << outgoing_energy << std::endl;
 
   // sample epr14_distribution
@@ -61,25 +57,25 @@ std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" 
                               outgoing_energy,
                               scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 
   incoming_energy = 1.05;
   epr14_distribution->sample( incoming_energy,
                               outgoing_energy,
                               scattering_angle_cosine );
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0499892862612037, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.0499892862612037, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 std::cout << std::setprecision(16) << std::scientific << "outgoing_energy = \t" << outgoing_energy << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function
-TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials )
 {
-  unsigned trials = 10;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 10;
   double incoming_energy = 1e-3;
   double outgoing_energy,scattering_angle_cosine;
 
@@ -88,18 +84,18 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
                                              outgoing_energy,
                                              scattering_angle_cosine,
                                              trials );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 
   incoming_energy = 1.05;
   epr12_distribution->sampleAndRecordTrials( incoming_energy,
                                              outgoing_energy,
                                              scattering_angle_cosine,
                                              trials );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.04998928662, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.04998928662, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 12 );
 
   // sample epr14_distribution
   incoming_energy = 1e-3;
@@ -107,55 +103,55 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionACEFactory,
                                              outgoing_energy,
                                              scattering_angle_cosine,
                                              trials );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 13 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1e-3 - 9.32298E-06, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 13 );
 
   incoming_energy = 1.05;
   epr14_distribution->sampleAndRecordTrials( incoming_energy,
                                              outgoing_energy,
                                              scattering_angle_cosine,
                                              trials );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0499892862612037, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 14 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.0499892862612037, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 14 );
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_ace12_file_name, test_ace12_table_name,
             test_ace14_file_name, test_ace14_table_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_ace12_file",
-                   &test_ace12_file_name,
-                   "Test ACE12 file name" );
-  clp().setOption( "test_ace12_table",
-                   &test_ace12_table_name,
-                   "Test ACE12 table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_file",
+                                        test_ace12_file_name, "",
+                                        "Test ACE12 file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_table",
+                                        test_ace12_table_name, "",
+                                        "Test ACE12 table name" );
 
-  clp().setOption( "test_ace14_file",
-                   &test_ace14_file_name,
-                   "Test ACE14 file name" );
-  clp().setOption( "test_ace14_table",
-                   &test_ace14_table_name,
-                   "Test ACE14 table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_file",
+                                        test_ace14_file_name, "",
+                                        "Test ACE14 file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_table",
+                                        test_ace14_table_name, "",
+                                        "Test ACE14 table name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the distribution using the eprdata12 file
   {
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace12_file_name,
                                   test_ace12_table_name,
                                   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
@@ -168,11 +164,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the distribution using the eprdata14 file
   {
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace14_file_name,
                                   test_ace14_table_name,
                                   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
@@ -181,9 +177,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
                                                  *xss_data_extractor,
                                                  epr14_distribution );
   }
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicExcitationElectronScatteringDistributionACEFactory.cpp

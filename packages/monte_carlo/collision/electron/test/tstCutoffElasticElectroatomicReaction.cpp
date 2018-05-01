@@ -9,18 +9,13 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -30,11 +25,12 @@ std::shared_ptr<MonteCarlo::ElectroatomicReaction>
     ace_elastic_reaction, test_elastic_reaction;
 std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
-std::shared_ptr<Utility::FullyTabularTwoDDistribution>
+std::shared_ptr<Utility::FullyTabularBasicBivariateDistribution>
     full_elastic_scattering_function, partial_elastic_scattering_function;
-Teuchos::ArrayRCP<double> energy_grid;
-Teuchos::ArrayRCP<double> elastic_cross_section;
-unsigned elastic_threshold_index;
+
+std::shared_ptr<std::vector<double> > energy_grid( new std::vector<double>  );
+std::shared_ptr<std::vector<double> > elastic_cross_section( new std::vector<double> );
+size_t elastic_threshold_index;
 double upper_cutoff_angle_cosine;
 
 //---------------------------------------------------------------------------//
@@ -49,59 +45,70 @@ bool notEqualZero( double value )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getReactionType_ace )
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction, getReactionType_ace )
 {
-  TEST_EQUALITY_CONST( ace_elastic_reaction->getReactionType(),
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getReactionType(),
                        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getThresholdEnergy_ace )
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction, getThresholdEnergy_ace )
 {
-  TEST_EQUALITY_CONST( ace_elastic_reaction->getThresholdEnergy(),
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getThresholdEnergy(),
                        1e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedElectrons_ace )
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedElectrons_ace )
 {
-  TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
-                       0u );
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
+                       1u );
 
-  TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-                       0u );
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getNumberOfEmittedElectrons(20.0),
+                       1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedPhotons_ace )
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedPhotons_ace )
 {
-  TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedPhotons(20.0),
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getNumberOfEmittedPhotons(20.0),
+                       0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedPositrons_ace )
+{
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getNumberOfEmittedPositrons(1e-3),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( ace_elastic_reaction->getNumberOfEmittedPositrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getCrossSection_ace )
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction, getCrossSection_ace )
 {
   double cross_section = ace_elastic_reaction->getCrossSection( 1.0E-05 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.48924E+09, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.48924E+09, 1e-12 );
 
   cross_section = ace_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.90281E+08, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.90281E+08, 1e-12 );
 
   cross_section = ace_elastic_reaction->getCrossSection( 1.0E+05 );
-  TEST_FLOATING_EQUALITY( cross_section, 8.83051E-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.83051E-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cutoff cross section can be returned
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction,
                    getCrossSection_cutoff_ace )
 {
   double cutoff_angle_cosine = 0.9;
@@ -125,25 +132,25 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
   double cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.48924E+09*ratio, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.48924E+09*ratio, 1e-12 );
 
   ratio = 2.439675590438E-01;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-03 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.90281E+08*ratio, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.90281E+08*ratio, 1e-12 );
 
   ratio = 7.776633431294E-06;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E+05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.83051E-02*ratio, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.83051E-02*ratio, 1e-12 );
 }
 
 
 //---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
-TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, react_ace )
+FRENSIE_UNIT_TEST( CutoffElasticElectroatomicReaction, react_ace )
 {
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 20.0 );
@@ -155,92 +162,94 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, react_ace )
 
   ace_elastic_reaction->react( electron, bank, shell_of_interaction );
 
-  TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
-  TEST_ASSERT( electron.getZDirection() < 2.0 );
-  TEST_ASSERT( electron.getZDirection() > 0.0 );
-  TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  FRENSIE_CHECK_EQUAL( electron.getEnergy(), 20.0 );
+  FRENSIE_CHECK( electron.getZDirection() < 2.0 );
+  FRENSIE_CHECK( electron.getZDirection() > 0.0 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_ace_file_name, test_ace_table_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_ace_file",
-                   &test_ace_file_name,
-                   "Test ACE file name" );
-  clp().setOption( "test_ace_table",
-                   &test_ace_table_name,
-                   "Test ACE table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_file",
+                                        test_ace_file_name, "",
+                                        "Test ACE file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace_table",
+                                        test_ace_table_name, "",
+                                        "Test ACE table name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace_file_name,
                                   test_ace_table_name,
                                   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
 
   // Extract the energy grid and cross section
-  energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
+  energy_grid->assign( xss_data_extractor->extractElectronEnergyGrid().begin(),
+                       xss_data_extractor->extractElectronEnergyGrid().end() );
 
-  Teuchos::ArrayView<const double> raw_elastic_cross_section =
+  Utility::ArrayView<const double> raw_elastic_cross_section =
     xss_data_extractor->extractElasticCutoffCrossSection();
 
-  Teuchos::ArrayView<const double>::iterator start =
+  Utility::ArrayView<const double>::iterator start =
     std::find_if( raw_elastic_cross_section.begin(),
                   raw_elastic_cross_section.end(),
                   notEqualZero );
 
-  elastic_cross_section.assign( start, raw_elastic_cross_section.end() );
+  elastic_cross_section->assign( start, raw_elastic_cross_section.end() );
 
   elastic_threshold_index =
-    energy_grid.size() - elastic_cross_section.size();
+    energy_grid->size() - elastic_cross_section->size();
 
   // Extract the elastic scattering information data block (ELASI)
-  Teuchos::ArrayView<const double> elasi_block(
+  Utility::ArrayView<const double> elasi_block(
               xss_data_extractor->extractELASIBlock() );
 
   // Extract the number of tabulated distributions
   int size = elasi_block.size()/3;
 
   // Extract the energy grid for elastic scattering angular distributions
-  Teuchos::Array<double> elastic_energy_grid(elasi_block(0,size));
+  std::vector<double> elastic_energy_grid(elasi_block(0,size));
 
   // Extract the table lengths for elastic scattering angular distributions
-  Teuchos::Array<double> table_length(elasi_block(size,size));
+  std::vector<double> table_length(elasi_block(size,size));
 
   // Extract the offsets for elastic scattering angular distributions
-  Teuchos::Array<double> offset(elasi_block(2*size,size));
+  std::vector<double> offset(elasi_block(2*size,size));
 
   // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block =
+  Utility::ArrayView<const double> elas_block =
     xss_data_extractor->extractELASBlock();
 
   // Create the scattering function
-  Utility::FullyTabularTwoDDistribution::DistributionType function_data( size );
-  Utility::FullyTabularTwoDDistribution::DistributionType partial_function_data( size );
+  std::vector<double> primary_grid( size ), partial_primary_grid( size );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( size ), partial_secondary_dists( size );
 
   for( unsigned n = 0; n < size; ++n )
   {
-    function_data[n].first = elastic_energy_grid[n];
-    partial_function_data[n].first = elastic_energy_grid[n];
+    primary_grid[n] = elastic_energy_grid[n];
+    partial_primary_grid[n] = elastic_energy_grid[n];
 
-    Teuchos::Array<double> angles = elas_block( offset[n], table_length[n] );
-    Teuchos::Array<double> pdfs =
+    std::vector<double> angles = elas_block( offset[n], table_length[n] );
+    std::vector<double> pdfs =
             elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 );
 
-    function_data[n].second.reset(
+    secondary_dists[n].reset(
       new Utility::HistogramDistribution( angles, pdfs, true ) );
 
     unsigned index = 0;
@@ -252,7 +261,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
       }
     }
 
-    Teuchos::Array<double> partial_angles(index+1), partial_pdfs(index);
+    std::vector<double> partial_angles(index+1), partial_pdfs(index);
     partial_angles[0] = angles[0];
     for( unsigned i = 1; i <= index; ++i )
     {
@@ -263,11 +272,11 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
     if( angles[index] != 0.9 )
     {
       partial_angles.push_back(0.9);
-      partial_pdfs.push_back(function_data[n].second->evaluate( 0.9 ) );
+      partial_pdfs.push_back(secondary_dists[n]->evaluate( 0.9 ) );
 
     }
 
-    partial_function_data[n].second.reset(
+    partial_secondary_dists[n].reset(
       new Utility::HistogramDistribution( partial_angles, partial_pdfs, true ) );
   }
 
@@ -276,12 +285,14 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
   // Create the scattering function
   full_elastic_scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
-            function_data ) );
+     new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                                                           primary_grid,
+                                                           secondary_dists ) );
 
   partial_elastic_scattering_function.reset(
-    new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLin,Utility::Correlated>(
-            partial_function_data ) );
+     new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLin> >(
+                                                   partial_primary_grid,
+                                                   partial_secondary_dists ) );
 
   elastic_scattering_distribution.reset(
           new MonteCarlo::CutoffElasticElectronScatteringDistribution(
@@ -303,7 +314,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCutoffElasticElectroatomicReaction.cpp

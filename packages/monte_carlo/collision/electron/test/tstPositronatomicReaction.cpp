@@ -9,20 +9,15 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReaction.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that positrons can be annihilated
-TEUCHOS_UNIT_TEST( PositronatomicReaction, producesAnnihilationPhotons )
+FRENSIE_UNIT_TEST( PositronatomicReaction, producesAnnihilationPhotons )
 {
   MonteCarlo::PositronState positron( 0 );
   positron.setEnergy(20.0);
@@ -33,50 +28,50 @@ TEUCHOS_UNIT_TEST( PositronatomicReaction, producesAnnihilationPhotons )
   MonteCarlo::PositronatomicReaction::producesAnnihilationPhotons( positron, bank );
 
   // Test the positron
-  TEST_ASSERT( !positron.isGone() );
-  TEST_FLOATING_EQUALITY( positron.getEnergy(), 20.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getXDirection(), 0.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getYDirection(), 0.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
-  TEST_ASSERT( !bank.isEmpty() );
+  FRENSIE_CHECK( !positron.isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 20.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getXDirection(), 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getYDirection(), 0.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 1.0, 1e-12 );
+  FRENSIE_CHECK( !bank.isEmpty() );
 
   // Test the first photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
                           positron.getRestMassEnergy(), 1e-12 );
-  TEST_EQUALITY_CONST( bank.top().getZDirection(), 0.0 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZDirection(), 0.0 );
   double x_direction = bank.top().getXDirection();
   double y_direction = bank.top().getYDirection();
 
   // Remove the first photon
   bank.pop();
-  TEST_ASSERT( !bank.isEmpty() );
+  FRENSIE_CHECK( !bank.isEmpty() );
 
   // Test the second photon
-  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
+  FRENSIE_CHECK_EQUAL( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(),
                           positron.getRestMassEnergy(), 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), -x_direction, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -y_direction, 1e-12 );
-  TEST_EQUALITY_CONST( bank.top().getZDirection(), 0.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getXDirection(), -x_direction, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getYDirection(), -y_direction, 1e-12 );
+  FRENSIE_CHECK_EQUAL( bank.top().getZDirection(), 0.0 );
 
   // Remove the second photon
   bank.pop();
-  TEST_ASSERT( bank.isEmpty() );
+  FRENSIE_CHECK( bank.isEmpty() );
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstPositronatomicReaction.cpp

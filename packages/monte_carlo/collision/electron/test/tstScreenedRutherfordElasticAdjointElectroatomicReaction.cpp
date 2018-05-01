@@ -9,20 +9,14 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 typedef MonteCarlo::ElasticElectronScatteringDistributionNativeFactory 
     NativeFactory;
@@ -38,66 +32,77 @@ std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getReactionType )
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST(
+  FRENSIE_CHECK_EQUAL(
     rutherford_elastic_reaction->getReactionType(),
     MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getThresholdEnergy )
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( rutherford_elastic_reaction->getThresholdEnergy(),
+  FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getThresholdEnergy(),
                        3.12509629531249944e-01 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getNumberOfEmittedElectrons )
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getNumberOfEmittedAdjointElectrons )
 {
-  TEST_EQUALITY_CONST( rutherford_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
-                       0u );
+  FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getNumberOfEmittedAdjointElectrons(1e-3),
+                       1u );
 
-  TEST_EQUALITY_CONST( rutherford_elastic_reaction->getNumberOfEmittedElectrons(20.0),
-                       0u );
+  FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getNumberOfEmittedAdjointElectrons(20.0),
+                       1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getNumberOfEmittedPhotons )
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getNumberOfEmittedAdjointPhotons )
 {
-  TEST_EQUALITY_CONST( rutherford_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
+  FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getNumberOfEmittedAdjointPhotons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( rutherford_elastic_reaction->getNumberOfEmittedPhotons(20.0),
+  FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getNumberOfEmittedAdjointPhotons(20.0),
+                       0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, getNumberOfEmittedAdjointPositrons )
+{
+  FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getNumberOfEmittedAdjointPositrons(1e-3),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( rutherford_elastic_reaction->getNumberOfEmittedAdjointPositrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving cross section can be returned
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction,
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction,
                    getCrossSection )
 {
 
   double cross_section = rutherford_elastic_reaction->getCrossSection( 1.0E-05 );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 
   cross_section = rutherford_elastic_reaction->getCrossSection( 1.0E-03 );
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  FRENSIE_CHECK_SMALL( cross_section, 1e-12 );
 
   cross_section = rutherford_elastic_reaction->getCrossSection( 0.312509629531249944 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.6966818153468921e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6966818153468921e+01, 1e-12 );
 
   cross_section = rutherford_elastic_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.2717394891258004e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.2717394891258004e+04, 1e-12 );
 }
 
 
 //---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
-TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, react )
+FRENSIE_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, react )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
   electron.setEnergy( 20.0 );
@@ -109,28 +114,28 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticAdjointElectroatomicReaction, react 
 
   rutherford_elastic_reaction->react( electron, bank, shell_of_interaction );
 
-  TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
-  TEST_ASSERT( electron.getZDirection() < 1.0 );
-  TEST_ASSERT( electron.getZDirection() > 0.0 );
-  TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  FRENSIE_CHECK_EQUAL( electron.getEnergy(), 20.0 );
+  FRENSIE_CHECK( electron.getZDirection() < 1.0 );
+  FRENSIE_CHECK( electron.getZDirection() > 0.0 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create reaction
   {
@@ -139,17 +144,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         Data::AdjointElectronPhotonRelaxationDataContainer( test_native_file_name );
 
     // Extract the energy grid and cross section
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.assign(
-        data_container.getAdjointElectronEnergyGrid().begin(),
-        data_container.getAdjointElectronEnergyGrid().end() );
+    std::shared_ptr<const std::vector<double> > energy_grid(
+       new std::vector<double>( data_container.getAdjointElectronEnergyGrid() ) );
 
-    Teuchos::ArrayRCP<double> cross_section;
-    cross_section.assign(
-        data_container.getAdjointScreenedRutherfordElasticCrossSection().begin(),
-        data_container.getAdjointScreenedRutherfordElasticCrossSection().end() );
+    std::shared_ptr<const std::vector<double> > cross_section(
+       new std::vector<double>( data_container.getAdjointScreenedRutherfordElasticCrossSection() ) );
 
-    unsigned threshold_index(
+    size_t threshold_index(
         data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex() );
 
     // Create the screened rutherford distribution
@@ -173,7 +174,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstCutoffElasticAdjointElectroatomicReaction.cpp

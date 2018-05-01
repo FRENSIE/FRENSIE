@@ -9,22 +9,17 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
+std::unique_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
 
 std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   dipole_distribution;
@@ -36,7 +31,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_DipoleBremsstrahlung_LinLinLog )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
@@ -61,13 +56,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.62240683985362E-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.62240683985362E-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_LinLinLin )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::UnitBaseCorrelated>(
@@ -92,13 +87,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.67197635933458E-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.67197635933458E-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_LogLogLog_direct )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LogLogLog,Utility::Correlated>(
@@ -123,13 +118,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.561053962145298170e-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.561053962145298170e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_LinLinLin_direct )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLin,Utility::Correlated>(
@@ -152,15 +147,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                                photon_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.51455974406695E-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.51455974406695E-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_DipoleBremsstrahlung_LinLinLog )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
@@ -174,7 +169,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 10;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 10;
   double incoming_energy = 0.0009;
   double photon_energy, photon_angle_cosine;
 
@@ -183,16 +178,16 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                                               photon_angle_cosine,
                                               trials );
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.62240683985362E-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.62240683985362E-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_TwoBSBremsstrahlung_LinLinLog )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
@@ -220,13 +215,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 2.07132641637312E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 2.07132641637312E-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_TwoBSBremsstrahlung_LinLinLog )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution<Utility::LinLinLog,Utility::UnitBaseCorrelated>(
@@ -245,7 +240,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0.0;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 0.0;
   double incoming_energy = 1.0;
   double photon_energy, photon_angle_cosine;
 
@@ -256,27 +251,27 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 2.07132641637312E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 2.07132641637312E-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 1.0 );
 }
 
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the native data file container
   data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
@@ -286,7 +281,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstBremsstrahlungElectronScatteringDistributionNativeFactory.cpp

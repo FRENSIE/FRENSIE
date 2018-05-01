@@ -9,16 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -31,58 +26,69 @@ std::shared_ptr<MonteCarlo::AdjointElectroatomicReaction>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getReactionType )
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST( bremsstrahlung_reaction->getReactionType(),
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getReactionType(),
                  MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getThresholdEnergy )
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( bremsstrahlung_reaction->getThresholdEnergy(), 1e-05 );
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getThresholdEnergy(), 1e-05 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmittedElectrons )
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmittedAdjointElectrons )
 {
-  TEST_EQUALITY_CONST( bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-3),
-                       0u );
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getNumberOfEmittedAdjointElectrons(1e-3),
+                       1u );
 
-  TEST_EQUALITY_CONST( bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
-                       0u );
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getNumberOfEmittedAdjointElectrons(20.0),
+                       1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmittedPhotons )
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmittedAdjointPhotons )
 {
-  TEST_EQUALITY_CONST( bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-3),
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getNumberOfEmittedAdjointPhotons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getNumberOfEmittedAdjointPhotons(20.0),
+                       0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getNumberOfEmittedAdjointPositrons )
+{
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getNumberOfEmittedAdjointPositrons(1e-3),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( bremsstrahlung_reaction->getNumberOfEmittedAdjointPositrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, getCrossSection )
 {
   double cross_section = bremsstrahlung_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 2e-2 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.4764284177960834, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4764284177960834, 1e-12 );
 
   cross_section = bremsstrahlung_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung reaction can be simulated
-TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, react )
+FRENSIE_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, react )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
   electron.setEnergy( 1e-5 );
@@ -94,27 +100,27 @@ TEUCHOS_UNIT_TEST( BremsstrahlungAdjointElectroatomicReaction, react )
 
   bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
 
-  TEST_ASSERT( electron.getEnergy() > 1e-5 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
-  TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  FRENSIE_CHECK( electron.getEnergy() > 1e-5 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create Native Reaction
   {
@@ -134,17 +140,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         evaluation_tol );
 
     // Get the energy grid
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.assign(
-        data_container.getAdjointElectronEnergyGrid().begin(),
-        data_container.getAdjointElectronEnergyGrid().end() );
+    std::shared_ptr<const std::vector<double> > energy_grid(
+       new std::vector<double>( data_container.getAdjointElectronEnergyGrid() ) );
 
     // Get the cross section
-    Teuchos::ArrayRCP<double> cross_section;
-    cross_section.assign(
-        data_container.getAdjointBremsstrahlungElectronCrossSection().begin(),
-        data_container.getAdjointBremsstrahlungElectronCrossSection().end() );
-
+    std::shared_ptr<const std::vector<double> > cross_section(
+       new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
+       
     // Create the reaction
     bremsstrahlung_reaction.reset(
       new MonteCarlo::BremsstrahlungAdjointElectroatomicReaction<Utility::LinLin>(
@@ -158,7 +160,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstBremsstrahlungAdjointElectroatomicReaction.cpp

@@ -651,7 +651,8 @@ void ElasticElectronScatteringDistributionNativeFactory::getAngularGridAndPDF(
 
     // Get the distribution data
     std::vector<double> primary_grid( 2 );
-    std::vector<std::shared_ptr<const TabularDist> > secondary_dists( 2 );
+    std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+      secondary_dists( 2 );
 
     // Get the lower angular distributions
     primary_grid[0] = lower_bin->first;
