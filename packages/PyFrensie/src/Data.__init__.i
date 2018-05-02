@@ -37,7 +37,8 @@ PyFrensie.Data is the python interface to the FRENSIE data package.
 # import code - see comment above)
 sys.path.pop(0)
 
-__all__ = ['ACE'
+__all__ = ['ACE',
+           'ENDL'
            ]
 
 # __all__ = ['ACE',

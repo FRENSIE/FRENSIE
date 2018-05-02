@@ -38,7 +38,7 @@ SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
-# SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ENDL)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ENDL)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_core data_ace data_endl data_native pyfrensie)
 

@@ -162,7 +162,7 @@ and extracting data blocks from the XSS array.
 %include "Data_ACEPhotoatomicDataProperties.hpp"
 
 //---------------------------------------------------------------------------//
-// Add support for the ElectroatomicDataProperties
+// Add support for the ACEElectroatomicDataProperties
 //---------------------------------------------------------------------------//
 
 %atomic_properties_interface_setup( ACEElectroatomicDataProperties );

@@ -108,6 +108,21 @@ SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSElectronDataExtractor_B_test PROPERTY LA
 ADD_TEST(PyFrensie.Data.ACE.XSSElectronDataExtractor_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSElectronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_electron_ace_file.txt --tablename=82000.03e)
 SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSElectronDataExtractor_Pb_test PROPERTY LABELS pyfrensie ace electron)
 
+# Add the Data.ENDL.ENDLElectroatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.ENDL.ENDLElectroatomicDataProperties)
+ADD_TEST(PyFrensie.Data.ENDL.ENDLElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ENDL.ENDLElectroatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.ENDL.ENDLElectroatomicDataProperties_test PROPERTY LABELS pyfrensie endl)
+
+# Add the Data.ENDL.ENDLPhotoatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.ENDL.ENDLPhotoatomicDataProperties)
+ADD_TEST(PyFrensie.Data.ENDL.ENDLPhotoatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ENDL.ENDLPhotoatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.ENDL.ENDLPhotoatomicDataProperties_test PROPERTY LABELS pyfrensie endl)
+
+# Add the Data.ENDL.ENDLDataContainer unit tests
+PyFrensie_MAKE_TEST(tstData.ENDL.ENDLDataContainer)
+ADD_TEST(PyFrensie.Data.ENDL.ENDLDataContainer_test ${PYTHON_EXECUTABLE} tstData.ENDL.ENDLDataContainer.py --endlfile=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml)
+SET_PROPERTY(TEST PyFrensie.Data.ENDL.ENDLDataContainer_test PROPERTY LABELS pyfrensie endl)
+
 
 # Add the Geometry.Ray unit tests
 PyFrensie_MAKE_TEST(tstGeometry.Ray)
