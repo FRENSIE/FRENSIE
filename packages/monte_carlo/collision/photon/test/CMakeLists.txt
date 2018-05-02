@@ -119,6 +119,10 @@ FRENSIE_ADD_TEST(LineEnergyAdjointPhotonScatteringDistribution
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
 
+##---------------------------------------------------------------------------##
+## Scattering distribution factory tests
+##---------------------------------------------------------------------------##
+
 FRENSIE_ADD_TEST_EXECUTABLE(IncoherentPhotonScatteringDistributionACEFactory DEPENDS tstIncoherentPhotonScatteringDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(IncoherentPhotonScatteringDistributionACEFactory
   EXTRA_ARGS
@@ -247,6 +251,10 @@ FRENSIE_ADD_TEST(StandardPhotonuclearReaction
   --c12_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c12_photonuclear_ace_file.txt
   --c12_ace_table=6012.24u)
 
+##---------------------------------------------------------------------------##
+## Reaction factory tests
+##---------------------------------------------------------------------------##
+
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomicReactionACEFactory DEPENDS tstPhotoatomicReactionACEFactory.cpp)
 FRENSIE_ADD_TEST(PhotoatomicReactionACEFactory
   EXTRA_ARGS
@@ -288,6 +296,10 @@ FRENSIE_ADD_TEST_EXECUTABLE(AdjointPhotoatom DEPENDS tstAdjointPhotoatom.cpp)
 FRENSIE_ADD_TEST(AdjointPhotoatom
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_14_native.xml)
+
+##---------------------------------------------------------------------------##
+## Scattering center factory tests
+##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(PhotoatomACEFactory DEPENDS tstPhotoatomACEFactory.cpp)
 FRENSIE_ADD_TEST(PhotoatomACEFactory

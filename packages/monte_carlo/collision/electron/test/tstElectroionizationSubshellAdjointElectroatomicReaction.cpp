@@ -9,11 +9,6 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellAdjointElectronScatteringDistributionNativeFactory.hpp"
@@ -24,7 +19,7 @@
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -39,88 +34,105 @@ double max_ionization_subshell_adjoint_energy;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getReactionType_ace )
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getReactionType_ace )
 {
-  TEST_EQUALITY_CONST( first_subshell_reaction->getReactionType(),
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getReactionType(),
     MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( last_subshell_reaction->getReactionType(),
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getReactionType(),
     MonteCarlo::L3_SUBSHELL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getThresholdEnergy_ace )
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getThresholdEnergy_ace )
 {
-  TEST_EQUALITY_CONST( first_subshell_reaction->getThresholdEnergy(),
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getThresholdEnergy(),
                        1e-5 );
 
-  TEST_EQUALITY_CONST( last_subshell_reaction->getThresholdEnergy(),
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getThresholdEnergy(),
                        1e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getNumberOfEmittedElectrons_ace )
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getNumberOfEmittedAdjointElectrons_ace )
 {
-  TEST_EQUALITY_CONST( first_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
-                       0u );
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getNumberOfEmittedAdjointElectrons(1e-3),
+                       1u );
 
-  TEST_EQUALITY_CONST( first_subshell_reaction->getNumberOfEmittedElectrons(20.0),
-                       0u );
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getNumberOfEmittedAdjointElectrons(20.0),
+                       1u );
 
-  TEST_EQUALITY_CONST( last_subshell_reaction->getNumberOfEmittedElectrons(1e-3),
-                       0u );
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getNumberOfEmittedAdjointElectrons(1e-3),
+                       1u );
 
-  TEST_EQUALITY_CONST( last_subshell_reaction->getNumberOfEmittedElectrons(20.0),
-                       0u );
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getNumberOfEmittedAdjointElectrons(20.0),
+                       1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getNumberOfEmittedPhotons_ace )
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getNumberOfEmittedAdjointPhotons_ace )
 {
-  TEST_EQUALITY_CONST( first_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getNumberOfEmittedAdjointPhotons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( first_subshell_reaction->getNumberOfEmittedPhotons(20.0),
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getNumberOfEmittedAdjointPhotons(20.0),
                        0u );
 
-  TEST_EQUALITY_CONST( last_subshell_reaction->getNumberOfEmittedPhotons(1e-3),
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getNumberOfEmittedAdjointPhotons(1e-3),
                        0u );
 
-  TEST_EQUALITY_CONST( last_subshell_reaction->getNumberOfEmittedPhotons(20.0),
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getNumberOfEmittedAdjointPhotons(20.0),
+                       0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getNumberOfEmittedAdjointPositrons_ace )
+{
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getNumberOfEmittedAdjointPositrons(1e-3),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( first_subshell_reaction->getNumberOfEmittedAdjointPositrons(20.0),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getNumberOfEmittedAdjointPositrons(1e-3),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( last_subshell_reaction->getNumberOfEmittedAdjointPositrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCrossSection )
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, getCrossSection )
 {
   // First Subshell
   double cross_section = first_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.6110462808911211e+09, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6110462808911211e+09, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.0795465976383857e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.0795465976383857e+04, 1e-12 );
 
   cross_section = first_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.0110763061599802e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.0110763061599802e+04, 1e-12 );
 
   // Last Subshell
   cross_section = last_subshell_reaction->getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.3480113717434631e+11, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.3480113717434631e+11, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 1.5 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.1277989214683068e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.1277989214683068e+05, 1e-12 );
 
   cross_section = last_subshell_reaction->getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.1818180758223236e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.1818180758223236e+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the first_subshell reaction can be simulated
-TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react )
+FRENSIE_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
   electron.setEnergy( 20.0 );
@@ -132,10 +144,10 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellAdjointElectroatomicReaction, react 
 
   first_subshell_reaction->react( electron, bank, shell_of_interaction );
 
-  TEST_ASSERT( electron.getEnergy() > 20.0 );
-  TEST_ASSERT( electron.getZDirection() < 1.0 );
-  TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
+  FRENSIE_CHECK( electron.getEnergy() > 20.0 );
+  FRENSIE_CHECK( electron.getZDirection() < 1.0 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -147,9 +159,9 @@ std::string test_native_file_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                    &test_native_file_name,
-                    "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -160,38 +172,34 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                              test_native_file_name ) );
 
     // Extract the common electron energy grid
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.assign(
-      data_container->getAdjointElectronEnergyGrid().begin(),
-      data_container->getAdjointElectronEnergyGrid().end() );
+    std::shared_ptr<const std::vector<double> > energy_grid(
+       new std::vector<double>( data_container->getAdjointElectronEnergyGrid() ) );
 
     // Create the hash-based grid searcher
-    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
                   energy_grid,
-                  energy_grid[0],
-                  energy_grid[energy_grid.size()-1],
-                  energy_grid.size()/10 + 1 ) );
+                  energy_grid->front(),
+                  energy_grid->back(),
+                  energy_grid->size()/10 + 1 ) );
 
   // Extract the subshell information
   std::set<unsigned> subshells = data_container->getSubshells();
 
   // Create the distribution for the first subshell
   {
-  std::set<unsigned>::iterator shell = data_container->getSubshells().begin();
+    std::set<unsigned>::iterator shell = data_container->getSubshells().begin();
 
     // Convert subshell number to enum
     Data::SubshellType subshell_type =
       Data::convertENDFDesignatorToSubshellEnum( *shell );
 
     // Electroionization cross section
-    Teuchos::ArrayRCP<double> subshell_cross_section;
-    subshell_cross_section.assign(
-        data_container->getAdjointElectroionizationCrossSection( *shell ).begin(),
-        data_container->getAdjointElectroionizationCrossSection( *shell ).end() );
+    std::shared_ptr<const std::vector<double> > subshell_cross_section(
+       new std::vector<double>( data_container->getAdjointElectroionizationCrossSection( *shell ) ) );
 
     // Electroionization cross section threshold energy bin index
-    unsigned threshold_energy_index =
+    size_t threshold_energy_index =
         data_container->getAdjointElectroionizationCrossSectionThresholdEnergyIndex(
         *shell );
 
@@ -232,15 +240,13 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
       Data::convertENDFDesignatorToSubshellEnum( *shell );
 
     // Electroionization cross section
-    Teuchos::ArrayRCP<double> subshell_cross_section;
-    subshell_cross_section.assign(
-        data_container->getAdjointElectroionizationCrossSection( *shell ).begin(),
-        data_container->getAdjointElectroionizationCrossSection( *shell ).end() );
+    std::shared_ptr<const std::vector<double> > subshell_cross_section(
+       new std::vector<double>( data_container->getAdjointElectroionizationCrossSection( *shell ) ) );
 
     double evaluation_tol = 1e-7;
 
     // Electroionization cross section threshold energy bin index
-    unsigned threshold_energy_index =
+    size_t threshold_energy_index =
         data_container->getAdjointElectroionizationCrossSectionThresholdEnergyIndex(
         *shell );
 

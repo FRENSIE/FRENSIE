@@ -170,7 +170,8 @@ void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
     raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   // Moment preserving elastic cross section
-  std::shared_ptr<std::vector<double> > mp_cross_section;
+  std::shared_ptr<std::vector<double> >
+    mp_cross_section( new std::vector<double> );
   size_t mp_threshold_energy_index;
   ElasticFactory::calculateMomentPreservingCrossSections<TwoDInterpPolicy,TwoDGridPolicy>(
                                 *mp_cross_section,

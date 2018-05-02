@@ -10,11 +10,6 @@
 #include <iostream>
 #include <algorithm>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomCore.hpp"
 #include "MonteCarlo_BremsstrahlungAdjointElectroatomicReaction.hpp"
@@ -29,7 +24,7 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 typedef MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeFactory
             AtomicNativeFactory;
@@ -44,35 +39,35 @@ std::shared_ptr<MonteCarlo::AdjointElectroatomCore> electroatom_core;
 
 //---------------------------------------------------------------------------//
 // Check that the total forward reaction can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getTotalForwardReaction )
 {
   const MonteCarlo::ElectroatomicReaction& total_forward_reaction =
     electroatom_core->getTotalForwardReaction();
 
-  TEST_EQUALITY_CONST( total_forward_reaction.getReactionType(),
+  FRENSIE_CHECK_EQUAL( total_forward_reaction.getReactionType(),
                        MonteCarlo::TOTAL_ELECTROATOMIC_REACTION );
-  TEST_FLOATING_EQUALITY( total_forward_reaction.getThresholdEnergy(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( total_forward_reaction.getThresholdEnergy(),
                           1e-5,
                           1e-15 );
 
   double cross_section = total_forward_reaction.getCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.97832E+01, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section, 2.0449492968423121e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.0449492968423121e+07, 1e-12 );
 
   cross_section = total_forward_reaction.getCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.6467035552999546e+05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the scattering reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
 {
   const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& scattering_reactions =
     electroatom_core->getScatteringReactions();
 
-  TEST_EQUALITY_CONST( scattering_reactions.size(), 2 );
+  FRENSIE_CHECK_EQUAL( scattering_reactions.size(), 2 );
 
   const MonteCarlo::AdjointElectroatomicReaction& ae_reaction =
     *(scattering_reactions.find(MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION)->second);
@@ -83,58 +78,58 @@ TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
   double cross_section = ae_reaction.getCrossSection( 1e-5 ) +
                           b_reaction.getCrossSection( 1e-5 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           3.9800795006423726e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 1e-3 ) +
                    b_reaction.getCrossSection( 1e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           1.4246702389204639e+01 + 1.0551636170350602e+07,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 20.0 ) +
                    b_reaction.getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           2.4971444066404619e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions )
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions )
 {
   const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& absorption_reactions =
     electroatom_core->getAbsorptionReactions();
 
-  TEST_EQUALITY_CONST( absorption_reactions.size(), 0 );
+  FRENSIE_CHECK_EQUAL( absorption_reactions.size(), 0 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the grid searcher can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getGridSearcher )
 {
-  const Utility::HashBasedGridSearcher& grid_searcher =
+  const Utility::HashBasedGridSearcher<double>& grid_searcher =
     electroatom_core->getGridSearcher();
 
   unsigned grid_index = grid_searcher.findLowerBinIndex( 1e-5 );
-  TEST_EQUALITY_CONST( grid_index, 0u );
+  FRENSIE_CHECK_EQUAL( grid_index, 0u );
 
   grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
-  TEST_EQUALITY_CONST( grid_index, 53 );
+  FRENSIE_CHECK_EQUAL( grid_index, 53 );
 
   grid_index = grid_searcher.findLowerBinIndex( 20.0 );
-  TEST_EQUALITY_CONST( grid_index, 157 );
+  FRENSIE_CHECK_EQUAL( grid_index, 157 );
 }
 
 //---------------------------------------------------------------------------//
 // Check if all of the reactions share a common energy grid
-TEUCHOS_UNIT_TEST( AdjointElectroatomCore, hasSharedEnergyGrid )
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, hasSharedEnergyGrid )
 {
-  TEST_ASSERT( electroatom_core->hasSharedEnergyGrid() );
+  FRENSIE_CHECK( electroatom_core->hasSharedEnergyGrid() );
 }
 
 //---------------------------------------------------------------------------//
@@ -146,9 +141,9 @@ std::string test_native_file_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -160,27 +155,29 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         test_native_file_name );
 
     // Create the atomic excitation, bremsstrahlung cross sections
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.deepCopy( data_container.getAdjointElectronEnergyGrid() );
+    std::shared_ptr<const std::vector<double> > energy_grid(
+       new std::vector<double>( data_container.getAdjointElectronEnergyGrid() ) );
 
     // Create the hash-based grid searcher
-    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
+    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
+       new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
                                              energy_grid,
                                              100 ) );
 
-    // Create the total forward reaction
-    std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_forward_reaction;
-
     // Get void reaction
-    Teuchos::ArrayRCP<double> void_cross_section( energy_grid.size() );
-    std::shared_ptr<MonteCarlo::ElectroatomicReaction> void_reaction(
+    std::shared_ptr<const std::vector<double> > void_cross_section(
+                         new std::vector<double>( energy_grid->size(), 0.0 ) );
+    
+    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction(
      new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
                        energy_grid,
                        void_cross_section,
                        0u,
                        grid_searcher,
                        MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION ) );
+
+    // Create the total forward reaction
+    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> total_forward_reaction;
 
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
                                        data_container,
@@ -190,12 +187,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                        total_forward_reaction );
 
     // Atomic Excitation cross section
-    Teuchos::ArrayRCP<double> ae_cross_section;
-    ae_cross_section.assign(
-      data_container.getAdjointAtomicExcitationCrossSection().begin(),
-      data_container.getAdjointAtomicExcitationCrossSection().end() );
+    std::shared_ptr<const std::vector<double> > ae_cross_section(
+       new std::vector<double>( data_container.getAdjointAtomicExcitationCrossSection() ) );
 
-    unsigned ae_threshold_index =
+    size_t ae_threshold_index =
         data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
 
     std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
@@ -217,12 +212,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
 
     // Bremsstrahlung cross section
-    Teuchos::ArrayRCP<double> b_cross_section;
-    b_cross_section.assign(
-      data_container.getAdjointBremsstrahlungElectronCrossSection().begin(),
-      data_container.getAdjointBremsstrahlungElectronCrossSection().end() );
+    std::shared_ptr<const std::vector<double> > b_cross_section(
+       new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
 
-    unsigned b_threshold_index =
+    size_t b_threshold_index =
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
@@ -246,7 +239,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
             b_distribution ) );
 
     // Create the reaction maps
-    MonteCarlo::AdjointElectroatomCore::ReactionMap scattering_reactions,
+    MonteCarlo::AdjointElectroatomCore::ConstReactionMap scattering_reactions,
       absorption_reactions;
 
     scattering_reactions[ae_reaction->getReactionType()] = ae_reaction;

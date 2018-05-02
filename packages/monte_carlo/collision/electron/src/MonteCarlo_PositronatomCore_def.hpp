@@ -141,7 +141,7 @@ void PositronatomCore::createTotalAbsorptionReaction(
   std::shared_ptr<std::vector<double> >
     absorption_cross_section( new std::vector<double> );
   
-  unsigned absorption_threshold_energy_index = 0u;
+  size_t absorption_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator absorption_reaction;
 
@@ -153,8 +153,16 @@ void PositronatomCore::createTotalAbsorptionReaction(
 
     while( absorption_reaction != absorption_reactions.end() )
     {
-      raw_cross_section +=
-        absorption_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          absorption_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++absorption_reaction;
     }
@@ -220,7 +228,7 @@ void PositronatomCore::createProcessedTotalAbsorptionReaction(
     while( absorption_reaction != absorption_reactions.end() )
     {
       raw_cross_section +=
-        absorption_reaction->second->getCrossSection( raw_energy, i );
+        absorption_reaction->second->getCrossSection( raw_energy );
 
       ++absorption_reaction;
     }
@@ -274,7 +282,7 @@ void PositronatomCore::createTotalReaction(
   std::shared_ptr<std::vector<double> >
     total_cross_section( new std::vector<double> );
   
-  unsigned total_threshold_energy_index = 0u;
+  size_t total_threshold_energy_index = 0u;
 
   ConstReactionMap::const_iterator scattering_reaction;
 
@@ -282,13 +290,31 @@ void PositronatomCore::createTotalReaction(
   {
     scattering_reaction = scattering_reactions.begin();
 
-    double raw_cross_section =
-      total_absorption_reaction->getCrossSection( (*energy_grid)[i], i );
+    double raw_cross_section = 0.0;
+
+    if( i < energy_grid->size() - 1 )
+    {
+      raw_cross_section = 
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i );
+    }
+    else
+    {
+      raw_cross_section =
+        total_absorption_reaction->getCrossSection( (*energy_grid)[i], i-1 );
+    }
 
     while( scattering_reaction != scattering_reactions.end() )
     {
-      raw_cross_section +=
-        scattering_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      if( i < energy_grid->size() - 1 )
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i );
+      }
+      else
+      {
+        raw_cross_section +=
+          scattering_reaction->second->getCrossSection( (*energy_grid)[i], i-1 );
+      }
 
       ++scattering_reaction;
     }

@@ -62,7 +62,7 @@ DecoupledElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Dec
   : BaseType( incoming_energy_grid,
               total_cross_section,
               threshold_energy_index,
-              d_grid_searcher ),
+              grid_searcher ),
     d_incoming_energy_grid( incoming_energy_grid ),
     d_grid_searcher( grid_searcher ),
     d_threshold_energy_index( threshold_energy_index ),

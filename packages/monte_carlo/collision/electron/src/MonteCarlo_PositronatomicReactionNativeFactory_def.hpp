@@ -108,7 +108,7 @@ void PositronatomicReactionNativeFactory::createDecoupledElasticReaction(
     std::shared_ptr<std::vector<double> > tmp_sampling_ratios(
                       new std::vector<double>( total_cross_section->size() ) );
     
-    for( size_t i = 0; i < sampling_ratios->size(); ++i )
+    for( size_t i = 0; i < tmp_sampling_ratios->size(); ++i )
     {
       (*tmp_sampling_ratios)[i] =
         (*cutoff_cross_section)[i]/(*total_cross_section)[i];

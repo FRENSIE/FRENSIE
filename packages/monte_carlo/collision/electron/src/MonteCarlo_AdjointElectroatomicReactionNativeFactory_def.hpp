@@ -522,23 +522,20 @@ void AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
     raw_adjoint_electroatom_data.getForwardInelasticElectronCrossSection();
 
   // Add the inelastic and elastic cross section together
-  std::vector<double> total_forward_cross_section( energy_grid->size() );
+  std::shared_ptr<std::vector<double> > total_forward_cross_section(
+                              new std::vector<double>( energy_grid->size() ) );
+  
   for( size_t i = 0; i < energy_grid->size(); ++i )
   {
-    total_forward_cross_section[i] = inelastic_cross_section[i] +
+    (*total_forward_cross_section)[i] = inelastic_cross_section[i] +
       elastic_reaction->getCrossSection( (*energy_grid)[i] );
   }
-
-  // Assign the total forward cross section
-  std::shared_ptr<std::vector<double> > cross_section;
-  cross_section->assign( total_forward_cross_section.begin(),
-                         total_forward_cross_section.end() );
 
   // Create the total forward reaction
   total_forward_reaction.reset(
      new AbsorptionElectroatomicReaction<Utility::LinLin,false>(
                                                energy_grid,
-                                               cross_section,
+                                               total_forward_cross_section,
                                                0u,
                                                grid_searcher,
                                                TOTAL_ELECTROATOMIC_REACTION ) );
