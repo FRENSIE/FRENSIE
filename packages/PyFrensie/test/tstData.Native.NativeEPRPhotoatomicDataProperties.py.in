@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Data.ENDLPhotoatomicDataProperties class unit tests
-#  \file   tstData.ENDL.ENDLPhotoatomicDataProperties.py
+## Data.NativeEPRPhotoatomicDataProperties class unit tests
+#  \file   tstData.Native.NativeEPRPhotoatomicDataProperties.py
 #  \author Luke Kersting
-#  \brief  Unit tests for the Data.ENDL.ENDLPhotoatomicDataProperties class
+#  \brief  Unit tests for the Data.Native.NativeEPRPhotoatomicDataProperties class
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -21,72 +21,72 @@ options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
 Data = importPyFrensieModuleFromBuildDir('Data')
-ENDL = importPyFrensieModuleFromBuildDir('Data.ENDL')
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
 
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the ENDLPhotoatomicDataProperties class
-class ENDLPhotoatomicDataPropertiesTestCase(unittest.TestCase):
-    "TestCase class for Data.ENDL.ENDLPhotoatomicDataProperties class"
+# Test the NativeEPRPhotoatomicDataProperties class
+class NativeEPRPhotoatomicDataPropertiesTestCase(unittest.TestCase):
+    "TestCase class for Data.Native.NativeEPRPhotoatomicDataProperties class"
 
     @classmethod
     def setUpClass(cls):
-        cls.properties = ENDL.ENDLPhotoatomicDataProperties(
+        cls.properties = Native.NativeEPRPhotoatomicDataProperties(
                                               1.0,
                                               "photoatomic_data/h_data.txt",
                                               10,
                                               Data.H_ATOM )
 
     def testConstructor(self):
-        "*Test Data.ENDLPhotoatomicDataProperties constructor"
+        "*Test Data.NativeEPRPhotoatomicDataProperties constructor"
         with self.assertRaises(ValueError):
-            ENDL.ENDLPhotoatomicDataProperties( -1.0,
+            Native.NativeEPRPhotoatomicDataProperties( -1.0,
                                                 "photoatomic_data/h_data.txt",
                                                 10,
                                                 Data.H_ATOM )
 
     def testAtom(self):
-        "*Test Data.ENDLPhotoatomicDataProperties atom"
+        "*Test Data.NativeEPRPhotoatomicDataProperties atom"
         self.assertEqual( self.properties.atom(), Data.H_ATOM )
 
     def testFileType(self):
-        "*Test Data.ENDLPhotoatomicDataProperties fileType"
+        "*Test Data.NativeEPRPhotoatomicDataProperties fileType"
         self.assertEqual( self.properties.fileType(),
-                          Data.PhotoatomicDataProperties.Native_ENDL_FILE )
+                          Data.PhotoatomicDataProperties.Native_EPR_FILE )
 
-        local_properties = ENDL.ENDLPhotoatomicDataProperties(
+        local_properties = Native.NativeEPRPhotoatomicDataProperties(
                                               1.0,
                                               "photoatomic_data/h_data.txt",
                                               10,
                                               Data.H_ATOM )
 
         self.assertEqual( local_properties.fileType(),
-                          Data.PhotoatomicDataProperties.Native_ENDL_FILE )
+                          Data.PhotoatomicDataProperties.Native_EPR_FILE )
 
     def testAtomicWeight(self):
-        "*Test Data.ENDLPhotoatomicDataProperties atomicWeight"
+        "*Test Data.NativeEPRPhotoatomicDataProperties atomicWeight"
         self.assertEqual( self.properties.atomicWeight(), 1.0 )
 
     def testFilePath(self):
-        "*Test Data.ENDLPhotoatomicDataProperties filePath"
+        "*Test Data.NativeEPRPhotoatomicDataProperties filePath"
         self.assertEqual( self.properties.filePath(),
                           "photoatomic_data/h_data.txt" )
 
     def testFileStartLine(self):
-        "*Test Data.ENDLPhotoatomicDataProperties fileStartLine"
+        "*Test Data.NativeEPRPhotoatomicDataProperties fileStartLine"
         self.assertEqual( self.properties.fileStartLine(), 0 )
 
     def testFileVersion(self):
-        "*Test Data.ENDLPhotoatomicDataProperties fileVersion"
+        "*Test Data.NativeEPRPhotoatomicDataProperties fileVersion"
         self.assertEqual( self.properties.fileVersion(), 10 )
 
     def testTableName(self):
-        "*Test Data.ENDLPhotoatomicDataProperties tableName"
+        "*Test Data.NativeEPRPhotoatomicDataProperties tableName"
         self.assertEqual( self.properties.tableName(), "" )
 
     def testClone(self):
-        "*Test Data.ENDLPhotoatomicDataProperties constructor"
+        "*Test Data.NativeEPRPhotoatomicDataProperties constructor"
         properties_clone = self.properties.clone()
 
         self.assertTrue( properties_clone )
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the testSuite
-    suite.addTest(unittest.makeSuite(ENDLPhotoatomicDataPropertiesTestCase))
+    suite.addTest(unittest.makeSuite(NativeEPRPhotoatomicDataPropertiesTestCase))
 
     print >>sys.stderr, \
         "\n**************************************\n" + \
@@ -127,5 +127,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstData.ENDL.ENDLPhotoatomicDataProperties.py
+# end tstData.Native.NativeEPRPhotoatomicDataProperties.py
 #-----------------------------------------------------------------------------#

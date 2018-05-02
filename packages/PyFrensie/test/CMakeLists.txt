@@ -123,6 +123,40 @@ PyFrensie_MAKE_TEST(tstData.ENDL.ENDLDataContainer)
 ADD_TEST(PyFrensie.Data.ENDL.ENDLDataContainer_test ${PYTHON_EXECUTABLE} tstData.ENDL.ENDLDataContainer.py --endlfile=${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml)
 SET_PROPERTY(TEST PyFrensie.Data.ENDL.ENDLDataContainer_test PROPERTY LABELS pyfrensie endl)
 
+# Add the Data.Native.NativeEPRElectroatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.Native.NativeEPRElectroatomicDataProperties)
+ADD_TEST(PyFrensie.Data.Native.NativeEPRElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.Native.NativeEPRElectroatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.Native.NativeEPRElectroatomicDataProperties_test PROPERTY LABELS pyfrensie native electron )
+
+# Add the Data.Native.NativeEPRPhotoatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.Native.NativeEPRPhotoatomicDataProperties)
+ADD_TEST(PyFrensie.Data.Native.NativeEPRPhotoatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.Native.NativeEPRPhotoatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.Native.NativeEPRPhotoatomicDataProperties_test PROPERTY LABELS pyfrensie native photon)
+
+# Add the Data.Native.NativeMomentPreservingElectroatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.Native.NativeMomentPreservingElectroatomicDataProperties)
+ADD_TEST(PyFrensie.Data.Native.NativeMomentPreservingElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.Native.NativeMomentPreservingElectroatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.Native.NativeMomentPreservingElectroatomicDataProperties_test PROPERTY LABELS pyfrensie native electron )
+
+# Add the Data.Native.NativeEPRAdjointElectroatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.Native.NativeEPRAdjointElectroatomicDataProperties)
+ADD_TEST(PyFrensie.Data.Native.NativeEPRAdjointElectroatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.Native.NativeEPRAdjointElectroatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.Native.NativeEPRAdjointElectroatomicDataProperties_test PROPERTY LABELS pyfrensie native electron adjoint)
+
+# Add the Data.Native.NativeEPRAdjointPhotoatomicDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.Native.NativeEPRAdjointPhotoatomicDataProperties)
+ADD_TEST(PyFrensie.Data.Native.NativeEPRAdjointPhotoatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.Native.NativeEPRAdjointPhotoatomicDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.Native.NativeEPRAdjointPhotoatomicDataProperties_test PROPERTY LABELS pyfrensie native photon adjoint)
+
+# Add the Data.Native.ElectronPhotonRelaxationDataContainer unit tests
+PyFrensie_MAKE_TEST(tstData.Native.ElectronPhotonRelaxationDataContainer)
+ADD_TEST(PyFrensie.Data.Native.ElectronPhotonRelaxationDataContainer_test ${PYTHON_EXECUTABLE} tstData.Native.ElectronPhotonRelaxationDataContainer.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_6_native.xml)
+SET_PROPERTY(TEST PyFrensie.Data.Native.ElectronPhotonRelaxationDataContainer_test PROPERTY LABELS pyfrensie native electron photon)
+
+# Add the Data.Native.AdjointElectronPhotonRelaxationDataContainer unit tests
+PyFrensie_MAKE_TEST(tstData.Native.AdjointElectronPhotonRelaxationDataContainer)
+ADD_TEST(PyFrensie.Data.Native.AdjointElectronPhotonRelaxationDataContainer_test ${PYTHON_EXECUTABLE} tstData.Native.AdjointElectronPhotonRelaxationDataContainer.py --nativefile=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_6_native.xml)
+SET_PROPERTY(TEST PyFrensie.Data.Native.AdjointElectronPhotonRelaxationDataContainer_test PROPERTY LABELS pyfrensie native adjoint electron photon)
 
 # Add the Geometry.Ray unit tests
 PyFrensie_MAKE_TEST(tstGeometry.Ray)

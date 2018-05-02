@@ -26,8 +26,8 @@ ENDL = importPyFrensieModuleFromBuildDir('Data.ENDL')
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the ENDLDataContainerr
-class ENDLDataContainerrTestCase(unittest.TestCase):
+# Test the ENDLDataContainer
+class ENDLDataContainerTestCase(unittest.TestCase):
     "TestCase for Data.ENDL.ENDLDataContainer class"
     @classmethod
     def setUpClass(cls):
@@ -364,7 +364,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    suite.addTest(unittest.makeSuite(ENDLDataContainerrTestCase))
+    suite.addTest(unittest.makeSuite(ENDLDataContainerTestCase))
 
     print >>sys.stderr, \
         "\n****************\n" +\

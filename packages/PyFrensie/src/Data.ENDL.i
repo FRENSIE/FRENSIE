@@ -44,6 +44,9 @@ FRENSIE format data file.
 // Include the Data_AtomProperties support
 %include "Data_AtomProperties.i"
 
+// Include the data property helpers
+%include "Data_PropertyHelpers.i"
+
 // Include the serialization helpers for macros
 %include "Utility_SerializationHelpers.hpp"
 
@@ -129,8 +132,6 @@ tutorial for this class is shown below:
   matplotlib.pyplot.loglog( h_native_data.getElasticEnergyGrid(), h_native_data.getElasticTransportCrossSection() )
   matplotlib.pyplot.show()
 "
-
-// %template(IntSet) std::set< unsigned int>;
 
 // Allow std::vector<double> output type
 %template(DoubleVector) std::vector<double>;
