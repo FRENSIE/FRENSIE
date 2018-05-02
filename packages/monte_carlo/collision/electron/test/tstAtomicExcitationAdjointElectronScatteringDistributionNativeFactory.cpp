@@ -9,15 +9,10 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -33,7 +28,7 @@ std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistr
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFactory,
                    sample )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
@@ -49,14 +44,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                                   scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials )
 {
   MonteCarlo::AdjointElectronState electron( 0 );
@@ -65,7 +60,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
 
   double outgoing_energy,scattering_angle_cosine;
   double final_energy = electron.getEnergy() + 2.10088e-5;
-  unsigned trials = 10;
+  MonteCarlo::AdjointElectronScatteringDistribution::Counter trials = 10;
 
   // sample distribution
   native_ae_distribution->sampleAndRecordTrials( electron.getEnergy(),
@@ -74,14 +69,14 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                                                  trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
-  TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, final_energy, 1e-12 );
+  FRENSIE_CHECK_EQUAL( scattering_angle_cosine, 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the scattering angle can be evaluated
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFactory,
+FRENSIE_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFactory,
                    scatterAdjointElectron )
 {
   MonteCarlo::ParticleBank bank;
@@ -99,26 +94,26 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionNativeFa
                                                   shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), final_energy, 1e-12 );
-  TEST_EQUALITY_CONST( adjoint_electron.getZDirection(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), final_energy, 1e-12 );
+  FRENSIE_CHECK_EQUAL( adjoint_electron.getZDirection(), 1.0 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the native data file container
   std::shared_ptr<Data::AdjointElectronPhotonRelaxationDataContainer>
@@ -134,7 +129,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstAtomicExcitationAdjointElectronScatteringDistribution.cpp

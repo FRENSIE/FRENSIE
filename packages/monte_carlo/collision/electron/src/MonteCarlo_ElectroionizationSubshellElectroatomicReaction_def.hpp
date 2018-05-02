@@ -74,7 +74,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 unsigned ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() )
-    return 1u;
+    return 2u;
   else
     return 0u;
 }

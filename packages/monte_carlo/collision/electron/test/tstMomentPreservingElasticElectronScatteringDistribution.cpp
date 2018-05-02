@@ -9,24 +9,19 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_ElasticTwoDDistribution.hpp"
+#include "Utility_ElasticBasicBivariateDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
 
-typedef Utility::FullyTabularTwoDDistribution TwoDDist;
+typedef Utility::FullyTabularBasicBivariateDistribution TwoDDist;
 
 class TestMomentPreservingElasticElectronScatteringDistribution : public MonteCarlo::MomentPreservingElasticElectronScatteringDistribution
 {
@@ -61,10 +56,10 @@ double angle_cosine_cutoff = 0.9;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    evaluate )
 {
-  TEST_THROW( discrete_elastic_distribution->evaluate( 1e-3, angle_cosine_cutoff ),
+  FRENSIE_CHECK_THROW( discrete_elastic_distribution->evaluate( 1e-3, angle_cosine_cutoff ),
               std::runtime_error );
 
   // // Set energy in MeV and angle cosine
@@ -76,7 +71,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 1 energy 1
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
 
   // scattering_angle_cosine = 9.23783127169921725e-01;
@@ -84,21 +79,21 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 2
-  // TEST_FLOATING_EQUALITY( pdf_value, 1.41615401623161025e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.41615401623161025e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.81773163837444063e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 3
-  // TEST_FLOATING_EQUALITY( pdf_value, 8.58384598376839003e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 8.58384598376839003e-01, 1e-12 );
 
   // scattering_angle_cosine = 1.0;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 4
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
   // // Test with a different energy
   // energy = 1.00E+05;
@@ -108,7 +103,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 1 energy 1
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
 
   // scattering_angle_cosine = 9.330761886145804151e-01;
@@ -116,7 +111,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 2
-  // TEST_FLOATING_EQUALITY( pdf_value, 5.496999172982874144e-04, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 5.496999172982874144e-04, 1e-12 );
 
 
   // scattering_angle_cosine = 9.990768004009449310e-01;
@@ -124,14 +119,14 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 3
-  // TEST_FLOATING_EQUALITY( pdf_value, 9.994503000827017480e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 9.994503000827017480e-01, 1e-12 );
 
   // scattering_angle_cosine = 1.0;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
 
   // // Test 4
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
   // // Test at an in between energy
   // energy = 1e-2;
@@ -139,40 +134,40 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   // scattering_angle_cosine = angle_cosine_cutoff;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
   // scattering_angle_cosine = 9.2645992675518529e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 6.4764433696216817e-02, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 6.4764433696216817e-02, 1e-12 );
 
   // scattering_angle_cosine = 9.8541370435560194e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 6.1330747141642072e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 6.1330747141642072e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.2769440676839743e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 2.2808272964015063e-02, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 2.2808272964015063e-02, 1e-12 );
 
   // scattering_angle_cosine = 9.8734113139460522e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 2.9911982192334730e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 2.9911982192334730e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.87342e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluate( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    evaluatePDF )
 {
-  TEST_THROW( discrete_elastic_distribution->evaluate( 1e-3, angle_cosine_cutoff ),
+  FRENSIE_CHECK_THROW( discrete_elastic_distribution->evaluate( 1e-3, angle_cosine_cutoff ),
               std::runtime_error );
 
   // // Set energy in MeV and angle cosine
@@ -184,7 +179,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 1 energy 1
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
 
   // scattering_angle_cosine = 9.23783127169921725e-01;
@@ -192,21 +187,21 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 2
-  // TEST_FLOATING_EQUALITY( pdf_value, 1.41615401623161025e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 1.41615401623161025e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.81773163837444063e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 3
-  // TEST_FLOATING_EQUALITY( pdf_value, 8.58384598376839003e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 8.58384598376839003e-01, 1e-12 );
 
   // scattering_angle_cosine = 1.0;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 4
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
   // // Test with a different energy
   // energy = 1.00E+05;
@@ -216,7 +211,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 1 energy 1
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
 
   // scattering_angle_cosine = 9.330761886145804151e-01;
@@ -224,7 +219,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 2
-  // TEST_FLOATING_EQUALITY( pdf_value, 5.496999172982874144e-04, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 5.496999172982874144e-04, 1e-12 );
 
 
   // scattering_angle_cosine = 9.990768004009449310e-01;
@@ -232,14 +227,14 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 3
-  // TEST_FLOATING_EQUALITY( pdf_value, 9.994503000827017480e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 9.994503000827017480e-01, 1e-12 );
 
   // scattering_angle_cosine = 1.0-1e-5;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
 
   // // Test 4
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
   // // Test at an in between energy
   // energy = 1e-2;
@@ -247,40 +242,40 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   // scattering_angle_cosine = angle_cosine_cutoff;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 
   // scattering_angle_cosine = 9.2645992675518529e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 6.4764433696216830e-02, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 6.4764433696216830e-02, 1e-12 );
 
   // scattering_angle_cosine = 9.8541370435560194e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 6.1330747141642084e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 6.1330747141642084e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.2769440676839743e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 2.2808272964015063e-02, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 2.2808272964015063e-02, 1e-12 );
 
   // scattering_angle_cosine = 9.8734113139460522e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( pdf_value, 2.9911982192334730e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( pdf_value, 2.9911982192334730e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.87342e-01;
   // pdf_value =
   //   discrete_elastic_distribution->evaluatePDF( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( pdf_value, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cdf can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    evaluateCDF )
 {
-  TEST_THROW( discrete_elastic_distribution->evaluate( 1e-3, angle_cosine_cutoff ),
+  FRENSIE_CHECK_THROW( discrete_elastic_distribution->evaluate( 1e-3, angle_cosine_cutoff ),
               std::runtime_error );
 
   // // Set energy in MeV and angle cosine
@@ -290,23 +285,23 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   // // Calculate the pdf
   // double cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( cdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( cdf_value, 0.0 );
 
 
   // scattering_angle_cosine = 9.23783127169921725e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 1.41615401623161025e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 1.41615401623161025e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.5e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 1.41615401623161025e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 1.41615401623161025e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.81773163837444063e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // // Test with a different energy
   // energy = 1.00E+05;
@@ -314,24 +309,24 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   // scattering_angle_cosine = angle_cosine_cutoff;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( cdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( cdf_value, 0.0 );
 
 
   // scattering_angle_cosine = 9.330761886145804151e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 5.496999172982874144e-04, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 5.496999172982874144e-04, 1e-12 );
 
 
   // scattering_angle_cosine = 9.6e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 5.496999172982874144e-04, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 5.496999172982874144e-04, 1e-12 );
 
   // scattering_angle_cosine = 9.990768004009449310e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 1.0, 1e-12 );
 
   // // Test at an in between energy
   // energy = 1e-2;
@@ -339,37 +334,37 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   // scattering_angle_cosine = angle_cosine_cutoff;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( cdf_value, 0.0 );
+  // FRENSIE_CHECK_EQUAL( cdf_value, 0.0 );
 
   // scattering_angle_cosine = 9.2645992675518529e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 6.4764433696216830e-02, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 6.4764433696216830e-02, 1e-12 );
 
   // scattering_angle_cosine = 9.8541370435560194e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 7.0088017807665270e-01, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 7.0088017807665270e-01, 1e-12 );
 
   // scattering_angle_cosine = 9.2769440676839743e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_FLOATING_EQUALITY( cdf_value, 8.7572706660231897e-02, 1e-12 );
+  // FRENSIE_CHECK_FLOATING_EQUALITY( cdf_value, 8.7572706660231897e-02, 1e-12 );
 
   // scattering_angle_cosine = 9.8734113139460522e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( cdf_value, 1.0 );
+  // FRENSIE_CHECK_EQUAL( cdf_value, 1.0 );
 
   // scattering_angle_cosine = 9.87342e-01;
   // cdf_value =
   //   discrete_elastic_distribution->evaluateCDF( energy, scattering_angle_cosine );
-  // TEST_EQUALITY_CONST( cdf_value, 1.0 );
+  // FRENSIE_CHECK_EQUAL( cdf_value, 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl )
 {
   // Set fake random number stream
@@ -384,7 +379,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double scattering_angle_cosine;
-  unsigned trials = 10;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
   test_discrete_elastic_distribution->sampleAndRecordTrialsImpl(
@@ -393,8 +388,8 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                                                 trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.23783127169921725e-01, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.23783127169921725e-01, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 
   // sampleAndRecordTrialsImpl from distribution
   test_discrete_elastic_distribution->sampleAndRecordTrialsImpl(
@@ -403,14 +398,14 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                                                 trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.81773163837444063e-01, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.81773163837444063e-01, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 12 );
 }
 
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    sample )
 {
   // Set fake random number stream
@@ -431,13 +426,13 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.23783127169921725e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.23783127169921725e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    sampleAndRecordTrials )
 {
   // Set fake random number stream
@@ -451,7 +446,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   double scattering_angle_cosine, outgoing_energy;
-  unsigned trials = 10;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 10;
 
   // sampleAndRecordTrials from distribution
   discrete_elastic_distribution->sampleAndRecordTrials(
@@ -461,14 +456,14 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                                           trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.23783127169921725e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( scattering_angle_cosine, 9.23783127169921725e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    ScatterElectron )
 {
   // Set fake random number stream
@@ -490,14 +485,14 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                                              shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.23783127169921725e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 9.23783127169921725e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    ScatterPositron )
 {
   // Set fake random number stream
@@ -519,14 +514,14 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                                              shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( positron.getZDirection(), 9.23783127169921725e-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getZDirection(), 9.23783127169921725e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( positron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
 // Check that the angle cosine can be evaluated
-TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
+FRENSIE_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                    ScatterAdjointElectron )
 {
   // Set fake random number stream
@@ -548,28 +543,28 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
                                                     shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
                           9.23783127169921725e-01,
                           1e-12 );
-  TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0e-3, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 
 //---------------------------------------------------------------------------//
-// Custom setup
+// Custom Setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_native_file_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // create Native distributions
   {
@@ -585,11 +580,13 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   int size = angular_energy_grid.size();
 
   // Create the scattering function
-  TwoDDist::DistributionType function_data( size );
+  std::vector<double> primary_grid( size );
+  std::vector<std::shared_ptr<const Utility::TabularUnivariateDistribution> >
+    secondary_dists( size );
 
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
   {
-    function_data[n].first = angular_energy_grid[n];
+    primary_grid[n] = angular_energy_grid[n];
 
     // Get the moment preserving elastic scattering angle cosines at the energy
     std::vector<double> discrete_angles(
@@ -601,7 +598,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
         data_container.getMomentPreservingElasticWeights(
             angular_energy_grid[n] ) );
 
-    function_data[n].second.reset(
+    secondary_dists[n].reset(
       new const Utility::DiscreteDistribution(
         discrete_angles,
         weights,
@@ -616,11 +613,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
 
     // Create the scattering function
     std::shared_ptr<TwoDDist> scattering_function(
-      new Utility::InterpolatedFullyTabularTwoDDistribution<Utility::LinLinLog,Utility::Correlated>(
-        function_data,
-        fuzzy_boundary_tol,
-        evaluate_relative_error_tol,
-        evaluate_error_tol ) );
+       new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::Correlated<Utility::LinLinLog>>(
+                                                   primary_grid,
+                                                   secondary_dists,
+                                                   fuzzy_boundary_tol,
+                                                   evaluate_relative_error_tol,
+                                                   evaluate_error_tol ) );
 
     discrete_elastic_distribution.reset(
         new MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
@@ -637,7 +635,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstMomentPreservingElasticElectronScatteringDistribution.cpp

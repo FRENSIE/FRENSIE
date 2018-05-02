@@ -9,18 +9,13 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -34,7 +29,7 @@ std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sample_DipoleBremsstrahlung )
 {
   // Set up the random number stream
@@ -51,8 +46,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   dipole_distribution->sample( incoming_energy,
                                photon_energy,
                                photon_angle_cosine );
-  TEST_FLOATING_EQUALITY( photon_energy, 1.5161296983571827e-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5161296983571827e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
 
   // sample using the eprdata14 file
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -64,13 +59,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.5615223131747785e-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 5.9272490590767779e-02, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5615223131747785e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 5.9272490590767779e-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_DipoleBremsstrahlung )
 {
   // Set up the random number stream
@@ -80,7 +75,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 10;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 10;
   double incoming_energy = 0.0009;
   double photon_energy, photon_angle_cosine;
 
@@ -91,9 +86,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.5161296983571827e-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5161296983571827e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 11 );
 
   // sample using the eprdata14 file
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -106,14 +101,14 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Test
-  TEST_FLOATING_EQUALITY( photon_energy, 1.5615223131747785e-05, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 5.92724905907677790e-02, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.5615223131747785e-05, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 5.92724905907677790e-02, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sample_TwoBSBremsstrahlung )
 {
   // Set up the random number stream
@@ -136,13 +131,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.65383677217787E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.65383677217787E-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
+FRENSIE_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_TwoBSBremsstrahlung )
 {
   // Set up the random number stream
@@ -156,7 +151,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials = 0;
+  MonteCarlo::ElectronScatteringDistribution::Counter trials = 0;
   double incoming_energy = 1.0;
   double photon_energy, photon_angle_cosine;
 
@@ -167,48 +162,47 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionACEFactory,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( photon_energy, 1.65383677217787E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 1 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_energy, 1.65383677217787E-04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( photon_angle_cosine, 0.612270260118, 1e-12 );
+  FRENSIE_CHECK_EQUAL( trials, 1 );
 }
 
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
 std::string test_ace12_file_name, test_ace12_table_name,
             test_ace14_file_name, test_ace14_table_name;
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_COMMAND_LINE_OPTIONS()
+FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_ace12_file",
-                   &test_ace12_file_name,
-                   "Test ACE file name" );
-  clp().setOption( "test_ace12_table",
-                   &test_ace12_table_name,
-                   "Test ACE12 table name" );
-
-  clp().setOption( "test_ace14_file",
-                   &test_ace14_file_name,
-                   "Test ACE14 file name" );
-  clp().setOption( "test_ace14_table",
-                   &test_ace14_table_name,
-                   "Test ACE14 table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_file",
+                                        test_ace12_file_name, "",
+                                        "Test ACE12 file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace12_table",
+                                        test_ace12_table_name, "",
+                                        "Test ACE12 table name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_file",
+                                        test_ace14_file_name, "",
+                                        "Test ACE14 file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_ace14_table",
+                                        test_ace14_table_name, "",
+                                        "Test ACE14 table name" );
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Create the distributions using the eprdata14 file
   {
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace12_file_name,
                                   test_ace12_table_name,
                                   1u ) );
 
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
@@ -226,12 +220,12 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   // Create the distribution using the eprdata14 file
   {
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::unique_ptr<Data::ACEFileHandler> ace_file_handler(
         new Data::ACEFileHandler( test_ace14_file_name,
                                   test_ace14_table_name,
                                   1u ) );
 
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::unique_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
         new Data::XSSEPRDataExtractor( ace_file_handler->getTableNXSArray(),
                                        ace_file_handler->getTableJXSArray(),
                                        ace_file_handler->getTableXSSArray() ) );
@@ -245,7 +239,7 @@ UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstBremsstrahlungElectronScatteringDistributionACEFactory.cpp
