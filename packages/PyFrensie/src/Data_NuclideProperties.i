@@ -25,6 +25,8 @@
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ToStringTraitsDecl.hpp"
+#include "Utility_TypeTraitsDecl.hpp"
 
 // Add the Data namespace to the global lookup scope
 using namespace Data;
@@ -42,11 +44,18 @@ using namespace Data;
 // Include typemaps support
 %include <typemaps.i>
 
+// Import the ToString Traits and Type Traits Decl
+%import "Utility_ToStringTraitsDecl.hpp"
+%import "Utility_TypeTraitsDecl.hpp"
+
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
 
 // Import the explicit template instantiation helpers
 %include "Data_ExplicitTemplateInstantiationMacros.hpp"
+
+// Include the data property helpers
+%include "Data_PropertyHelpers.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -87,16 +96,19 @@ using namespace Data;
 //---------------------------------------------------------------------------//
 // Add support for the ZAID
 //---------------------------------------------------------------------------//
+
+// Add template for a std::set of ZAIDs
+%template(ZaidSet) std::set<Data::ZAID>;
+
+%rename(assign) Data::ZAID::operator=( const ZAID& that );
+%rename(make_unsigned) Data::ZAID::operator unsigned() const;
+
 // Import the ZAID
 %include "Data_ZAID.hpp"
 
-// Add typemaps for converting ZAID to and from Python int
+// Add typemaps for converting a Python int to a ZAID
 %typemap(in) const Data::ZAID {
   $1 = PyFrensie::convertFromPython<unsigned>( $input );
-}
-
-%typemap(out) Data::ZAID {
-  %append_output( (unsigned)$1 );
 }
 
 %typemap(typecheck, precedence=25) (const Data::ZAID) {
@@ -107,8 +119,8 @@ using namespace Data;
 // Add support for the NuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of NuclearDataProperties objects
-%shared_ptr( Data::NuclearDataProperties );
+// Use helper interface setup
+%nuclear_properties_interface_setup(NuclearDataProperties);
 
 // Import the NuclearDataProperties
 %include "Data_NuclearDataProperties.hpp"
@@ -117,8 +129,8 @@ using namespace Data;
 // Add support for the ThermalNuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of ThermalNuclearDataProperties objects
-%shared_ptr( Data::ThermalNuclearDataProperties );
+// Use helper interface setup
+%thermal_nuclear_properties_interface_setup(ThermalNuclearDataProperties);
 
 // Import the ThermalNuclearDataProperties
 %include "Data_ThermalNuclearDataProperties.hpp"
@@ -127,8 +139,8 @@ using namespace Data;
 // Add support for the AdjointNuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of AdjointNuclearDataProperties objects
-%shared_ptr( Data::AdjointNuclearDataProperties );
+// Use helper interface setup
+%nuclear_properties_interface_setup(AdjointNuclearDataProperties);
 
 // Import the AdjointNuclearDataProperties
 %include "Data_AdjointNuclearDataProperties.hpp"
@@ -137,8 +149,8 @@ using namespace Data;
 // Add support for the AdjointThermalNuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of AdjointThermalNuclearDataProperties objects
-%shared_ptr( Data::AdjointThermalNuclearDataProperties );
+// Use helper interface setup
+%thermal_nuclear_properties_interface_setup(AdjointThermalNuclearDataProperties);
 
 // Import the AdjointThermalNuclearDataProperties
 %include "Data_AdjointThermalNuclearDataProperties.hpp"
@@ -147,8 +159,34 @@ using namespace Data;
 // Add support for the PhotonuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of PhotonuclearDataProperties objects
-%shared_ptr( Data::PhotonuclearDataProperties );
+// Add a more detailed docstring
+%feature("docstring") Data::PhotonuclearDataProperties
+"The PhotonuclearDataProperties class stores photonuclear data properties.
+It can be used for querying photonuclear data properties and for creating
+photonuclear data extractors or container, which can be used to read
+photonuclear data."
+
+// Use helper interface setup
+%basic_properties_interface_setup(PhotonuclearDataProperties);
+
+%feature("autodoc", "zaid(PhotonuclearDataProperties self) -> ZAID")
+Data::PhotonuclearDataProperties::zaid;
+
+%feature("autodoc", "atomicWeight(PhotonuclearDataProperties self) -> AtomicWeight")
+Data::PhotonuclearDataProperties::atomicWeight;
+
+// Add typemaps for converting AtomicWeight to and from Python float
+%typemap(in) const Data::PhotonuclearDataProperties::AtomicWeight {
+  $1 = Data::PhotonuclearDataProperties::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
+}
+
+%typemap(out) Data::PhotonuclearDataProperties::AtomicWeight {
+  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
+}
+
+%typemap(typecheck, precedence=90) (const Data::PhotonuclearDataProperties::AtomicWeight) {
+  $1 = (PyFloat_Check($input)) ? 1 : 0;
+}
 
 // Import the PhotonuclearDataProperties
 %include "Data_PhotonuclearDataProperties.hpp"
@@ -157,8 +195,24 @@ using namespace Data;
 // Add support for the AdjointPhotonuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of AdjointPhotonuclearDataProperties objects
-%shared_ptr( Data::AdjointPhotonuclearDataProperties );
+// Add a more detailed docstring
+%feature("docstring") Data::AdjointPhotonuclearDataProperties
+"The Adjoint PhotonuclearDataProperties class stores adjoint photonuclear data
+properties. It can be used for querying adjoint photonuclear data properties
+and for creating adjoint photonuclear data extractors or container, which can be
+used to read adjoint photonuclear data."
+
+// Use helper interface setup
+%basic_properties_interface_setup(AdjointPhotonuclearDataProperties);
+
+%feature("autodoc", "zaid(AdjointPhotonuclearDataProperties self) -> ZAID")
+Data::AdjointPhotonuclearDataProperties::zaid;
+
+%feature("autodoc", "atomicWeight(AdjointPhotonuclearDataProperties self) -> AtomicWeight")
+Data::AdjointPhotonuclearDataProperties::atomicWeight;
+
+%apply const Data::PhotonuclearDataProperties::AtomicWeight {
+  const Data::AdjointPhotonuclearDataProperties::AtomicWeight }
 
 // Import the AdjointPhotonuclearDataProperties
 %include "Data_AdjointPhotonuclearDataProperties.hpp"
@@ -170,82 +224,68 @@ using namespace Data;
 %ignore *::AtomicWeight;
 %ignore Data::NuclideProperties::NuclideProperties( const Data::ZAID, const AtomicWeight );
 
+%feature("docstring") Data::NuclideProperties
+"The NuclideProperties class stores a nuclear data properties. It can be used for
+querying nuclear data properties and for creating nuclear data extractors or
+container, which can be used to read nuclear data."
+
+%feature("autodoc", "zaid(NuclideProperties self) -> ZAID")
+Data::NuclideProperties::zaid;
+
+%feature("autodoc", "atomicWeight(NuclideProperties self) -> AtomicWeight")
+Data::NuclideProperties::atomicWeight;
+
+%feature("autodoc", "atomicWeightRatio(NuclideProperties self) -> double")
+Data::NuclideProperties::atomicWeightRatio;
+
+// Docstrings for getDataEvaluationTempsInMeV
+%feature("autodoc", "getDataEvaluationTempsInMeV(NuclideProperties self, const NuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Energy>")
+Data::NuclideProperties::getDataEvaluationTempsInMeV;
+
+%feature("autodoc", "getAdjointDataEvaluationTempsInMeV(NuclideProperties self, const AdjointNuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Energy>")
+Data::NuclideProperties::getAdjointDataEvaluationTempsInMeV;
+
+%feature("autodoc", "getDataEvaluationTempsInMeV(NuclideProperties self, const std::string& name, const NuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Energy>")
+Data::NuclideProperties::getDataEvaluationTempsInMeV;
+
+%feature("autodoc", "getAdjointDataEvaluationTempsInMeV(NuclideProperties self, const std::string& name, const AdjointNuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Energy>")
+Data::NuclideProperties::getAdjointDataEvaluationTempsInMeV;
+
+// Docstrings for getDataEvaluationTemps
+%feature("autodoc", "getDataEvaluationTemps(NuclideProperties self, const NuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Temperature>")
+Data::NuclideProperties::getDataEvaluationTemps;
+
+%feature("autodoc", "getAdjointDataEvaluationTemps(NuclideProperties self, const AdjointNuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Temperature>")
+Data::NuclideProperties::getAdjointDataEvaluationTemps;
+
+%feature("autodoc", "getDataEvaluationTemps(NuclideProperties self, const std::string& name, const NuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Temperature>")
+Data::NuclideProperties::getDataEvaluationTemps;
+
+%feature("autodoc", "getAdjointDataEvaluationTemps(NuclideProperties self, const std::string& name, const AdjointNuclearDataProperties::FileType file_type, const unsigned table_major_version) ->  std::vector<Temperature>")
+Data::NuclideProperties::getAdjointDataEvaluationTemps;
+
+// Docstrings for getDataFileTypes
+%feature("autodoc", "getNuclearDataFileTypes(NuclideProperties self) ->  std::set<NuclearDataProperties::FileType>")
+Data::NuclideProperties::getNuclearDataFileTypes;
+
+%feature("autodoc", "getAdjointNuclearDataFileTypes(NuclideProperties self) -> std::set<AdjointNuclearDataProperties::FileType>")
+Data::NuclideProperties::getAdjointNuclearDataFileTypes;
+
+%feature("autodoc", "getThermalNuclearDataFileTypes(NuclideProperties self, const std::string& name) -> std::set<ThermalNuclearDataProperties::FileType>")
+Data::NuclideProperties::getThermalNuclearDataFileTypes;
+
+%feature("autodoc", "getAdjointThermalNuclearDataFileTypes(NuclideProperties self, const std::string& name) -> std::set<AdjointThermalNuclearDataProperties::FileType>")
+Data::NuclideProperties::getAdjointThermalNuclearDataFileTypes;
+
 // Allow shared pointers of NuclideProperties objects
 %shared_ptr( Data::NuclideProperties );
 
-// Add std::set templates for FileType
-%template(NuclearDataPropertiesSet) std::set< Data::NuclearDataProperties::FileType >;
-%template(ThermalNuclearDataPropertiesSet) std::set< Data::ThermalNuclearDataProperties::FileType >;
-%template(AdjointNuclearDataPropertiesSet) std::set< Data::AdjointNuclearDataProperties::FileType >;
-%template(AdjointThermalNuclearDataPropertiesSet) std::set< Data::AdjointThermalNuclearDataProperties::FileType >;
-%template(PhotonuclearDataPropertiesSet) std::set< Data::PhotonuclearDataProperties::FileType >;
-%template(AdjointPhotonuclearDataPropertiesSet) std::set< Data::AdjointPhotonuclearDataProperties::FileType >;
-
-
-// Rename the overloaded nuclearDataAvailable functions
-%rename(nuclearDataAvailableAtMeV) Data::NuclideProperties::nuclearDataAvailable(
-  const NuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp ) const;
-
-%rename(thermalNuclearDataAvailableAtMeV) Data::NuclideProperties::thermalNuclearDataAvailable(
-  const std::string& name,
-  const ThermalNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp ) const;
-
-%rename(adjointNuclearDataAvailableAtMeV) Data::NuclideProperties::adjointNuclearDataAvailable(
-  const AdjointNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp ) const;
-
-%rename(adjointThermalNuclearDataAvailableAtMeV) Data::NuclideProperties::adjointThermalNuclearDataAvailable(
-  const std::string& name,
-  const AdjointThermalNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp ) const;
-
-// Rename the overloaded getDataFileVersions functions
-%rename(getNuclearDataFileVersions) Data::NuclideProperties::getDataFileVersions(
-  const NuclearDataProperties::FileType file_type ) const;
-
-%rename(getThermalNuclearDataFileVersions) Data::NuclideProperties::getDataFileVersions(
-  const std::string& name,
-  const ThermalNuclearDataProperties::FileType file_type ) const;
-
-%rename(getAdjointNuclearDataFileVersions) Data::NuclideProperties::getDataFileVersions(
-  const AdjointNuclearDataProperties::FileType file_type ) const;
-
-%rename(getAdjointThermalNuclearDataFileVersions) Data::NuclideProperties::getDataFileVersions(
-  const std::string& name,
-  const AdjointThermalNuclearDataProperties::FileType file_type ) const;
-
-%rename(getPhotonuclearDataFileVersions) Data::NuclideProperties::getDataFileVersions(
-  const PhotonuclearDataProperties::FileType file_type ) const;
-
-%rename(getAdjointPhotonuclearDataFileVersions) Data::NuclideProperties::getDataFileVersions(
-  const AdjointPhotonuclearDataProperties::FileType file_type ) const;
-
-// Rename the overloaded getRecommendedDataFileVersion functions
-%rename(getRecommendedNuclearDataFileVersion) Data::NuclideProperties::getRecommendedDataFileVersion(
-  const NuclearDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedThermalNuclearDataFileVersion) Data::NuclideProperties::getRecommendedDataFileVersion(
-  const std::string& name,
-  const ThermalNuclearDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedAdjointNuclearDataFileVersion) Data::NuclideProperties::getRecommendedDataFileVersion(
-  const AdjointNuclearDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedAdjointThermalNuclearDataFileVersion) Data::NuclideProperties::getRecommendedDataFileVersion(
-  const std::string& name,
-  const AdjointThermalNuclearDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedPhotonuclearDataFileVersion) Data::NuclideProperties::getRecommendedDataFileVersion(
-  const PhotonuclearDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedAdjointPhotonuclearDataFileVersion) Data::NuclideProperties::getRecommendedDataFileVersion(
-  const AdjointPhotonuclearDataProperties::FileType file_type ) const;
+%rename_data_file_version( Photonuclear, NuclideProperties )
+%rename_data_file_version( AdjointPhotonuclear, NuclideProperties )
+%rename_nuclide_data_functions( Nuclear, nuclear )
+%rename_nuclide_data_functions( AdjointNuclear, adjointNuclear )
+%rename_thermal_nuclide_data_functions( ThermalNuclear, thermalNuclear )
+%rename_thermal_nuclide_data_functions( AdjointThermalNuclear, adjointThermalNuclear )
 
 // Rename the overloaded getDataEvaluationTemps function
 %rename(getAdjointDataEvaluationTemps) Data::NuclideProperties::getDataEvaluationTemps(
@@ -267,112 +307,11 @@ using namespace Data;
   const AdjointThermalNuclearDataProperties::FileType file_type,
   const unsigned table_major_version ) const;
 
-// Rename the overloaded getNuclearDataProperties function
-%rename(getNuclearDataPropertiesAtMeV) getNuclearDataProperties(
-  const NuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-%rename(getThermalNuclearDataPropertiesAtMeV) getThermalNuclearDataProperties(
-  const std::string& name,
-  const ThermalNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-%rename(getAdjointNuclearDataPropertiesAtMeV) getAdjointNuclearDataProperties(
-  const AdjointNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-%rename(getAdjointThermalNuclearDataPropertiesAtMeV) getAdjointThermalNuclearDataProperties(
-  const std::string& name,
-  const AdjointThermalNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-// Rename the overloaded getSharedNuclearDataProperties function
-%rename(getSharedNuclearDataPropertiesAtMeV) getSharedNuclearDataProperties(
-  const NuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-%rename( getSharedThermalNuclearDataPropertiesAtMeV) getSharedThermalNuclearDataProperties(
-  const std::string& name,
-  const ThermalNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-%rename(getSharedAdjointNuclearDataPropertiesAtMeV) getSharedAdjointNuclearDataProperties(
-  const AdjointNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-%rename( getSharedAdjointThermalNuclearDataPropertiesAtMeV) getSharedAdjointThermalNuclearDataProperties(
-  const std::string& name,
-  const AdjointThermalNuclearDataProperties::FileType file_type,
-  const unsigned table_major_version,
-  const Energy evaluation_temp,
-  const bool find_exact ) const;
-
-
 // Add typemaps for converting AtomicWeight to and from Python float
-%typemap(in) const Data::NuclideProperties::AtomicWeight {
-  $1 = Data::NuclideProperties::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
-}
-
-%typemap(out) Data::NuclideProperties::AtomicWeight {
-  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
-}
-
-%typemap(typecheck, precedence=90) (const Data::NuclideProperties::AtomicWeight) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
-
-// Apply AtomicWeight typemaps to other classes
-%apply const Data::NuclideProperties::AtomicWeight {
-  const Data::NuclearDataProperties::AtomicWeight,
-  const Data::AdjointNuclearDataProperties::AtomicWeight,
-  const Data::PhotonuclearDataProperties::AtomicWeight,
-  const Data::AdjointPhotonuclearDataProperties::AtomicWeight };
-
-%apply Data::NuclideProperties::AtomicWeight {
-  Data::NuclearDataProperties::AtomicWeight,
-  Data::AdjointNuclearDataProperties::AtomicWeight,
-  Data::PhotonuclearDataProperties::AtomicWeight,
-  Data::AdjointPhotonuclearDataProperties::AtomicWeight };
-
-// Add typemaps for converting Energy to and from Python float
-%typemap(in) const Data::NuclideProperties::Energy {
-  $1 = Data::NuclideProperties::Energy::from_value( PyFrensie::convertFromPython<double>( $input ) );
-}
-
-%typemap(out) Data::NuclideProperties::Energy {
-  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
-}
-
-%typemap(typecheck, precedence=90) (const Data::NuclideProperties::Energy) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
-
-// Add typemaps for converting Temperature to and from Python float
-%typemap(in) const Data::NuclideProperties::Temperature {
-  $1 = Data::NuclideProperties::Temperature::from_value( PyFrensie::convertFromPython<double>( $input ) );
-}
-
-%typemap(out) Data::NuclideProperties::Temperature {
-  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
-}
-
-%typemap(typecheck, precedence=90) (const Data::NuclideProperties::Temperature) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
+%apply const Data::PhotonuclearDataProperties::AtomicWeight {
+  const Data::NuclideProperties::AtomicWeight }
+%apply Data::PhotonuclearDataProperties::AtomicWeight {
+  Data::NuclideProperties::AtomicWeight }
 
 // Import the NuclideProperties
 %include "Data_NuclideProperties.hpp"

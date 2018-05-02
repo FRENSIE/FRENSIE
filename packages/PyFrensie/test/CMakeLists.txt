@@ -70,26 +70,44 @@ PyFrensie_MAKE_TEST(tstData.ACE.ACEPhotoatomicDataProperties)
 ADD_TEST(PyFrensie.Data.ACE.ACEPhotoatomicDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEPhotoatomicDataProperties.py)
 SET_PROPERTY(TEST PyFrensie.Data.ACE.ACEPhotoatomicDataProperties_test PROPERTY LABELS pyfrensie ace)
 
-# # Add the Data.ACE.ACEFileHandler unit tests
-# PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)
-# ADD_TEST(PyFrensie.Data.ACE.ACEFileHandler_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEFileHandler.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
-# SET_PROPERTY(TEST PyFrensie.Data.ACE.ACEFileHandler_test PROPERTY LABELS pyfrensie ace)
+# Add the Data.ACE.ACENuclearDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.ACENuclearDataProperties)
+ADD_TEST(PyFrensie.Data.ACE.ACENuclearDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACENuclearDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.ACENuclearDataProperties_test PROPERTY LABELS pyfrensie ace)
 
-# # Add the Data.ACE.XSSNeutronDataExtractor unit tests
-# PyFrensie_MAKE_TEST(tstData.ACE.XSSNeutronDataExtractor)
-# ADD_TEST(PyFrensie.Data.ACE.XSSNeutronDataExtractor_H1_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSNeutronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
-# SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSNeutronDataExtractor_H1_test PROPERTY LABELS pyfrensie ace neutron)
-# ADD_TEST(PyFrensie.Data.ACE.XSSNeutronDataExtractor_U238_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSNeutronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt --tablename=92238.70c)
-# SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSNeutronDataExtractor_U238_test PROPERTY LABELS pyfrensie ace neutron)
+# Add the Data.ACE.ACEThermalNuclearDataProperties unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.ACEThermalNuclearDataProperties)
+ADD_TEST(PyFrensie.Data.ACE.ACEThermalNuclearDataProperties_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEThermalNuclearDataProperties.py)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.ACEThermalNuclearDataProperties_test PROPERTY LABELS pyfrensie ace)
 
-# # Add the Data.ACE.XSSEPRDataExtractor unit tests
-# PyFrensie_MAKE_TEST(tstData.ACE.XSSEPRDataExtractor)
-# ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_B_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_b_epr_ace_file.txt --tablename=5000.12p)
-# SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_B_test PROPERTY LABELS pyfrensie ace electron photon neutron)
-# ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --tablename=82000.12p)
-# SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_Pb_test PROPERTY LABELS pyfrensie ace electron photon neutron)
-# ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt --tablename=82000.14p)
-# SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test PROPERTY LABELS pyfrensie ace14 electron photon neutron)
+# Add the Data.ACE.ACEFileHandler unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)
+ADD_TEST(PyFrensie.Data.ACE.ACEFileHandler_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEFileHandler.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.ACEFileHandler_test PROPERTY LABELS pyfrensie ace)
+
+# Add the Data.ACE.XSSNeutronDataExtractor unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.XSSNeutronDataExtractor)
+ADD_TEST(PyFrensie.Data.ACE.XSSNeutronDataExtractor_H1_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSNeutronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSNeutronDataExtractor_H1_test PROPERTY LABELS pyfrensie ace neutron)
+ADD_TEST(PyFrensie.Data.ACE.XSSNeutronDataExtractor_U238_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSNeutronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt --tablename=92238.70c)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSNeutronDataExtractor_U238_test PROPERTY LABELS pyfrensie ace neutron)
+
+# Add the Data.ACE.XSSEPRDataExtractor unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.XSSEPRDataExtractor)
+ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_B_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_b_epr_ace_file.txt --tablename=5000.12p)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_B_test PROPERTY LABELS pyfrensie ace electron photon neutron)
+ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --tablename=82000.12p)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_Pb_test PROPERTY LABELS pyfrensie ace electron photon neutron)
+ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt --tablename=82000.14p)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSEPRDataExtractor_epr14_Pb_test PROPERTY LABELS pyfrensie ace14 electron photon neutron)
+
+# Add the Data.ACE.XSSElectronDataExtractor unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.XSSElectronDataExtractor)
+ADD_TEST(PyFrensie.Data.ACE.XSSElectronDataExtractor_B_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSElectronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_b_electron_ace_file.txt --tablename=5000.03e)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSElectronDataExtractor_B_test PROPERTY LABELS pyfrensie ace electron)
+ADD_TEST(PyFrensie.Data.ACE.XSSElectronDataExtractor_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSElectronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_electron_ace_file.txt --tablename=82000.03e)
+SET_PROPERTY(TEST PyFrensie.Data.ACE.XSSElectronDataExtractor_Pb_test PROPERTY LABELS pyfrensie ace electron)
+
 
 # Add the Geometry.Ray unit tests
 PyFrensie_MAKE_TEST(tstGeometry.Ray)

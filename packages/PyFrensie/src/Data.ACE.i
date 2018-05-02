@@ -27,10 +27,16 @@ and extracting data blocks from the XSS array.
 #include "Data_ACETableName.hpp"
 #include "Data_ACEPhotoatomicDataProperties.hpp"
 #include "Data_ACEElectroatomicDataProperties.hpp"
+#include "Data_ACENuclearDataProperties.hpp"
+#include "Data_ACEThermalNuclearDataProperties.hpp"
 
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Data_XSSSabDataExtractor.hpp"
+#include "Data_XSSElectronDataExtractor.hpp"
+#include "Data_XSSPhotoatomicDataExtractor.hpp"
+#include "Data_XSSPhotonuclearDataExtractor.hpp"
 
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
@@ -42,11 +48,17 @@ and extracting data blocks from the XSS array.
 %include <std_string.i>
 %include <std_except.i>
 
-// Include the Teuchos::ArrayRCP support
+// Include the ArrayView support
 %include "PyFrensie_Array.i"
 
 // Include the Data_AtomProperties support
 %include "Data_AtomProperties.i"
+
+// Include the Data_NuclideProperties support
+%include "Data_NuclideProperties.i"
+
+// Include the data property helpers
+%include "Data_PropertyHelpers.i"
 
 // Include the serialization helpers for macros
 %include "Utility_SerializationHelpers.hpp"
@@ -94,6 +106,10 @@ and extracting data blocks from the XSS array.
   %append_output(PyFrensie::convertToPython( $1.string() ) );
 }
 
+%typemap(out) const boost::filesystem::path& {
+  %append_output(PyFrensie::convertToPython( $1->string() ) );
+}
+
 %typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
   $1 = (PyString_Check($input)) ? 1 : 0;
 }
@@ -101,6 +117,11 @@ and extracting data blocks from the XSS array.
 //---------------------------------------------------------------------------//
 // Add support for the ACETableName
 //---------------------------------------------------------------------------//
+
+%ignore Data::ACETableName::operator std::string() const;
+
+%rename(assign) Data::ACETableName::operator=( const ACETableName& that );
+
 // Import the ACETableName
 %include "Data_ACETableName.hpp"
 
@@ -114,12 +135,28 @@ and extracting data blocks from the XSS array.
   $1 = (PyString_Check($input)) ? 1 : 0;
 }
 
+// Add some useful methods to the ACETableName class
+%extend Data::ACETableName
+{
+  // String conversion method
+  PyObject* __str__() const
+  {
+    return PyString_FromString( $self->toRaw().c_str() );
+  }
+
+  // String representation method
+  PyObject* __repr__() const
+  {
+    return PyString_FromString( $self->toRaw().c_str() );
+  }
+
+};
+
 //---------------------------------------------------------------------------//
 // Add support for the ACEPhotoatomicDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of ACEPhotoatomicDataProperties objects
-%shared_ptr( Data::ACEPhotoatomicDataProperties );
+%atomic_properties_interface_setup( ACEPhotoatomicDataProperties );
 
 // Import the ACEPhotoatomicDataProperties
 %include "Data_ACEPhotoatomicDataProperties.hpp"
@@ -128,172 +165,190 @@ and extracting data blocks from the XSS array.
 // Add support for the ElectroatomicDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of ACEElectroatomicDataProperties objects
-%shared_ptr( Data::ACEElectroatomicDataProperties );
+%atomic_properties_interface_setup( ACEElectroatomicDataProperties );
 
 // Import the ACEElectroatomicDataProperties
 %include "Data_ACEElectroatomicDataProperties.hpp"
 
+//---------------------------------------------------------------------------//
+// Add support for the NuclearDataProperties
+//---------------------------------------------------------------------------//
 
-// //---------------------------------------------------------------------------//
-// // Add support for the ACEFileHandler
-// //---------------------------------------------------------------------------//
-// // Add more detailed docstrings for the ACEFileHandler
-// %feature("docstring")
-// Data::ACEFileHandler
-// "
-// The ACEFileHandler can be used to read in any ACE table and extract
-// the NXS array, JXS array and XSS array. Usually, these arrays are then
-// passed to one of the XSSDataExtractor classes to extract the individual
-// data blocks from the XSS array. A brief usage tutorial for this class is
-// shown below:
+%nuclear_properties_interface_setup( ACENuclearDataProperties );
 
-//   import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy
+// Import the ACENuclearDataProperties
+%include "Data_ACENuclearDataProperties.hpp"
 
-//   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
-//   xml_obj = source.getObject()
-//   cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
+//---------------------------------------------------------------------------//
+// Add support for the ThermalNuclearDataProperties
+//---------------------------------------------------------------------------//
 
-//   h_data_list = cs_list.get( 'H' )
-//   h_ace_file_name = 'datadir' + h_data_list.get( 'photoatomic_file_path' )
+%nuclear_properties_interface_setup( ACEThermalNuclearDataProperties );
 
-//   h_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_ace_file_name, h_data_list.get( 'photoatomic_table_name' ), h_data_list.get( 'photoatomic_file_start_line' ) )
+// Import the ACEThermalNuclearDataProperties
+%include "Data_ACEThermalNuclearDataProperties.hpp"
 
-//   nxs_array = h_ace_file.getTableNXSArray()
-//   jxs_array = h_ace_file.getTableJXSArray()
-//   xss_array = h_ace_file.getTableXSSArray()
-// "
+//---------------------------------------------------------------------------//
+// Add support for the ACEFileHandler
+//---------------------------------------------------------------------------//
+// Add more detailed docstrings for the ACEFileHandler
+%feature("docstring")
+Data::ACEFileHandler
+"
+The ACEFileHandler can be used to read in any ACE table and extract
+the NXS array, JXS array and XSS array. Usually, these arrays are then
+passed to one of the XSSDataExtractor classes to extract the individual
+data blocks from the XSS array. A brief usage tutorial for this class is
+shown below:
 
-// // Add some useful methods to the ACEFileHandler class
-// %extend Data::ACEFileHandler
-// {
-//   // String conversion method
-//   PyObject* __str__() const
-//   {
-//     std::string string_rep( $self->getTableName() );
-//     string_rep += " from ";
-//     string_rep += $self->getLibraryName();
+  import PyFrensie.Data.ACE, numpy
 
-//     return PyString_FromString( string_rep.c_str() );
-//   }
+  h_ace_file = PyFrensie.Data.ACE.ACEFileHandler( 'h_ace_file_name', 'photoatomic_table_name' )
 
-//   // String representation method
-//   PyObject* __repr__() const
-//   {
-//     std::string string_rep( "ACEFileHandler(" );
-//     string_rep += $self->getTableName();
-//     string_rep += " from ";
-//     string_rep += $self->getLibraryName();
-//     string_rep += ")";
+  nxs_array = h_ace_file.getTableNXSArray()
+  jxs_array = h_ace_file.getTableJXSArray()
+  xss_array = h_ace_file.getTableXSSArray()
+"
 
-//     return PyString_FromString( string_rep.c_str() );
-//   }
-// };
+// Add typemaps for converting Energy to and from Python float
+%typemap(in) const Data::ACEFileHandler::Energy {
+  $1 = Data::ACEFileHandler::Energy::from_value( PyFrensie::convertFromPython<double>( $input ) );
+}
 
-// // Include ACEFileHandler
-// %include "Data_ACEFileHandler.hpp"
+%typemap(out) Data::ACEFileHandler::Energy {
+  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
+}
 
-// //---------------------------------------------------------------------------//
-// // Macro for setting up the XSS data extractor classes
-// //---------------------------------------------------------------------------//
-// %define %data_extractor_setup( EXTRACTOR )
+%typemap(typecheck, precedence=90) (const Data::ACEFileHandler::Energy) {
+  $1 = (PyFloat_Check($input)) ? 1 : 0;
+}
 
-// // Ignore the constructor (a new one will be provided)
-// %ignore Data::EXTRACTOR::EXTRACTOR( const Teuchos::ArrayView<const int>&, const Teuchos::ArrayView<const int>&, const Teuchos::ArrayRCP<const double>& );
 
-// // Define the new constructor
-// %extend Data::EXTRACTOR
-// {
-//   // Constructor
-//   EXTRACTOR( PyObject* nxs_py_array,
-//              PyObject* jxs_py_array,
-//              PyObject* xss_py_array )
-//   {
-//     Teuchos::Array<int> nxs_array =
-//       PyFrensie::convertFromPython<Teuchos::Array<int> >( nxs_py_array );
+// Add support for std::shared_ptr<std::vector<double> >
+%shared_ptr(std::vector<double>);
+%template(DoubleVector) std::vector<double>;
 
-//     Teuchos::Array<int> jxs_array =
-//       PyFrensie::convertFromPython<Teuchos::Array<int> >( jxs_py_array );
 
-//     Teuchos::ArrayRCP<double> xss_array =
-//       PyFrensie::convertFromPython<Teuchos::ArrayRCP<double> >( xss_py_array );
+// Swig will return an ArrayView<int> instead of ArrayView<Zaid>. To avoid this
+// the class is extended to return a std::vector<Zaid> instead.
 
-//     return new Data::EXTRACTOR( nxs_array(),
-//                                 jxs_array(),
-//                                 xss_array.getConst() );
-//   }
-// };
+// %array_typemaps(Data::ZAID , NPY_INT )
 
-// %enddef
+%template(ZaidVector) std::vector<Data::ZAID>;
 
-// //---------------------------------------------------------------------------//
-// // Add support for the XSSNeutronDataExtractor
-// //---------------------------------------------------------------------------//
-// // Add more detailed docstrings for the XSSNeutronDataExtractor
-// %feature("docstring")
-// Data::XSSNeutronDataExtractor
-// "
-// The XSSNeutronDataExtractor can be used to extract the data blocks from the
-// xss array found in an ACE data table.  A brief usage tutorial for this class is
-// shown below:
+// Add some useful methods to the ACEFileHandler class
+%extend Data::ACEFileHandler
+{
+  // Return the table's ZAIDs
+  std::vector<Data::ZAID> Data::ACEFileHandler::getTableZAIDs() const
+  {
+    std::vector<Data::ZAID> temp( $self->getTableZAIDs().begin(), $self->getTableZAIDs().end() );
 
-//   import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+    return temp;
+  }
 
-//   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
-//   xml_obj = source.getObject()
-//   cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
+  // String conversion method
+  PyObject* __str__() const
+  {
+    std::string string_rep( $self->getTableName() );
+    string_rep += " from ";
+    string_rep += $self->getLibraryName().string();
 
-//   h_1_data_list = cs_list.get( 'H-1_293.6K_v8' )
-//   h_1_ace_file_name = 'datadir' + h_1_data_list.get( 'nuclear_file_path' )
+    return PyString_FromString( string_rep.c_str() );
+  }
 
-//   h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'nuclear_table_name' ), h_1_data_list.get( 'nuclear_file_start_line' ) )
+  // String representation method
+  PyObject* __repr__() const
+  {
+    std::string string_rep( "ACEFileHandler(" );
+    string_rep += $self->getTableName();
+    string_rep += " from ";
+    string_rep += $self->getLibraryName().string();
+    string_rep += ")";
 
-//   neutron_data_extractor = PyFrensie.Data.ACE.XSSNeutronDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )
+    return PyString_FromString( string_rep.c_str() );
+  }
+};
 
-//   matplotlib.pyplot.loglog( neutron_data_extractor.extractEnergyGrid(), neutron_data_extractor.extractTotalCrossSection() )
-//   matplotlib.pyplot.show()
-// "
+// Ignore the original getTableZAIDs but keep the extened version
+%ignore Data::ACEFileHandler::getTableZAIDs() const;
 
-// %data_extractor_setup( XSSNeutronDataExtractor )
+// Include ACEFileHandler
+%include "Data_ACEFileHandler.hpp"
 
-// // Include XSSNeutronDataExtractor
-// %include "Data_XSSNeutronDataExtractor.hpp"
+//---------------------------------------------------------------------------//
+// Add support for the XSSNeutronDataExtractor
+//---------------------------------------------------------------------------//
+// Add more detailed docstrings for the XSSNeutronDataExtractor
+%feature("docstring")
+Data::XSSNeutronDataExtractor
+"
+The XSSNeutronDataExtractor can be used to extract the data blocks from the
+xss array found in an ACE data table.  A brief usage tutorial for this class is
+shown below:
 
-// //---------------------------------------------------------------------------//
-// // Add support for the XSSEPRDataExtractor
-// //---------------------------------------------------------------------------//
-// // Add more detailed docstrings for the XSSEPRDataExtractor
-// %feature("docstring")
-// Data::XSSEPRDataExtractor
-// "
-// The XSSEPRDataExtractor can be used to extract the data blocks from the
-// xss array found in an ACE data table.  A brief usage tutorial for this class is
-// shown below:
+  import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
 
-//   import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( ace_file_name, ace_table_name )
 
-//   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
-//   xml_obj = source.getObject()
-//   cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
+  neutron_data_extractor = PyFrensie.Data.ACE.XSSNeutronDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )
 
-//   h_1_data_list = cs_list.get( 'H-1_293.6K_v8' )
-//   h_1_ace_file_name = 'datadir' + h_1_data_list.get( 'photoatomic_file_path' )
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractEnergyGrid(), neutron_data_extractor.extractTotalCrossSection() )
+  matplotlib.pyplot.show()
+"
 
-//   h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'photoatomic_table_name' ), h_1_data_list.get( 'photoatomic_file_start_line' ) )
+// Include XSSNeutronDataExtractor
+%include "Data_XSSNeutronDataExtractor.hpp"
 
-//   neutron_data_extractor = PyFrensie.Data.ACE.XSSEPRDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )
+// ---------------------------------------------------------------------------//
+// Add support for the XSSEPRDataExtractor
+// ---------------------------------------------------------------------------//
 
-//   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractIncoherentCrossSection() )
-//   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractCoherentCrossSection() )
-//   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractPhotoelectricCrossSection() )
-//   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractPairProductionCrossSection() )
-//   matplotlib.pyplot.show()
-// "
+// Add more detailed docstrings for the XSSEPRDataExtractor
+%feature("docstring")
+Data::XSSEPRDataExtractor
+"
+The XSSEPRDataExtractor can be used to extract the data blocks from the
+xss array found in an ACE data table.  A brief usage tutorial for this class is
+shown below:
 
-// %data_extractor_setup( XSSEPRDataExtractor )
+  import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
 
-// // Include XSSEPRDataExtractor
-// %include "Data_XSSEPRDataExtractor.hpp"
+  h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( ace_file_name, ace_table_name )
+
+  neutron_data_extractor = PyFrensie.Data.ACE.XSSEPRDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )
+
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractIncoherentCrossSection() )
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractCoherentCrossSection() )
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractPhotoelectricCrossSection() )
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractPairProductionCrossSection() )
+  matplotlib.pyplot.show()
+"
+
+// Include XSSEPRDataExtractor
+%include "Data_XSSEPRDataExtractor.hpp"
+
+// ---------------------------------------------------------------------------//
+// Add support for the XSSElectronDataExtractor
+// ---------------------------------------------------------------------------//
+
+// Include XSSElectronDataExtractor
+%include "Data_XSSElectronDataExtractor.hpp"
+
+// ---------------------------------------------------------------------------//
+// Add support for the XSSPhotonuclearDataExtractor
+// ---------------------------------------------------------------------------//
+
+// Include XSSPhotonuclearDataExtractor
+%include "Data_XSSPhotonuclearDataExtractor.hpp"
+
+// ---------------------------------------------------------------------------//
+// Add support for the XSSPhotoatomicDataExtractor
+// ---------------------------------------------------------------------------//
+
+// Include XSSPhotoatomicDataExtractor
+%include "Data_XSSPhotoatomicDataExtractor.hpp"
+
 
 // Turn off the exception handling
 %exception;

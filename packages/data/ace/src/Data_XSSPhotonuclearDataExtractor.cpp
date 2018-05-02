@@ -23,11 +23,14 @@ XSSPhotonuclearDataExtractor::XSSPhotonuclearDataExtractor(
                        const std::shared_ptr<const std::vector<double> >& xss )
   : d_nxs( nxs.begin(), nxs.end() ),
     d_jxs( jxs.begin(), jxs.end() ),
-    d_xss( xss )
+    d_xss( xss ),
+    d_xss_view(),
+    d_secondary_particle_types(),
+    d_secondary_particle_order()
 {
   // Make sure that the xss array exists
   testPrecondition( xss.get() );
-  
+
   // Make sure the arrays have the correct size
   TEST_FOR_EXCEPTION( nxs.size() != 16,
                       std::runtime_error,
@@ -43,14 +46,14 @@ XSSPhotonuclearDataExtractor::XSSPhotonuclearDataExtractor(
                       << nxs[0] << " but it was found to have size "
                       << xss->size() << "!" );
 
-  //Adjust the indices in the JXS array so they are zero indexed
-  for( unsigned i = 0; i < d_jxs.size();++i)
+  // Adjust the indices in the JXS array so that they correspond to a C-array
+  for( size_t i = 0; i < d_jxs.size(); ++i )
     d_jxs[i] -= 1;
 
   // Create the XSS view
   d_xss_view = Utility::arrayViewOfConst( *d_xss );
 
-  // Parse secondary partcle types
+  // Parse secondary particle types
   unsigned num_secondary_particle_types = d_nxs[4];
   unsigned ixs_array_subsize = d_nxs[6];
 
@@ -94,6 +97,13 @@ bool XSSPhotonuclearDataExtractor::hasElasticScatteringData() const
 bool XSSPhotonuclearDataExtractor::hasHeatingNumberData() const
 {
     return d_jxs[4] != -1;
+}
+
+// Return secondary particle types
+const std::set<unsigned>&
+XSSPhotonuclearDataExtractor::getSecondaryParticleTypes() const
+{
+  return d_secondary_particle_types;
 }
 
   //! Extract the ESZ block

@@ -26,6 +26,7 @@
 #include "Utility_Set.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_ToStringTraitsDecl.hpp"
 
 // Add the Data namespace to the global lookup scope
 using namespace Data;
@@ -43,11 +44,17 @@ using namespace Data;
 // Include typemaps support
 %include <typemaps.i>
 
+// Import the ToStringTraitsDecl
+%import "Utility_ToStringTraitsDecl.hpp"
+
 // Include the serialization helpers for handling macros
 %include "Utility_SerializationHelpers.hpp"
 
-// Import the explicit template instantiation helpers
+// Include the explicit template instantiation helpers
 %include "Data_ExplicitTemplateInstantiationMacros.hpp"
+
+// Include the data property helpers
+%include "Data_PropertyHelpers.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -94,8 +101,7 @@ using namespace Data;
 // Add support for the PhotoatomicDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of PhotoatomicDataProperties objects
-%shared_ptr( Data::PhotoatomicDataProperties );
+%atomic_properties_interface_setup( PhotoatomicDataProperties );
 
 // Import the PhotoatomicDataProperties
 %include "Data_PhotoatomicDataProperties.hpp"
@@ -104,8 +110,7 @@ using namespace Data;
 // Add support for the AdjointPhotoatomicDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of AdjointPhotoatomicDataProperties objects
-%shared_ptr( Data::AdjointPhotoatomicDataProperties );
+%atomic_properties_interface_setup( AdjointPhotoatomicDataProperties );
 
 // Import the AdjointPhotoatomicDataProperties
 %include "Data_AdjointPhotoatomicDataProperties.hpp"
@@ -114,8 +119,7 @@ using namespace Data;
 // Add support for the ElectroatomicDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of ElectroatomicDataProperties objects
-%shared_ptr( Data::ElectroatomicDataProperties );
+%atomic_properties_interface_setup( ElectroatomicDataProperties );
 
 // Import the ElectroatomicDataProperties
 %include "Data_ElectroatomicDataProperties.hpp"
@@ -124,8 +128,7 @@ using namespace Data;
 // Add support for the AdjointElectroatomicDataProperties
 //---------------------------------------------------------------------------//
 
-// Allow shared pointers of AdjointElectroatomicDataProperties objects
-%shared_ptr( Data::AdjointElectroatomicDataProperties );
+%atomic_properties_interface_setup( AdjointElectroatomicDataProperties );
 
 // Import the AdjointElectroatomicDataProperties
 %include "Data_AdjointElectroatomicDataProperties.hpp"
@@ -137,70 +140,37 @@ using namespace Data;
 %ignore *::AtomicWeight;
 %ignore Data::AtomProperties::AtomProperties( const Data::AtomType, const AtomicWeight );
 
+%feature("docstring") Data::AtomProperties
+"The AtomProperties class stores a atomic data properties. It can be used for
+querying atomic data properties and for creating atomic data extractors or
+container, which can be used to read atomic data."
+
+%feature("autodoc", "atom(AtomProperties self) -> AtomType")
+Data::AtomProperties::atom;
+
+%feature("autodoc", "atomicNumber(AtomProperties self) -> unsigned")
+Data::AtomProperties::atomicNumber;
+
+%feature("autodoc", "atomicWeight(AtomProperties self) -> AtomicWeight")
+Data::AtomProperties::atomicWeight;
+
+%feature("autodoc", "atomicWeightRatio(AtomProperties self) -> double")
+Data::AtomProperties::atomicWeightRatio;
+
 // Allow shared pointers of AtomProperties objects
 %shared_ptr( Data::AtomProperties );
 
-// Add std::set templates for FileType
-%template(PhotoatomicDataPropertiesSet) std::set< Data::PhotoatomicDataProperties::FileType >;
-
-%template(AdjointPhotoatomicDataPropertiesSet) std::set< Data::AdjointPhotoatomicDataProperties::FileType >;
-
-%template(ElectroatomicDataPropertiesSet) std::set< Data::ElectroatomicDataProperties::FileType >;
-
-%template(AdjointElectroatomicDataPropertiesSet) std::set< Data::AdjointElectroatomicDataProperties::FileType >;
-
 // Rename the overloaded getDataFileVersions functions
-%rename(getPhotoatomicDataFileVersions) Data::AtomProperties::getDataFileVersions(
-  const PhotoatomicDataProperties::FileType file_type ) const;
-
-%rename(getAdjointPhotoatomicDataFileVersions) Data::AtomProperties::getDataFileVersions(
-  const AdjointPhotoatomicDataProperties::FileType file_type ) const;
-
-%rename(getElectroatomicDataFileVersions) Data::AtomProperties::getDataFileVersions(
-  const ElectroatomicDataProperties::FileType file_type ) const;
-
-%rename(getAdjointElectroatomicDataFileVersions) Data::AtomProperties::getDataFileVersions(
-  const AdjointElectroatomicDataProperties::FileType file_type ) const;
-
-// Rename the overloaded getRecommendedDataFileVersion functions
-%rename(getRecommendedPhotoatomicDataFileVersion) Data::AtomProperties::getRecommendedDataFileVersion(
-  const PhotoatomicDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedAdjointPhotoatomicDataFileVersion) Data::AtomProperties::getRecommendedDataFileVersion(
-  const AdjointPhotoatomicDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedElectroatomicDataFileVersion) Data::AtomProperties::getRecommendedDataFileVersion(
-  const ElectroatomicDataProperties::FileType file_type ) const;
-
-%rename(getRecommendedAdjointElectroatomicDataFileVersion) Data::AtomProperties::getRecommendedDataFileVersion(
-  const AdjointElectroatomicDataProperties::FileType file_type ) const;
-
+%atom_properties_interface_setup( Photoatomic, photoatomic )
+%atom_properties_interface_setup( AdjointPhotoatomic, adjointPhotoatomic )
+%atom_properties_interface_setup( Electroatomic, electroatomic )
+%atom_properties_interface_setup( AdjointElectroatomic, adjointElectroatomic )
 
 // Add typemaps for converting AtomicWeight to and from Python float
-%typemap(in) const Data::AtomProperties::AtomicWeight {
-  $1 = Data::AtomProperties::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
-}
-
-%typemap(out) Data::AtomProperties::AtomicWeight {
-  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
-}
-
-%typemap(typecheck, precedence=90) (const Data::AtomProperties::AtomicWeight) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
-
-// Apply AtomicWeight typemaps to other classes
-%apply const Data::AtomProperties::AtomicWeight {
-  const Data::PhotoatomicDataProperties::AtomicWeight,
-  const Data::AdjointPhotoatomicDataProperties::AtomicWeight,
-  const Data::ElectroatomicDataProperties::AtomicWeight,
-  const Data::AdjointElectroatomicDataProperties::AtomicWeight };
-
-%apply Data::AtomProperties::AtomicWeight {
-  Data::PhotoatomicDataProperties::AtomicWeight,
-  Data::AdjointPhotoatomicDataProperties::AtomicWeight,
-  Data::ElectroatomicDataProperties::AtomicWeight,
-  Data::AdjointElectroatomicDataProperties::AtomicWeight };
+%apply const Data::PhotoatomicDataProperties::AtomicWeight {
+  const Data::AtomProperties::AtomicWeight }
+%apply Data::PhotoatomicDataProperties::AtomicWeight {
+  Data::AtomProperties::AtomicWeight }
 
 // Import the AtomProperties
 %include "Data_AtomProperties.hpp"

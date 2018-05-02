@@ -133,7 +133,7 @@ ACEThermalNuclearDataProperties::ACEThermalNuclearDataProperties(
                                      file_start_line,
                                      file_table_name )
 { /* ... */ }
-  
+
 } // end Data namespace
 
 BOOST_SERIALIZATION_CLASS_VERSION( ACEThermalNuclearDataProperties, Data, 0 );

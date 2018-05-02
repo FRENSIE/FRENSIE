@@ -35,18 +35,40 @@
 %typemap(in) Utility::ArrayView< const TYPE > (int is_new = 0,
                                                PyArrayObject* np_array = NULL)
 {
-  np_array = Details::getNumPyArray<TYPE>( $input, &is_new );
+  np_array = PyFrensie::Details::getNumPyArray<TYPE>( $input, &is_new );
 
   if( !np_array )
     SWIG_fail;
-  
-  $1 = Utility::arrayView( (TYPE*)PyArray_DATA(np_array), PyArray_DIM(np_array, 0) );
+
+  $1 = Utility::ArrayView< const TYPE >( (TYPE*)PyArray_DATA(np_array), PyArray_DIM(np_array, 0) );
 }
 
 %typemap(freearg) Utility::ArrayView< const TYPE >
 {
   if( is_new$argnum )
-    Py_DECREF(np_array$argnum)
+    Py_DECREF(np_array$argnum);
+}
+
+
+%typemap(in) const Utility::ArrayView< const TYPE >& (int is_new = 0,
+                                                PyArrayObject* np_array = NULL,
+                                                Utility::ArrayView< const TYPE > temp )
+{
+  np_array = PyFrensie::Details::getNumPyArray<TYPE>( $input, &is_new );
+
+  if( !np_array )
+    SWIG_fail;
+
+  temp =
+    Utility::ArrayView< const TYPE >( (TYPE*)PyArray_DATA(np_array), PyArray_DIM(np_array, 0) );
+
+  $1 = &temp;
+}
+
+%typemap(freearg) const Utility::ArrayView< const TYPE >&
+{
+  if( is_new$argnum )
+    Py_DECREF(np_array$argnum);
 }
 
 // // If an ArrayView argument has a non-const TYPE, then the default
@@ -55,11 +77,11 @@
 %typemap(in) Utility::ArrayView< TYPE >
 {
   PyArrayObject* np_array =
-    Details::getNumPyArrayWithoutConversion<TYPE>( $input );
+    PyFrensie::Details::getNumPyArrayWithoutConversion<TYPE>( $input );
 
   if (!np_array)
     SWIG_fail;
-  
+
   $1 = Utility::arrayView( (TYPE*)PyArray_DATA(np_array), PyArray_DIM(np_array, 0) );
 }
 
@@ -68,9 +90,9 @@
 %typemap(out) Utility::ArrayView< TYPE >
 {
   npy_intp dims[1] = { $1.size() };
-  
+
   $result = PyArray_SimpleNewFromData( 1, dims, TYPECODE, (void*)$1.data() );
-  
+
   if( !$result )
     SWIG_fail;
 }
@@ -78,9 +100,9 @@
 %typemap(out) Utility::ArrayView< const TYPE >
 {
   npy_intp dims[1] = { $1.size() };
-  
+
   $result = PyArray_SimpleNewFromData( 1, dims, TYPECODE, (void*)$1.data() );
-  
+
   if( !$result )
     SWIG_fail;
 }
