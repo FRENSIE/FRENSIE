@@ -31,21 +31,21 @@ class NuclidePropertiesTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.properties = Data.NuclideProperties( 1001, 1.0 )
+        cls.properties = Data.NuclideProperties( Data.ZAID(1001), 1.0 )
 
     def testConstructor(self):
         "*Test Data.NuclideProperties constructor"
-        self.assertTrue( Data.NuclideProperties( 2004, 4.0 ) )
+        self.assertTrue( Data.NuclideProperties( Data.ZAID(2004), 4.0 ) )
         with self.assertRaises(RuntimeError):
-            Data.NuclideProperties( 1001, 0.0 )
+            Data.NuclideProperties( Data.ZAID(1001), 0.0 )
         with self.assertRaises(RuntimeError):
-            Data.NuclideProperties( 1001, -1.0 )
+            Data.NuclideProperties( Data.ZAID(1001), -1.0 )
 
     def testZaid(self):
         "*Test Data.NuclideProperties zaid"
         self.assertEqual( self.properties.zaid(), Data.ZAID(1001) )
 
-        he4_properties = Data.NuclideProperties( 2004, 4.0 )
+        he4_properties = Data.NuclideProperties( Data.ZAID(2004), 4.0 )
         self.assertEqual( he4_properties.zaid(), Data.ZAID(2004) )
 
     def testAtomicWeight(self):

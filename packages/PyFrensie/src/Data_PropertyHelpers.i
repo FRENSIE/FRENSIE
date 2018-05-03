@@ -318,5 +318,103 @@ Data::AtomProperties::set ## BASE_NAME ## DataProperties;
 %enddef
 
 //---------------------------------------------------------------------------//
+// Macro for setting up a scattering center properties database class interface
+//---------------------------------------------------------------------------//
+%define %database_interface_setup( DATABASE )
+
+%feature("docstring") Data::DATABASE
+"The DATABASE class stores a database of nuclear and
+atomic data. It can be used for loading/saving nuclide and atom data."
+
+%feature("autodoc", "doAtomPropertiesExist(DATABASE self, const AtomType atom) -> bool,
+doAtomPropertiesExist(DATABASE self, const Data::ZAID zaid) -> bool")
+Data::DATABASE::doAtomPropertiesExist;
+
+%feature("autodoc", "doNuclidePropertiesExist(DATABASE self, const Data::ZAID zaid) -> bool")
+Data::DATABASE::doNuclidePropertiesExist;
+
+%feature("autodoc", "removeAtomProperties(DATABASE self, const AtomType atom) -> void,
+removeAtomProperties(DATABASE self, const Data::ZAID zaid) -> void")
+Data::DATABASE::removeAtomProperties;
+
+%feature("autodoc", "removeAtomProperties(DATABASE self, const Data::ZAID zaid) -> void")
+Data::DATABASE::removeAtomProperties;
+
+%feature("autodoc", "removeEmptyProperties(DATABASE self, const bool include_atom_properties = false) -> void")
+Data::DATABASE::removeEmptyProperties;
+
+%feature("autodoc", "getAtomProperties(DATABASE self, const AtomType atom) -> AtomProperties,
+getAtomProperties(DATABASE self, const Data::ZAID zaid) -> AtomProperties")
+Data::DATABASE::getAtomProperties;
+
+%feature("autodoc", "initializeAtomProperties(DATABASE self, const AtomType atom, const double atomic_weight_ratio) -> AtomProperties,
+initializeAtomProperties(DATABASE self, const Data::ZAID zaid, const double atomic_weight_ratio) -> AtomProperties")
+Data::DATABASE::initializeAtomProperties;
+
+%feature("autodoc", "initializeAtomPropertiesFromAtomicWeight(DATABASE self, const AtomType atom, const AtomProperties::AtomicWeight atomic_weight) -> AtomProperties,
+initializeAtomPropertiesFromAtomicWeight(DATABASE self, const Data::ZAID zaid, const AtomProperties::AtomicWeight atomic_weight) -> AtomProperties")
+Data::DATABASE::initializeAtomPropertiesFromAtomicWeight;
+
+%feature("autodoc", "getNuclideProperties(DATABASE self, const Data::ZAID zaid) -> NuclideProperties")
+Data::DATABASE::getNuclideProperties;
+
+%feature("autodoc", "initializeNuclideProperties(DATABASE self, const Data::ZAID zaid, const double atomic_weight_ratio) -> NuclideProperties")
+Data::DATABASE::initializeNuclideProperties;
+
+%feature("autodoc", "initializeNuclidePropertiesFromAtomicWeight(DATABASE self, const Data::ZAID zaid, const NuclideProperties::AtomicWeight atomic_weight) -> NuclideProperties")
+Data::DATABASE::initializeNuclidePropertiesFromAtomicWeight;
+
+%feature("autodoc", "getNumberOfAtomProperties(DATABASE self) -> size_t")
+Data::DATABASE::getNumberOfAtomProperties;
+
+%feature("autodoc", "getNumberOfNuclideProperties(DATABASE self) -> size_t")
+Data::DATABASE::getNumberOfNuclideProperties;
+
+%feature("autodoc", "listAtoms(DATABASE self) -> std::cout")
+Data::DATABASE::listAtoms;
+
+%feature("autodoc", "listAtomsAsString(DATABASE self) -> std::cout")
+Data::DATABASE::listAtomsAsString;
+
+%feature("autodoc", "listZaidsAsString(DATABASE self) -> std::cout,
+listZaidsAsString(DATABASE self, const AtomType atom) -> std::cout")
+Data::DATABASE::listZaidsAsString;
+
+%rename(initializeAtomPropertiesFromAtomicWeight) Data::DATABASE::initializeAtomProperties( const AtomType atom, const AtomProperties::AtomicWeight atomic_weight );
+
+%rename(initializeAtomPropertiesFromAtomicWeight) Data::DATABASE::initializeAtomProperties( const Data::ZAID zaid, const AtomProperties::AtomicWeight atomic_weight );
+
+%ignore Data::DATABASE::initializeNuclideProperties( const Data::ZAID zaid, const NuclideProperties::AtomicWeight atomic_weight );
+
+%extend Data::DATABASE
+{
+  std::string Data::DATABASE::listAtomsAsString() const
+  {
+    std::ostringstream oss;
+
+    $self->listAtoms( oss );
+    return oss.str();
+  }
+
+  std::string Data::DATABASE::listZaidsAsString() const
+  {
+    std::ostringstream oss;
+
+    $self->listZaids( oss );
+    return oss.str();
+  }
+
+  std::string Data::DATABASE::listZaidsAsString( const AtomType atom ) const
+  {
+    std::ostringstream oss;
+
+    $self->listZaids( atom, oss );
+    return oss.str();
+  }
+}
+
+%enddef
+
+//---------------------------------------------------------------------------//
 // end Data_PropertyHelpers.i
 //---------------------------------------------------------------------------//

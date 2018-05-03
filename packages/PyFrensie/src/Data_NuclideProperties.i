@@ -106,14 +106,14 @@ using namespace Data;
 // Import the ZAID
 %include "Data_ZAID.hpp"
 
-// Add typemaps for converting a Python int to a ZAID
-%typemap(in) const Data::ZAID {
-  $1 = PyFrensie::convertFromPython<unsigned>( $input );
-}
+// // Add typemaps for converting a Python int to a ZAID
+// %typemap(in) const Data::ZAID {
+//   $1 = PyFrensie::convertFromPython<unsigned>( $input );
+// }
 
-%typemap(typecheck, precedence=25) (const Data::ZAID) {
-  $1 = (PyInt_Check($input)) ? 1 : 0;
-}
+// %typemap(typecheck, precedence=25) (const Data::ZAID) {
+//   $1 = (PyInt_Check($input)) ? 1 : 0;
+// }
 
 //---------------------------------------------------------------------------//
 // Add support for the NuclearDataProperties

@@ -21,9 +21,9 @@
 #include "Data_ElectroatomicDataProperties.hpp"
 #include "Data_AdjointElectroatomicDataProperties.hpp"
 #include "Data_AtomProperties.hpp"
-#include "Data_ZAID.hpp"
+// #include "Data_ZAID.hpp"
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
-#include "Utility_Set.hpp"
+// #include "Utility_Set.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ToStringTraitsDecl.hpp"
@@ -34,12 +34,9 @@ using namespace Data;
 
 // C++ STL support
 %include <stl.i>
-// %include <std_string.i>
 %include <std_set.i>
-// %include <std_map.i>
-// %include <std_vector.i>
-%include <std_except.i>
 %include <std_shared_ptr.i>
+%include <std_except.i>
 
 // Include typemaps support
 %include <typemaps.i>
