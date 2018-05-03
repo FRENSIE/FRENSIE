@@ -10,11 +10,6 @@
 #include <iostream>
 #include <algorithm>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatom.hpp"
 #include "MonteCarlo_AtomicExcitationAdjointElectroatomicReaction.hpp"
@@ -25,7 +20,7 @@
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "MonteCarlo_AdjointElectroatomicReactionNativeFactory.hpp"
 #include "Data_AdjointElectronPhotonRelaxationDataContainer.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 typedef MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeFactory
             AtomicNativeFactory;
@@ -36,115 +31,115 @@ typedef MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFac
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::AdjointElectroatom> electroatom;
+std::shared_ptr<const MonteCarlo::AdjointElectroatom> electroatom;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the adjoint electroatom atom name can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getAtomName )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getAtomName )
 {
-  TEST_EQUALITY_CONST( electroatom->getAtomName(), "H" );
+  FRENSIE_CHECK_EQUAL( electroatom->getAtomName(), "H" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electroatom nuclide name can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getNuclideName )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getNuclideName )
 {
-  TEST_EQUALITY_CONST( electroatom->getNuclideName(), "H" );
+  FRENSIE_CHECK_EQUAL( electroatom->getNuclideName(), "H" );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electroatom atomic number can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getAtomicNumber )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getAtomicNumber )
 {
-  TEST_EQUALITY_CONST( electroatom->getAtomicNumber(), 1 );
+  FRENSIE_CHECK_EQUAL( electroatom->getAtomicNumber(), 1 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electroatom atomic mass number can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getAtomicMassNumber )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getAtomicMassNumber )
 {
-  TEST_EQUALITY_CONST( electroatom->getAtomicMassNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( electroatom->getAtomicMassNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electroatom isomer number can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getIsomerNumber )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getIsomerNumber )
 {
-  TEST_EQUALITY_CONST( electroatom->getIsomerNumber(), 0 );
+  FRENSIE_CHECK_EQUAL( electroatom->getIsomerNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electroatom atomic weight can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getAtomicWeight )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getAtomicWeight )
 {
-  TEST_FLOATING_EQUALITY( electroatom->getAtomicWeight(),
+  FRENSIE_CHECK_FLOATING_EQUALITY( electroatom->getAtomicWeight(),
                           1.00794,
                           1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the electroatom temperature can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getTemperature )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getTemperature )
 {
-  TEST_EQUALITY_CONST( electroatom->getTemperature(), 0 );
+  FRENSIE_CHECK_EQUAL( electroatom->getTemperature(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the total cross section can be returned (brem and exciation only)
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getTotalCrossSection )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getTotalCrossSection )
 {
   double cross_section = electroatom->getTotalCrossSection( 1e-5 );
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           3.9800795006423726e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = electroatom->getTotalCrossSection( 1e-3 );
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           1.4246702389204639e+01 + 1.0551636170350602e+07,
                           1e-12 );
 
   cross_section = electroatom->getTotalCrossSection( 20.0 );
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           2.4971444066404619e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the absorption cross section can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getAbsorptionCrossSection )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getAbsorptionCrossSection )
 {
   double cross_section = electroatom->getAbsorptionCrossSection( 1e-2 );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = electroatom->getAbsorptionCrossSection( 2e-3 );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = electroatom->getAbsorptionCrossSection( 4e-4 );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = electroatom->getAbsorptionCrossSection( 9e-5 );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the survival probability can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getSurvivalProbability )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getSurvivalProbability )
 {
   double survival_prob = electroatom->getSurvivalProbability( 2e-3 );
-  TEST_EQUALITY_CONST( survival_prob, 1.0 );
+  FRENSIE_CHECK_EQUAL( survival_prob, 1.0 );
 
   survival_prob = electroatom->getSurvivalProbability( 4e-4 );
-  TEST_EQUALITY_CONST( survival_prob, 1.0 );
+  FRENSIE_CHECK_EQUAL( survival_prob, 1.0 );
 
   survival_prob = electroatom->getSurvivalProbability( 9e-5 );
-  TEST_EQUALITY_CONST( survival_prob, 1.0 );
+  FRENSIE_CHECK_EQUAL( survival_prob, 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the reaction cross section can be returned
-TEUCHOS_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
+FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
 {
   MonteCarlo::AdjointElectroatomicReactionType reaction;
 
@@ -152,76 +147,76 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
   reaction = MonteCarlo::TOTAL_ELECTROIONIZATION_ADJOINT_ELECTROATOMIC_REACTION;
 
   double cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
 
   // Atomic Excitation
   reaction = MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION;
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 6.1243057898416743e+07, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 1.0551636170350602e+07, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.0551636170350602e+07, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 8.1829299836129925e+04, 1e-12 );
 
 
   // Bremsstrahlung
   reaction = MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION;
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.9800795006423726e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 1.4246702389204639e+01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4246702389204639e+01, 1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  TEST_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 2.4971444066404619e-01, 1e-12 );
 
 
   // Cutoff Elastic
   reaction = MonteCarlo::CUTOFF_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   // Total
   reaction = MonteCarlo::TOTAL_ADJOINT_ELECTROATOMIC_REACTION;
 
   cross_section = electroatom->getReactionCrossSection( 1e-5, reaction );
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           3.9800795006423726e+01 + 6.1243057898416743e+07,
                           1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 1e-3, reaction );
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           1.4246702389204639e+01 + 1.0551636170350602e+07,
                           1e-12 );
 
   cross_section = electroatom->getReactionCrossSection( 20.0, reaction );
-  TEST_FLOATING_EQUALITY( cross_section,
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section,
                           2.4971444066404619e-01 + 8.1829299836129925e+04,
                           1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an analogue collision with the atom can be modeled
-TEUCHOS_UNIT_TEST( AdjointElectroatom, collideAnalogue )
+FRENSIE_UNIT_TEST( AdjointElectroatom, collideAnalogue )
 {
-  Teuchos::RCP<MonteCarlo::AdjointElectronState> electron(
+  std::shared_ptr<MonteCarlo::AdjointElectronState> electron(
                         new MonteCarlo::AdjointElectronState( 0 ) );
   electron->setEnergy( 20 );
   electron->setDirection( 0.0, 0.0, 1.0 );
@@ -236,18 +231,18 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, collideAnalogue )
 
   electroatom->collideAnalogue( *electron, bank );
 
-  TEST_ASSERT( !electron->isGone() );
-  TEST_EQUALITY_CONST( electron->getWeight(), 1.0 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK( !electron->isGone() );
+  FRENSIE_CHECK_EQUAL( electron->getWeight(), 1.0 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that a survival biased collision with the atom can be modeled
-TEUCHOS_UNIT_TEST( AdjointElectroatom, collideSurvivalBias )
+FRENSIE_UNIT_TEST( AdjointElectroatom, collideSurvivalBias )
 {
-  Teuchos::RCP<MonteCarlo::AdjointElectronState> electron(
+  std::shared_ptr<MonteCarlo::AdjointElectronState> electron(
                         new MonteCarlo::AdjointElectronState( 0 ) );
   electron->setEnergy( 1 );
   electron->setDirection( 0.0, 0.0, 1.0 );
@@ -257,8 +252,8 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, collideSurvivalBias )
 
   electroatom->collideSurvivalBias( *electron, bank );
 
-  TEST_ASSERT( !electron->isGone() );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK( !electron->isGone() );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   // reset the particle
   electron.reset( new MonteCarlo::AdjointElectronState( 0 ) );
@@ -268,16 +263,16 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, collideSurvivalBias )
 
   electroatom->collideSurvivalBias( *electron, bank );
 
-  TEST_ASSERT( !electron->isGone() );
-  TEST_FLOATING_EQUALITY( electron->getWeight(), 1.0, 1e-15 );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK( !electron->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron->getWeight(), 1.0, 1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the atom can be relaxed
-TEUCHOS_UNIT_TEST( AdjointElectroatom, relaxAtom )
+FRENSIE_UNIT_TEST( AdjointElectroatom, relaxAtom )
 {
-  Teuchos::RCP<MonteCarlo::AdjointElectronState> electron(
+  std::shared_ptr<MonteCarlo::AdjointElectronState> electron(
                                   new MonteCarlo::AdjointElectronState( 0 ) );
   electron->setEnergy( exp( -1.214969212306E+01 ) );
   electron->setDirection( 0.0, 0.0, 1.0 );
@@ -287,40 +282,40 @@ TEUCHOS_UNIT_TEST( AdjointElectroatom, relaxAtom )
   MonteCarlo::ParticleBank bank;
 
   electroatom->relaxAtom( vacancy, *electron, bank );
-  TEST_EQUALITY_CONST( bank.size(), 0 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a electroatom can be constructed from a core
-TEUCHOS_UNIT_TEST( AdjointElectroatom, core_constructor )
+FRENSIE_UNIT_TEST( AdjointElectroatom, core_constructor )
 {
   MonteCarlo::AdjointElectroatom electroatom_copy( electroatom->getAtomName(),
-                      electroatom->getAtomicNumber(),
-                      electroatom->getAtomicWeight(),
-                      electroatom->getCore() );
+                                                   electroatom->getAtomicNumber(),
+                                                   electroatom->getAtomicWeight(),
+                                                   electroatom->getCore() );
 
-  TEST_EQUALITY( electroatom_copy.getAtomName(),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getAtomName(),
          electroatom->getAtomName() );
-  TEST_EQUALITY( electroatom_copy.getNuclideName(),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getNuclideName(),
          electroatom->getNuclideName() );
-  TEST_EQUALITY( electroatom_copy.getAtomicNumber(),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getAtomicNumber(),
          electroatom->getAtomicNumber() );
-  TEST_EQUALITY( electroatom_copy.getAtomicMassNumber(),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getAtomicMassNumber(),
          electroatom->getAtomicMassNumber() );
-  TEST_EQUALITY( electroatom_copy.getIsomerNumber(),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getIsomerNumber(),
          electroatom->getIsomerNumber() );
-  TEST_EQUALITY( electroatom_copy.getAtomicWeight(),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getAtomicWeight(),
          electroatom->getAtomicWeight() );
-  TEST_EQUALITY( electroatom_copy.getTemperature(),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getTemperature(),
          electroatom->getTemperature() );
 
-  TEST_EQUALITY( electroatom_copy.getTotalCrossSection( 1e-3 ),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getTotalCrossSection( 1e-3 ),
          electroatom->getTotalCrossSection( 1e-3 ) );
-  TEST_EQUALITY( electroatom_copy.getTotalCrossSection( 20.0 ),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getTotalCrossSection( 20.0 ),
          electroatom->getTotalCrossSection( 20.0 ) );
-  TEST_EQUALITY( electroatom_copy.getAbsorptionCrossSection( 1e-3 ),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getAbsorptionCrossSection( 1e-3 ),
          electroatom->getAbsorptionCrossSection( 1e-3 ) );
-  TEST_EQUALITY( electroatom_copy.getAbsorptionCrossSection( 20.0 ),
+  FRENSIE_CHECK_EQUAL( electroatom_copy.getAbsorptionCrossSection( 20.0 ),
          electroatom->getAbsorptionCrossSection( 20.0 ) );
 }
 
@@ -333,9 +328,9 @@ std::string test_native_file_name;
 
 FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 {
-  clp().setOption( "test_native_file",
-                   &test_native_file_name,
-                   "Test Native file name" );
+  ADD_STANDARD_OPTION_AND_ASSIGN_VALUE( "test_native_file",
+                                        test_native_file_name, "",
+                                        "Test Native file name" );
 }
 
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
@@ -347,27 +342,29 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         test_native_file_name );
 
     // Create the atomic excitation, bremsstrahlung cross sections
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.deepCopy( data_container.getAdjointElectronEnergyGrid() );
+    std::shared_ptr<const std::vector<double> > energy_grid(
+       new std::vector<double>( data_container.getAdjointElectronEnergyGrid() ) );
 
     // Create the hash-based grid searcher
-    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<double>,false>(
+    std::shared_ptr<Utility::HashBasedGridSearcher<double> > grid_searcher(
+         new Utility::StandardHashBasedGridSearcher<std::vector<double>,false>(
                          energy_grid,
                          100 ) );
 
-    // Create the total forward reaction
-    std::shared_ptr<MonteCarlo::ElectroatomicReaction> total_forward_reaction;
-
     // Get void reaction
-    Teuchos::ArrayRCP<double> void_cross_section( energy_grid.size() );
-    std::shared_ptr<MonteCarlo::ElectroatomicReaction> void_reaction(
+    std::shared_ptr<const std::vector<double> > void_cross_section(
+                         new std::vector<double>( energy_grid->size(), 0.0 ) );
+    
+    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> void_reaction(
      new MonteCarlo::AbsorptionElectroatomicReaction<Utility::LinLin,false>(
                        energy_grid,
                        void_cross_section,
                        0u,
                        grid_searcher,
                        MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION) );
+
+    // Create the total forward reaction
+    std::shared_ptr<const MonteCarlo::ElectroatomicReaction> total_forward_reaction;
 
     MonteCarlo::AdjointElectroatomicReactionNativeFactory::createTotalForwardReaction(
                                        data_container,
@@ -377,12 +374,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                        total_forward_reaction );
 
     // Atomic Excitation cross section
-    Teuchos::ArrayRCP<double> ae_cross_section;
-    ae_cross_section.assign(
-      data_container.getAdjointAtomicExcitationCrossSection().begin(),
-      data_container.getAdjointAtomicExcitationCrossSection().end() );
+    std::shared_ptr<const std::vector<double> > ae_cross_section(
+       new std::vector<double>( data_container.getAdjointAtomicExcitationCrossSection() ) );
 
-    unsigned ae_threshold_index =
+    size_t ae_threshold_index =
         data_container.getAdjointAtomicExcitationCrossSectionThresholdEnergyIndex();
 
     std::shared_ptr<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
@@ -404,12 +399,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
 
     // Bremsstrahlung cross section
-    Teuchos::ArrayRCP<double> b_cross_section;
-    b_cross_section.assign(
-      data_container.getAdjointBremsstrahlungElectronCrossSection().begin(),
-      data_container.getAdjointBremsstrahlungElectronCrossSection().end() );
+    std::shared_ptr<const std::vector<double> > b_cross_section(
+       new std::vector<double>( data_container.getAdjointBremsstrahlungElectronCrossSection() ) );
 
-    unsigned b_threshold_index =
+    size_t b_threshold_index =
         data_container.getAdjointBremsstrahlungElectronCrossSectionThresholdEnergyIndex();
 
     std::shared_ptr<const MonteCarlo::BremsstrahlungAdjointElectronScatteringDistribution>
@@ -433,7 +426,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
             b_distribution ) );
 
     // Create the reaction maps
-    MonteCarlo::AdjointElectroatomCore::ReactionMap scattering_reactions,
+    MonteCarlo::AdjointElectroatomCore::ConstReactionMap scattering_reactions,
       absorption_reactions;
 
     scattering_reactions[ae_reaction->getReactionType()] = ae_reaction;
@@ -446,6 +439,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                     "H",
                     data_container.getAtomicNumber(),
                     1.00794,
+                    energy_grid,
                     grid_searcher,
                     total_forward_reaction,
                     scattering_reactions,

@@ -1,7 +1,7 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_neutron)
 
 ##---------------------------------------------------------------------------##
-## Distribution tests
+## Scattering distribution tests
 ##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(ElasticNeutronNuclearScatteringDistribution DEPENDS tstElasticNeutronNuclearScatteringDistribution.cpp)
@@ -9,6 +9,22 @@ FRENSIE_ADD_TEST(ElasticNeutronNuclearScatteringDistribution)
 
 FRENSIE_ADD_TEST_EXECUTABLE(InelasticLevelNeutronScatteringDistribution DEPENDS tstInelasticLevelNeutronScatteringDistribution.cpp)
 FRENSIE_ADD_TEST(InelasticLevelNeutronScatteringDistribution)
+
+FRENSIE_ADD_TEST_EXECUTABLE(FissionNeutronMultiplicityDistribution DEPENDS tstFissionNeutronMultiplicityDistribution.cpp)
+FRENSIE_ADD_TEST(FissionNeutronMultiplicityDistribution
+  EXTRA_ARGS
+  --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
+  --test_u238_ace_table=92238.70c)
+
+FRENSIE_ADD_TEST_EXECUTABLE(DelayedNeutronEmissionDistribution DEPENDS tstDelayedNeutronEmissionDistribution.cpp)
+FRENSIE_ADD_TEST(DelayedNeutronEmissionDistribution
+  EXTRA_ARGS
+  --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
+  --test_u238_ace_table=92238.70c)
+
+##---------------------------------------------------------------------------##
+## Scattering distribution factory tests
+##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(NeutronNuclearScatteringDistributionACEFactory DEPENDS tstNeutronNuclearScatteringDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(NeutronNuclearScatteringDistributionACEFactory
@@ -24,20 +40,8 @@ FRENSIE_ADD_TEST(FissionNeutronMultiplicityDistributionACEFactory
   --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
   --test_u238_ace_table=92238.70c)
 
-FRENSIE_ADD_TEST_EXECUTABLE(FissionNeutronMultiplicityDistribution DEPENDS tstFissionNeutronMultiplicityDistribution.cpp)
-FRENSIE_ADD_TEST(FissionNeutronMultiplicityDistribution
-  EXTRA_ARGS
-  --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
-  --test_u238_ace_table=92238.70c)
-
 FRENSIE_ADD_TEST_EXECUTABLE(DelayedNeutronEmissionDistributionACEFactory DEPENDS tstDelayedNeutronEmissionDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(DelayedNeutronEmissionDistributionACEFactory
-  EXTRA_ARGS
-  --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
-  --test_u238_ace_table=92238.70c)
-
-FRENSIE_ADD_TEST_EXECUTABLE(DelayedNeutronEmissionDistribution DEPENDS tstDelayedNeutronEmissionDistribution.cpp)
-FRENSIE_ADD_TEST(DelayedNeutronEmissionDistribution
   EXTRA_ARGS
   --test_u238_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt
   --test_u238_ace_table=92238.70c)
@@ -88,6 +92,10 @@ FRENSIE_ADD_TEST(DecoupledCrossSectionBasedPhotonProductionReaction
   --test_basic_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt
   --test_basic_ace_table=1001.70c)
 
+##---------------------------------------------------------------------------##
+## Reaction factory tests
+##---------------------------------------------------------------------------##
+
 FRENSIE_ADD_TEST_EXECUTABLE(NeutronNuclearReactionACEFactory DEPENDS tstNeutronNuclearReactionACEFactory.cpp)
 FRENSIE_ADD_TEST(NeutronNuclearReactionACEFactory
     EXTRA_ARGS
@@ -113,6 +121,10 @@ FRENSIE_ADD_TEST(Nuclide
   --test_h1_ace_table=1001.70c
   --test_o16_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_o16_ace_file.txt
   --test_o16_ace_table=8016.70c)
+
+##---------------------------------------------------------------------------##
+## Scattering center factory tests
+##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(NuclideFactory
   DEPENDS tstNuclideFactory.cpp

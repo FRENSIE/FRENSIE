@@ -9,15 +9,10 @@
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -30,58 +25,69 @@ std::shared_ptr<MonteCarlo::ElectroatomicReaction>
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getReactionType )
+FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getReactionType )
 {
-  TEST_EQUALITY_CONST( void_absorption_reaction->getReactionType(),
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getReactionType(),
 		       MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getThresholdEnergy )
+FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( void_absorption_reaction->getThresholdEnergy(), 1e-5 );
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getThresholdEnergy(), 1e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getNumberOfEmittedElectrons )
+FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getNumberOfEmittedElectrons )
 {
-  TEST_EQUALITY_CONST( void_absorption_reaction->getNumberOfEmittedElectrons(1e-5),
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getNumberOfEmittedElectrons(1e-5),
                        0u );
 
-  TEST_EQUALITY_CONST( void_absorption_reaction->getNumberOfEmittedElectrons(20.0),
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getNumberOfEmittedElectrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getNumberOfEmittedPhotons )
+FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getNumberOfEmittedPhotons )
 {
-  TEST_EQUALITY_CONST( void_absorption_reaction->getNumberOfEmittedPhotons(1e-5),
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getNumberOfEmittedPhotons(1e-5),
                        0u );
 
-  TEST_EQUALITY_CONST( void_absorption_reaction->getNumberOfEmittedPhotons(20.0),
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getNumberOfEmittedPhotons(20.0),
+                       0u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of positrons emitted from the rxn can be returned
+FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getNumberOfEmittedPositrons )
+{
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getNumberOfEmittedPositrons(1e-5),
+                       0u );
+
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getNumberOfEmittedPositrons(20.0),
                        0u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getCrossSection )
+FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getCrossSection )
 {
   double cross_section = void_absorption_reaction->getCrossSection( 1e-5 );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = void_absorption_reaction->getCrossSection( 1.0 );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section = void_absorption_reaction->getCrossSection( 1e5 );
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the basic dipole bremsstrahlung reaction can be simulated
-TEUCHOS_UNIT_TEST( VoidAbsorptionElectroatomicReaction, react )
+FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, react )
 {
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 20 );
@@ -93,10 +99,10 @@ TEUCHOS_UNIT_TEST( VoidAbsorptionElectroatomicReaction, react )
 
   void_absorption_reaction->react( electron, bank, shell_of_interaction );
 
-  TEST_ASSERT( electron.getEnergy() == 20.0 );
-  TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
-  TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
+  FRENSIE_CHECK( electron.getEnergy() == 20.0 );
+  FRENSIE_CHECK_EQUAL( electron.getZDirection(), 1.0 );
+  FRENSIE_CHECK( bank.isEmpty() );
+  FRENSIE_CHECK_EQUAL( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

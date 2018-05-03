@@ -1,7 +1,7 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_electron)
 
 ##---------------------------------------------------------------------------##
-## Scattering distribution test
+## Scattering distribution tests
 ##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(CutoffElasticElectronScatteringDistribution DEPENDS tstCutoffElasticElectronScatteringDistribution.cpp)
@@ -69,7 +69,9 @@ FRENSIE_ADD_TEST(ElectroionizationSubshellAdjointElectronScatteringDistribution
   EXTRA_ARGS
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
 
-##      electron distribution ace factory tests
+##---------------------------------------------------------------------------##
+## Scattering distribution factory tests
+##---------------------------------------------------------------------------##
 
 FRENSIE_ADD_TEST_EXECUTABLE(ElasticElectronScatteringDistributionACEFactory DEPENDS tstElasticElectronScatteringDistributionACEFactory.cpp)
 FRENSIE_ADD_TEST(ElasticElectronScatteringDistributionACEFactory
@@ -102,8 +104,6 @@ FRENSIE_ADD_TEST(ElectroionizationSubshellElectronScatteringDistributionACEFacto
   --test_ace12_table=82000.12p
   --test_ace14_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt
   --test_ace14_table=82000.14p)
-
-##      electron distribution native factory tests
 
 FRENSIE_ADD_TEST_EXECUTABLE(ElasticElectronScatteringDistributionNativeFactory DEPENDS tstElasticElectronScatteringDistributionNativeFactory.cpp)
 FRENSIE_ADD_TEST(ElasticElectronScatteringDistributionNativeFactory
@@ -298,191 +298,170 @@ FRENSIE_ADD_TEST(ElectroionizationSubshellElectroatomicReaction
   --test_ace_table=82000.12p
   --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_6_native.xml)
 
-ADD_EXECUTABLE(tstPositronionizationSubshellPositronatomicReaction
-  tstPositronionizationSubshellPositronatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronionizationSubshellPositronatomicReaction monte_carlo_collision_native)
-ADD_TEST(PositronionizationSubshellPositronatomicReaction_test tstPositronionizationSubshellPositronatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_6_native.xml")
-SET_PROPERTY(TEST PositronionizationSubshellPositronatomicReaction_test PROPERTY LABELS positron)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronionizationSubshellPositronatomicReaction DEPENDS tstPositronionizationSubshellPositronatomicReaction.cpp)
+FRENSIE_ADD_TEST(PositronionizationSubshellPositronatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_6_native.xml)
 
-ADD_EXECUTABLE(tstElectroionizationSubshellAdjointElectroatomicReaction
-  tstElectroionizationSubshellAdjointElectroatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroionizationSubshellAdjointElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(ElectroionizationSubshellAdjointElectroatomicReaction_test tstElectroionizationSubshellAdjointElectroatomicReaction --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_6_native.xml")
-SET_PROPERTY(TEST ElectroionizationSubshellAdjointElectroatomicReaction_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroionizationSubshellAdjointElectroatomicReaction DEPENDS tstElectroionizationSubshellAdjointElectroatomicReaction.cpp)
+FRENSIE_ADD_TEST(ElectroionizationSubshellAdjointElectroatomicReaction
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_6_native.xml)
 
-ADD_EXECUTABLE(tstVoidElectroatomicReaction
-  tstVoidElectroatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstVoidElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(VoidElectroatomicReaction_test tstVoidElectroatomicReaction --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST VoidElectroatomicReaction_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(VoidElectroatomicReaction DEPENDS tstVoidElectroatomicReaction.cpp)
+FRENSIE_ADD_TEST(VoidElectroatomicReaction
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstVoidAbsorptionElectroatomicReaction
-  tstVoidAbsorptionElectroatomicReaction.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstVoidAbsorptionElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(VoidAbsorptionElectroatomicReaction_test tstVoidAbsorptionElectroatomicReaction )
-SET_PROPERTY(TEST VoidAbsorptionElectroatomicReaction_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(VoidAbsorptionElectroatomicReaction DEPENDS tstVoidAbsorptionElectroatomicReaction.cpp)
+FRENSIE_ADD_TEST(VoidAbsorptionElectroatomicReaction)
 
-ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
-  tstElectroatomicReactionACEFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
-ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST ElectroatomicReactionACEFactory_test PROPERTY LABELS electron ace)
+##---------------------------------------------------------------------------##
+## Reaction factory tests
+##---------------------------------------------------------------------------##
 
-ADD_EXECUTABLE(tstPositronatomicReactionACEFactory
-  tstPositronatomicReactionACEFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomicReactionACEFactory monte_carlo_collision_native)
-ADD_TEST(PositronatomicReactionACEFactory_test tstPositronatomicReactionACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PositronatomicReactionACEFactory_test PROPERTY LABELS Positron ace)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomicReactionACEFactory DEPENDS tstElectroatomicReactionACEFactory.cpp)
+FRENSIE_ADD_TEST(ElectroatomicReactionACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstElectroatomicReactionEPR14Factory
-  tstElectroatomicReactionEPR14Factory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomicReactionEPR14Factory monte_carlo_collision_native)
-ADD_TEST(ElectroatomicReactionEPR14Factory_test tstElectroatomicReactionEPR14Factory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt" --test_ace_table=82000.14p)
-SET_PROPERTY(TEST ElectroatomicReactionEPR14Factory_test PROPERTY LABELS electron ace14)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomicReactionACEFactory DEPENDS tstPositronatomicReactionACEFactory.cpp)
+FRENSIE_ADD_TEST(PositronatomicReactionACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstPositronatomicReactionEPR14Factory
-  tstPositronatomicReactionEPR14Factory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomicReactionEPR14Factory monte_carlo_collision_native)
-ADD_TEST(PositronatomicReactionEPR14Factory_test tstPositronatomicReactionEPR14Factory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt" --test_ace_table=82000.14p)
-SET_PROPERTY(TEST PositronatomicReactionEPR14Factory_test PROPERTY LABELS positron ace14)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomicReactionEPR14Factory DEPENDS tstElectroatomicReactionEPR14Factory.cpp)
+FRENSIE_ADD_TEST(ElectroatomicReactionEPR14Factory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt
+  --test_ace_table=82000.14p)
 
-ADD_EXECUTABLE(tstElectroatomicReactionNativeFactory
-  tstElectroatomicReactionNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactory monte_carlo_collision_native)
-ADD_TEST(ElectroatomicReactionNativeFactory_test tstElectroatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
-SET_PROPERTY(TEST ElectroatomicReactionNativeFactory_test PROPERTY LABELS electron native)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomicReactionEPR14Factory DEPENDS tstPositronatomicReactionEPR14Factory.cpp)
+FRENSIE_ADD_TEST(PositronatomicReactionEPR14Factory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt
+  --test_ace_table=82000.14p)
 
-ADD_EXECUTABLE(tstPositronatomicReactionNativeFactory
-  tstPositronatomicReactionNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomicReactionNativeFactory monte_carlo_collision_native)
-ADD_TEST(PositronatomicReactionNativeFactory_test tstPositronatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
-SET_PROPERTY(TEST PositronatomicReactionNativeFactory_test PROPERTY LABELS positron native)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomicReactionNativeFactory DEPENDS tstElectroatomicReactionNativeFactory.cpp)
+FRENSIE_ADD_TEST(ElectroatomicReactionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstAdjointElectroatomicReactionNativeFactory
-  tstAdjointElectroatomicReactionNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectroatomicReactionNativeFactory monte_carlo_collision_native)
-ADD_TEST(AdjointElectroatomicReactionNativeFactory_test tstAdjointElectroatomicReactionNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml" )
-SET_PROPERTY(TEST AdjointElectroatomicReactionNativeFactory_test PROPERTY LABELS electron native adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomicReactionNativeFactory DEPENDS tstPositronatomicReactionNativeFactory.cpp)
+FRENSIE_ADD_TEST(PositronatomicReactionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstElectroatomicReactionNativeFactoryHelpers
-  tstElectroatomicReactionNativeFactoryHelpers.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactoryHelpers monte_carlo_collision_native)
-ADD_TEST(ElectroatomicReactionNativeFactoryHelpers_test tstElectroatomicReactionNativeFactoryHelpers --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" )
-SET_PROPERTY(TEST ElectroatomicReactionNativeFactoryHelpers_test PROPERTY LABELS electron native)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectroatomicReactionNativeFactory DEPENDS tstAdjointElectroatomicReactionNativeFactory.cpp)
+FRENSIE_ADD_TEST(AdjointElectroatomicReactionNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomicReactionNativeFactoryHelpers DEPENDS tstElectroatomicReactionNativeFactoryHelpers.cpp)
+FRENSIE_ADD_TEST(ElectroatomicReactionNativeFactoryHelpers
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
 ##---------------------------------------------------------------------------##
 ## Scattering center tests
 ##---------------------------------------------------------------------------##
 
-ADD_EXECUTABLE(tstElectroatomCore
-  tstElectroatomCore.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
-ADD_TEST(ElectroatomCore_test tstElectroatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST ElectroatomCore_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomCore DEPENDS tstElectroatomCore.cpp)
+FRENSIE_ADD_TEST(ElectroatomCore
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstPositronatomCore
-  tstPositronatomCore.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomCore monte_carlo_collision_native)
-ADD_TEST(PositronatomCore_test tstPositronatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST PositronatomCore_test PROPERTY LABELS positron)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomCore DEPENDS tstPositronatomCore.cpp)
+FRENSIE_ADD_TEST(PositronatomCore
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstAdjointElectroatomCore
-  tstAdjointElectroatomCore.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectroatomCore monte_carlo_collision_native)
-ADD_TEST(AdjointElectroatomCore_test tstAdjointElectroatomCore --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AdjointElectroatomCore_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectroatomCore DEPENDS tstAdjointElectroatomCore.cpp)
+FRENSIE_ADD_TEST(AdjointElectroatomCore
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
 
-ADD_EXECUTABLE(tstElectroatom
-  tstElectroatom.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatom monte_carlo_collision_native)
-ADD_TEST(Electroatom_test tstElectroatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_epr14_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_au_epr14_ace_file.txt" --test_epr14_table=79000.14p)
-SET_PROPERTY(TEST Electroatom_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(Electroatom DEPENDS tstElectroatom.cpp)
+FRENSIE_ADD_TEST(Electroatom
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml
+  --test_epr14_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_au_epr14_ace_file.txt
+  --test_epr14_table=79000.14p)
 
-ADD_EXECUTABLE(tstPositronatom
-  tstPositronatom.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatom monte_carlo_collision_native)
-ADD_TEST(Positronatom_test tstPositronatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_epr14_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_au_epr14_ace_file.txt" --test_epr14_table=79000.14p)
-SET_PROPERTY(TEST Positronatom_test PROPERTY LABELS positron)
+FRENSIE_ADD_TEST_EXECUTABLE(Positronatom DEPENDS tstPositronatom.cpp)
+FRENSIE_ADD_TEST(Positronatom
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml
+  --test_epr14_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_au_epr14_ace_file.txt
+  --test_epr14_table=79000.14p)
 
-ADD_EXECUTABLE(tstAdjointElectroatom
-  tstAdjointElectroatom.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectroatom monte_carlo_collision_native)
-ADD_TEST(AdjointElectroatom_test tstAdjointElectroatom --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AdjointElectroatom_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectroatom DEPENDS tstAdjointElectroatom.cpp)
+FRENSIE_ADD_TEST(AdjointElectroatom
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
 
-ADD_EXECUTABLE(tstElectroatomACEFactory
-  tstElectroatomACEFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomACEFactory monte_carlo_collision_native)
-ADD_TEST(ElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST ElectroatomACEFactory_test PROPERTY LABELS electron ace)
+##---------------------------------------------------------------------------##
+## Scattering center factory tests
+##---------------------------------------------------------------------------##
 
-ADD_EXECUTABLE(tstPositronatomACEFactory
-  tstPositronatomACEFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomACEFactory monte_carlo_collision_native)
-ADD_TEST(PositronatomACEFactory_test tstPositronatomACEFactory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-SET_PROPERTY(TEST PositronatomACEFactory_test PROPERTY LABELS positron ace)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomACEFactory DEPENDS tstElectroatomACEFactory.cpp)
+FRENSIE_ADD_TEST(ElectroatomACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstElectroatomEPR14Factory
-  tstElectroatomEPR14Factory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomEPR14Factory monte_carlo_collision_native)
-ADD_TEST(ElectroatomEPR14Factory_test tstElectroatomEPR14Factory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt" --test_ace_table=82000.14p)
-SET_PROPERTY(TEST ElectroatomEPR14Factory_test PROPERTY LABELS electron ace14)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomACEFactory DEPENDS tstPositronatomACEFactory.cpp)
+FRENSIE_ADD_TEST(PositronatomACEFactory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt
+  --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstPositronatomEPR14Factory
-  tstPositronatomEPR14Factory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomEPR14Factory monte_carlo_collision_native)
-ADD_TEST(PositronatomEPR14Factory_test tstPositronatomEPR14Factory --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt" --test_ace_table=82000.14p)
-SET_PROPERTY(TEST PositronatomEPR14Factory_test PROPERTY LABELS positron ace14)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomEPR14Factory DEPENDS tstElectroatomEPR14Factory.cpp)
+FRENSIE_ADD_TEST(ElectroatomEPR14Factory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt
+  --test_ace_table=82000.14p)
 
-ADD_EXECUTABLE(tstElectroatomNativeFactory
-  tstElectroatomNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomNativeFactory monte_carlo_collision_native)
-ADD_TEST(ElectroatomNativeFactory_test tstElectroatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST ElectroatomNativeFactory_test PROPERTY LABELS electron native)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomEPR14Factory DEPENDS tstPositronatomEPR14Factory.cpp)
+FRENSIE_ADD_TEST(PositronatomEPR14Factory
+  EXTRA_ARGS
+  --test_ace_file=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr14_ace_file.txt
+  --test_ace_table=82000.14p)
 
-ADD_EXECUTABLE(tstPositronatomNativeFactory
-  tstPositronatomNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomNativeFactory monte_carlo_collision_native)
-ADD_TEST(PositronatomNativeFactory_test tstPositronatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
-SET_PROPERTY(TEST PositronatomNativeFactory_test PROPERTY LABELS positron native)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomNativeFactory DEPENDS tstElectroatomNativeFactory.cpp)
+FRENSIE_ADD_TEST(ElectroatomNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstAdjointElectroatomNativeFactory
-  tstAdjointElectroatomNativeFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectroatomNativeFactory monte_carlo_collision_native)
-ADD_TEST(AdjointElectroatomNativeFactory_test tstAdjointElectroatomNativeFactory --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml")
-SET_PROPERTY(TEST AdjointElectroatomNativeFactory_test PROPERTY LABELS electron native adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomNativeFactory DEPENDS tstPositronatomNativeFactory.cpp)
+FRENSIE_ADD_TEST(PositronatomNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml)
 
-ADD_EXECUTABLE(tstElectroatomFactory
-  tstElectroatomFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
-ADD_TEST(ElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST ElectroatomFactory_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectroatomNativeFactory DEPENDS tstAdjointElectroatomNativeFactory.cpp)
+FRENSIE_ADD_TEST(AdjointElectroatomNativeFactory
+  EXTRA_ARGS
+  --test_native_file=${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_aepr_1_native.xml)
+
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomFactory
+  DEPENDS tstElectroatomFactory.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(ElectroatomFactory
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 ADD_EXECUTABLE(tstPositronatomFactory
   tstPositronatomFactory.cpp
