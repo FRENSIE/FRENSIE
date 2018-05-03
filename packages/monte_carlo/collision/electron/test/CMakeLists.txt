@@ -463,40 +463,41 @@ FRENSIE_ADD_TEST(ElectroatomFactory
   EXTRA_ARGS
   --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstPositronatomFactory
-  tstPositronatomFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronatomFactory monte_carlo_collision_native)
-ADD_TEST(PositronatomFactory_test tstPositronatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PositronatomFactory_test PROPERTY LABELS positron)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomFactory
+  DEPENDS tstPositronatomFactory.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(PositronatomFactory
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstAdjointElectroatomFactory
-  tstAdjointElectroatomFactory.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectroatomFactory monte_carlo_collision_native)
-ADD_TEST(AdjointElectroatomFactory_test tstAdjointElectroatomFactory --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST AdjointElectroatomFactory_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectroatomFactory DEPENDS tstAdjointElectroatomFactory.cpp)
+FRENSIE_ADD_TEST(AdjointElectroatomFactory
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 ##---------------------------------------------------------------------------##
 ## Material tests
 ##---------------------------------------------------------------------------##
 
-ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
-ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST ElectronMaterial_test PROPERTY LABELS electron)
+FRENSIE_ADD_TEST_EXECUTABLE(ElectronMaterial
+  DEPENDS tstElectronMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(ElectronMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstPositronMaterial tstPositronMaterial.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPositronMaterial monte_carlo_collision_native)
-ADD_TEST(PositronMaterial_test tstPositronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST PositronMaterial_test PROPERTY LABELS positron)
+FRENSIE_ADD_TEST_EXECUTABLE(PositronMaterial
+  DEPENDS tstPositronMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(PositronMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
-ADD_EXECUTABLE(tstAdjointElectronMaterial tstAdjointElectronMaterial.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstAdjointElectronMaterial monte_carlo_collision_native)
-ADD_TEST(AdjointElectronMaterial_test tstAdjointElectronMaterial --test_cross_sections_xml_directory="${GLOBAL_TEST_DATA_SOURCE_DIR}/")
-SET_PROPERTY(TEST AdjointElectronMaterial_test PROPERTY LABELS electron adjoint)
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectronMaterial
+  DEPENDS tstAdjointElectronMaterial.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(AdjointElectronMaterial
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
 
 FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_electron)
