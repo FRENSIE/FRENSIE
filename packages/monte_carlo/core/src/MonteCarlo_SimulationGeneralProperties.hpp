@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 /*! The general simulation properties class
- * 
+ *
  * Use this class in all parts of code that require runtime configuration.
  */
 class SimulationGeneralProperties
@@ -56,7 +56,7 @@ public:
 
   //! Turn on warnings (on by default)
   void setWarningsOn();
-  
+
   //! Turn off warnings (on by default)
   void setWarningsOff();
 
@@ -121,9 +121,13 @@ void SimulationGeneralProperties::serialize( Archive& ar,
 
 } // end MonteCarlo namespace
 
+#if !defined SWIG
+
 BOOST_CLASS_VERSION( MonteCarlo::SimulationGeneralProperties, 0 );
 BOOST_CLASS_EXPORT_KEY2( MonteCarlo::SimulationGeneralProperties, "SimulationGeneralProperties" );
 EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::SimulationGeneralProperties );
+
+#endif // end !defined SWIG
 
 #endif // end MONTE_CARLO_SIMULATION_GENERAL_PROPERTIES_HPP
 

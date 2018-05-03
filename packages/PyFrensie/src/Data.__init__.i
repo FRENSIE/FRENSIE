@@ -43,7 +43,7 @@ __all__ = ['ACE',
            ]
 %}
 
-// Support for specific coordinate types
+// Add support for specific coordinate types
 %include "Data_AtomProperties.i"
 %include "Data_NuclideProperties.i"
 %include "Data_ScatteringCenterPropertiesDatabase.i"

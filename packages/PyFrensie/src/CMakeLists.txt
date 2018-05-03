@@ -70,11 +70,11 @@ SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}]")
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
   ${CMAKE_CURRENT_BINARY_DIR}/Geometry_Config.i)
 
-# # Add the MonteCarlo package
-# SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)
-# SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.__init__)
+# Add the MonteCarlo package
+SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} MonteCarlo)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.__init__)
 # SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
-# SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_native pyfrensie)
+SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core pyfrensie)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)
