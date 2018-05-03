@@ -13,9 +13,6 @@
 #include <unordered_map>
 #include <memory>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomicReactionType.hpp"
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
@@ -44,12 +41,12 @@ public:
   typedef AdjointElectronState ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<AdjointElectroatomicReactionType,
+  typedef std::unordered_map<AdjointElectroatomicReactionType,
                                std::shared_ptr<AdjointElectroatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<AdjointElectroatomicReactionType,
+  typedef std::unordered_map<AdjointElectroatomicReactionType,
                            std::shared_ptr<const AdjointElectroatomicReaction> >
   ConstReactionMap;
 

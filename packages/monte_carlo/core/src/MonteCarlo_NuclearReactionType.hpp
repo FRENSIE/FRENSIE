@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 #define MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 
+// FRENSIE Includes
+#include "Utility_TypeTraits.hpp"
+
 namespace MonteCarlo{
 
 /*! The nuclear reaction type enum.
@@ -436,6 +439,26 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
 						     const unsigned reaction );
 
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! Specialization of Utility::IsHashable for MonteCarlo::NuclearReactionType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<MonteCarlo::NuclearReactionType> : public std::true_type
+{ /* ... */ };
+
+} // end Utility namespace
+
+namespace std{
+
+//! Specialization of std::hash for MonteCarlo::NuclearReactionType
+template<>
+struct hash<MonteCarlo::NuclearReactionType> : public hash<unsigned>
+{ /* ... */ };
+
+} // end std namespace
 
 #endif // end MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 

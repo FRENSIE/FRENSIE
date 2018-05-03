@@ -49,7 +49,7 @@ bool notEqualZero( double value )
 // Check that the scattering reaction types can be returned
 FRENSIE_UNIT_TEST( Positronatom, getScatteringReactionTypes )
 {
-  const boost::unordered_set<MonteCarlo::PositronatomicReactionType>&
+  const std::unordered_set<MonteCarlo::PositronatomicReactionType>&
     scattering_types = MonteCarlo::Positronatom::getScatteringReactionTypes();
 
   FRENSIE_CHECK( scattering_types.count(
@@ -1066,7 +1066,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
        new Utility::InterpolatedFullyTabularBasicBivariateDistribution<Utility::UnitBaseCorrelated<Utility::LogLogLog> >(
                                                         b_energy_grid,
                                                         secondary_dists ) );
-    
+
     std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(

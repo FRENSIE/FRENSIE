@@ -13,9 +13,6 @@
 #include <unordered_map>
 #include <memory>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotoatomicReactionType.hpp"
 #include "MonteCarlo_LineEnergyAdjointPhotoatomicReaction.hpp"

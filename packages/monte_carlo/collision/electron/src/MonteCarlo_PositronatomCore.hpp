@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReactionType.hpp"
@@ -45,21 +43,21 @@ public:
   typedef PositronState ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<PositronatomicReactionType,
+  typedef std::unordered_map<PositronatomicReactionType,
                    std::shared_ptr<PositronatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<PositronatomicReactionType,
+  typedef std::unordered_map<PositronatomicReactionType,
                    std::shared_ptr<const PositronatomicReaction> >
   ConstReactionMap;
 
   // Reactions that should be treated as scattering
-  static const boost::unordered_set<PositronatomicReactionType>
+  static const std::unordered_set<PositronatomicReactionType>
   scattering_reaction_types;
 
   // Reactions that should be treated as void
-  static const boost::unordered_set<PositronatomicReactionType>
+  static const std::unordered_set<PositronatomicReactionType>
   void_reaction_types;
 
   //! Default constructor
@@ -123,7 +121,7 @@ public:
 private:
 
   // Set the default scattering reaction types
-  static boost::unordered_set<PositronatomicReactionType>
+  static std::unordered_set<PositronatomicReactionType>
   setDefaultScatteringReactionTypes();
 
   // Create the total absorption reaction

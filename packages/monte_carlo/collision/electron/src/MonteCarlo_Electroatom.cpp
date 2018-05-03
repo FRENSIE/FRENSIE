@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Return the reactions that are treated as scattering
-const boost::unordered_set<ElectroatomicReactionType>&
+const std::unordered_set<ElectroatomicReactionType>&
 Electroatom::getScatteringReactionTypes()
 {
   return ElectroatomCore::scattering_reaction_types;

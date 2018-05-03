@@ -47,7 +47,7 @@ public:
   typedef ElectroatomCore::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as scattering
-  static const boost::unordered_set<ElectroatomicReactionType>&
+  static const std::unordered_set<ElectroatomicReactionType>&
   getScatteringReactionTypes();
 
   //! Constructor

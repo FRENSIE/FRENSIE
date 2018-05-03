@@ -60,17 +60,17 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
     raw_nuclide_data.extractSIGPBlock();
 
   // Create a map of the reaction types and their table ordering
-  boost::unordered_map<unsigned,unsigned> reaction_ordering;
+  std::unordered_map<unsigned,unsigned> reaction_ordering;
   DecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap(
                                                            mtrp_block,
                                                            reaction_ordering );
 
   // Parse the SIGP data and create the necessary data maps
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> > yield_energy_map;
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> > yield_values_map;
-  boost::unordered_map<unsigned,std::shared_ptr<std::vector<double> > > xs_based_map;
-  boost::unordered_map<unsigned,unsigned> threshold_energy_map;
-  boost::unordered_map<unsigned,NuclearReactionType> base_reaction_type_map;
+  std::unordered_map<unsigned,Utility::ArrayView<const double> > yield_energy_map;
+  std::unordered_map<unsigned,Utility::ArrayView<const double> > yield_values_map;
+  std::unordered_map<unsigned,std::shared_ptr<std::vector<double> > > xs_based_map;
+  std::unordered_map<unsigned,unsigned> threshold_energy_map;
+  std::unordered_map<unsigned,NuclearReactionType> base_reaction_type_map;
 
   DecoupledPhotonProductionReactionACEFactory::parseSIGP(
                                                      table_name,
@@ -85,7 +85,7 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
                                                      base_reaction_type_map );
 
   // Construct a map of required base reaction classes
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> > base_reaction_map;
+  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> > base_reaction_map;
 
   DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
                                                     base_reaction_type_map,
@@ -132,7 +132,7 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
 
 // Create the photon production reactions
 void DecoupledPhotonProductionReactionACEFactory::createPhotonProductionReactions(
-      boost::unordered_map<unsigned,std::shared_ptr<const DecoupledPhotonProductionReaction> >&
+      std::unordered_map<unsigned,std::shared_ptr<const DecoupledPhotonProductionReaction> >&
       photon_production_reactions ) const
 {
   photon_production_reactions.insert( d_photon_production_reactions.begin(),
@@ -162,7 +162,7 @@ void DecoupledPhotonProductionReactionACEFactory::createTotalReaction(
 // Create the reaction type ordering map
 void DecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap(
         const Utility::ArrayView<const double>& mtrp_block,
-        boost::unordered_map<unsigned,unsigned>& reaction_ordering )
+        std::unordered_map<unsigned,unsigned>& reaction_ordering )
 
 {
   unsigned reaction;
@@ -182,14 +182,14 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
   const size_t energy_grid_size,
   const Utility::ArrayView<const double>& lsigp_block,
   const Utility::ArrayView<const double>& sigp_block,
-  const boost::unordered_map<unsigned,unsigned>& reaction_ordering,
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_values_map,
-  boost::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
-  boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
-  boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map )
+  const std::unordered_map<unsigned,unsigned>& reaction_ordering,
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_values_map,
+  std::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
+  std::unordered_map<unsigned,unsigned>& threshold_energy_map,
+  std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map )
 {
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     reaction, end_reaction;
   reaction = reaction_ordering.begin();
   end_reaction = reaction_ordering.end();
@@ -197,7 +197,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
   unsigned cs_index;
   unsigned cs_array_size;
   unsigned energy_array_size;
-  
+
   while( reaction != end_reaction )
   {
     cs_index = static_cast<unsigned>( lsigp_block[reaction->second] ) - 1u;
@@ -210,7 +210,7 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
       // Convert to C-style index
       if( threshold_energy_map[reaction->first] > 0u )
         --threshold_energy_map[reaction->first];
-      
+
       cs_array_size = static_cast<unsigned>( sigp_block[cs_index + 2u] );
 
       FRENSIE_LOG_TAGGED_WARNING( "DecoupledPhotoProductionReactionACEFactory",
@@ -267,11 +267,11 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
 
 // Create the base reaction map
 void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
-  boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-  boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
+  std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+  std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
 {
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     reaction, end_reaction;
   reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
@@ -292,10 +292,10 @@ void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
 
 // Construct a map of photon MT numbers to yield distributions
 void DecoupledPhotonProductionReactionACEFactory::constructMTPYieldDistributions(
-	     const boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
-	     const boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_values_map )
+	     const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
+	     const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_values_map )
 {
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
@@ -317,10 +317,10 @@ void DecoupledPhotonProductionReactionACEFactory::constructMTPYieldDistributions
 
 // Construct a map of base reaction types to yield distribution arrays
 void DecoupledPhotonProductionReactionACEFactory::constructMTYieldArrays(
-       const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-       const boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
+       const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+       const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map )
 {
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
@@ -341,14 +341,14 @@ void DecoupledPhotonProductionReactionACEFactory::constructMTYieldArrays(
 
 // Initialize the yield based photon production reactions
 void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProductionReactions(
-       const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+       const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
        const double temperature,
-       const boost::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
-       const boost::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
+       const std::unordered_map<unsigned,Utility::ArrayView<const double> >& yield_energy_map,
+       const std::unordered_map<NuclearReactionType,std::shared_ptr<const NeutronNuclearReaction> >& base_reaction_map,
        const SimulationProperties& properties,
        PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory )
 {
-  boost::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
+  std::unordered_map<unsigned,Utility::ArrayView<const double> >::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = yield_energy_map.begin();
   end_reaction = yield_energy_map.end();
@@ -385,17 +385,17 @@ void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProd
 
 // Initialize the yield based photon production reactions
 void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPhotonProductionReactions(
-  const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+  const std::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
   const double temperature,
-  const boost::unordered_map<unsigned,unsigned>& threshold_energy_map,
-  const boost::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
+  const std::unordered_map<unsigned,unsigned>& threshold_energy_map,
+  const std::unordered_map<unsigned,std::shared_ptr<std::vector<double> > >& xs_based_map,
   const std::shared_ptr<const std::vector<double> >& energy_grid,
   const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
   grid_searcher,
   const SimulationProperties& properties,
   PhotonProductionNuclearScatteringDistributionACEFactory& photon_production_dist_factory )
 {
-  boost::unordered_map<unsigned,unsigned>::const_iterator
+  std::unordered_map<unsigned,unsigned>::const_iterator
     iter_reaction, end_reaction;
   iter_reaction = threshold_energy_map.begin();
   end_reaction = threshold_energy_map.end();

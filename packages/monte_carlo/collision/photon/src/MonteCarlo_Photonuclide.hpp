@@ -12,10 +12,8 @@
 // Std Lib Includes
 #include <string>
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
@@ -37,17 +35,17 @@ private:
 public:
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<PhotonuclearReactionType,
+  typedef std::unordered_map<PhotonuclearReactionType,
 			       std::shared_ptr<PhotonuclearReaction> >
   NuclearReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<PhotonuclearReactionType,
+  typedef std::unordered_map<PhotonuclearReactionType,
 			       std::shared_ptr<const PhotonuclearReaction> >
   ConstNuclearReactionMap;
 
   //! Return the reactions that are treated as absorption
-  static const boost::unordered_set<PhotonuclideReactionType>&
+  static const std::unordered_set<PhotonuclideReactionType>&
   getNuclearAbsorptionReactionTypes();
 
   //! Constructor

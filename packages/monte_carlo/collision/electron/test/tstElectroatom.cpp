@@ -49,7 +49,7 @@ bool notEqualZero( double value )
 // Check that the scattering reaction types can be returned
 FRENSIE_UNIT_TEST( Electroatom, getScatteringReactionTypes )
 {
-  const boost::unordered_set<MonteCarlo::ElectroatomicReactionType>&
+  const std::unordered_set<MonteCarlo::ElectroatomicReactionType>&
     scattering_types = MonteCarlo::Electroatom::getScatteringReactionTypes();
 
   FRENSIE_CHECK( scattering_types.count(

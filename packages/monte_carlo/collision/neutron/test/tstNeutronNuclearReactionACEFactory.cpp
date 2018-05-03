@@ -40,7 +40,7 @@ std::shared_ptr<const MonteCarlo::SimulationProperties> properties;
 FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, constructor )
 {
   std::shared_ptr<MonteCarlo::NeutronNuclearReactionACEFactory> factory;
-  
+
   FRENSIE_CHECK_NO_THROW( factory.reset( new MonteCarlo::NeutronNuclearReactionACEFactory(
                             "h1_test_table",
                             h1_ace_file_handler->getTableAtomicWeightRatio(),
@@ -80,8 +80,8 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, createScatteringReaction
                             h1_energy_grid_searcher,
                             *properties,
                             *h1_xss_data_extractor ) );
-  
-  boost::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
+
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
 
   factory->createScatteringReactions( reactions );
 
@@ -114,12 +114,12 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createScatteringReactio
                            o16_energy_grid_searcher,
                            *properties,
                            *o16_xss_data_extractor ) );
-  
-  boost::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
+
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
 
   factory->createScatteringReactions( reactions );
 
-  typedef boost::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
+  typedef std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 18 );
 
@@ -182,8 +182,8 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, createAbsorptionReaction
                             h1_energy_grid_searcher,
                             *properties,
                             *h1_xss_data_extractor ) );
-  
-  boost::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
+
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
 
   factory->createAbsorptionReactions( reactions );
 
@@ -241,12 +241,12 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_o16, createAbsorptionReactio
                            o16_energy_grid_searcher,
                            *properties,
                            *o16_xss_data_extractor ) );
-  
-  boost::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
+
+  std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> > reactions;
 
   factory->createAbsorptionReactions( reactions );
 
-  typedef boost::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
+  typedef std::unordered_map<MonteCarlo::NuclearReactionType,std::shared_ptr<const MonteCarlo::NeutronNuclearReaction> >::const_iterator Reaction;
 
   FRENSIE_CHECK_EQUAL( reactions.size(), 51 );
 
@@ -322,7 +322,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
         new Utility::StandardHashBasedGridSearcher<std::vector<double>, false>(
                                                h1_energy_grid,
                                                h1_energy_grid->size()/100+1) );
-  
+
   // Create the O-16 file handler, data extractor and energy grid
   o16_ace_file_handler.reset( new Data::ACEFileHandler(test_o16_ace_file_name,
                                                        test_o16_ace_table_name,

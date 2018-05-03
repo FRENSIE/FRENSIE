@@ -25,7 +25,7 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
-typedef boost::unordered_map<MonteCarlo::AdjointElectroatomicReactionType,
+typedef std::unordered_map<MonteCarlo::AdjointElectroatomicReactionType,
                            std::shared_ptr<const MonteCarlo::AdjointElectroatomicReaction> >
   ConstReactionMap;
 

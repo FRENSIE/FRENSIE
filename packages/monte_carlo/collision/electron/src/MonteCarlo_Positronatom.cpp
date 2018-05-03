@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 // Return the reactions that are treated as scattering
-const boost::unordered_set<PositronatomicReactionType>&
+const std::unordered_set<PositronatomicReactionType>&
 Positronatom::getScatteringReactionTypes()
 {
   return PositronatomCore::scattering_reaction_types;

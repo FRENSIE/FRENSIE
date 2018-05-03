@@ -9,9 +9,9 @@
 #ifndef MONTE_CARLO_NUCLEAR_REACTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_PHOTONUCLEAR_REACTION_ACE_FACTORY_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+// Std Includes
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearReaction.hpp"
@@ -47,12 +47,12 @@ public:
 
   //! Create the scattering reactions
   void createScatteringReactions(
-      boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >&
+      std::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >&
       scattering_reactions ) const;
 
   //! Create the absorption reactions
   void createAbsorptionReactions(
-      boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >&
+      std::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >&
       absorption_reactions ) const;
 
 
@@ -61,31 +61,31 @@ protected:
   //! Create the reaction type ordering map
   static void createReactionOrderingMap(
        const Utility::ArrayView<const double>& mtr_block,
-       boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering );
+       std::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering );
 
   //! Create the reaction type Q-value map
   static void createReactionQValueMap(
    const Utility::ArrayView<const double>& lqr_block,
-   const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value );
+   const std::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<PhotonuclearReactionType,double>& reaction_q_value );
 
   //! Create the reaction multiplicity map
   static void createReactionMultiplicityMap(
    const std::string& table_name,
    const Utility::ArrayView<const double>& tyr_block,
    const Utility::ArrayView<const double>& dlw_block,
-   const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,unsigned>&
+   const std::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<PhotonuclearReactionType,unsigned>&
    reaction_multiplicity,
-   boost::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
+   std::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
    reaction_energy_dependent_multiplicity );
 
   //! Create the reaction threshold index map
   static void createReactionThresholdMap(
    const Utility::ArrayView<const double>& lsig_block,
    const Utility::ArrayView<const double>& sig_block,
-   const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,size_t>&
+   const std::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<PhotonuclearReactionType,size_t>&
    reaction_threshold_index );
 
   //! Create the reaction cross section map
@@ -93,8 +93,8 @@ protected:
    const Utility::ArrayView<const double>& lsig_block,
    const Utility::ArrayView<const double>& sig_block,
    const Utility::ArrayView<const double>& elastic_cross_section,
-   const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
+   const std::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
+   std::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
    reaction_cross_section );
 
 private:
@@ -102,36 +102,36 @@ private:
   // Initialize the scattering reactions
   void initializeScatteringReactions(
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value,
-    const boost::unordered_map<PhotonuclearReactionType,unsigned>&
+    const std::unordered_map<PhotonuclearReactionType,double>& reaction_q_value,
+    const std::unordered_map<PhotonuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
+    const std::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
     reaction_energy_dependent_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,size_t>&
+    const std::unordered_map<PhotonuclearReactionType,size_t>&
     reaction_threshold_index,
-    const boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
+    const std::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
     reaction_cross_section,
     const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory );
 
   // Initialize the absorption reactions
   void initializeAbsorptionReactions(
     const std::shared_ptr<const std::vector<double> >& energy_grid,
-    const boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value,
-    const boost::unordered_map<PhotonuclearReactionType,unsigned>&
+    const std::unordered_map<PhotonuclearReactionType,double>& reaction_q_value,
+    const std::unordered_map<PhotonuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
+    const std::unordered_map<PhotonuclearReactionType,Utility::ArrayView<const double> >&
     reaction_energy_dependent_multiplicity,
-    const boost::unordered_map<PhotonuclearReactionType,size_t>&
+    const std::unordered_map<PhotonuclearReactionType,size_t>&
     reaction_threshold_index,
-    const boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
+    const std::unordered_map<PhotonuclearReactionType,std::shared_ptr<std::vector<double> > >&
     reaction_cross_section );
 
   // A map of the scattering reactions
-  boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >
+  std::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >
   d_scattering_reactions;
 
   // A map of the absorption reactions
-  boost::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >
+  std::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >
   d_absorption_reactions;
 
 };

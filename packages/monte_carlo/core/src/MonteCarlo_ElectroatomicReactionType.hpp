@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_TypeTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -99,7 +100,14 @@ struct ToStringTraits<MonteCarlo::ElectroatomicReactionType>
   //! Place the MonteCarlo::ElectroatomicReactionType in a stream
   static void toStream( std::ostream& os, const MonteCarlo::ElectroatomicReactionType type );
 };
-  
+
+/*! Specialization of Utility::IsHashable for MonteCarlo::ElectroatomicReactionType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<MonteCarlo::ElectroatomicReactionType> : public std::true_type
+{ /* ... */ };
+
 } // end Utility namespace
 
 namespace std{
@@ -111,7 +119,12 @@ inline std::ostream& operator<<( std::ostream& os,
   os << Utility::toString( reaction );
   return os;
 }
-  
+
+//! Specialization of std::hash for MonteCarlo::ElectroatomicReactionType
+template<>
+struct hash<MonteCarlo::ElectroatomicReactionType> : public hash<unsigned>
+{ /* ... */ };
+
 } // end std namespace
 
 #endif // end MONTE_CARLO_ELECTROATOMIC_REACTION_TYPE_HPP

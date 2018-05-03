@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_TypeTraits.hpp"
 
 namespace Data{
 
@@ -79,7 +80,7 @@ unsigned convertEADLDesignatorToENDFDesignator(
 					      const unsigned eadl_designator );
 
 } // end Data namespace
-  
+
 namespace Utility{
 
 /*! Specialization of Utility::ToStringTraits for Data::SubshellType
@@ -94,7 +95,14 @@ struct ToStringTraits<Data::SubshellType>
   //! Place the Data::SubshellType in a stream
   static void toStream( std::ostream& os, const Data::SubshellType obj );
 };
-  
+
+/*! Specialization of Utility::IsHashable for Data::SubshellType
+ * \ingroup type_traits
+ */
+template<>
+struct IsHashable<Data::SubshellType> : public std::true_type
+{ /* ... */ };
+
 } // end Utility namespace
 
 namespace std{
@@ -104,9 +112,14 @@ inline std::ostream& operator<<( std::ostream& os,
 				 const Data::SubshellType subshell )
 {
   Utility::ToStringTraits<Data::SubshellType>::toStream( os, subshell );
-  
+
   return os;
 }
+
+//! Specialization of std::hash for Data::SubshellType
+template<>
+struct hash<Data::SubshellType> : public hash<unsigned>
+{ /* ... */ };
 
 } // end std namespace
 

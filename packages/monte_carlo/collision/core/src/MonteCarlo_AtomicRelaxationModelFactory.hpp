@@ -11,9 +11,7 @@
 
 // Std Lib Includes
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 // FRENSIE Includes
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
@@ -111,7 +109,7 @@ private:
   static const std::shared_ptr<const AtomicRelaxationModel> default_void_model;
 
   // The map of atomic numbers and atomic relaxation models
-  boost::unordered_map<unsigned,std::shared_ptr<const AtomicRelaxationModel> >
+  std::unordered_map<unsigned,std::shared_ptr<const AtomicRelaxationModel> >
   d_relaxation_models;
 };
 

@@ -13,15 +13,15 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-const boost::unordered_set<ElectroatomicReactionType>
+const std::unordered_set<ElectroatomicReactionType>
 ElectroatomCore::scattering_reaction_types =
   ElectroatomCore::setDefaultScatteringReactionTypes();
 
 // Set the default scattering reaction types
-boost::unordered_set<ElectroatomicReactionType>
+std::unordered_set<ElectroatomicReactionType>
 ElectroatomCore::setDefaultScatteringReactionTypes()
 {
-  boost::unordered_set<ElectroatomicReactionType> tmp_scattering_reaction_types;
+  std::unordered_set<ElectroatomicReactionType> tmp_scattering_reaction_types;
   tmp_scattering_reaction_types.insert(
                   DECOUPLED_ELASTIC_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(

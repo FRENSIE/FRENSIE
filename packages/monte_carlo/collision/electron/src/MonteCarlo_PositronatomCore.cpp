@@ -13,15 +13,15 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-const boost::unordered_set<PositronatomicReactionType>
+const std::unordered_set<PositronatomicReactionType>
 PositronatomCore::scattering_reaction_types =
   PositronatomCore::setDefaultScatteringReactionTypes();
 
 // Set the default scattering reaction types
-boost::unordered_set<PositronatomicReactionType>
+std::unordered_set<PositronatomicReactionType>
 PositronatomCore::setDefaultScatteringReactionTypes()
 {
-  boost::unordered_set<PositronatomicReactionType> tmp_scattering_reaction_types;
+  std::unordered_set<PositronatomicReactionType> tmp_scattering_reaction_types;
   tmp_scattering_reaction_types.insert(
                   DECOUPLED_ELASTIC_POSITRONATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(

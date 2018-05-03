@@ -43,7 +43,7 @@ public:
   typedef PositronatomCore::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as scattering
-  static const boost::unordered_set<PositronatomicReactionType>&
+  static const std::unordered_set<PositronatomicReactionType>&
   getScatteringReactionTypes();
 
   //! Constructor

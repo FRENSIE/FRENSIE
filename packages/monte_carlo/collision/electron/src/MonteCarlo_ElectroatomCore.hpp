@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <memory>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
@@ -45,21 +43,21 @@ public:
   typedef ElectronState ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<ElectroatomicReactionType,
+  typedef std::unordered_map<ElectroatomicReactionType,
                    std::shared_ptr<ElectroatomicReaction> >
   ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<ElectroatomicReactionType,
+  typedef std::unordered_map<ElectroatomicReactionType,
                    std::shared_ptr<const ElectroatomicReaction> >
   ConstReactionMap;
 
   // Reactions that should be treated as scattering
-  static const boost::unordered_set<ElectroatomicReactionType>
+  static const std::unordered_set<ElectroatomicReactionType>
   scattering_reaction_types;
 
   // Reactions that should be treated as void
-  static const boost::unordered_set<ElectroatomicReactionType>
+  static const std::unordered_set<ElectroatomicReactionType>
   void_reaction_types;
 
   //! Default constructor
@@ -123,7 +121,7 @@ public:
 private:
 
   // Set the default scattering reaction types
-  static boost::unordered_set<ElectroatomicReactionType>
+  static std::unordered_set<ElectroatomicReactionType>
   setDefaultScatteringReactionTypes();
 
   // Create the total absorption reaction
