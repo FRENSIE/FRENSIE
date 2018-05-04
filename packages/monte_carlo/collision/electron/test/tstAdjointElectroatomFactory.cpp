@@ -205,6 +205,8 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
 
   MonteCarlo::SimulationProperties properties;
   properties.setAdjointElasticCutoffAngleCosine( 1.0 );
+  properties.setAdjointElectronEvaluationTolerance( 1e-7 );
+  properties.setAdjointElasticElectronDistributionMode( MonteCarlo::DECOUPLED_DISTRIBUTION );
 
   std::shared_ptr<MonteCarlo::AdjointElectroatomFactory> electroatom_factory(
                     new MonteCarlo::AdjointElectroatomFactory(
@@ -281,23 +283,23 @@ FRENSIE_UNIT_TEST( AdjointElectroatomFactory,
 
   // Test that the coupled elastic cross section can be returned
   reaction = MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
-  // cross_section = atom->getReactionCrossSection( 1e-5, reaction );
-  // FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.06351e+09, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 3.06351e+09, 1e-12 );
 
-  // cross_section = atom->getReactionCrossSection( 1e-3, reaction );
-  // FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.2833237650446758e+07, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 1e-3, reaction );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 5.2833237650446758e+07, 1e-12 );
 
-  // cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  // FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4129048986120211e+05, 1e-12 );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  FRENSIE_CHECK_FLOATING_EQUALITY( cross_section, 1.4129048986120211e+05, 1e-12 );
 
 
-  // // Test that the coupled elastic cross section can be returned
-  // reaction = MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
-  // cross_section = atom->getReactionCrossSection( 1e-5, reaction );
-  // FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
+  // Test that the coupled elastic cross section can be returned
+  reaction = MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION;
+  cross_section = atom->getReactionCrossSection( 1e-5, reaction );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
-  // cross_section = atom->getReactionCrossSection( 20.0, reaction );
-  // FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
+  cross_section = atom->getReactionCrossSection( 20.0, reaction );
+  FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
 
   // Test that there is no hybrid elastic cross section
@@ -400,10 +402,10 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Determine the database directory
   boost::filesystem::path database_path =
     test_scattering_center_database_name;
-  
+
   data_directory.reset(
                   new boost::filesystem::path( database_path.parent_path() ) );
-  
+
   // Load the database
   const Data::ScatteringCenterPropertiesDatabase database( database_path );
 
@@ -431,7 +433,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   c_native_definition.setAdjointElectroatomicDataProperties(
            c_properties.getSharedAdjointElectroatomicDataProperties(
               Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }

@@ -180,10 +180,7 @@ FRENSIE_UNIT_TEST( ElectronMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
-  if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 0.36; // select the elastic reaction (for boost below version 1.60)
-  else
-    fake_stream[1] = 0.61; // select the elastic reaction (for boost above version 1.60)
+  fake_stream[1] = 0.36; // select the elastic reaction
   fake_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -211,10 +208,7 @@ FRENSIE_UNIT_TEST( ElectronMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
-  if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 0.36; // select the elastic reaction (for boost below version 1.60)
-  else
-    fake_stream[1] = 0.61; // select the elastic reaction (for boost above version 1.60)
+  fake_stream[1] = 0.36; // select the elastic reaction
   fake_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );

@@ -189,10 +189,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the H atom
-  if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 9.35e-2; // select elastic (for boost below version 1.60)
-  else
-    fake_stream[1] = 9.065e-01; // select elastic (for boost above version 1.60)
+  fake_stream[1] = 9.35e-2; // select pair production
   fake_stream[2] = 0.0; // sample cutoff distribution
   fake_stream[3] = 0.0; // sample mu = -1.0
 
@@ -220,10 +217,7 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the H atom
-  if( BOOST_VERSION < 106000 )
-    fake_stream[1] = 9.35e-2; // select pair production (for boost below version 1.60)
-  else
-    fake_stream[1] = 9.065e-01; // select pair production (for boost above version 1.60)
+  fake_stream[1] = 9.35e-2; // select pair production
   fake_stream[2] = 1.0-1e-15; // sample cutoff distribution
   fake_stream[3] = 1.0-1e-15; // sample mu = 0.999999
 
@@ -277,7 +271,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     h_definition.setAdjointElectroatomicDataProperties(
            h_properties.getSharedAdjointElectroatomicDataProperties(
               Data::AdjointElectroatomicDataProperties::Native_EPR_FILE, 0 ) );
-                     
+
 
     MonteCarlo::AdjointElectroatomFactory::ScatteringCenterNameSet atom_aliases;
     atom_aliases.insert( "H-Native" );
@@ -299,7 +293,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                                                    atom_definitions,
                                                    properties,
                                                    true );
-        
+
     MonteCarlo::AdjointElectroatomFactory::AdjointElectroatomNameMap atom_map;
 
     factory.createAdjointElectroatomMap( atom_map );

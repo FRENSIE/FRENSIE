@@ -334,17 +334,15 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.0;
-
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
-
   double knock_on_energy, knock_on_angle_cosine;
 
   // sample the electron
   ace_ionization_dist->sample( incoming_energy,
-                                              knock_on_energy,
-                                              knock_on_angle_cosine );
+                               knock_on_energy,
+                               knock_on_angle_cosine );
 
   // Test knock-on electron
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.279436961765390, 1e-12 );
@@ -372,11 +370,10 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 1.0-1e-15;
-  fake_stream[3] = 0.0;
-
+  fake_stream[0] = 0.0;         // Sample Bin
+  fake_stream[1] = 0.0;         // Sample Electron
+  fake_stream[2] = 0.0;         // Sample Bin
+  fake_stream[3] = 1.0-1e-15;   // Sample Electron
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 6.041e-05;
@@ -391,14 +388,14 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 4.0687255489257182e-02, 1e-12 );
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 1.0E-07, 1e-12 );
 
-  // // sample the electron at the max random number
-  // unit_base_ionization_dist->sample( incoming_energy,
-  //                                    knock_on_energy,
-  //                                    knock_on_angle_cosine );
+  // sample the electron at the max random number
+  unit_base_ionization_dist->sample( incoming_energy,
+                                     knock_on_energy,
+                                     knock_on_angle_cosine );
 
-  // // Test knock-on electron at the max random number
-  // FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.7795576315906780e-01, 1e-12 );
-  // FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.7765e-05, 1e-12 );
+  // Test knock-on electron at the max random number
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.7795576315906780e-01, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_energy, 2.7765e-05, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -422,8 +419,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
   // sample the electron at the min random number
   correlated_ionization_dist->sample( incoming_energy,
-                                                knock_on_energy,
-                                                knock_on_angle_cosine );
+                                      knock_on_energy,
+                                      knock_on_angle_cosine );
 
   // Test knock-on electron at the min random number
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 0.0406872554892572, 1e-12 );
@@ -431,8 +428,8 @@ FRENSIE_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
   // sample the electron at the max random number
   correlated_ionization_dist->sample( incoming_energy,
-                                                knock_on_energy,
-                                                knock_on_angle_cosine );
+                                      knock_on_energy,
+                                      knock_on_angle_cosine );
 
   // Test knock-on electron at the max random number
   FRENSIE_CHECK_FLOATING_EQUALITY( knock_on_angle_cosine, 6.680945582865936982e-01, 1e-12 );
