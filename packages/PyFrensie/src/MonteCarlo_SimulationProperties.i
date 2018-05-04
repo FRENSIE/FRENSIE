@@ -10,6 +10,13 @@
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "MonteCarlo_ParticleType.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
+#include "MonteCarlo_IncoherentAdjointModelType.hpp"
+#include "MonteCarlo_TwoDInterpolationType.hpp"
+#include "MonteCarlo_TwoDSamplingType.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_ElasticElectronDistributionType.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
@@ -28,8 +35,7 @@ using namespace MonteCarlo;
 
 // C++ STL support
 %include <stl.i>
-// %include <std_set.i>
-// %include <std_shared_ptr.i>
+%include <std_vector.i>
 %include <std_except.i>
 
 // Include typemaps support
@@ -44,8 +50,8 @@ using namespace MonteCarlo;
 // Include the explicit template instantiation helpers
 %include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 
-// // Include the data property helpers
-// %include "MonteCarlo_PropertyHelpers.i"
+// Include the MonteCarlo simulation properties helpers
+%include "MonteCarlo_SimulationPropertiesHelpers.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -72,23 +78,44 @@ using namespace MonteCarlo;
   }
 }
 
-// // General ignore directives
-// %ignore *::operator<<;
-
-// // Add general templates
-// %template(IntSet) std::set< unsigned int>;
+// General ignore directives
+%ignore *::operator<<;
 
 //---------------------------------------------------------------------------//
-// Add support for the ParticleType
+// Add support for the different particle/model types and modes
 //---------------------------------------------------------------------------//
 // Import the ParticleType
 %include "MonteCarlo_ParticleType.hpp"
 
+// Import the ParticleModeType
+%include "MonteCarlo_ParticleModeType.hpp"
+
+// Import the IncoherentModelType
+%include "MonteCarlo_IncoherentModelType.hpp"
+
+// Import the IncoherentAdjointModelType
+%include "MonteCarlo_IncoherentAdjointModelType.hpp"
+
+// Import the TwoDInterpolationType
+%include "MonteCarlo_TwoDInterpolationType.hpp"
+
+// Import the TwoDSamplingType
+%include "MonteCarlo_TwoDSamplingType.hpp"
+
+// Import the BremsstrahlungAngularDistributionType
+%include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+
+// Import the ElasticElectronDistributionType
+%include "MonteCarlo_ElasticElectronDistributionType.hpp"
+
 //---------------------------------------------------------------------------//
-// Add support for the PhotoatomicDataProperties
+// Add support for the SimulationGeneralProperties
 //---------------------------------------------------------------------------//
 
-// %atomic_properties_interface_setup( PhotoatomicDataProperties );
+%feature("docstring") MonteCarlo::SimulationGeneralProperties
+"The SimulationGeneralProperties class stores general simulation properties. It can be used for setting and getting the general simulation properties when running a simulation."
+
+%general_properties_setup_helper( SimulationGeneralProperties )
 
 // Import the PhotoatomicDataProperties
 %include "MonteCarlo_SimulationGeneralProperties.hpp"
@@ -97,7 +124,10 @@ using namespace MonteCarlo;
 // Add support for the SimulationNeutronProperties.
 //---------------------------------------------------------------------------//
 
-// %atomic_properties_interface_setup( SimulationNeutronProperties. );
+%feature("docstring") MonteCarlo::SimulationNeutronProperties
+"The SimulationNeutronProperties class stores the neutron simulation properties. It can be used for setting and getting the neutron simulation properties when running a simulation."
+
+%neutron_properties_setup_helper( SimulationNeutronProperties )
 
 // Import the SimulationNeutronProperties.
 %include "MonteCarlo_SimulationNeutronProperties.hpp"
@@ -106,7 +136,10 @@ using namespace MonteCarlo;
 // Add support for the SimulationPhotonProperties
 //---------------------------------------------------------------------------//
 
-// %atomic_properties_interface_setup( SimulationPhotonProperties );
+%feature("docstring") MonteCarlo::SimulationPhotonProperties
+"The SimulationPhotonProperties class stores the photon simulation properties. It can be used for setting and getting the photon simulation properties when running a simulation."
+
+%neutron_properties_setup_helper( SimulationPhotonProperties )
 
 // Import the SimulationPhotonProperties
 %include "MonteCarlo_SimulationPhotonProperties.hpp"
@@ -115,7 +148,13 @@ using namespace MonteCarlo;
 // Add support for the SimulationAdjointPhotonProperties
 //---------------------------------------------------------------------------//
 
-// %atomic_properties_interface_setup( SimulationAdjointPhotonProperties );
+%feature("docstring") MonteCarlo::SimulationAdjointPhotonProperties
+"The SimulationAdjointPhotonProperties class stores the adjoint photon simulation properties. It can be used for setting and getting the adjoint photon simulation properties when running a simulation."
+
+%neutron_properties_setup_helper( SimulationAdjointPhotonProperties )
+
+// Add template for std::vector<double>
+%template(DoubleVector) std::vector<double>;
 
 // Import the SimulationAdjointPhotonProperties
 %include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
@@ -124,7 +163,10 @@ using namespace MonteCarlo;
 // Add support for the SimulationElectronProperties
 //---------------------------------------------------------------------------//
 
-// %atomic_properties_interface_setup( SimulationElectronProperties );
+%feature("docstring") MonteCarlo::SimulationElectronProperties
+"The SimulationElectronProperties class stores the electron simulation properties. It can be used for setting and getting the electron simulation properties when running a simulation."
+
+%neutron_properties_setup_helper( SimulationElectronProperties )
 
 // Import the SimulationElectronProperties
 %include "MonteCarlo_SimulationElectronProperties.hpp"
@@ -133,7 +175,10 @@ using namespace MonteCarlo;
 // Add support for the SimulationAdjointElectronProperties
 //---------------------------------------------------------------------------//
 
-// %atomic_properties_interface_setup( SimulationAdjointElectronProperties );
+%feature("docstring") MonteCarlo::SimulationAdjointElectronProperties
+"The SimulationAdjointElectronProperties class stores the adjoint electron simulation properties. It can be used for setting and getting the adjoint electron simulation properties when running a simulation."
+
+%adjoint_electron_properties_setup( SimulationAdjointElectronProperties )
 
 // Import the SimulationAdjointElectronProperties
 %include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
@@ -142,43 +187,16 @@ using namespace MonteCarlo;
 // // Add support for the SimulationProperties
 // //---------------------------------------------------------------------------//
 
-// %ignore *::AtomicWeight;
-// %ignore Data::SimulationProperties::SimulationProperties( const Data::AtomType, const AtomicWeight );
+%feature("docstring") MonteCarlo::SimulationProperties
+"The SimulationProperties class stores the simulation properties. It can be used for setting and getting the simulation properties when running a simulation."
 
-// %feature("docstring") Data::SimulationProperties
-// "The SimulationProperties class stores a atomic data properties. It can be used for
-// querying atomic data properties and for creating atomic data extractors or
-// container, which can be used to read atomic data."
+%simulation_properties_setup( SimulationProperties )
 
-// %feature("autodoc", "atom(SimulationProperties self) -> AtomType")
-// Data::SimulationProperties::atom;
+%ignore MonteCarlo::SimulationProperties::getMinParticleEnergy() const;
+%ignore MonteCarlo::SimulationProperties::getMaxParticleEnergy() const;
 
-// %feature("autodoc", "atomicNumber(SimulationProperties self) -> unsigned")
-// Data::SimulationProperties::atomicNumber;
-
-// %feature("autodoc", "atomicWeight(SimulationProperties self) -> AtomicWeight")
-// Data::SimulationProperties::atomicWeight;
-
-// %feature("autodoc", "atomicWeightRatio(SimulationProperties self) -> double")
-// Data::SimulationProperties::atomicWeightRatio;
-
-// // Allow shared pointers of SimulationProperties objects
-// %shared_ptr( Data::SimulationProperties );
-
-// // Rename the overloaded getDataFileVersions functions
-// %atom_properties_interface_setup( Photoatomic, photoatomic )
-// %atom_properties_interface_setup( AdjointPhotoatomic, adjointPhotoatomic )
-// %atom_properties_interface_setup( Electroatomic, electroatomic )
-// %atom_properties_interface_setup( AdjointElectroatomic, adjointElectroatomic )
-
-// // Add typemaps for converting AtomicWeight to and from Python float
-// %apply const Data::PhotoatomicDataProperties::AtomicWeight {
-//   const Data::SimulationProperties::AtomicWeight }
-// %apply Data::PhotoatomicDataProperties::AtomicWeight {
-//   Data::SimulationProperties::AtomicWeight }
-
-// // Import the SimulationProperties
-// %include "MonteCarlo_SimulationProperties.hpp"
+// Include the SimulationProperties
+%include "MonteCarlo_SimulationProperties.hpp"
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationProperties.i

@@ -65,13 +65,13 @@ public:
   double getElectronEvaluationTolerance() const;
 
   //! Set the electron 2D interpolation policy (LogLogLog by default)
-  void setElectronTwoDInterpPolicy( TwoDInterpolationType interp_type );
+  void setElectronTwoDInterpPolicy( const TwoDInterpolationType interp_type );
 
   //! Return the electron 2D interpolation policy
   TwoDInterpolationType getElectronTwoDInterpPolicy() const;
 
   //! Set the electron 2D sampling policy (UnitBaseCorrelated by default)
-  void setElectronTwoDSamplingPolicy( TwoDSamplingType sampling_type );
+  void setElectronTwoDSamplingPolicy( const TwoDSamplingType sampling_type );
 
   //! Return the electron 2D sampling policy
   TwoDSamplingType getElectronTwoDSamplingPolicy() const;
@@ -103,13 +103,13 @@ public:
   bool isElasticModeOn() const;
 
   //! Set the elastic distribution mode ( Decoupled by default )
-  void setElasticElectronDistributionMode( ElasticElectronDistributionType distribution_mode );
+  void setElasticElectronDistributionMode( const ElasticElectronDistributionType distribution_mode );
 
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getElasticElectronDistributionMode() const;
 
   //! Set the coupled elastic sampling mode ( Simplified Union by default )
-  void setCoupledElasticSamplingMode( CoupledElasticSamplingMethod sampling_method );
+  void setCoupledElasticSamplingMode( const CoupledElasticSamplingMethod sampling_method );
 
   //! Return the coupled elastic sampling mode
   CoupledElasticSamplingMethod getCoupledElasticSamplingMode() const;

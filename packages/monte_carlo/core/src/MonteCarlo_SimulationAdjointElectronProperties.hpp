@@ -110,14 +110,14 @@ public:
 
   //! Set the adjoint elastic distribution mode ( Decoupled by default )
   void setAdjointElasticElectronDistributionMode(
-                        ElasticElectronDistributionType distribution_mode );
+                        const ElasticElectronDistributionType distribution_mode );
 
   //! Return the elastic distribution mode
   ElasticElectronDistributionType getAdjointElasticElectronDistributionMode() const;
 
   //! Set the adjoint coupled elastic sampling mode ( Simplified Union by default )
   void setAdjointCoupledElasticSamplingMode(
-                        CoupledElasticSamplingMethod sampling_method );
+                        const CoupledElasticSamplingMethod sampling_method );
 
   //! Return the adjoint coupled elastic sampling mode
   CoupledElasticSamplingMethod getAdjointCoupledElasticSamplingMode() const;

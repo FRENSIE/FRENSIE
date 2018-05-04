@@ -218,6 +218,34 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
   ENDIF()
 ENDIF()
 
+# Add the MonteCarlo.SimulationGeneralProperties unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationGeneralProperties)
+ADD_TEST(PyFrensie.MonteCarlo.SimulationGeneralProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationGeneralProperties.py)
+
+# Add the MonteCarlo.SimulationNeutronProperties unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationNeutronProperties)
+ADD_TEST(PyFrensie.MonteCarlo.SimulationNeutronProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationNeutronProperties.py)
+
+# Add the MonteCarlo.SimulationPhotonProperties unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationPhotonProperties)
+ADD_TEST(PyFrensie.MonteCarlo.SimulationPhotonProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationPhotonProperties.py)
+
+# Add the MonteCarlo.SimulationAdjointPhotonProperties unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationAdjointPhotonProperties)
+ADD_TEST(PyFrensie.MonteCarlo.SimulationAdjointPhotonProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationAdjointPhotonProperties.py)
+
+# Add the MonteCarlo.SimulationElectronProperties unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationElectronProperties)
+ADD_TEST(PyFrensie.MonteCarlo.SimulationElectronProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationElectronProperties.py)
+
+# Add the MonteCarlo.SimulationAdjointElectronProperties unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationAdjointElectronProperties)
+ADD_TEST(PyFrensie.MonteCarlo.SimulationAdjointElectronProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationAdjointElectronProperties.py)
+
+# Add the MonteCarlo.SimulationProperties unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationProperties)
+ADD_TEST(PyFrensie.MonteCarlo.SimulationProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationProperties.py)
+
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
