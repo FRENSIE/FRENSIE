@@ -14,30 +14,40 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectroatomCore.hpp"
-#include "MonteCarlo_Atom.hpp"
+#include "MonteCarlo_AdjointAtom.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The atom class for adjoint electroatomic reactions
-class AdjointElectroatom : public Atom<AdjointElectroatomCore>
+class AdjointElectroatom : public AdjointAtom<AdjointElectroatomCore>
 {
   // Typedef for QuantityTraits
   typedef Utility::QuantityTraits<double> QT;
 
+  // Typedef for the base type
+  typedef AdjointAtom<AdjointElectroatomCore> BaseType;
+
 public:
 
   //! The reaction enum type
-  typedef AdjointElectroatomicReactionType ReactionEnumType;
+  typedef BaseType::ReactionEnumType ReactionEnumType;
 
   //! The particle state type
-  typedef AdjointElectronState ParticleStateType;
+  typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef AdjointElectroatomCore::ReactionMap ReactionMap;
+  typedef BaseType::ReactionMap ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef AdjointElectroatomCore::ConstReactionMap ConstReactionMap;
+  typedef BaseType::ConstReactionMap ConstReactionMap;
+
+  //! Typedef for the line energy reaction map
+  typedef BaseType::LineEnergyReactionMap LineEnergyReactionMap;
+
+  //! Typedef for the const line energy reaction map
+  typedef BaseType::ConstLineEnergyReactionMap
+  ConstLineEnergyReactionMap;
 
   //! Constructor
   AdjointElectroatom(
@@ -46,51 +56,30 @@ public:
     const double atomic_weight,
     const std::shared_ptr<const std::vector<double> >& energy_grid,
     const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+    const std::shared_ptr<const std::vector<double> >&
+          critical_line_energies,
     const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
     const ConstReactionMap& scattering_reactions,
-    const ConstReactionMap& absorption_reactions );
+    const ConstReactionMap& absorption_reactions,
+    const ConstLineEnergyReactionMap& line_energy_reactions );
 
   //! Constructor (from a core)
   AdjointElectroatom( const std::string& name,
                       const unsigned atomic_number,
                       const double atomic_weight,
                       const AdjointElectroatomCore& core )
-    : Atom<AdjointElectroatomCore>( name, atomic_number, atomic_weight, core )
+    : BaseType( name, atomic_number, atomic_weight, core )
   { /* ... */ }
 
   //! Destructor
   virtual ~AdjointElectroatom()
   { /* ... */ }
 
-  //! Relax the atom
-  void relaxAtom( const Data::SubshellType vacancy_shell,
-                  const AdjointElectronState& electron,
-                  ParticleBank& bank ) const;
-
-  //! Check if the energy corresponds to a line energy reaction
-  bool doesEnergyHaveLineEnergyReaction( const double energy ) const;
-
-  //! Return the total cross section at the desired line energy
-  double getTotalLineEnergyCrossSection( const double energy ) const;
-
-  //! Return the total forward cross section at the desired energy
-  double getTotalForwardCrossSection( const double energy ) const;
-
-  //! Return the adjoint weight factor at the desired energy
-  double getAdjointWeightFactor( const double energy ) const;
-
- //! Return the cross section for a specific adjoint electroatomic reaction
+  //! Return the cross section for a specific adjoint electroatomic reaction
   double getReactionCrossSection(
                     const double energy,
                     const AdjointElectroatomicReactionType reaction ) const;
 };
-
-// Relax the atom
-//! \details There currently is no adjoint atomic relaxation implementation.
-inline void AdjointElectroatom::relaxAtom( const Data::SubshellType vacancy_shell,
-                                           const AdjointElectronState& electron,
-                                           ParticleBank& bank ) const
-{ /* ... */ }
 
 } // end MonteCarlo namespace
 

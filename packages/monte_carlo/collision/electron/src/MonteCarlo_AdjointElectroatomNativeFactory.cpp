@@ -199,9 +199,11 @@ void AdjointElectroatomNativeFactory::createAdjointElectroatomCore(
   // Create the electroatom core
   adjoint_electroatom_core.reset(
     new AdjointElectroatomCore( grid_searcher,
+                                std::make_shared<const std::vector<double> >(),
                                 total_forward_reaction,
                                 scattering_reactions,
-                                AdjointElectroatomCore::ConstReactionMap() ) );
+                                AdjointElectroatomCore::ConstReactionMap(),
+                                AdjointElectroatomCore::ConstLineEnergyReactionMap() ) );
 }
 
 // Create a adjoint electroatom

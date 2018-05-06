@@ -29,6 +29,15 @@ class AdjointMaterial : public Material<ScatteringCenter>
 
 public:
 
+  //! The scattering center type
+  typedef typename BaseType::ScatteringCenterType ScatteringCenterType;
+
+  //! The reaction enum type
+  typedef typename BaseType::ReactionEnumType ReactionEnumType;
+
+  //! The particle state type
+  typedef typename BaseType::ParticleStateType ParticleStateType;
+
   //! The material handle type
   typedef typename BaseType::InternalMaterialHandle InternalMaterialHandle;
 
@@ -54,10 +63,17 @@ public:
   //! Return the adjoint line energy weight factor
   double getAdjointLineEnergyWeightFactor( const double energy ) const;
 
+  //! Collide with a scattering center
+  void collideAnalogue( ParticleStateType& adjoint_particle,
+                        ParticleBank& bank ) const final override;
+
+  //! Collide with a scattering center and survival bias
+  void collideSurvivalBias( ParticleStateType& adjoint_particle,
+                            ParticleBank& bank ) const final override;
+
   //! Collide with an adjoint photon at a line energy
-  void collideAtLineEnergy(
-           typename ScatteringCenter::ParticleStateType& adjoint_photon,
-           ParticleBank& bank ) const;
+  void collideAtLineEnergy( ParticleStateType& adjoint_particle,
+                            ParticleBank& bank ) const;
 
 protected:
 

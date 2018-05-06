@@ -10,7 +10,6 @@
 #define MONTE_CARLO_ADJOINT_ELECTROATOM_CORE_HPP
 
 // Std Lib Includes
-#include <unordered_map>
 #include <memory>
 
 // Boost Includes
@@ -21,6 +20,7 @@
 #include "MonteCarlo_AdjointElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
+#include "Utility_Map.hpp"
 
 namespace MonteCarlo{
 
@@ -40,6 +40,9 @@ class AdjointElectroatomCore
 
 public:
 
+  //! Typedef for the reaction type enum
+  typedef AdjointElectroatomicReactionType ReactionEnumType;
+
   //! Typedef for the particle state type
   typedef AdjointElectronState ParticleStateType;
 
@@ -53,15 +56,23 @@ public:
                            std::shared_ptr<const AdjointElectroatomicReaction> >
   ConstReactionMap;
 
+  //! Typedef for the line energy reaction map
+  typedef std::unordered_map<double,ReactionMap> LineEnergyReactionMap;
+
+  //! Typedef for the const line energy reaction map
+  typedef std::unordered_map<double,ConstReactionMap> ConstLineEnergyReactionMap;
+
   //! Default constructor
   AdjointElectroatomCore();
 
   //! Constructor
   AdjointElectroatomCore(
       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >& critical_line_energies,
       const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
       const ConstReactionMap& scattering_reactions,
-      const ConstReactionMap& absorption_reactions );
+      const ConstReactionMap& absorption_reactions,
+      const ConstLineEnergyReactionMap& line_energy_reactions );
 
   //! Copy constructor
   AdjointElectroatomCore( const AdjointElectroatomCore& instance );
@@ -82,6 +93,12 @@ public:
   //! Return the absorption reactions
   const ConstReactionMap& getAbsorptionReactions() const;
 
+  //! Return the line energy reactions
+  const ConstLineEnergyReactionMap& getLineEnergyReactions() const;
+
+  //! Return the critical line energies
+  const std::vector<double>& getCriticalLineEnergies() const;
+
   //! Return the hash-based grid searcher
   const Utility::HashBasedGridSearcher<double>& getGridSearcher() const;
 
@@ -89,6 +106,12 @@ public:
   bool hasSharedEnergyGrid() const;
 
 private:
+
+  // Check if the line energy reactions are valid
+  template<typename Map>
+  bool areLineEnergyReactionsValid(
+         const Map& line_energy_reactions,
+         const std::vector<double>& critical_line_energies ) const;
 
   // The total forward reactions
   std::shared_ptr<const ElectroatomicReaction> d_total_forward_reaction;
@@ -98,6 +121,12 @@ private:
 
   // The absorption reactions
   ConstReactionMap d_absorption_reactions;
+
+  // The line energy reactions
+  ConstLineEnergyReactionMap d_line_energy_reactions;
+
+  // The critical line energies
+  std::shared_ptr<const std::vector<double> > d_critical_line_energies;
 
   // The hash-based grid searcher
   std::shared_ptr<const Utility::HashBasedGridSearcher<double>> d_grid_searcher;
@@ -121,10 +150,47 @@ inline auto AdjointElectroatomCore::getAbsorptionReactions() const -> const Cons
   return d_absorption_reactions;
 }
 
+// Return the line energy reactions
+inline auto AdjointElectroatomCore::getLineEnergyReactions() const -> const ConstLineEnergyReactionMap&
+{
+  return d_line_energy_reactions;
+}
+
+// Return the critical line energies
+inline auto AdjointElectroatomCore::getCriticalLineEnergies() const -> const std::vector<double>&
+{
+  return *d_critical_line_energies;
+}
+
 // Return the hash-based grid searcher
 inline const Utility::HashBasedGridSearcher<double>& AdjointElectroatomCore::getGridSearcher() const
 {
   return *d_grid_searcher;
+}
+
+// Check if the line energy reactions are valid
+template<typename Map>
+bool AdjointElectroatomCore::areLineEnergyReactionsValid(
+          const Map& line_energy_reactions,
+          const std::vector<double>& critical_line_energies ) const
+{
+  typename Map::const_iterator line_energies =
+    line_energy_reactions.begin();
+
+  // To be valid a line energy reaction must have an associated critical line
+  // energy. Without the critical line energy the line energy reaction will
+  // never occur.
+  while( line_energies != line_energy_reactions.end() )
+  {
+    if( !std::binary_search( critical_line_energies.begin(),
+                             critical_line_energies.end(),
+                             line_energies->first ) )
+      return false;
+
+    ++line_energies;
+  }
+
+  return true;
 }
 
 } // end MonteCarlo namespace

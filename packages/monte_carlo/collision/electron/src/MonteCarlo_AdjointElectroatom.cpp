@@ -19,15 +19,13 @@ AdjointElectroatom::AdjointElectroatom(
       const double atomic_weight,
       const std::shared_ptr<const std::vector<double> >& energy_grid,
       const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher,
+      const std::shared_ptr<const std::vector<double> >&
+          critical_line_energies,
       const std::shared_ptr<const ElectroatomicReaction>& total_forward_reaction,
       const ConstReactionMap& scattering_reactions,
-      const ConstReactionMap& absorption_reactions )
-  : Atom<AdjointElectroatomCore>( name,
-                                  atomic_number,
-                                  atomic_weight,
-                                  grid_searcher,
-                                  scattering_reactions,
-                                  absorption_reactions )
+      const ConstReactionMap& absorption_reactions,
+      const ConstLineEnergyReactionMap& line_energy_reactions )
+  : BaseType( name, atomic_number, atomic_weight )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -38,68 +36,15 @@ AdjointElectroatom::AdjointElectroatom(
   testPrecondition( grid_searcher.get() );
 
   // Populate the core
-  Atom<AdjointElectroatomCore>::setCore(
-                    AdjointElectroatomCore( grid_searcher,
-                                            total_forward_reaction,
-                                            scattering_reactions,
-                                            absorption_reactions ) );
+  BaseType::setCore( AdjointElectroatomCore( grid_searcher,
+                                             critical_line_energies,
+                                             total_forward_reaction,
+                                             scattering_reactions,
+                                             absorption_reactions,
+                                             line_energy_reactions ) );
 
   // Make sure the reactions have a shared energy grid
   testPostcondition( this->getCore().hasSharedEnergyGrid() );
-}
-
-// Check if the energy corresponds to a line energy reaction
-bool AdjointElectroatom::doesEnergyHaveLineEnergyReaction(
-                                                    const double energy ) const
-{
-  return false;
-}
-
-// Return the total cross section at the desired line energy
-double AdjointElectroatom::getTotalLineEnergyCrossSection(
-                                                    const double energy ) const
-{
-  return 0.0;
-}
-
-// Return the total forward cross section
-double AdjointElectroatom::getTotalForwardCrossSection(
-                                                    const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !QT::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-  
-  return this->getCore().getTotalForwardReaction().getCrossSection( energy );
-}
-
-// Return the adjoint weight factor at the desired energy
-/*! \details Generally, we do not use the weight factor for an individual atom.
- * The weight factor of an entire material is more commonly used.
- */
-double AdjointElectroatom::getAdjointWeightFactor( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !QT::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-
-  double weight_factor;
-  
-  double total_forward_cross_section =
-    this->getTotalForwardCrossSection( energy );
-
-  if( total_forward_cross_section > 0.0 )
-  {
-    weight_factor = this->getTotalCrossSection( energy )/
-      total_forward_cross_section;
-  }
-  else
-    weight_factor = 1.0;
-
-  // Make sure the weight factor is valid
-  testPrecondition( weight_factor > 0.0 );
-
-  return weight_factor;
 }
 
 // Return the cross section for a specific adjoint electroatomic reaction

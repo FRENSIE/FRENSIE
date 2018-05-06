@@ -16,35 +16,22 @@
 
 namespace MonteCarlo{
 
-//! The photon collision handler traits
-struct PhotonCollisionHandlerTraits
-{
-  //! The material used by this collision handler
-  typedef PhotonMaterial MaterialType;
-
-  //! The particle type used by this collision handler
-  typedef PhotonState ParticleType;
-};
-
 //! The photon collision handler class
-class PhotonCollisionHandler : public StandardParticleCollisionHandler<PhotonCollisionHandlerTraits>
+class PhotonCollisionHandler : public StandardParticleCollisionHandler<PhotonMaterial>
 {
-
-private:
-
   // Typedef for the base type
-  typedef StandardParticleCollisionHandler<PhotonCollisionHandlerTraits> BaseType;
+  typedef StandardParticleCollisionHandler<PhotonMaterial> BaseType;
 
 public:
 
   //! The material used by this collision handler
-  typedef PhotonCollisionHandlerTraits::MaterialType MaterialType;
+  typedef BaseType::MaterialType MaterialType;
+
+  //! The reaction enum type used by this collision handler
+  typedef BaseType::ReactionEnumType ReactionEnumType;
 
   //! The particle type used by this collision handler
-  typedef PhotonCollisionHandlerTraits::ParticleType ParticleType;
-
-  //! Check if the particle type is valid
-  static bool isParticleTypeValid( const ParticleState& particle );
+  typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Constructor
   PhotonCollisionHandler( const bool analogue_collisions = true );
@@ -55,13 +42,25 @@ public:
 
   //! Get the macroscopic cross section for a specific reaction
   double getMacroscopicReactionCrossSection(
-                                const PhotonState& photon,
-                                const PhotoatomicReactionType reaction ) const;
+                               const PhotonState& photon,
+                               const PhotonuclearReactionType reaction ) const;
 
   //! Get the macroscopic cross section for a specific reaction
   double getMacroscopicReactionCrossSection(
+                         const Geometry::ModuleTraits::InternalCellHandle cell,
+                         const double energy,
+                         const PhotonuclearReactionType reaction ) const;
+
+  //! Get the macroscopic cross section for a specific reaction
+  double getMacroscopicReactionCrossSectionQuick(
                                const PhotonState& photon,
                                const PhotonuclearReactionType reaction ) const;
+
+  //! Get the macroscopic cross section for a specific reaction
+  double getMacroscopicReactionCrossSectionQuick(
+                         const Geometry::ModuleTraits::InternalCellHandle cell,
+                         const double energy,
+                         const PhotonuclearReactionType reaction ) const;
 };
   
 } // end MonteCarlo namespace

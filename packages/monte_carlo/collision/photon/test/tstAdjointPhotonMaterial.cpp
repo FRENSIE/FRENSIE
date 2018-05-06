@@ -222,6 +222,79 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, getMacroscopicReactionCrossSection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that an adjoint photon at a line energy can collide with the material
+//! \details This unit test is dependent on the version of boost being used.
+FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
+{
+  // Sample the pair production reaction
+  std::vector<double> fake_stream( 5 );
+  fake_stream[0] = 0.99; // select the only photoatom
+  if( BOOST_VERSION < 106000 )
+    fake_stream[1] = 0.95; // select pair production (for boost below version 1.60)
+  else
+    fake_stream[1] = 0.05; // select pair production (for boost above version 1.60)
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.0;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  std::unique_ptr<MonteCarlo::AdjointPhotonProbeState>
+    adjoint_photon( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  material->collideAtLineEnergy( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+                                   2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+
+  bank.pop();
+
+  // Sample the triplet production reaction
+  fake_stream[0] = 0.99; // select the only photoatom
+  fake_stream[1] = 0.96;
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.0;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+
+  material->collideAtLineEnergy( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+                                   4*Utility::PhysicalConstants::electron_rest_mass_energy,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that an adjoint photon can collide with the material
 FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAnalogue )
 {
@@ -254,7 +327,9 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAnalogue )
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
 			  0.05677765668111111,
 			  1e-15 );
-  FRENSIE_CHECK_EQUAL( adjoint_photon.getWeight(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getWeight(),
+                                   5.714184541337496981e-01,
+                                   1e-15 );
   FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   // Sample the coherent reaction
@@ -279,7 +354,147 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAnalogue )
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
 			  4.95936772145E-03,
 			  1e-15 );
-  FRENSIE_CHECK_EQUAL( adjoint_photon.getWeight(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getWeight(),
+                                   5.549283184166514844e-03,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that an adjoint photon can collide with the material
+FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAnalogue_probe )
+{
+  // Sample the pair production reaction
+  std::vector<double> fake_stream( 5 );
+  fake_stream[0] = 0.99; // select the only photoatom
+  if( BOOST_VERSION < 106000 )
+    fake_stream[1] = 0.95; // select pair production (for boost below version 1.60)
+  else
+    fake_stream[1] = 0.05; // select pair production (for boost above version 1.60)
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.0;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  std::unique_ptr<MonteCarlo::AdjointPhotonProbeState>
+    adjoint_photon( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  material->collideAnalogue( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+                                   2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+
+  bank.pop();
+
+  // Sample the triplet production reaction
+  fake_stream[0] = 0.99; // select the only photoatom
+  fake_stream[1] = 0.96;
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.0;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+  adjoint_photon->activate();
+
+  material->collideAnalogue( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
+                                   4*Utility::PhysicalConstants::electron_rest_mass_energy,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Sample the incoherent reaction
+  fake_stream.resize( 11 );
+  fake_stream[0] = 0.99; // choose the only photoatom
+  fake_stream[1] = 0.78; // choose incoherent scattering
+  fake_stream[2] = 0.15; // branch 1
+  fake_stream[3] = 0.4721647344828152; // select x = 0.9
+  fake_stream[4] = 0.49; // accept
+  fake_stream[5] = 0.91; // reject based on scattering function
+  fake_stream[6] = 0.15; // branch 1
+  fake_stream[7] = 0.4721647344828152; // select x = 0.9
+  fake_stream[8] = 0.49; // accept
+  fake_stream[9] = 0.909; // accept based on scattering function
+  fake_stream[10] = 0.0;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+  adjoint_photon->activate();
+
+  material->collideAnalogue( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getEnergy(),
+                                   0.05677765668111111,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   5.714184541337496981e-01,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+
+  bank.pop();
+
+  // Sample the coherent reaction
+  fake_stream.resize( 7 );
+  fake_stream[0] = 0.99; // choose the only photoatom
+  fake_stream[1] = 0.79; // choose coherent scattering
+  fake_stream[2] = 1.00475965594E-03; // sample form factor function squared (y = 1E6 cm)
+  fake_stream[3] = 9.98800000000E-01; // reject the cosine scattering angle form function rejection loop
+  fake_stream[4] = 6.50327467413E-01; // sample form factor function squared (y = 3E7 cm)
+  fake_stream[5] = 5.07800000000E-01; // accept the cosine scattering angle form function rejection loop
+  fake_stream[6] = 0.0;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( 4.95936772145E-03 );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+
+  material->collideAnalogue( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( !adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getEnergy(),
+                                   4.95936772145E-03,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   5.549283184166514844e-03,
+                                   1e-15 );
   FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -319,7 +534,9 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideSurvivalBias )
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
 			  0.05677765668111111,
 			  1e-15 );
-  FRENSIE_CHECK_EQUAL( adjoint_photon.getWeight(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getWeight(),
+                                   5.714184541337496981e-01,
+                                   1e-15 );
   FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   // Sample the coherent reaction
@@ -344,16 +561,17 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideSurvivalBias )
   FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getEnergy(),
 			  4.95936772145E-03,
 			  1e-15 );
-  FRENSIE_CHECK_EQUAL( adjoint_photon.getWeight(), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon.getWeight(),
+                                   5.549283184166514844e-03,
+                                   1e-15 );
   FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
-// Check that an adjoint photon at a line energy can collide with the material
-//! \details This unit test is dependent on the version of boost being used.
-FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
+// Check that an adjoint photon can collide with the material
+FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideSurvivalBias_probe )
 {
   // Sample the pair production reaction
   std::vector<double> fake_stream( 5 );
@@ -376,13 +594,19 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
 
   MonteCarlo::ParticleBank bank;
 
-  material->collideAtLineEnergy( *adjoint_photon, bank );
+  material->collideSurvivalBias( *adjoint_photon, bank );
 
   FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
-                          2*Utility::PhysicalConstants::electron_rest_mass_energy,
-                          1e-15 );
+                                   2*Utility::PhysicalConstants::electron_rest_mass_energy,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
 
   bank.pop();
 
@@ -399,14 +623,86 @@ FRENSIE_UNIT_TEST( AdjointPhotonMaterial, collideAtLineEnergy )
   adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
   adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
   adjoint_photon->setWeight( 1.0 );
+  adjoint_photon->activate();
 
-  material->collideAtLineEnergy( *adjoint_photon, bank );
+  material->collideSurvivalBias( *adjoint_photon, bank );
 
   FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
   FRENSIE_CHECK_EQUAL( bank.size(), 1 );
   FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getEnergy(), 
                                    4*Utility::PhysicalConstants::electron_rest_mass_energy,
                                    1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( bank.top().getWeight(),
+                                   3.804939079352169351e+00,
+                                   1e-15 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Sample the incoherent reaction
+  fake_stream.resize( 11 );
+  fake_stream[0] = 0.99; // choose the only photoatom
+  fake_stream[1] = 0.78; // choose incoherent scattering
+  fake_stream[2] = 0.15; // branch 1
+  fake_stream[3] = 0.4721647344828152; // select x = 0.9
+  fake_stream[4] = 0.49; // accept
+  fake_stream[5] = 0.91; // reject based on scattering function
+  fake_stream[6] = 0.15; // branch 1
+  fake_stream[7] = 0.4721647344828152; // select x = 0.9
+  fake_stream[8] = 0.49; // accept
+  fake_stream[9] = 0.909; // accept based on scattering function
+  fake_stream[10] = 0.0;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy/10.0 );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+  adjoint_photon->activate();
+
+  material->collideSurvivalBias( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getEnergy(),
+                                   0.05677765668111111,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   5.714184541337496981e-01,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 1 );
+
+  bank.pop();
+
+  // Sample the coherent reaction
+  fake_stream.resize( 7 );
+  fake_stream[0] = 0.99; // choose the only photoatom
+  fake_stream[1] = 0.79; // choose coherent scattering
+  fake_stream[2] = 1.00475965594E-03; // sample form factor function squared (y = 1E6 cm)
+  fake_stream[3] = 9.98800000000E-01; // reject the cosine scattering angle form function rejection loop
+  fake_stream[4] = 6.50327467413E-01; // sample form factor function squared (y = 3E7 cm)
+  fake_stream[5] = 5.07800000000E-01; // accept the cosine scattering angle form function rejection loop
+  fake_stream[6] = 0.0;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  adjoint_photon.reset( new MonteCarlo::AdjointPhotonProbeState( 0 ) );
+  adjoint_photon->setEnergy( 4.95936772145E-03 );
+  adjoint_photon->setDirection( 0.0, 0.0, 1.0 );
+  adjoint_photon->setWeight( 1.0 );
+
+  material->collideSurvivalBias( *adjoint_photon, bank );
+
+  FRENSIE_CHECK( !adjoint_photon->isGone() );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getEnergy(),
+                                   4.95936772145E-03,
+                                   1e-15 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( adjoint_photon->getWeight(),
+                                   5.549283184166514844e-03,
+                                   1e-15 );
+  FRENSIE_CHECK_EQUAL( bank.size(), 0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

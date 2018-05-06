@@ -299,7 +299,7 @@ void ParticleSimulateManager<mode>::simulateParticleTrack(
     if( !CMI::isCellVoid<State>( particle.getCell() ) )
     {
       cell_total_macro_cross_section =
-        CMI::getMacroscopicTotalCrossSection( particle );
+        CMI::getMacroscopicTotalForwardCrossSectionQuick( particle );
     }
     else
       cell_total_macro_cross_section = 0.0;

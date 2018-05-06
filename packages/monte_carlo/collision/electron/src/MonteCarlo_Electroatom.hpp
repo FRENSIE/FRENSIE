@@ -26,25 +26,25 @@ namespace MonteCarlo{
 //! The atom class for electroatomic reactions
 class Electroatom : public Atom<ElectroatomCore>
 {
-
-private:
-
   // Typedef for QuantityTraits
   typedef Utility::QuantityTraits<double> QT;
+
+  // Typedef for the base type
+  typedef Atom<ElectroatomCore> BaseType;
 
 public:
 
   //! The reaction enum type
-  typedef ElectroatomicReactionType ReactionEnumType;
+  typedef BaseType::ReactionEnumType ReactionEnumType;
 
   //! The particle state type
-  typedef ElectronState ParticleStateType;
+  typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef ElectroatomCore::ReactionMap ReactionMap;
+  typedef BaseType::ReactionMap ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef ElectroatomCore::ConstReactionMap ConstReactionMap;
+  typedef BaseType::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as scattering
   static const boost::unordered_set<ElectroatomicReactionType>&
@@ -69,7 +69,7 @@ public:
                const unsigned atomic_number,
                const double atomic_weight,
                const ElectroatomCore& core )
-    : Atom<ElectroatomCore>( name, atomic_number, atomic_weight, core )
+    : BaseType( name, atomic_number, atomic_weight, core )
   { /* ... */ }
 
   //! Destructor

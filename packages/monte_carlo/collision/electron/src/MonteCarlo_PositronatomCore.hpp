@@ -41,6 +41,9 @@ class PositronatomCore
 
 public:
 
+  //! Typedef for the reaction type enum
+  typedef PositronatomicReactionType ReactionEnumType;
+
   //! Typedef for the particle state type
   typedef PositronState ParticleStateType;
 

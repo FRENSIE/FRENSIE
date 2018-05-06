@@ -202,6 +202,9 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, collideAnalogue )
 
   FRENSIE_CHECK_EQUAL( electron.getEnergy(), 1e-3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), -1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getWeight(),
+                                   1.253318091374596488e+00,
+                                   1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -233,7 +236,9 @@ FRENSIE_UNIT_TEST( AdjointElectronMaterial, collideSurvivalBias )
 
   FRENSIE_CHECK_EQUAL( electron.getEnergy(), 1e-3 );
   FRENSIE_CHECK_FLOATING_EQUALITY( electron.getZDirection(), 0.999999, 1e-12 );
-  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getWeight(), 1.0, 1e-12 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( electron.getWeight(),
+                                   1.253318091374596488e+00,
+                                   1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

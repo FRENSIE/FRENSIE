@@ -22,25 +22,25 @@ namespace MonteCarlo{
 //! The atom class for positron-atomic reactions
 class Positronatom : public Atom<PositronatomCore>
 {
-
-private:
-
   // Typedef for QuantityTraits
   typedef Utility::QuantityTraits<double> QT;
+
+  // Typedef for the base type
+  typedef Atom<PositronatomCore> BaseType;
 
 public:
 
   //! The reaction enum type
-  typedef PositronatomicReactionType ReactionEnumType;
+  typedef BaseType::ReactionEnumType ReactionEnumType;
 
   //! The particle state type
-  typedef PositronState ParticleStateType;
+  typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef PositronatomCore::ReactionMap ReactionMap;
+  typedef BaseType::ReactionMap ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef PositronatomCore::ConstReactionMap ConstReactionMap;
+  typedef BaseType::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as scattering
   static const boost::unordered_set<PositronatomicReactionType>&
@@ -65,7 +65,7 @@ public:
                 const unsigned atomic_number,
                 const double atomic_weight,
                 const PositronatomCore& core )
-    : Atom<PositronatomCore>( name, atomic_number, atomic_weight, core )
+    : BaseType( name, atomic_number, atomic_weight, core )
   { /* ... */ }
 
   //! Destructor
