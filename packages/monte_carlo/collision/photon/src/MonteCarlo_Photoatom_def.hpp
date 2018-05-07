@@ -29,12 +29,7 @@ Photoatom::Photoatom(
         atomic_relaxation_model,
         const bool processed_atomic_cross_sections,
         const InterpPolicy policy )
-  : Atom<PhotoatomCore>( name,
-                         atomic_number,
-                         atomic_weight,
-                         grid_searcher,
-                         standard_scattering_reactions,
-                         standard_absorption_reactions )
+  : BaseType( name, atomic_number, atomic_weight )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );

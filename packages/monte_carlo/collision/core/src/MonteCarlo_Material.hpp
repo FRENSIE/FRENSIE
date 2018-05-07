@@ -34,6 +34,15 @@ class Material
 
 public:
 
+  //! The scattering center type
+  typedef ScatteringCenter ScatteringCenterType;
+
+  //! The reaction enum type
+  typedef typename ScatteringCenter::ReactionEnumType ReactionEnumType;
+
+  //! The particle state type
+  typedef typename ScatteringCenter::ParticleStateType ParticleStateType;
+
   //! The material handle type
   typedef size_t InternalMaterialHandle;
 
@@ -64,16 +73,16 @@ public:
 
   //! Return the macroscopic cross section (1/cm) for a specific reaction
   double getMacroscopicReactionCrossSection(
-          const double energy,
-	  const typename ScatteringCenter::ReactionEnumType reaction ) const;
+                                       const double energy,
+                                       const ReactionEnumType reaction ) const;
 
-  //! Collide with a photon
-  void collideAnalogue( typename ScatteringCenter::ParticleStateType& photon,
-                        ParticleBank& bank ) const;
+  //! Collide with a scattering center
+  virtual void collideAnalogue( ParticleStateType& particle,
+                                ParticleBank& bank ) const;
 
-  //! Collide with a photon and survival bias
-  void collideSurvivalBias( typename ScatteringCenter::ParticleStateType& photon,
-                            ParticleBank& bank ) const;
+  //! Collide with a scattering center and survival bias
+  virtual void collideSurvivalBias( ParticleStateType& particle,
+                                    ParticleBank& bank ) const;
 
 protected:
 

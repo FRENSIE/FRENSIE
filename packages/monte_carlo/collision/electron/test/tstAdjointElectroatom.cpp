@@ -441,9 +441,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                     1.00794,
                     energy_grid,
                     grid_searcher,
+                    std::make_shared<const std::vector<double> >(),
                     total_forward_reaction,
                     scattering_reactions,
-                    absorption_reactions ) );
+                    absorption_reactions,
+                    MonteCarlo::AdjointElectroatomCore::ConstLineEnergyReactionMap() ) );
   }
 
   // Initialize the random number generator

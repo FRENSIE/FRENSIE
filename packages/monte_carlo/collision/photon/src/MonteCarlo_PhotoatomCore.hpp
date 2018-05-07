@@ -39,6 +39,9 @@ class PhotoatomCore
 
 public:
 
+  //! Typedef for the reaction type enum
+  typedef PhotoatomicReactionType ReactionEnumType;
+
   //! Typedef for the particle state type
   typedef PhotonState ParticleStateType;
 

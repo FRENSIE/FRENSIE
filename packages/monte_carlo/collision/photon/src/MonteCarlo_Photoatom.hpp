@@ -30,19 +30,22 @@ class Photoatom : public Atom<PhotoatomCore>
   // Typedef for QuantityTraits
   typedef Utility::QuantityTraits<double> QT;
 
+  // Typedef for the base type
+  typedef Atom<PhotoatomCore> BaseType;
+
 public:
 
   //! The reaction enum type
-  typedef PhotoatomicReactionType ReactionEnumType;
+  typedef BaseType::ReactionEnumType ReactionEnumType;
 
   //! The particle state type
-  typedef PhotonState ParticleStateType;
+  typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef PhotoatomCore::ReactionMap ReactionMap;
+  typedef BaseType::ReactionMap ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef PhotoatomCore::ConstReactionMap ConstReactionMap;
+  typedef BaseType::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as absorption
   static const std::unordered_set<PhotoatomicReactionType>&
@@ -69,7 +72,7 @@ public:
 	     const unsigned atomic_number,
 	     const double atomic_weight,
 	     const PhotoatomCore& core )
-    : Atom<PhotoatomCore>( name, atomic_number, atomic_weight, core )
+    : BaseType( name, atomic_number, atomic_weight, core )
   { /* ... */ }
 
   //! Destructor
@@ -79,7 +82,7 @@ public:
   //! Relax the atom
   void relaxAtom( const Data::SubshellType vacancy_shell,
                   const PhotonState& photon,
-                  ParticleBank& bank ) const;
+                  ParticleBank& bank ) const final override;
 
   //! Return the cross section for a specific photoatomic reaction
   double getReactionCrossSection(

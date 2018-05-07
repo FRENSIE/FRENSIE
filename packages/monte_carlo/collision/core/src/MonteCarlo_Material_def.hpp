@@ -221,13 +221,14 @@ double Material<ScatteringCenter>::getSurvivalProbability( const double energy )
 
 // Collide with a photon
 template<typename ScatteringCenter>
-void Material<ScatteringCenter>::collideAnalogue(
-                           typename ScatteringCenter::ParticleStateType& photon,
-                           ParticleBank& bank ) const
+void Material<ScatteringCenter>::collideAnalogue( ParticleStateType& particle,
+                                                  ParticleBank& bank ) const
 {
-  size_t atom_index = this->sampleCollisionScatteringCenter( photon.getEnergy() );
+  size_t atom_index =
+    this->sampleCollisionScatteringCenter( particle.getEnergy() );
 
-  Utility::get<1>(d_scattering_centers[atom_index])->collideAnalogue( photon, bank );
+  Utility::get<1>(d_scattering_centers[atom_index])->collideAnalogue(
+                                                              particle, bank );
 }
 
 // Collide with a photon and survival bias
@@ -242,12 +243,14 @@ void Material<ScatteringCenter>::collideAnalogue(
  */
 template<typename ScatteringCenter>
 void Material<ScatteringCenter>::collideSurvivalBias(
-                           typename ScatteringCenter::ParticleStateType& photon,
-                           ParticleBank& bank ) const
+                                                   ParticleStateType& particle,
+                                                   ParticleBank& bank ) const
 {
-  size_t atom_index = this->sampleCollisionScatteringCenter( photon.getEnergy() );
+  size_t atom_index =
+    this->sampleCollisionScatteringCenter( particle.getEnergy() );
 
-  Utility::get<1>(d_scattering_centers[atom_index])->collideSurvivalBias( photon, bank );
+  Utility::get<1>(d_scattering_centers[atom_index])->collideSurvivalBias(
+                                                              particle, bank );
 }
 
 // Return the number of scattering centers

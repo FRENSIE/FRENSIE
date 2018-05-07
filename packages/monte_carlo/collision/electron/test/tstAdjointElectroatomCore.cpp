@@ -249,9 +249,11 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
     // Create a test  adjoint electroatom core
     electroatom_core.reset( new MonteCarlo::AdjointElectroatomCore(
         grid_searcher,
+        std::make_shared<const std::vector<double> >(),
         total_forward_reaction,
         scattering_reactions,
-        absorption_reactions ) );
+        absorption_reactions,
+        MonteCarlo::AdjointElectroatomCore::ConstLineEnergyReactionMap() ) );
   }
 }
 

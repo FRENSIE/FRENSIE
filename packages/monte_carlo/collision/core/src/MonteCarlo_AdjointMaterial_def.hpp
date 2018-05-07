@@ -134,21 +134,83 @@ double AdjointMaterial<ScatteringCenter>::getAdjointLineEnergyWeightFactor( cons
   return weight_factor;
 }
 
+// Collide with a scattering center
+/*! \details Before the collision occurs, the particle's weight will be 
+ * multiplied by the adjoint weight factor. If the particle is a probe and
+ * its energy corresponds to a line energy reaction, one of the line
+ * energy reactions defined at the energy will be sampled instead of the
+ * normal (continuous) reactions.
+ */ 
+template<typename ScatteringCenter>
+void AdjointMaterial<ScatteringCenter>::collideAnalogue(
+                                           ParticleStateType& adjoint_particle,
+                                           ParticleBank& bank ) const
+{
+  bool collision_complete = false;
+
+  // Check if a line energy reaction should occur
+  if( adjoint_particle.isProbe() )
+  {
+    if( this->doesEnergyHaveLineEnergyReaction(adjoint_particle.getEnergy()) )
+    {
+      this->collideAtLineEnergy( adjoint_particle, bank );
+
+      collision_complete = true;
+    }
+  }
+
+  if( !collision_complete )
+  {
+    // Multiply the partile weight by the adjoint weight factor
+    adjoint_particle.multiplyWeight(
+                  this->getAdjointWeightFactor(adjoint_particle.getEnergy()) );
+
+    BaseType::collideAnalogue( adjoint_particle, bank );
+  }
+}
+
+// Collide with a scattering center and survival bias
+/*! \details Before the collision occurs, the particle's weight will be 
+ * multiplied by the adjoint weight factor. If the particle is a probe and
+ * its energy corresponds to a line energy reaction, one of the line
+ * energy reactions defined at the energy will be sampled instead of the
+ * normal (continuous) reactions. There are no absorption reactions 
+ * associated with adjoint particles so this method is identical to the
+ * analogue method.
+ */ 
+template<typename ScatteringCenter>
+inline void AdjointMaterial<ScatteringCenter>::collideSurvivalBias(
+                                           ParticleStateType& adjoint_particle,
+                                           ParticleBank& bank ) const
+{
+  this->collideAnalogue( adjoint_particle, bank );
+}
+
 // Collide with an adjoint photon at a line energy
+/*! \details This method should only be called with an adjoint particle that
+ * is a probe. You must also check that a line energy reaction exists at the
+ * particle's energy. Before the collision occurs, the particle's weight will 
+ * be multiplied by the adjoint weight factor at the line energy.
+ */
 template<typename ScatteringCenter>
 void AdjointMaterial<ScatteringCenter>::collideAtLineEnergy( 
-                   typename ScatteringCenter::ParticleStateType& adjoint_photon,
-                   ParticleBank& bank ) const
+                                           ParticleStateType& adjoint_particle,
+                                           ParticleBank& bank ) const
 {
   // Make sure that the particle is a probe
-  testPrecondition( adjoint_photon.isProbe() );
+  testPrecondition( adjoint_particle.isProbe() );
   // Make sure that there are line energy reactions at the particle's energy
-  testPrecondition( this->doesEnergyHaveLineEnergyReaction( adjoint_photon.getEnergy() ) );
+  testPrecondition( this->doesEnergyHaveLineEnergyReaction( adjoint_particle.getEnergy() ) );
+
+  // Multiply the particle weight by the adjoint weight factor for this
+  // line energy
+  adjoint_particle.multiplyWeight(
+        this->getAdjointLineEnergyWeightFactor(adjoint_particle.getEnergy()) );
   
   size_t sampled_index =
-    this->sampleCollisionAtomAtLineEnergy( adjoint_photon.getEnergy() );
+    this->sampleCollisionAtomAtLineEnergy( adjoint_particle.getEnergy() );
 
-  this->getScatteringCenter( sampled_index ).collideAtLineEnergy( adjoint_photon, bank );
+  this->getScatteringCenter( sampled_index ).collideAtLineEnergy( adjoint_particle, bank );
 }
 
 // Sample the atom that is collided with at a line energy

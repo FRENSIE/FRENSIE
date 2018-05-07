@@ -39,6 +39,9 @@ class ElectroatomCore
 
 public:
 
+  //! Typedef for the reaction type enum
+  typedef ElectroatomicReactionType ReactionEnumType;
+
   //! Typedef for the particle state type
   typedef ElectronState ParticleStateType;
 

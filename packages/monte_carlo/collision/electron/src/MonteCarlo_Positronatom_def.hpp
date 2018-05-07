@@ -27,12 +27,7 @@ Positronatom::Positronatom(
    const std::shared_ptr<const AtomicRelaxationModel>& atomic_relaxation_model,
    const bool processed_cross_sections,
    const InterpPolicy policy )
-  : Atom<PositronatomCore>( name,
-                            atomic_number,
-                            atomic_weight,
-                            grid_searcher,
-                            standard_scattering_reactions,
-                            standard_absorption_reactions )
+  : BaseType( name, atomic_number, atomic_weight) 
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -49,14 +44,13 @@ Positronatom::Positronatom(
   testPrecondition( grid_searcher.get() );
 
   // Populate the core
-  Atom<PositronatomCore>::setCore(
-                    PositronatomCore( energy_grid,
-                                      grid_searcher,
-                                      standard_scattering_reactions,
-                                      standard_absorption_reactions,
-                                      atomic_relaxation_model,
-                                      processed_cross_sections,
-                                      policy ) );
+  BaseType::setCore( PositronatomCore( energy_grid,
+                                       grid_searcher,
+                                       standard_scattering_reactions,
+                                       standard_absorption_reactions,
+                                       atomic_relaxation_model,
+                                       processed_cross_sections,
+                                       policy ) );
 }
 
 } // end MonteCarlo namespace

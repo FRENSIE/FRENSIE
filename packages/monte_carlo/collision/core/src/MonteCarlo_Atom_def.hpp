@@ -13,31 +13,19 @@
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic constructor
 template<typename AtomCore>
 Atom<AtomCore>::Atom(
           const std::string& name,
           const unsigned atomic_number,
-          const double atomic_weight,
-          const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
-          grid_searcher,
-          const ConstReactionMap& scattering_reactions,
-          const ConstReactionMap& absorption_reactions )
+          const double atomic_weight )
   : d_name( name ),
     d_atomic_number( atomic_number ),
     d_atomic_weight( atomic_weight ),
     d_core()
-{
-  // Make sure the atomic weight is valid
-  testPrecondition( atomic_weight > 0.0 );
-  // There must be at least one reaction specified
-  testPrecondition( scattering_reactions.size() +
-                    absorption_reactions.size() > 0 );
-  // Make sure the grid searcher is valid
-  testPrecondition( grid_searcher.get() );
-}
+{ /* ... */ }
 
-// Constructor (from a core)
+// Constructor
 template<typename AtomCore>
 Atom<AtomCore>::Atom( const std::string& name,
                       const unsigned atomic_number,
