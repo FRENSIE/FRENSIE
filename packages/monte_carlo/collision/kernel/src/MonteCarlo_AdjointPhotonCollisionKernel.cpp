@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectronCollisionHandler.cpp
+//! \file   MonteCarlo_AdjointPhotonCollisionKernel.cpp
 //! \author Alex Robinson
-//! \brief  Electron collision handler class definition
+//! \brief  Adjoint photon collision kernel class definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectronCollisionHandler.hpp"
+#include "MonteCarlo_AdjointPhotonCollisionKernel.hpp"
 
 namespace MonteCarlo{
 
-EXPLICIT_TEMPLATE_CLASS_INST( StandardParticleCollisionHandler<ElectronMaterial> );
+EXPLICIT_TEMPLATE_CLASS_INST( StandardAdjointParticleCollisionKernel<FilledAdjointPhotonGeometryModel> );
   
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectronCollisionHandler.cpp
+// end MonteCarlo_AdjointPhotonCollisionKernel.cpp
 //---------------------------------------------------------------------------//
