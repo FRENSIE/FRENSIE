@@ -1,0 +1,176 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   MonteCarlo_FilledGeometryModel.hpp
+//! \author Alex Robinson
+//! \brief  The filled geometry model class declaration
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef MONTE_CARLO_FILLED_GEOMETRY_MODEL_HPP
+#define MONTE_CARLO_FILLED_GEOMETRY_MODEL_HPP
+
+// Boost Includes
+#include <boost/filesystem.hpp>
+
+// FRENSIE Includes
+#include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
+#include "MonteCarlo_MaterialDefinitionDatabase.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
+#include "Geometry_Model.hpp"
+
+namespace MonteCarlo{
+
+/*! The filled geometry model class
+ *
+ * This class can be thought of as an extension to the Geometry::Model. All
+ * of the material ids stored in the Geometry::Model object will have an
+ * associated material object in this class. 
+ */
+class FilledGeometryModel : public FilledNeutronGeometryModel,
+                            public FilledPhotonGeometryModel,
+                            public FilledAdjointPhotonGeometryModel,
+                            public FilledElectronGeometryModel,
+                            public FilledAdjointElectronGeometryModel,
+                            public FilledPositronGeometryModel
+{
+
+public:
+
+  //! Constructor
+  FilledGeometryModel(
+       const boost::filesystem::path& database_path,
+       const ScatteringCenterDefinitionDatabase& scattering_center_definitions,
+       const MaterialDefinitionDatabase& material_definitions,
+       const SimulationProperties& properties,
+       const std::shared_ptr<const Geometry::Model>& geometry_model,
+       const bool verbose_construction = true );
+
+  //! Destructor
+  ~FilledGeometryModel()
+  { /* ... */ }
+
+  //! Check if a cell is void (as experienced by the given particle type)
+  bool isCellVoid( const Geometry::Model::InternalCellHandle cell,
+                   const MonteCarlo::ParticleType particle_type ) const;
+
+  //! Check if a cell is void (as experienced by the given particle type)
+  template<typename ParticleStateType>
+  bool isCellVoid( const Geometry::Model::InternalCellHandle cell ) const;
+
+  //! Check if a cell is a termination cell
+  using FilledNeutronGeometryModel::isTerminationCell;
+
+  //! Get the total macroscopic cross section of a material for neutrons
+  using FilledNeutronGeometryModel::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for neutrons
+  using FilledNeutronGeometryModel::getMacroscopicTotalCrossSectionQuick;
+
+  //! Get the total macroscopic cross section of a material for photons
+  using FilledPhotonGeometryModel::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for photons
+  using FilledPhotonGeometryModel::getMacroscopicTotalCrossSectionQuick;
+
+  //! Get the total macroscopic cross section of a material for adjoint photons
+  using FilledAdjointPhotonGeometryModel::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for adjoint photons
+  using FilledAdjointPhotonGeometryModel::getMacroscopicTotalCrossSectionQuick;
+
+  //! Get the total macroscopic cross section of a material for electrons
+  using FilledElectronGeometryModel::getMacroscopicTotalCrossSection;
+  
+  //! Get the total macroscopic cross section of a material for electrons
+  using FilledElectronGeometryModel::getMacroscopicTotalCrossSectionQuick;
+
+  //! Get the total macroscopic cross section of a material for adjoint electrons
+  using FilledAdjointElectronGeometryModel::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for adjoint electrons
+  using FilledAdjointElectronGeometryModel::getMacroscopicTotalCrossSectionQuick;
+
+  //! Get the total macroscopic cross section of a material for positrons
+  using FilledPositronGeometryModel::getMacroscopicTotalCrossSection;
+
+  //! Get the total macroscopic cross section of a material for positrons
+  using FilledPositronGeometryModel::getMacroscopicTotalCrossSectionQuick;
+
+  //! Get the total forward macroscopic cs of a material for neutrons
+  using FilledNeutronGeometryModel::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for neutrons
+  using FilledNeutronGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
+
+  //! Get the total forward macroscopic cs of a material for photons
+  using FilledPhotonGeometryModel::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for photons
+  using FilledPhotonGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
+
+  //! Get the total forward macroscopic cs of a material for adjoint photons
+  using FilledAdjointPhotonGeometryModel::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for adjoint photons
+  using FilledAdjointPhotonGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
+
+  //! Get the total forward macroscopic cs of a material for electrons
+  using FilledElectronGeometryModel::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for electrons
+  using FilledElectronGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
+
+  //! Get the total forward macroscopic cs of a material for adjoint electrons
+  using FilledAdjointElectronGeometryModel::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for adjoint electrons
+  using FilledAdjointElectronGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
+
+  //! Get the total forward macroscopic cs of a material for positrons
+  using FilledPositronGeometryModel::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cs of a material for positrons
+  using FilledPositronGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
+
+  //! Get the adjoint weight factor for adjoint photons
+  using FilledAdjointPhotonGeometryModel::getAdjointWeightFactor;
+
+  //! Get the adjoint weight factor for adjoint photons
+  using FilledAdjointPhotonGeometryModel::getAdjointWeightFactorQuick;
+
+  //! Get the adjoint weight factor for adjoint electrons
+  using FilledAdjointElectronGeometryModel::getAdjointWeightFactor;
+
+  //! Get the adjoint weight factor for adjoint electrons
+  using FilledAdjointElectronGeometryModel::getAdjointWeightFactorQuick;
+
+  //! Get the unfilled geometry model
+  using FilledNeutronGeometryModel::getUnfilledModel;
+
+  //! Convert to a const unfilled model reference
+  operator const Geometry::Model&() const;
+
+  //! Convert to a shared unfilled model
+  operator std::shared_ptr<const Geometry::Model>() const;
+
+private:
+
+  // The unfilled model
+  std::shared_ptr<const Geometry::Model>& d_unfilled_model;
+};
+  
+} // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_FilledGeometryModel_def.hpp"
+
+//---------------------------------------------------------------------------//
+
+#endif // end MONTE_CARLO_FILLED_GEOMETRY_MODEL_HPP
+
+//---------------------------------------------------------------------------//
+// end MonteCarlo_FilledGeometryModel.hpp
+//---------------------------------------------------------------------------//
