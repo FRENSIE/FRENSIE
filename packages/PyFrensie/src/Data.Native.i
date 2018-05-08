@@ -35,6 +35,9 @@ FRENSIE formate data file.
 #include "Data_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
+
+// Add the Data namespace to the global lookup scope
+using namespace Data;
 %}
 
 // C++ STL support

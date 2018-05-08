@@ -62,7 +62,7 @@ FRENSIE_UNIT_TEST( RootModel, getModelProperties )
     model->getModelProperties();
 
   FRENSIE_CHECK( properties.getModelFileName().find( "basic_root_geometry.root" ) < properties.getModelFileName().size() );
-  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "material" );
+  FRENSIE_CHECK_EQUAL( properties.getMaterialPropertyName(), "mat" );
   FRENSIE_CHECK_EQUAL( properties.getVoidMaterialName(), "void" );
   FRENSIE_CHECK_EQUAL( properties.getTerminalMaterialName(), "graveyard" );
 }
@@ -349,6 +349,7 @@ FRENSIE_CUSTOM_UNIT_TEST_COMMAND_LINE_OPTIONS()
 FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   Geometry::RootModelProperties local_properties( test_root_geom_file_name );
+  local_properties.setMaterialPropertyName("mat");
 
   model_properties.reset( new Geometry::RootModelProperties( local_properties ) );
 }

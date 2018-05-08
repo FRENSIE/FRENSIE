@@ -213,7 +213,9 @@ that the original random number stream state will be reset as well.
 // Instantiate the getRandomNumber template method
 %template(getRandomNumber) Utility::RandomNumberGenerator::getRandomNumber<double>;
 
+//---------------------------------------------------------------------------//
 // Turn off the exception handling
+//---------------------------------------------------------------------------//
 %exception;
 
 //---------------------------------------------------------------------------//

@@ -246,6 +246,14 @@ ADD_TEST(PyFrensie.MonteCarlo.SimulationAdjointElectronProperties_test ${PYTHON_
 PyFrensie_MAKE_TEST(tstMonteCarlo.SimulationProperties)
 ADD_TEST(PyFrensie.MonteCarlo.SimulationProperties_test ${PYTHON_EXECUTABLE} tstMonteCarlo.SimulationProperties.py)
 
+# Add the MonteCarlo.Collision.ScatteringCenterDefinition unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ScatteringCenterDefinition)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.ScatteringCenterDefinition_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ScatteringCenterDefinition.py)
+
+# Add the MonteCarlo.Collision.ScatteringCenterDefinitionDatabase unit tests
+PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.ScatteringCenterDefinitionDatabase)
+ADD_TEST(PyFrensie.MonteCarlo.Collision.ScatteringCenterDefinitionDatabase_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.ScatteringCenterDefinitionDatabase.py)
+
 # # Add the MonteCarlo.Collision.PhotonKinematics unit tests
 # PyFrensie_MAKE_TEST(tstMonteCarlo.Collision.PhotonKinematics)
 # ADD_TEST(PyFrensie.MonteCarlo.Collision.PhotonKinematics_test ${PYTHON_EXECUTABLE} tstMonteCarlo.Collision.PhotonKinematics.py)
