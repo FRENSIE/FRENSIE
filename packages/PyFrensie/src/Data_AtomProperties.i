@@ -91,37 +91,37 @@ using namespace Data;
 // Add support for the PhotoatomicDataProperties
 //---------------------------------------------------------------------------//
 
-%atomic_properties_interface_setup( PhotoatomicDataProperties );
-
 // Import the PhotoatomicDataProperties
 %include "Data_PhotoatomicDataProperties.hpp"
+
+%atomic_properties_interface_setup( PhotoatomicDataProperties );
 
 //---------------------------------------------------------------------------//
 // Add support for the AdjointPhotoatomicDataProperties
 //---------------------------------------------------------------------------//
 
-%atomic_properties_interface_setup( AdjointPhotoatomicDataProperties );
-
 // Import the AdjointPhotoatomicDataProperties
 %include "Data_AdjointPhotoatomicDataProperties.hpp"
+
+%atomic_properties_interface_setup( AdjointPhotoatomicDataProperties );
 
 //---------------------------------------------------------------------------//
 // Add support for the ElectroatomicDataProperties
 //---------------------------------------------------------------------------//
 
-%atomic_properties_interface_setup( ElectroatomicDataProperties );
-
 // Import the ElectroatomicDataProperties
 %include "Data_ElectroatomicDataProperties.hpp"
+
+%atomic_properties_interface_setup( ElectroatomicDataProperties );
 
 //---------------------------------------------------------------------------//
 // Add support for the AdjointElectroatomicDataProperties
 //---------------------------------------------------------------------------//
 
-%atomic_properties_interface_setup( AdjointElectroatomicDataProperties );
-
 // Import the AdjointElectroatomicDataProperties
 %include "Data_AdjointElectroatomicDataProperties.hpp"
+
+%atomic_properties_interface_setup( AdjointElectroatomicDataProperties );
 
 //---------------------------------------------------------------------------//
 // Add support for the AtomProperties

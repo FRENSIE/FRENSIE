@@ -89,10 +89,6 @@ using namespace Data;
 // // General ignore directives
 // %ignore *::operator<<;
 
-// Add general templates
-%template(EnergyVector) std::vector<Data::NuclideProperties::Energy>;
-%template(TemperatureVector) std::vector<Data::NuclideProperties::Temperature>;
-
 //---------------------------------------------------------------------------//
 // Add support for the ZAID
 //---------------------------------------------------------------------------//
@@ -119,41 +115,41 @@ using namespace Data;
 // Add support for the NuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Use helper interface setup
-%nuclear_properties_interface_setup(NuclearDataProperties);
-
 // Import the NuclearDataProperties
 %include "Data_NuclearDataProperties.hpp"
+
+// Use helper interface setup
+%nuclear_properties_interface_setup(NuclearDataProperties);
 
 //---------------------------------------------------------------------------//
 // Add support for the ThermalNuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Use helper interface setup
-%thermal_nuclear_properties_interface_setup(ThermalNuclearDataProperties);
-
 // Import the ThermalNuclearDataProperties
 %include "Data_ThermalNuclearDataProperties.hpp"
+
+// Use helper interface setup
+%thermal_nuclear_properties_interface_setup(ThermalNuclearDataProperties);
 
 //---------------------------------------------------------------------------//
 // Add support for the AdjointNuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Use helper interface setup
-%nuclear_properties_interface_setup(AdjointNuclearDataProperties);
-
 // Import the AdjointNuclearDataProperties
 %include "Data_AdjointNuclearDataProperties.hpp"
+
+// Use helper interface setup
+%nuclear_properties_interface_setup(AdjointNuclearDataProperties);
 
 //---------------------------------------------------------------------------//
 // Add support for the AdjointThermalNuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Use helper interface setup
-%thermal_nuclear_properties_interface_setup(AdjointThermalNuclearDataProperties);
-
 // Import the AdjointThermalNuclearDataProperties
 %include "Data_AdjointThermalNuclearDataProperties.hpp"
+
+// Use helper interface setup
+%thermal_nuclear_properties_interface_setup(AdjointThermalNuclearDataProperties);
 
 //---------------------------------------------------------------------------//
 // Add support for the PhotonuclearDataProperties
@@ -165,6 +161,9 @@ using namespace Data;
 It can be used for querying photonuclear data properties and for creating
 photonuclear data extractors or container, which can be used to read
 photonuclear data."
+
+// Import the PhotonuclearDataProperties
+%include "Data_PhotonuclearDataProperties.hpp"
 
 // Use helper interface setup
 %basic_properties_interface_setup(PhotonuclearDataProperties);
@@ -187,9 +186,6 @@ Data::PhotonuclearDataProperties::atomicWeight;
 %typemap(typecheck, precedence=90) (const Data::PhotonuclearDataProperties::AtomicWeight) {
   $1 = (PyFloat_Check($input)) ? 1 : 0;
 }
-
-// Import the PhotonuclearDataProperties
-%include "Data_PhotonuclearDataProperties.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the AdjointPhotonuclearDataProperties
@@ -316,6 +312,9 @@ Data::NuclideProperties::getAdjointThermalNuclearDataFileTypes;
 // Import the NuclideProperties
 %include "Data_NuclideProperties.hpp"
 
+// Add general templates
+%template(EnergyVector) std::vector<Data::NuclideProperties::Energy>;
+%template(TemperatureVector) std::vector<Data::NuclideProperties::Temperature>;
 
 //---------------------------------------------------------------------------//
 // end Data_NuclideProperties.i

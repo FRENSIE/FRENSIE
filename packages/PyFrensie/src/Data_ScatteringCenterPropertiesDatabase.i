@@ -80,10 +80,10 @@ using namespace Data;
 // Add support for the ScatteringCenterPropertiesDatabaseImpl
 //---------------------------------------------------------------------------//
 
-%database_interface_setup(ScatteringCenterPropertiesDatabaseImpl)
-
 // Include the ScatteringCenterPropertiesDatabaseImpl
 %include "Data_ScatteringCenterPropertiesDatabaseImpl.hpp"
+
+%database_interface_setup(ScatteringCenterPropertiesDatabaseImpl)
 
 //---------------------------------------------------------------------------//
 // Add support for the ScatteringCenterPropertiesDatabase
@@ -100,10 +100,10 @@ using namespace Data;
   }
 }
 
-%database_interface_setup(ScatteringCenterPropertiesDatabase)
-
 // Include the ScatteringCenterPropertiesDatabase
 %include "Data_ScatteringCenterPropertiesDatabase.hpp"
+
+%database_interface_setup(ScatteringCenterPropertiesDatabase)
 
 //---------------------------------------------------------------------------//
 // end Data_ScatteringCenterPropertiesDatabase.i

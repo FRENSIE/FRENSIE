@@ -45,8 +45,8 @@ geometries.
 // Include typemaps support
 %include <typemaps.i>
 
-// Import the Geometry.__init__.i file
-%import "Geometry.__init__.i"
+// Import the Geometry.Geometry__init__.i file
+%import "Geometry.Geometry__init__.i"
 
 // Standard exception handling
 %include "exception.i"

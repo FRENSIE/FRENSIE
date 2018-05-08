@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo.__init__.i
+//! \file   MonteCarlo.MonteCarlo__init__.i
 //! \author Alex Robinson
 //! \brief  The monte carlo module swig interface file
 //!
@@ -8,14 +8,14 @@
 
 %define %monte_carlo_docstring
 "
-PyFrensie.MonteCarlo is the python interface to the FRENSIE monte_carlo
-package.
+PyFrensie.MonteCarlo.MonteCarlo__init__ will be imported directly into the
+PyFrensie.MonteCarlo module (see PyFrensie.MonteCarlo.__init__.py)
 "
 %enddef
 
 %module(package   = "PyFrensie.MonteCarlo",
         autodoc   = "1",
-        docstring = %monte_carlo_docstring) __init__
+        docstring = %monte_carlo_docstring) MonteCarlo__init__
 
 %pythonbegin
 %{
@@ -31,14 +31,11 @@ package.
   sys.path.insert(0, current_dir)
 %}
 
-// Set the special python variables
 %pythoncode
 %{
 # Remove the local current directory from the sys path (added to help
 # import code - see comment above)
 sys.path.pop(0)
-
-__all__ = ['Collision']
 %}
 
 // Add support for the simulation properties classes

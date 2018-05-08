@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility.__init__.i
+//! \file   Utility.Utility__init__.i
 //! \author Alex Robinson, Luke Kersting
 //! \brief  The utility module swig interface file
 //!
@@ -8,13 +8,14 @@
 
 %define %utility_docstring
 "
-PyFrensie.Utility is the python interface to the FRENSIE utilities package.
+PyFrensie.Utility.Utility__init__ will be imported directly into the 
+PyFrensie.Utility module (see PyFrensie.Utility.__init__.py)
 "
 %enddef
 
 %module(package   = "PyFrensie.Utility",
         autodoc   = "1",
-        docstring = %utility_docstring) __init__
+        docstring = %utility_docstring) Utility__init__
 
 %pythonbegin
 %{
@@ -30,17 +31,11 @@ PyFrensie.Utility is the python interface to the FRENSIE utilities package.
   sys.path.insert(0, current_dir)
 %}
 
-// Set the special python variables
 %pythoncode
 %{
 # Remove the local current directory from the sys path (added to help
 # import code - see comment above)
 sys.path.pop(0)
-
-__all__ = ['Distribution',
-           'Prng',
-           'Coordinate'
-           ]
 %}
 
 %{
@@ -67,5 +62,5 @@ void initFrensiePrng()
 %}
 
 //---------------------------------------------------------------------------//
-// end Utility.__init__.i
+// end Utility.Utility__init__.i
 //---------------------------------------------------------------------------//
