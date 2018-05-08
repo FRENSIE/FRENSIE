@@ -19,6 +19,7 @@
 #include "MonteCarlo_ElectronCollisionKernel.hpp"
 #include "MonteCarlo_AdjointElectronCollisionKernel.hpp"
 #include "MonteCarlo_PositronCollisionKernel.hpp"
+#include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_Vector.hpp"
 
@@ -77,12 +78,6 @@ private:
 };
 
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_CollisionKernel_def.hpp"
 
 #endif // end MONTE_CARLO_COLLISION_KERNEL_HPP
 

@@ -17,7 +17,7 @@
 namespace MonteCarlo{
 
 //! The adjoint photon collision kernel
-typedef StandardAdjointParticleCollisionKernel<FilledAdjointPhotonGeometryModel> AdjointPhotonCollisionKernel
+typedef StandardAdjointParticleCollisionKernel<FilledAdjointPhotonGeometryModel> AdjointPhotonCollisionKernel;
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardAdjointParticleCollisionKernel<FilledAdjointPhotonGeometryModel> );
   

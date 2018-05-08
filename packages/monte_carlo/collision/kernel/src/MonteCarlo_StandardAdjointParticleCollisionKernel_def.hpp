@@ -23,8 +23,8 @@ namespace MonteCarlo{
  */ 
 template<typename _FilledGeometryModelType>
 void StandardAdjointParticleCollisionKernel<_FilledGeometryModelType>::collideWithCellMaterial(
-                                                     ParticleType& particle,
-                                                     ParticleBank& bank ) const
+                                                   ParticleStateType& particle,
+                                                   ParticleBank& bank ) const
 {
   const MaterialType& cell_material = this->getCellMaterial( particle );
 
@@ -51,7 +51,7 @@ void StandardAdjointParticleCollisionKernel<_FilledGeometryModelType>::collideWi
     // Multiply the particle weight by the adjoint weight factor before the
     // collision
     particle.multiplyWeight(
-          cell_material.getAdjointWeightFactor(adjoint_particle.getEnergy()) );
+                cell_material.getAdjointWeightFactor( particle.getEnergy() ) );
 
     BaseType::collideWithCellMaterial( particle, bank );
   }

@@ -38,10 +38,6 @@ public:
   //! Typedef for the particle type
   typedef BaseType::ParticleStateType ParticleStateType;
 
-  //! Destructor
-  FilledAdjointElectronGeometryModel()
-  { /* ... */ }
-
 protected:
 
   //! Constructor

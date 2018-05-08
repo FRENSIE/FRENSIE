@@ -13,7 +13,7 @@
 namespace MonteCarlo{
 
 // Load the scattering centers
-void FilledNeutronGeometryModel::loadScatteringCenters(
+void FilledAdjointElectronGeometryModel::loadScatteringCenters(
        const boost::filesystem::path& database_path,
        const MaterialDefinitionDatabase::ScatteringCenterNameSet&
        unique_scattering_center_names,

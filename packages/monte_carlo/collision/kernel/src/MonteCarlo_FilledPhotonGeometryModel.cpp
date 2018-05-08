@@ -18,7 +18,7 @@ void FilledPhotonGeometryModel::loadScatteringCenters(
        const MaterialDefinitionDatabase::ScatteringCenterNameSet&
        unique_scattering_center_names,
        const ScatteringCenterDefinitionDatabase& scattering_center_definitions,
-       const std::shared_ptr<AtomicRelaxationModelFactory>&,
+       const std::shared_ptr<AtomicRelaxationModelFactory>&
        atomic_relaxation_model_factory,
        const SimulationProperties& properties,
        const bool verbose,                  
@@ -31,11 +31,11 @@ void FilledPhotonGeometryModel::loadScatteringCenters(
                                       properties,
                                       verbose );
 
-  photoatom_factory.createNuclideMap( scattering_center_name_map );
+  photoatom_factory.createPhotoatomMap( scattering_center_name_map );
 }
 
 // Get the macroscopic cross section for a specific reaction
-double PhotonCollisionKernel::getMacroscopicReactionCrossSection(
+double FilledPhotonGeometryModel::getMacroscopicReactionCrossSection(
                                 const PhotonState& photon,
                                 const PhotonuclearReactionType reaction ) const
 {
@@ -45,8 +45,8 @@ double PhotonCollisionKernel::getMacroscopicReactionCrossSection(
 }
 
 // Get the macroscopic cross section for a specific reaction
-double PhotonCollisionKernel::getMacroscopicReactionCrossSection(
-                         const Geometry::ModuleTraits::InternalCellHandle cell,
+double FilledPhotonGeometryModel::getMacroscopicReactionCrossSection(
+                         const Geometry::Model::InternalCellHandle cell,
                          const double energy,
                          const PhotonuclearReactionType reaction ) const
 {
@@ -63,7 +63,7 @@ double PhotonCollisionKernel::getMacroscopicReactionCrossSection(
 /*! \details Before calling this method you must first check if the cell
  * is void. Calling this method with a void cell is not allowed.
  */
-double PhotonCollisionKernel::getMacroscopicReactionCrossSectionQuick(
+double FilledPhotonGeometryModel::getMacroscopicReactionCrossSectionQuick(
                                 const PhotonState& photon,
                                 const PhotonuclearReactionType reaction ) const
 {
@@ -76,8 +76,8 @@ double PhotonCollisionKernel::getMacroscopicReactionCrossSectionQuick(
 /*! \details Before calling this method you must first check if the cell
  * is void. Calling this method with a void cell is not allowed.
  */
-double PhotonCollisionKernel::getMacroscopicReactionCrossSectionQuick(
-                         const Geometry::ModuleTraits::InternalCellHandle cell,
+double FilledPhotonGeometryModel::getMacroscopicReactionCrossSectionQuick(
+                         const Geometry::Model::InternalCellHandle cell,
                          const double energy,
                          const PhotonuclearReactionType reaction ) const
 {
@@ -86,7 +86,6 @@ double PhotonCollisionKernel::getMacroscopicReactionCrossSectionQuick(
   
   return this->getMaterial(cell)->getMacroscopicReactionCrossSection(
                                                             energy, reaction );
-  }
 }
   
 } // end MonteCarlo namespace

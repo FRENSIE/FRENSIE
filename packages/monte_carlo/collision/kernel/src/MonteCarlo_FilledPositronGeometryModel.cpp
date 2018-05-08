@@ -18,7 +18,7 @@ void FilledPositronGeometryModel::loadScatteringCenters(
        const MaterialDefinitionDatabase::ScatteringCenterNameSet&
        unique_scattering_center_names,
        const ScatteringCenterDefinitionDatabase& scattering_center_definitions,
-       const std::shared_ptr<AtomicRelaxationModelFactory>&,
+       const std::shared_ptr<AtomicRelaxationModelFactory>&
        atomic_relaxation_model_factory,
        const SimulationProperties& properties,
        const bool verbose,                  

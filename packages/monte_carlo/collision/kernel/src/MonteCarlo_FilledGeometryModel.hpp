@@ -13,6 +13,12 @@
 #include <boost/filesystem.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_FilledNeutronGeometryModel.hpp"
+#include "MonteCarlo_FilledPhotonGeometryModel.hpp"
+#include "MonteCarlo_FilledAdjointPhotonGeometryModel.hpp"
+#include "MonteCarlo_FilledElectronGeometryModel.hpp"
+#include "MonteCarlo_FilledAdjointElectronGeometryModel.hpp"
+#include "MonteCarlo_FilledPositronGeometryModel.hpp"
 #include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
@@ -59,6 +65,30 @@ public:
 
   //! Check if a cell is a termination cell
   using FilledNeutronGeometryModel::isTerminationCell;
+
+  //! Get the total macroscopic cross section of a material for the given particle type
+  template<typename ParticleStateType>
+  double getMacroscopicTotalCrossSection(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
+
+  //! Get the total macroscopic cross section of a material for the given particle type
+  template<typename ParticleStateType>
+  double getMacroscopicTotalCrossSectionQuick(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
+
+  //! Get the total forward macroscopic cross section of a material for the given particle type
+  template<typename ParticleStateType>
+  double getMacroscopicTotalForwardCrossSection(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
+
+  //! Get the total macroscopic cross section of a material for the given particle type
+  template<typename ParticleStateType>
+  double getMacroscopicTotalForwardCrossSectionQuick(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
 
   //! Get the total macroscopic cross section of a material for neutrons
   using FilledNeutronGeometryModel::getMacroscopicTotalCrossSection;
@@ -156,7 +186,7 @@ public:
 private:
 
   // The unfilled model
-  std::shared_ptr<const Geometry::Model>& d_unfilled_model;
+  std::shared_ptr<const Geometry::Model> d_unfilled_model;
 };
   
 } // end MonteCarlo namespace

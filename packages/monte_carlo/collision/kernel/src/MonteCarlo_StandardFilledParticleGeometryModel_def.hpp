@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_ToStringTraits.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -72,10 +73,10 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
     Geometry::Model::InternalCellHandle cell_id =
       cell_id_mat_id_it->first;
 
-    typename MaterialType::InternalMaterialType material_id =
+    typename MaterialType::InternalMaterialHandle material_id =
       cell_id_mat_id_it->second;
 
-    double density = cell_id_density_map.find( cell_id )->second;
+    double density = cell_id_density_map.find( cell_id )->second.value();
 
     std::string material_name =
       material_definitions.getMaterialName( material_id );
@@ -99,15 +100,15 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
       for( size_t i = 0; i < material_definition.size(); ++i )
       {
         scattering_center_names[i] =
-          Utility::get<0>( material_definition );
+          Utility::get<0>( material_definition[i] );
         
         scattering_center_fractions[i] =
-          Utility::get<1>( material_definition );
+          Utility::get<1>( material_definition[i] );
       }
 
       new_material.reset( new MaterialType( material_id,
                                             density,
-                                            nuclide_name_map,
+                                            scattering_center_name_map,
                                             scattering_center_fractions,
                                             scattering_center_names ) );
     }
@@ -118,12 +119,9 @@ void StandardFilledParticleGeometryModel<Material>::loadMaterialsAndFillModel(
   }
 
   // Fill the geometry
-  std::unordered_map<std::string,std::shared_ptr<const MaterialType> >::const_iterator
+  typename std::unordered_map<std::string,std::shared_ptr<const MaterialType> >::const_iterator
     material_name_it = material_name_map.begin();
   
-  std::unordered_map<std::string,std::vector<Geometry::Model::InternalCellHandle> >::const_iterator
-    material_name_cell_ids_it = material_name_cell_ids_map.begin();
-
   while( material_name_it != material_name_map.end() )
   {
     this->addMaterial( material_name_it->second,
@@ -200,7 +198,7 @@ bool StandardFilledParticleGeometryModel<Material>::isTerminationCell(
 // Get the total macroscopic cross section of a material
 template<typename Material>
 double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalCrossSection(
-                                           const ParticleType& particle ) const
+                                           const ParticleStateType& particle ) const
 {
   return this->getMacroscopicTotalCrossSection( particle.getCell(),
                                                 particle.getEnergy() );
@@ -224,7 +222,7 @@ inline double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotal
  */
 template<typename Material>
 double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalCrossSectionQuick(
-                                           const ParticleType& particle ) const
+                                           const ParticleStateType& particle ) const
 {
   return this->getMacroscopicTotalCrossSectionQuick( particle.getCell(),
                                                      particle.getEnergy() );
@@ -251,7 +249,7 @@ inline double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotal
  */
 template<typename Material>
 double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalForwardCrossSection(
-                                           const ParticleType& particle ) const
+                                           const ParticleStateType& particle ) const
 {
   return this->getMacroscopicTotalForwardCrossSection( particle.getCell(),
                                                        particle.getEnergy() );
@@ -277,7 +275,7 @@ inline double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotal
  */
 template<typename Material>
 double StandardFilledParticleGeometryModel<Material>::getMacroscopicTotalForwardCrossSectionQuick(
-                                           const ParticleType& particle ) const
+                                           const ParticleStateType& particle ) const
 {
   return this->getMacroscopicTotalForwardCrossSectionQuick( particle.getCell(),
                                                             particle.getEnergy() );

@@ -46,7 +46,7 @@ public:
   { /* ... */ }
 
   //! Collide with the material in a cell
-  void collideWithCellMaterial( ParticleType& particle,
+  void collideWithCellMaterial( ParticleStateType& particle,
                                 ParticleBank& bank ) const final override;
 };
   

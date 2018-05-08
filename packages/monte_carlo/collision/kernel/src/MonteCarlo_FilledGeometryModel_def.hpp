@@ -24,7 +24,7 @@ template<>
 struct FilledGeometryModelUpcastHelper<NeutronState>
 {
   //! The desired base type for the upcast
-  typedef NeutronFilledGeometryModel UpcastType;
+  typedef FilledNeutronGeometryModel UpcastType;
   
   //! Upcast the filled geometry model to a NeutronFilledGeometryModel
   static inline UpcastType* upcast( FilledGeometryModel* handler )
@@ -40,7 +40,7 @@ template<>
 struct FilledGeometryModelUpcastHelper<PhotonState>
 {
   //! The desired base type for the upcast
-  typedef PhotonFilledGeometryModel UpcastType;
+  typedef FilledPhotonGeometryModel UpcastType;
   
   //! Upcast the filled geometry model to a PhotonFilledGeometryModel
   static inline UpcastType* upcast( FilledGeometryModel* handler )
@@ -56,7 +56,7 @@ template<>
 struct FilledGeometryModelUpcastHelper<AdjointPhotonState>
 {
   //! The desired base type for the upcast
-  typedef AdjointPhotonFilledGeometryModel UpcastType;
+  typedef FilledAdjointPhotonGeometryModel UpcastType;
   
   //! Upcast the filled geometry model to a AdjointPhotonFilledGeometryModel
   static inline UpcastType* upcast( FilledGeometryModel* handler )
@@ -72,7 +72,7 @@ template<>
 struct FilledGeometryModelUpcastHelper<ElectronState>
 {
   //! The desired base type for the upcast
-  typedef ElectronFilledGeometryModel UpcastType;
+  typedef FilledElectronGeometryModel UpcastType;
   
   //! Upcast the filled geometry model to a ElectronFilledGeometryModel
   static inline UpcastType* upcast( FilledGeometryModel* handler )
@@ -88,7 +88,7 @@ template<>
 struct FilledGeometryModelUpcastHelper<AdjointElectronState>
 {
   //! The desired base type for the upcast
-  typedef AdjointElectronFilledGeometryModel UpcastType;
+  typedef FilledAdjointElectronGeometryModel UpcastType;
   
   //! Upcast the filled geometry model to a AdjointElectronFilledGeometryModel
   static inline UpcastType* upcast( FilledGeometryModel* handler )
@@ -104,7 +104,7 @@ template<>
 struct FilledGeometryModelUpcastHelper<PositronState>
 {
   //! The desired base type for the upcast
-  typedef PositronFilledGeometryModel UpcastType;
+  typedef FilledPositronGeometryModel UpcastType;
   
   //! Upcast the filled geometry model to a PositronFilledGeometryModel
   static inline UpcastType* upcast( FilledGeometryModel* handler )
@@ -126,6 +126,42 @@ bool FilledGeometryModel::isCellVoid(
                          const Geometry::Model::InternalCellHandle cell ) const
 {
   Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::isCellVoid( cell );
+}
+
+// Get the total macroscopic cross section of a material for the given particle type
+template<typename ParticleStateType>
+double FilledGeometryModel::getMacroscopicTotalCrossSection(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const
+{
+  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSection( cell, energy );
+}
+
+// Get the total macroscopic cross section of a material for the given particle type
+template<typename ParticleStateType>
+double FilledGeometryModel::getMacroscopicTotalCrossSectionQuick(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const
+{
+  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalCrossSectionQuick( cell, energy );
+}
+
+// Get the total forward macroscopic cross section of a material for the given particle type
+template<typename ParticleStateType>
+double FilledGeometryModel::getMacroscopicTotalForwardCrossSection(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const
+{
+  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSection( cell, energy );
+}
+
+// Get the total macroscopic cross section of a material for the given particle type
+template<typename ParticleStateType>
+double FilledGeometryModel::getMacroscopicTotalForwardCrossSectionQuick(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const
+{
+  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSectionQuick( cell, energy );
 }
 
 } // end MonteCarlo namespace

@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_TransportKernel.hpp"
-#include "MonteCarlo_ContractException.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -22,7 +22,7 @@ TransportKernel::TransportKernel(
 }
 
 // Sample the optical path length traveled by a particle before a collision
-double TransportKernel::sampleOpticalPathLengthToNextCollisionSite() const
+double TransportKernel::sampleOpticalPathLengthToNextCollisionSite()
 {
   return -std::log( Utility::RandomNumberGenerator::getRandomNumber<double>() );
 }

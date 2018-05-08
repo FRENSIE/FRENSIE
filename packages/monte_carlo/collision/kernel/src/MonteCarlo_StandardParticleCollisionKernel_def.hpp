@@ -48,7 +48,7 @@ StandardParticleCollisionKernel<_FilledGeometryModelType>::StandardParticleColli
 
 // Get the cell material
 template<typename _FilledGeometryModelType>
-auto StandardParticleCollisionKernel<_FilledGeometryModelType>::getCellMaterial( const ParticleType& particle ) const ->const MaterialType&
+auto StandardParticleCollisionKernel<_FilledGeometryModelType>::getCellMaterial( const ParticleStateType& particle ) const -> const MaterialType&
 {
   // Make sure the cell is not void
   testPrecondition( !d_filled_geometry_model->isCellVoid( particle.getCell() ) );
@@ -59,8 +59,8 @@ auto StandardParticleCollisionKernel<_FilledGeometryModelType>::getCellMaterial(
 // Collide with the material in a cell
 template<typename _FilledGeometryModelType>
 void StandardParticleCollisionKernel<_FilledGeometryModelType>::collideWithCellMaterial(
-                                                     ParticleType& particle,
-                                                     ParticleBank& bank ) const
+                                                   ParticleStateType& particle,
+                                                   ParticleBank& bank ) const
 {
   d_collision_method( particle, bank );
 }
@@ -68,8 +68,8 @@ void StandardParticleCollisionKernel<_FilledGeometryModelType>::collideWithCellM
 // Collide with the material in a cell (analogue)
 template<typename _FilledGeometryModelType>
 void StandardParticleCollisionKernel<_FilledGeometryModelType>::collideWithCellMaterialAnalogue(
-                                                     ParticleType& particle,
-                                                     ParticleBank& bank ) const
+                                                   ParticleStateType& particle,
+                                                   ParticleBank& bank ) const
 {
   this->getCellMaterial( particle ).collideAnalogue( particle, bank );
 }
@@ -77,8 +77,8 @@ void StandardParticleCollisionKernel<_FilledGeometryModelType>::collideWithCellM
 // Collide with the material in a cell (survival bias)
 template<typename _FilledGeometryModelType>
 void StandardParticleCollisionKernel<_FilledGeometryModelType>::collideWithCellMaterialSurvivalBias(
-                                                     ParticleType& particle,
-                                                     ParticleBank& bank ) const
+                                                   ParticleStateType& particle,
+                                                   ParticleBank& bank ) const
 {
   this->getCellMaterial( particle ).collideSurvivalBias( particle, bank );
 }

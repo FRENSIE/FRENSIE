@@ -39,7 +39,7 @@ public:
   typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Destructor
-  FilledAdjointPhotonGeometryModel()
+  ~FilledAdjointPhotonGeometryModel()
   { /* ... */ }
 
 protected:

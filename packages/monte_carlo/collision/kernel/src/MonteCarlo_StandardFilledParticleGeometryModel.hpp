@@ -166,7 +166,7 @@ private:
                     cells_containing_material );
 
   // The unfilled model
-  std::shared_ptr<const Geometry::Model>& d_unfilled_model;
+  std::shared_ptr<const Geometry::Model> d_unfilled_model;
 
   // The cell id material map
   typedef std::unordered_map<Geometry::Model::InternalCellHandle,std::shared_ptr<const MaterialType> >

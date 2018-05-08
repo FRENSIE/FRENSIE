@@ -33,7 +33,7 @@ class StandardParticleCollisionKernel
 public:
 
   //! Typedef for the filled geometry model type
-  typedef _FilledGeometryModel FilledGeometryModelType;
+  typedef _FilledGeometryModelType FilledGeometryModelType;
 
   //! Typedef for the material type
   typedef typename FilledGeometryModelType::MaterialType MaterialType;
@@ -55,29 +55,29 @@ public:
   { /* ... */ }
 
   //! Collide with the material in a cell
-  virtual void collideWithCellMaterial( ParticleType& particle,
+  virtual void collideWithCellMaterial( ParticleStateType& particle,
                                         ParticleBank& bank ) const;
 
 protected:
 
   //! Get the cell material
-  const MaterialType& getCellMaterial( const ParticleType& particle ) const;
+  const MaterialType& getCellMaterial( const ParticleStateType& particle ) const;
 
 private:
 
   //! Collide with the material in a cell (analogue)
-  void collideWithCellMaterialAnalogue( ParticleType& particle,
+  void collideWithCellMaterialAnalogue( ParticleStateType& particle,
                                         ParticleBank& bank ) const;
 
   //! Collide with the material in a cell (survival bias)
-  void collideWithCellMaterialSurvivalBias( ParticleType& particle,
+  void collideWithCellMaterialSurvivalBias( ParticleStateType& particle,
                                             ParticleBank& bank ) const;
 
   // The filled geometry model
-  std::shared_ptr<const FilledGeometryModelType>& d_filled_geometry_model;
+  std::shared_ptr<const FilledGeometryModelType> d_filled_geometry_model;
 
   // The collision method function pointer
-  std::function<void(typename ParticleType&,ParticleBank&)>
+  std::function<void(ParticleStateType&,ParticleBank&)>
   d_collision_method;
 
   

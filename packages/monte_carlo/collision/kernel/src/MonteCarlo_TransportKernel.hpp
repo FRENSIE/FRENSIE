@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionKernel.hpp"
-#include "Geometry_FilledGeometryModel.hpp"
+#include "MonteCarlo_FilledGeometryModel.hpp"
 
 namespace MonteCarlo{
 
@@ -30,7 +30,7 @@ public:
   { /* ... */ }
 
   //! Sample the optical path length traveled by a particle before a collision
-  static double sampleOpticalPathLengthToNextCollisionSite() const;
+  static double sampleOpticalPathLengthToNextCollisionSite();
 
   //! Sample the the distance to the next collision
   template<typename ParticleStateType>
@@ -47,14 +47,14 @@ private:
 
 // Sample the the distance to the next collision
 template<typename ParticleStateType>
-double TransportKernel<ParticleStateType>::sampleDistanceToNextCollisionSite(
+double TransportKernel::sampleDistanceToNextCollisionSite(
                                       const ParticleStateType& particle ) const
 {
   // Make sure that the particle is embedded in the model that the
   // transport kernel is defined in.
-  testPrecondition( particle.isEmbeddedInModel( d_model ) );
+  testPrecondition( particle.isEmbeddedInModel( *d_model ) );
   // Make sure that the particle is still in the geometry
-  testPrecondition( !d_model.isTerminationCell( particle.getCell() ) );
+  testPrecondition( !d_model->isTerminationCell( particle.getCell() ) );
 
   // Sample an optical path
   double remaining_optical_path_length =
@@ -72,10 +72,10 @@ double TransportKernel<ParticleStateType>::sampleDistanceToNextCollisionSite(
 
     double cell_total_macro_cross_section = 0.0;
 
-    if( !d_model.isCellVoid<ParticleStateType>() )
+    if( !d_model->isCellVoid<ParticleStateType>() )
     {
       cell_total_macro_cross_section =
-        d_model.getMacroscopicTotalForwardCrossSectionQuick( particle );
+        d_model->getMacroscopicTotalForwardCrossSectionQuick( particle );
     }
 
     double optical_path_to_cell_boundary =
@@ -92,7 +92,7 @@ double TransportKernel<ParticleStateType>::sampleDistanceToNextCollisionSite(
       // If the geometry is exited before the entire optical path has
       // been converted the distance traveled is infinite from the kernels
       // perspective.
-      if( d_model.isTerminationCell( navigator.getCurrentCell() ) )
+      if( d_model->isTerminationCell( navigator->getCurrentCell() ) )
       {
         distance_to_collision_site = std::numeric_limits<double>::infinity();
         break;

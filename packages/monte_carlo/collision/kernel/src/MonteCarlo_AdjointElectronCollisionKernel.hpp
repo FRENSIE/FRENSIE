@@ -17,7 +17,7 @@
 namespace MonteCarlo{
 
 //! The adjoint electron collision kernel
-typedef StandardAdjointParticleCollisionKernel<FilledAdjointElectronGeometryModel> AdjointElectronCollisionKernel
+typedef StandardAdjointParticleCollisionKernel<FilledAdjointElectronGeometryModel> AdjointElectronCollisionKernel;
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardAdjointParticleCollisionKernel<FilledAdjointElectronGeometryModel> );
   
