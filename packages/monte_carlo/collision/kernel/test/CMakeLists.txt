@@ -1,4 +1,17 @@
-FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_handler)
+FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_kernel)
+
+FRENSIE_ADD_TEST_EXECUTABLE(FilledGeometryModel
+  DEPENDS tstFilledGeometryModel.cpp
+  TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+FRENSIE_ADD_TEST(FilledGeometryModel
+  EXTRA_ARGS
+  --test_database=${COLLISION_DATABASE_XML_FILE})
+
+IF(FRENSIE_ENABLE_DAGMC)
+
+ELSEIF(FRENSIE_ENABLE_ROOT)
+
+ENDIF()
 
 ADD_EXECUTABLE(tstPhotonCollisionHandler
   tstPhotonCollisionHandler.cpp
@@ -76,4 +89,4 @@ IF(FRENSIE_ENABLE_DAGMC)
   SET_PROPERTY(TEST CollisionModuleInterface_Native_DagMC_test PROPERTY LABELS dagmc native)
 ENDIF()
 
-FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_handler)
+FRENSIE_FINALIZE_PACKAGE_TESTS(monte_carlo_collision_kernel)

@@ -28,9 +28,13 @@ namespace Geometry{
 
 // Constructor
 InfiniteMediumModel::InfiniteMediumModel(
-                           const InternalCellHandle cell )
+                               const InternalCellHandle cell,
+                               const Model::InternalMaterialHandle material_id,
+                               const Model::Density density )
   : Model(),
-    d_cell( cell )
+    d_cell( cell ),
+    d_material_id( material_id ),
+    d_density( density )
 { /* ... */ }
 
 // Get the model name
@@ -46,10 +50,10 @@ bool InfiniteMediumModel::hasCellEstimatorData() const
 }
 
 // Get the material ids
-/*! \details By default the infinite medium is void.
- */
-void InfiniteMediumModel::getMaterialIds( MaterialIdSet& ) const
-{ /* ... */ }
+void InfiniteMediumModel::getMaterialIds( MaterialIdSet& material_ids ) const
+{ 
+  material_ids.insert( d_material_id );
+}
 
 // Get the cells
 /*! \details By default there will only be a single cell with an id of 1.
@@ -63,16 +67,18 @@ void InfiniteMediumModel::getCells( CellIdSet& cells,
 }
 
 // Get the cell material ids
-/*! \details By default the infinite medium is void.
- */
-void InfiniteMediumModel::getCellMaterialIds( CellIdMatIdMap& ) const
-{ /* ... */ }
+void InfiniteMediumModel::getCellMaterialIds(
+                                     CellIdMatIdMap& cell_id_mat_id_map ) const
+{ 
+  cell_id_mat_id_map[d_cell] = d_material_id;
+}
 
 // Get the cell densities
-/*! \details By default the infinite medium is void.
- */
-void InfiniteMediumModel::getCellDensities( CellIdDensityMap& ) const
-{ /* ... */ }
+void InfiniteMediumModel::getCellDensities(
+                                  CellIdDensityMap& cell_id_density_map ) const
+{ 
+  cell_id_density_map[d_cell] = d_density;
+}
 
 // Get the cell estimator data
 void InfiniteMediumModel::getCellEstimatorData( CellEstimatorIdDataMap& ) const
@@ -127,28 +133,6 @@ InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced(
 InfiniteMediumNavigator* InfiniteMediumModel::createNavigatorAdvanced() const
 {
   return new InfiniteMediumNavigator( d_cell );
-}
-
-// Save the model to an archive
-template<typename Archive>
-void InfiniteMediumModel::save( Archive& ar, const unsigned version ) const
-{
-  // Save the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-  
-  // Save the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_cell );
-}
-
-// Load the model from an archive
-template<typename Archive>
-void InfiniteMediumModel::load( Archive& ar, const unsigned version )
-{
-  // Load the base class first
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
-  
-  // Load the local member data
-  ar & BOOST_SERIALIZATION_NVP( d_cell );
 }
 
 EXPLICIT_GEOMETRY_CLASS_SAVE_LOAD_INST( InfiniteMediumModel );

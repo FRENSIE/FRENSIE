@@ -53,17 +53,23 @@ FilledGeometryModel::FilledGeometryModel(
     ++required_material_id_it;
   }
 
+  std::cout << "required materials: " << required_material_ids << std::endl;
+
   // Check for extraneous user-defined materials
   MaterialDefinitionDatabase::MaterialDefinitionIterator
     database_material_id_it = material_definitions.begin();
+
+  std::cout << material_definitions.getDefinition( 2 ) << std::endl;
 
   while( database_material_id_it != material_definitions.end() )
   {
     if( required_material_ids.find( database_material_id_it->first ) ==
         required_material_ids.end() )
     {
-      FRENSIE_LOG_WARNING( "Material " << *database_material_id_it <<
-                           " is not used!" );
+      FRENSIE_LOG_TAGGED_WARNING( "FilledGeometryModel",
+                                  "Material "
+                                  << database_material_id_it->first <<
+                                  " is not used!" );
     }
 
     ++database_material_id_it;
@@ -73,7 +79,9 @@ FilledGeometryModel::FilledGeometryModel(
   MaterialDefinitionDatabase::ScatteringCenterNameSet
     unique_scattering_center_names;
 
-  material_definitions.getUniqueScatteringCenterNames( unique_scattering_center_names );
+  material_definitions.getUniqueScatteringCenterNames(
+                                              required_material_ids,
+                                              unique_scattering_center_names );
 
   // Check that every scattering center has a definition
   MaterialDefinitionDatabase::ScatteringCenterNameSet::const_iterator
@@ -86,6 +94,8 @@ FilledGeometryModel::FilledGeometryModel(
                         "Scattering center "
                         << *unique_scattering_center_names_it <<
                         " is not defined!" );
+
+    ++unique_scattering_center_names_it;
   }
 
   // Create the cell id data maps

@@ -44,6 +44,9 @@ public:
   //! The material definition array
   typedef MaterialDefinitionArrayPrivate MaterialDefinitionArray;
 
+  //! The material id set
+  typedef std::set<size_t> MaterialIdSet;
+  
   //! The scattering center name set
   typedef std::set<std::string> ScatteringCenterNameSet;
 
@@ -111,12 +114,29 @@ public:
   //! Get an iterator to the one-past-the-last material definition
   MaterialDefinitionIterator end() const;
 
+  //! Get the material ids
+  void getMaterialIds( MaterialIdSet& material_ids ) const;
+
+  //! Get the material ids
+  MaterialIdSet getMaterialIds() const;
+
   //! Get the unique scattering center names
   void getUniqueScatteringCenterNames(
                       ScatteringCenterNameSet& scattering_center_names ) const;
 
+  //! Get the unique scattering center names from the materials of interest
+  template<template<typename,typename...> class Set, typename MaterialIdType>
+  void getUniqueScatteringCenterNames(
+                      const Set<MaterialIdType>& material_ids,
+                      ScatteringCenterNameSet& scattering_center_names ) const;
+
   //! Get the unique scattering center names
   ScatteringCenterNameSet getUniqueScatteringCenterNames() const;
+
+  //! Get the unique scattering center names
+  template<template<typename,typename...> class Set, typename MaterialIdType>
+  ScatteringCenterNameSet getUniqueScatteringCenterNames(
+                               const Set<MaterialIdType>& material_ids ) const;
 
   //! Place the material properties in a stream
   void toStream( std::ostream& os ) const final override;
@@ -157,6 +177,46 @@ void MaterialDefinitionDatabase::load( Archive& ar, const unsigned version )
 {
   ar & BOOST_SERIALIZATION_NVP( d_material_id_definition_map );
   ar & BOOST_SERIALIZATION_NVP( d_material_id_name_map );
+}
+
+// Get the unique scattering center names from the materials of interest
+template<template<typename,typename...> class Set, typename MaterialIdType>
+void MaterialDefinitionDatabase::getUniqueScatteringCenterNames(
+                       const Set<MaterialIdType>& material_ids,
+                       ScatteringCenterNameSet& scattering_center_names ) const
+{
+  typename Set<MaterialIdType>::const_iterator material_id_it =
+    material_ids.begin();
+
+  while( material_id_it != material_ids.end() )
+  {
+    auto material_definition_it =
+      d_material_id_definition_map.find( *material_id_it );
+
+    if( material_definition_it != d_material_id_definition_map.end() )
+    {
+      for( size_t i = 0; i < material_definition_it->second.size(); ++i )
+      {
+        scattering_center_names.insert(
+                        Utility::get<0>( material_definition_it->second[i] ) );
+      }
+    }
+
+    ++material_id_it;
+  }
+}
+
+//  Get the unique scattering center names
+template<template<typename,typename...> class Set, typename MaterialIdType>
+auto MaterialDefinitionDatabase::getUniqueScatteringCenterNames(
+     const Set<MaterialIdType>& material_ids ) const -> ScatteringCenterNameSet
+{
+  ScatteringCenterNameSet scattering_center_names;
+
+  this->getUniqueScatteringCenterNames( material_ids,
+                                        scattering_center_names );
+
+  return scattering_center_names;
 }
   
 } // end MonteCarlo namespace

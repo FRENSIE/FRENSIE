@@ -37,27 +37,6 @@ void NuclideACEFactory::createNuclide(
                                energy_grid,
                                properties.getNumberOfNeutronHashGridBins() ) );
 
-  // Create the photon production reaction factory
-  DecoupledPhotonProductionReactionACEFactory
-    reaction_factory( nuclide_alias,
-                      atomic_weight_ratio,
-                      temperature,
-                      energy_grid,
-                      grid_searcher,
-                      properties,
-                      raw_nuclide_data );
-  
-  // Create the standard scattering reactions
-  Nuclide::ConstReactionMap standard_scattering_reactions;
-
-  reaction_factory.createScatteringReactions( standard_scattering_reactions );
-  reaction_factory.createFissionReactions( standard_scattering_reactions );
-
-  // Create the standard absorption reactions
-  Nuclide::ConstReactionMap standard_absorption_reactions;
-
-  reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
-
   if( properties.isUnresolvedResonanceProbabilityTableModeOn() )
   {
     FRENSIE_LOG_TAGGED_WARNING( "NuclideACEFactory",
@@ -69,7 +48,26 @@ void NuclideACEFactory::createNuclide(
   if( properties.getParticleMode() == NEUTRON_PHOTON_MODE ||
       properties.getParticleMode() == NEUTRON_PHOTON_ELECTRON_MODE )
   {
+    // Create the photon production reaction factory
+    DecoupledPhotonProductionReactionACEFactory
+      reaction_factory( nuclide_alias,
+                        atomic_weight_ratio,
+                        temperature,
+                        energy_grid,
+                        grid_searcher,
+                        properties,
+                        raw_nuclide_data );
+  
+    // Create the standard scattering reactions and the standard absorption
+    // reactions
+    Nuclide::ConstReactionMap standard_scattering_reactions,
+      standard_absorption_reactions;
 
+    NuclideACEFactory::createScatteringReactions(
+                                               reaction_factory,
+                                               standard_scattering_reactions,
+                                               standard_absorption_reactions );
+    
     // Create the photon production reactions
     DecoupledPhotonProductionNuclide::ConstPhotonProductionReactionMap
       photon_production_reactions;
@@ -92,6 +90,26 @@ void NuclideACEFactory::createNuclide(
   }
   else
   {
+    // Create the photon production reaction factory
+    NeutronNuclearReactionACEFactory
+      reaction_factory( nuclide_alias,
+                        atomic_weight_ratio,
+                        temperature,
+                        energy_grid,
+                        grid_searcher,
+                        properties,
+                        raw_nuclide_data );
+  
+    // Create the standard scattering reactions and the standard absorption
+    // reactions
+    Nuclide::ConstReactionMap standard_scattering_reactions,
+      standard_absorption_reactions;
+
+    NuclideACEFactory::createScatteringReactions(
+                                               reaction_factory,
+                                               standard_scattering_reactions,
+                                               standard_absorption_reactions );
+    
     nuclide.reset( new Nuclide( nuclide_alias,
 			        atomic_number,
 			        atomic_mass_number,
@@ -103,6 +121,18 @@ void NuclideACEFactory::createNuclide(
 			        standard_scattering_reactions,
 			        standard_absorption_reactions ) );
   }
+}
+
+// Create the scattering reactions
+void NuclideACEFactory::createScatteringReactions(
+                      const NeutronNuclearReactionACEFactory& reaction_factory,
+                      Nuclide::ConstReactionMap& scattering_reactions,
+                      Nuclide::ConstReactionMap& absorption_reactions )
+{
+  reaction_factory.createScatteringReactions( scattering_reactions );
+  reaction_factory.createFissionReactions( scattering_reactions );
+
+  reaction_factory.createAbsorptionReactions( absorption_reactions );
 }
 
 } // end MonteCarlo namespace
