@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data.__init__.i
+//! \file   Data.Data__init__.i
 //! \author Luke Kersting
 //! \brief  The data module swig interface file
 //!
@@ -8,13 +8,14 @@
 
 %define %data_docstring
 "
-PyFrensie.Data is the python interface to the FRENSIE data package.
+PyFrensie.Data.Data__init__ will be imported directly into the
+PyFrensie.Data module (see PyFrensie.Data.__init__.py).
 "
 %enddef
 
 %module(package   = "PyFrensie.Data",
         autodoc   = "1",
-        docstring = %data_docstring) __init__
+        docstring = %data_docstring) Data__init__
 
 %pythonbegin
 %{
@@ -30,17 +31,11 @@ PyFrensie.Data is the python interface to the FRENSIE data package.
   sys.path.insert(0, current_dir)
 %}
 
-// Set the special python variables
 %pythoncode
 %{
 # Remove the local current directory from the sys path (added to help
 # import code - see comment above)
 sys.path.pop(0)
-
-__all__ = ['ACE',
-           'Native',
-           'ENDL'
-           ]
 %}
 
 // Add support for specific coordinate types
@@ -49,5 +44,5 @@ __all__ = ['ACE',
 %include "Data_ScatteringCenterPropertiesDatabase.i"
 
 //---------------------------------------------------------------------------//
-// end Data.__init__.i
+// end Data.Data__init__.i
 //---------------------------------------------------------------------------//

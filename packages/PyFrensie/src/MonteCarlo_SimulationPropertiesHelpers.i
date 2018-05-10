@@ -9,7 +9,7 @@
 //---------------------------------------------------------------------------//
 // Helper macro for setting up the general simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %general_properties_setup_helper( PROPERTIES )
+%define %general_simulation_properties_setup_helper( PROPERTIES )
 
 // Set/get Particle Mode
 %feature("autodoc", "setParticleMode(PROPERTIES self, const ParticleModeType particle_mode) -> void")
@@ -65,7 +65,7 @@ MonteCarlo::PROPERTIES::getNumberOfBatchesPerProcessor;
 //---------------------------------------------------------------------------//
 // Helper macro for setting up a basic particle simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %basic_properties_setup_helper( PARTICLE )
+%define %basic_simulation_properties_setup_helper( PARTICLE )
 
 // Set/get min energy
 %feature("autodoc", "setMin ## PARTICLE ## Energy(PROPERTIES self, const double energy) -> void")
@@ -100,7 +100,7 @@ MonteCarlo::PROPERTIES::getNumberOf ## PARTICLE ## HashGridBins;
 //---------------------------------------------------------------------------//
 // Helper macro for setting up an atomic simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %atomic_properties_setup_helper( PROPERTIES )
+%define %atomic_simulation_properties_setup_helper( PROPERTIES )
 
 // Set atomic relaxation on/off
 %feature("autodoc", "setAtomicRelaxationModeOff(PROPERTIES self) -> void")
@@ -117,7 +117,7 @@ MonteCarlo::PROPERTIES::isAtomicRelaxationModeOn;
 //---------------------------------------------------------------------------//
 // Helper macro for setting up an neutron simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %neutron_properties_setup_helper( PROPERTIES )
+%define %neutron_simulation_properties_setup_helper( PROPERTIES )
 
 // Set/get free gas threshold
 %feature("autodoc", "setFreeGasThreshold(PROPERTIES self, const double threshold) -> void")
@@ -141,7 +141,7 @@ MonteCarlo::PROPERTIES::isUnresolvedResonanceProbabilityTableModeOn;
 //---------------------------------------------------------------------------//
 // Helper macro for setting up photon simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %photon_properties_setup_helper( PROPERTIES )
+%define %photon_simulation_properties_setup_helper( PROPERTIES )
 
 // Set/get incoherent model type
 %feature("autodoc", "setIncoherentModelType(PROPERTIES self, const IncoherentModelType model) -> void")
@@ -170,14 +170,14 @@ MonteCarlo::PROPERTIES::setPhotonuclearInteractionModeOff;
 %feature("autodoc", "isPhotonuclearInteractionModeOn(PROPERTIES self) -> bool")
 MonteCarlo::PROPERTIES::isPhotonuclearInteractionModeOn;
 
-%atomic_properties_setup_helper( PROPERTIES )
+%atomic_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Helper macro for setting up adjoint photon simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %adjoint_photon_properties_setup_helper( PROPERTIES )
+%define %adjoint_photon_simulation_properties_setup_helper( PROPERTIES )
 
 // Set/get incoherent model type
 %feature("autodoc", "setIncoherentAdjointModelType(PROPERTIES self, const IncoherentAdjointModelType model) -> void")
@@ -198,7 +198,7 @@ MonteCarlo::PROPERTIES::getCriticalAdjointPhotonLineEnergies;
 //---------------------------------------------------------------------------//
 // Helper macro for setting up electron simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %electron_properties_setup_helper( PROPERTIES )
+%define %electron_simulation_properties_setup_helper( PROPERTIES )
 
 // Set/get Electron TwoDInterpPolicy
 %feature("autodoc", "setElectronTwoDInterpPolicy(PROPERTIES self, const TwoDInterpolationType interp_type) -> void")
@@ -289,14 +289,14 @@ MonteCarlo::PROPERTIES::setAtomicExcitationModeOff;
 %feature("autodoc", "isAtomicExcitationModeOn(PROPERTIES self) -> bool")
 MonteCarlo::PROPERTIES::isAtomicExcitationModeOn;
 
-%atomic_properties_setup_helper( PROPERTIES )
+%atomic_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
 //---------------------------------------------------------------------------//
 // Helper macro for setting up adjoint electron simulation properties class python interface
 //---------------------------------------------------------------------------//
-%define %adjoint_electron_properties_setup_helper( PROPERTIES )
+%define %adjoint_electron_simulation_properties_setup_helper( PROPERTIES )
 
 // Set/get Evaluation Tolerance
 %feature("autodoc", "setAdjointElectronEvaluationTolerance(PROPERTIES self, const double tol) -> void")
@@ -373,7 +373,7 @@ MonteCarlo::PROPERTIES::setAdjointAtomicExcitationModeOff;
 %feature("autodoc", "isAdjointAtomicExcitationModeOn(PROPERTIES self) -> bool")
 MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 
-%atomic_properties_setup_helper( PROPERTIES )
+%atomic_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
@@ -382,7 +382,7 @@ MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 //---------------------------------------------------------------------------//
 %define %general_properties_setup( PROPERTIES )
 
-%general_properties_setup_helper( PROPERTIES )
+%general_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
@@ -391,9 +391,9 @@ MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 //---------------------------------------------------------------------------//
 %define %neutron_properties_setup( PROPERTIES )
 
-%basic_properties_setup_helper( Neutron )
+%basic_simulation_properties_setup_helper( Neutron )
 
-%neutron_properties_setup_helper( PROPERTIES )
+%neutron_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
@@ -402,9 +402,9 @@ MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 //---------------------------------------------------------------------------//
 %define %photon_properties_setup( PROPERTIES )
 
-%basic_properties_setup_helper( Photon )
+%basic_simulation_properties_setup_helper( Photon )
 
-%photon_properties_setup_helper( PROPERTIES )
+%photon_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
@@ -413,9 +413,9 @@ MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 //---------------------------------------------------------------------------//
 %define %electron_properties_setup( PROPERTIES )
 
-%basic_properties_setup_helper( Electron )
+%basic_simulation_properties_setup_helper( Electron )
 
-%electron_properties_setup_helper( PROPERTIES )
+%electron_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
@@ -424,9 +424,9 @@ MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 //---------------------------------------------------------------------------//
 %define %adjoint_photon_properties_setup( PROPERTIES )
 
-%basic_properties_setup_helper( AdjointPhoton )
+%basic_simulation_properties_setup_helper( AdjointPhoton )
 
-%adjoint_photon_properties_setup_helper( PROPERTIES )
+%adjoint_photon_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
@@ -435,9 +435,9 @@ MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 //---------------------------------------------------------------------------//
 %define %adjoint_electron_properties_setup( PROPERTIES )
 
-%basic_properties_setup_helper( AdjointElectron )
+%basic_simulation_properties_setup_helper( AdjointElectron )
 
-%adjoint_electron_properties_setup_helper( PROPERTIES )
+%adjoint_electron_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 
@@ -451,18 +451,18 @@ MonteCarlo::PROPERTIES::isAdjointAtomicExcitationModeOn;
 properties of the geometry and for creating navigators,
 which can be used to traverse the geometry."
 
-%basic_properties_setup_helper( Neutron )
-%basic_properties_setup_helper( Photon )
-%basic_properties_setup_helper( Electron )
-%basic_properties_setup_helper( AdjointPhoton )
-%basic_properties_setup_helper( AdjointElectron )
+%basic_simulation_properties_setup_helper( Neutron )
+%basic_simulation_properties_setup_helper( Photon )
+%basic_simulation_properties_setup_helper( Electron )
+%basic_simulation_properties_setup_helper( AdjointPhoton )
+%basic_simulation_properties_setup_helper( AdjointElectron )
 
-%general_properties_setup_helper( PROPERTIES )
-%neutron_properties_setup_helper( PROPERTIES )
-%photon_properties_setup_helper( PROPERTIES )
-%electron_properties_setup_helper( PROPERTIES )
-%adjoint_photon_properties_setup_helper( PROPERTIES )
-%adjoint_electron_properties_setup_helper( PROPERTIES )
+%general_simulation_properties_setup_helper( PROPERTIES )
+%neutron_simulation_properties_setup_helper( PROPERTIES )
+%photon_simulation_properties_setup_helper( PROPERTIES )
+%electron_simulation_properties_setup_helper( PROPERTIES )
+%adjoint_photon_simulation_properties_setup_helper( PROPERTIES )
+%adjoint_electron_simulation_properties_setup_helper( PROPERTIES )
 
 %enddef
 

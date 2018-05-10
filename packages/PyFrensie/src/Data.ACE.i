@@ -29,6 +29,7 @@ and extracting data blocks from the XSS array.
 #include "Data_ACEElectroatomicDataProperties.hpp"
 #include "Data_ACENuclearDataProperties.hpp"
 #include "Data_ACEThermalNuclearDataProperties.hpp"
+#include "Data_ACEPhotonuclearDataProperties.hpp"
 
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
@@ -54,11 +55,11 @@ using namespace Data;
 // Include the ArrayView support
 %include "PyFrensie_Array.i"
 
-// Include the Data_AtomProperties support
-%include "Data_AtomProperties.i"
+// AtomProperties handling
+%import(module="PyFrensie.Data") Data_AtomProperties.i
 
-// Include the Data_NuclideProperties support
-%include "Data_NuclideProperties.i"
+// NuclideProperties handling
+%import(module="PyFrensie.Data") Data_NuclideProperties.i
 
 // Include the data property helpers
 %include "Data_PropertyHelpers.i"
@@ -95,26 +96,6 @@ using namespace Data;
   {
     SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
   }
-}
-
-// Add some general typemaps
-
-// Add typemaps for converting file_path to and from Python string
-%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
-  temp = PyFrensie::convertFromPython<std::string>( $input );
-  $1 = &temp;
-}
-
-%typemap(out) boost::filesystem::path {
-  %append_output(PyFrensie::convertToPython( $1.string() ) );
-}
-
-%typemap(out) const boost::filesystem::path& {
-  %append_output(PyFrensie::convertToPython( $1->string() ) );
-}
-
-%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
-  $1 = (PyString_Check($input)) ? 1 : 0;
 }
 
 //---------------------------------------------------------------------------//
@@ -190,6 +171,14 @@ using namespace Data;
 
 // Import the ACEThermalNuclearDataProperties
 %include "Data_ACEThermalNuclearDataProperties.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the PhotonuclearDataProperties
+//---------------------------------------------------------------------------//
+
+%photonuclear_properties_interface_setup(ACEPhotonuclearDataProperties );
+
+%include "Data_ACEPhotonuclearDataProperties.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the ACEFileHandler

@@ -115,9 +115,9 @@ using namespace MonteCarlo;
 %feature("docstring") MonteCarlo::SimulationGeneralProperties
 "The SimulationGeneralProperties class stores general simulation properties. It can be used for setting and getting the general simulation properties when running a simulation."
 
-%general_properties_setup_helper( SimulationGeneralProperties )
+%general_properties_setup( SimulationGeneralProperties )
 
-// Import the PhotoatomicDataProperties
+// Import the SimulationGeneralProperties
 %include "MonteCarlo_SimulationGeneralProperties.hpp"
 
 //---------------------------------------------------------------------------//
@@ -127,7 +127,7 @@ using namespace MonteCarlo;
 %feature("docstring") MonteCarlo::SimulationNeutronProperties
 "The SimulationNeutronProperties class stores the neutron simulation properties. It can be used for setting and getting the neutron simulation properties when running a simulation."
 
-%neutron_properties_setup_helper( SimulationNeutronProperties )
+%neutron_properties_setup( SimulationNeutronProperties )
 
 // Import the SimulationNeutronProperties.
 %include "MonteCarlo_SimulationNeutronProperties.hpp"
@@ -139,7 +139,7 @@ using namespace MonteCarlo;
 %feature("docstring") MonteCarlo::SimulationPhotonProperties
 "The SimulationPhotonProperties class stores the photon simulation properties. It can be used for setting and getting the photon simulation properties when running a simulation."
 
-%neutron_properties_setup_helper( SimulationPhotonProperties )
+%photon_properties_setup( SimulationPhotonProperties )
 
 // Import the SimulationPhotonProperties
 %include "MonteCarlo_SimulationPhotonProperties.hpp"
@@ -151,7 +151,7 @@ using namespace MonteCarlo;
 %feature("docstring") MonteCarlo::SimulationAdjointPhotonProperties
 "The SimulationAdjointPhotonProperties class stores the adjoint photon simulation properties. It can be used for setting and getting the adjoint photon simulation properties when running a simulation."
 
-%neutron_properties_setup_helper( SimulationAdjointPhotonProperties )
+%adjoint_photon_properties_setup( SimulationAdjointPhotonProperties )
 
 // Add template for std::vector<double>
 %template(DoubleVector) std::vector<double>;
@@ -166,7 +166,7 @@ using namespace MonteCarlo;
 %feature("docstring") MonteCarlo::SimulationElectronProperties
 "The SimulationElectronProperties class stores the electron simulation properties. It can be used for setting and getting the electron simulation properties when running a simulation."
 
-%neutron_properties_setup_helper( SimulationElectronProperties )
+%electron_properties_setup( SimulationElectronProperties )
 
 // Import the SimulationElectronProperties
 %include "MonteCarlo_SimulationElectronProperties.hpp"

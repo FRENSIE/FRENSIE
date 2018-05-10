@@ -44,8 +44,8 @@ using namespace Data;
 // Include typemaps support
 %include <typemaps.i>
 
-// Include the Data_AtomProperties support
-%include "Data_AtomProperties.i"
+// AtomProperties handling
+%import(module="PyFrensie.Data") Data_AtomProperties.i
 
 // Include the data property helpers
 %include "Data_PropertyHelpers.i"
@@ -82,20 +82,6 @@ using namespace Data;
   {
     SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
   }
-}
-
-// Add typemaps for converting file_path to and from Python string
-%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
-  temp = PyFrensie::convertFromPython<std::string>( $input );
-  $1 = &temp;
-}
-
-%typemap(out) boost::filesystem::path {
-  %append_output(PyFrensie::convertToPython( $1.string() ) );
-}
-
-%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
-  $1 = (PyString_Check($input)) ? 1 : 0;
 }
 
 //---------------------------------------------------------------------------//

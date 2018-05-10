@@ -1,10 +1,53 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_UnivariateDistribution.i
+//! \file   Utility.UnivariateDistribution.i
 //! \author Alex Robinson, Luke Kersting
 //! \brief  The UnivariateDistribution class interface file
 //!
 //---------------------------------------------------------------------------//
+
+%define %utility_univariate_dist_docstring
+"
+PyFrensie.Utility.UnivariateDistribution is the python interface to
+the Univariate distributions in the FRENSIE utility/distribution subpackage.
+
+The purpose of UnivariateDistribution is to provide a variety of 1-D
+distributions that can be used for both evaluation and sampling. This sub-module
+will only be accessed under the Utility.Distribution sub-module.
+"
+%enddef
+
+%module(package   = "PyFrensie.Utility",
+        autodoc   = "1",
+        docstring = %utility_univariate_dist_docstring) UnivariateDistribution
+
+// Standard exception handling
+%include "exception.i"
+
+// Global swig features
+%feature("autodoc", "1");
+
+// General exception handling
+%exception
+{
+  try{
+    $action;
+    if( PyErr_Occurred() )
+      SWIG_fail;
+  }
+  catch( Utility::ContractException& e )
+  {
+    SWIG_exception( SWIG_ValueError, e.what() );
+  }
+  catch( Utility::BadUnivariateDistributionParameter& e )
+  {
+    SWIG_exception( SWIG_RuntimeError, e.what() );
+  }
+  catch( ... )
+  {
+    SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+  }
+}
 
 %{
 #define NO_IMPORT_ARRAY
@@ -36,20 +79,19 @@
 using namespace Utility;
 %}
 
-// Include std::string support
-%include <std_string.i>
-
 // Include typemaps support
 %include <typemaps.i>
 
-// Include vector support
+// General std library handling
+%include <std_string.i>
 %include <std_vector.i>
-
-// Include shared pointer support
 %include <std_shared_ptr.i>
 
 // Include macros to find initialized numpy
 %include "numpy.i"
+
+// Import the base distribution interface
+%import "Utility.Distribution.i"
 
 // Import the distribution traits class
 %import "Utility_DistributionTraits.hpp"
@@ -88,14 +130,14 @@ typedef unsigned int size_t;
 // Basic distribution interface setup
 %basic_distribution_interface_setup( UnivariateDistribution )
 
-// Add functionality to Upcast to the UnivariateDistribution from derived classes
-%inline %{
-std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> > upcastToUnivariateDistribution(
-  std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> >& dist )
-{
-  return dist;
-}
-%}
+// // Add functionality to Upcast to the UnivariateDistribution from derived classes
+// %inline %{
+// std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> > upcastToUnivariateDistribution(
+//   std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> >& dist )
+// {
+//   return dist;
+// }
+// %}
 
 //---------------------------------------------------------------------------//
 // Add support for the TabularUnivariateDistribution
@@ -106,14 +148,14 @@ std::shared_ptr<const Utility::UnitAwareUnivariateDistribution<void,void> > upca
 // Basic tabular distribution interface setup
 %basic_tab_distribution_interface_setup( TabularUnivariateDistribution )
 
-// Add functionality to Upcast to the TabularUnivariateDistribution from derived classes
-%inline %{
-std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > upcastToTabularUnivariateDistribution(
-  std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> >& tab_dist )
-{
-  return tab_dist;
-}
-%}
+// // Add functionality to Upcast to the TabularUnivariateDistribution from derived classes
+// %inline %{
+// std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > upcastToTabularUnivariateDistribution(
+//   std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> >& tab_dist )
+// {
+//   return tab_dist;
+// }
+// %}
 
 //---------------------------------------------------------------------------//
 // Add support for the DeltaDistribution
@@ -520,5 +562,5 @@ Utility::UnitAwareCoupledElasticDistribution<Utility::INTERP,void,void>::UnitAwa
 %coupled_elastic_distribution_interface_setup( LinLog )
 
 //---------------------------------------------------------------------------//
-// end Utility_UnivariateDistribution.i
+// end Utility.UnivariateDistribution.i
 //---------------------------------------------------------------------------//

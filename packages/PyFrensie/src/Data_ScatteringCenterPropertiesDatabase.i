@@ -56,26 +56,6 @@ using namespace Data;
   }
 }
 
-// Add some general typemaps
-
-// Add typemaps for converting file_path to and from Python string
-%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
-  temp = PyFrensie::convertFromPython<std::string>( $input );
-  $1 = &temp;
-}
-
-%typemap(out) boost::filesystem::path {
-  %append_output(PyFrensie::convertToPython( $1.string() ) );
-}
-
-%typemap(out) const boost::filesystem::path& {
-  %append_output(PyFrensie::convertToPython( $1->string() ) );
-}
-
-%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
-  $1 = (PyString_Check($input)) ? 1 : 0;
-}
-
 //---------------------------------------------------------------------------//
 // Add support for the ScatteringCenterPropertiesDatabaseImpl
 //---------------------------------------------------------------------------//
@@ -100,10 +80,10 @@ using namespace Data;
   }
 }
 
-%database_interface_setup(ScatteringCenterPropertiesDatabase)
-
 // Include the ScatteringCenterPropertiesDatabase
 %include "Data_ScatteringCenterPropertiesDatabase.hpp"
+
+%database_interface_setup(ScatteringCenterPropertiesDatabase)
 
 //---------------------------------------------------------------------------//
 // end Data_ScatteringCenterPropertiesDatabase.i

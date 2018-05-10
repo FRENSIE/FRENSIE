@@ -86,19 +86,27 @@ using namespace Data;
   }
 }
 
-// // General ignore directives
-// %ignore *::operator<<;
+// Add typemaps for converting file_path to and from Python string
+%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
+  temp = PyFrensie::convertFromPython<std::string>( $input );
+  $1 = &temp;
+}
 
-// Add general templates
-%template(EnergyVector) std::vector<Data::NuclideProperties::Energy>;
-%template(TemperatureVector) std::vector<Data::NuclideProperties::Temperature>;
+%typemap(out) boost::filesystem::path {
+  %append_output(PyFrensie::convertToPython( $1.string() ) );
+}
+
+%typemap(out) const boost::filesystem::path& {
+  %append_output(PyFrensie::convertToPython( $1->string() ) );
+}
+
+%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
+  $1 = (PyString_Check($input)) ? 1 : 0;
+}
 
 //---------------------------------------------------------------------------//
 // Add support for the ZAID
 //---------------------------------------------------------------------------//
-
-// Add template for a std::set of ZAIDs
-%template(ZaidSet) std::set<Data::ZAID>;
 
 %rename(assign) Data::ZAID::operator=( const ZAID& that );
 %rename(make_unsigned) Data::ZAID::operator unsigned() const;
@@ -106,14 +114,8 @@ using namespace Data;
 // Import the ZAID
 %include "Data_ZAID.hpp"
 
-// // Add typemaps for converting a Python int to a ZAID
-// %typemap(in) const Data::ZAID {
-//   $1 = PyFrensie::convertFromPython<unsigned>( $input );
-// }
-
-// %typemap(typecheck, precedence=25) (const Data::ZAID) {
-//   $1 = (PyInt_Check($input)) ? 1 : 0;
-// }
+// Add template for a std::set of ZAIDs
+%template(ZaidSet) std::set<Data::ZAID>;
 
 //---------------------------------------------------------------------------//
 // Add support for the NuclearDataProperties
@@ -125,6 +127,9 @@ using namespace Data;
 // Import the NuclearDataProperties
 %include "Data_NuclearDataProperties.hpp"
 
+// Add std::set template for FileType
+%template(NuclearDataPropertiesSet) std::set< Data::NuclearDataProperties::FileType >;
+
 //---------------------------------------------------------------------------//
 // Add support for the ThermalNuclearDataProperties
 //---------------------------------------------------------------------------//
@@ -134,6 +139,9 @@ using namespace Data;
 
 // Import the ThermalNuclearDataProperties
 %include "Data_ThermalNuclearDataProperties.hpp"
+
+// Add std::set template for FileType
+%template(ThermalNuclearDataPropertiesSet) std::set< Data::ThermalNuclearDataProperties::FileType >;
 
 //---------------------------------------------------------------------------//
 // Add support for the AdjointNuclearDataProperties
@@ -145,6 +153,9 @@ using namespace Data;
 // Import the AdjointNuclearDataProperties
 %include "Data_AdjointNuclearDataProperties.hpp"
 
+// Add std::set template for FileType
+%template(AdjointNuclearDataPropertiesSet) std::set< Data::AdjointNuclearDataProperties::FileType >;
+
 //---------------------------------------------------------------------------//
 // Add support for the AdjointThermalNuclearDataProperties
 //---------------------------------------------------------------------------//
@@ -155,38 +166,14 @@ using namespace Data;
 // Import the AdjointThermalNuclearDataProperties
 %include "Data_AdjointThermalNuclearDataProperties.hpp"
 
+// Add std::set template for FileType
+%template(AdjointThermalNuclearDataPropertiesSet) std::set< Data::AdjointThermalNuclearDataProperties::FileType >;
+
 //---------------------------------------------------------------------------//
 // Add support for the PhotonuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Add a more detailed docstring
-%feature("docstring") Data::PhotonuclearDataProperties
-"The PhotonuclearDataProperties class stores photonuclear data properties.
-It can be used for querying photonuclear data properties and for creating
-photonuclear data extractors or container, which can be used to read
-photonuclear data."
-
-// Use helper interface setup
-%basic_properties_interface_setup(PhotonuclearDataProperties);
-
-%feature("autodoc", "zaid(PhotonuclearDataProperties self) -> ZAID")
-Data::PhotonuclearDataProperties::zaid;
-
-%feature("autodoc", "atomicWeight(PhotonuclearDataProperties self) -> AtomicWeight")
-Data::PhotonuclearDataProperties::atomicWeight;
-
-// Add typemaps for converting AtomicWeight to and from Python float
-%typemap(in) const Data::PhotonuclearDataProperties::AtomicWeight {
-  $1 = Data::PhotonuclearDataProperties::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
-}
-
-%typemap(out) Data::PhotonuclearDataProperties::AtomicWeight {
-  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
-}
-
-%typemap(typecheck, precedence=90) (const Data::PhotonuclearDataProperties::AtomicWeight) {
-  $1 = (PyFloat_Check($input)) ? 1 : 0;
-}
+%photonuclear_properties_interface_setup(PhotonuclearDataProperties);
 
 // Import the PhotonuclearDataProperties
 %include "Data_PhotonuclearDataProperties.hpp"
@@ -195,24 +182,7 @@ Data::PhotonuclearDataProperties::atomicWeight;
 // Add support for the AdjointPhotonuclearDataProperties
 //---------------------------------------------------------------------------//
 
-// Add a more detailed docstring
-%feature("docstring") Data::AdjointPhotonuclearDataProperties
-"The Adjoint PhotonuclearDataProperties class stores adjoint photonuclear data
-properties. It can be used for querying adjoint photonuclear data properties
-and for creating adjoint photonuclear data extractors or container, which can be
-used to read adjoint photonuclear data."
-
-// Use helper interface setup
-%basic_properties_interface_setup(AdjointPhotonuclearDataProperties);
-
-%feature("autodoc", "zaid(AdjointPhotonuclearDataProperties self) -> ZAID")
-Data::AdjointPhotonuclearDataProperties::zaid;
-
-%feature("autodoc", "atomicWeight(AdjointPhotonuclearDataProperties self) -> AtomicWeight")
-Data::AdjointPhotonuclearDataProperties::atomicWeight;
-
-%apply const Data::PhotonuclearDataProperties::AtomicWeight {
-  const Data::AdjointPhotonuclearDataProperties::AtomicWeight }
+%adjoint_photonuclear_properties_interface_setup(AdjointPhotonuclearDataProperties)
 
 // Import the AdjointPhotonuclearDataProperties
 %include "Data_AdjointPhotonuclearDataProperties.hpp"
@@ -316,6 +286,9 @@ Data::NuclideProperties::getAdjointThermalNuclearDataFileTypes;
 // Import the NuclideProperties
 %include "Data_NuclideProperties.hpp"
 
+// Add general templates
+%template(EnergyVector) std::vector<Data::NuclideProperties::Energy>;
+%template(TemperatureVector) std::vector<Data::NuclideProperties::Temperature>;
 
 //---------------------------------------------------------------------------//
 // end Data_NuclideProperties.i

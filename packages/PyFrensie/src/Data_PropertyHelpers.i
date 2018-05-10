@@ -55,8 +55,8 @@ Data::PROPERTIES::atomicWeight;
 
 %basic_properties_setup_helper( PROPERTIES )
 
-// Add std::set templates for FileType
-%template(PROPERTIES ## Set) std::set< Data::PROPERTIES::FileType >;
+// // Add std::set templates for FileType
+// %template(PROPERTIES ## Set) std::set< Data::PROPERTIES::FileType >;
 
 // Add typemaps for converting AtomicWeight to and from Python float
 %typemap(in) const Data::PROPERTIES::AtomicWeight {
@@ -94,8 +94,8 @@ Data::PROPERTIES::fileMajorVersion;
 
 %basic_properties_setup_helper( PROPERTIES )
 
-// Add std::set template for FileType
-%template(PROPERTIES ## Set) std::set< Data::PROPERTIES::FileType >;
+// // Add std::set template for FileType
+// %template(PROPERTIES ## Set) std::set< Data::PROPERTIES::FileType >;
 
 // Add typemaps for converting Energy to and from Python float
 %typemap(in) const Data::PROPERTIES::Energy {
@@ -288,6 +288,68 @@ Data::ThermalNuclearDataProperties::hasDataForZAID;
 
 %feature("autodoc", "zaids(PROPERTIES self) -> std::set<Data::ZAID>")
 Data::ThermalNuclearDataProperties::zaids;
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a photonuclear data property class python interface
+//---------------------------------------------------------------------------//
+%define %photonuclear_properties_interface_setup( PROPERTIES )
+
+// Add a more detailed docstring
+%feature("docstring") Data::PROPERTIES
+"The PROPERTIES class stores photonuclear data properties.
+It can be used for querying photonuclear data properties and for creating
+photonuclear data extractors or container, which can be used to read
+photonuclear data."
+
+// Use helper interface setup
+%basic_properties_interface_setup(PROPERTIES);
+
+%feature("autodoc", "zaid(PROPERTIES self) -> ZAID")
+Data::PROPERTIES::zaid;
+
+%feature("autodoc", "atomicWeight(PROPERTIES self) -> AtomicWeight")
+Data::PROPERTIES::atomicWeight;
+
+// Add typemaps for converting AtomicWeight to and from Python float
+%typemap(in) const Data::PROPERTIES::AtomicWeight {
+  $1 = Data::PROPERTIES::AtomicWeight::from_value( PyFrensie::convertFromPython<double>( $input ) );
+}
+
+%typemap(out) Data::PROPERTIES::AtomicWeight {
+  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
+}
+
+%typemap(typecheck, precedence=90) (const Data::PROPERTIES::AtomicWeight) {
+  $1 = (PyFloat_Check($input)) ? 1 : 0;
+}
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a adjoint photonuclear data property class python interface
+//---------------------------------------------------------------------------//
+%define %adjoint_photonuclear_properties_interface_setup( PROPERTIES )
+
+// Add a more detailed docstring
+%feature("docstring") Data::PROPERTIES
+"The PROPERTIES class stores adjoint photonuclear data
+properties. It can be used for querying adjoint photonuclear data properties
+and for creating adjoint photonuclear data extractors or container, which can be
+used to read adjoint photonuclear data."
+
+// Use helper interface setup
+%basic_properties_interface_setup(PROPERTIES);
+
+%feature("autodoc", "zaid(PROPERTIES self) -> ZAID")
+Data::PROPERTIES::zaid;
+
+%feature("autodoc", "atomicWeight(PROPERTIES self) -> AtomicWeight")
+Data::PROPERTIES::atomicWeight;
+
+%apply const Data::PhotonuclearDataProperties::AtomicWeight {
+  const Data::PROPERTIES::AtomicWeight }
 
 %enddef
 

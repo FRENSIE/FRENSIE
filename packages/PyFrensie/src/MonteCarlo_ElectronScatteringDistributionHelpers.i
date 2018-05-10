@@ -10,7 +10,7 @@
 %include <std_string.i>
 
 //---------------------------------------------------------------------------//
-// Helper macro for setting up a basic UnivariateDistribution class python interface
+// Helper macro for setting up a basic electron distribution class python interface
 //---------------------------------------------------------------------------//
 %define %electron_distribution_interface_setup( DISTRIBUTION )
 

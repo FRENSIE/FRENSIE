@@ -81,6 +81,24 @@ using namespace Data;
 // Add general templates
 %template(IntSet) std::set< unsigned int>;
 
+// Add typemaps for converting file_path to and from Python string
+%typemap(in) const boost::filesystem::path& ( boost::filesystem::path temp ){
+  temp = PyFrensie::convertFromPython<std::string>( $input );
+  $1 = &temp;
+}
+
+%typemap(out) boost::filesystem::path {
+  %append_output(PyFrensie::convertToPython( $1.string() ) );
+}
+
+%typemap(out) const boost::filesystem::path& {
+  %append_output(PyFrensie::convertToPython( $1->string() ) );
+}
+
+%typemap(typecheck, precedence=1140) (const boost::filesystem::path&) {
+  $1 = (PyString_Check($input)) ? 1 : 0;
+}
+
 //---------------------------------------------------------------------------//
 // Add support for the AtomType
 //---------------------------------------------------------------------------//
@@ -96,6 +114,9 @@ using namespace Data;
 // Import the PhotoatomicDataProperties
 %include "Data_PhotoatomicDataProperties.hpp"
 
+// Add std::set templates for FileType
+%template(PhotoatomicDataPropertiesSet) std::set< Data::PhotoatomicDataProperties::FileType >;
+
 //---------------------------------------------------------------------------//
 // Add support for the AdjointPhotoatomicDataProperties
 //---------------------------------------------------------------------------//
@@ -104,6 +125,9 @@ using namespace Data;
 
 // Import the AdjointPhotoatomicDataProperties
 %include "Data_AdjointPhotoatomicDataProperties.hpp"
+
+// Add std::set templates for FileType
+%template(AdjointPhotoatomicDataPropertiesSet) std::set< Data::AdjointPhotoatomicDataProperties::FileType >;
 
 //---------------------------------------------------------------------------//
 // Add support for the ElectroatomicDataProperties
@@ -114,6 +138,9 @@ using namespace Data;
 // Import the ElectroatomicDataProperties
 %include "Data_ElectroatomicDataProperties.hpp"
 
+// Add std::set templates for FileType
+%template(ElectroatomicDataPropertiesSet) std::set< Data::ElectroatomicDataProperties::FileType >;
+
 //---------------------------------------------------------------------------//
 // Add support for the AdjointElectroatomicDataProperties
 //---------------------------------------------------------------------------//
@@ -122,6 +149,9 @@ using namespace Data;
 
 // Import the AdjointElectroatomicDataProperties
 %include "Data_AdjointElectroatomicDataProperties.hpp"
+
+// Add std::set templates for FileType
+%template(AdjointElectroatomicDataPropertiesSet) std::set< Data::AdjointElectroatomicDataProperties::FileType >;
 
 //---------------------------------------------------------------------------//
 // Add support for the AtomProperties

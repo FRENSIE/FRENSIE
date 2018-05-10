@@ -67,11 +67,15 @@ evaluation and sampling.
 %import "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 // Distribution support
-%include "Utility_UnivariateDistribution.i"
-%include "Utility_BivariateDistribution.i"
+%pythoncode
+%{
+from PyFrensie.Utility.UnivariateDistribution import *
+%}
 
-// Turn off the exception handling
-%exception;
+%pythoncode
+%{
+from PyFrensie.Utility.BivariateDistribution import *
+%}
 
 //---------------------------------------------------------------------------//
 // end Utility.Distribution.i

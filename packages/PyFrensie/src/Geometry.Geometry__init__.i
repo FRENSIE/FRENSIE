@@ -8,13 +8,14 @@
 
 %define %geometry_docstring
 "
-PyFrensie.Geometry is the python interface to the FRENSIE geometry package
+PyFrensie.Geometry.Geometry__init__ will be imported directly into the
+PyFrensie.Geometry module (see PyFrensie.Geometry.__init__.py)
 "
 %enddef
 
 %module(package   = "PyFrensie.Geometry",
         autodoc   = "1",
-        docstring = %geometry_docstring) __init__
+        docstring = %geometry_docstring) Geometry__init__
 
 %pythonbegin
 %{
@@ -30,7 +31,12 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
   sys.path.insert(0, current_dir)
 %}
 
-%include "Geometry_Config.i"
+%pythoncode
+%{
+# Remove the local current directory from the sys path (added to help
+# import code - see comment above)
+sys.path.pop(0)
+%}
 
 %{
 // Std Lib Includes
@@ -560,5 +566,5 @@ for this class is shown below:
 %exception;
 
 //---------------------------------------------------------------------------//
-// end Geometry.__init__.i
+// end Geometry.Geometry__init__.i
 //---------------------------------------------------------------------------//

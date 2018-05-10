@@ -55,7 +55,7 @@ class InterpolatedFullyTabularBasicBivariateDistributionTestCase(unittest.TestCa
         univariate_distb = Distribution.PowerDistribution_1( 0.0, 1.0 )
 
         exception_thrown = False
-        
+
         try:
             bad_dist = Distribution.InterpolatedFullyTabularBasicBivariateDistribution_LinLinLin_UnitBase( [0.0,1.0], [univariate_dista, univariate_distb] )
         except:
@@ -789,5 +789,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstUtility.Distribution.UnivariateDistribution.py
+# end tstUtility.Distribution.BivariateDistribution.py
 #-----------------------------------------------------------------------------#

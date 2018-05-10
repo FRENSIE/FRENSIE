@@ -1,10 +1,25 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_BivariateDistribution.i
+//! \file   Utility.BivariateDistribution.i
 //! \author Luke Kersting
 //! \brief  The BivariateDistribution class interface file
 //!
 //---------------------------------------------------------------------------//
+
+%define %utility_bivariate_dist_docstring
+"
+PyFrensie.Utility.BivariateDistribution is the python interface to
+the Bivariate distributions in the FRENSIE utility/distribution subpackage.
+
+The purpose of BivariateDistribution is to provide a variety of 1-D
+distributions that can be used for both evaluation and sampling. This sub-module
+will only be accessed under the Utility.Distribution sub-module.
+"
+%enddef
+
+%module(package   = "PyFrensie.Utility",
+        autodoc   = "1",
+        docstring = %utility_bivariate_dist_docstring) BivariateDistribution
 
 %{
 #define NO_IMPORT_ARRAY
@@ -13,6 +28,25 @@
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "Utility_DistributionTraits.hpp"
+
+#include "Utility_UnivariateDistribution.hpp"
+#include "Utility_TabularUnivariateDistribution.hpp"
+#include "Utility_DeltaDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
+#include "Utility_EquiprobableBinDistribution.hpp"
+#include "Utility_EvaporationDistribution.hpp"
+#include "Utility_ExponentialDistribution.hpp"
+#include "Utility_HistogramDistribution.hpp"
+#include "Utility_MaxwellFissionDistribution.hpp"
+#include "Utility_NormalDistribution.hpp"
+#include "Utility_PolynomialDistribution.hpp"
+#include "Utility_PowerDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
+#include "Utility_TabularCDFDistribution.hpp"
+#include "Utility_UniformDistribution.hpp"
+#include "Utility_WattDistribution.hpp"
+#include "Utility_CoupledElasticDistribution.hpp"
+
 #include "Utility_BasicBivariateDistribution.hpp"
 #include "Utility_TabularBasicBivariateDistribution.hpp"
 #include "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
@@ -23,6 +57,7 @@
 #include "Utility_HistogramTabularBasicBivariateDistributionImplBase.hpp"
 #include "Utility_HistogramPartiallyTabularBasicBivariateDistribution.hpp"
 #include "Utility_HistogramFullyTabularBasicBivariateDistribution.hpp"
+
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_TwoDGridPolicy.hpp"
@@ -30,6 +65,34 @@
 // Add the Utility namespace to the global lookup scope
 using namespace Utility;
 %}
+
+// Standard exception handling
+%include "exception.i"
+
+// Global swig features
+%feature("autodoc", "1");
+
+// General exception handling
+%exception
+{
+  try{
+    $action;
+    if( PyErr_Occurred() )
+      SWIG_fail;
+  }
+  catch( Utility::ContractException& e )
+  {
+    SWIG_exception( SWIG_ValueError, e.what() );
+  }
+  catch( Utility::BadUnivariateDistributionParameter& e )
+  {
+    SWIG_exception( SWIG_RuntimeError, e.what() );
+  }
+  catch( ... )
+  {
+    SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+  }
+}
 
 // Include std::string support
 %include <std_string.i>
@@ -49,8 +112,9 @@ using namespace Utility;
 // Import the distribution traits class
 %import "Utility_DistributionTraits.hpp"
 
-// Include the univariate distribution
-%include "Utility_UnivariateDistribution.i"
+// Import the base distribution interface
+%import "Utility.Distribution.i"
+%import "Utility.UnivariateDistribution.i"
 
 // Include the bivariate distribution helpers
 %include "Utility_BivariateDistributionHelpers.i"
@@ -80,99 +144,99 @@ typedef unsigned int size_t;
 %ignore *::SecondaryIndepQuantity;
 %ignore *::InverseSecondaryIndepQuantity;
 
-//---------------------------------------------------------------------------//
-// Add support for the BasicBivariateDistribution
-//---------------------------------------------------------------------------//
-// Import the BasicBivariateDistribution
-%import "Utility_BasicBivariateDistribution.hpp"
-
-// Basic distribution interface setup
-%basic_bivariate_distribution_interface_setup( BasicBivariateDistribution )
+// //---------------------------------------------------------------------------//
+// // Add support for the BasicBivariateDistribution
+// //---------------------------------------------------------------------------//
+// // Import the BasicBivariateDistribution
+// %import "Utility_BasicBivariateDistribution.hpp"
 
 // // Basic distribution interface setup
-// %basic_bivariate_distribution_interface_setup( BivariateDistribution )
+// %basic_bivariate_distribution_interface_setup( BasicBivariateDistribution )
 
-/* NOTE: Currently the TabularBasicBivariateDistribution cannot be imported due
- *       to the complexity of its template structure. It appears that similar
- *       structures are supported by Swig but all attempts have failed to import
- *       the class.
- */
+// // // Basic distribution interface setup
+// // %basic_bivariate_distribution_interface_setup( BivariateDistribution )
+
+// /* NOTE: Currently the TabularBasicBivariateDistribution cannot be imported due
+//  *       to the complexity of its template structure. It appears that similar
+//  *       structures are supported by Swig but all attempts have failed to import
+//  *       the class.
+//  */
+// // //---------------------------------------------------------------------------//
+// // // Add support for the TabularBasicBivariateDistribution
+// // //---------------------------------------------------------------------------//
+// // // Import the TabularBasicBivariateDistribution
+// // %import "Utility_TabularBasicBivariateDistribution.hpp"
+
+// // // Create unitless constructor
+// // %extend Utility::UnitAwareTabularBasicBivariateDistribution
+// // {
+// //   // Constructor
+// //   Utility::UnitAwareTabularBasicBivariateDistribution<double,double,double, Utility::UnitAwareTabularUnivariateDistribution>::UnitAwareTabularBasicBivariateDistribution(
+// //     const std::vector<double>& raw_prim_grid,
+// //     const std::vector<std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<void,void> > >& vec )
+// //   {
+// //     std::vector<double> prim_grid(raw_prim_grid);
+// //     std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > > sec_dists(2);
+
+// //     for ( unsigned i = 0; i < vec.size(); ++i )
+// //     {
+// //       sec_dists[i] = vec[i];
+// //     }
+
+// //     return new Utility::UnitAwareTabularBasicBivariateDistribution<double,double,double, Utility::UnitAwareTabularUnivariateDistribution<double,double> >::UnitAwareTabularBasicBivariateDistribution( prim_grid, sec_dists );
+// //   }
+// // }
+
+// // // typedef Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> > TabularBasicBivariateDistribution;
+
+// // // // %shared_ptr(TabularBasicBivariateDistribution)
+// // %shared_ptr(Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> > )
+
+// // %feature("docstring") Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> >
+// // "The RENAMED_DISTRIBUTION proxy class. This class can be evaluated and sampled.
+// // Before sampling, make sure to initialize the Frensie Pseudo-Random Number
+// // Generator (PyFrensie.Utility.initFrensiePrng())"
+
+// // %template(TabularBasicBivariateDistribution) Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> >;
+
+// // Basic distribution interface setup
+// // %basic_tab_bivariate_distribution_interface_setup( TabularBasicBivariateDistribution, TabularUnivariateDistribution )
+
+// /* NOTE: Currently importing the
+//  *       PartiallyTabularBasicBivariateDistribution class causes
+//  *       an error when importing the
+//  *       InterpolatedPartiallyTabularBasicBivariateDistribution class.
+//  *       For now the class will be included but not imported.
+//  */
 // //---------------------------------------------------------------------------//
-// // Add support for the TabularBasicBivariateDistribution
+// // Add support for the PartiallyTabularBasicBivariateDistribution
 // //---------------------------------------------------------------------------//
-// // Import the TabularBasicBivariateDistribution
-// %import "Utility_TabularBasicBivariateDistribution.hpp"
+// %include "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
+// // // Import the PartiallyTabularBasicBivariateDistribution
+// // %import "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
 
-// // Create unitless constructor
-// %extend Utility::UnitAwareTabularBasicBivariateDistribution
-// {
-//   // Constructor
-//   Utility::UnitAwareTabularBasicBivariateDistribution<double,double,double, Utility::UnitAwareTabularUnivariateDistribution>::UnitAwareTabularBasicBivariateDistribution(
-//     const std::vector<double>& raw_prim_grid,
-//     const std::vector<std::shared_ptr<Utility::UnitAwareTabularUnivariateDistribution<void,void> > >& vec )
-//   {
-//     std::vector<double> prim_grid(raw_prim_grid);
-//     std::vector<std::shared_ptr<const Utility::UnitAwareTabularUnivariateDistribution<void,void> > > sec_dists(2);
+// // // Standard tabular distribution interface setup
+// // %standard_tab_bivariate_distribution_interface_setup( PartiallyTabularBasicBivariateDistribution )
 
-//     for ( unsigned i = 0; i < vec.size(); ++i )
-//     {
-//       sec_dists[i] = vec[i];
-//     }
-
-//     return new Utility::UnitAwareTabularBasicBivariateDistribution<double,double,double, Utility::UnitAwareTabularUnivariateDistribution<double,double> >::UnitAwareTabularBasicBivariateDistribution( prim_grid, sec_dists );
-//   }
-// }
-
-// // typedef Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> > TabularBasicBivariateDistribution;
-
-// // // %shared_ptr(TabularBasicBivariateDistribution)
-// %shared_ptr(Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> > )
-
-// %feature("docstring") Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> >
-// "The RENAMED_DISTRIBUTION proxy class. This class can be evaluated and sampled.
-// Before sampling, make sure to initialize the Frensie Pseudo-Random Number
-// Generator (PyFrensie.Utility.initFrensiePrng())"
-
-// %template(TabularBasicBivariateDistribution) Utility::UnitAwareTabularBasicBivariateDistribution<void,void,void, Utility::UnitAwareTabularUnivariateDistribution<void,void> >;
-
-// Basic distribution interface setup
-// %basic_tab_bivariate_distribution_interface_setup( TabularBasicBivariateDistribution, TabularUnivariateDistribution )
-
-/* NOTE: Currently importing the
- *       PartiallyTabularBasicBivariateDistribution class causes
- *       an error when importing the
- *       InterpolatedPartiallyTabularBasicBivariateDistribution class. For now the
- *       class will be included but not imported.
- */
-//---------------------------------------------------------------------------//
-// Add support for the PartiallyTabularBasicBivariateDistribution
-//---------------------------------------------------------------------------//
-%include "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
-// // Import the PartiallyTabularBasicBivariateDistribution
-// %import "Utility_PartiallyTabularBasicBivariateDistribution.hpp"
+// //---------------------------------------------------------------------------//
+// // Add support for the FullyTabularBasicBivariateDistribution
+// //---------------------------------------------------------------------------//
+// // Import the FullyTabularBasicBivariateDistribution
+// %import "Utility_FullyTabularBasicBivariateDistribution.hpp"
 
 // // Standard tabular distribution interface setup
-// %standard_tab_bivariate_distribution_interface_setup( PartiallyTabularBasicBivariateDistribution )
+// %standard_tab_bivariate_distribution_interface_setup( FullyTabularBasicBivariateDistribution )
 
-//---------------------------------------------------------------------------//
-// Add support for the FullyTabularBasicBivariateDistribution
-//---------------------------------------------------------------------------//
-// Import the FullyTabularBasicBivariateDistribution
-%import "Utility_FullyTabularBasicBivariateDistribution.hpp"
-
-// Standard tabular distribution interface setup
-%standard_tab_bivariate_distribution_interface_setup( FullyTabularBasicBivariateDistribution )
-
-/* NOTE: Currently importing the
- *       InterpolatedTabularBasicBivariateDistributionImplBase class causes
- *       an error when importing the
- *       InterpolatedFullyTabularBasicBivariateDistribution class. For now the
- *       class will be included but not imported.
- */
-//---------------------------------------------------------------------------//
-// Add support for the InterpolatedTabularBasicBivariateDistributionImplBase
-//---------------------------------------------------------------------------//
-%include "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
+// /* NOTE: Currently importing the
+//  *       InterpolatedTabularBasicBivariateDistributionImplBase class causes
+//  *       an error when importing the
+//  *       InterpolatedFullyTabularBasicBivariateDistribution class. For now the
+//  *       class will be included but not imported.
+//  */
+// //---------------------------------------------------------------------------//
+// // Add support for the InterpolatedTabularBasicBivariateDistributionImplBase
+// //---------------------------------------------------------------------------//
+// // %include "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
 // // Import the InterpolatedTabularBasicBivariateDistributionImplBase
 // %import "Utility_InterpolatedTabularBasicBivariateDistributionImplBase.hpp"
 
@@ -189,11 +253,13 @@ typedef unsigned int size_t;
 // %enddef
 
 // // Basic distribution interface setup
+// %tabular_bivariate_distribution_base_interface_setup( Direct, LinLinLin, UnitAwareFullyTabularBasicBivariateDistribution )
 // %tabular_bivariate_distribution_base_interface_setup( UnitBase, LinLinLin, UnitAwareFullyTabularBasicBivariateDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the InterpolatedFullyTabularBasicBivariateDistribution
 //---------------------------------------------------------------------------//
+
 // Import the InterpolatedFullyTabularBasicBivariateDistribution
 %import "Utility_InterpolatedFullyTabularBasicBivariateDistribution.hpp"
 
@@ -209,18 +275,23 @@ Utility::UnitAwareInterpolatedFullyTabularBasicBivariateDistribution<Utility::GR
 
 %enddef
 
+// Add LinLinLin grid policies
 %tabular_bivariate_distribution_interface_setup( Direct, LinLinLin )
-%tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
-%tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
 %tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLin )
-%tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
-%tabular_bivariate_distribution_interface_setup( UnitBase, LogLogLog )
 %tabular_bivariate_distribution_interface_setup( Correlated, LinLinLin )
-%tabular_bivariate_distribution_interface_setup( Correlated, LinLinLog )
-%tabular_bivariate_distribution_interface_setup( Correlated, LogLogLog )
 %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLin )
-%tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLog )
+
+// Add LogLogLog grid policies
+%tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
+%tabular_bivariate_distribution_interface_setup( UnitBase, LogLogLog )
+%tabular_bivariate_distribution_interface_setup( Correlated, LogLogLog )
 %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LogLogLog )
+
+// // Add LinLinLog grid policies
+// %tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
+// %tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
+// %tabular_bivariate_distribution_interface_setup( Correlated, LinLinLog )
+// %tabular_bivariate_distribution_interface_setup( UnitBaseCorrelated, LinLinLog )
 
 //---------------------------------------------------------------------------//
 // Add support for the InterpolatedPartiallyTabularBasicBivariateDistribution
@@ -258,17 +329,22 @@ Utility::UnitAwareInterpolatedPartiallyTabularBasicBivariateDistribution<Utility
 
 %enddef
 
+// Add LinLinLin grid policies
 %partially_tabular_bivariate_distribution_interface_setup( Direct, LinLinLin )
-%partially_tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
-%partially_tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
 %partially_tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLin )
-%partially_tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
+
+// Add LogLogLog grid policies
+%partially_tabular_bivariate_distribution_interface_setup( Direct, LogLogLog )
 %partially_tabular_bivariate_distribution_interface_setup( UnitBase, LogLogLog )
 
-//---------------------------------------------------------------------------//
-// Add support for the HistogramTabularBasicBivariateDistributionImplBase
-//---------------------------------------------------------------------------//
-%include "Utility_HistogramTabularBasicBivariateDistributionImplBase.hpp"
+// // Add LinLinLog grid policies
+// %partially_tabular_bivariate_distribution_interface_setup( Direct, LinLinLog )
+// %partially_tabular_bivariate_distribution_interface_setup( UnitBase, LinLinLog )
+
+// // //---------------------------------------------------------------------------//
+// // // Add support for the HistogramTabularBasicBivariateDistributionImplBase
+// // //---------------------------------------------------------------------------//
+// // %include "Utility_HistogramTabularBasicBivariateDistributionImplBase.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the HistogramFullyTabularBasicBivariateDistribution
@@ -296,6 +372,6 @@ Utility::UnitAwareHistogramPartiallyTabularBasicBivariateDistribution<void,void,
 
 %advanced_histogram_bivariate_distribution_interface_setup( HistogramPartiallyTabularBasicBivariateDistribution, HistogramPartiallyTabularBasicBivariateDistribution, UnivariateDistribution )
 
-// //---------------------------------------------------------------------------//
-// // end Utility_BivariateDistribution.i
-// //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+// end Utility.BivariateDistribution.i
+//---------------------------------------------------------------------------//
