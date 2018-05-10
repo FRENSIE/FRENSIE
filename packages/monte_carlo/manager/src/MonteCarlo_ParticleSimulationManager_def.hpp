@@ -117,10 +117,6 @@ void ParticleSimulationManager<mode>::runSimulation()
   // Set up the random number generator for the number of threads requested
   Utility::RandomNumberGenerator::createStreams();
 
-  // Enable geometry thread support
-  GMI::enableThreadSupport(
-                 Utility::OpenMPProperties::getRequestedNumberOfThreads() );
-
   // Enable source thread support
   SMI::enableThreadSupport(
                  Utility::OpenMPProperties::getRequestedNumberOfThreads() );

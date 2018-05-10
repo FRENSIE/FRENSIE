@@ -58,7 +58,7 @@ struct ParticleModeTypeTraits<ELECTRON_MODE>
 
   //! Check if the particle type is compatible with the mode
   static inline bool isParticleTypeCompatible( const ParticleType type )
-  { return (type == ELECTRON ? true : false); }
+  { return (type == ELECTRON || type == POSITRON ? true : false); }
 };
 
 /*! Specialization of ParticleModeTypeTraits for NEUTRON_PHOTON_MODE
@@ -86,7 +86,7 @@ struct ParticleModeTypeTraits<PHOTON_ELECTRON_MODE>
 
   //! Check if the particle type is compatible with the mode
   static inline bool isParticleTypeCompatible( const ParticleType type )
-  { return (type == PHOTON || type == ELECTRON ? true : false); }
+  { return (type == PHOTON || type == ELECTRON || type == POSITRON ? true : false); }
 };
 
 /*! Specialization of ParticleModeTypeTraits for NEUTRON_PHOTON_ELECTRON_MODE
@@ -100,7 +100,7 @@ struct ParticleModeTypeTraits<NEUTRON_PHOTON_ELECTRON_MODE>
 
   //! Check if the particle type is compatible with the mode
   static inline bool isParticleTypeCompatible( const ParticleType type )
-  { return (type == NEUTRON || type == PHOTON || type == ELECTRON ? true : false); }
+  { return (type == NEUTRON || type == PHOTON || type == ELECTRON || type == POSITRON ? true : false); }
 };
 
 /*! Specialization of ParticleModeTypeTraits for ADJOINT_PHOTON_MODE

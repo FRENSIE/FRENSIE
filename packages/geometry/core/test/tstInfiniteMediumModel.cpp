@@ -48,19 +48,6 @@ FRENSIE_UNIT_TEST( InfiniteMediumModel, hasCellEstimatorData )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the model material ids can be returned
-FRENSIE_UNIT_TEST( InfiniteMediumModel, getMaterialIds )
-{
-  Geometry::InfiniteMediumModel model;
-
-  Geometry::Model::MaterialIdSet material_ids;
-
-  model.getMaterialIds( material_ids );
-
-  FRENSIE_CHECK( material_ids.empty() );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the model cells can be returned
 FRENSIE_UNIT_TEST( InfiniteMediumModel, getCells )
 {
@@ -98,29 +85,44 @@ FRENSIE_UNIT_TEST( InfiniteMediumModel, getCells )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the model material ids can be returned
+FRENSIE_UNIT_TEST( InfiniteMediumModel, getMaterialIds )
+{
+  Geometry::InfiniteMediumModel model( 1, 1 );
+
+  Geometry::Model::MaterialIdSet material_ids;
+
+  model.getMaterialIds( material_ids );
+
+  FRENSIE_CHECK( material_ids.count( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cell material ids can be returned
 FRENSIE_UNIT_TEST( InfiniteMediumModel, getCellMaterialIds )
 {
-  Geometry::InfiniteMediumModel model( 1 );
+  Geometry::InfiniteMediumModel model( 1, 2 );
 
   Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;
 
   model.getCellMaterialIds( cell_id_mat_id_map );
 
-  FRENSIE_CHECK( cell_id_mat_id_map.empty() );
+  FRENSIE_REQUIRE( cell_id_mat_id_map.count( 1 ) );
+  FRENSIE_CHECK_EQUAL( cell_id_mat_id_map[1], 2 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell densities can be returned
 FRENSIE_UNIT_TEST( InfiniteMediumModel, getCellDensities )
 {
-  Geometry::InfiniteMediumModel model( 1 );
+  Geometry::InfiniteMediumModel model( 1, 2, 1.0*Geometry::Model::DensityUnit() );
 
   Geometry::Model::CellIdDensityMap cell_id_density_map;
 
   model.getCellDensities( cell_id_density_map );
 
-  FRENSIE_CHECK( cell_id_density_map.empty() );
+  FRENSIE_REQUIRE( cell_id_density_map.count( 1 ) );
+  FRENSIE_CHECK_EQUAL( cell_id_density_map[1], 1.0*Geometry::Model::DensityUnit() );
 }
 
 //---------------------------------------------------------------------------//
@@ -227,11 +229,12 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InfiniteMediumModel,
 
     createOArchive( archive_base_name, archive_ostream, oarchive );
 
-    Geometry::InfiniteMediumModel model( 1 );
+    Geometry::InfiniteMediumModel
+      model( 1, 2, 1.0*Geometry::Model::DensityUnit() );
 
-    std::unique_ptr<Geometry::Model> unique_model( new Geometry::InfiniteMediumModel( 2 ) );
+    std::unique_ptr<Geometry::Model> unique_model( new Geometry::InfiniteMediumModel( 2, 3, -1.0*Geometry::Model::DensityUnit() ) );
 
-    std::shared_ptr<Geometry::Model> shared_model( new Geometry::InfiniteMediumModel( 3 ) );
+    std::shared_ptr<Geometry::Model> shared_model( new Geometry::InfiniteMediumModel( 3, 4, -0.5*Geometry::Model::DensityUnit() ) );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( model ) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( unique_model ) );
@@ -246,21 +249,72 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( InfiniteMediumModel,
 
   createIArchive( archive_istream, iarchive );
 
-  Geometry::InfiniteMediumModel model( 100 );
+  {
+    Geometry::InfiniteMediumModel model( 100 );
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( model ) );
-  FRENSIE_CHECK( model.doesCellExist( 1 ) );
-  FRENSIE_CHECK( !model.doesCellExist( 100 ) );
+    FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( model ) );
+    FRENSIE_CHECK( model.doesCellExist( 1 ) );
+    FRENSIE_CHECK( !model.doesCellExist( 100 ) );
+    
+    Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;
+    
+    model.getCellMaterialIds( cell_id_mat_id_map );
+    
+    FRENSIE_REQUIRE( cell_id_mat_id_map.count( 1 ) );
+    FRENSIE_CHECK_EQUAL( cell_id_mat_id_map[1], 2 );
+    
+    Geometry::Model::CellIdDensityMap cell_id_density_map;
+    
+    model.getCellDensities( cell_id_density_map );
+    
+    FRENSIE_REQUIRE( cell_id_density_map.count( 1 ) );
+    FRENSIE_CHECK_EQUAL( cell_id_density_map[1],
+                         1.0*Geometry::Model::DensityUnit() );
+  }
 
-  std::unique_ptr<Geometry::Model> unique_model;
+  {
+    std::unique_ptr<Geometry::Model> unique_model;
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( unique_model ) );
-  FRENSIE_CHECK( unique_model->doesCellExist( 2 ) );
-  
-  std::shared_ptr<Geometry::Model> shared_model;
+    FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( unique_model ) );
+    FRENSIE_CHECK( unique_model->doesCellExist( 2 ) );
 
-  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_model ) );
-  FRENSIE_CHECK( shared_model->doesCellExist( 3 ) );
+    Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;
+
+    unique_model->getCellMaterialIds( cell_id_mat_id_map );
+    
+    FRENSIE_REQUIRE( cell_id_mat_id_map.count( 2 ) );
+    FRENSIE_CHECK_EQUAL( cell_id_mat_id_map[2], 3 );
+
+    Geometry::Model::CellIdDensityMap cell_id_density_map;
+
+    unique_model->getCellDensities( cell_id_density_map );
+
+    FRENSIE_REQUIRE( cell_id_density_map.count( 2 ) );
+    FRENSIE_CHECK_EQUAL( cell_id_density_map[2],
+                         -1.0*Geometry::Model::DensityUnit() );
+  }
+
+  {
+    std::shared_ptr<Geometry::Model> shared_model;
+
+    FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_model ) );
+    FRENSIE_CHECK( shared_model->doesCellExist( 3 ) );
+
+    Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;
+
+    shared_model->getCellMaterialIds( cell_id_mat_id_map );
+    
+    FRENSIE_REQUIRE( cell_id_mat_id_map.count( 3 ) );
+    FRENSIE_CHECK_EQUAL( cell_id_mat_id_map[3], 4 );
+
+    Geometry::Model::CellIdDensityMap cell_id_density_map;
+
+    shared_model->getCellDensities( cell_id_density_map );
+
+    FRENSIE_REQUIRE( cell_id_density_map.count( 3 ) );
+    FRENSIE_CHECK_EQUAL( cell_id_density_map[3],
+                         -0.5*Geometry::Model::DensityUnit() );
+  }
 }
 
 //---------------------------------------------------------------------------//

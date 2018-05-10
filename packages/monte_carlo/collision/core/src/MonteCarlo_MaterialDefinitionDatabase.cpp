@@ -209,22 +209,40 @@ void MaterialDefinitionDatabase::removeDefinition( const size_t material_id )
   }
 }
 
-// Get the unique scattering center names
-void MaterialDefinitionDatabase::getUniqueScatteringCenterNames(
-                      ScatteringCenterNameSet& scattering_center_names ) const
+// Get the material ids
+void MaterialDefinitionDatabase::getMaterialIds(
+                                            MaterialIdSet& material_ids ) const
 {
   auto material_definition_it = d_material_id_definition_map.cbegin();
 
   while( material_definition_it != d_material_id_definition_map.cend() )
   {
-    for( size_t i = 0; i < material_definition_it->second.size(); ++i )
-    {
-      scattering_center_names.insert(
-                        Utility::get<0>( material_definition_it->second[i] ) );
-    }
+    material_ids.insert( material_definition_it->first );
     
     ++material_definition_it;
   }
+}
+
+// Get the material ids
+auto MaterialDefinitionDatabase::getMaterialIds() const -> MaterialIdSet
+{
+  MaterialIdSet material_ids;
+
+  this->getMaterialIds( material_ids );
+
+  return material_ids;
+}
+
+// Get the unique scattering center names
+void MaterialDefinitionDatabase::getUniqueScatteringCenterNames(
+                      ScatteringCenterNameSet& scattering_center_names ) const
+{
+  MaterialIdSet material_ids;
+
+  this->getMaterialIds( material_ids );
+
+  this->getUniqueScatteringCenterNames( material_ids,
+                                        scattering_center_names );
 }
 
 // Get the unique scattering center names

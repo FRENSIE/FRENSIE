@@ -213,16 +213,19 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
 
       cs_array_size = static_cast<unsigned>( sigp_block[cs_index + 2u] );
 
-      FRENSIE_LOG_TAGGED_WARNING( "DecoupledPhotoProductionReactionACEFactory",
-                                  "SIGP reaction " << reaction->first <<
-                                  " specifies a threshold energy index of "
-                                  << threshold_energy_map[reaction->first] <<
-                                  " and a cross section size of "
-                                  << cs_array_size << ", which implies an "
-                                  "energy grid of size "
-                                  << threshold_energy_map[reaction->first] + cs_array_size <<
-                                  ". The expected energy grid size is "
-                                  << energy_grid_size << "!" );
+      FRENSIE_LOG_TAGGED_WARNING("DecoupledPhotonProductionReactionACEFactory",
+                                 "SIGP reaction " << reaction->first <<
+                                 " specifies a threshold energy index of "
+                                 << threshold_energy_map[reaction->first] <<
+                                 " and a cross section size of "
+                                 << cs_array_size << ", which implies an "
+                                 "energy grid of size "
+                                 << threshold_energy_map[reaction->first] + cs_array_size <<
+                                 ". The expected energy grid size is "
+                                 << energy_grid_size << "!" << " While this "
+                                 "is not expected to have an impact on a "
+                                 "simulation, you may want to contact the "
+                                 "data evaluators.");
 
       std::shared_ptr<std::vector<double> >& cross_section =
 	                                    xs_based_map[reaction->first];

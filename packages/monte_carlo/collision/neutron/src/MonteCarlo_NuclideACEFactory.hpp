@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Nuclide.hpp"
+#include "MonteCarlo_NeutronNuclearReactionACEFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
@@ -38,6 +39,12 @@ public:
 			 std::shared_ptr<const Nuclide>& nuclide );
 
 private:
+
+  // Create the scattering reactions
+  static void createScatteringReactions(
+                      const NeutronNuclearReactionACEFactory& reaction_factory,
+                      Nuclide::ConstReactionMap& scattering_reaction_map,
+                      Nuclide::ConstReactionMap& absorption_reaction_map );
 
   // Constructor
   NuclideACEFactory();

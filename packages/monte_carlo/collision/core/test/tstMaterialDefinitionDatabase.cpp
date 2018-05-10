@@ -218,6 +218,32 @@ FRENSIE_UNIT_TEST( MaterialDefinitionDatabase, iterate )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the material ids can be returned
+FRENSIE_UNIT_TEST( MaterialDefinitionDatabase, getMaterialIds )
+{
+  MonteCarlo::MaterialDefinitionDatabase database;
+  
+  database.addDefinition( 1, {"H", "O"}, {2.0, 1.0} );
+  database.addDefinition( "D2O", 2, {"H2", "O"}, {2.0, 1.0} );
+  
+  MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet material_ids;
+
+  database.getMaterialIds( material_ids );
+
+  FRENSIE_CHECK_EQUAL( material_ids.size(), 2 );
+  FRENSIE_CHECK( material_ids.count( 1 ) );
+  FRENSIE_CHECK( material_ids.count( 2 ) );
+
+  material_ids.clear();
+
+  material_ids = database.getMaterialIds();
+
+  FRENSIE_CHECK_EQUAL( material_ids.size(), 2 );
+  FRENSIE_CHECK( material_ids.count( 1 ) );
+  FRENSIE_CHECK( material_ids.count( 2 ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the unique scattering center names can be returned
 FRENSIE_UNIT_TEST( MaterialDefinitionDatabase, getUniqueScatteringCenterNames )
 {
@@ -233,6 +259,13 @@ FRENSIE_UNIT_TEST( MaterialDefinitionDatabase, getUniqueScatteringCenterNames )
   FRENSIE_CHECK( unique_scattering_center_names.count( "H" ) );
   FRENSIE_CHECK( unique_scattering_center_names.count( "H2" ) );
   FRENSIE_CHECK( unique_scattering_center_names.count( "O" ) );
+
+  unique_scattering_center_names = database.getUniqueScatteringCenterNames(
+                                                       std::set<size_t>({2}) );
+
+  FRENSIE_CHECK_EQUAL( unique_scattering_center_names.size(), 2 );
+  FRENSIE_CHECK( unique_scattering_center_names.count( "H2" ) );
+  FRENSIE_CHECK( unique_scattering_center_names.count( "O" ) );
   
   database.addDefinition( 3, {"H", "C", "O"}, {4, 1, 1} );
 
@@ -243,6 +276,17 @@ FRENSIE_UNIT_TEST( MaterialDefinitionDatabase, getUniqueScatteringCenterNames )
   FRENSIE_CHECK_EQUAL( unique_scattering_center_names.size(), 4 );
   FRENSIE_CHECK( unique_scattering_center_names.count( "H" ) );
   FRENSIE_CHECK( unique_scattering_center_names.count( "H2" ) );
+  FRENSIE_CHECK( unique_scattering_center_names.count( "O" ) );
+  FRENSIE_CHECK( unique_scattering_center_names.count( "C" ) );
+
+  unique_scattering_center_names.clear();
+
+  database.getUniqueScatteringCenterNames( std::unordered_set<int>({3}),
+                                           unique_scattering_center_names );
+                                           
+
+  FRENSIE_CHECK_EQUAL( unique_scattering_center_names.size(), 3 );
+  FRENSIE_CHECK( unique_scattering_center_names.count( "H" ) );
   FRENSIE_CHECK( unique_scattering_center_names.count( "O" ) );
   FRENSIE_CHECK( unique_scattering_center_names.count( "C" ) );
 }

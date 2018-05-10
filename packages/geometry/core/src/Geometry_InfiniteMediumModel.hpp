@@ -23,7 +23,9 @@ class InfiniteMediumModel : public Model
 public:
 
   //! Constructor
-  InfiniteMediumModel( const InternalCellHandle cell = 1 );
+  InfiniteMediumModel( const InternalCellHandle cell = 1,
+                       const Model::InternalMaterialHandle material_id = 0,
+                       const Model::Density density = 0.0*Model::DensityUnit() );
 
   //! Destructor
   ~InfiniteMediumModel()
@@ -90,7 +92,39 @@ private:
 
   // The infinite medium cell id
   InternalCellHandle d_cell;
+
+  // The infinite medium material id
+  Model::InternalMaterialHandle d_material_id;
+
+  // The infinite medium material density
+  Model::Density d_density;
 };
+
+// Save the model to an archive
+template<typename Archive>
+void InfiniteMediumModel::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+  
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+  ar & BOOST_SERIALIZATION_NVP( d_material_id );
+  ar & BOOST_SERIALIZATION_NVP( d_density );
+}
+
+// Load the model from an archive
+template<typename Archive>
+void InfiniteMediumModel::load( Archive& ar, const unsigned version )
+{
+  // Load the base class first
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( Model );
+  
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+  ar & BOOST_SERIALIZATION_NVP( d_material_id );
+  ar & BOOST_SERIALIZATION_NVP( d_density );
+}
   
 } // end Geometry namespace
 

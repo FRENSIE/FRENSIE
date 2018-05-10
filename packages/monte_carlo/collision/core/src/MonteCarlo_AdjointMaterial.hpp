@@ -63,10 +63,6 @@ public:
   //! Return the adjoint line energy weight factor
   double getAdjointLineEnergyWeightFactor( const double energy ) const;
 
-  //! Collide with a scattering center
-  void collideAnalogue( ParticleStateType& adjoint_particle,
-                        ParticleBank& bank ) const final override;
-
   //! Collide with a scattering center and survival bias
   void collideSurvivalBias( ParticleStateType& adjoint_particle,
                             ParticleBank& bank ) const final override;
