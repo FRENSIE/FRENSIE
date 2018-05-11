@@ -668,7 +668,7 @@ void ParticleState::extractFromModel()
 /*! \details This check is currently done using a simple memory comparison
  * between the cached model and the model of interest.
  */
-bool ParticleState::isEmbeddedInModel( const Geometry::Model& model )
+bool ParticleState::isEmbeddedInModel( const Geometry::Model& model ) const
 {
   return d_model.get() == &model;
 }

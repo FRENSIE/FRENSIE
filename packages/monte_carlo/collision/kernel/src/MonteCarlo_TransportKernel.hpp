@@ -72,11 +72,14 @@ double TransportKernel::sampleDistanceToNextCollisionSite(
 
     double cell_total_macro_cross_section = 0.0;
 
-    if( !d_model->isCellVoid<ParticleStateType>() )
+    if( !d_model->isCellVoid<ParticleStateType>(navigator->getCurrentCell()) )
     {
       cell_total_macro_cross_section =
         d_model->getMacroscopicTotalForwardCrossSectionQuick( particle );
     }
+    // The particle is inside of an empty infinite medium
+    else if( distance_to_cell_boundary == Utility::QuantityTraits<double>::inf() )
+      return distance_to_cell_boundary;
 
     double optical_path_to_cell_boundary =
       distance_to_cell_boundary*cell_total_macro_cross_section;
