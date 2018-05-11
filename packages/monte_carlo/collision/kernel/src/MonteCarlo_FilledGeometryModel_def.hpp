@@ -9,8 +9,6 @@
 #ifndef MONTE_CARLO_FILLED_GEOMETRY_MODEL_DEF_HPP
 #define MONTE_CARLO_FILLED_GEOMETRY_MODEL_DEF_HPP
 
-// FRENSIE Includes
-
 namespace MonteCarlo{
 
 namespace Details{
@@ -162,6 +160,73 @@ double FilledGeometryModel::getMacroscopicTotalForwardCrossSectionQuick(
                                 const double energy ) const
 {
   Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getMacroscopicTotalForwardCrossSectionQuick( cell, energy );
+}
+
+// Get the adjoint weight factor of a material for the given particle type
+template<typename ParticleStateType>
+double FilledGeometryModel::getAdjointWeightFactor(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const
+{
+  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactor( cell, energy );
+}
+
+// Get the adjoint weight factor of a material for the given particle type
+template<typename ParticleStateType>
+double FilledGeometryModel::getAdjointWeightFactorQuick(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const
+{
+  Details::FilledGeometryModelUpcastHelper<ParticleStateType>::UpcastType::getAdjointWeightFactorQuick( cell, energy );
+}
+
+// Save the object to an archive
+template<typename Archive>
+void FilledGeometryModel::save( Archive& ar, const unsigned version ) const
+{
+  std::string raw_path;
+    
+  // Convert the database path to an absolute path
+  if( d_database_path.is_relative() )
+  {
+    boost::filesystem::path absolute_database_path =
+      boost::filesystem::absolute( d_database_path );
+
+    raw_path = absolute_database_path.string();
+  }
+  else
+    raw_path = d_database_path.string();
+  
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+  
+  ar & BOOST_SERIALIZATION_NVP( d_scattering_center_definitions );
+  ar & BOOST_SERIALIZATION_NVP( d_material_definitions );
+  ar & BOOST_SERIALIZATION_NVP( d_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_unfilled_model );
+}
+
+// Load the object from an archive
+template<typename Archive>
+void FilledGeometryModel::load( Archive& ar, const unsigned version )
+{
+  // Load the database path
+  std::string raw_path;
+  ar & BOOST_SERIALIZATION_NVP( raw_path );
+
+  d_database_path = raw_path;
+  d_database_path.make_preferred();
+
+  // If the database path is no longer valid - try to use the default path
+  if( !boost::filesystem::is_directory( d_database_path ) )
+    d_database_path = s_default_database_path;
+
+  ar & BOOST_SERIALIZATION_NVP( d_scattering_center_definitions );
+  ar & BOOST_SERIALIZATION_NVP( d_material_definitions );
+  ar & BOOST_SERIALIZATION_NVP( d_properties );
+  ar & BOOST_SERIALIZATION_NVP( d_unfilled_model );
+
+  // Fill the geometry
+  this->fillGeometry( false );
 }
 
 } // end MonteCarlo namespace

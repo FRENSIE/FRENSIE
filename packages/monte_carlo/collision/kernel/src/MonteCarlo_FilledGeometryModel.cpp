@@ -9,21 +9,52 @@
 // Std Lib Includes
 #include <stdexcept>
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_FilledGeometryModel.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_ParticleModeTypeTraits.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Initialize static member data
+boost::filesystem::path FilledGeometryModel::s_default_database_path;
+
+// Set the default database path
+void FilledGeometryModel::setDefaultDatabasePath(
+                         const boost::filesystem::path& default_database_path )
+{
+  s_default_database_path = default_database_path;
+
+  s_default_database_path.make_preferred();
+}
+
+// Default constructor
+FilledGeometryModel::FilledGeometryModel()
+{ /* ... */ }
 
 // Constructor
 FilledGeometryModel::FilledGeometryModel(
        const boost::filesystem::path& database_path,
-       const ScatteringCenterDefinitionDatabase& scattering_center_definitions,
-       const MaterialDefinitionDatabase& material_definitions,
-       const SimulationProperties& properties,
+       const std::shared_ptr<const ScatteringCenterDefinitionDatabase>&
+       scattering_center_definitions,
+       const std::shared_ptr<const MaterialDefinitionDatabase>&
+       material_definitions,
+       const std::shared_ptr<const SimulationProperties>& properties,
        const std::shared_ptr<const Geometry::Model>& geometry_model,
        const bool verbose_construction )
   : FilledNeutronGeometryModel( geometry_model ),
@@ -32,12 +63,94 @@ FilledGeometryModel::FilledGeometryModel(
     FilledElectronGeometryModel( geometry_model ),
     FilledAdjointElectronGeometryModel( geometry_model ),
     FilledPositronGeometryModel( geometry_model ),
+    d_database_path( database_path ),
+    d_scattering_center_definitions( scattering_center_definitions ),
+    d_material_definitions( material_definitions ),
+    d_properties( properties ),
     d_unfilled_model( geometry_model )
 {
+  // Make sure that the scattering center definitions are valid
+  testPrecondition( scattering_center_definitions.get() );
+  // Make sure that the material definitions are valid
+  testPrecondition( material_definitions.get() );
+  // Make sure that the properties are valid
+  testPrecondition( properties.get() );
+  // Make sure that the geometry model is valid
+  testPrecondition( geometry_model.get() );
+  
+  this->fillGeometry( verbose_construction );
+}
+  
+// Check if a cell is void
+bool FilledGeometryModel::isCellVoid(
+                           const Geometry::Model::InternalCellHandle cell,
+                           const MonteCarlo::ParticleType particle_type ) const
+{
+  switch( particle_type )
+  {
+  case NEUTRON:
+    return FilledNeutronGeometryModel::isCellVoid( cell );
+  case PHOTON:
+    return FilledPhotonGeometryModel::isCellVoid( cell );
+  case ADJOINT_PHOTON:
+    return FilledAdjointPhotonGeometryModel::isCellVoid( cell );
+  case ELECTRON:
+    return FilledElectronGeometryModel::isCellVoid( cell );
+  case ADJOINT_ELECTRON:
+    return FilledAdjointElectronGeometryModel::isCellVoid( cell );
+  case POSITRON:
+    return FilledPositronGeometryModel::isCellVoid( cell );
+  default:
+    THROW_EXCEPTION( std::logic_error,
+                     "Particle type " << particle_type <<
+                     " is not recognized by the collision kernel!" );
+  }
+}
+
+// Get the unfilled geometry model
+const Geometry::Model& FilledGeometryModel::getUnfilledModel() const
+{
+  return *d_unfilled_model;
+}
+
+// Convert to a const unfilled model reference
+FilledGeometryModel::operator const Geometry::Model&() const
+{
+  return *d_unfilled_model;
+}
+
+// Convert to a shared unfilled model
+FilledGeometryModel::operator std::shared_ptr<const Geometry::Model>() const
+{
+  return d_unfilled_model;
+}
+
+// Pass the unfilled model to the bases
+void FilledGeometryModel::passUnfilledModelToBases()
+{
+  FilledNeutronGeometryModel::setUnfilledModel( d_unfilled_model );
+  FilledPhotonGeometryModel::setUnfilledModel( d_unfilled_model );
+  FilledAdjointPhotonGeometryModel::setUnfilledModel( d_unfilled_model );
+  FilledElectronGeometryModel::setUnfilledModel( d_unfilled_model );
+  FilledAdjointElectronGeometryModel::setUnfilledModel( d_unfilled_model );
+  FilledPositronGeometryModel::setUnfilledModel( d_unfilled_model );
+}
+
+// Fill the geometry
+void FilledGeometryModel::fillGeometry( const bool verbose )
+{
+  this->passUnfilledModelToBases();
+    
+  // Make sure that the database path is valid
+  TEST_FOR_EXCEPTION( !boost::filesystem::is_directory( d_database_path ),
+                      std::runtime_error,
+                      "The database path (" << d_database_path.string() <<
+                      ") is not a valid directory path!" );
+  
   // Get the material ids defined in the geometry
   Geometry::Model::MaterialIdSet required_material_ids;
 
-  geometry_model->getMaterialIds( required_material_ids );
+  d_unfilled_model->getMaterialIds( required_material_ids );
 
   // Check that the required material ids are valid
   Geometry::Model::MaterialIdSet::const_iterator required_material_id_it =
@@ -45,7 +158,7 @@ FilledGeometryModel::FilledGeometryModel(
 
   while( required_material_id_it != required_material_ids.end() )
   {
-    TEST_FOR_EXCEPTION( !material_definitions.doesDefinitionExist( *required_material_id_it ),
+    TEST_FOR_EXCEPTION( !d_material_definitions->doesDefinitionExist( *required_material_id_it ),
                         std::runtime_error,
                         "No definition for material "
                         << *required_material_id_it << " has been defined!" );
@@ -53,33 +166,32 @@ FilledGeometryModel::FilledGeometryModel(
     ++required_material_id_it;
   }
 
-  std::cout << "required materials: " << required_material_ids << std::endl;
-
   // Check for extraneous user-defined materials
   MaterialDefinitionDatabase::MaterialDefinitionIterator
-    database_material_id_it = material_definitions.begin();
+    database_material_id_it = d_material_definitions->begin();
 
-  std::cout << material_definitions.getDefinition( 2 ) << std::endl;
-
-  while( database_material_id_it != material_definitions.end() )
+  if( verbose )
   {
-    if( required_material_ids.find( database_material_id_it->first ) ==
-        required_material_ids.end() )
+    while( database_material_id_it != d_material_definitions->end() )
     {
-      FRENSIE_LOG_TAGGED_WARNING( "FilledGeometryModel",
-                                  "Material "
-                                  << database_material_id_it->first <<
-                                  " is not used!" );
-    }
+      if( required_material_ids.find( database_material_id_it->first ) ==
+          required_material_ids.end() )
+      {
+        FRENSIE_LOG_TAGGED_WARNING( "FilledGeometryModel",
+                                    "Material "
+                                    << database_material_id_it->first <<
+                                    " is not used!" );
+      }
 
-    ++database_material_id_it;
+      ++database_material_id_it;
+    }
   }
 
   // Get the unique scattering center names used by materials
   MaterialDefinitionDatabase::ScatteringCenterNameSet
     unique_scattering_center_names;
 
-  material_definitions.getUniqueScatteringCenterNames(
+  d_material_definitions->getUniqueScatteringCenterNames(
                                               required_material_ids,
                                               unique_scattering_center_names );
 
@@ -89,7 +201,7 @@ FilledGeometryModel::FilledGeometryModel(
 
   while( unique_scattering_center_names_it != unique_scattering_center_names.end() )
   {
-    TEST_FOR_EXCEPTION( !scattering_center_definitions.doesDefinitionExist( *unique_scattering_center_names_it ),
+    TEST_FOR_EXCEPTION( !d_scattering_center_definitions->doesDefinitionExist( *unique_scattering_center_names_it ),
                         std::runtime_error,
                         "Scattering center "
                         << *unique_scattering_center_names_it <<
@@ -102,8 +214,8 @@ FilledGeometryModel::FilledGeometryModel(
   Geometry::Model::CellIdMatIdMap cell_id_mat_id_map;
   Geometry::Model::CellIdDensityMap cell_id_density_map;
 
-  geometry_model->getCellMaterialIds( cell_id_mat_id_map );
-  geometry_model->getCellDensities( cell_id_density_map );
+  d_unfilled_model->getCellMaterialIds( cell_id_mat_id_map );
+  d_unfilled_model->getCellDensities( cell_id_density_map );
 
   Geometry::Model::CellIdMatIdMap::const_iterator cell_id_mat_id_it =
     cell_id_mat_id_map.begin();
@@ -141,22 +253,22 @@ FilledGeometryModel::FilledGeometryModel(
     atomic_relaxation_model_factory( new AtomicRelaxationModelFactory );
 
   // Only load the particle materials required by the simulation mode
-  ParticleModeType mode = properties.getParticleMode();
+  ParticleModeType mode = d_properties->getParticleMode();
 
   // Load the neutron materials
   if( MonteCarlo::isParticleTypeCompatible( mode, NEUTRON ) )
   {
     try{
       FilledNeutronGeometryModel::loadMaterialsAndFillModel(
-                                               database_path,
-                                               unique_scattering_center_names,
-                                               scattering_center_definitions,
-                                               atomic_relaxation_model_factory,
-                                               properties,
-                                               verbose_construction,
-                                               material_definitions,
-                                               cell_id_mat_id_map,
-                                               cell_id_density_map );
+                                              d_database_path,
+                                              unique_scattering_center_names,
+                                              *d_scattering_center_definitions,
+                                              atomic_relaxation_model_factory,
+                                              *d_properties,
+                                              verbose,
+                                              *d_material_definitions,
+                                              cell_id_mat_id_map,
+                                              cell_id_density_map );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Could not fill the model with neutron "
@@ -168,15 +280,15 @@ FilledGeometryModel::FilledGeometryModel(
   {
     try{
       FilledPhotonGeometryModel::loadMaterialsAndFillModel(
-                                               database_path,
-                                               unique_scattering_center_names,
-                                               scattering_center_definitions,
-                                               atomic_relaxation_model_factory,
-                                               properties,
-                                               verbose_construction,
-                                               material_definitions,
-                                               cell_id_mat_id_map,
-                                               cell_id_density_map );
+                                              d_database_path,
+                                              unique_scattering_center_names,
+                                              *d_scattering_center_definitions,
+                                              atomic_relaxation_model_factory,
+                                              *d_properties,
+                                              verbose,
+                                              *d_material_definitions,
+                                              cell_id_mat_id_map,
+                                              cell_id_density_map );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Could not fill the model with photon "
@@ -188,15 +300,15 @@ FilledGeometryModel::FilledGeometryModel(
   {
     try{
       FilledAdjointPhotonGeometryModel::loadMaterialsAndFillModel(
-                                               database_path,
-                                               unique_scattering_center_names,
-                                               scattering_center_definitions,
-                                               atomic_relaxation_model_factory,
-                                               properties,
-                                               verbose_construction,
-                                               material_definitions,
-                                               cell_id_mat_id_map,
-                                               cell_id_density_map );
+                                              d_database_path,
+                                              unique_scattering_center_names,
+                                              *d_scattering_center_definitions,
+                                              atomic_relaxation_model_factory,
+                                              *d_properties,
+                                              verbose,
+                                              *d_material_definitions,
+                                              cell_id_mat_id_map,
+                                              cell_id_density_map );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Could not fill the model with adjoint photon "
@@ -208,15 +320,15 @@ FilledGeometryModel::FilledGeometryModel(
   {
     try{
       FilledElectronGeometryModel::loadMaterialsAndFillModel(
-                                               database_path,
-                                               unique_scattering_center_names,
-                                               scattering_center_definitions,
-                                               atomic_relaxation_model_factory,
-                                               properties,
-                                               verbose_construction,
-                                               material_definitions,
-                                               cell_id_mat_id_map,
-                                               cell_id_density_map );
+                                              d_database_path,
+                                              unique_scattering_center_names,
+                                              *d_scattering_center_definitions,
+                                              atomic_relaxation_model_factory,
+                                              *d_properties,
+                                              verbose,
+                                              *d_material_definitions,
+                                              cell_id_mat_id_map,
+                                              cell_id_density_map );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Could not fill the model with electron "
@@ -224,15 +336,15 @@ FilledGeometryModel::FilledGeometryModel(
 
     try{
       FilledPositronGeometryModel::loadMaterialsAndFillModel(
-                                               database_path,
-                                               unique_scattering_center_names,
-                                               scattering_center_definitions,
-                                               atomic_relaxation_model_factory,
-                                               properties,
-                                               verbose_construction,
-                                               material_definitions,
-                                               cell_id_mat_id_map,
-                                               cell_id_density_map );
+                                              d_database_path,
+                                              unique_scattering_center_names,
+                                              *d_scattering_center_definitions,
+                                              atomic_relaxation_model_factory,
+                                              *d_properties,
+                                              verbose,
+                                              *d_material_definitions,
+                                              cell_id_mat_id_map,
+                                              cell_id_density_map );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Could not fill the model with positron "
@@ -244,59 +356,23 @@ FilledGeometryModel::FilledGeometryModel(
   {
     try{
       FilledAdjointElectronGeometryModel::loadMaterialsAndFillModel(
-                                               database_path,
-                                               unique_scattering_center_names,
-                                               scattering_center_definitions,
-                                               atomic_relaxation_model_factory,
-                                               properties,
-                                               verbose_construction,
-                                               material_definitions,
-                                               cell_id_mat_id_map,
-                                               cell_id_density_map );
+                                              d_database_path,
+                                              unique_scattering_center_names,
+                                              *d_scattering_center_definitions,
+                                              atomic_relaxation_model_factory,
+                                              *d_properties,
+                                              verbose,
+                                              *d_material_definitions,
+                                              cell_id_mat_id_map,
+                                              cell_id_density_map );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
                              "Could not fill the model with adjoint electron "
                              "materials!" );
   }
 }
-  
-// Check if a cell is void
-bool FilledGeometryModel::isCellVoid(
-                           const Geometry::Model::InternalCellHandle cell,
-                           const MonteCarlo::ParticleType particle_type ) const
-{
-  switch( particle_type )
-  {
-  case NEUTRON:
-    return FilledNeutronGeometryModel::isCellVoid( cell );
-  case PHOTON:
-    return FilledPhotonGeometryModel::isCellVoid( cell );
-  case ADJOINT_PHOTON:
-    return FilledAdjointPhotonGeometryModel::isCellVoid( cell );
-  case ELECTRON:
-    return FilledElectronGeometryModel::isCellVoid( cell );
-  case ADJOINT_ELECTRON:
-    return FilledAdjointElectronGeometryModel::isCellVoid( cell );
-  case POSITRON:
-    return FilledPositronGeometryModel::isCellVoid( cell );
-  default:
-    THROW_EXCEPTION( std::logic_error,
-                     "Particle type " << particle_type <<
-                     " is not recognized by the collision kernel!" );
-  }
-}
 
-// Convert to a const unfilled model reference
-FilledGeometryModel::operator const Geometry::Model&() const
-{
-  return *d_unfilled_model;
-}
-
-// Convert to a shared unfilled model
-FilledGeometryModel::operator std::shared_ptr<const Geometry::Model>() const
-{
-  return d_unfilled_model;
-}
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( FilledGeometryModel );
   
 } // end MonteCarlo namespace
 

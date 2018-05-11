@@ -11,6 +11,7 @@
 
 // Boost Includes
 #include <boost/filesystem.hpp>
+#include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_FilledNeutronGeometryModel.hpp"
@@ -22,7 +23,9 @@
 #include "MonteCarlo_ScatteringCenterDefinitionDatabase.hpp"
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Model.hpp"
+#include "Utility_SerializationHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -44,16 +47,22 @@ public:
 
   //! Constructor
   FilledGeometryModel(
-       const boost::filesystem::path& database_path,
-       const ScatteringCenterDefinitionDatabase& scattering_center_definitions,
-       const MaterialDefinitionDatabase& material_definitions,
-       const SimulationProperties& properties,
-       const std::shared_ptr<const Geometry::Model>& geometry_model,
-       const bool verbose_construction = true );
+               const boost::filesystem::path& database_path,
+               const std::shared_ptr<const ScatteringCenterDefinitionDatabase>&
+               scattering_center_definitions,
+               const std::shared_ptr<const MaterialDefinitionDatabase>&
+               material_definitions,
+               const std::shared_ptr<const SimulationProperties>& properties,
+               const std::shared_ptr<const Geometry::Model>& geometry_model,
+               const bool verbose_construction = true );
 
   //! Destructor
   ~FilledGeometryModel()
   { /* ... */ }
+
+  //! Set the default database path
+  static void setDefaultDatabasePath(
+                        const boost::filesystem::path& default_database_path );
 
   //! Check if a cell is void (as experienced by the given particle type)
   bool isCellVoid( const Geometry::Model::InternalCellHandle cell,
@@ -75,18 +84,6 @@ public:
   //! Get the total macroscopic cross section of a material for the given particle type
   template<typename ParticleStateType>
   double getMacroscopicTotalCrossSectionQuick(
-                                const Geometry::Model::InternalCellHandle cell,
-                                const double energy ) const;
-
-  //! Get the total forward macroscopic cross section of a material for the given particle type
-  template<typename ParticleStateType>
-  double getMacroscopicTotalForwardCrossSection(
-                                const Geometry::Model::InternalCellHandle cell,
-                                const double energy ) const;
-
-  //! Get the total macroscopic cross section of a material for the given particle type
-  template<typename ParticleStateType>
-  double getMacroscopicTotalForwardCrossSectionQuick(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const;
 
@@ -126,6 +123,18 @@ public:
   //! Get the total macroscopic cross section of a material for positrons
   using FilledPositronGeometryModel::getMacroscopicTotalCrossSectionQuick;
 
+  //! Get the total forward macroscopic cross section of a material for the given particle type
+  template<typename ParticleStateType>
+  double getMacroscopicTotalForwardCrossSection(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
+
+  //! Get the total macroscopic cross section of a material for the given particle type
+  template<typename ParticleStateType>
+  double getMacroscopicTotalForwardCrossSectionQuick(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
+
   //! Get the total forward macroscopic cs of a material for neutrons
   using FilledNeutronGeometryModel::getMacroscopicTotalForwardCrossSection;
 
@@ -162,6 +171,18 @@ public:
   //! Get the total forward macroscopic cs of a material for positrons
   using FilledPositronGeometryModel::getMacroscopicTotalForwardCrossSectionQuick;
 
+  //! Get the adjoint weight factor of a material for the given particle type
+  template<typename ParticleStateType>
+  double getAdjointWeightFactor(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
+
+  //! Get the adjoint weight factor of a material for the given particle type
+  template<typename ParticleStateType>
+  double getAdjointWeightFactorQuick(
+                                const Geometry::Model::InternalCellHandle cell,
+                                const double energy ) const;
+
   //! Get the adjoint weight factor for adjoint photons
   using FilledAdjointPhotonGeometryModel::getAdjointWeightFactor;
 
@@ -175,7 +196,7 @@ public:
   using FilledAdjointElectronGeometryModel::getAdjointWeightFactorQuick;
 
   //! Get the unfilled geometry model
-  using FilledNeutronGeometryModel::getUnfilledModel;
+  const Geometry::Model& getUnfilledModel() const;
 
   //! Convert to a const unfilled model reference
   operator const Geometry::Model&() const;
@@ -185,11 +206,53 @@ public:
 
 private:
 
+  //! Default constructor
+  FilledGeometryModel();
+
+  // Pass the unfilled model to the bases
+  void passUnfilledModelToBases();
+
+  // Fill the geometry
+  void fillGeometry( const bool verbose );
+
+  // Save the object to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the object from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  // The default path to the cross section database
+  static boost::filesystem::path s_default_database_path;
+
+  // The path to the cross section database
+  boost::filesystem::path d_database_path;
+
+  // The scattering center definitions
+  std::shared_ptr<const ScatteringCenterDefinitionDatabase>
+  d_scattering_center_definitions;
+
+  // The material definitions
+  std::shared_ptr<const MaterialDefinitionDatabase> d_material_definitions;
+
+  // The simulation properties
+  std::shared_ptr<const SimulationProperties> d_properties;
+
   // The unfilled model
   std::shared_ptr<const Geometry::Model> d_unfilled_model;
 };
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( FilledGeometryModel, MonteCarlo, 0 );
+
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( FilledGeometryModel );
 
 //---------------------------------------------------------------------------//
 // Template Includes

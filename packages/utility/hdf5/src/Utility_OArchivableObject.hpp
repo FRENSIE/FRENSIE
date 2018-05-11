@@ -40,6 +40,12 @@ public:
   //! Archive the object
   void saveToFile( const boost::filesystem::path& archive_name_with_path,
                    const bool overwrite = false ) const;
+
+private:
+
+  // Archive the object using the required archive
+  template<typename Archive>
+  void saveToArchive( Archive& archive ) const;
 };
   
 } // end Utility namespace

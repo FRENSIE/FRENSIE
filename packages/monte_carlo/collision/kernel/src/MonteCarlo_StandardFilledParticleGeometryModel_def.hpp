@@ -17,6 +17,11 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+template<typename Material>
+StandardFilledParticleGeometryModel<Material>::StandardFilledParticleGeometryModel()
+{ /* ... */ }
+
 // Constructor
 template<typename Material>
 StandardFilledParticleGeometryModel<Material>::StandardFilledParticleGeometryModel(
@@ -26,6 +31,17 @@ StandardFilledParticleGeometryModel<Material>::StandardFilledParticleGeometryMod
 {
   // Make sure that the unfilled model is valid
   testPrecondition( unfilled_model.get() );
+}
+
+// Set the unfilled model
+template<typename Material>
+void StandardFilledParticleGeometryModel<Material>::setUnfilledModel(
+                 const std::shared_ptr<const Geometry::Model>& unfilled_model )
+{
+  // Make sure that the unfilled model is valid
+  testPrecondition( unfilled_model.get() );
+  
+  d_unfilled_model = unfilled_model;
 }
 
 // Load the materials and fill the model
@@ -352,6 +368,13 @@ double StandardFilledParticleGeometryModel<Material>::getMacroscopicReactionCros
   
   return this->getMaterial( cell )->getMacroscopicReactionCrossSection(
                                                             energy, reaction );
+}
+
+// Get the unfilled model
+template<typename Material>
+const Geometry::Model& StandardFilledParticleGeometryModel<Material>::getUnfilledModel() const
+{
+  return *d_unfilled_model;
 }
   
 } // end MonteCarlo namespace
