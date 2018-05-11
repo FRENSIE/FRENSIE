@@ -3319,6 +3319,582 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_photon_mode,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_filled_geometry_model_photon_mode" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Geometry::Model> unfilled_model(
+            new Geometry::InfiniteMediumModel( 1, 1, -1.0/cubic_centimeter ) );
+
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_MODE );
+
+    std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
+                                 new MonteCarlo::FilledGeometryModel(
+                                         data_directory,
+                                         scattering_center_definition_database,
+                                         material_definition_database,
+                                         properties,
+                                         unfilled_model,
+                                         true ) );
+
+    //FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model ) );
+    (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
+  
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::PhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::ElectronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::PositronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_NEUTRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointNeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointElectronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_electron_mode,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_filled_geometry_model_electron_mode" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Geometry::Model> unfilled_model(
+            new Geometry::InfiniteMediumModel( 1, 1, -1.0/cubic_centimeter ) );
+
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::ELECTRON_MODE );
+
+    std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
+                                 new MonteCarlo::FilledGeometryModel(
+                                         data_directory,
+                                         scattering_center_definition_database,
+                                         material_definition_database,
+                                         properties,
+                                         unfilled_model,
+                                         true ) );
+
+    //FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model ) );
+    (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
+  
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::PhotonState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::ElectronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::PositronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_NEUTRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointNeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointElectronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_neutron_photon_mode,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_filled_geometry_model_neutron_photon_mode" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Geometry::Model> unfilled_model(
+            new Geometry::InfiniteMediumModel( 1, 1, -1.0/cubic_centimeter ) );
+
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
+
+    std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
+                                 new MonteCarlo::FilledGeometryModel(
+                                         data_directory,
+                                         scattering_center_definition_database,
+                                         material_definition_database,
+                                         properties,
+                                         unfilled_model,
+                                         true ) );
+
+    //FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model ) );
+    (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
+  
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::PhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::ElectronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::PositronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_NEUTRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointNeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointElectronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_photon_electron_mode,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_filled_geometry_model_photon_electron_mode" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Geometry::Model> unfilled_model(
+            new Geometry::InfiniteMediumModel( 1, 1, -1.0/cubic_centimeter ) );
+
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::PHOTON_ELECTRON_MODE );
+
+    std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
+                                 new MonteCarlo::FilledGeometryModel(
+                                         data_directory,
+                                         scattering_center_definition_database,
+                                         material_definition_database,
+                                         properties,
+                                         unfilled_model,
+                                         true ) );
+
+    //FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model ) );
+    (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
+  
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::PhotonState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::ElectronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::PositronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_NEUTRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointNeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointElectronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_neutron_photon_electron_mode,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_filled_geometry_model_neutron_photon_electron_mode" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Geometry::Model> unfilled_model(
+            new Geometry::InfiniteMediumModel( 1, 1, -1.0/cubic_centimeter ) );
+
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
+
+    std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
+                                 new MonteCarlo::FilledGeometryModel(
+                                         data_directory,
+                                         scattering_center_definition_database,
+                                         material_definition_database,
+                                         properties,
+                                         unfilled_model,
+                                         true ) );
+
+    //FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model ) );
+    (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
+  
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::PhotonState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::ElectronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::PositronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_NEUTRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointNeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointElectronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_adjoint_neutron_mode,
+                                   TestArchives )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_adjoint_photon_mode,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_filled_geometry_adjoint_photon_mode" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Geometry::Model> unfilled_model(
+            new Geometry::InfiniteMediumModel( 1, 2, -1.0/cubic_centimeter ) );
+
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::ADJOINT_PHOTON_MODE );
+
+    std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
+                                 new MonteCarlo::FilledGeometryModel(
+                                         data_directory,
+                                         scattering_center_definition_database,
+                                         material_definition_database,
+                                         properties,
+                                         unfilled_model,
+                                         true ) );
+
+    //FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model ) );
+    (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::PhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::ElectronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::PositronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_NEUTRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointNeutronState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::AdjointPhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointElectronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a filled geometry model can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( FilledGeometryModel,
+                                   archive_adjoint_electron_mode,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_filled_geometry_adjoint_electron_mode" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Geometry::Model> unfilled_model(
+            new Geometry::InfiniteMediumModel( 1, 2, -1.0/cubic_centimeter ) );
+
+    std::shared_ptr<MonteCarlo::SimulationProperties> properties( new MonteCarlo::SimulationProperties );
+    properties->setParticleMode( MonteCarlo::ADJOINT_ELECTRON_MODE );
+
+    std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model(
+                                 new MonteCarlo::FilledGeometryModel(
+                                         data_directory,
+                                         scattering_center_definition_database,
+                                         material_definition_database,
+                                         properties,
+                                         unfilled_model,
+                                         true ) );
+
+    //FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model ) );
+    (*oarchive) << BOOST_SERIALIZATION_NVP( filled_model );
+    FRENSIE_FLUSH_ALL_LOGS();
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::unique_ptr<MonteCarlo::FilledGeometryModel> filled_model;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( filled_model ) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK( !filled_model->isTerminationCell( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::NeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::PhotonState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::ElectronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::POSITRON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::PositronState>( 1 ) );
+
+  // FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_NEUTRON ) );
+  // FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointNeutronState>( 1 ) );
+
+  FRENSIE_CHECK( filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_PHOTON ) );
+  FRENSIE_CHECK( filled_model->isCellVoid<MonteCarlo::AdjointPhotonState>( 1 ) );
+
+  FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_ELECTRON ) );
+  FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::AdjointElectronState>( 1 ) );
+
+  // FRENSIE_CHECK( !filled_model->isCellVoid( 1, MonteCarlo::ADJOINT_POSITRON ) );
+  // FRENSIE_CHECK( !filled_model->isCellVoid<MonteCarlo::AdjointPositronState>( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
 // Custom Setup
 //---------------------------------------------------------------------------//
 FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();

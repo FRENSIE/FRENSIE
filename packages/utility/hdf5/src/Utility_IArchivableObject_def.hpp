@@ -91,6 +91,27 @@ template<typename DerivedType>
 template<typename Archive>
 void IArchivableObject<DerivedType>::loadFromArchive( Archive& archive )
 {
+  // Note: There appears to be an error in the boost serialization library
+  // when loading from an archive. For some reason the iserializer for
+  // std::vector<double> does not get initialized correctly. The iserializer
+  // for non-pointer types should always have a NULL bpis (pointer iserializer)
+  // but with std::vector<double> it is **sometimes** and **unpredictably** set
+  // to a non-null value! When this happens, the basic_iarchive::load_preamble
+  // will erroneously set the tracking_level for std::vector<double> to true
+  // (i.e. it will treat the vector as a pointer to a vector). This will cause
+  // the return statement at basic_iarchive.cpp:397 to be hit, which will
+  // prevent the vector from ever being loaded, and more importantly, it will
+  // prevent the archive stream from being moved passed the vector data
+  // characters. When the iarchive calls load_end next, the data that gets read
+  // in will be unexpected by the archive, which will result in an
+  // input_stream_error exception being thrown. To avoid this situation, we
+  // will always check the value of the bpis for the std::vector<double>
+  // iserializer here and set it back to NULL if necessary.
+  if( boost::serialization::singleton<boost::archive::detail::iserializer<Archive, std::vector<double> > >::get_const_instance().get_bpis_ptr() != NULL )
+  {
+    boost::serialization::singleton<boost::archive::detail::iserializer<Archive, std::vector<double> > >::get_mutable_instance().set_bpis( NULL );
+  }
+  
   try{
     archive >> boost::serialization::make_nvp( this->getIArchiveName(), *dynamic_cast<DerivedType*>(this) );
   }
@@ -99,24 +120,6 @@ void IArchivableObject<DerivedType>::loadFromArchive( Archive& archive )
                               "Unable to load the object from the desired "
                               "archive!" );
 }
-
-// Note: There appears to be an error in the boost serialization library
-// when loading an archive through a polymorphic_iarchive. For some reason
-// the iserializer for std::vector<double> does not get initialized
-// correctly. The iserializer for non-pointer types should always have
-// a NULL bpis (pointer iserializer) but with std::vector<double> it is
-// **sometimes** and **unpredictably** set to a non-null value! When this
-// happens, the basic_iarchive::load_preamble will erroneously set the
-// tracking_level for std::vector<double> to true (i.e. it will treat the
-// vector as a pointer to a vector). This will cause the return statement at
-// basic_iarchive.cpp:397 to be hit, which will prevent the vector from
-// every being loaded and more importantly, it will prevent the archive
-// stream from being moved passed the vector data characters. When the
-// polymorphic_iarchive calls load_end next, the data that gets read in will
-// be unexpected by the archive, which will result in an input_stream_error
-// exception being thrown. To avoid this situation, we will always check
-// the value of the bpis for the std::vector<double> iserializer here and
-// set it back to NULL if necessary.
   
 // if( boost::serialization::singleton<boost::archive::detail::iserializer<boost::archive::polymorphic_iarchive, std::vector<double> > >::get_const_instance().get_bpis_ptr() != NULL )
 // {
