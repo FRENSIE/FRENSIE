@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Test_Root_Geometry.C
+//! \file   test_root_geometry.c
 //! \author Eli Moll
 //! \brief  Geometry for unit testing on ROOT implementation
 //!
@@ -11,7 +11,7 @@
  * surrounding volume is a cube of side length 10cm centered at (0,0,0) filled
  * with the terminal material.
  */
-void Test_Root_Geometry()
+void test_root_geometry()
 {
   // Set up manager of geometry world
   gSystem->Load( "libGeom" );
@@ -22,7 +22,7 @@ void Test_Root_Geometry()
   TGeoMaterial *void_mat = new TGeoMaterial( "void",0,0,0 );
   TGeoMedium   *void_med = new TGeoMedium( "void_med",1,void_mat );
 
-  TGeoMaterial *mat_1 = new TGeoMaterial( "mat_1",1,1,1 );
+  TGeoMaterial *mat_1 = new TGeoMaterial( "mat_1",1,1,-1.0 );
   TGeoMedium   *med_1 = new TGeoMedium( "med_1",2,mat_1 );
 
   TGeoMaterial *terminal_mat = new TGeoMaterial( "graveyard",0,0,0 );
@@ -52,12 +52,12 @@ void Test_Root_Geometry()
   // gGeoManager->SetTopVisible();
   // terminal_cube->Draw();
 
-  gGeoManager->Export("Test_Root_Geometry.root");
+  gGeoManager->Export("test_root_geometry.root");
   exit(1);
 
-}  // end Test_Root_Geometry
+}  // end test_root_geometry
 
 
 //---------------------------------------------------------------------------//
-// end Test_Root_Geometry.C
+// end test_root_geometry.c
 //---------------------------------------------------------------------------//

@@ -75,7 +75,7 @@ double TransportKernel::sampleDistanceToNextCollisionSite(
     if( !d_model->isCellVoid<ParticleStateType>(navigator->getCurrentCell()) )
     {
       cell_total_macro_cross_section =
-        d_model->getMacroscopicTotalForwardCrossSectionQuick( particle );
+        d_model->getMacroscopicTotalForwardCrossSectionQuick<ParticleStateType>( navigator->getCurrentCell(), particle.getEnergy() );
     }
     // The particle is inside of an empty infinite medium
     else if( distance_to_cell_boundary == Utility::QuantityTraits<double>::inf() )

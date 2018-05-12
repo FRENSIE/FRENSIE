@@ -43,7 +43,7 @@ material_definition_database;
 // Check that the optical path to the next collision site can be sampled
 FRENSIE_UNIT_TEST( TransportKernel, sampleOpticalPathLengthToNextCollisionSite )
 {
-  Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+  Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
   FRENSIE_CHECK_FLOATING_EQUALITY( MonteCarlo::TransportKernel::sampleOpticalPathLengthToNextCollisionSite(),
                                    0.6931471805599453,
@@ -87,7 +87,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     neutron.embedInModel( *filled_model );
     neutron.setEnergy( 1.0 );
 
-    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( neutron ),
                                      1.2454032586308799,
@@ -210,7 +210,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     photon.embedInModel( *filled_model );
     photon.setEnergy( 1.0 );
 
-    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( photon ),
                                      9.81307852954266,
@@ -333,7 +333,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     electron.embedInModel( *filled_model );
     electron.setEnergy( 1.0 );
 
-    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( electron ),
                                      1.7048714719550108e-05,
@@ -351,7 +351,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     positron.embedInModel( *filled_model );
     positron.setEnergy( 1.0 );
 
-    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( positron ),
                                      1.7048714719550335e-05,
@@ -474,7 +474,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     adjoint_photon.embedInModel( *filled_model );
     adjoint_photon.setEnergy( 1.0 );
 
-    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_photon ),
                                      3.2815500615235527,
@@ -597,7 +597,7 @@ FRENSIE_UNIT_TEST( TransportKernel,
     adjoint_electron.embedInModel( *filled_model );
     adjoint_electron.setEnergy( 1.0 );
 
-    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.75} );
+    Utility::RandomNumberGenerator::setFakeStream( {0.5, 0.25} );
 
     FRENSIE_CHECK_FLOATING_EQUALITY( transport_kernel.sampleDistanceToNextCollisionSite( adjoint_electron ),
                                      3.5344858544097657e-06,
