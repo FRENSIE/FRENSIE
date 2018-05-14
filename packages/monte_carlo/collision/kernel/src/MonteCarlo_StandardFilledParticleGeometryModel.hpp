@@ -128,9 +128,15 @@ public:
   
 protected:
 
+  //! Default constructor
+  StandardFilledParticleGeometryModel();
+
   //! Constructor
   StandardFilledParticleGeometryModel(
                 const std::shared_ptr<const Geometry::Model>& unfilled_model );
+
+  //! Set the unfilled model
+  void setUnfilledModel( const std::shared_ptr<const Geometry::Model>& unfilled_model );
 
   //! Load the materials and fill the model
   void loadMaterialsAndFillModel(

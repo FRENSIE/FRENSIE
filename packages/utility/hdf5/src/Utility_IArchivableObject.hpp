@@ -39,6 +39,12 @@ public:
 
   //! Load the archived object
   void loadFromFile( const boost::filesystem::path& archive_name_with_path );
+
+private:
+
+  // Archive the object using the required archive
+  template<typename Archive>
+  void loadFromArchive( Archive& archive );
 };
   
 } // end Utility namespace

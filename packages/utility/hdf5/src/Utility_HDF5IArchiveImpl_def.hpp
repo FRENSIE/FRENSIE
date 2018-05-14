@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "Utility_BoostVersion.hpp"
 #include "Utility_TypeNameTraits.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -89,6 +90,26 @@ void HDF5IArchiveImpl<Archive>::init( unsigned flags )
   }
 }
 
+// Start a load
+template<typename Archive>
+void HDF5IArchiveImpl<Archive>::load_start( const char* name )
+{
+  // if( name )
+  // {
+  //   FRENSIE_LOG_TAGGED_NOTIFICATION( name, "started" );
+  // }
+}
+
+// Finish a load
+template<typename Archive>
+void HDF5IArchiveImpl<Archive>::load_end( const char* name )
+{
+  // if( name )
+  // {
+  //   FRENSIE_LOG_TAGGED_NOTIFICATION( name, "finished" );
+  // }
+}
+
 // Load object from memory
 /*! \details This is a required boost::archive interface method
  */
@@ -137,13 +158,18 @@ template<typename T>
 inline void HDF5IArchiveImpl<Archive>::load_override(
                                    const boost::serialization::nvp<T>& t, int )
 {
+  this->load_start( t.name() );
+  
   this->loadIntercept( t.value(), typename std::conditional<IsTuple<T>::value && Utility::HDF5TypeTraits<T>::IsSpecialized::value,std::true_type,std::false_type>::type() );
+
+  this->load_end( t.name() );
 }
 
 // Load a boost::archive::object_id_type attribute
 template<typename Archive>
 void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "object id type: " );
   unsigned i;
   this->load(i);
 
@@ -154,6 +180,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_id_type& t
 template<typename Archive>
 void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "object reference type: " );
   unsigned i;
   this->load(i);
 
@@ -164,6 +191,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::object_reference_
 template<typename Archive>
 void HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "version type: " );
   unsigned i;
   this->load(i);
 
@@ -174,6 +202,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::version_type& t, 
 template<typename Archive>
 void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "class id type: " );
   size_t i;
   this->load(i);
 
@@ -199,6 +228,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_optional
 template<typename Archive>
 void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_reference_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "class id reference type: " );
   size_t i;
   this->load(i);
 
@@ -209,6 +239,7 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_id_referenc
 template<typename Archive>
 void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "class name type: " );
   std::string s;
   s.reserve(BOOST_SERIALIZATION_MAX_KEY_SIZE);
   this->load(s);
@@ -227,6 +258,8 @@ void HDF5IArchiveImpl<Archive>::load_override( boost::archive::class_name_type& 
 template<typename Archive>
 void HDF5IArchiveImpl<Archive>::load_override( boost::archive::tracking_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "tracking type: " );
+  
   bool i;
   this->load(i);
 
@@ -317,6 +350,7 @@ void HDF5IArchiveImpl<Archive>::loadImpl(
                                        T* data,
                                        size_t count )
 {
+  //FRENSIE_LOG_NOTIFICATION( object_data_set_path << " (" << Utility::typeName<T>() << ")" );
   this->readFromDataSet( object_data_set_path, data, count );
   this->updateObjectCount();
 }

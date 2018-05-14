@@ -43,6 +43,12 @@ public:
   { /* ... */ }
 
   //! Get the total forward macroscopic cross section of a material
+  using BaseType::getMacroscopicTotalForwardCrossSection;
+
+  //! Get the total forward macroscopic cross section of a material
+  using BaseType::getMacroscopicTotalForwardCrossSectionQuick;
+
+  //! Get the total forward macroscopic cross section of a material
   double getMacroscopicTotalForwardCrossSection(
                                 const Geometry::Model::InternalCellHandle cell,
                                 const double energy ) const final override;

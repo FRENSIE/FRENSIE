@@ -9,43 +9,22 @@
 #ifndef UTILITY_OARCHIVABLE_OBJECT_DEF_HPP
 #define UTILITY_OARCHIVABLE_OBJECT_DEF_HPP
 
+// Std Lib Includes
+#include <fstream>
+
 // Boost Includes
-#include <boost/serialization/nvp.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/serialization/nvp.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 
 // FRENSIE Includes
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
-
-namespace Details{
-
-/*! The output archive creator
- *
- * This class should never be used directly
- */
-class OArchiveCreator
-{
-  
-public:
-
-  //! Constructor
-  OArchiveCreator()
-  { /* ... */ }
-
-  //! Destructor
-  virtual ~OArchiveCreator()
-  { /* ... */ }
-
-  //! Create an output archive
-  static void create(
-             const boost::filesystem::path& archive_name_with_path,
-             std::unique_ptr<std::ostream>& oarchive_stream,
-             std::unique_ptr<boost::archive::polymorphic_oarchive>& oarchive );
-};
-
-} // end Details namespace
 
 // Archive the object
 /*! \details The file extension will be used to determine the archive type
@@ -64,24 +43,82 @@ void OArchivableObject<DerivedType>::saveToFile(
                         "A file with the specified path and name already "
                         "exists!" );
   }
+
+  // Verify that the parent directory exists
+  if( archive_name_with_path.has_parent_path() )
+  {
+    TEST_FOR_EXCEPTION( !boost::filesystem::exists( archive_name_with_path.parent_path() ),
+                        std::runtime_error,
+                        "Cannot create the output archive "
+                        << archive_name_with_path.string() <<
+                        " because the parent directory does not exist!" );
+  }
   
-  // Create the output archive
+  // Initialize the archive ostream here to ensure that it gets deleted
+  // after the archive
   std::unique_ptr<std::ostream> oarchive_stream;
-  std::unique_ptr<boost::archive::polymorphic_oarchive> oarchive;
 
-  Details::OArchiveCreator::create( archive_name_with_path, oarchive_stream, oarchive );
+  // Get the file extension
+  std::string extension = archive_name_with_path.extension().string();
 
-  // Save the derived type to the archive
+  // Create the oarchive
+  if( extension == ".xml" || extension == ".txt" )
+  {
+    // Create the oarchive file stream
+    oarchive_stream.reset(
+                        new std::ofstream( archive_name_with_path.string() ) );
+    
+    if( extension == ".xml" )
+    {
+      boost::archive::xml_oarchive archive( *oarchive_stream );
+
+      this->saveToArchive( archive );
+    }
+    else
+    {
+      boost::archive::text_oarchive archive( *oarchive_stream );
+
+      this->saveToArchive( archive );
+    }
+  }
+  else if( extension == ".bin" )
+  {
+    // Create the oarchive file stream
+    oarchive_stream.reset( new std::ofstream( archive_name_with_path.string(),
+                                              std::ofstream::binary ) );
+
+    boost::archive::binary_oarchive archive( *oarchive_stream );
+
+    this->saveToArchive( archive );
+  }
+  else if( extension == ".h5fa" )
+  {
+    Utility::HDF5OArchive archive( archive_name_with_path.string(),
+                                   Utility::HDF5OArchiveFlags::OVERWRITE_EXISTING_ARCHIVE );
+
+    this->saveToArchive( archive );
+  }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Cannot create the output archive "
+                     << archive_name_with_path.string() <<
+                     " because the extension type is not supported!" );
+  }
+}
+
+// Archive the object using the required archive
+template<typename DerivedType>
+template<typename Archive>
+void OArchivableObject<DerivedType>::saveToArchive( Archive& archive ) const
+{
   try{
-    (*oarchive) << boost::serialization::make_nvp( this->getOArchiveName(), *dynamic_cast<const DerivedType*>(this) );
+    archive << boost::serialization::make_nvp( this->getOArchiveName(), *dynamic_cast<const DerivedType*>(this) );
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,
                               std::runtime_error,
-                              "Unable to save the object to file "
-                              << archive_name_with_path.string() << "!" );
-
-  // Ensure that the archive destructor is called before the stream destructor
-  oarchive.reset();
+                              "Unable to save the object to the desired "
+                              "archive!" );
 }
   
 } // end Utility namespace

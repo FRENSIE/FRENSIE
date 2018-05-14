@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_TypeNameTraits.hpp"
+#include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -93,6 +94,11 @@ inline void HDF5OArchiveImpl<Archive>::save_array(
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_start( const char* name )
 {
+  // if( name )
+  // {
+  //   FRENSIE_LOG_TAGGED_NOTIFICATION( name,  "started" );
+  // }
+
   this->startHDF5Group( name );
 }
 
@@ -100,6 +106,11 @@ void HDF5OArchiveImpl<Archive>::save_start( const char* name )
 template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_end( const char* name )
 {
+  // if( name )
+  // {
+  //   FRENSIE_LOG_TAGGED_NOTIFICATION( name, "finished" );
+  // }
+  
   this->endHDF5Group();
 }
 
@@ -140,6 +151,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
                                  const boost::archive::object_id_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "object id type: " );
   unsigned object_id = t;
   this->writeToCurrentGroupAttribute( "object_id", &object_id, 1 );
   this->linkTrackedObject( object_id );
@@ -153,6 +165,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
                           const boost::archive::object_reference_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "object reference type: " );
   unsigned object_reference = t;
   this->writeToCurrentGroupAttribute( "object_reference", &object_reference, 1 );
   this->linkTrackedObjectReference( object_reference );
@@ -166,6 +179,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
                                    const boost::archive::version_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "version type: " );
   unsigned version = t;
   this->writeToCurrentGroupAttribute( "version", &version, 1 );
 
@@ -178,6 +192,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
                                   const boost::archive::class_id_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "class id type: " );
   size_t class_id = t;
   this->writeToCurrentGroupAttribute( "class_id", &class_id, 1 );
 
@@ -207,6 +222,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
                         const boost::archive::class_id_reference_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "class id reference type: " );
   size_t class_id_reference = t;
   this->writeToCurrentGroupAttribute( "class_id_reference", &class_id_reference, 1 );
 
@@ -219,6 +235,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
                                 const boost::archive::class_name_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "class name type: " );
   const std::string class_name( t );
   this->writeToCurrentGroupAttribute( "class_name", &class_name, 1 );
 
@@ -231,6 +248,7 @@ template<typename Archive>
 void HDF5OArchiveImpl<Archive>::save_override(
                                   const boost::archive::tracking_type& t, int )
 {
+  //FRENSIE_LOG_PARTIAL_NOTIFICATION( "tracking type: " );
   this->writeToCurrentGroupAttribute( "class_tracking", &t.t, 1 );
 
   d_next_object_is_attribute = true;
@@ -343,6 +361,7 @@ void HDF5OArchiveImpl<Archive>::saveImpl(
                                        const T* data,
                                        size_t count )
 {
+  //FRENSIE_LOG_NOTIFICATION( object_data_set_path << " (" << Utility::typeName<T>() << ")" );
   this->writeToDataSet( object_data_set_path, data, count );
   this->linkDataAndUpdateObjectCount();
 }

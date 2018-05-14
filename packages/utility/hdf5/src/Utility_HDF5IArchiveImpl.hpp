@@ -82,6 +82,12 @@ protected:
   //! Initialize the archive
   void init( unsigned flags );
 
+  //! Start a load
+  void load_start( const char* name );
+
+  //! Finish a load
+  void load_end( const char* name );
+
   //! Intercept any type that is not a name-value pair or an attribute here
   template<typename T>
   void load_override( T& t, int = 0 );

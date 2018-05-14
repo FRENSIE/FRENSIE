@@ -1,6 +1,7 @@
 # Process the root geometries (*.c -> *.root)
 FRENSIE_PROCESS_ROOT_GEOM(basic_root_geometry
-  SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})
+  TARGET_NAME ${ROOT_GEOM_TEST_TARGET}
+  PACKAGE_NAME geometry_root)
 
 # Configure files needing absolute paths
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/basic_root_model_archive.xml.in
