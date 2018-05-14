@@ -18,7 +18,7 @@ namespace Utility{
 double calculateBetaMin( const double kinetic_energy,
 			 const double kT )
 {
-  return -kinetic_energy/kT;
+  return ((1.0e-11)-kinetic_energy)/kT;
 }
 
 // Calculate the dimensionless alpha min value
