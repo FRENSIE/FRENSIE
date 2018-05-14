@@ -1,5 +1,7 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_kernel)
 
+SET(ROOT_GEOM_TEST_TARGET monte_carlo_collision_kernel_test_root_geometry)
+
 ADD_SUBDIRECTORY(test_files)
 
 FRENSIE_ADD_TEST_EXECUTABLE(FilledGeometryModel
@@ -34,7 +36,7 @@ IF(FRENSIE_ENABLE_ROOT)
   FRENSIE_ADD_TEST_EXECUTABLE(TransportKernelRoot
     DEPENDS tstTransportKernelRoot.cpp
     LIB_DEPENDS geometry_root
-    TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET})
+    TARGET_DEPENDS ${COLLISION_DATABASE_XML_FILE_TARGET} ${ROOT_GEOM_TEST_TARGET})
   FRENSIE_ADD_TEST(TransportKernelRoot
     EXTRA_ARGS
     --test_database=${COLLISION_DATABASE_XML_FILE}

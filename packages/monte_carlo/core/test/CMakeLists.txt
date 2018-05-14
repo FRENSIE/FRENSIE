@@ -1,5 +1,7 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_core)
 
+SET(ROOT_GEOM_TEST_TARGET monte_carlo_core_test_root_geometry)
+
 ADD_SUBDIRECTORY(test_files)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -12,9 +14,11 @@ FRENSIE_ADD_TEST(ParticleState)
 IF(FRENSIE_ENABLE_ROOT)
   FRENSIE_ADD_TEST_EXECUTABLE(RootParticleState
     DEPENDS tstRootParticleState.cpp
+    TARGET_DEPENDS ${ROOT_GEOM_TEST_TARGET}
     LIB_DEPENDS geometry_root)
   FRENSIE_ADD_TEST(RootParticleState
-    EXTRA_ARGS --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
+    EXTRA_ARGS
+    --test_root_file=${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)

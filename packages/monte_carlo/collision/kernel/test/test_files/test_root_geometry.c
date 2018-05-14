@@ -53,7 +53,7 @@ void test_root_geometry()
   // terminal_cube->Draw();
 
   gGeoManager->Export("test_root_geometry.root");
-  exit(1);
+  exit(0);
 
 }  // end test_root_geometry
 
