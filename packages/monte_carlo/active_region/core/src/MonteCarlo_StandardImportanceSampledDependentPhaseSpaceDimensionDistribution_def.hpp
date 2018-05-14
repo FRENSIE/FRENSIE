@@ -10,10 +10,8 @@
 #ifndef MONTE_CARLO_STANDARD_IMPORTANCE_SAMPLED_DEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_DEF_HPP
 #define MONTE_CARLO_STANDARD_IMPORTANCE_SAMPLED_DEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -139,7 +137,7 @@ double StandardImportanceSampledDependentPhaseSpaceDimensionDistribution<indep_d
   }
 
   // Make sure that the weight is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( weight ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( weight ) );
   testPostcondition( weight > 0.0 );
 }
   

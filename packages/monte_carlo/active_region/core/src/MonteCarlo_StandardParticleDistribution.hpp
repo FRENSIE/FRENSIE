@@ -11,21 +11,17 @@
 
 // Std Lib Includes
 #include <memory>
-#include <vector>
-#include <map>
-#include <set>
 #include <functional>
-
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleDistribution.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "Utility_SpatialCoordinateConversionPolicy.hpp"
 #include "Utility_DirectionalCoordinateConversionPolicy.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_Map.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Vector.hpp"
 
 namespace MonteCarlo{
 
@@ -36,7 +32,7 @@ class StandardParticleDistribution : public ParticleDistribution
 private:
 
   // Typedef for scalar traits
-  typedef Teuchos::ScalarTraits<double> ST;
+  typedef Utility::QuantityTraits<double> QT;
 
   //! Typedef for the phase space dimension distribution map
   typedef std::map<PhaseSpaceDimension,std::shared_ptr<PhaseSpaceDimensionDistribution> > DimensionDistributionMap;
@@ -50,12 +46,11 @@ public:
   typedef std::set<PhaseSpaceDimension> DimensionSet;
 
   //! Basic Constructor
-  StandardParticleDistribution( const ModuleTraits::InternalROIHandle id,
-                                const std::string& name );
+  StandardParticleDistribution( const size_t id, const std::string& name );
   
   //! Constructor
   StandardParticleDistribution(
-   const ModuleTraits::InternalROIHandle id,
+   const size_t id,
    const std::string& name,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,

@@ -14,15 +14,11 @@
 #include <memory>
 #include <set>
 
-// Trilinos Includes
-#include <Teuchos_Comm.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleStateFactory.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
-#include "Utility_HDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
@@ -40,15 +36,14 @@ public:
   DimensionCounterMap;
 
   //! Constructor
-  ParticleDistribution( const ModuleTraits::InternalROIHandle id,
-                        const std::string& name );
+  ParticleDistribution( const size_t id, const std::string& name );
 
   //! Destructor
   virtual ~ParticleDistribution()
   { /* ... */ }
 
   //! Return the id
-  ModuleTraits::InternalROIHandle getId() const;
+  size_t getId() const;
 
   //! Return the name of the region of interest
   const std::string& getName() const;
@@ -92,7 +87,7 @@ public:
 private:
 
   // The distribution id
-  unsigned d_id;
+  size_t d_id;
 
   // The distribution name
   std::string d_name;

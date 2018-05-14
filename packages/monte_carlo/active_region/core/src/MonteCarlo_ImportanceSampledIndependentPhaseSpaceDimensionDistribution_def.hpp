@@ -10,10 +10,8 @@
 #ifndef MONTE_CARLO_IMPORTANCE_SAMPLED_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_DEF_HPP
 #define MONTE_CARLO_IMPORTANCE_SAMPLED_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_DEF_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -125,7 +123,7 @@ double ImportanceSampledIndependentPhaseSpaceDimensionDistribution<dimension>::c
   }
 
   // Make sure that the weight is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( weight ) );
+  testPostcondition( !Utility::QuantityTraits<double>::isnaninf( weight ) );
   testPostcondition( weight > 0.0 );
 }
   
