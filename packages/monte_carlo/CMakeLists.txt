@@ -3,7 +3,7 @@ ADD_SUBDIRECTORY(core)
 INCLUDE_DIRECTORIES(core/src)
 
 ADD_SUBDIRECTORY(collision)
-INCLUDE_DIRECTORIES(collision/core/src collision/interface collision/native/src)
+INCLUDE_DIRECTORIES(collision/core/src collision/interface collision/neutron/src collision/photon/src collision/electron/src)
 
 ADD_SUBDIRECTORY(source)
 INCLUDE_DIRECTORIES(source/core/src source/interface source/native/src)

@@ -34,7 +34,7 @@ ADD_SUBDIRECTORY(data)
 INCLUDE_DIRECTORIES(data/core/src data/ace/src data/endf/src data/endl/src data/native/src data/database/src)
 
 ADD_SUBDIRECTORY(monte_carlo)
-INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/native/src)
+INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/neutron/src monte_carlo/collision/photon/src monte_carlo/collision/electron/src)
 
 # ADD_SUBDIRECTORY(data_gen)
 # INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src data_gen/endl/src data_gen/electron_photon/src)
