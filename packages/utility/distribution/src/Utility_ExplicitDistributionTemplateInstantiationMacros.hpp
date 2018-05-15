@@ -13,7 +13,7 @@
 #include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 /*! Declare an external explicit instantiation of a distribution class
-
+ *
  * This macro must be called in the global namespace
  * \ingroup explicit_instantiation_macros
  */

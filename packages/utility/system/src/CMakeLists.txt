@@ -1,0 +1,3 @@
+FRENSIE_SETUP_PACKAGE(utility_system
+  NON_MPI_LIBRARIES utility_core utility_hdf5 ${Boost_LIBRARIES}
+  SET_VERBOSE ${CMAKE_VERBOSE_CONFIGURE})
