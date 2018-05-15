@@ -431,6 +431,9 @@ FRENSIE_ADD_TEST_EXECUTABLE(FortranFileHelpers DEPENDS tstFortranFileHelpers.cpp
 FRENSIE_ADD_TEST(FortranFileHelpers
   EXTRA_ARGS --test_file=${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt)
 
+FRENSIE_ADD_TEST_EXECUTABLE(3DCartesianVectorHelpers DEPENDS tst3DCartesianVectorHelpers.cpp)
+FRENSIE_ADD_TEST(3DCartesianVectorHelpers)
+
 FRENSIE_ADD_TEST_EXECUTABLE(KinematicHelpers DEPENDS tstKinematicHelpers.cpp)
 FRENSIE_ADD_TEST(KinematicHelpers)
 

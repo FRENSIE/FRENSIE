@@ -16,6 +16,7 @@
 #include "Utility_DirectionalCoordinateSystemType.hpp"
 #include "Utility_DirectionalCoordinateSystemTraits.hpp"
 #include "Utility_3DCartesianVectorHelpers.hpp"
+#include "Utility_ExplicitSystemTemplateInstantiationMacros.hpp"
 
 namespace Utility{
 

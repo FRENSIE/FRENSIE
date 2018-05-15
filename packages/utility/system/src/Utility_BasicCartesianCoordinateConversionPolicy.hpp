@@ -31,6 +31,9 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
+  using CartesianSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -38,6 +41,9 @@ public:
                                       double& x_spatial_coord,
                                       double& y_spatial_coord,
                                       double& z_spatial_coord ) const override;
+
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using CartesianSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
@@ -49,6 +55,9 @@ public:
                                double& tertiary_spatial_coord ) const override;
 
   //! Convert the directional coordinates to cartesian coordinates
+  using CartesianDirectionalCoordinateConversionPolicy::convertToCartesianDirectionalCoordinates;
+
+  //! Convert the directional coordinates to cartesian coordinates
   void convertToCartesianDirectionalCoordinates(
                                   const double primary_directional_coord,
                                   const double secondary_directional_coord,
@@ -56,6 +65,9 @@ public:
                                   double& x_directional_coord,
                                   double& y_directional_coord,
                                   double& z_directional_coord ) const override;
+
+  //! Convert the cartesian coordinates to the directional coordinate system
+  using CartesianDirectionalCoordinateConversionPolicy::convertFromCartesianDirectionalCoordinates;
 
   //! Convert the cartesian coordinates to the directional coordinate system
   void convertFromCartesianDirectionalCoordinates(

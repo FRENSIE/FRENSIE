@@ -32,6 +32,9 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
+  using CartesianSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -40,6 +43,9 @@ public:
                                       double& y_spatial_coord,
                                       double& z_spatial_coord ) const override;
 
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using CartesianSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
+  
   //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
                                const double x_spatial_coord,
@@ -53,7 +59,8 @@ private:
 
   // The default constructor should not be used - if the origin corresponds to
   // the global coordinate system (0,0,0) use the basic conversion policy
-  TranslationCartesianSpatialCoordinateConversionPolicy();
+  TranslationCartesianSpatialCoordinateConversionPolicy()
+  { /* ... */ }
 
   // We have C-arrays as members - hide the copy constructor and assignment
   // operator
@@ -86,7 +93,7 @@ void TranslationCartesianSpatialCoordinateConversionPolicy::save( Archive& ar, c
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CartesianSpatialCoordinateConversionPolicy );
 
   // Save the local data
-  ar & boost::serialization::make_nvp( "d_origin", boost::serialization::array_wrapper( d_origin, 3 ) );
+  ar & boost::serialization::make_nvp( "d_origin", boost::serialization::make_array( d_origin, 3 ) );
 }
 
 // Load the policy from an archive
@@ -97,7 +104,7 @@ void TranslationCartesianSpatialCoordinateConversionPolicy::load( Archive& ar, c
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CartesianSpatialCoordinateConversionPolicy );
 
   // Load the local data
-  ar & boost::serialization::make_nvp( "d_origin", boost::serialization::array_wrapper( d_origin, 3 ) );
+  ar & boost::serialization::make_nvp( "d_origin", boost::serialization::make_array( d_origin, 3 ) );
 }
 
 } // end Utility namespace

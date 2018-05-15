@@ -31,6 +31,9 @@ public:
   { /* ... */ }
 
   //! Convert the spatial coordinates to cartesian coordinates
+  using CylindricalSpatialCoordinateConversionPolicy::convertToCartesianSpatialCoordinates;
+
+  //! Convert the spatial coordinates to cartesian coordinates
   void convertToCartesianSpatialCoordinates(
                                       const double primary_spatial_coord,
                                       const double secondary_spatial_coord,
@@ -38,6 +41,9 @@ public:
                                       double& x_spatial_coord,
                                       double& y_spatial_coord,
                                       double& z_spatial_coord ) const override;
+
+  //! Convert the cartesian coordinates to the spatial coordinate system
+  using CylindricalSpatialCoordinateConversionPolicy::convertFromCartesianSpatialCoordinates;
 
   //! Convert the cartesian coordinates to the spatial coordinate system
   void convertFromCartesianSpatialCoordinates(
@@ -54,7 +60,8 @@ private:
   // coordinate system w.r.t. the global Cartesian coordinate system aligns
   // with the z-axis of the Cartesian coordinate system use the basic
   // conversion policy
-  RotationCylindricalSpatialCoordinateConversionPolicy();
+  RotationCylindricalSpatialCoordinateConversionPolicy()
+  { /* ... */ }
 
   // We have C-arrays as members - hide the copy constructor and assignment
   // operator
@@ -71,6 +78,9 @@ private:
 
   BOOST_SERIALIZATION_SPLIT_MEMBER();
 
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The z-axis (unit vector) of the local cylindrical coordinate system w.r.t.
   // the global Cartesian coordinate system
   double d_axis[3];
@@ -81,10 +91,10 @@ template<typename Archive>
 void RotationCylindricalSpatialCoordinateConversionPolicy::save( Archive& ar, const unsigned version ) const
 {
   // Save the base class
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( RotationCylindricalSpatialCoordinateConversionPolicy );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CylindricalSpatialCoordinateConversionPolicy );
 
   // Save the local data
-  ar & boost::serialization::make_nvp( "d_axis", boost::serialization::array_wrapper( d_axis, 3 ) );
+  ar & boost::serialization::make_nvp( "d_axis", boost::serialization::make_array( d_axis, 3 ) );
 }
 
 // Load the policy from an archive
@@ -92,10 +102,10 @@ template<typename Archive>
 void RotationCylindricalSpatialCoordinateConversionPolicy::load( Archive& ar, const unsigned version )
 {
   // Load the base class
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( RotationCylindricalSpatialCoordinateConversionPolicy );
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( CylindricalSpatialCoordinateConversionPolicy );
 
   // Load the local data
-  ar & boost::serialization::make_nvp( "d_axis", boost::serialization::array_wrapper( d_axis, 3 ) );
+  ar & boost::serialization::make_nvp( "d_axis", boost::serialization::make_array( d_axis, 3 ) );
 }
   
 } // end Utility namespace

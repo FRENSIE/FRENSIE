@@ -15,6 +15,18 @@
 #include "Utility_Vector.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -278,6 +290,121 @@ FRENSIE_UNIT_TEST( BasicCartesianCoordinateConversionPolicy,
                                                 output_direction.data() );
 
   FRENSIE_CHECK_EQUAL( input_direction, output_direction );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a policy can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( BasicCartesianCoordinateConversionPolicy,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+  
+  std::string archive_base_name( "test_basic_cartesian_coordinate_conversion_policy" );
+  std::ostringstream archive_ostream;
+
+  // Create and archive some uniform distributions
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    Utility::BasicCartesianCoordinateConversionPolicy concrete_policy;
+
+    std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+      shared_spatial_policy(
+                       new Utility::BasicCartesianCoordinateConversionPolicy );
+
+    std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+      shared_directional_policy(
+                       new Utility::BasicCartesianCoordinateConversionPolicy );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( concrete_policy ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( shared_spatial_policy ) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP( shared_directional_policy ) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  Utility::BasicCartesianCoordinateConversionPolicy concrete_policy;
+  std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
+    shared_spatial_policy;
+  std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
+    shared_directional_policy;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( concrete_policy ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_spatial_policy ) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP( shared_directional_policy ) );
+
+  iarchive.reset();
+
+  {
+    std::vector<double> input_position( 3 );
+    input_position[0] = 1.0;
+    input_position[1] = 1.0;
+    input_position[2] = 1.0;
+    
+    std::vector<double> output_position( 3 );
+    
+    concrete_policy.convertFromCartesianSpatialCoordinates(
+                                                       input_position.data(),
+                                                       output_position.data());
+    
+    FRENSIE_CHECK_EQUAL( input_position, output_position );
+
+    std::vector<double> input_direction( 3 );
+    input_direction[0] = 1.0/sqrt(3.0);
+    input_direction[1] = 1.0/sqrt(3.0);
+    input_direction[2] = 1.0/sqrt(3.0);
+    
+    std::vector<double> output_direction( 3 );
+    
+    concrete_policy.convertFromCartesianDirectionalCoordinates(
+                                                     input_direction.data(),
+                                                     output_direction.data() );
+
+    FRENSIE_CHECK_EQUAL( input_direction, output_direction );
+  }
+
+  {
+    std::vector<double> input_position( 3 );
+    input_position[0] = 1.0;
+    input_position[1] = 1.0;
+    input_position[2] = 1.0;
+    
+    std::vector<double> output_position( 3 );
+    
+    shared_spatial_policy->convertFromCartesianSpatialCoordinates(
+                                                       input_position.data(),
+                                                       output_position.data());
+    
+    FRENSIE_CHECK_EQUAL( input_position, output_position );
+  }
+
+  {
+    std::vector<double> input_direction( 3 );
+    input_direction[0] = 1.0/sqrt(3.0);
+    input_direction[1] = 1.0/sqrt(3.0);
+    input_direction[2] = 1.0/sqrt(3.0);
+    
+    std::vector<double> output_direction( 3 );
+    
+    shared_directional_policy->convertFromCartesianDirectionalCoordinates(
+                                                     input_direction.data(),
+                                                     output_direction.data() );
+
+    FRENSIE_CHECK_EQUAL( input_direction, output_direction );
+  }
 }
 
 //---------------------------------------------------------------------------//
