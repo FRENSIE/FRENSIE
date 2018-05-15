@@ -23,40 +23,40 @@
 #include "Utility_HDF5OArchive.hpp"
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentPrimarySpatialDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_SPATIAL_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentSecondarySpatialDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_SPATIAL_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentTertiarySpatialDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_SPATIAL_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentPrimaryDirectionalDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentSecondaryDirectionalDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentTertiaryDirectionalDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentEnergyDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::ENERGY_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::ENERGY_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentTimeDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::TIME_DIMENSION> );
 
 BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::IndependentWeightDimensionDistribution );
-EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> );
-EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> );
+EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::WEIGHT_DIMENSION> );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<MonteCarlo::WEIGHT_DIMENSION> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_IndependentPhaseSpaceDimensionDistribution.cpp

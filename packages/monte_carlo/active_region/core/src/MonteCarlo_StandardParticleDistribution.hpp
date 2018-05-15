@@ -107,6 +107,12 @@ public:
                                  const PhaseSpaceDimension dimension,
                                  const double dimension_value ) const override;
 
+protected:
+
+  //! Default Constructor
+  StandardParticleDistribution()
+  { /* ... */ }
+  
 private:
 
   // Reset the spatial distributions
@@ -213,13 +219,12 @@ void StandardParticleDistribution::load( Archive& ar, const unsigned version )
   ar & BOOST_SERIALIZATION_NVP( d_dimension_distributions );
   ar & BOOST_SERIALIZATION_NVP( d_ready );
 }
-
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( StandardParticleDistribution );
   
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::StandardParticleDistribution, 0 );
 BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleDistribution, MonteCarlo );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( StandardParticleDistribution );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_DISTRIBUTION_HPP
 

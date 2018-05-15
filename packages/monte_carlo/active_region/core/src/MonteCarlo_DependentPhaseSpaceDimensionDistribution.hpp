@@ -104,6 +104,10 @@ public:
 
 protected:
 
+  //! Default constructor
+  DependentPhaseSpaceDimensionDistribution()
+  { /* ... */ }
+
   //! Evaluate the PDF of this dimension distribution
   double evaluatePDFWithoutCascade( const double parent_dimension_value,
                                     const double dimension_value ) const;
@@ -385,8 +389,8 @@ typedef DependentPhaseSpaceDimensionDistribution<TIME_DIMENSION,WEIGHT_DIMENSION
 #define BOOST_SERIALIZATION_DEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( version ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
     DependentPhaseSpaceDimensionDistribution, MonteCarlo, version,      \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimesion ParentDim, MonteCarlo::PhaseSpaceDimesion Dim ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( ParentDime, Dim ) )
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimension ParentDim, MonteCarlo::PhaseSpaceDimension Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( ParentDim, Dim ) )
 
 BOOST_SERIALIZATION_DEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( 0 );
 

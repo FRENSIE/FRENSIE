@@ -91,6 +91,12 @@ public:
                                       const PhaseSpaceDimension dimension,
                                       const double dimension_value ) const = 0;
 
+protected:
+
+  //! Constructor
+  ParticleDistribution()
+  { /* ... */ }
+  
 private:
 
   // Save the state to an archive

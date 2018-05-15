@@ -86,6 +86,10 @@ public:
   
 protected:
 
+  //! Default constructor
+  IndependentPhaseSpaceDimensionDistribution()
+  { /* ... */ }
+
   //! Evaluate the PDF of this dimension distribution
   double evaluatePDFWithoutCascade( const double dimension_value ) const;
 
@@ -140,7 +144,7 @@ typedef IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> Independent
 #define BOOST_SERIALIZATION_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( version ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
     IndependentPhaseSpaceDimensionDistribution, MonteCarlo, version,      \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimesion Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimension Dim ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
 
 BOOST_SERIALIZATION_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( 0 );

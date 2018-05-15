@@ -28,14 +28,14 @@ public:
   typedef typename BaseType::Counter Counter;
 
   //! Constructor
-  DependentPhaseSpaceDimensionDistribution(
+  ImportanceSampledDependentPhaseSpaceDimensionDistribution(
               const std::shared_ptr<const Utility::BasicBivariateDistribution>&
               dimension_distribution,
               const std::shared_ptr<const Utility::BasicBivariateDistribution>&
               importance_distribution );
 
   //! Destructor
-  ~DependentPhaseSpaceDimensionDistribution()
+  ~ImportanceSampledDependentPhaseSpaceDimensionDistribution()
   { /* ... */ }
 
   //! Sample a dimension value without a cascade to the dependent dists.
@@ -44,10 +44,14 @@ public:
 
   //! Sample a dimension value without a cascade to the dependent dists.
   void sampleAndRecordTrialsWithoutCascade(
-                  PhaseSpacePoint& phase_space_sample,
-                  ModuleTraits::InternalCounter& trials ) const final override;
+                                        PhaseSpacePoint& phase_space_sample,
+                                        Counter& trials ) const final override;
 
 private:
+
+  // Default constructor
+  ImportanceSampledDependentPhaseSpaceDimensionDistribution()
+  { /* ... */ }
 
   // Calculate the weight of a sample
   double calculateSampleWeight( const double indep_dimension_value,
@@ -67,7 +71,7 @@ private:
   friend class boost::serialization::access;
 
   // The dimension importance distribution
-  std::shared_ptr<const TwoDDistributionBaseType>
+  std::shared_ptr<const Utility::BasicBivariateDistribution>
   d_dimension_importance_distribution;
 };
 
@@ -327,9 +331,9 @@ typedef ImportanceSampledDependentPhaseSpaceDimensionDistribution<TIME_DIMENSION
 
 #define BOOST_SERIALIZATION_IMPORTANCE_SAMPLED_DEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( version ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
-    DependentPhaseSpaceDimensionDistribution, MonteCarlo, version,      \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimesion ParentDim, MonteCarlo::PhaseSpaceDimesion Dim ), \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( ParentDime, Dim ) )
+    ImportanceSampledDependentPhaseSpaceDimensionDistribution, MonteCarlo, version,      \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimension ParentDim, MonteCarlo::PhaseSpaceDimension Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( ParentDim, Dim ) )
 
 BOOST_SERIALIZATION_IMPORTANCE_SAMPLED_DEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( 0 );
 
@@ -337,7 +341,7 @@ BOOST_SERIALIZATION_IMPORTANCE_SAMPLED_DEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUT
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_ImportanceSampledImportanceSampledDependentPhaseSpaceDimensionDistribution_def.hpp"
+#include "MonteCarlo_ImportanceSampledDependentPhaseSpaceDimensionDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 

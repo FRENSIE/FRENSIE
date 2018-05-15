@@ -47,8 +47,12 @@ public:
   void sampleAndRecordTrialsWithoutCascade(
                                         PhaseSpacePoint& phase_space_sample,
                                         Counter& trials ) const final override;
-
+  
 private:
+
+  // Default constructor
+  ImportanceSampledIndependentPhaseSpaceDimensionDistribution()
+  { /* ... */ }
 
   // Calculate the weight of a sample
   double calculateSampleWeight( const double dimension_sample ) const;
@@ -103,7 +107,7 @@ typedef ImportanceSampledIndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMEN
 #define BOOST_SERIALIZATION_IMPORTANCE_SAMPLED_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( version ) \
   BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
     ImportanceSampledIndependentPhaseSpaceDimensionDistribution, MonteCarlo, version,      \
-    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimesion Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimension Dim ), \
     __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
 
 BOOST_SERIALIZATION_IMPORTANCE_SAMPLED_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( 0 );

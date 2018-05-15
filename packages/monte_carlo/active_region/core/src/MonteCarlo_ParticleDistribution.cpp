@@ -40,7 +40,7 @@ ParticleDistribution::ParticleDistribution( const size_t id,
 }
 
 // Return the id
-ModuleTraits::InternalROIHandle ParticleDistribution::getId() const
+size_t ParticleDistribution::getId() const
 {
   return d_id;
 }
