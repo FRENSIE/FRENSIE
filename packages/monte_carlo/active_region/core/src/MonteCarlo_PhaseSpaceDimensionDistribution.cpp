@@ -6,9 +6,22 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_LoggingMacros.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -230,14 +243,22 @@ void PhaseSpaceDimensionDistribution::sampleFromDependentDistributionsAndRecordT
   }
 }
 
+// Check if the distribution has a parent
+bool PhaseSpaceDimensionDistribution::hasParentDistribution() const
+{
+  return d_parent_distribution != NULL;
+}
+
 // Return the parent distribution
 /*! \details If the distribution is independent or if the parent distribution
- * has not been assigned yet, this method will return NULL.
+ * has not been assigned yet, this method will throw an exception
  */
-const PhaseSpaceDimensionDistribution*
+const PhaseSpaceDimensionDistribution&
 PhaseSpaceDimensionDistribution::getParentDistribution() const
 {
-  return d_parent_distribution;
+  testPrecondition( this->hasParentDistribution() );
+  
+  return *d_parent_distribution;
 }
 
 // Add a dependent distribution
@@ -246,10 +267,25 @@ void PhaseSpaceDimensionDistribution::addDependentDistribution(
                        dependent_dimension )
 {
   // Make sure that the dependent dimension is actually dependent on this dim.
-  testPrecondition( dependent_dimension->isDependentOnDimension( this->getDimension() ) );
+  TEST_FOR_EXCEPTION( !dependent_dimension->isDependentOnDimension( this->getDimension() ),
+                      std::runtime_error,
+                      "The dependent distribution cannot be set because its "
+                      "parent dimension does not match the parent "
+                      "distribution's dimension!" );
+
   // Make sure that the dependent dimension is unique
-  testPrecondition( this->getDimension() != dependent_dimension->getDimension() );
-  testPrecondition( !d_dependent_dimension_distributions.count( dependent_dimension->getDimension() ) );
+  TEST_FOR_EXCEPTION( this->getDimension() == dependent_dimension->getDimension(),
+                      std::runtime_error,
+                      "The dependent distribution cannot be set because its "
+                      "dimension is the same the same as the parent "
+                      "distribution's dimension!" );
+
+  TEST_FOR_EXCEPTION( d_dependent_dimension_distributions.count( dependent_dimension->getDimension() ),
+                      std::runtime_error,
+                      "The dependent distribution cannot be set because a "
+                      "dependent distribution with the same dimension has "
+                      "already been set in the parent distribution!" );
+                                        
 
   // Add the dependent distribution to the map
   d_dependent_dimension_distributions[dependent_dimension->getDimension()] =
@@ -296,6 +332,8 @@ void PhaseSpaceDimensionDistribution::getDependentDimensions(
     ++dimension_it;
   }
 }
+
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( PhaseSpaceDimensionDistribution  );
   
 } // end MonteCarlo namespace
 

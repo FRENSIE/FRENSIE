@@ -15,8 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_UnivariateDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,46 +26,49 @@ class IndependentPhaseSpaceDimensionDistribution : public PhaseSpaceDimensionDis
 
 public:
 
+  //! The trial counter type
+  typedef PhaseSpaceDimensionDistribution::Counter Counter;
+
   //! Constructor
   IndependentPhaseSpaceDimensionDistribution(
-                        const std::shared_ptr<const Utility::OneDDistribution>&
-                        dimension_distribution );
+                  const std::shared_ptr<const Utility::UnivariateDistribution>&
+                  dimension_distribution );
 
   //! Destructor
   virtual ~IndependentPhaseSpaceDimensionDistribution()
   { /* ... */ }
 
   //! Return the phase space dimension
-  PhaseSpaceDimension getDimension() const override;
+  PhaseSpaceDimension getDimension() const final override;
 
   //! Return the phase space dimension class
-  PhaseSpaceDimensionClass getDimensionClass() const override;
+  PhaseSpaceDimensionClass getDimensionClass() const final override;
 
   //! Get the distribution type name
-  std::string getDistributionTypeName() const override;
+  std::string getDistributionTypeName() const final override;
 
   //! Check if the dimension distribution is independent
-  bool isIndependent() const override;
+  bool isIndependent() const final override;
 
   //! Check if the dimension is dependent on the dimension of interest
   bool isDependentOnDimension(
-                    const PhaseSpaceDimension other_dimension ) const override;
+              const PhaseSpaceDimension other_dimension ) const final override;
 
   //! Check if the dimension distribution is continuous
-  bool isContinuous() const override;
+  bool isContinuous() const final override;
 
   //! Check if the dimension distribution is tabular
-  bool isTabular() const override;
+  bool isTabular() const final override;
 
   //! Check if the dimension distribution is uniform (somewhere)
-  bool isUniform() const;
+  bool isUniform() const final override;
 
   //! Check if the underlying distribution has the form of interest
-  bool hasForm( const Utility::OneDDistributionType distribution_type ) const override;
+  bool hasForm( const Utility::UnivariateDistributionType distribution_type ) const final override;
 
   //! Evaluate the dimension distribution without cascade to dependent dists.
   double evaluateWithoutCascade(
-                     const PhaseSpacePoint& phase_space_point ) const override;
+               const PhaseSpacePoint& phase_space_point ) const final override;
 
   //! Sample a dimension value without a cascade to the dependent dists.
   virtual void sampleWithoutCascade(
@@ -74,13 +76,13 @@ public:
 
   //! Sample a dimension value without a cascade to the dependent dists.
   virtual void sampleAndRecordTrialsWithoutCascade(
-                        PhaseSpacePoint& phase_space_sample,
-                        ModuleTraits::InternalCounter& trials ) const override;
+                                           PhaseSpacePoint& phase_space_sample,
+                                           Counter& trials ) const override;
 
   //! Set the dimension value (weight appropriately)
   void setDimensionValueAndApplyWeight(
-                                 PhaseSpacePoint& phase_space_sample,
-                                 const double dimension_value ) const override;
+                           PhaseSpacePoint& phase_space_sample,
+                           const double dimension_value ) const final override;
   
 protected:
 
@@ -89,23 +91,59 @@ protected:
 
 private:
 
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The dimension distribution
-  std::shared_ptr<const Utility::OneDDistribution> d_dimension_distribution;
+  std::shared_ptr<const Utility::UnivariateDistribution> d_dimension_distribution;
 };
 
-// Explicit instantiation (extern declaration)
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> );
-  
+//! The independent primary spatial phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> IndependentPrimarySpatialDimensionDistribution;
+
+//! The independent secondary spatial phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> IndependentSecondarySpatialDimensionDistribution;
+
+//! The independent tertiary spatial phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> IndependentTertiarySpatialDimensionDistribution;
+
+//! The independent primary directional phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> IndependentPrimaryDirectionalDimensionDistribution;
+
+//! The independent secondary directional phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> IndependentSecondaryDirectionalDimensionDistribution;
+
+//! The independent tertiary directional phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> IndependentTertiaryDirectionalDimensionDistribution;
+
+//! The independent energy phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> IndependentEnergyDimensionDistribution;
+
+//! The independent time phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> IndependentTimeDimensionDistribution;
+
+//! The independent weight phase space dimension distribution
+typedef IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> IndependentWeightDimensionDistribution;
   
 } // end MonteCarlo namespace
+
+#define BOOST_SERIALIZATION_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( version ) \
+  BOOST_SERIALIZATION_TEMPLATE_CLASS_VERSION_IMPL(                      \
+    IndependentPhaseSpaceDimensionDistribution, MonteCarlo, version,      \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( MonteCarlo::PhaseSpaceDimesion Dim ), \
+    __BOOST_SERIALIZATION_FORWARD_AS_SINGLE_ARG__( Dim ) )
+
+BOOST_SERIALIZATION_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_VERSION( 0 );
 
 //---------------------------------------------------------------------------//
 // Template Includes.

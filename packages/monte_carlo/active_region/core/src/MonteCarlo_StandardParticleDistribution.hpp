@@ -28,9 +28,6 @@ namespace MonteCarlo{
 //! The standard particle distribution class
 class StandardParticleDistribution : public ParticleDistribution
 {
-
-private:
-
   // Typedef for scalar traits
   typedef Utility::QuantityTraits<double> QT;
 
@@ -43,7 +40,10 @@ private:
 public:
 
   //! Typedef for the phase space dimension set
-  typedef std::set<PhaseSpaceDimension> DimensionSet;
+  typedef ParticleDistribution::DimensionSet DimensionSet;
+
+  //! The dimension trial counter map
+  typedef ParticleDistribution::DimensionCounterMap DimensionCounterMap;
 
   //! Basic Constructor
   StandardParticleDistribution( const size_t id, const std::string& name );
@@ -123,6 +123,19 @@ private:
   // Check the dependency tree for orphans
   void checkDependencyTreeForOrphans();
 
+  // Save the state to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The spatial coordinate conversion policy
   std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>
   d_spatial_coord_conversion_policy;
@@ -170,8 +183,43 @@ inline void StandardParticleDistribution::sampleImpl(
   // use the spatial and directional conversion policies
   phase_space_sample.setParticleState( particle );
 }
+
+// Save the state to an archive
+template<typename Archive>
+void StandardParticleDistribution::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class member data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleDistribution );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_spatial_coord_conversion_policy );
+  ar & BOOST_SERIALIZATION_NVP( d_directional_coord_conversion_policy );
+  ar & BOOST_SERIALIZATION_NVP( d_independent_dimensions );
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_distributions );
+  ar & BOOST_SERIALIZATION_NVP( d_ready );
+}
+
+// Load the data from an archive
+template<typename Archive>
+void StandardParticleDistribution::load( Archive& ar, const unsigned version )
+{
+  // Load the base class member data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleDistribution );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_spatial_coord_conversion_policy );
+  ar & BOOST_SERIALIZATION_NVP( d_directional_coord_conversion_policy );
+  ar & BOOST_SERIALIZATION_NVP( d_independent_dimensions );
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_distributions );
+  ar & BOOST_SERIALIZATION_NVP( d_ready );
+}
+
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( StandardParticleDistribution );
   
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::StandardParticleDistribution, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( StandardParticleDistribution, MonteCarlo );
 
 #endif // end MONTE_CARLO_STANDARD_PARTICLE_DISTRIBUTION_HPP
 

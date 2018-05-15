@@ -48,8 +48,7 @@ template<PhaseSpaceDimension dimension>
 std::string
 IndependentPhaseSpaceDimensionDistribution<dimension>::getDistributionTypeName() const
 {
-  return Utility::convertOneDDistributionTypeToString(
-                             d_dimension_distribution->getDistributionType() );
+  return Utility::toString( d_dimension_distribution->getDistributionType() );
 }
 
 // Check if the dimension distribution is independent
@@ -158,8 +157,68 @@ double IndependentPhaseSpaceDimensionDistribution<dimension>::evaluatePDFWithout
 {
   return d_dimension_distribution->evaluatePDF( dimension_value );
 }
+
+// Save the data to an archive
+template<PhaseSpaceDimension dimension>
+template<typename Archive>
+void IndependentPhaseSpaceDimensionDistribution<dimension>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class member data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhaseSpaceDimensionDistribution );
+
+  // Save the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_distribution );
+}
+
+// Load the data from an archive
+template<PhaseSpaceDimension dimension>
+template<typename Archive>
+void IndependentPhaseSpaceDimensionDistribution<dimension>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class member data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( PhaseSpaceDimensionDistribution );
+
+  // Load the local member data
+  ar & BOOST_SERIALIZATION_NVP( d_dimension_distribution );
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentPrimarySpatialDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentSecondarySpatialDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentTertiarySpatialDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentPrimaryDirectionalDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentSecondaryDirectionalDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentTertiaryDirectionalDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentEnergyDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentTimeDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( IndependentWeightDimensionDistribution, MonteCarlo );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION> );
 
 #endif // end MONTE_CARLO_INDEPENDENT_PHASE_SPACE_DIMENSION_DISTRIBUTION_DEF_HPP
 
