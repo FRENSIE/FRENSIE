@@ -445,31 +445,31 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
                            new Utility::UniformDistribution( 0.5, 0.9, 0.5 ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      primary_spatial_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION>( basic_distribution ) );
+      primary_spatial_dimension_distribution( new MonteCarlo::IndependentPrimarySpatialDimensionDistribution( basic_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      secondary_spatial_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION>( basic_distribution ) );
+      secondary_spatial_dimension_distribution( new MonteCarlo::IndependentSecondarySpatialDimensionDistribution( basic_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      tertiary_spatial_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION>( basic_distribution ) );
+      tertiary_spatial_dimension_distribution( new MonteCarlo::IndependentTertiarySpatialDimensionDistribution( basic_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      primary_directional_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>( basic_distribution ) );
+      primary_directional_dimension_distribution( new MonteCarlo::IndependentPrimaryDirectionalDimensionDistribution( basic_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      secondary_directional_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION>( basic_distribution ) );
+      secondary_directional_dimension_distribution( new MonteCarlo::IndependentSecondaryDirectionalDimensionDistribution( basic_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      tertiary_directional_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION>( basic_distribution ) );
+      tertiary_directional_dimension_distribution( new MonteCarlo::IndependentTertiaryDirectionalDimensionDistribution( basic_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      energy_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION>( basic_distribution ) );
+      energy_dimension_distribution( new MonteCarlo::IndependentEnergyDimensionDistribution( basic_distribution ) );
     
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      time_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION>( basic_distribution ) );
+      time_dimension_distribution( new MonteCarlo::IndependentTimeDimensionDistribution( basic_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      weight_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION>( basic_distribution ) );
+      weight_dimension_distribution( new MonteCarlo::IndependentWeightDimensionDistribution( basic_distribution ) );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(primary_spatial_dimension_distribution) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(secondary_spatial_dimension_distribution) );

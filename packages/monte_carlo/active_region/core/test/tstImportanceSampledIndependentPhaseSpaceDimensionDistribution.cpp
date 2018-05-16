@@ -519,31 +519,31 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
                            new Utility::UniformDistribution( 0.1, 0.9, 0.5 ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      primary_spatial_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION>( distribution, importance_distribution ) );
+      primary_spatial_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPrimarySpatialDimensionDistribution( distribution, importance_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      secondary_spatial_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION>( distribution, importance_distribution ) );
+      secondary_spatial_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentSecondarySpatialDimensionDistribution( distribution, importance_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      tertiary_spatial_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION>( distribution, importance_distribution ) );
+      tertiary_spatial_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentTertiarySpatialDimensionDistribution( distribution, importance_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      primary_directional_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>( distribution, importance_distribution ) );
+      primary_directional_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPrimaryDirectionalDimensionDistribution( distribution, importance_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      secondary_directional_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION>( distribution, importance_distribution ) );
+      secondary_directional_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentSecondaryDirectionalDimensionDistribution( distribution, importance_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      tertiary_directional_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION>( distribution, importance_distribution ) );
+      tertiary_directional_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentTertiaryDirectionalDimensionDistribution( distribution, importance_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      energy_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION>( distribution, importance_distribution ) );
+      energy_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentEnergyDimensionDistribution( distribution, importance_distribution ) );
     
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      time_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION>( distribution, importance_distribution ) );
+      time_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentTimeDimensionDistribution( distribution, importance_distribution ) );
 
     std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
-      weight_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION>( importance_distribution, distribution ) );
+      weight_dimension_distribution( new MonteCarlo::ImportanceSampledIndependentWeightDimensionDistribution( importance_distribution, distribution ) );
 
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(primary_spatial_dimension_distribution) );
     FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(secondary_spatial_dimension_distribution) );
@@ -588,6 +588,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   iarchive.reset();
 
   {
+    FRENSIE_CHECK_EQUAL( primary_spatial_dimension_distribution->getDimension(),
+                         PRIMARY_SPATIAL_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -623,6 +626,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   }
 
   {
+    FRENSIE_CHECK_EQUAL( secondary_spatial_dimension_distribution->getDimension(),
+                         SECONDARY_SPATIAL_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -658,6 +664,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   }
 
   {
+    FRENSIE_CHECK_EQUAL( tertiary_spatial_dimension_distribution->getDimension(),
+                         TERTIARY_SPATIAL_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -693,6 +702,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   }
 
   {
+    FRENSIE_CHECK_EQUAL( primary_directional_dimension_distribution->getDimension(),
+                         PRIMARY_DIRECTIONAL_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -728,6 +740,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   }
 
   {
+    FRENSIE_CHECK_EQUAL( secondary_directional_dimension_distribution->getDimension(),
+                         SECONDARY_DIRECTIONAL_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -763,6 +778,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   }
 
   {
+    FRENSIE_CHECK_EQUAL( tertiary_directional_dimension_distribution->getDimension(),
+                         TERTIARY_DIRECTIONAL_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -798,6 +816,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   }
 
   {
+    FRENSIE_CHECK_EQUAL( energy_dimension_distribution->getDimension(),
+                         ENERGY_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -833,6 +854,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   }
 
   {
+    FRENSIE_CHECK_EQUAL( time_dimension_distribution->getDimension(),
+                         TIME_DIMENSION );
+    
     std::vector<double> fake_stream( 3 );
     fake_stream[0] = 0.0;
     fake_stream[1] = 0.5;
@@ -871,6 +895,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   // evaluate it to ensure that the serialization/deserialization was
   // successful
   {
+    FRENSIE_CHECK_EQUAL( weight_dimension_distribution->getDimension(),
+                         WEIGHT_DIMENSION );
+    
     MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                        directional_coord_conversion_policy );
     setCoordinate<WEIGHT_DIMENSION>( point, 0.1 );
