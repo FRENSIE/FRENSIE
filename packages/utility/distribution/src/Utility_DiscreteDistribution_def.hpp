@@ -52,8 +52,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
                     const bool interpret_dependent_values_as_cdf,
                     const bool treat_as_continuous )
   : d_distribution( independent_values.size() ),
-    d_continuous( treat_as_continuous ),
-    d_norm_constant()
+    d_norm_constant(),
+    d_continuous( treat_as_continuous )
 {
   // Verify that the values are valid
   this->verifyValidValues( independent_values,
@@ -87,8 +87,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
     const Utility::ArrayView<const double>& dependent_values,
     const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
-    d_continuous( treat_as_continuous ),
-    d_norm_constant()
+    d_norm_constant(),
+    d_continuous( treat_as_continuous )
 {
   // Verify that the values are valid
   this->verifyValidValues( independent_quantities, dependent_values, true );
@@ -119,8 +119,8 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteD
     const Utility::ArrayView<const InputDepQuantity>& dependent_quantities,
     const bool treat_as_continuous )
   : d_distribution( independent_quantities.size() ),
-    d_continuous( treat_as_continuous ),
-    d_norm_constant()
+    d_norm_constant(),
+    d_continuous( treat_as_continuous )
 {
   // Verify that the values are valid
   this->verifyValidValues( independent_quantities,
@@ -145,7 +145,8 @@ template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
 	  const UnitAwareDiscreteDistribution<InputIndepUnit,InputDepUnit>& dist_instance )
   : d_distribution(),
-    d_norm_constant()
+    d_norm_constant(),
+    d_continuous( dist_instance.d_continuous )
 {
   // Make sure that the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
@@ -173,7 +174,8 @@ template<typename IndependentUnit,typename DependentUnit>
 UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::UnitAwareDiscreteDistribution(
   const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int )
   : d_distribution(),
-    d_norm_constant()
+    d_norm_constant(),
+    d_continuous( unitless_dist_instance.d_continuous )
 {
   // Make sure that the distribution is valid
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
@@ -224,6 +226,7 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::operator=(
   {
     d_distribution = dist_instance.d_distribution;
     d_norm_constant = dist_instance.d_norm_constant;
+    d_continuous = dist_instance.d_continuous;
   }
 
   return *this;

@@ -214,7 +214,7 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
   typedef typename std::remove_pointer<RawOArchive>::type OArchive;
   typedef typename std::remove_pointer<RawIArchive>::type IArchive;
 
-  std::string archive_base_name( "test_material_definition_database" );
+  std::string archive_base_name( "test_phase_space_dimension_enum" );
   std::ostringstream archive_ostream;
 
   {

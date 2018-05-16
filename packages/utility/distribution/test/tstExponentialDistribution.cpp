@@ -783,6 +783,9 @@ FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( ExponentialDistribution,
   FRENSIE_REQUIRE_NO_THROW(
                            (*iarchive) >> BOOST_SERIALIZATION_NVP( dist_c ) );
   FRENSIE_CHECK_EQUAL( dist_c, Utility::ExponentialDistribution( 2.0, 3.0 ) );
+  FRENSIE_CHECK_EQUAL( dist_c.evaluatePDF( -1.0 ), 0.0 );
+  FRENSIE_CHECK_EQUAL( dist_c.evaluatePDF( 0.0 ), 3.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY(dist_c.evaluatePDF(1.0), 3.0*exp(-3.0), 1e-12);
 
   Utility::ExponentialDistribution dist_d;
 

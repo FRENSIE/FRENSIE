@@ -10,22 +10,42 @@
 #include <iostream>
 #include <memory>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IndependentPhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
-#include "MonteCarlo_SourceUnitTestHarnessExtensions.hpp"
 #include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
 
 using namespace MonteCarlo;
+
+typedef std::tuple<std::integral_constant<PhaseSpaceDimension,PRIMARY_SPATIAL_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,SECONDARY_SPATIAL_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,TERTIARY_SPATIAL_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,PRIMARY_DIRECTIONAL_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,SECONDARY_DIRECTIONAL_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,TERTIARY_DIRECTIONAL_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,ENERGY_DIMENSION>,
+                   std::integral_constant<PhaseSpaceDimension,TIME_DIMENSION>
+                  > TestPhaseSpaceDimensionsNoWeight;
+
+typedef decltype(std::tuple_cat(TestPhaseSpaceDimensionsNoWeight(),std::make_tuple(std::integral_constant<PhaseSpaceDimension,WEIGHT_DIMENSION>()))) TestPhaseSpaceDimensions;
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -37,236 +57,215 @@ std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>
 directional_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy );
 
 //---------------------------------------------------------------------------//
-// Instantiation Macros.
-//---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name )   \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, PRIMARY_SPATIAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SECONDARY_SPATIAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TERTIARY_SPATIAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, PRIMARY_DIRECTIONAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SECONDARY_DIRECTIONAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TERTIARY_DIRECTIONAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ENERGY_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TIME_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, WEIGHT_DIMENSION )
-
-#define UNIT_TEST_INSTANTIATION_NO_WEIGHT_DIM( type, name )   \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, PRIMARY_SPATIAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SECONDARY_SPATIAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TERTIARY_SPATIAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, PRIMARY_DIRECTIONAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SECONDARY_DIRECTIONAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TERTIARY_DIRECTIONAL_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ENERGY_DIMENSION ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, TIME_DIMENSION )
-
-//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Test that the dimension can be returned
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  getDimension,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            getDimension,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_EQUALITY_CONST( dimension_distribution->getDimension(), Dimension );
+  FRENSIE_CHECK_EQUAL( dimension_distribution->getDimension(), Dimension );
 }
-
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         getDimension );
                          
 //---------------------------------------------------------------------------//
 // Test that the dimension class can be returned
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  getDimensionClass,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            getDimensionClass,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_EQUALITY_CONST( dimension_distribution->getDimensionClass(),
+  FRENSIE_CHECK_EQUAL( dimension_distribution->getDimensionClass(),
                        MonteCarlo::PhaseSpaceDimensionTraits<Dimension>::getClass() );
 }
 
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         getDimensionClass );
-
 //---------------------------------------------------------------------------//
 // Test that the distribution type name can be returned
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  getDistributionTypeName,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            getDistributionTypeName,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_EQUALITY_CONST( dimension_distribution->getDistributionTypeName(),
+  FRENSIE_CHECK_EQUAL( dimension_distribution->getDistributionTypeName(),
                        "Uniform Distribution" );
 }
 
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         getDistributionTypeName );
-
 //---------------------------------------------------------------------------//
 // Test if the distribution is independent
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  isIndependent,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            isIndependent,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( dimension_distribution->isIndependent() );
+  FRENSIE_CHECK( dimension_distribution->isIndependent() );
 }
-
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         isIndependent );
 
 //---------------------------------------------------------------------------//
 // Test if the distribution is dependent on another dimension
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  isDependentOnDimension,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            isDependentOnDimension,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::ENERGY_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::TIME_DIMENSION ) );
-  TEST_ASSERT( !dimension_distribution->isDependentOnDimension( MonteCarlo::WEIGHT_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::PRIMARY_SPATIAL_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::SECONDARY_SPATIAL_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::TERTIARY_SPATIAL_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::ENERGY_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::TIME_DIMENSION ) );
+  FRENSIE_CHECK( !dimension_distribution->isDependentOnDimension( MonteCarlo::WEIGHT_DIMENSION ) );
 }
-
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         isDependentOnDimension );
 
 //---------------------------------------------------------------------------//
 // Test if the distribution is continuous
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  isContinuous,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            isContinuous,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( dimension_distribution->isContinuous() );
+  FRENSIE_CHECK( dimension_distribution->isContinuous() );
 
   basic_distribution.reset( new Utility::DeltaDistribution( 1.0 ) );
 
   dimension_distribution.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( !dimension_distribution->isContinuous() );
+  FRENSIE_CHECK( !dimension_distribution->isContinuous() );
 }
-
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         isContinuous );
 
 //---------------------------------------------------------------------------//
 // Test if the distribution is tabular
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  isTabular,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            isTabular,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( dimension_distribution->isTabular() );
+  FRENSIE_CHECK( dimension_distribution->isTabular() );
 
   basic_distribution.reset( new Utility::ExponentialDistribution( 1.0, 1.0 ) );
 
   dimension_distribution.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( !dimension_distribution->isTabular() );
+  FRENSIE_CHECK( !dimension_distribution->isTabular() );
 }
-
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         isTabular );
 
 //---------------------------------------------------------------------------//
 // Test if the distribution is uniform
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  isUniform,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            isUniform,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( dimension_distribution->isUniform() );
+  FRENSIE_CHECK( dimension_distribution->isUniform() );
 
   basic_distribution.reset( new Utility::ExponentialDistribution( 1.0, 1.0 ) );
 
   dimension_distribution.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( !dimension_distribution->isUniform() );
+  FRENSIE_CHECK( !dimension_distribution->isUniform() );
 }
-
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         isUniform );
 
 //---------------------------------------------------------------------------//
 // Test if the distribution has the specified form
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  hasForm,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            hasForm,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 1.5, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
     dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( dimension_distribution->hasForm( Utility::UNIFORM_DISTRIBUTION ) );
-  TEST_ASSERT( !dimension_distribution->hasForm( Utility::EXPONENTIAL_DISTRIBUTION ) );
+  FRENSIE_CHECK( dimension_distribution->hasForm( Utility::UNIFORM_DISTRIBUTION ) );
+  FRENSIE_CHECK( !dimension_distribution->hasForm( Utility::EXPONENTIAL_DISTRIBUTION ) );
 
   basic_distribution.reset( new Utility::ExponentialDistribution( 1.0, 1.0 ) );
 
   dimension_distribution.reset( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>( basic_distribution ) );
 
-  TEST_ASSERT( !dimension_distribution->hasForm( Utility::UNIFORM_DISTRIBUTION ) );
-  TEST_ASSERT( dimension_distribution->hasForm( Utility::EXPONENTIAL_DISTRIBUTION ) );
+  FRENSIE_CHECK( !dimension_distribution->hasForm( Utility::UNIFORM_DISTRIBUTION ) );
+  FRENSIE_CHECK( dimension_distribution->hasForm( Utility::EXPONENTIAL_DISTRIBUTION ) );
 }
-
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         hasForm );
 
 //---------------------------------------------------------------------------//
 // Test if the distribution can be evaluated without a cascade
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  evaluateWithoutCascade,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            evaluateWithoutCascade,
+                            TestPhaseSpaceDimensions )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.5, 0.9, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
@@ -276,40 +275,40 @@ MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
                                      directional_coord_conversion_policy );
   setCoordinate<Dimension>( point, 0.1 );
   
-  TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
+  FRENSIE_CHECK_EQUAL( dimension_distribution->evaluateWithoutCascade( point ),
                        0.0 );
 
   setCoordinate<Dimension>( point, 0.5 );
 
-  TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
+  FRENSIE_CHECK_EQUAL( dimension_distribution->evaluateWithoutCascade( point ),
                        0.5 );
 
   setCoordinate<Dimension>( point, 0.7 );
 
-  TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
+  FRENSIE_CHECK_EQUAL( dimension_distribution->evaluateWithoutCascade( point ),
                        0.5 );
 
   setCoordinate<Dimension>( point, 0.9 );
 
-  TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
+  FRENSIE_CHECK_EQUAL( dimension_distribution->evaluateWithoutCascade( point ),
                        0.5 );
 
   setCoordinate<Dimension>( point, 1.0 );
 
-  TEST_EQUALITY_CONST( dimension_distribution->evaluateWithoutCascade( point ),
+  FRENSIE_CHECK_EQUAL( dimension_distribution->evaluateWithoutCascade( point ),
                        0.0 );
 }
 
-UNIT_TEST_INSTANTIATION( IndependentPhaseSpaceDimensionDistribution,
-                         evaluateWithoutCascade );
-
 //---------------------------------------------------------------------------//
 // Test if the distribution can be sampled without a cascade
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  sampleWithoutCascade,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            sampleWithoutCascade,
+                            TestPhaseSpaceDimensionsNoWeight )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.1, 0.9, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
@@ -327,30 +326,31 @@ MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.1 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.0 );
+  FRENSIE_CHECK_EQUAL( getCoordinate<Dimension>( point ), 0.1 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.0 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.5 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.0 );
+  FRENSIE_CHECK_EQUAL( getCoordinate<Dimension>( point ), 0.5 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.0 );
 
   dimension_distribution->sampleWithoutCascade( point );
 
-  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ), 0.9, 1e-15 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.0 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<Dimension>( point ), 0.9, 1e-15 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.0 );
 }
-
-UNIT_TEST_INSTANTIATION_NO_WEIGHT_DIM( IndependentPhaseSpaceDimensionDistribution, sampleWithoutCascade );
 
 //---------------------------------------------------------------------------//
 // Test if the distribution can be sampled without a cascade and the
 // trials can be counted
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  sampleAndRecordTrialsWithoutCascade,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            sampleAndRecordTrialsWithoutCascade,
+                            TestPhaseSpaceDimensionsNoWeight )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.1, 0.9, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
@@ -359,7 +359,7 @@ MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
 
-  MonteCarlo::ModuleTraits::InternalCounter trials = 0;
+  typename MonteCarlo::IndependentPhaseSpaceDimensionDistribution<Dimension>::Counter trials = 0;
 
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -370,32 +370,33 @@ MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.1 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.0 );
-  TEST_EQUALITY_CONST( trials, 1 );
+  FRENSIE_CHECK_EQUAL( getCoordinate<Dimension>( point ), 0.1 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 1 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.5 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.0 );
-  TEST_EQUALITY_CONST( trials, 2 );
+  FRENSIE_CHECK_EQUAL( getCoordinate<Dimension>( point ), 0.5 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 2 );
 
   dimension_distribution->sampleAndRecordTrialsWithoutCascade( point, trials );
 
-  TEST_FLOATING_EQUALITY( getCoordinate<Dimension>( point ), 0.9, 1e-15 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.0 );
-  TEST_EQUALITY_CONST( trials, 3 );
+  FRENSIE_CHECK_FLOATING_EQUALITY( getCoordinate<Dimension>( point ), 0.9, 1e-15 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.0 );
+  FRENSIE_CHECK_EQUAL( trials, 3 );
 }
-
-UNIT_TEST_INSTANTIATION_NO_WEIGHT_DIM( IndependentPhaseSpaceDimensionDistribution, sampleAndRecordTrialsWithoutCascade );
 
 //---------------------------------------------------------------------------//
 // Test that the dimension value can be set and weighted appropriately
-MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
-                                  setDimensionValueAndApplyWeight,
-                                  Dimension )
+FRENSIE_UNIT_TEST_TEMPLATE( IndependentPhaseSpaceDimensionDistribution,
+                            setDimensionValueAndApplyWeight,
+                            TestPhaseSpaceDimensionsNoWeight )
 {
-  std::shared_ptr<const Utility::OneDDistribution> basic_distribution(
+  FETCH_TEMPLATE_PARAM( 0, WrappedDimension );
+  constexpr PhaseSpaceDimension Dimension = WrappedDimension::value;
+  
+  std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
                            new Utility::UniformDistribution( 0.1, 0.9, 0.5 ) );
 
   std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
@@ -406,35 +407,413 @@ MC_UNIT_TEST_PSD_TEMPLATE_1_DECL( IndependentPhaseSpaceDimensionDistribution,
 
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.1 );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.1 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.25 );
+  FRENSIE_CHECK_EQUAL( getCoordinate<Dimension>( point ), 0.1 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.25 );
 
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.5 );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.5 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.25 );
+  FRENSIE_CHECK_EQUAL( getCoordinate<Dimension>( point ), 0.5 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.25 );
 
   dimension_distribution->setDimensionValueAndApplyWeight( point, 0.9 );
 
-  TEST_EQUALITY_CONST( getCoordinate<Dimension>( point ), 0.9 );
-  TEST_EQUALITY_CONST( getCoordinateWeight<Dimension>( point ), 1.25 );
+  FRENSIE_CHECK_EQUAL( getCoordinate<Dimension>( point ), 0.9 );
+  FRENSIE_CHECK_EQUAL( getCoordinateWeight<Dimension>( point ), 1.25 );
 }
 
-UNIT_TEST_INSTANTIATION_NO_WEIGHT_DIM( IndependentPhaseSpaceDimensionDistribution, setDimensionValueAndApplyWeight );
+//---------------------------------------------------------------------------//
+// Check that the distribution can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_independent_phase_dimension_distribution" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    std::shared_ptr<const Utility::UnivariateDistribution> basic_distribution(
+                           new Utility::UniformDistribution( 0.5, 0.9, 0.5 ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      primary_spatial_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_SPATIAL_DIMENSION>( basic_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      secondary_spatial_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_SPATIAL_DIMENSION>( basic_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      tertiary_spatial_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_SPATIAL_DIMENSION>( basic_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      primary_directional_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>( basic_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      secondary_directional_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION>( basic_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      tertiary_directional_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION>( basic_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      energy_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION>( basic_distribution ) );
+    
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      time_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION>( basic_distribution ) );
+
+    std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+      weight_dimension_distribution( new MonteCarlo::IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION>( basic_distribution ) );
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(primary_spatial_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(secondary_spatial_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(tertiary_spatial_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(primary_directional_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(secondary_directional_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(tertiary_directional_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(energy_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(time_dimension_distribution) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(weight_dimension_distribution) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  std::shared_ptr<const MonteCarlo::PhaseSpaceDimensionDistribution>
+    primary_spatial_dimension_distribution,
+    secondary_spatial_dimension_distribution,
+    tertiary_spatial_dimension_distribution,
+    primary_directional_dimension_distribution,
+    secondary_directional_dimension_distribution,
+    tertiary_directional_dimension_distribution,
+    energy_dimension_distribution,
+    time_dimension_distribution,
+    weight_dimension_distribution;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(primary_spatial_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(secondary_spatial_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(tertiary_spatial_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(primary_directional_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(secondary_directional_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(tertiary_directional_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(energy_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(time_dimension_distribution) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(weight_dimension_distribution) );
+
+  iarchive.reset();
+
+  {
+    FRENSIE_CHECK_EQUAL( primary_spatial_dimension_distribution->getDimension(),
+                         PRIMARY_SPATIAL_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                     directional_coord_conversion_policy );
+    setCoordinate<PRIMARY_SPATIAL_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( primary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<PRIMARY_SPATIAL_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( primary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<PRIMARY_SPATIAL_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( primary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<PRIMARY_SPATIAL_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( primary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<PRIMARY_SPATIAL_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( primary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( secondary_spatial_dimension_distribution->getDimension(),
+                         SECONDARY_SPATIAL_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                     directional_coord_conversion_policy );
+    setCoordinate<SECONDARY_SPATIAL_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( secondary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<SECONDARY_SPATIAL_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( secondary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<SECONDARY_SPATIAL_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( secondary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<SECONDARY_SPATIAL_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( secondary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<SECONDARY_SPATIAL_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( secondary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( tertiary_spatial_dimension_distribution->getDimension(),
+                         TERTIARY_SPATIAL_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                     directional_coord_conversion_policy );
+    setCoordinate<TERTIARY_SPATIAL_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( tertiary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<TERTIARY_SPATIAL_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( tertiary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TERTIARY_SPATIAL_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( tertiary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TERTIARY_SPATIAL_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( tertiary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TERTIARY_SPATIAL_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( tertiary_spatial_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( primary_directional_dimension_distribution->getDimension(),
+                         PRIMARY_DIRECTIONAL_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy );
+    setCoordinate<PRIMARY_DIRECTIONAL_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( primary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<PRIMARY_DIRECTIONAL_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( primary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<PRIMARY_DIRECTIONAL_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( primary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<PRIMARY_DIRECTIONAL_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( primary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<PRIMARY_DIRECTIONAL_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( primary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( secondary_directional_dimension_distribution->getDimension(),
+                         SECONDARY_DIRECTIONAL_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                     directional_coord_conversion_policy );
+    setCoordinate<SECONDARY_DIRECTIONAL_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( secondary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<SECONDARY_DIRECTIONAL_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( secondary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<SECONDARY_DIRECTIONAL_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( secondary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<SECONDARY_DIRECTIONAL_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( secondary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<SECONDARY_DIRECTIONAL_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( secondary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( tertiary_directional_dimension_distribution->getDimension(),
+                         TERTIARY_DIRECTIONAL_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                     directional_coord_conversion_policy );
+    setCoordinate<TERTIARY_DIRECTIONAL_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( tertiary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<TERTIARY_DIRECTIONAL_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( tertiary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TERTIARY_DIRECTIONAL_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( tertiary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TERTIARY_DIRECTIONAL_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( tertiary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TERTIARY_DIRECTIONAL_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( tertiary_directional_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( energy_dimension_distribution->getDimension(),
+                         ENERGY_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                     directional_coord_conversion_policy );
+    setCoordinate<ENERGY_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( energy_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<ENERGY_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( energy_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<ENERGY_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( energy_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<ENERGY_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( energy_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<ENERGY_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( energy_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( time_dimension_distribution->getDimension(),
+                         TIME_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                     directional_coord_conversion_policy );
+    setCoordinate<TIME_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( time_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<TIME_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( time_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TIME_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( time_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TIME_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( time_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<TIME_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( time_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+
+  {
+    FRENSIE_CHECK_EQUAL( weight_dimension_distribution->getDimension(),
+                         WEIGHT_DIMENSION );
+
+    MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
+                                       directional_coord_conversion_policy );
+    setCoordinate<WEIGHT_DIMENSION>( point, 0.1 );
+  
+    FRENSIE_CHECK_EQUAL( weight_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+
+    setCoordinate<WEIGHT_DIMENSION>( point, 0.5 );
+    
+    FRENSIE_CHECK_EQUAL( weight_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<WEIGHT_DIMENSION>( point, 0.7 );
+
+    FRENSIE_CHECK_EQUAL( weight_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<WEIGHT_DIMENSION>( point, 0.9 );
+    
+    FRENSIE_CHECK_EQUAL( weight_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.5 );
+
+    setCoordinate<WEIGHT_DIMENSION>( point, 1.0 );
+    
+    FRENSIE_CHECK_EQUAL( weight_dimension_distribution->evaluateWithoutCascade( point ),
+                         0.0 );
+  }
+}
 
 //---------------------------------------------------------------------------//
 // Custom setup
 //---------------------------------------------------------------------------//
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_BEGIN();
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_BEGIN();
-
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_DATA_INITIALIZATION()
+FRENSIE_CUSTOM_UNIT_TEST_INIT()
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 }
 
-UTILITY_CUSTOM_TEUCHOS_UNIT_TEST_SETUP_END();
+FRENSIE_CUSTOM_UNIT_TEST_SETUP_END();
 
 //---------------------------------------------------------------------------//
 // end tstIndependentPhaseSpaceDimensionDistribution.cpp
