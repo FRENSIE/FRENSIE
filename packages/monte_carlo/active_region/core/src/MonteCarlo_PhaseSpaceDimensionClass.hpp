@@ -10,8 +10,10 @@
 #define MONTE_CARLO_PHASE_SPACE_DIMENSION_CLASS_HPP
 
 // Std Lib Includes
-#include <iostream>
 #include <string>
+
+// FRENSIE Includes
+#include "Utility_ToStringTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -25,20 +27,38 @@ enum PhaseSpaceDimensionClass
   WEIGHT_DIMENSION_CLASS
 };
 
-//! Convert the dimension class type enum to a string
-std::string convertPhaseSpaceDimensionClassEnumToString(
-                      const PhaseSpaceDimensionClass dimension_class );
+} // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! \brief Specialization of Utility::ToStringTraits for
+ * MonteCarlo::PhaseSpaceDimensionClass
+ * \ingroup to_string_traits
+ */
+template<>
+struct ToStringTraits<MonteCarlo::PhaseSpaceDimensionClass>
+{
+  //! Convert a MonteCarlo::PhaseSpaceDimension to a string
+  static std::string toString( const MonteCarlo::PhaseSpaceDimensionClass _class );
+
+  //! Place the MonteCarlo::PhaseSpaceDimension in a stream
+  static void toStream( std::ostream& os, const MonteCarlo::PhaseSpaceDimensionClass _class );
+};
+  
+} // end Utility namespace
+
+namespace std{
 
 //! Stream operator for printing dimension type enums
 inline std::ostream& operator<<(
-                               std::ostream& os,
-                               const PhaseSpaceDimensionClass dimension_class )
+                   std::ostream& os,
+                   const MonteCarlo::PhaseSpaceDimensionClass dimension_class )
 {
-  os << convertPhaseSpaceDimensionClassEnumToString( dimension_class );
+  os << Utility::toString( dimension_class );
   return os;
 }
-  
-} // end MonteCarlo namespace
+
+} // end std namespace
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_CLASS_HPP
 

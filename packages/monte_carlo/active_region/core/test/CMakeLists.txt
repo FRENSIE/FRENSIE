@@ -1,25 +1,13 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_active_region_core)
 
-ADD_EXECUTABLE(tstPhaseSpaceDimension
-  tstPhaseSpaceDimension.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhaseSpaceDimension monte_carlo_source_native)
-ADD_TEST(PhaseSpaceDimension_test tstPhaseSpaceDimension)
-SET_PROPERTY(TEST PhaseSpaceDimension_test PROPERTY LABELS monte_carlo_source_native)
+FRENSIE_ADD_TEST_EXECUTABLE(PhaseSpaceDimension DEPENDS tstPhaseSpaceDimension.cpp)
+FRENSIE_ADD_TEST(PhaseSpaceDimension)
 
-ADD_EXECUTABLE(tstPhaseSpaceDimensionClass
-  tstPhaseSpaceDimensionClass.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhaseSpaceDimensionClass monte_carlo_source_native)
-ADD_TEST(PhaseSpaceDimensionClass_test tstPhaseSpaceDimensionClass)
-SET_PROPERTY(TEST PhaseSpaceDimensionClass_test PROPERTY LABELS monte_carlo_source_native)
+FRENSIE_ADD_TEST_EXECUTABLE(PhaseSpaceDimensionClass DEPENDS tstPhaseSpaceDimensionClass.cpp)
+FRENSIE_ADD_TEST(PhaseSpaceDimensionClass)
 
-ADD_EXECUTABLE(tstPhaseSpacePoint
-  tstPhaseSpacePoint.cpp
-  ${FRENSIE_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhaseSpacePoint monte_carlo_source_native)
-ADD_TEST(PhaseSpacePoint_test tstPhaseSpacePoint)
-SET_PROPERTY(TEST PhaseSpacePoint_test PROPERTY LABELS monte_carlo_source_native)
+FRENSIE_ADD_TEST_EXECUTABLE(PhaseSpacePoint DEPENDS tstPhaseSpacePoint.cpp)
+FRENSIE_ADD_TEST(PhaseSpacePoint)
 
 ADD_EXECUTABLE(tstPhaseSpaceDimensionTraits
   tstPhaseSpaceDimensionTraits.cpp
