@@ -28,7 +28,7 @@ namespace MonteCarlo{
 
 // Constructor
 PhaseSpaceDimensionDistribution::PhaseSpaceDimensionDistribution()
-  : d_parent_distribution( NULL ),
+  : d_parent_distribution(),
     d_dependent_dimension_distributions()
 { /* ... */ }
 
@@ -246,19 +246,16 @@ void PhaseSpaceDimensionDistribution::sampleFromDependentDistributionsAndRecordT
 // Check if the distribution has a parent
 bool PhaseSpaceDimensionDistribution::hasParentDistribution() const
 {
-  return d_parent_distribution != NULL;
+  return d_parent_distribution.use_count() > 0;
 }
 
-// Return the parent distribution
-/*! \details If the distribution is independent or if the parent distribution
- * has not been assigned yet, this method will throw an exception
- */
-const PhaseSpaceDimensionDistribution&
-PhaseSpaceDimensionDistribution::getParentDistribution() const
+// Get the parent distribution
+const PhaseSpaceDimensionDistribution& PhaseSpaceDimensionDistribution::getParentDistribution() const
 {
+  // Make sure that there is a parent distribution
   testPrecondition( this->hasParentDistribution() );
   
-  return *d_parent_distribution;
+  return *d_parent_distribution.lock();
 }
 
 // Add a dependent distribution
@@ -292,7 +289,7 @@ void PhaseSpaceDimensionDistribution::addDependentDistribution(
     dependent_dimension;
 
   // Set this distribution as the parent of the dependent distribution
-  dependent_dimension->d_parent_distribution = this;
+  dependent_dimension->d_parent_distribution = shared_from_this();
 }
 
 // Remove dependent distributions
@@ -307,7 +304,8 @@ void PhaseSpaceDimensionDistribution::removeDependentDistributions()
   while( dep_dist_it != dep_dist_end )
   {
     // This distribution will no longer be the parent of the stored dists.
-    dep_dist_it->second->d_parent_distribution = NULL;
+    dep_dist_it->second->d_parent_distribution =
+      std::weak_ptr<const PhaseSpaceDimensionDistribution>();
     
     ++dep_dist_it;
   }

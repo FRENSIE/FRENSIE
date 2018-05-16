@@ -19,6 +19,7 @@
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/weak_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
@@ -34,7 +35,7 @@
 namespace MonteCarlo{
 
 //! The phase space dimension distribution class
-class PhaseSpaceDimensionDistribution
+class PhaseSpaceDimensionDistribution : public std::enable_shared_from_this<PhaseSpaceDimensionDistribution>
 {
 
 public:
@@ -129,9 +130,9 @@ public:
   //! Check if the distribution has a parent
   bool hasParentDistribution() const;
 
-  //! Return the parent distribution
+  //! Get the parent distribution
   const PhaseSpaceDimensionDistribution& getParentDistribution() const;
-  
+
   //! Add a dependent distribution
   void addDependentDistribution(
                         const std::shared_ptr<PhaseSpaceDimensionDistribution>&
@@ -185,7 +186,7 @@ private:
   friend class boost::serialization::access;
 
   // The parent distribution
-  const PhaseSpaceDimensionDistribution* d_parent_distribution;
+  std::weak_ptr<const PhaseSpaceDimensionDistribution> d_parent_distribution;
 
   // The dependent dimensions
   typedef std::map<PhaseSpaceDimension,std::shared_ptr<PhaseSpaceDimensionDistribution> > DimensionDependentDistributionMap;
