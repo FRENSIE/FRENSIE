@@ -689,7 +689,7 @@ ParticleState::createAdvanceCompleteCallback()
                           std::placeholders::_1 );
 }
 
-EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( ParticleState );
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( ParticleState );
 
 } // end MonteCarlo
 

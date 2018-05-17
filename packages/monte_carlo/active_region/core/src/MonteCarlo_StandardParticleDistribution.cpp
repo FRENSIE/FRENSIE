@@ -6,8 +6,15 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <functional>
+// Boost Includes
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardParticleDistribution.hpp"
@@ -17,6 +24,8 @@
 #include "Utility_BasicSphericalCoordinateConversionPolicy.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_HDF5IArchive.hpp"
+#include "Utility_HDF5OArchive.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -24,8 +33,8 @@ namespace MonteCarlo{
 
 // Basic Constructor
 StandardParticleDistribution::StandardParticleDistribution(
-                                      const ModuleTraits::InternalROIHandle id,
-                                      const std::string& name )
+                                                      const size_t id,
+                                                      const std::string& name )
   : ParticleDistribution( id, name ),
     d_spatial_coord_conversion_policy( new Utility::BasicCartesianCoordinateConversionPolicy ),
     d_directional_coord_conversion_policy( new Utility::BasicSphericalCoordinateConversionPolicy ),
@@ -39,7 +48,7 @@ StandardParticleDistribution::StandardParticleDistribution(
 
 // Constructor
 StandardParticleDistribution::StandardParticleDistribution(
-   const ModuleTraits::InternalROIHandle id,
+   const size_t id,
    const std::string& name,
    const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
    spatial_coord_conversion_policy,
@@ -177,7 +186,7 @@ void StandardParticleDistribution::checkDependencyTreeForOrphans()
     if( !distribution_it->second->isIndependent() )
     {
       TEST_FOR_EXCEPTION(
-                   distribution_it->second->getParentDistribution() == NULL,
+                   !distribution_it->second->hasParentDistribution(),
                    std::runtime_error,
                    "Invalid particle distribution! The dependent distribution "
                    "defined for the "
@@ -206,19 +215,19 @@ void StandardParticleDistribution::reset()
   // The default energy is 1.0
   d_dimension_distributions[ENERGY_DIMENSION].reset(
    new IndependentPhaseSpaceDimensionDistribution<ENERGY_DIMENSION>(
-                 std::shared_ptr<const Utility::OneDDistribution>(
+                 std::shared_ptr<const Utility::UnivariateDistribution>(
                                    new Utility::DeltaDistribution( 1.0 ) ) ) );
 
   // The default time is 0.0
   d_dimension_distributions[TIME_DIMENSION].reset(
    new IndependentPhaseSpaceDimensionDistribution<TIME_DIMENSION>(
-                 std::shared_ptr<const Utility::OneDDistribution>(
+                 std::shared_ptr<const Utility::UnivariateDistribution>(
                                    new Utility::DeltaDistribution( 0.0 ) ) ) );
 
   // The default weight is 1.0
   d_dimension_distributions[WEIGHT_DIMENSION].reset(
    new IndependentPhaseSpaceDimensionDistribution<WEIGHT_DIMENSION>(
-                 std::shared_ptr<const Utility::OneDDistribution>(
+                 std::shared_ptr<const Utility::UnivariateDistribution>(
                                    new Utility::DeltaDistribution( 1.0 ) ) ) );
 
   // Construct the dependency tree
@@ -229,7 +238,7 @@ void StandardParticleDistribution::reset()
 void StandardParticleDistribution::resetSpatialDistributions()
 {
   // The spatial distribution will model a point at the origin by default
-  std::shared_ptr<const Utility::OneDDistribution> raw_spatial_distribution( 
+  std::shared_ptr<const Utility::UnivariateDistribution> raw_spatial_distribution( 
                                        new Utility::DeltaDistribution( 0.0 ) );
     
   d_dimension_distributions[PRIMARY_SPATIAL_DIMENSION].reset(
@@ -255,7 +264,7 @@ void StandardParticleDistribution::resetDirectionalDistributions()
   if( d_directional_coord_conversion_policy->getLocalDirectionalCoordinateSystemType() ==
       Utility::CARTESIAN_DIRECTIONAL_COORDINATE_SYSTEM )
   {
-    std::shared_ptr<const Utility::OneDDistribution>
+    std::shared_ptr<const Utility::UnivariateDistribution>
       raw_directional_distribution( 
                           new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
   
@@ -276,17 +285,17 @@ void StandardParticleDistribution::resetDirectionalDistributions()
   {
     d_dimension_distributions[PRIMARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<PRIMARY_DIRECTIONAL_DIMENSION>(
-                 std::shared_ptr<const Utility::OneDDistribution>(
+                 std::shared_ptr<const Utility::UnivariateDistribution>(
                                    new Utility::DeltaDistribution( 1.0 ) ) ) );
     d_dimension_distributions[SECONDARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<SECONDARY_DIRECTIONAL_DIMENSION>(
-                 std::shared_ptr<const Utility::OneDDistribution>(
+                 std::shared_ptr<const Utility::UnivariateDistribution>(
                       new Utility::UniformDistribution(
                             0.0, 2*Utility::PhysicalConstants::pi, 1.0 ) ) ) );
     
     d_dimension_distributions[TERTIARY_DIRECTIONAL_DIMENSION].reset(
      new IndependentPhaseSpaceDimensionDistribution<TERTIARY_DIRECTIONAL_DIMENSION>(
-                 std::shared_ptr<const Utility::OneDDistribution>(
+                 std::shared_ptr<const Utility::UnivariateDistribution>(
                       new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) ) ) );
   }
 
@@ -318,12 +327,16 @@ bool StandardParticleDistribution::isSpatiallyUniform() const
   else if( d_spatial_coord_conversion_policy->getLocalSpatialCoordinateSystemType() ==
            Utility::CYLINDRICAL_SPATIAL_COORDINATE_SYSTEM )
   {
-    if( !d_dimension_distributions.find( PRIMARY_SPATIAL_DIMENSION )->second->hasForm( Utility::POWER_1_DISTRIBUTION ) )
+    // Note: we really need to check that this distribution has a form of
+    //       f(x) ~ x
+    if( !d_dimension_distributions.find( PRIMARY_SPATIAL_DIMENSION )->second->hasForm( Utility::POWER_DISTRIBUTION ) )
       return false;
   }
   else
   {
-    if( !d_dimension_distributions.find( PRIMARY_SPATIAL_DIMENSION )->second->hasForm( Utility::POWER_2_DISTRIBUTION ) )
+    // Note: we really need to check that this distribution has a form of
+    //       f(x) ~ x^2
+    if( !d_dimension_distributions.find( PRIMARY_SPATIAL_DIMENSION )->second->hasForm( Utility::POWER_DISTRIBUTION ) )
       return false;
   }
   
@@ -509,7 +522,11 @@ void StandardParticleDistribution::sampleWithDimensionValueAndRecordTrials(
   this->sampleImpl( dimension_sample_functor, particle );
 }
 
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( StandardParticleDistribution );
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::StandardParticleDistribution );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardParticleDistribution.cpp

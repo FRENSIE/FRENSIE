@@ -321,6 +321,8 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::load( Arch
   // Restore the inf value of the upper limit
   if( __upper_limit_is_inf__ )
     d_upper_limit = IQT::inf();
+
+  this->initialize();
 }
 
 // Method for testing if two objects are equivalent

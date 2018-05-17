@@ -92,23 +92,23 @@ std::string ToStringTraits<MonteCarlo::PhaseSpaceDimension>::toString(
 {
   switch( dimension )
   {
-  case PRIMARY_SPATIAL_DIMENSION:
+  case MonteCarlo::PRIMARY_SPATIAL_DIMENSION:
     return "Primary Spatial Dimension";
-  case SECONDARY_SPATIAL_DIMENSION:
+  case MonteCarlo::SECONDARY_SPATIAL_DIMENSION:
     return "Secondary Spatial Dimension";
-  case TERTIARY_SPATIAL_DIMENSION:
+  case MonteCarlo::TERTIARY_SPATIAL_DIMENSION:
     return "Tertiary Spatial Dimension";
-  case PRIMARY_DIRECTIONAL_DIMENSION:
+  case MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION:
     return "Primary Directional Dimension";
-  case SECONDARY_DIRECTIONAL_DIMENSION:
+  case MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION:
     return "Secondary Directional Dimension";
-  case TERTIARY_DIRECTIONAL_DIMENSION:
+  case MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION:
     return "Tertiary Directional Dimension";
-  case ENERGY_DIMENSION:
+  case MonteCarlo::ENERGY_DIMENSION:
     return "Energy Dimension";
-  case TIME_DIMENSION:
+  case MonteCarlo::TIME_DIMENSION:
     return "Time Dimension";
-  case WEIGHT_DIMENSION:
+  case MonteCarlo::WEIGHT_DIMENSION:
     return "Weight Dimension";
   default:
     THROW_EXCEPTION( std::logic_error,

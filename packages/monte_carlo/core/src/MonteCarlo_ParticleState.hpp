@@ -401,7 +401,7 @@ inline const Geometry::Navigator& ParticleState::navigator() const
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleState );
 BOOST_CLASS_VERSION( MonteCarlo::ParticleState, 0 );
-EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::ParticleState );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleState );
 
 //---------------------------------------------------------------------------//
 // Template includes

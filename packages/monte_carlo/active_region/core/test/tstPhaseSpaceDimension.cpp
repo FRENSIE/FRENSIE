@@ -11,331 +11,289 @@
 #include <sstream>
 #include <string>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_UnitTestHarnessWithMain.hpp"
+#include "ArchiveTestHelpers.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Types.
+//---------------------------------------------------------------------------//
+
+typedef std::tuple<
+  std::tuple<boost::archive::xml_oarchive,boost::archive::xml_iarchive>,
+  std::tuple<boost::archive::text_oarchive,boost::archive::text_iarchive>,
+  std::tuple<boost::archive::binary_oarchive,boost::archive::binary_iarchive>,
+  std::tuple<Utility::HDF5OArchive,Utility::HDF5IArchive>
+  > TestArchives;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check if dimension names are valid
-TEUCHOS_UNIT_TEST( PhaseSpaceDimension, isValidPhaseSpaceDimensionName )
-{
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Primary Spatial Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Secondary Spatial Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Tertiary Spatial Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Primary Directional Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Secondary Directional Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Tertiary Directional Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Energy Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Time Dimension" ) );
-  TEST_ASSERT( MonteCarlo::isValidPhaseSpaceDimensionName( "Weight Dimension" ) );
-  TEST_ASSERT( !MonteCarlo::isValidPhaseSpaceDimensionName( "Dummy Dimension" ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if a name can be converted to a dimension enum
-TEUCHOS_UNIT_TEST( PhaseSpaceDimension, convertPhaseSpaceDimensionNameToEnum )
-{
-  MonteCarlo::PhaseSpaceDimension dimension =
-    MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Primary Spatial Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
-
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Secondary Spatial Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
-
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Tertiary Spatial Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
-
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Primary Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
-
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Secondary Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Tertiary Directional Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
-
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Energy Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::ENERGY_DIMENSION );
-
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Time Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TIME_DIMENSION );
-
-  dimension = MonteCarlo::convertPhaseSpaceDimensionNameToEnum( "Weight Dimension" );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::WEIGHT_DIMENSION );
-}
-
-//---------------------------------------------------------------------------//
-// Check if an unsigned int can be converted to a dimension enum
-TEUCHOS_UNIT_TEST( PhaseSpaceDimension,
-                   convertUnsignedToPhaseSpaceDimensionEnum )
-{
-  MonteCarlo::PhaseSpaceDimension dimension =
-    MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 0 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
-
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 1 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
-  
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 2 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
-
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 3 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
-
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 4 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
-  
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 5 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
-
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 6 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::ENERGY_DIMENSION );
-
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 7 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TIME_DIMENSION );
-
-  dimension = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( 8 );
-
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::WEIGHT_DIMENSION );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the dimension enum can be converted to a name
-TEUCHOS_UNIT_TEST( PhaseSpaceDimension,
-                   convertPhaseSpaceDimensionEnumToString )
-{
-  std::string dimension_name =
-    MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Primary Spatial Dimension" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Secondary Spatial Dimension" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Tertiary Spatial Dimension" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Primary Directional Dimension" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Secondary Directional Dimension" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Tertiary Directional Dimension" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::ENERGY_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Energy Dimension" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::TIME_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Time Dimension" );
-  
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToString( MonteCarlo::WEIGHT_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "Weight Dimension" );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the dimension enum can be converted to a basic name
-TEUCHOS_UNIT_TEST( PhaseSpaceDimenion,
-                   convertPhaseSpaceDimensionEnumToBasicString )
-{
-  std::string dimension_name =
-    MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "PRIMARY_SPATIAL_DIMENSION" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "SECONDARY_SPATIAL_DIMENSION" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "TERTIARY_SPATIAL_DIMENSION" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "PRIMARY_DIRECTIONAL_DIMENSION" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "SECONDARY_DIRECTIONAL_DIMENSION" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "TERTIARY_DIRECTIONAL_DIMENSION" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::ENERGY_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "ENERGY_DIMENSION" );
-
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::TIME_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "TIME_DIMENSION" );
-  
-  dimension_name = MonteCarlo::convertPhaseSpaceDimensionEnumToBasicString( MonteCarlo::WEIGHT_DIMENSION );
-
-  TEST_EQUALITY_CONST( dimension_name, "WEIGHT_DIMENSION" );
-}
-
-//---------------------------------------------------------------------------//
 // Check if the spatial dimension enum can be converted to a phase space
 // dimension enum
-TEUCHOS_UNIT_TEST( PhaseSpaceDimension,
+FRENSIE_UNIT_TEST( PhaseSpaceDimension,
                    convertSpatialDimensionToPhaseSpaceDimension )
 {
   MonteCarlo::PhaseSpaceDimension dimension =
     MonteCarlo::convertSpatialDimensionToPhaseSpaceDimension( Utility::X_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
 
   dimension = MonteCarlo::convertSpatialDimensionToPhaseSpaceDimension( Utility::Y_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
 
   dimension = MonteCarlo::convertSpatialDimensionToPhaseSpaceDimension( Utility::Z_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
 
   dimension = MonteCarlo::convertSpatialDimensionToPhaseSpaceDimension( Utility::R_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
 
   dimension = MonteCarlo::convertSpatialDimensionToPhaseSpaceDimension( Utility::AZIMUTHAL_ANGLE_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
 
   dimension = MonteCarlo::convertSpatialDimensionToPhaseSpaceDimension( Utility::POLAR_ANGLE_COSINE_SPATIAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
 }
 
 //---------------------------------------------------------------------------//
 // Check if a directional dimension enum can be converted to a phase space
 // dimension enum
-TEUCHOS_UNIT_TEST( PhaseSpaceDimension,
+FRENSIE_UNIT_TEST( PhaseSpaceDimension,
                    convertDirectionalDimensionToPhaseSpaceDimension )
 {
   MonteCarlo::PhaseSpaceDimension dimension =
     MonteCarlo::convertDirectionalDimensionToPhaseSpaceDimension( Utility::U_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
 
   dimension = MonteCarlo::convertDirectionalDimensionToPhaseSpaceDimension( Utility::V_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
 
   dimension = MonteCarlo::convertDirectionalDimensionToPhaseSpaceDimension( Utility::W_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
 
   dimension = MonteCarlo::convertDirectionalDimensionToPhaseSpaceDimension( Utility::R_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
 
   dimension = MonteCarlo::convertDirectionalDimensionToPhaseSpaceDimension( Utility::AZIMUTHAL_ANGLE_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
 
   dimension = MonteCarlo::convertDirectionalDimensionToPhaseSpaceDimension( Utility::POLAR_ANGLE_COSINE_DIRECTIONAL_DIMENSION );
 
-  TEST_EQUALITY_CONST( dimension, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the dimension enum can be converted to a name
+FRENSIE_UNIT_TEST( PhaseSpaceDimension, toString )
+{
+  std::string dimension_name =
+    Utility::toString( MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Primary Spatial Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Secondary Spatial Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Tertiary Spatial Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Primary Directional Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Secondary Directional Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Tertiary Directional Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::ENERGY_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Energy Dimension" );
+
+  dimension_name = Utility::toString( MonteCarlo::TIME_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Time Dimension" );
+  
+  dimension_name = Utility::toString( MonteCarlo::WEIGHT_DIMENSION );
+
+  FRENSIE_CHECK_EQUAL( dimension_name, "Weight Dimension" );
 }
 
 //---------------------------------------------------------------------------//
 // Check if a dimension enum can be placed in a stream
-TEUCHOS_UNIT_TEST( PhaseSpaceDimension, stream_operator )
+FRENSIE_UNIT_TEST( PhaseSpaceDimension, stream_operator )
 {
   std::ostringstream oss;
 
   oss << MonteCarlo::PRIMARY_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Primary Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Primary Spatial Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::SECONDARY_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Secondary Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Secondary Spatial Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::TERTIARY_SPATIAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Tertiary Spatial Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Tertiary Spatial Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Primary Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Primary Directional Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Secondary Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Secondary Directional Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Tertiary Directional Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Tertiary Directional Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::ENERGY_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Energy Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Energy Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::TIME_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Time Dimension" );
+  FRENSIE_CHECK_EQUAL( oss.str(), "Time Dimension" );
 
   oss.str( "" );
   oss.clear();
 
   oss << MonteCarlo::WEIGHT_DIMENSION;
 
-  TEST_EQUALITY_CONST( oss.str(), "Weight Dimension" );
-}                   
+  FRENSIE_CHECK_EQUAL( oss.str(), "Weight Dimension" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a database can be archived
+FRENSIE_UNIT_TEST_TEMPLATE_EXPAND( PhaseSpaceDimension,
+                                   archive,
+                                   TestArchives )
+{
+  FETCH_TEMPLATE_PARAM( 0, RawOArchive );
+  FETCH_TEMPLATE_PARAM( 1, RawIArchive );
+
+  typedef typename std::remove_pointer<RawOArchive>::type OArchive;
+  typedef typename std::remove_pointer<RawIArchive>::type IArchive;
+
+  std::string archive_base_name( "test_phase_space_dimension_enum" );
+  std::ostringstream archive_ostream;
+
+  {
+    std::unique_ptr<OArchive> oarchive;
+
+    createOArchive( archive_base_name, archive_ostream, oarchive );
+
+    MonteCarlo::PhaseSpaceDimension dimension_1 =
+      MonteCarlo::PRIMARY_SPATIAL_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_2 =
+      MonteCarlo::SECONDARY_SPATIAL_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_3 =
+      MonteCarlo::TERTIARY_SPATIAL_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_4 =
+      MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_5 =
+      MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_6 =
+      MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_7 =
+      MonteCarlo::ENERGY_DIMENSION;
+    
+    MonteCarlo::PhaseSpaceDimension dimension_8 =
+      MonteCarlo::TIME_DIMENSION;
+
+    MonteCarlo::PhaseSpaceDimension dimension_9 =
+      MonteCarlo::WEIGHT_DIMENSION;
+
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_1) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_2) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_3) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_4) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_5) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_6) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_7) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_8) );
+    FRENSIE_REQUIRE_NO_THROW( (*oarchive) << BOOST_SERIALIZATION_NVP(dimension_9) );
+  }
+
+  // Copy the archive ostream to an istream
+  std::istringstream archive_istream( archive_ostream.str() );
+
+  // Load the archived distributions
+  std::unique_ptr<IArchive> iarchive;
+
+  createIArchive( archive_istream, iarchive );
+
+  MonteCarlo::PhaseSpaceDimension dimension_1, dimension_2, dimension_3,
+    dimension_4, dimension_5, dimension_6, dimension_7, dimension_8,
+    dimension_9;
+
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_1) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_2) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_3) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_4) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_5) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_6) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_7) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_8) );
+  FRENSIE_REQUIRE_NO_THROW( (*iarchive) >> BOOST_SERIALIZATION_NVP(dimension_9) );
+
+  iarchive.reset();
+
+  FRENSIE_CHECK_EQUAL( dimension_1, MonteCarlo::PRIMARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_2, MonteCarlo::SECONDARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_3, MonteCarlo::TERTIARY_SPATIAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_4, MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_5, MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_6, MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_7, MonteCarlo::ENERGY_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_8, MonteCarlo::TIME_DIMENSION );
+  FRENSIE_CHECK_EQUAL( dimension_9, MonteCarlo::WEIGHT_DIMENSION );
+}
 
 //---------------------------------------------------------------------------//
 // end tstPhaseSpaceDimension.cpp

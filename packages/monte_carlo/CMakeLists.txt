@@ -8,8 +8,8 @@ INCLUDE_DIRECTORIES(collision/core/src collision/photon/src collision/electron/s
 ADD_SUBDIRECTORY(active_region)
 INCLUDE_DIRECTORIES(active_region/core/src)
 
-ADD_SUBDIRECTORY(event)
-INCLUDE_DIRECTORIES(event/core/src event/estimator/src event/particle_tracker/src event/weight_window/src event/dispatcher/src)
+# ADD_SUBDIRECTORY(event)
+# INCLUDE_DIRECTORIES(event/core/src event/estimator/src event/particle_tracker/src event/weight_window/src event/dispatcher/src)
 
-ADD_SUBDIRECTORY(manager)
-INCLUDE_DIRECTORIES(manager/src)
+# ADD_SUBDIRECTORY(manager)
+# INCLUDE_DIRECTORIES(manager/src)

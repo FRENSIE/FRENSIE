@@ -1444,6 +1444,19 @@ FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, isTabular )
 FRENSIE_UNIT_TEST( DiscreteDistribution, isContinuous )
 {
   FRENSIE_CHECK( !distribution->isContinuous() );
+
+  {
+    Utility::DiscreteDistribution tmp_dist( {-1.0, 0.0, 1.0},
+                                            {1.0, 2.0, 1.0},
+                                            false,
+                                            true );
+
+    FRENSIE_CHECK( tmp_dist.isContinuous() );
+
+    Utility::DiscreteDistribution copy_tmp_dist( tmp_dist );
+
+    FRENSIE_CHECK( copy_tmp_dist.isContinuous() );
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -1451,6 +1464,20 @@ FRENSIE_UNIT_TEST( DiscreteDistribution, isContinuous )
 FRENSIE_UNIT_TEST( UnitAwareDiscreteDistribution, isContinuous )
 {
   FRENSIE_CHECK( !unit_aware_distribution->isContinuous() );
+
+  {
+    Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>
+      tmp_dist( std::vector<quantity<ElectronVolt> >({-1.0*eV, 0.0*eV, 1.0*eV}),
+                std::vector<quantity<si::amount> >({1.0*si::mole, 2.0*si::mole, 1.0*si::mole}),
+                true );
+
+    FRENSIE_CHECK( tmp_dist.isContinuous() );
+
+    Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>
+      copy_tmp_dist( tmp_dist );
+
+    FRENSIE_CHECK( copy_tmp_dist.isContinuous() );
+  }
 }
 
 //---------------------------------------------------------------------------//

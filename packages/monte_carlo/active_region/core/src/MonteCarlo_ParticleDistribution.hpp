@@ -12,13 +12,20 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
-#include <set>
+
+// Boost Includes
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ParticleStateFactory.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
+#include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
+#include "Utility_SerializationHelpers.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
@@ -84,7 +91,26 @@ public:
                                       const PhaseSpaceDimension dimension,
                                       const double dimension_value ) const = 0;
 
+protected:
+
+  //! Constructor
+  ParticleDistribution()
+  { /* ... */ }
+  
 private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The distribution id
   size_t d_id;
@@ -92,8 +118,28 @@ private:
   // The distribution name
   std::string d_name;
 };
+
+// Save the state to an archive
+template<typename Archive>
+void ParticleDistribution::save( Archive& ar, const unsigned version ) const
+{
+  ar & BOOST_SERIALIZATION_NVP( d_id );
+  ar & BOOST_SERIALIZATION_NVP( d_name );
+}
+
+// Load the data from an archive
+template<typename Archive>
+void ParticleDistribution::load( Archive& ar, const unsigned version )
+{
+  ar & BOOST_SERIALIZATION_NVP( d_id );
+  ar & BOOST_SERIALIZATION_NVP( d_name );
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleDistribution );
+BOOST_CLASS_VERSION( MonteCarlo::ParticleDistribution, 0 );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::ParticleDistribution );
 
 #endif // end MONTE_CARLO_PARTICLE_DISTRIBUTION_HPP
 
