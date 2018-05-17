@@ -21,28 +21,21 @@ definitions in the monte_carlo/collision subpackage.
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
 #include "MonteCarlo_MaterialDefinitionDatabase.hpp"
-
-
-// #include "MonteCarlo_Material.hpp"
-// #include "MonteCarlo_AdjointMaterial.hpp"
-
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
-
 #include "MonteCarlo_NeutronMaterial.hpp"
 #include "MonteCarlo_PhotonMaterial.hpp"
 #include "MonteCarlo_AdjointPhotonMaterial.hpp"
 #include "MonteCarlo_ElectronMaterial.hpp"
 #include "MonteCarlo_AdjointElectronMaterial.hpp"
 #include "MonteCarlo_PositronMaterial.hpp"
-
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 // Declare typedef for the MaterialDefinitionArray
 typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray MaterialDefinitionArray;
-// typedef MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet ScatteringCenterNameSet;
-// typedef MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet MaterialIdSet;
+
+using namespace MonteCarlo;
 %}
 
 // C++ STL support
@@ -63,15 +56,6 @@ typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray Material
 
 // Include the explicit template instantiation helpers
 %include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
-
-// Simulation properties handling
-// %import(module="PyFrensie.MonteCarlo") MonteCarlo_SimulationProperties.i
-
-// // Atom properties handling
-// %import(module="PyFrensie.Data") Data_AtomProperties.i
-
-// // Nuclide properties handling
-// %import(module="PyFrensie.Data") Data_NuclideProperties.i
 
 // Standard exception handling
 %include "exception.i"
@@ -111,44 +95,90 @@ typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray Material
 %ignore *::begin;
 %ignore *::end;
 
-// %template(MaterialDefinitionArrayPrivate) std::vector<std::pair<std::string,double> >;
-// %template(MaterialIdDefinitionMap) std::map<size_t,std::vector<std::pair<std::string,double> > >;
-// // %template(MaterialIdNameBimap) boost::bimap<size_t,std::string>;
-// %template(MaterialDefinitionArray) std::vector<std::pair<std::string,double> >;
-// %template(MaterialIdSet) std::set<size_t>;
-// %template(ScatteringCenterNameSet) std::set<std::string>;
-// // %template(MaterialDefinitionIterator) std::map<size_t,std::vector<std::pair<std::string,double>>>::const_iterator;
-// typedef MaterialIdDefinitionMap::const_iterator MaterialDefinitionIterator;
+// ---------------------------------------------------------------------------//
+// Add support for the different particle materials
+// ---------------------------------------------------------------------------//
 
+// Import the NeutronMaterial class
+%import "MonteCarlo_NeutronMaterial.hpp"
 
-// typedef std::vector<std::pair<std::string,double> > MaterialDefinitionArray;
+%import "MonteCarlo_PhotonuclearReactionType.hpp"
+// Import the PhotonMaterial class
+%import "MonteCarlo_PhotonMaterial.hpp"
 
-//   typedef std::vector<std::pair<std::string,double> > MaterialDefinitionArrayPrivate;
-//   typedef std::map<size_t,MaterialDefinitionArrayPrivate> MaterialIdDefinitionMap;
-//   typedef boost::bimap<size_t,std::string> MaterialIdNameBimap;
-//   typedef MaterialDefinitionArrayPrivate MaterialDefinitionArray;
-  // typedef std::set<size_t> MaterialIdSet;
-  // typedef MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet TESTSET;
-  // typedef std::set<std::string> ScatteringCenterNameSet;
-//   typedef MaterialIdDefinitionMap::const_iterator MaterialDefinitionIterator;
+// Import the AdjointPhotonMaterial class
+%import "MonteCarlo_AdjointPhotonMaterial.hpp"
+
+// Import the ElectronMaterial class
+%import "MonteCarlo_ElectronMaterial.hpp"
+
+// Import the AdjointElectronMaterial class
+%import "MonteCarlo_AdjointElectronMaterial.hpp"
+
+// Import the PositronMaterial class
+%import "MonteCarlo_PositronMaterial.hpp"
 
 //---------------------------------------------------------------------------//
 // Add MonteCarlo_MaterialDefinitionDatabase support
 //---------------------------------------------------------------------------//
 
+// Add a more detailed docstring for the constructor
+%feature("docstring")
+MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionDatabase
+"The MaterialDefinitionDatabase holds definitions of materials which
+ can be used to access cross sectional data."
+
+%feature("autodoc",
+"doesDefinitionExist(RENAMED_DISTRIBUTION self, const std::string& name ) -> bool,
+doesDefinitionExist(RENAMED_DISTRIBUTION self, const size_t material_id  ) -> bool" )
+MonteCarlo::MaterialDefinitionDatabase::doesDefinitionExist;
+
+%feature("autodoc",
+"addDefinition(RENAMED_DISTRIBUTION self, const std::string& material_name, const size_t material_id, const MaterialDefinitionArray& material_components ),
+addDefinition(RENAMED_DISTRIBUTION self, const size_t material_id, const MaterialDefinitionArray& material_components ),
+addDefinition(RENAMED_DISTRIBUTION self, const std::string& material_name, const size_t material_id, const std::vector<std::string>& material_component_names, const std::vector<double>& material_component_fractions ),
+addDefinition(RENAMED_DISTRIBUTION self, const size_t material_id, const std::vector<std::string>& material_component_names, const std::vector<double>& material_component_fractions )" )
+MonteCarlo::MaterialDefinitionDatabase::addDefinition;
+
+%feature("autodoc",
+"getDefinition(RENAMED_DISTRIBUTION self, const std::string& material_name ) -> const MaterialDefinitionArray&,
+getDefinition(RENAMED_DISTRIBUTION self, const size_t material_id  ) -> const MaterialDefinitionArray&" )
+MonteCarlo::MaterialDefinitionDatabase::getDefinition;
+
+%feature("autodoc",
+"getMaterialId(RENAMED_DISTRIBUTION self, const std::string& material_name ) -> size_t" )
+MonteCarlo::MaterialDefinitionDatabase::getMaterialId;
+
+%feature("autodoc",
+"getMaterialName(RENAMED_DISTRIBUTION self, const size_t material_id ) -> const std::string&" )
+MonteCarlo::MaterialDefinitionDatabase::getMaterialName;
+
+%feature("autodoc",
+"removeDefinition(RENAMED_DISTRIBUTION self, const std::string& material_name ),
+removeDefinition(RENAMED_DISTRIBUTION self, const size_t material_id )" )
+MonteCarlo::MaterialDefinitionDatabase::removeDefinition;
+
+%feature("autodoc",
+"getMaterialIds(RENAMED_DISTRIBUTION self, MaterialIdSet& material_ids ) -> MaterialIdSet&,
+getMaterialIds(RENAMED_DISTRIBUTION self ) -> MaterialIdSet" )
+MonteCarlo::MaterialDefinitionDatabase::getMaterialIds;
+
+%feature("autodoc",
+"getUniqueScatteringCenterNames(RENAMED_DISTRIBUTION self, ScatteringCenterNameSet& scattering_center_names ) -> ScatteringCenterNameSet&,
+getUniqueScatteringCenterNames(RENAMED_DISTRIBUTION self ) -> ScatteringCenterNameSet" )
+MonteCarlo::MaterialDefinitionDatabase::getUniqueScatteringCenterNames;
+
+%feature("autodoc",
+"getUniqueScatteringCenterNamesFromIds(RENAMED_DISTRIBUTION self, const std::set<size_t>& material_ids, ScatteringCenterNameSet& scattering_center_names ) -> ScatteringCenterNameSet&,
+getUniqueScatteringCenterNamesFromIds(RENAMED_DISTRIBUTION self, const std::set<size_t>& material_ids ) -> ScatteringCenterNameSet" )
+MonteCarlo::MaterialDefinitionDatabase::getUniqueScatteringCenterNamesFromIds;
+
 %template(DoubleVector) std::vector<double>;
 %template(StringVector) std::vector<std::string>;
 %template(StringSet) std::set<std::string>;
 %template(UnsignedSet) std::set<unsigned int>;
-// %template(SizeSet) std::set<size_t>;
 %template(StringDoublePair) std::pair<std::string,double>;
 %template(StringDoublePairArray) std::vector<std::pair<std::string,double> >;
-// %shared_ptr(std::set<size_t>)
-
-// %typemap(in) MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet& = std::set<size_t>;
-// %typemap(out) std::set<size_t>& = std::set<size_t>;
-
-// %shared_ptr(MonteCarlo::ScatteringCenterDefinition);
 
 // Add typemaps for converting set<size_t> to and from Python set
 %typemap(in) const std::set<size_t>& ( std::set<size_t> temp ){
@@ -160,7 +190,6 @@ typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray Material
   $1 = (PySet_Check($input)) ? 1 : 0;
 }
 
-// %clear MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet& INPUT;
 // Add typemaps for converting MaterialIdSet to and from Python set
 %typemap(in) MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet& ( std::set<size_t> temp ){
   temp = PyFrensie::convertFromPython<std::set<size_t> >( $input );
@@ -178,37 +207,6 @@ typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray Material
 %typemap(typecheck, precedence=SWIG_TYPECHECK_SET) (MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet&) {
   $1 = (PySet_Check($input)) ? 1 : 0;
 }
-
-
-// // Add typemaps for converting ScatteringCenterNameSet to and from Python set
-// %typemap(in) MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet& ( std::set<std::string> temp ){
-
-//   std::set<std::string> *ptr = (std::set<std::string> *)0;
-//   int res = swig::asptr($input, &ptr);
-
-//   if (!SWIG_IsOK(res)) {
-//     SWIG_exception_fail(SWIG_ArgError(res), "argument " "1"" of type '" "std::set<std::string>& ""'");
-//   }
-//   if (!ptr) {
-//     SWIG_exception_fail(SWIG_ValueError, "invalid null reference, argument " "1"" of type '" "std::set<std::string>& ""'");
-//   }
-
-//   $1 = ptr;
-// }
-
-// %typemap(argout) MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet& {
-//   %append_output(swig::from( *$1 ) );
-// }
-
-// %typemap(out) MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet {
-//   return swig::from( $1 );
-// }
-
-// %typemap(in,numinputs=0) MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet& ( std::set<std::string> temp ) "$1 = &temp;"
-
-// %typemap(argout) MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet& {
-//   %append_output(PyFrensie::convertToPython( *$1 ));
-// }
 
 // Add typemaps for converting ScatteringCenterNameSet to and from Python set
 %typemap(in) MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet& ( std::set<std::string> temp ){
@@ -228,9 +226,9 @@ typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray Material
   $1 = (PySet_Check($input)) ? 1 : 0;
 }
 
+%shared_ptr(MonteCarlo::MaterialDefinitionDatabase)
+
 %include "MonteCarlo_MaterialDefinitionDatabase.hpp"
-// %typemap(in) MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet& = std::set<size_t>;
-// %typemap(in) std::set<size_t>& = std::set<size_t>;
 
 %extend MonteCarlo::MaterialDefinitionDatabase
 {
@@ -245,72 +243,11 @@ typedef MonteCarlo::MaterialDefinitionDatabase::MaterialDefinitionArray Material
 
   // Get the unique scattering center names from the materials of interest
   MonteCarlo::MaterialDefinitionDatabase::ScatteringCenterNameSet getUniqueScatteringCenterNamesFromIds(
-                               const std::set<size_t>& material_ids ) const
+    const std::set<size_t>& material_ids ) const
   {
     return $self->getUniqueScatteringCenterNames( material_ids );
   }
-
-  // MonteCarlo::MaterialDefinitionDatabase::MaterialIdSet& MonteCarlo::MaterialDefinitionDatabase::getMaterialIds(std::set<size_t> material_ids) const
-  // {
-  //   $self->getMaterialIds(material_ids);
-  //   return material_ids;
-  // }
 }
-
-// // ---------------------------------------------------------------------------//
-// // Add Material support
-// // ---------------------------------------------------------------------------//
-
-// %import "MonteCarlo_Material.hpp"
-
-// // ---------------------------------------------------------------------------//
-// // Add AdjointMaterial support
-// // ---------------------------------------------------------------------------//
-
-// %import "MonteCarlo_AdjointMaterial.hpp"
-
-// ---------------------------------------------------------------------------//
-// Add NeutronMaterial support
-// ---------------------------------------------------------------------------//
-
-%ignore MonteCarlo::NeutronMaterial::NeutronMaterial;
-
-%include "MonteCarlo_NeutronMaterial.hpp"
-
-//---------------------------------------------------------------------------//
-// Add PhotonMaterial support
-//---------------------------------------------------------------------------//
-
-%ignore MonteCarlo::PhotonMaterial::PhotonMaterial;
-
-%import "MonteCarlo_PhotonuclearReactionType.hpp"
-%include "MonteCarlo_PhotonMaterial.hpp"
-
-//---------------------------------------------------------------------------//
-// Add AdjointPhotonMaterial support
-//---------------------------------------------------------------------------//
-
-%ignore MonteCarlo::AdjointPhotonMaterial::AdjointPhotonMaterial;
-
-%include "MonteCarlo_AdjointPhotonMaterial.hpp"
-
-//---------------------------------------------------------------------------//
-// Add ElectronMaterial support
-//---------------------------------------------------------------------------//
-
-%include "MonteCarlo_ElectronMaterial.hpp"
-
-//---------------------------------------------------------------------------//
-// Add AdjointElectronMaterial support
-//---------------------------------------------------------------------------//
-
-%include "MonteCarlo_AdjointElectronMaterial.hpp"
-
-//---------------------------------------------------------------------------//
-// Add PositronMaterial support
-//---------------------------------------------------------------------------//
-
-%include "MonteCarlo_PositronMaterial.hpp"
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo.Material.i

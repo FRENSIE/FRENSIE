@@ -20,7 +20,7 @@ class StandardFilledAdjointParticleGeometryModel : public StandardFilledParticle
 {
   // Typedef for the base type
   typedef StandardFilledParticleGeometryModel<Material> BaseType;
-  
+
   // Typedef for this type
   typedef StandardFilledParticleGeometryModel<Material> ThisType;
 
@@ -79,7 +79,7 @@ protected:
   //! Constructor
   using StandardFilledParticleGeometryModel<Material>::StandardFilledParticleGeometryModel;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

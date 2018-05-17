@@ -22,8 +22,7 @@ options,args = parser.parse_args()
 from testingHelpers import importPyFrensieModuleFromBuildDir
 Data = importPyFrensieModuleFromBuildDir('Data')
 MonteCarlo = importPyFrensieModuleFromBuildDir('MonteCarlo')
-Collision2 = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
-Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Material')
+Collision = importPyFrensieModuleFromBuildDir('MonteCarlo.Collision')
 
 #-----------------------------------------------------------------------------#
 # Tests.

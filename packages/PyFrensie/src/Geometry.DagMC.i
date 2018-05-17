@@ -28,14 +28,17 @@ geometries.
 
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
+#include "Geometry_InfiniteMediumNavigator.hpp"
+#include "Geometry_InfiniteMediumModel.hpp"
 #include "Geometry_DagMCModelProperties.hpp"
 #include "Geometry_DagMCModel.hpp"
 #include "Geometry_DagMCNavigator.hpp"
 #include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Exceptions.hpp"
 #include "Utility_SerializationHelpers.hpp"
-// #include "Utility_ContractException.hpp"
+#include "Utility_ContractException.hpp"
 
+using namespace Geometry;
 %}
 
 // // C++ STL support
@@ -46,6 +49,7 @@ geometries.
 %include <typemaps.i>
 
 // Import the Geometry.Geometry__init__.i file
+// %import(module=) "Geometry.Geometry__init__.i"
 %import "Geometry.Geometry__init__.i"
 
 // Standard exception handling

@@ -121,10 +121,13 @@ SET(MONTE_CARLO_MODULE_INIT_PACKAGE MonteCarlo__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Material)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Material)
 
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.GeometryModel)
+SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} GeometryModel)
+
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} MonteCarlo.Collision)
 SET(MONTE_CARLO_PACKAGES ${MONTE_CARLO_PACKAGES} Collision)
 
-SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron pyfrensie)
+SET(MONTE_CARLO_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} monte_carlo_core monte_carlo_collision_core monte_carlo_collision_neutron monte_carlo_collision_photon monte_carlo_collision_electron monte_carlo_collision_kernel pyfrensie)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)

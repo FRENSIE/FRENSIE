@@ -37,6 +37,7 @@ using namespace MonteCarlo;
 %include <stl.i>
 %include <std_vector.i>
 %include <std_except.i>
+%include <std_shared_ptr.i>
 
 // Include typemaps support
 %include <typemaps.i>
@@ -117,6 +118,8 @@ using namespace MonteCarlo;
 
 %general_properties_setup( SimulationGeneralProperties )
 
+%shared_ptr(MonteCarlo::SimulationGeneralProperties);
+
 // Import the SimulationGeneralProperties
 %include "MonteCarlo_SimulationGeneralProperties.hpp"
 
@@ -129,6 +132,8 @@ using namespace MonteCarlo;
 
 %neutron_properties_setup( SimulationNeutronProperties )
 
+%shared_ptr(MonteCarlo::SimulationNeutronProperties);
+
 // Import the SimulationNeutronProperties.
 %include "MonteCarlo_SimulationNeutronProperties.hpp"
 
@@ -140,6 +145,8 @@ using namespace MonteCarlo;
 "The SimulationPhotonProperties class stores the photon simulation properties. It can be used for setting and getting the photon simulation properties when running a simulation."
 
 %photon_properties_setup( SimulationPhotonProperties )
+
+%shared_ptr(MonteCarlo::SimulationPhotonProperties);
 
 // Import the SimulationPhotonProperties
 %include "MonteCarlo_SimulationPhotonProperties.hpp"
@@ -156,6 +163,8 @@ using namespace MonteCarlo;
 // Add template for std::vector<double>
 %template(DoubleVector) std::vector<double>;
 
+%shared_ptr(MonteCarlo::SimulationAdjointPhotonProperties);
+
 // Import the SimulationAdjointPhotonProperties
 %include "MonteCarlo_SimulationAdjointPhotonProperties.hpp"
 
@@ -168,6 +177,8 @@ using namespace MonteCarlo;
 
 %electron_properties_setup( SimulationElectronProperties )
 
+%shared_ptr(MonteCarlo::SimulationElectronProperties);
+
 // Import the SimulationElectronProperties
 %include "MonteCarlo_SimulationElectronProperties.hpp"
 
@@ -179,6 +190,8 @@ using namespace MonteCarlo;
 "The SimulationAdjointElectronProperties class stores the adjoint electron simulation properties. It can be used for setting and getting the adjoint electron simulation properties when running a simulation."
 
 %adjoint_electron_properties_setup( SimulationAdjointElectronProperties )
+
+%shared_ptr(MonteCarlo::SimulationAdjointElectronProperties);
 
 // Import the SimulationAdjointElectronProperties
 %include "MonteCarlo_SimulationAdjointElectronProperties.hpp"
@@ -194,6 +207,8 @@ using namespace MonteCarlo;
 
 %ignore MonteCarlo::SimulationProperties::getMinParticleEnergy() const;
 %ignore MonteCarlo::SimulationProperties::getMaxParticleEnergy() const;
+
+%shared_ptr(MonteCarlo::SimulationProperties);
 
 // Include the SimulationProperties
 %include "MonteCarlo_SimulationProperties.hpp"

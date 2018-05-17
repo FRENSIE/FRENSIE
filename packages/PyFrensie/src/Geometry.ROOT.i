@@ -28,6 +28,8 @@ debugging geometries.
 
 // FRENSIE Includes
 #include "PyFrensie_PythonTypeTraits.hpp"
+#include "Geometry_InfiniteMediumNavigator.hpp"
+#include "Geometry_InfiniteMediumModel.hpp"
 #include "Geometry_RootModelProperties.hpp"
 #include "Geometry_RootModel.hpp"
 #include "Geometry_AdvancedModel.hpp"
@@ -35,7 +37,9 @@ debugging geometries.
 #include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Geometry_Exceptions.hpp"
 #include "Utility_SerializationHelpers.hpp"
-// #include "Utility_ContractException.hpp"
+#include "Utility_ContractException.hpp"
+
+using namespace Geometry;
 %}
 
 // // C++ STL support

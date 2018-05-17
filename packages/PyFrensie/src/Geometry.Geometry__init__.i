@@ -49,13 +49,17 @@ sys.path.pop(0)
 #include "Geometry_EstimatorType.hpp"
 #include "Geometry_ParticleType.hpp"
 #include "Geometry_Model.hpp"
+#include "Geometry_InfiniteMediumModel.hpp"
 #include "Geometry_AdvancedModel.hpp"
 #include "Geometry_Ray.hpp"
 #include "Geometry_Navigator.hpp"
+#include "Geometry_InfiniteMediumNavigator.hpp"
 #include "Geometry_Exceptions.hpp"
 #include "Geometry_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
 #include "Utility_ContractException.hpp"
+
+using namespace Geometry;
 %}
 
 // C++ STL support
@@ -432,6 +436,62 @@ class is shown below:
 %include "Geometry_Navigator.hpp"
 
 //---------------------------------------------------------------------------//
+// Add support for the InfiniteMediumNavigator class
+//---------------------------------------------------------------------------//
+
+%feature("docstring")
+Geometry::InfiniteMediumNavigator
+"
+The InfiniteMediumNavigator class is primarily used to traverse a Model. Some geometric data,
+such as the surface normal at a point on a surface or the relationship between
+a point and a cell, can also be queried. A brief useage tutorial for this
+class is shown below:
+
+   import PyFrensie.Geometry, numpy
+   model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   model.initialize( properties )
+   navigator = model.createNavigator()
+
+   navigator.setState( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
+   distance_to_surface_hit = navigator.fireRay()
+   navigator.advanceToCellBoundary()
+
+   ray_position = navigator.getPosition()
+   ray_cell = navigator.getCurrentCell()
+
+   distance_to_surface_hit, surface_hit = navigator.fireRayAndGetSurfaceHit()
+   reflected = navigator.advanceToCellBoundary()
+   if( reflected ):
+      print 'Surface ', surface_hit, ' reflected ray.'
+
+   distance_to_surface_hit = navigator.fireRay()
+   navigator.advanceBySubstep( 0.5*distance_to_surface_hit )
+   navigator.changeDirection( 0.0, 0.0, -1.0 )
+
+   navigator.fireRay()
+   reflected, normal = navigator.advanceToCellBoundaryAndGetSurfaceNormal()
+"
+
+// Add typemaps for converting AtomicWeight to and from Python float
+%typemap(in) const Geometry::Model::Density {
+  $1 = Geometry::Model::Density::from_value( PyFrensie::convertFromPython<double>( $input ) );
+}
+
+%typemap(out) Geometry::Model::Density {
+  %append_output(PyFrensie::convertToPython( Utility::getRawQuantity( $1 ) ) );
+}
+
+%typemap(typecheck, precedence=90) (const Geometry::Model::Density) {
+  $1 = (PyFloat_Check($input)) ? 1 : 0;
+}
+
+%navigator_interface_setup( InfiniteMediumNavigator )
+
+// Include the InfiniteMediumNavigator class
+%include "Geometry_InfiniteMediumNavigator.hpp"
+
+//---------------------------------------------------------------------------//
 // Add support for the Model class
 //---------------------------------------------------------------------------//
 
@@ -508,6 +568,38 @@ A brief usage tutorial for this class is shown below:
 
 // Include the Model class
 %include "Geometry_Model.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the Model class
+//---------------------------------------------------------------------------//
+
+// Add more detailed docstrings for the Model class
+%feature("docstring")
+Geometry::InfiniteMediumModel
+"
+The InfiniteMediumModel class stores a geometric model, which can be from a CAD (.sat) file
+or a Root (.root) file. It can be used for querying properties of the geometry
+and for creating navigators, which can be used to traverse the geometry.
+A brief usage tutorial for this class is shown below:
+
+   import PyFrensie.Geometry, numpy
+
+   model = PyFrensie.Geometry.DagMC.DagMCModel.getInstance()
+   properties = PyFrensie.Geometry.DagMC.DagMCModelProperties( 'my_geom.sat' )
+   model.initialize( properties )
+
+   cells = model.getCells( True, True )
+   materials = model.getMaterialIds()
+   cell_materials = model.getCellMaterialIds()
+   cell_densities = model.getCellDensities()
+   cell_estimator_data = model.getCellEstimatorData()
+   navigator = model.createNavigatorAdvanced()
+"
+
+%model_interface_setup( InfiniteMediumModel )
+
+// Include the InfiniteMediumModel class
+%include "Geometry_InfiniteMediumModel.hpp"
 
 //---------------------------------------------------------------------------//
 // Add support for the AdvancedModel class
