@@ -72,7 +72,7 @@ FRENSIE_UNIT_TEST( ParticleBank, push )
   {
     MonteCarlo::NeutronState neutron( 1ull );
 
-    bank.push( neutron, MonteCarlo::N__N_ELASTIC_REACTION );
+    bank.push( neutron, 0 );
   }
 
   FRENSIE_CHECK( !bank.isEmpty() );
@@ -130,7 +130,7 @@ FRENSIE_UNIT_TEST( ParticleBank, push_smart_ptr )
     std::shared_ptr<MonteCarlo::NeutronState> neutron(
 					new MonteCarlo::NeutronState( 1ull ) );
 
-    bank.push( neutron, MonteCarlo::N__N_ELASTIC_REACTION );
+    bank.push( neutron, 1 );
   }
 
   FRENSIE_CHECK( !bank.isEmpty() );

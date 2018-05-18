@@ -21,7 +21,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_List.hpp"
 
@@ -69,15 +68,15 @@ public:
   //! Insert a neutron into the bank after an interaction
   template<template<typename> class SmartPointer>
   void push( SmartPointer<NeutronState>& neutron,
-	     const NuclearReactionType reaction );
+	     const int reaction );
 
   //! Insert a neutron into the bank after an interaction (Most Efficient/Recommended)
   virtual void push( std::shared_ptr<NeutronState>& neutron,
-                     const NuclearReactionType reaction );
+                     const int reaction );
 
   //! Insert a neutron into the bank after an interaction
   virtual void push( const NeutronState& neutron,
-		     const NuclearReactionType reaction );
+		     const int reaction );
 
   //! Pop the top particle from bank
   void pop();

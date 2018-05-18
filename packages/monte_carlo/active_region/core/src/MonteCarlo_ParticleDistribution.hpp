@@ -23,8 +23,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionDistribution.hpp"
 #include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_UniqueIdManager.hpp"
 #include "MonteCarlo_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_SerializationHelpers.hpp"
+#include "Utility_TypeNameTraits.hpp"
 #include "Utility_Set.hpp"
 
 namespace MonteCarlo{
@@ -95,6 +97,7 @@ protected:
 
   //! Constructor
   ParticleDistribution()
+    : d_id( std::numeric_limits<size_t>::max() ), d_name()
   { /* ... */ }
   
 private:
@@ -113,7 +116,7 @@ private:
   friend class boost::serialization::access;
 
   // The distribution id
-  size_t d_id;
+  UniqueIdManager<ParticleDistribution,size_t> d_id;
 
   // The distribution name
   std::string d_name;
@@ -136,6 +139,22 @@ void ParticleDistribution::load( Archive& ar, const unsigned version )
 }
   
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+//! Specialization of Utility::TypeNameTraits for MonteCarlo::ParticleDistribution
+template<>
+struct TypeNameTraits<MonteCarlo::ParticleDistribution>
+{
+  //! Check if the type has a specialization
+  typedef std::true_type IsSpecialized;
+
+  //! Get the type name
+  static inline std::string name()
+  { return "ParticleDistribution"; }
+};
+  
+} // end Utility namespace
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleDistribution );
 BOOST_CLASS_VERSION( MonteCarlo::ParticleDistribution, 0 );

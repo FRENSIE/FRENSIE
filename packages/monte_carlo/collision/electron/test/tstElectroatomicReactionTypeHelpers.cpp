@@ -13,7 +13,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
-#include "ArchiveTestHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.

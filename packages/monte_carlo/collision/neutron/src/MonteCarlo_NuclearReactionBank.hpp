@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 #include "Utility_List.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_Map.hpp"
@@ -31,16 +32,16 @@ public:
 
   //! Insert a neutron into the bank after an interaction (Most Efficient/Recommended)
   void push( std::shared_ptr<NeutronState>& neutron,
-             const NuclearReactionType reaction ) override;
+             const int reaction ) final override;
   
   //! Insert a neutron into the bank after an interaction
   void push( const NeutronState& neutron,
-	     const NuclearReactionType reaction ) override;
+	     const int reaction ) final override;
 
 private:
 
   // The nuclear reactions type bank map
-  typedef std::map<NuclearReactionType, ParticleBank::BankContainerType>
+  typedef std::map<int, ParticleBank::BankContainerType>
   NuclearReactionTypeBankMap;
   
   NuclearReactionTypeBankMap d_nuclear_reaction_banks;

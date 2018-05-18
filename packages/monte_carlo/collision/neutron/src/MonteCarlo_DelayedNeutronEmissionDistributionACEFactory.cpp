@@ -14,6 +14,7 @@
 #include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"

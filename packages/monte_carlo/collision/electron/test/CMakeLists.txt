@@ -1,6 +1,19 @@
 FRENSIE_INITIALIZE_PACKAGE_TESTS(monte_carlo_collision_electron)
 
 ##---------------------------------------------------------------------------##
+## Support class tests
+##---------------------------------------------------------------------------##
+
+FRENSIE_ADD_TEST_EXECUTABLE(ElectroatomicReactionTypeHelpers DEPENDS tstElectroatomicReactionTypeHelpers.cpp)
+FRENSIE_ADD_TEST(ElectroatomicReactionTypeHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(AdjointElectroatomicReactionTypeHelpers DEPENDS tstAdjointElectroatomicReactionTypeHelpers.cpp)
+FRENSIE_ADD_TEST(AdjointElectroatomicReactionTypeHelpers)
+
+FRENSIE_ADD_TEST_EXECUTABLE(PositronatomicReactionTypeHelpers DEPENDS tstPositronatomicReactionTypeHelpers.cpp)
+FRENSIE_ADD_TEST(PositronatomicReactionTypeHelpers)
+
+##---------------------------------------------------------------------------##
 ## Scattering distribution tests
 ##---------------------------------------------------------------------------##
 
