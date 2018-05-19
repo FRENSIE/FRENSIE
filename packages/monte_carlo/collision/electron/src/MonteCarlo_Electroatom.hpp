@@ -46,10 +46,6 @@ public:
   //! Typedef for the const reaction map
   typedef BaseType::ConstReactionMap ConstReactionMap;
 
-  //! Return the reactions that are treated as scattering
-  static const boost::unordered_set<ElectroatomicReactionType>&
-  getScatteringReactionTypes();
-
   //! Constructor
   template<typename InterpPolicy>
   Electroatom(

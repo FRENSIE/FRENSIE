@@ -193,6 +193,32 @@ FRENSIE_UNIT_TEST( PositronatomCore, getScatteringReactions_native )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getScatteringReactionTypes_ace )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_positronatom_core->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getScatteringReactionTypes_native )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_positronatom_core->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
 FRENSIE_UNIT_TEST( PositronatomCore, getAbsorptionReactions_ace )
 {
@@ -215,6 +241,28 @@ FRENSIE_UNIT_TEST( PositronatomCore, getAbsorptionReactions_native )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getAbsorptionReactionTypes_ace )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_positronatom_core->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getAbsorptionReactionTypes_native )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_positronatom_core->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that miscellaneous reactions can be returned
 FRENSIE_UNIT_TEST( PositronatomCore, getMiscReactions_ace )
 {
@@ -232,6 +280,56 @@ FRENSIE_UNIT_TEST( PositronatomCore, getMiscReactions_native )
     native_positronatom_core->getMiscReactions();
 
   FRENSIE_CHECK_EQUAL( misc_reactions.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getMiscReactionTypes_ace )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_positronatom_core->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getMiscReactionTypes_native )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_positronatom_core->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getReactionTypes_ace )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_positronatom_core->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_POSITRONATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( PositronatomCore, getReactionTypes_native )
+{
+  MonteCarlo::PositronatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_positronatom_core->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_POSITRONATOMIC_REACTION ) );
 }
 
 //---------------------------------------------------------------------------//

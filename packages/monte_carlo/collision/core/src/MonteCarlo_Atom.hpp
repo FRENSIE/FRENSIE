@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_Set.hpp"
 
 namespace MonteCarlo{
 
@@ -35,6 +36,9 @@ public:
 
   //! The reaction enum type
   typedef typename AtomCore::ReactionEnumType ReactionEnumType;
+
+  //! The reaction enum set type
+  typedef typename AtomCore::ReactionEnumTypeSet ReactionEnumTypeSet;
 
   //! Typedef for the particle state type
   typedef typename AtomCore::ParticleStateType ParticleStateType;
@@ -97,6 +101,18 @@ public:
   //! Return the survival probability from nuclear interactions
   double getNuclearSurvivalProbability( const double energy ) const;
 
+  //! Get the absorption reaction types
+  void getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the scattering reaction types
+  void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the miscellanseous reaction types
+  void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the reaction types
+  void getReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
   //! Collide with a particle
   virtual void collideAnalogue( ParticleStateType& particle,
                                 ParticleBank& bank ) const;
@@ -107,6 +123,9 @@ public:
 
   //! Return the core
   const AtomCore& getCore() const;
+
+  //! Return the const core
+  const AtomCore& getConstCore() const;
 
   //! Relax the atom
   virtual void relaxAtom( const Data::SubshellType vacancy_shell,
@@ -186,193 +205,6 @@ private:
   // The atom core (storing all reactions, relaxation model)
   AtomCore d_core;
 };
-
-// Return the nuclide name
-template<typename AtomCore>
-inline const std::string& Atom<AtomCore>::getNuclideName() const
-{
-  return this->getAtomName();
-}
-
-// Return the atomic mass number
-template<typename AtomCore>
-inline unsigned Atom<AtomCore>::getAtomicMassNumber() const
-{
-  return 0u;
-}
-
-// Return the nuclear isomer number
-template<typename AtomCore>
-inline unsigned Atom<AtomCore>::getIsomerNumber() const
-{
-  return 0u;
-}
-
-// Return the temperature of the atom
-/*! \details This information is irrelevant for atomic reactions. However,
- * it my be important for nuclear reactions where Doppler broadening of
- * cross sections may be necessary.
- */
-template<typename AtomCore>
-inline double Atom<AtomCore>::getTemperature() const
-{
-  return 0.0;
-}
-
-// Return the total cross section at the desired energy
-template<typename AtomCore>
-inline double Atom<AtomCore>::getTotalCrossSection( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( d_core.getGridSearcher().isValueWithinGridBounds( energy ) );
-
-  unsigned energy_grid_bin =
-      d_core.getGridSearcher().findLowerBinIndex( energy );
-
-  return this->getTotalCrossSection( energy, energy_grid_bin );
-}
-
-// Return the total cross section at the desired energy
-template<typename AtomCore>
-inline double Atom<AtomCore>::getTotalCrossSection(
-                                        const double energy,
-                                        const unsigned energy_grid_bin ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( energy > 0.0 );
-
-  return this->getAtomicTotalCrossSection( energy, energy_grid_bin ) +
-         this->getNuclearTotalCrossSection( energy, energy_grid_bin );
-}
-
-// Return the total cross section from nuclear interactions
-/*! \details By default, photonuclear reactions are not considered.
- */
-template<typename AtomCore>
-inline double
-Atom<AtomCore>::getNuclearTotalCrossSection( const double energy ) const
-{
-  return 0.0;
-}
-
-// Return the total cross section from nuclear interactions
-/*! \details By default, photonuclear reactions are not considered.
- */
-template<typename AtomCore>
-inline double
-Atom<AtomCore>::getNuclearTotalCrossSection(
-                                        const double energy,
-                                        const unsigned energy_grid_bin ) const
-{
-  return 0.0;
-}
-
-// Return the total absorption cross section at the desired energy
-template<typename AtomCore>
-inline double
-Atom<AtomCore>::getAbsorptionCrossSection( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !QT::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-
-  return this->getAtomicAbsorptionCrossSection( energy ) +
-         this->getNuclearAbsorptionCrossSection( energy );
-}
-
-// Return the total absorption cross section at the desired energy
-template<typename AtomCore>
-inline double
-Atom<AtomCore>::getAbsorptionCrossSection( const double energy,
-                                           const unsigned energy_grid_bin ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !QT::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-
-  return this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin ) +
-         this->getNuclearAbsorptionCrossSection( energy, energy_grid_bin );
-}
-
-// Return the total absorption cross section from nuclear interactions
-/*! \details By default, nuclear reactions are not considered.
- */
-template<typename AtomCore>
-inline double
-Atom<AtomCore>::getNuclearAbsorptionCrossSection( const double energy ) const
-{
-  return 0.0;
-}
-
-// Return the total absorption cross section from nuclear interactions
-/*! \details By default, nuclear reactions are not considered.
- */
-template<typename AtomCore>
-inline double
-Atom<AtomCore>::getNuclearAbsorptionCrossSection(
-                                        const double energy,
-                                        const unsigned energy_grid_bin ) const
-{
-  return 0.0;
-}
-
-// Return the core
-template<typename AtomCore>
-inline const AtomCore& Atom<AtomCore>::getCore() const
-{
-  return d_core;
-}
-
-// Return the core
-template<typename AtomCore>
-inline AtomCore& Atom<AtomCore>::getCore()
-{
-  return d_core;
-}
-
-// Return the scatt. cross section from atomic interactions with a bin index
-template<typename AtomCore>
-inline double Atom<AtomCore>::getAtomicScatteringCrossSection(
-                                      const double energy,
-                                      const unsigned energy_grid_bin ) const
-{
-  double cross_section = 0.0;
-
-  typename ConstReactionMap::const_iterator atomic_reaction =
-    d_core.getScatteringReactions().begin();
-
-  while( atomic_reaction != d_core.getScatteringReactions().end() )
-  {
-    cross_section +=
-      atomic_reaction->second->getCrossSection( energy, energy_grid_bin );
-
-    ++atomic_reaction;
-  }
-
-  return cross_section;
-}
-
-// Return the absorption cross section from atomic interactions w/ bin index
-template<typename AtomCore>
-inline double Atom<AtomCore>::getAtomicAbsorptionCrossSection(
-                                          const double energy,
-                                          const unsigned energy_grid_bin ) const
-{
-  double cross_section = 0.0;
-
-  typename ConstReactionMap::const_iterator atomic_reaction =
-    d_core.getAbsorptionReactions().begin();
-
-  while( atomic_reaction != d_core.getAbsorptionReactions().end() )
-  {
-    cross_section +=
-      atomic_reaction->second->getCrossSection( energy, energy_grid_bin );
-
-    ++atomic_reaction;
-  }
-
-  return cross_section;
-}
 
 } // end MonteCarlo namespace
 

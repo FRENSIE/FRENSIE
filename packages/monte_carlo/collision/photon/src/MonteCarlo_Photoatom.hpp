@@ -38,6 +38,13 @@ public:
   //! The reaction enum type
   typedef BaseType::ReactionEnumType ReactionEnumType;
 
+  //! The reaction enum set type
+  typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
+  //! The photonuclear reaction enum set type
+  typedef std::unordered_set<PhotonuclearReactionType>
+  PhotonuclearReactionEnumTypeSet;
+
   //! The particle state type
   typedef BaseType::ParticleStateType ParticleStateType;
 
@@ -46,10 +53,6 @@ public:
 
   //! Typedef for the const reaction map
   typedef BaseType::ConstReactionMap ConstReactionMap;
-
-  //! Return the reactions that are treated as absorption
-  static const std::unordered_set<PhotoatomicReactionType>&
-  getAbsorptionReactionTypes();
 
   //! Constructor
   template<typename InterpPolicy>
@@ -93,6 +96,30 @@ public:
   virtual double getReactionCrossSection(
 			       const double energy,
 			       const PhotonuclearReactionType reaction ) const;
+
+  //! Get the absorption reaction types
+  using BaseType::getAbsorptionReactionTypes;
+
+  //! Get the photonuclear absorption reaction types
+  virtual void getAbsorptionReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the scattering reaction types
+  using BaseType::getScatteringReactionTypes;
+
+  //! Get the photonuclear scattering reaction types
+  virtual void getScatteringReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the miscellaneous reaction types
+  using BaseType::getMiscReactionTypes;
+
+  //! Get the photonuclear miscellaneous reaction types
+  virtual void getMiscReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the reaction types
+  using BaseType::getReactionTypes;
+
+  //! Get the photonuclear reaction types
+  virtual void getReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
 };
 
 // Return the cross section for a specific photonuclear reaction
@@ -104,6 +131,22 @@ inline double Photoatom::getReactionCrossSection(
 {
   return 0.0;
 }
+
+// Get the photonuclear absorption reaction types
+inline void Photoatom::getAbsorptionReactionTypes( PhotonuclearReactionEnumTypeSet& ) const
+{ /* ... */ }
+
+// Get the photonuclear scattering reaction types
+inline void Photoatom::getScatteringReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const
+{ /* ... */ }
+
+// Get the photonuclear miscellaneous reaction types
+inline void Photoatom::getMiscReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const
+{ /* ... */ }
+
+// Get the photonuclear reaction types
+inline void Photoatom::getReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const
+{ /* ... */ }
 
 // Relax the atom
 inline void Photoatom::relaxAtom( const Data::SubshellType vacancy_shell,

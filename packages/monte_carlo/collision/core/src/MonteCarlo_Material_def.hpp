@@ -219,6 +219,50 @@ double Material<ScatteringCenter>::getSurvivalProbability( const double energy )
   return survival_prob;
 }
 
+// Get the absorption reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getAbsorptionReactionTypes(
+                                                              reaction_types );
+  }
+}
+
+// Get the scattering reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getScatteringReactionTypes(
+                                                              reaction_types );
+  }
+}
+
+// Get the miscellanseous reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getMiscReactionTypes(
+                                                              reaction_types );
+  }
+}
+
+// Get the reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getReactionTypes(
+                                                              reaction_types );
+  }
+}
+
 // Collide with a photon
 template<typename ScatteringCenter>
 void Material<ScatteringCenter>::collideAnalogue( ParticleStateType& particle,

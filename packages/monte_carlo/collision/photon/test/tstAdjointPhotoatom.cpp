@@ -461,6 +461,55 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, getReactionCrossSection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatom, getAbsorptionReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatom::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatom, getScatteringReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatom::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::COHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the miscellaneous reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatom, getMiscReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatom::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatom, getReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatom::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ADJOINT_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::COHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that an analogue collision can be modeled
 FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAnalogue )
 {
@@ -592,9 +641,9 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
   // Sample the pair production reaction
   std::vector<double> fake_stream( 4 );
   // if( BOOST_VERSION < 106000 )
-  fake_stream[0] = 0.95; // select pair production (for boost below version 1.60)
+  //fake_stream[0] = 0.95; // select pair production (for boost below version 1.60)
   // else
-  //fake_stream[0] = 0.05; // select pair production (for boost above version 1.60)
+  fake_stream[0] = 0.05; // select pair production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -621,9 +670,9 @@ FRENSIE_UNIT_TEST( AdjointPhotoatom, collideAtLineEnergy )
 
   // Sample the triplet production reaction
   // if( BOOST_VERSION < 106000 )
-  fake_stream[0] = 0.96; // select triplet production (for boost below version 1.60)
+  //fake_stream[0] = 0.96; // select triplet production (for boost below version 1.60)
   // else
-  //fake_stream[0] = 0.04; // select triplet production (for boost above version 1.60)
+  fake_stream[0] = 0.04; // select triplet production (for boost above version 1.60)
   fake_stream[1] = 0.0;
   fake_stream[2] = 0.5;
   fake_stream[3] = 0.0;
@@ -779,6 +828,7 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
                               test_native_file_name,
                               data_container.getAtomicNumber(),
                               data_container.getAtomicNumber(),
+                              energy_grid,
                               grid_searcher,
                               critical_line_energies,
                               total_forward_reaction,

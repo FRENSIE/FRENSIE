@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReaction.hpp"
+#include "MonteCarlo_VoidAtomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -18,7 +19,7 @@ namespace MonteCarlo{
 * \details This class can be used to ignore absorption reactions.
 */
 
-class VoidAbsorptionPositronatomicReaction : public PositronatomicReaction
+class VoidAbsorptionPositronatomicReaction : public VoidAtomicReaction<PositronatomicReaction>
 {
 
 public:
@@ -31,130 +32,14 @@ public:
   ~VoidAbsorptionPositronatomicReaction()
   { /* ... */ }
 
-  //! Test if the energy falls within the energy grid
-  bool isEnergyWithinEnergyGrid( const double energy ) const override;
-
-  //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const override;
-
-  //! Return the cross section at the given energy (efficient)
-  double getCrossSection( const double energy,
-                          const size_t bin_index ) const override;
-
-  //! Return the differential cross section
-  double getDifferentialCrossSection( const double incoming_energy,
-                                      const double outgoing_energy ) const override;
-
-  //! Return the threshold energy
-  double getThresholdEnergy() const override;
-
-  //! Return the max energy
-  double getMaxEnergy() const override;
-
-  //! Return the number of photons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPhotons( const double energy ) const override;
-
-  //! Return the number of electrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedElectrons( const double energy ) const override;
-
-  //! Return the number of positrons emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedPositrons( const double energy ) const override;
-
   //! Return the reaction type
-  PositronatomicReactionType getReactionType() const override;
+  PositronatomicReactionType getReactionType() const final override;
 
   //! Simulate the reaction
   void react( PositronState& positron,
               ParticleBank& bank,
-              Data::SubshellType& shell_of_interaction ) const override;
-
-protected:
-
-  //! Return the head of the energy grid
-  const double* getEnergyGridHead() const override;
+              Data::SubshellType& shell_of_interaction ) const final override;
 };
-
-// Test if the energy falls within the energy grid
-inline bool VoidAbsorptionPositronatomicReaction::isEnergyWithinEnergyGrid(
-    const double energy ) const
-{
-  return true;
-}
-
-// Return the cross section at the given energy
-inline double VoidAbsorptionPositronatomicReaction::getCrossSection(
-    const double energy ) const
-{
-  return 0.0;
-}
-
-// Return the cross section at the given energy (efficient)
-inline double VoidAbsorptionPositronatomicReaction::getCrossSection(
-    const double energy,
-    const size_t bin_index ) const
-{
-  return 0.0;
-}
-
-// Return the differential cross section
-inline double VoidAbsorptionPositronatomicReaction::getDifferentialCrossSection(
-    const double incoming_energy,
-    const double outgoing_energy ) const
-{
-  return 0.0;
-}
-
-// Return the threshold energy
-inline double VoidAbsorptionPositronatomicReaction::getThresholdEnergy() const
-{
-  return 1.00000e-5;
-}
-
-// Return the max energy
-inline double VoidAbsorptionPositronatomicReaction::getMaxEnergy() const
-{
-  return 100.0;
-}
-
-// Return the number of photons emitted from the rxn at the given energy
-inline unsigned VoidAbsorptionPositronatomicReaction::getNumberOfEmittedPhotons(
-                                                     const double energy ) const
-{
-  return 0u;
-}
-
-// Return the number of positrons emitted from the rxn at the given energy
-inline unsigned VoidAbsorptionPositronatomicReaction::getNumberOfEmittedElectrons(
-                                                     const double energy ) const
-{
-  return 0u;
-}
-  
-// Return the number of positrons emitted from the rxn at the given energy
-inline unsigned VoidAbsorptionPositronatomicReaction::getNumberOfEmittedPositrons(
-                                                     const double energy ) const
-{
-  return 0u;
-}
-
-// Return reaction type
-inline PositronatomicReactionType VoidAbsorptionPositronatomicReaction::getReactionType() const
-{
-  return TOTAL_ABSORPTION_POSITRONATOMIC_REACTION;
-}
-
-// Simulate the reaction
-inline void VoidAbsorptionPositronatomicReaction::react(
-       PositronState& positron,
-       ParticleBank& bank,
-       Data::SubshellType& shell_of_interaction ) const
-{ /* ... */ }
-
-// Return the head of the energy grid
-inline const double* VoidAbsorptionPositronatomicReaction::getEnergyGridHead() const
-{
-  return nullptr;
-}
 
 } // end MonteCarlo namespace
 

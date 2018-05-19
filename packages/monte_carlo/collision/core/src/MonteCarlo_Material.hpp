@@ -40,6 +40,9 @@ public:
   //! The reaction enum type
   typedef typename ScatteringCenter::ReactionEnumType ReactionEnumType;
 
+  //! The reaction enum set type
+  typedef typename ScatteringCenter::ReactionEnumTypeSet ReactionEnumTypeSet;
+
   //! The particle state type
   typedef typename ScatteringCenter::ParticleStateType ParticleStateType;
 
@@ -75,6 +78,18 @@ public:
   double getMacroscopicReactionCrossSection(
                                        const double energy,
                                        const ReactionEnumType reaction ) const;
+
+  //! Get the absorption reaction types
+  void getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the scattering reaction types
+  void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the miscellanseous reaction types
+  void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the reaction types
+  void getReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
   //! Collide with a scattering center
   virtual void collideAnalogue( ParticleStateType& particle,

@@ -38,6 +38,38 @@ double PhotonMaterial::getMacroscopicReactionCrossSection(
                                                  reaction ) );
 }
 
+// Get the photonuclear absorption reaction types
+void PhotonMaterial::getAbsorptionReactionTypes(
+                        PhotonuclearReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < this->getNumberOfScatteringCenters(); ++i )
+    this->getScatteringCenter( i ).getAbsorptionReactionTypes(reaction_types);
+}
+
+// Get the photonuclear scattering reaction types
+void PhotonMaterial::getScatteringReactionTypes(
+                        PhotonuclearReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < this->getNumberOfScatteringCenters(); ++i )
+    this->getScatteringCenter( i ).getScatteringReactionTypes(reaction_types);
+}
+
+// Get the photonuclear miscellanseous reaction types
+void PhotonMaterial::getMiscReactionTypes(
+                        PhotonuclearReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < this->getNumberOfScatteringCenters(); ++i )
+    this->getScatteringCenter( i ).getMiscReactionTypes(reaction_types);
+}
+
+// Get the photonuclear reaction types
+void PhotonMaterial::getReactionTypes(
+                        PhotonuclearReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < this->getNumberOfScatteringCenters(); ++i )
+    this->getScatteringCenter( i ).getReactionTypes(reaction_types);
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

@@ -92,6 +92,19 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getScatteringReactions )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getScatteringReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatomCore::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom_core->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::COHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
 FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getAbsorptionReactions )
 {
@@ -99,6 +112,52 @@ FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getAbsorptionReactions )
     absorption_reactions = adjoint_photoatom_core->getAbsorptionReactions();
 
   FRENSIE_CHECK_EQUAL( absorption_reactions.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getAbsorptionReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatomCore::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom_core->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the miscellaneous reactions can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getMiscReactions )
+{
+  const MonteCarlo::AdjointPhotoatomCore::ConstReactionMap&
+    misc_reactions = adjoint_photoatom_core->getMiscReactions();
+
+  FRENSIE_CHECK_EQUAL( misc_reactions.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the miscellaneous reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getMiscReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatomCore::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom_core->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointPhotoatomCore, getReactionTypes )
+{
+  MonteCarlo::AdjointPhotoatomCore::ReactionEnumTypeSet reaction_types;
+
+  adjoint_photoatom_core->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ADJOINT_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::COHERENT_ADJOINT_PHOTOATOMIC_REACTION ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -369,12 +428,15 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
   // Construct the core
   adjoint_photoatom_core.reset(
            new MonteCarlo::AdjointPhotoatomCore(
+                          energy_grid,
                           grid_searcher,
                           critical_line_energies,
                           total_forward_reaction,
                           scattering_reactions,
                           MonteCarlo::AdjointPhotoatomCore::ConstReactionMap(),
-                          line_energy_reactions ) );
+                          line_energy_reactions,
+                          false,
+                          Utility::LinLin() ) );
                                                          
     
   // Initialize the random number generator

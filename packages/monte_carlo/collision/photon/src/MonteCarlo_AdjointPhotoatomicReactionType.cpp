@@ -119,6 +119,8 @@ std::string ToStringTraits<MonteCarlo::AdjointPhotoatomicReactionType>::toString
   {
   case MonteCarlo::TOTAL_ADJOINT_PHOTOATOMIC_REACTION:
     return "Total Adjoint Photoatomic Reaction";
+  case MonteCarlo::TOTAL_ABSORPTION_ADJOINT_PHOTOATOMIC_REACTION:
+    return "Total Absorption Adjoint Photoatomic Reaction";
   case MonteCarlo::TOTAL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:
     return "Total Incoherent Adjoint Photoatomic Reaction";
   case MonteCarlo::K_SUBSHELL_INCOHERENT_ADJOINT_PHOTOATOMIC_REACTION:

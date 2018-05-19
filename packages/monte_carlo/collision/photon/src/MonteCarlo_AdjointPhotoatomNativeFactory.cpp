@@ -137,12 +137,15 @@ void AdjointPhotoatomNativeFactory::createAdjointPhotoatomCore(
   
   // Create the adjoint photoatom core
   adjoint_photoatom_core.reset( new AdjointPhotoatomCore(
+                                      energy_grid,
                                       grid_searcher,
                                       critical_line_energies,
                                       total_forward_reaction,
                                       scattering_reactions,
                                       AdjointPhotoatomCore::ConstReactionMap(),
-                                      line_energy_reactions ) );
+                                      line_energy_reactions,
+                                      false,
+                                      Utility::LinLin() ) );
 }
 
 // Create an adjoint photoatom

@@ -30,103 +30,6 @@ std::shared_ptr<const MonteCarlo::Photoatom> ace_photoatom;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the absorption reaction types can be returned
-FRENSIE_UNIT_TEST( Photoatom, getAbsorptionReactionTypes )
-{
-  auto absorption_types = MonteCarlo::Photoatom::getAbsorptionReactionTypes();
-
-  FRENSIE_CHECK( absorption_types.count(
-		      MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		 MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::L1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::L2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::L3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	        MonteCarlo::M1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	        MonteCarlo::M2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::M3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::M4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::M5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::N1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::N2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::N3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::N4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	        MonteCarlo::N5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::N6_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::N7_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	        MonteCarlo::O1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	        MonteCarlo::O2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	        MonteCarlo::O3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::O4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::O5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::O6_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::O7_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::O8_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::O9_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P6_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P7_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P8_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-		MonteCarlo::P9_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	       MonteCarlo::P10_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	       MonteCarlo::P11_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	       MonteCarlo::Q1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	       MonteCarlo::Q2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( absorption_types.count(
-	       MonteCarlo::Q3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-
-  FRENSIE_CHECK( !absorption_types.count(
-	       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( !absorption_types.count(
-	       MonteCarlo::COHERENT_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( !absorption_types.count(
-	       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) );
-  FRENSIE_CHECK( !absorption_types.count(
-	       MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION ) );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the photoatom atom name can be returned
 FRENSIE_UNIT_TEST( Photoatom, getAtomName_ace )
 {
@@ -504,6 +407,80 @@ FRENSIE_UNIT_TEST( Photoatom, getReactionCrossSection )
   cross_section = ace_photoatom->getReactionCrossSection(
 					   20.0,
 					   MonteCarlo::GAMMA__TOTAL_REACTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( Photoatom, getAbsorptionReactionTypes )
+{
+  MonteCarlo::Photoatom::ReactionEnumTypeSet reaction_types;
+
+  ace_photoatom->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 1 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
+
+  MonteCarlo::Photoatom::PhotonuclearReactionEnumTypeSet nuclear_reaction_types;
+
+  ace_photoatom->getAbsorptionReactionTypes( nuclear_reaction_types );
+
+  FRENSIE_CHECK_EQUAL( nuclear_reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( Photoatom, getScatteringReactionTypes )
+{
+  MonteCarlo::Photoatom::ReactionEnumTypeSet reaction_types;
+
+  ace_photoatom->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 1 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) );
+
+  MonteCarlo::Photoatom::PhotonuclearReactionEnumTypeSet nuclear_reaction_types;
+
+  ace_photoatom->getScatteringReactionTypes( nuclear_reaction_types );
+
+  FRENSIE_CHECK_EQUAL( nuclear_reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the miscellaneous reaction types can be returned
+FRENSIE_UNIT_TEST( Photoatom, getMiscReactionTypes )
+{
+  MonteCarlo::Photoatom::ReactionEnumTypeSet reaction_types;
+
+  ace_photoatom->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+
+  MonteCarlo::Photoatom::PhotonuclearReactionEnumTypeSet nuclear_reaction_types;
+
+  ace_photoatom->getMiscReactionTypes( nuclear_reaction_types );
+
+  FRENSIE_CHECK_EQUAL( nuclear_reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( Photoatom, getReactionTypes )
+{
+  MonteCarlo::Photoatom::ReactionEnumTypeSet reaction_types;
+
+  ace_photoatom->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 4 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ABSORPTION_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) );
+
+  MonteCarlo::Photoatom::PhotonuclearReactionEnumTypeSet nuclear_reaction_types;
+
+  ace_photoatom->getReactionTypes( nuclear_reaction_types );
+
+  FRENSIE_CHECK_EQUAL( nuclear_reaction_types.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//

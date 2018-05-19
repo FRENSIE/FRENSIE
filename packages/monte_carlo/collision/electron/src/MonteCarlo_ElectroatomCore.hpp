@@ -12,14 +12,11 @@
 // Std Lib Includes
 #include <memory>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_AtomCore.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_Vector.hpp"
 
@@ -36,34 +33,30 @@ namespace MonteCarlo{
  * share the electroatomic data without copying that data (even if each
  * electro-nuclide has its own copy of the electroatom core object).
  */
-class ElectroatomCore
+class ElectroatomCore : public AtomCore<ElectroatomicReactionType,ElectroatomicReaction,ElectronState,boost::unordered_map,std::unordered_set>
 {
+  // Typedef for the base type
+  typedef AtomCore<ElectroatomicReactionType,ElectroatomicReaction,ElectronState,boost::unordered_map,std::unordered_set> BaseType;
 
 public:
 
   //! Typedef for the reaction type enum
-  typedef ElectroatomicReactionType ReactionEnumType;
+  typedef BaseType::ReactionEnumType ReactionEnumType;
+
+  //! Typedef for the reaction type enum set
+  typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
+  //! Typedef for the reaction type
+  typedef BaseType::ReactionType ReactionType;
 
   //! Typedef for the particle state type
-  typedef ElectronState ParticleStateType;
+  typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<ElectroatomicReactionType,
-                   std::shared_ptr<ElectroatomicReaction> >
-  ReactionMap;
+  typedef BaseType::ReactionMap ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<ElectroatomicReactionType,
-                   std::shared_ptr<const ElectroatomicReaction> >
-  ConstReactionMap;
-
-  // Reactions that should be treated as scattering
-  static const boost::unordered_set<ElectroatomicReactionType>
-  scattering_reaction_types;
-
-  // Reactions that should be treated as void
-  static const boost::unordered_set<ElectroatomicReactionType>
-  void_reaction_types;
+  typedef BaseType::ConstReactionMap ConstReactionMap;
 
   //! Default constructor
   ElectroatomCore();
@@ -87,7 +80,7 @@ public:
     const ConstReactionMap& absorption_reactions,
     const ConstReactionMap& miscellaneous_reactions,
     const std::shared_ptr<const AtomicRelaxationModel> relaxation_model,
-    const std::shared_ptr<const Utility::HashBasedGridSearcher<double>>& grid_searcher );
+    const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >& grid_searcher );
 
   //! Copy constructor
   ElectroatomCore( const ElectroatomCore& instance );
@@ -99,134 +92,14 @@ public:
   ~ElectroatomCore()
   { /* ... */ }
 
-  //! Return the total reaction
-  const ElectroatomicReaction& getTotalReaction() const;
-
-  //! Return the total absorption reaction
-  const ElectroatomicReaction& getTotalAbsorptionReaction() const;
-
-  //! Return the scattering reactions
-  const ConstReactionMap& getScatteringReactions() const;
-
-  //! Return the absorption reactions
-  const ConstReactionMap& getAbsorptionReactions() const;
-
-  //! Return the miscellaneous non scattering reactions
-  const ConstReactionMap& getMiscReactions() const;
-
-  //! Return the atomic relaxation model
-  const AtomicRelaxationModel& getAtomicRelaxationModel() const;
-
-  //! Return the hash-based grid searcher
-  const Utility::HashBasedGridSearcher<double>& getGridSearcher() const;
-
-  //! Test if all of the reactions share a common energy grid
-  bool hasSharedEnergyGrid() const;
-
 private:
 
-  // Set the default scattering reaction types
-  static boost::unordered_set<ElectroatomicReactionType>
-  setDefaultScatteringReactionTypes();
+  // Set the default absorption reaction types
+  static bool setDefaultAbsorptionReactionTypes();
 
-  // Create the total absorption reaction
-  template<typename InterpPolicy>
-  static void createTotalAbsorptionReaction(
-     const std::shared_ptr<const std::vector<double> >& energy_grid,
-     const ConstReactionMap& absorption_reactions,
-     std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction );
-
-  // Create the processed total absorption reaction
-  template<typename InterpPolicy>
-  static void createProcessedTotalAbsorptionReaction(
-     const std::shared_ptr<const std::vector<double> >& energy_grid,
-     const ConstReactionMap& absorption_reactions,
-     std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction );
-
-  // Create the total reaction
-  template<typename InterpPolicy>
-  static void createTotalReaction(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<const ElectroatomicReaction>& total_reaction );
-
-  // Calculate the processed total absorption cross section
-  template<typename InterpPolicy>
-  static void createProcessedTotalReaction(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const ElectroatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<const ElectroatomicReaction>& total_reaction );
-
-  // The total reaction
-  std::shared_ptr<const ElectroatomicReaction> d_total_reaction;
-
-  // The total absorption reaction
-  std::shared_ptr<const ElectroatomicReaction> d_total_absorption_reaction;
-
-  // The scattering reactions
-  ConstReactionMap d_scattering_reactions;
-
-  // The absorption reactions
-  ConstReactionMap d_absorption_reactions;
-
-  // The miscellaneous reactions
-  ConstReactionMap d_miscellaneous_reactions;
-
-  // The atomic relaxation model
-  std::shared_ptr<const AtomicRelaxationModel> d_relaxation_model;
-
-  // The hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> d_grid_searcher;
+  // Used to set the default absorption reaction types
+  static const bool s_default_absorption_reaction_types_set;
 };
-
-// Return the total reaction
-inline const ElectroatomicReaction& ElectroatomCore::getTotalReaction() const
-{
-  return *d_total_reaction;
-}
-
-// Return the total absorption reaction
-inline const ElectroatomicReaction&
-ElectroatomCore::getTotalAbsorptionReaction() const
-{
-  return *d_total_absorption_reaction;
-}
-
-// Return the scattering reactions
-inline const ElectroatomCore::ConstReactionMap&
-ElectroatomCore::getScatteringReactions() const
-{
-  return d_scattering_reactions;
-}
-
-// Return the absorption reactions
-inline const ElectroatomCore::ConstReactionMap&
-ElectroatomCore::getAbsorptionReactions() const
-{
-  return d_absorption_reactions;
-}
-
-// Return the miscellaneous reactions
-inline const ElectroatomCore::ConstReactionMap&
-ElectroatomCore::getMiscReactions() const
-{
-  return d_miscellaneous_reactions;
-}
-
-// Return the atomic relaxation model
-inline const AtomicRelaxationModel&
-ElectroatomCore::getAtomicRelaxationModel() const
-{
-  return *d_relaxation_model;
-}
-
-// Return the hash-based grid searcher
-inline const Utility::HashBasedGridSearcher<double>& ElectroatomCore::getGridSearcher() const
-{
-  return *d_grid_searcher;
-}
 
 } // end MonteCarlo namespace
 

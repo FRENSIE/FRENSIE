@@ -12,14 +12,11 @@
 // Std Lib Includes
 #include <memory>
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PositronatomicReactionType.hpp"
 #include "MonteCarlo_PositronatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_AtomCore.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_Vector.hpp"
 
@@ -36,34 +33,30 @@ namespace MonteCarlo{
  * to share the positron-atomic data without copying that data (even if each
  * positron-nuclide has its own copy of the positron-atom core object).
  */
-class PositronatomCore
+class PositronatomCore : public AtomCore<PositronatomicReactionType,PositronatomicReaction,PositronState,boost::unordered_map,std::unordered_set>
 {
+  // Typedef for the base type
+  typedef AtomCore<PositronatomicReactionType,PositronatomicReaction,PositronState,boost::unordered_map,std::unordered_set> BaseType;
 
 public:
 
   //! Typedef for the reaction type enum
-  typedef PositronatomicReactionType ReactionEnumType;
+  typedef BaseType::ReactionEnumType ReactionEnumType;
+
+  //! Typedef for the reaction type enum set
+  typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
+  //! Typedef for the reaction type
+  typedef BaseType::ReactionType ReactionType;
 
   //! Typedef for the particle state type
-  typedef PositronState ParticleStateType;
+  typedef BaseType::ParticleStateType ParticleStateType;
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<PositronatomicReactionType,
-                   std::shared_ptr<PositronatomicReaction> >
-  ReactionMap;
+  typedef BaseType::ReactionMap ReactionMap;
 
   //! Typedef for the const reaction map
-  typedef boost::unordered_map<PositronatomicReactionType,
-                   std::shared_ptr<const PositronatomicReaction> >
-  ConstReactionMap;
-
-  // Reactions that should be treated as scattering
-  static const boost::unordered_set<PositronatomicReactionType>
-  scattering_reaction_types;
-
-  // Reactions that should be treated as void
-  static const boost::unordered_set<PositronatomicReactionType>
-  void_reaction_types;
+  typedef BaseType::ConstReactionMap ConstReactionMap;
 
   //! Default constructor
   PositronatomCore();
@@ -99,134 +92,14 @@ public:
   ~PositronatomCore()
   { /* ... */ }
 
-  //! Return the total reaction
-  const PositronatomicReaction& getTotalReaction() const;
-
-  //! Return the total absorption reaction
-  const PositronatomicReaction& getTotalAbsorptionReaction() const;
-
-  //! Return the scattering reactions
-  const ConstReactionMap& getScatteringReactions() const;
-
-  //! Return the absorption reactions
-  const ConstReactionMap& getAbsorptionReactions() const;
-
-  //! Return the miscellaneous non scattering reactions
-  const ConstReactionMap& getMiscReactions() const;
-
-  //! Return the atomic relaxation model
-  const AtomicRelaxationModel& getAtomicRelaxationModel() const;
-
-  //! Return the hash-based grid searcher
-  const Utility::HashBasedGridSearcher<double>& getGridSearcher() const;
-
-  //! Test if all of the reactions share a common energy grid
-  bool hasSharedEnergyGrid() const;
-
 private:
 
-  // Set the default scattering reaction types
-  static boost::unordered_set<PositronatomicReactionType>
-  setDefaultScatteringReactionTypes();
+  // Set the default absorption reaction types
+  static bool setDefaultAbsorptionReactionTypes();
 
-  // Create the total absorption reaction
-  template<typename InterpPolicy>
-  static void createTotalAbsorptionReaction(
-        const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const ConstReactionMap& absorption_reactions,
-        std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction );
-
-  // Create the processed total absorption reaction
-  template<typename InterpPolicy>
-  static void createProcessedTotalAbsorptionReaction(
-        const std::shared_ptr<const std::vector<double> >& energy_grid,
-        const ConstReactionMap& absorption_reactions,
-        std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction );
-
-  // Create the total reaction
-  template<typename InterpPolicy>
-  static void createTotalReaction(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<const PositronatomicReaction>& total_reaction );
-
-  // Calculate the processed total absorption cross section
-  template<typename InterpPolicy>
-  static void createProcessedTotalReaction(
-      const std::shared_ptr<const std::vector<double> >& energy_grid,
-      const ConstReactionMap& scattering_reactions,
-      const std::shared_ptr<const PositronatomicReaction>& total_absorption_reaction,
-      std::shared_ptr<const PositronatomicReaction>& total_reaction );
-
-  // The total reaction
-  std::shared_ptr<const PositronatomicReaction> d_total_reaction;
-
-  // The total absorption reaction
-  std::shared_ptr<const PositronatomicReaction> d_total_absorption_reaction;
-
-  // The scattering reactions
-  ConstReactionMap d_scattering_reactions;
-
-  // The absorption reactions
-  ConstReactionMap d_absorption_reactions;
-
-  // The miscellaneous reactions
-  ConstReactionMap d_miscellaneous_reactions;
-
-  // The atomic relaxation model
-  std::shared_ptr<const AtomicRelaxationModel> d_relaxation_model;
-
-  // The hash-based grid searcher
-  std::shared_ptr<const Utility::HashBasedGridSearcher<double>> d_grid_searcher;
+  // Used to set the default absorption reaction types
+  static const bool s_default_absorption_reaction_types_set;
 };
-
-// Return the total reaction
-inline const PositronatomicReaction& PositronatomCore::getTotalReaction() const
-{
-  return *d_total_reaction;
-}
-
-// Return the total absorption reaction
-inline const PositronatomicReaction&
-PositronatomCore::getTotalAbsorptionReaction() const
-{
-  return *d_total_absorption_reaction;
-}
-
-// Return the scattering reactions
-inline const PositronatomCore::ConstReactionMap&
-PositronatomCore::getScatteringReactions() const
-{
-  return d_scattering_reactions;
-}
-
-// Return the absorption reactions
-inline const PositronatomCore::ConstReactionMap&
-PositronatomCore::getAbsorptionReactions() const
-{
-  return d_absorption_reactions;
-}
-
-// Return the miscellaneous reactions
-inline const PositronatomCore::ConstReactionMap&
-PositronatomCore::getMiscReactions() const
-{
-  return d_miscellaneous_reactions;
-}
-
-// Return the atomic relaxation model
-inline const AtomicRelaxationModel&
-PositronatomCore::getAtomicRelaxationModel() const
-{
-  return *d_relaxation_model;
-}
-
-// Return the hash-based grid searcher
-inline const Utility::HashBasedGridSearcher<double>& PositronatomCore::getGridSearcher() const
-{
-  return *d_grid_searcher;
-}
 
 } // end MonteCarlo namespace
 
