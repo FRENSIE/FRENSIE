@@ -26,11 +26,20 @@ class AdjointPhotonMaterial : public AdjointMaterial<AdjointPhotoatom>
 
 public:
 
+  //! The scattering center type
+  typedef BaseType::ScatteringCenterType ScatteringCenterType;
+
+  //! The reaction enum type
+  typedef BaseType::ReactionEnumType ReactionEnumType;
+
+  //! The reaction enum set type
+  typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
   //! The material handle type
-  typedef typename BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef BaseType::InternalMaterialHandle InternalMaterialHandle;
 
   //! The adjoint photoatom name map type
-  typedef typename BaseType::ScatteringCenterNameMap AdjointPhotoatomNameMap;
+  typedef BaseType::ScatteringCenterNameMap AdjointPhotoatomNameMap;
 
   //! Constructor
   AdjointPhotonMaterial(

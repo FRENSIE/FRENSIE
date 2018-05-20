@@ -17,11 +17,22 @@ ElectroatomicReactionType VoidAbsorptionElectroatomicReaction::getReactionType()
   return TOTAL_ABSORPTION_ELECTROATOMIC_REACTION;
 }
 
+// Return the differential cross section
+double VoidAbsorptionElectroatomicReaction::getDifferentialCrossSection(
+                                                           const double,
+                                                           const double ) const
+{
+  return 0.0;
+}
+
 // Simulate the reaction
-void VoidAbsorptionElectroatomicReaction::react( ElectronState&,
-                                                 ParticleBank&,
-                                                 Data::SubshellType& ) const
-{ /* ... */ }
+void VoidAbsorptionElectroatomicReaction::react(
+                            ElectronState&,
+                            ParticleBank&,
+                            Data::SubshellType& subshell_of_interaction ) const
+{ 
+  subshell_of_interaction = Data::UNKNOWN_SUBSHELL;
+}
   
 } // end MonteCarlo namespace
 

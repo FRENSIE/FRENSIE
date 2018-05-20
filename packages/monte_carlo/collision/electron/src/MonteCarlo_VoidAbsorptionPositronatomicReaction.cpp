@@ -17,12 +17,22 @@ PositronatomicReactionType VoidAbsorptionPositronatomicReaction::getReactionType
   return TOTAL_ABSORPTION_POSITRONATOMIC_REACTION;
 }
 
+// Return the differential cross section
+double VoidAbsorptionPositronatomicReaction::getDifferentialCrossSection(
+                                                           const double,
+                                                           const double ) const
+{
+  return 0.0;
+}
+
 // Simulate the reaction
 void VoidAbsorptionPositronatomicReaction::react(
-       PositronState& positron,
-       ParticleBank& bank,
-       Data::SubshellType& shell_of_interaction ) const
-{ /* ... */ }
+                               PositronState&,
+                               ParticleBank&,
+                               Data::SubshellType& shell_of_interaction ) const
+{ 
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
+}
   
 } // end MonteCarlo namespace
 

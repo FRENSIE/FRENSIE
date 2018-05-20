@@ -29,11 +29,23 @@ class PositronMaterial : public Material<Positronatom>
 
 public:
 
+  //! The scattering center type
+  typedef BaseType::ScatteringCenterType ScatteringCenterType;
+
+  //! The reaction enum type
+  typedef BaseType::ReactionEnumType ReactionEnumType;
+
+  //! The reaction enum set type
+  typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
+  //! The particle state type
+  typedef BaseType::ParticleStateType ParticleStateType;
+
   //! The material handle type
-  typedef typename BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef BaseType::InternalMaterialHandle InternalMaterialHandle;
 
   //! The photoatom name map type
-  typedef typename BaseType::ScatteringCenterNameMap PositronatomNameMap;
+  typedef BaseType::ScatteringCenterNameMap PositronatomNameMap;
 
   //! Constructor
   PositronMaterial( const InternalMaterialHandle id,

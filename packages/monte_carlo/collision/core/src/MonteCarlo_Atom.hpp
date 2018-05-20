@@ -101,16 +101,16 @@ public:
   //! Return the survival probability from nuclear interactions
   double getNuclearSurvivalProbability( const double energy ) const;
 
-  //! Get the absorption reaction types
+  //! Return the absorption reaction types
   void getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
-  //! Get the scattering reaction types
+  //! Return the scattering reaction types
   void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
-  //! Get the miscellanseous reaction types
+  //! Return the miscellanseous reaction types
   void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
-  //! Get the reaction types
+  //! Return the reaction types
   void getReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
   //! Collide with a particle

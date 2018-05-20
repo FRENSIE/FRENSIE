@@ -153,6 +153,105 @@ FRENSIE_UNIT_TEST( PositronMaterial, getMacroscopicReactionCrossSection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( PositronMaterial, getAbsorptionReactionTypes )
+{
+  MonteCarlo::PositronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( PositronMaterial, getScatteringReactionTypes )
+{
+  MonteCarlo::PositronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 27 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::CUTOFF_ELASTIC_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::K_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::L1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::L2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::L3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::P1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::P2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::P3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( PositronMaterial, getMiscReactionTypes )
+{
+  MonteCarlo::PositronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( PositronMaterial, getReactionTypes )
+{
+  MonteCarlo::PositronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 28 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::CUTOFF_ELASTIC_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::K_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::L1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::L2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::L3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::M5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N6_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N7_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O4_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::O5_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::P1_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::P2_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::P3_SUBSHELL_POSITRONIONIZATION_POSITRONATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a positron can collide with the material
 //! \details This unit test is dependent on the version of boost being used.
 FRENSIE_UNIT_TEST( PositronMaterial, collideAnalogue )

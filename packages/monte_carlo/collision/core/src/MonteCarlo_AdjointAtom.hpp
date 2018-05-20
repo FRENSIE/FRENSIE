@@ -33,6 +33,9 @@ public:
   //! The reaction enum type
   typedef typename BaseType::ReactionEnumType ReactionEnumType;
 
+  //! The reaction enum set type
+  typedef typename BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
   //! Typedef for the particle state type
   typedef typename BaseType::ParticleStateType ParticleStateType;
 

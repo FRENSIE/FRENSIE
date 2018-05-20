@@ -46,110 +46,6 @@ bool notEqualZero( double value )
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the scattering reaction types can be returned
-FRENSIE_UNIT_TEST( Electroatom, getScatteringReactionTypes )
-{
-  const boost::unordered_set<MonteCarlo::ElectroatomicReactionType>&
-    scattering_types = MonteCarlo::Electroatom::getScatteringReactionTypes();
-
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::L1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::L2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::L3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::M1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::M2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::M3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::M4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::M5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::N1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::N2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::N3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::N4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::N5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::N6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::N7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::O9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P4_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P5_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P6_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P7_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P8_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P9_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P10_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::P11_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::Q1_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::Q2_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-        MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
-
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::COUPLED_ELASTIC_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
-  FRENSIE_CHECK( scattering_types.count(
-               MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the electroatom atom name can be returned
 FRENSIE_UNIT_TEST( Electroatom, getAtomName_ace )
 {
@@ -700,6 +596,104 @@ FRENSIE_UNIT_TEST( Electroatom, getReactionCrossSection_native )
                MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
 
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getAbsorptionReactionTypes_ace )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getAbsorptionReactionTypes_native )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getScatteringReactionTypes_ace )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getScatteringReactionTypes_native )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the miscellaneous reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getMiscReactionTypes_ace )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the miscellaneous reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getMiscReactionTypes_native )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getReactionTypes_ace )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( Electroatom, getReactionTypes_native )
+{
+  MonteCarlo::Electroatom::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
 }
 
 //---------------------------------------------------------------------------//

@@ -20,6 +20,7 @@
 #include "MonteCarlo_NeutronNuclearReaction.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_Set.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
@@ -37,6 +38,9 @@ public:
 
   //! The reaction enum type
   typedef NuclearReactionType ReactionEnumType;
+
+  //! The reaction enum set type
+  typedef std::set<ReactionEnumType> ReactionEnumTypeSet;
 
   //! The particle state type
   typedef NeutronState ParticleStateType;
@@ -113,6 +117,18 @@ public:
   //! Return the cross section for a specific nuclear reaction
   double getReactionCrossSection( const double energy,
 				  const NuclearReactionType reaction ) const;
+
+  //! Return the absorption reaction types
+  void getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Return the scattering reaction types
+  void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Return the miscellanseous reaction types
+  void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Return the reaction types
+  void getReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
 
   //! Collide with a neutron
   virtual void collideAnalogue( NeutronState& neutron, ParticleBank& bank ) const;

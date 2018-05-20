@@ -166,6 +166,59 @@ FRENSIE_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( ElectronMaterial, getAbsorptionReactionTypes )
+{
+  MonteCarlo::ElectronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( ElectronMaterial, getScatteringReactionTypes )
+{
+  MonteCarlo::ElectronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 4 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( ElectronMaterial, getMiscReactionTypes )
+{
+  MonteCarlo::ElectronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( ElectronMaterial, getReactionTypes )
+{
+  MonteCarlo::ElectronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 5 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a electron can collide with the material
 //! \details This unit test is dependent on the version of boost being used.
 FRENSIE_UNIT_TEST( ElectronMaterial, collideAnalogue )

@@ -24,11 +24,14 @@ void VoidAbsorptionAdjointPhotoatomicReaction::react( AdjointPhotonState&,
 { /* ... */ }
 
 // Simulate the reaction and track the number of sampling trials
-void VoidAbsorptionAdjointPhotoatomicReaction::react( AdjointPhotonState&,
-                                                      ParticleBank&,
-                                                      Data::SubshellType&,
-                                                      Counter& ) const
-{ /* ... */ }
+void VoidAbsorptionAdjointPhotoatomicReaction::react(
+                                   AdjointPhotonState&,
+                                   ParticleBank&,
+                                   Data::SubshellType& subshell_of_interaction,
+                                   Counter& ) const
+{ 
+  subshell_of_interaction = Data::UNKNOWN_SUBSHELL;
+}
   
 } // end MonteCarlo namespace
 

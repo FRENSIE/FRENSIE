@@ -34,6 +34,10 @@ public:
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const final override;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double secondary_variable ) const final override;
+
   //! Simulate the reaction
   void react( ElectronState& electron,
               ParticleBank& bank,

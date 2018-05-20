@@ -282,6 +282,60 @@ double Nuclide::getReactionCrossSection(
   }
 }
 
+// Return the absorption reaction types
+void Nuclide::getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  ConstReactionMap::const_iterator reaction_it =
+    d_absorption_reactions.begin();
+
+  while( reaction_it != d_absorption_reactions.end() )
+  {
+    reaction_types.insert( reaction_it->first );
+
+    ++reaction_it;
+  }
+}
+
+// Return the scattering reaction types
+void Nuclide::getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  ConstReactionMap::const_iterator reaction_it =
+    d_scattering_reactions.begin();
+
+  while( reaction_it != d_scattering_reactions.end() )
+  {
+    reaction_types.insert( reaction_it->first );
+
+    ++reaction_it;
+  }
+}
+
+// Return the miscellanseous reaction types
+void Nuclide::getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  ConstReactionMap::const_iterator reaction_it =
+    d_miscellaneous_reactions.begin();
+
+  while( reaction_it != d_miscellaneous_reactions.end() )
+  {
+    reaction_types.insert( reaction_it->first );
+
+    ++reaction_it;
+  }
+}
+
+// Return the reaction types
+void Nuclide::getReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  this->getAbsorptionReactionTypes( reaction_types );
+  this->getScatteringReactionTypes( reaction_types );
+  this->getMiscReactionTypes( reaction_types );
+
+  // Add the special reaction types
+  reaction_types.insert( N__TOTAL_REACTION );
+  reaction_types.insert( N__TOTAL_ABSORPTION_REACTION );
+}
+
 // Collide with a neutron
 void Nuclide::collideAnalogue( NeutronState& neutron,
 			       ParticleBank& bank ) const

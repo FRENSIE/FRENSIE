@@ -35,6 +35,10 @@ public:
   //! Return the reaction type
   PositronatomicReactionType getReactionType() const final override;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection( const double incoming_energy,
+                                      const double secondary_variable ) const final override;
+
   //! Simulate the reaction
   void react( PositronState& positron,
               ParticleBank& bank,

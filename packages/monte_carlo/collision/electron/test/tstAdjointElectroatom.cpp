@@ -213,6 +213,55 @@ FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionCrossSection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatom, getAbsorptionReactionTypes )
+{
+  MonteCarlo::AdjointElectroatom::ReactionEnumTypeSet reaction_types;
+
+  electroatom->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatom, getScatteringReactionTypes )
+{
+  MonteCarlo::AdjointElectroatom::ReactionEnumTypeSet reaction_types;
+
+  electroatom->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatom, getMiscReactionTypes )
+{
+  MonteCarlo::AdjointElectroatom::ReactionEnumTypeSet reaction_types;
+
+  electroatom->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatom, getReactionTypes )
+{
+  MonteCarlo::AdjointElectroatom::ReactionEnumTypeSet reaction_types;
+
+  electroatom->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that an analogue collision with the atom can be modeled
 FRENSIE_UNIT_TEST( AdjointElectroatom, collideAnalogue )
 {
