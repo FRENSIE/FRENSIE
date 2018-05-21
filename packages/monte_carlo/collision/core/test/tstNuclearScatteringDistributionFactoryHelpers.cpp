@@ -12,7 +12,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
-#include "MonteCarlo_NuclearReactionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"

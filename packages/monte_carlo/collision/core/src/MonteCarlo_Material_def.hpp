@@ -32,7 +32,7 @@ Material<ScatteringCenter>::s_absorption_cs_evaluation_functor(
                                 std::bind<double>( static_cast<double(ScatteringCenter::*)(const double) const>(&ScatteringCenter::getAbsorptionCrossSection),
                                                    std::placeholders::_1,
                                                    std::placeholders::_2 ) );
-  
+
 // Constructor (without photonuclear data)
 template<typename ScatteringCenter>
 Material<ScatteringCenter>::Material(
@@ -161,7 +161,7 @@ double Material<ScatteringCenter>::getMacroscopicReactionCrossSection(
   // Note: We must cast the getReactionCrossSection method to the exact
   // function signature to avoid unresolved overloaded type errors due to the
   // ScatteringCenterType having a getReactionCrossSection overload
-  
+
   return this->getMacroscopicCrossSection(
                               energy,
                               std::bind<double>( static_cast<double (ScatteringCenter::*)(const double, const typename ScatteringCenter::ReactionEnumType) const>(&ScatteringCenter::getReactionCrossSection),
@@ -217,6 +217,50 @@ double Material<ScatteringCenter>::getSurvivalProbability( const double energy )
   testPostcondition( survival_prob <= 1.0 );
 
   return survival_prob;
+}
+
+// Get the absorption reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getAbsorptionReactionTypes(
+                                                              reaction_types );
+  }
+}
+
+// Get the scattering reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getScatteringReactionTypes(
+                                                              reaction_types );
+  }
+}
+
+// Get the miscellaneous reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getMiscReactionTypes(
+                                                              reaction_types );
+  }
+}
+
+// Get the reaction types
+template<typename ScatteringCenter>
+void Material<ScatteringCenter>::getReactionTypes( ReactionEnumTypeSet& reaction_types ) const
+{
+  for( size_t i = 0; i < d_scattering_centers.size(); ++i )
+  {
+    Utility::get<1>(d_scattering_centers[i])->getReactionTypes(
+                                                              reaction_types );
+  }
 }
 
 // Collide with a photon
@@ -326,7 +370,7 @@ size_t Material<ScatteringCenter>::sampleCollisionScatteringCenter( const double
                                      d_macroscopic_total_cs_evaluation_functor,
                                      s_total_cs_evaluation_functor );
 }
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_MATERIAL_DEF_HPP

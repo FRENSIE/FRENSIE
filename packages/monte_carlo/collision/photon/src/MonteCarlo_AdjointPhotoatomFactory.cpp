@@ -31,7 +31,7 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
 {
   FRENSIE_LOG_NOTIFICATION( "Starting to load adjoint photoatom data tables ... " );
   FRENSIE_FLUSH_ALL_LOGS();
-  
+
   // Create each adjoint photoatom in the set
   ScatteringCenterNameSet::const_iterator adjoint_photoatom_name =
     adjoint_photoatom_names.begin();
@@ -68,14 +68,14 @@ AdjointPhotoatomFactory::AdjointPhotoatomFactory(
     if( adjoint_photoatom_data_properties.fileType() ==
         Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE )
     {
-      // Initialize the adjoint aphotoatomic table name map for Native EPR
+      // Initialize the adjoint photoatomic table name map for Native EPR
       // files
       if( d_adjoint_photoatomic_table_name_map.find( Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE ) ==
           d_adjoint_photoatomic_table_name_map.end() )
       {
         d_adjoint_photoatomic_table_name_map[Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE];
       }
-      
+
       this->createAdjointPhotoatomFromNativeTable(
                                              data_directory,
                                              *adjoint_photoatom_name,
@@ -138,7 +138,7 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
                            " ... " );
       FRENSIE_FLUSH_ALL_LOGS();
     }
-    
+
     // Create the aepr data container
     Data::AdjointElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
@@ -154,7 +154,7 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
                                            atomic_weight,
                                            properties,
                                            adjoint_photoatom );
-    
+
     // Cache the new adjoint photoatom in the table name map
     d_adjoint_photoatomic_table_name_map[Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()] = adjoint_photoatom;
 
@@ -171,7 +171,7 @@ void AdjointPhotoatomFactory::createAdjointPhotoatomFromNativeTable(
       d_adjoint_photoatomic_table_name_map[Data::AdjointPhotoatomicDataProperties::Native_EPR_FILE][data_properties.filePath().string()];
   }
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

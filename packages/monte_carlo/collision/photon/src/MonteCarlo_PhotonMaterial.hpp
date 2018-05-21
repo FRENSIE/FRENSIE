@@ -26,11 +26,27 @@ class PhotonMaterial : public Material<Photoatom>
 
 public:
 
+  //! The scattering center type
+  typedef BaseType::ScatteringCenterType ScatteringCenterType;
+
+  //! The reaction enum type
+  typedef BaseType::ReactionEnumType ReactionEnumType;
+
+  //! The reaction enum set type
+  typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
+  //! The photonuclear reaction enum set type
+  typedef ScatteringCenterType::PhotonuclearReactionEnumTypeSet
+  PhotonuclearReactionEnumTypeSet;
+
+  //! The particle state type
+  typedef BaseType::ParticleStateType ParticleStateType;
+
   //! The material handle type
-  typedef typename BaseType::InternalMaterialHandle InternalMaterialHandle;
+  typedef BaseType::InternalMaterialHandle InternalMaterialHandle;
 
   //! The photoatom name map type
-  typedef typename BaseType::ScatteringCenterNameMap PhotoatomNameMap;
+  typedef BaseType::ScatteringCenterNameMap PhotoatomNameMap;
 
   //! Constructor
   PhotonMaterial( const InternalMaterialHandle id,
@@ -50,6 +66,30 @@ public:
 
   //! Return the macroscopic cross section (1/cm) for a specific reaction
   using BaseType::getMacroscopicReactionCrossSection;
+
+    //! Get the absorption reaction types
+  using BaseType::getAbsorptionReactionTypes;
+
+  //! Get the photonuclear absorption reaction types
+  void getAbsorptionReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the scattering reaction types
+  using BaseType::getScatteringReactionTypes;
+
+  //! Get the photonuclear scattering reaction types
+  void getScatteringReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the miscellaneous reaction types
+  using BaseType::getMiscReactionTypes;
+
+  //! Get the photonuclear miscellaneous reaction types
+  void getMiscReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the reaction types
+  using BaseType::getReactionTypes;
+
+  //! Get the photonuclear reaction types
+  void getReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const;
 };
 
 } // end MonteCarlo namespace

@@ -40,6 +40,9 @@ public:
   //! The reaction enum type
   typedef typename ScatteringCenter::ReactionEnumType ReactionEnumType;
 
+  //! The reaction enum set type
+  typedef typename ScatteringCenter::ReactionEnumTypeSet ReactionEnumTypeSet;
+
   //! The particle state type
   typedef typename ScatteringCenter::ParticleStateType ParticleStateType;
 
@@ -76,6 +79,18 @@ public:
                                        const double energy,
                                        const ReactionEnumType reaction ) const;
 
+  //! Get the absorption reaction types
+  void getAbsorptionReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the scattering reaction types
+  void getScatteringReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the miscellaneous reaction types
+  void getMiscReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
+  //! Get the reaction types
+  void getReactionTypes( ReactionEnumTypeSet& reaction_types ) const;
+
   //! Collide with a scattering center
   virtual void collideAnalogue( ParticleStateType& particle,
                                 ParticleBank& bank ) const;
@@ -104,7 +119,7 @@ protected:
                                 const double energy,
                                 const MicroscopicCrossSectionEvaluationFunctor&
                                 cs_evaluation_functor ) const;
-  
+
   //! Sample the collision atom
   size_t sampleCollisionScatteringCenterImpl(
                            const double energy,
@@ -118,7 +133,7 @@ protected:
 
   //! Return the scattering center at the desired index
   const ScatteringCenter& getScatteringCenter( const size_t index ) const;
-  
+
 private:
 
   // Get the atomic weight from an atom pointer
@@ -146,7 +161,7 @@ private:
   MacroscopicCrossSectionEvaluationFunctor
   d_macroscopic_total_cs_evaluation_functor;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

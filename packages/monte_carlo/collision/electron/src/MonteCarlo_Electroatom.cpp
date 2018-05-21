@@ -14,13 +14,6 @@
 
 namespace MonteCarlo{
 
-// Return the reactions that are treated as scattering
-const std::unordered_set<ElectroatomicReactionType>&
-Electroatom::getScatteringReactionTypes()
-{
-  return ElectroatomCore::scattering_reaction_types;
-}
-
 // Return the cross section for a specific electroatomic reaction
 double Electroatom::getReactionCrossSection(
                     const double energy,

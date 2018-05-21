@@ -26,6 +26,10 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
+//---------------------------------------------------------------------------//
+// Testing Types
+//---------------------------------------------------------------------------//
+
 typedef MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionNativeFactory
             AtomicNativeFactory;
 typedef MonteCarlo::BremsstrahlungAdjointElectronScatteringDistributionNativeFactory
@@ -98,6 +102,19 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactions )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getScatteringReactionTypes )
+{
+  MonteCarlo::AdjointElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  electroatom_core->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
 FRENSIE_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions )
 {
@@ -106,6 +123,52 @@ FRENSIE_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactions )
 
   FRENSIE_CHECK_EQUAL( absorption_reactions.size(), 0 );
 
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getAbsorptionReactionTypes )
+{
+  MonteCarlo::AdjointElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  electroatom_core->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reactions can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getMiscReactions )
+{
+  const MonteCarlo::AdjointElectroatomCore::ConstReactionMap& misc_reactions =
+    electroatom_core->getMiscReactions();
+
+  FRENSIE_CHECK_EQUAL( misc_reactions.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getMiscReactionTypes )
+{
+  MonteCarlo::AdjointElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  electroatom_core->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( AdjointElectroatomCore, getReactionTyeps )
+{
+  MonteCarlo::AdjointElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  electroatom_core->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ADJOINT_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ADJOINT_ELECTROATOMIC_REACTION ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -248,12 +311,15 @@ FRENSIE_CUSTOM_UNIT_TEST_INIT()
 
     // Create a test  adjoint electroatom core
     electroatom_core.reset( new MonteCarlo::AdjointElectroatomCore(
+        energy_grid,
         grid_searcher,
         std::make_shared<const std::vector<double> >(),
         total_forward_reaction,
         scattering_reactions,
         absorption_reactions,
-        MonteCarlo::AdjointElectroatomCore::ConstLineEnergyReactionMap() ) );
+        MonteCarlo::AdjointElectroatomCore::ConstLineEnergyReactionMap(),
+        false,
+        Utility::LinLin() ) );
   }
 }
 

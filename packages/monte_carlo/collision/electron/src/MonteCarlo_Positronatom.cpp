@@ -14,13 +14,6 @@
 
 namespace MonteCarlo{
 
-// Return the reactions that are treated as scattering
-const std::unordered_set<PositronatomicReactionType>&
-Positronatom::getScatteringReactionTypes()
-{
-  return PositronatomCore::scattering_reaction_types;
-}
-
 // Return the cross section for a specific positron-atomic reaction
 double Positronatom::getReactionCrossSection(
                     const double energy,

@@ -17,6 +17,7 @@ AdjointPhotoatom::AdjointPhotoatom(
           const std::string& name,
           const unsigned atomic_number,
           const double atomic_weight,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher,
           const std::shared_ptr<const std::vector<double> >&
@@ -37,12 +38,15 @@ AdjointPhotoatom::AdjointPhotoatom(
   testPrecondition( grid_searcher.get() );
 
   // Populate the core
-  BaseType::setCore( AdjointPhotoatomCore( grid_searcher,
+  BaseType::setCore( AdjointPhotoatomCore( energy_grid,
+                                           grid_searcher,
                                            critical_line_energies,
                                            total_forward_reaction,
                                            scattering_reactions,
                                            absorption_reactions,
-                                           line_energy_reactions ) );
+                                           line_energy_reactions,
+                                           false,
+                                           Utility::LinLin() ) );
 
   // Make sure the reactions have a shared energy grid
   testPostcondition( this->getCore().hasSharedEnergyGrid() );

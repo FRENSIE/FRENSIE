@@ -34,6 +34,9 @@ public:
   //! The reaction enum type
   typedef BaseType::ReactionEnumType ReactionEnumType;
 
+  //! The reaction enum set type
+  typedef BaseType::ReactionEnumTypeSet ReactionEnumTypeSet;
+
   //! The particle state type
   typedef BaseType::ParticleStateType ParticleStateType;
 
@@ -55,6 +58,7 @@ public:
           const std::string& name,
           const unsigned atomic_number,
           const double atomic_weight,
+          const std::shared_ptr<const std::vector<double> >& energy_grid,
           const std::shared_ptr<const Utility::HashBasedGridSearcher<double> >&
           grid_searcher,
           const std::shared_ptr<const std::vector<double> >&

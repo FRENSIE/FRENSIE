@@ -27,7 +27,7 @@ NuclearReactionBank::NuclearReactionBank(
 
 // Insert a neutron into the bank after an interaction (Most Efficient/Recommended)
 void NuclearReactionBank::push( std::shared_ptr<NeutronState>& neutron,
-                                const NuclearReactionType reaction )
+                                const int reaction )
 {
   // Make sure that the neutron pointer is valid
   testPrecondition( neutron.get() );
@@ -50,7 +50,7 @@ void NuclearReactionBank::push( std::shared_ptr<NeutronState>& neutron,
 
 // Push a neutron to the bank
 void NuclearReactionBank::push( const NeutronState& neutron,
-				const NuclearReactionType reaction )
+				const int reaction )
 {
   NuclearReactionTypeBankMap::iterator reaction_it =
     d_nuclear_reaction_banks.find( reaction );

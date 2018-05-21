@@ -63,7 +63,7 @@ void ParticleBank::push( std::shared_ptr<State>& particle )
  */
 template<template<typename> class SmartPointer>
 void ParticleBank::push( SmartPointer<NeutronState>& neutron,
-			 const NuclearReactionType reaction )
+			 const int reaction )
 {
   // Make sure the particle is valid
   testPrecondition( neutron.get() );

@@ -329,6 +329,7 @@ bool StandardParticleDistribution::isSpatiallyUniform() const
   {
     // Note: we really need to check that this distribution has a form of
     //       f(x) ~ x
+    // \todo add more accurate check for a uniform spatial particle distribution in cylindrical coordinates
     if( !d_dimension_distributions.find( PRIMARY_SPATIAL_DIMENSION )->second->hasForm( Utility::POWER_DISTRIBUTION ) )
       return false;
   }
@@ -336,6 +337,7 @@ bool StandardParticleDistribution::isSpatiallyUniform() const
   {
     // Note: we really need to check that this distribution has a form of
     //       f(x) ~ x^2
+    // \todo add more accurate check for a uniform spatial particle distribution in spherical coordiantes
     if( !d_dimension_distributions.find( PRIMARY_SPATIAL_DIMENSION )->second->hasForm( Utility::POWER_DISTRIBUTION ) )
       return false;
   }

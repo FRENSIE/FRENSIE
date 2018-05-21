@@ -14,13 +14,6 @@
 
 namespace MonteCarlo{
 
-// Return the reactions that are treated as absorption
-const std::unordered_set<PhotoatomicReactionType>&
-Photoatom::getAbsorptionReactionTypes()
-{
-  return PhotoatomCore::absorption_reaction_types;
-}
-
 // Return the cross section for a specific photoatomic reaction
 double Photoatom::getReactionCrossSection(
 			        const double energy,

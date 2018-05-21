@@ -22,7 +22,7 @@
 
 namespace PyFrensie{
 
-/*! \brief This structure defines the traits taht are needed to map
+/*! \brief This structure defines the traits that are needed to map
  * C++ types to PyObject*
  * \ingroup python_type_traits
  */

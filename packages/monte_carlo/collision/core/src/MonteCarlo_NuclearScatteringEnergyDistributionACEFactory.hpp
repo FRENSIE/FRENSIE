@@ -15,7 +15,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
-#include "MonteCarlo_NuclearReactionType.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_Vector.hpp"
 #include "Utility_ArrayView.hpp"

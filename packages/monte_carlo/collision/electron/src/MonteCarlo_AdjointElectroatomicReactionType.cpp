@@ -83,6 +83,8 @@ std::string ToStringTraits<MonteCarlo::AdjointElectroatomicReactionType>::toStri
   {
   case MonteCarlo::TOTAL_ADJOINT_ELECTROATOMIC_REACTION:
     return "Total Adjoint Electroatomic Reaction";
+  case MonteCarlo::TOTAL_ABSORPTION_ADJOINT_ELECTROATOMIC_REACTION:
+    return "Total Absorption Adjoint Electroatomic Reaction";
   case MonteCarlo::COUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:
     return "Coupled Elastic Adjoint Electroatomic Reaction";
   case MonteCarlo::DECOUPLED_ELASTIC_ADJOINT_ELECTROATOMIC_REACTION:

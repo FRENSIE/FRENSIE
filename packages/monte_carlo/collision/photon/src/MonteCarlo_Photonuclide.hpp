@@ -12,13 +12,13 @@
 // Std Lib Includes
 #include <string>
 #include <memory>
-#include <unordered_map>
-#include <unordered_set>
 
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
 #include "MonteCarlo_PhotonuclearReaction.hpp"
 #include "Utility_Vector.hpp"
+#include "Utility_Set.hpp"
+#include "Utility_Map.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
@@ -34,18 +34,19 @@ private:
 
 public:
 
+  //! The photonuclear reaction enum set type
+  typedef Photoatom::PhotonuclearReactionEnumTypeSet PhotonuclearReactionEnumTypeSet;
+
   //! Typedef for the reaction map
-  typedef std::unordered_map<PhotonuclearReactionType,
-			       std::shared_ptr<PhotonuclearReaction> >
+  typedef std::unordered_map<PhotonuclearReactionType,std::shared_ptr<PhotonuclearReaction> >
   NuclearReactionMap;
 
   //! Typedef for the const reaction map
-  typedef std::unordered_map<PhotonuclearReactionType,
-			       std::shared_ptr<const PhotonuclearReaction> >
+  typedef std::unordered_map<PhotonuclearReactionType,std::shared_ptr<const PhotonuclearReaction> >
   ConstNuclearReactionMap;
 
   //! Return the reactions that are treated as absorption
-  static const std::unordered_set<PhotonuclideReactionType>&
+  static const PhotonuclearReactionEnumTypeSet&
   getNuclearAbsorptionReactionTypes();
 
   //! Constructor
@@ -109,6 +110,30 @@ public:
 			       const double energy
 			       const PhotonuclearReactionType reaction ) const;
 
+  //! Get the absorption reaction types
+  using Photoatom::getAbsorptionReactionTypes;
+
+  //! Get the photonuclear absorption reaction types
+  void getAbsorptionReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const final override;
+
+  //! Get the scattering reaction types
+  using Photoatom::getScatteringReactionTypes;
+
+  //! Get the photonuclear scattering reaction types
+  void getScatteringReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const final override;
+
+  //! Get the miscellaneous reaction types
+  using Photoatom::getMiscReactionTypes;
+
+  //! Get the photonuclear miscellaneous reaction types
+  void getMiscReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const final override;
+
+  //! Get the reaction types
+  using Photoatom::getReactionTypes;
+
+  //! Get the photonuclear reaction types
+  void getReactionTypes( PhotonuclearReactionEnumTypeSet& reaction_types ) const final override;
+
   //! Collide with a photon
   void collideAnalogue( PhotonState& photon,
 			ParticleBank& bank ) const;
@@ -138,13 +163,13 @@ private:
   std::shared_ptr<const PhotonuclearReaction> d_total_absorption_reaction;
 
   // The nuclear scattering reactions
-  NuclearReactionMap d_scattering_reactions;
+  ConstNuclearReactionMap d_scattering_reactions;
 
   // The nuclear absorption reactions
-  NuclearReactionMap d_absorption_reactions;
+  ConstNuclearReactionMap d_absorption_reactions;
 
   // The miscellaneous reactions
-  NuclearReactionMap d_miscellaneous_reactions;
+  ConstNuclearReactionMap d_miscellaneous_reactions;
 };
 
 } // end MonteCarlo namespace

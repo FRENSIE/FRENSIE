@@ -34,7 +34,12 @@
 
 namespace MonteCarlo{
 
-//! The phase space dimension distribution class
+/*! The phase space dimension distribution class
+ *
+ * All PhaseSpaceDimensionDistribution objects must be managed
+ * through std::shared_ptr. Failure to do this will result in undefined
+ * behavior.
+ */
 class PhaseSpaceDimensionDistribution : public std::enable_shared_from_this<PhaseSpaceDimensionDistribution>
 {
 

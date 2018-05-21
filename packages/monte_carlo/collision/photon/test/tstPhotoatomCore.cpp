@@ -108,6 +108,18 @@ FRENSIE_UNIT_TEST( PhotoatomCore, getScatteringReactions )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( PhotoatomCore, getScatteringReactionTypes )
+{
+  MonteCarlo::PhotoatomCore::ReactionEnumTypeSet reaction_types;
+  
+  ace_photoatom_core->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 1 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
 FRENSIE_UNIT_TEST( PhotoatomCore, getAbsorptionReactions )
 {
@@ -138,6 +150,18 @@ FRENSIE_UNIT_TEST( PhotoatomCore, getAbsorptionReactions )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( PhotoatomCore, getAbsorptionReactionTypes )
+{
+  MonteCarlo::PhotoatomCore::ReactionEnumTypeSet reaction_types;
+  
+  ace_photoatom_core->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 1 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that miscellaneous reactions can be returned
 FRENSIE_UNIT_TEST( PhotoatomCore, getMiscReactions )
 {
@@ -145,6 +169,32 @@ FRENSIE_UNIT_TEST( PhotoatomCore, getMiscReactions )
     ace_photoatom_core->getMiscReactions();
 
   FRENSIE_CHECK_EQUAL( misc_reactions.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( PhotoatomCore, getMiscReactionTypes )
+{
+  MonteCarlo::PhotoatomCore::ReactionEnumTypeSet reaction_types;
+  
+  ace_photoatom_core->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( PhotoatomCore, getReactionTypes )
+{
+  MonteCarlo::PhotoatomCore::ReactionEnumTypeSet reaction_types;
+  
+  ace_photoatom_core->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 4 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_PHOTOATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ABSORPTION_PHOTOATOMIC_REACTION ) );
 }
 
 //---------------------------------------------------------------------------//

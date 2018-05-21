@@ -79,7 +79,7 @@ void ParticleBank::push( const ParticleState& particle )
  * bank if a specific reaction occurs (i.e. fission bank).
  */
 void ParticleBank::push( std::shared_ptr<NeutronState>& neutron,
-                         const NuclearReactionType reaction )
+                         const int reaction )
 {
   this->push( neutron );
 }
@@ -91,7 +91,7 @@ void ParticleBank::push( std::shared_ptr<NeutronState>& neutron,
  * bank if a specific reaction occurs (i.e. fission bank).
  */
 void ParticleBank::push( const NeutronState& neutron,
-			 const NuclearReactionType )
+			 const int )
 {
   this->push( neutron );
 }

@@ -193,6 +193,32 @@ FRENSIE_UNIT_TEST( ElectroatomCore, getScatteringReactions_native )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getScatteringReactionTypes_ace )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom_core->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getScatteringReactionTypes_native )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom_core->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the absorption reactions can be returned
 FRENSIE_UNIT_TEST( ElectroatomCore, getAbsorptionReactions_ace )
 {
@@ -200,7 +226,6 @@ FRENSIE_UNIT_TEST( ElectroatomCore, getAbsorptionReactions_ace )
     ace_electroatom_core->getAbsorptionReactions();
 
   FRENSIE_CHECK_EQUAL( absorption_reactions.size(), 0 );
-
 }
 
 //---------------------------------------------------------------------------//
@@ -211,7 +236,28 @@ FRENSIE_UNIT_TEST( ElectroatomCore, getAbsorptionReactions_native )
     native_electroatom_core->getAbsorptionReactions();
 
   FRENSIE_CHECK_EQUAL( absorption_reactions.size(), 0 );
+}
 
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getAbsorptionReactionTypes_ace )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom_core->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getAbsorptionReactionTypes_native )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom_core->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -232,6 +278,56 @@ FRENSIE_UNIT_TEST( ElectroatomCore, getMiscReactions_native )
     native_electroatom_core->getMiscReactions();
 
   FRENSIE_CHECK_EQUAL( misc_reactions.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getMiscReactionTypes_ace )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom_core->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getMiscReactionTypes_native )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom_core->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getReactionTypes_ace )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  ace_electroatom_core->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ELECTROATOMIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( ElectroatomCore, getReactionTypes_native )
+{
+  MonteCarlo::ElectroatomCore::ReactionEnumTypeSet reaction_types;
+
+  native_electroatom_core->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 3 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::TOTAL_ELECTROATOMIC_REACTION ) );
 }
 
 //---------------------------------------------------------------------------//

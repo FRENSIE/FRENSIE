@@ -158,6 +158,60 @@ FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the absorption reaction types can be returned
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getAbsorptionReactionTypes )
+{
+  MonteCarlo::NeutronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getAbsorptionReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 1 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__GAMMA_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction types can be returned
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getScatteringReactionTypes )
+{
+  MonteCarlo::NeutronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getScatteringReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 1 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__N_ELASTIC_REACTION ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the misc reaction types can be returned
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getMiscReactionTypes )
+{
+  MonteCarlo::NeutronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getMiscReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_D_PRODUCTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DPA ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction types can be returned
+FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, getReactionTypes )
+{
+  MonteCarlo::NeutronMaterial::ReactionEnumTypeSet reaction_types;
+
+  material->getReactionTypes( reaction_types );
+
+  FRENSIE_CHECK_EQUAL( reaction_types.size(), 6 );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_ABSORPTION_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__GAMMA_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__N_ELASTIC_REACTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_D_PRODUCTION ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DPA ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a neutron can collide with a material
 FRENSIE_UNIT_TEST( NeutronMaterial_hydrogen, collideAnalogue )
 {
