@@ -21,10 +21,10 @@ PhotonMaterialParticleResponseFunction::PhotonMaterialParticleResponseFunction(
   : BaseType( model, cell, reaction ),
     d_use_photonuclear_reaction_type( false ),
     d_photonuclear_reaction( GAMMA__TOTAL_REACTION ),
-    d_evaluation_method( std::bind<double>( &BaseType::evaluate,
-                                            std::cref( *this ),
-                                            std::placeholders::_1 ) )
-{ /* ... */ }
+    d_evaluation_method()
+{
+  this->setEvaluationMethod();
+}
 
 // Constructor (photonuclear reaction)
 PhotonMaterialParticleResponseFunction::PhotonMaterialParticleResponseFunction(
@@ -34,9 +34,7 @@ PhotonMaterialParticleResponseFunction::PhotonMaterialParticleResponseFunction(
   : BaseType( model, cell, TOTAL_PHOTOATOMIC_REACTION, 0 ),
     d_use_photonuclear_reaction_type( true ),
     d_photonuclear_reaction( reaction ),
-    d_evaluation_method( std::bind<double>( &PhotonMaterialParticleResponseFunction::evaluate,
-                                            std::cref( *this ),
-                                            std::placeholders::_1 ) )
+    d_evaluation_method()
 {
   typename PhotonMaterial::PhotonuclearReactionEnumTypeSet
     available_reaction_types;
@@ -51,6 +49,8 @@ PhotonMaterialParticleResponseFunction::PhotonMaterialParticleResponseFunction(
                       "cross section data available for reaction "
                       << reaction << "! The following reactions are "
                       "available: " << available_reaction_types );
+
+  this->setEvaluationMethod();
 }
 
 // Evaluate the response function at the desired phase space point
@@ -68,8 +68,30 @@ std::string PhotonMaterialParticleResponseFunction::description() const
   else
     return BaseType::description();
 }
+
+// Set the evaluation method
+void PhotonMaterialParticleResponseFunction::setEvaluationMethod()
+{
+  if( d_use_photonuclear_reaction_type )
+  {
+    d_evaluation_method =
+      std::bind<double>( &PhotonMaterialParticleResponseFunction::evaluate,
+                         std::cref( *this ),
+                         std::placeholders::_1 );
+  }
+  else
+  {
+    d_evaluation_method = std::bind<double>( &BaseType::evaluate,
+                                             std::cref( *this ),
+                                             std::placeholders::_1 );
+  }
+}
+
+EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::PhotonMaterialParticleResponseFunction );
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( PhotonMaterialParticleResponseFunction, MonteCarlo ):
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonMaterialParticleResponseFunction.cpp

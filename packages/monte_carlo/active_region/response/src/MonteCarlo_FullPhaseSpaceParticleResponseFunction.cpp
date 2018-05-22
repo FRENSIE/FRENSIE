@@ -38,8 +38,12 @@ std::string FullPhaseSpaceParticleResponseFunction::description() const
 {
   return std::string("f_\"") + d_particle_dist->getName() + "\"(particle)";
 }
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::FullPhaseSpaceParticleResponseFunction );
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( FullPhaseSpaceParticleResponseFunction, MonteCarlo ):
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_FullPhaseSpaceParticleResponseFunction.cpp

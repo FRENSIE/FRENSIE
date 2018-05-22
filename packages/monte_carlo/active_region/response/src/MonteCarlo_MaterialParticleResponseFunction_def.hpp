@@ -33,10 +33,9 @@ MaterialParticleResponseFunction<Material>::MaterialParticleResponseFunction(
                       std::runtime_error,
                       "There is no material associated with cell "
                       << cell << "!" );
-  
-  const typename Details::FilledGeometryModelUpcastHelper<typename Material::ParticleStateType>::UpcastType& upcast_model = *model;
 
-  d_material = upcast_model.getMaterial( cell );
+  // Set the material
+  this->setMaterial();
 }
 
 // Constructor
@@ -99,14 +98,68 @@ std::string MaterialParticleResponseFunction<Material>::createDescription(
   return std::string("f_cell_") + Utility::toString( d_cell ) + "_mat_\"" +
     Utility::toString( reaction ) + "\"(E)";
 }
+
+// Set the material
+template<typename Material>
+void MaterialParticleResponseFunction<Material>::setMaterial()
+{
+  const typename Details::FilledGeometryModelUpcastHelper<typename Material::ParticleStateType>::UpcastType& upcast_model = *d_model;
+
+  d_material = upcast_model.getMaterial( d_cell );
+}
+
+// Save the data to an archive
+template<typename Material>
+template<typename Archive>
+void MaterialParticleResponseFunction<Material>::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleResponseFunction );
+
+  // Save the local data
+  ar & BOOST_SERIALIZATION_NVP( d_model );
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+  ar & BOOST_SERIALIZATION_NVP( d_reaction );
+}
+
+// Load the data from an archive
+template<typename Material>
+template<typename Archive>
+void MaterialParticleResponseFunction<Material>::load( Archive& ar, const unsigned version )
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleResponseFunction );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_model );
+  ar & BOOST_SERIALIZATION_NVP( d_cell );
+  ar & BOOST_SERIALIZATION_NVP( d_reaction );
+
+  // Set the material
+  this->setMaterial();
+}
   
 } // end MonteCarlo namespace
 
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( MonteCarlo::NeutronMaterialParticleResponseFunction );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::NeutronMaterial> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::NeutronMaterial> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( MonteCarlo::ElectronMaterialParticleResponseFunction );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::ElectronMaterial> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::ElectronMaterial> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( MonteCarlo::PositronMaterialParticleResponseFunction );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PositronMaterial> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PositronMaterial> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( MonteCarlo::AdjointPhotonMaterialParticleResponseFunction );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial> );
+
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( MonteCarlo::AdjointElectronMaterialParticleResponseFunction );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_SAVE_LOAD_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointElectronMaterial> );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_MaterialParticleResponseFunction_def.hpp

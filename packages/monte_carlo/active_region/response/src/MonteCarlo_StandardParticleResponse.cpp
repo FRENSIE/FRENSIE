@@ -44,8 +44,12 @@ bool StandardParticleResponse::isSpatiallyUniform() const
 {
   return d_response_function->isSpatiallyUniform();
 }
+
+EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( StandardParticleResponse );
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_EXPORT_IMPLEMENT( StandardParticleResponse, MonteCarlo );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardParticleResponse.cpp

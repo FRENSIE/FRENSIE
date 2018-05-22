@@ -59,9 +59,25 @@ protected:
   
 private:
 
-  // Constructor
+  // Default Constructor
   MaterialParticleResponseFunction()
   { /* ... */ }
+
+  // Set the material
+  void setMaterial();
+
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // The filled geometry model
   std::shared_ptr<const FilledGeometryModel> d_model;
@@ -92,6 +108,8 @@ typedef MaterialParticleResponseFunction<AdjointPhotonMaterial> AdjointPhotonMat
 typedef MaterialParticleResponseFunction<AdjointElectronMaterial> AdjointElectronMaterialParticleResponseFunction;
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS1_VERSION( MaterialParticleResponseFunction, MonteCarlo, 0 );  
 
 //---------------------------------------------------------------------------//
 // Template Includes

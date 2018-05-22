@@ -45,6 +45,26 @@ public:
 
 private:
 
+  //! Default Constructor 
+  PhotonMaterialParticleResponseFunction()
+  { /* ... */ }
+
+  // Set the evaluation method
+  void setEvaluationMethod();
+
+  // Save the data to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // Use the photonuclear reaction type
   bool d_use_photonuclear_reaction_type;
 
@@ -54,8 +74,39 @@ private:
   // The evaluate method
   std::function<double(const ParticleState&)> d_evaluation_method;
 };
+
+// Save the data to an archive
+template<typename Archive>
+void PhotonMaterialParticleResponseFunction::save( Archive& ar, const unsigned version ) const
+{
+  // Save the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Save the local data
+  ar & BOOST_SERIALIZATION_NVP( d_use_photonuclear_reaction_type );
+  ar & BOOST_SERIALIZATION_NVP( d_photonuclear_reaction );
+}
+
+// Load the data from an archive
+template<typename Archive>
+void PhotonMaterialParticleResponseFunction::load( Archive& ar, const unsigned version )
+{
+  // Load the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType );
+
+  // Load the local data
+  ar & BOOST_SERIALIZATION_NVP( d_use_photonuclear_reaction_type );
+  ar & BOOST_SERIALIZATION_NVP( d_photonuclear_reaction );
+
+  // Set the evaluation method
+  this->setEvaluationMethod();
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( PhotonMaterialParticleResponseFunction, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( PhotonMaterialParticleResponseFunction, MonteCarlo );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SAVE_LOAD_INST( MonteCarlo::PhotonMaterialParticleResponseFunction );
 
 #endif // end MONTE_CARLO_PHOTON_MATERIAL_PARTICLE_RESPONSE_FUNCTION_HPP
 

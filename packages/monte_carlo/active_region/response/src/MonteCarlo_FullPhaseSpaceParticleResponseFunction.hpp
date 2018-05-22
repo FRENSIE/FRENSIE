@@ -43,11 +43,34 @@ public:
 
 private:
 
+  // Serialize the response function data
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version );
+  { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( BaseType ); }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The particle distribution
   std::shared_ptr<const ParticleDistribution> d_particle_dist;
 };
+
+// Serialize the response function data
+template<typename Archive>
+void FullPhaseSpaceParticleResponseFunction::serialize( Archive& ar, const unsigned version )
+{
+  // Serialize the base class data
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP( ParticleResponseFunction );
+
+  // Serialize the local data
+  ar & BOOST_SERIALIZATION_NVP( d_particle_dist );
+}
   
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_CLASS_VERSION( FullPhaseSpaceParticleResponseFunction, MonteCarlo, 0 );
+BOOST_SERIALIZATION_CLASS_EXPORT_STANDARD_KEY( FullPhaseSpaceParticleResponseFunction, MonteCarlo );
+EXTERN_EXPLICIT_MONTE_CARLO_CLASS_SERIALIZE_INST( MonteCarlo::FullPhaseSpaceParticleResponseFunction );
 
 #endif // end MONTE_CARLO_FULL_PHASE_SPACE_PARTICLE_RESPONSE_FUNCTION_HPP
 
