@@ -302,7 +302,7 @@ FRENSIE_UNIT_TEST( ElectroatomicReactionACEFactory,
   // Test reaction properties
   FRENSIE_CHECK_EQUAL( reaction->getReactionType(),
                        MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
-  FRENSIE_CHECK_EQUAL( reaction->getThresholdEnergy(), 1e-5 );
+  FRENSIE_CHECK_EQUAL( reaction->getThresholdEnergy(), 0.0 );
 
   // Test that the stored cross section is correct
   double cross_section =

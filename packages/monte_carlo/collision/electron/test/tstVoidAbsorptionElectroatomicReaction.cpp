@@ -35,7 +35,7 @@ FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getReactionType )
 // Check that the threshold energy can be returned
 FRENSIE_UNIT_TEST( VoidAbsorptionElectroatomicReaction, getThresholdEnergy )
 {
-  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getThresholdEnergy(), 1e-5 );
+  FRENSIE_CHECK_EQUAL( void_absorption_reaction->getThresholdEnergy(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//

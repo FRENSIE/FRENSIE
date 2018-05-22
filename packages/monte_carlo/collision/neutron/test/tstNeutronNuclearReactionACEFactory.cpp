@@ -217,10 +217,10 @@ FRENSIE_UNIT_TEST( NeutronNuclearReactionACEFactory_h1, createAbsorptionReaction
 		       2.722354e-5 );
 
   std::shared_ptr<const MonteCarlo::NeutronNuclearReaction>& dpa_reaction =
-    reactions.find( MonteCarlo::N__DPA )->second;
+    reactions.find( MonteCarlo::N__DAMAGE )->second;
 
   FRENSIE_CHECK_EQUAL( dpa_reaction->getReactionType(),
-		       MonteCarlo::N__DPA );
+		       MonteCarlo::N__DAMAGE );
   FRENSIE_CHECK_EQUAL( dpa_reaction->getQValue(), 0.0 );
   FRENSIE_CHECK_EQUAL( dpa_reaction->getNumberOfEmittedParticles( 0.0 ), 0 );
   FRENSIE_CHECK_EQUAL( dpa_reaction->getThresholdEnergy(), 2.375e-05);

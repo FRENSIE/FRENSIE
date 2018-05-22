@@ -238,12 +238,12 @@ FRENSIE_UNIT_TEST( Nuclide_hydrogen, getReactionCrossSection )
   FRENSIE_CHECK_EQUAL( cross_section, 2.722354e-5 );
 
   cross_section =
-    h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__DPA );
+    h1_nuclide->getReactionCrossSection( 1.0e-11, MonteCarlo::N__DAMAGE );
 
   FRENSIE_CHECK_EQUAL( cross_section, 0.0 );
 
   cross_section =
-    h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__DPA );
+    h1_nuclide->getReactionCrossSection( 2.0e1, MonteCarlo::N__DAMAGE );
 
   FRENSIE_CHECK_EQUAL( cross_section, 3.067696e-4 );
 
@@ -287,7 +287,7 @@ FRENSIE_UNIT_TEST( Nuclide_hydrogen, getMiscReactionTypes )
 
   FRENSIE_CHECK_EQUAL( reaction_types.size(), 2 );
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_D_PRODUCTION ) );
-  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DPA ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DAMAGE ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -304,7 +304,7 @@ FRENSIE_UNIT_TEST( Nuclide_hydrogen, getReactionTypes )
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__GAMMA_REACTION ) );
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__N_ELASTIC_REACTION ) );
   FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__TOTAL_D_PRODUCTION ) );
-  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DPA ) );
+  FRENSIE_CHECK( reaction_types.count( MonteCarlo::N__DAMAGE ) );
 }
 
 //---------------------------------------------------------------------------//
