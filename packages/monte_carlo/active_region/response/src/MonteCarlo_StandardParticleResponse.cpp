@@ -24,6 +24,15 @@ StandardParticleResponse::StandardParticleResponse(
   testPrecondition( response_function.get() );
 }
 
+// Constructor
+StandardParticleResponse::StandardParticleResponse(
+     const size_t id,
+     const std::shared_ptr<const ParticleResponseFunction>& response_function )
+  : StandardParticleResponse( id,
+                              response_function->description(),
+                              response_function );
+{ /* ... */ }
+
 // Evaluate the response function at the desired phase space point
 double StandardParticleResponse::evaluate( const ParticleState& particle ) const
 {

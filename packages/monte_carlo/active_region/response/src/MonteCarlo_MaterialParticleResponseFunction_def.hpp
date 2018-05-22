@@ -13,19 +13,22 @@
 
 namespace MonteCarlo{
 
-// The filled geometry model constructor
+//! Constructor (do not check reaction type)
 template<typename Material>
 MaterialParticleResponseFunction<Material>::MaterialParticleResponseFunction(
                        const std::shared_ptr<const FilledGeometryModel>& model,
                        const Geometry::Model::InternalCellHandle cell,
-                       const typename Material::ReactionEnumType reaction )
+                       const typename Material::ReactionEnumType reaction,
+                       const int )
   : d_model( model ),
-    d_material(),
-    d_reaction( reaction )
+    d_cell( cell ),
+    d_reaction( reaction ),
+    d_material()
 {
   // Make sure that the model pointer is valid
   testPrecondition( model.get() );
-  
+
+  // Make sure that the cell of interest is not void
   TEST_FOR_EXCEPTION( model->isCellVoid<typename Material::ParticleStateType>( cell ),
                       std::runtime_error,
                       "There is no material associated with cell "
@@ -34,6 +37,28 @@ MaterialParticleResponseFunction<Material>::MaterialParticleResponseFunction(
   const typename Details::FilledGeometryModelUpcastHelper<typename Material::ParticleStateType>::UpcastType& upcast_model = *model;
 
   d_material = upcast_model.getMaterial( cell );
+}
+
+// Constructor
+template<typename Material>
+MaterialParticleResponseFunction<Material>::MaterialParticleResponseFunction(
+                       const std::shared_ptr<const FilledGeometryModel>& model,
+                       const Geometry::Model::InternalCellHandle cell,
+                       const typename Material::ReactionEnumType reaction )
+  : MaterialParticleResponseFunction( model, cell, reaction, 0 )
+{
+  typename Material::ReactionEnumTypeSet available_reaction_types;
+
+  d_material->getReactionTypes( available_reaction_types );
+
+  // Make sure that the material has cross section data for the reaction type
+  // of interest
+  TEST_FOR_EXCEPTION( !available_reaction_types.count( reaction ),
+                      std::runtime_error,
+                      "The material in cell " << cell << " has no cross "
+                      "section data available for reaction " << reaction <<
+                      "! The following reactions are available: "
+                      << available_reaction_types );
 }
 
 // Evaluate the response function at the desired phase space point
@@ -50,11 +75,34 @@ bool MaterialParticleResponseFunction<Material>::isSpatiallyUniform() const
 {
   return true;
 }
+
+// Get a description of the response function
+template<typename Material>
+std::string MaterialParticleResponseFunction<Material>::description() const
+{
+  return this->createDescription( d_reaction );
+}
+
+// Return the material
+template<typename Material>
+const Material& MaterialParticleResponseFunction<Material>::getMaterial() const
+{
+  return *d_material;
+}
+
+// Create a description of the response function
+template<typename Material>
+template<typename ReactionEnumType>
+std::string MaterialParticleResponseFunction<Material>::createDescription(
+                                        const ReactionEnumType reaction ) const
+{
+  return std::string("f_cell_") + Utility::toString( d_cell ) + "_mat_\"" +
+    Utility::toString( reaction ) + "\"(E)";
+}
   
 } // end MonteCarlo namespace
 
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::NeutronMaterial> );
-EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PhotonMaterial> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::ElectronMaterial> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::PositronMaterial> );
 EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( MonteCarlo::MaterialParticleResponseFunction<MonteCarlo::AdjointPhotonMaterial> );

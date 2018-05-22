@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpacePoint.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 #include "Utility_BasicCartesianCoordinateConversionPolicy.hpp"
 #include "Utility_UnitTestHarnessWithMain.hpp"
 
@@ -53,7 +54,7 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getClass )
 
 //---------------------------------------------------------------------------//
 // Check that the phase space point coordinates can be returned
-FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getCoordinate )
+FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getCoordinate_point )
 {
   MonteCarlo::PhaseSpacePoint point( spatial_coord_conversion_policy,
                                      directional_coord_conversion_policy );
@@ -91,6 +92,37 @@ FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getCoordinate )
   FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::TIME_DIMENSION>( point ), 0.1 );
 
   point.setWeightCoordinate( 0.9 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::WEIGHT_DIMENSION>( point ), 0.9 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the phase space point coordinates can be returned
+FRENSIE_UNIT_TEST( PhaseSpaceDimensionTraits, getCoordinate_particle )
+{
+  MonteCarlo::PhotonState point( 1ull );
+
+  point.setPosition( 1.0, 2.0, 3.0 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::PRIMARY_SPATIAL_DIMENSION>( point ), 1.0 );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SECONDARY_SPATIAL_DIMENSION>( point ), 2.0 );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::TERTIARY_SPATIAL_DIMENSION>( point ), 3.0 );
+
+  point.setDirection( -1.0/std::sqrt(2.0), 1.0/sqrt(2.0), 0.0 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::PRIMARY_DIRECTIONAL_DIMENSION>( point ), -1.0/std::sqrt(2.0) );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::SECONDARY_DIRECTIONAL_DIMENSION>( point ), 1.0/sqrt(2.0) );
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::TERTIARY_DIRECTIONAL_DIMENSION>( point ), 0.0 );
+
+  point.setEnergy( 0.5 );
+  
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::ENERGY_DIMENSION>( point ), 0.5 );
+
+  point.setTime( 0.1 );
+
+  FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::TIME_DIMENSION>( point ), 0.1 );
+
+  point.setWeight( 0.9 );
 
   FRENSIE_CHECK_EQUAL( MonteCarlo::getCoordinate<MonteCarlo::WEIGHT_DIMENSION>( point ), 0.9 );
 }

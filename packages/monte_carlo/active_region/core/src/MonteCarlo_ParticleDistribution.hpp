@@ -44,6 +44,9 @@ public:
   typedef PhaseSpaceDimensionDistribution::DimensionCounterMap
   DimensionCounterMap;
 
+  //! Basic constructor
+  ParticleDistribution( const size_t id );
+
   //! Constructor
   ParticleDistribution( const size_t id, const std::string& name );
 

@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleResponseFunction.hpp"
+#include "Utility_ToStringTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -39,9 +40,13 @@ public:
   bool isSpatiallyUniform() const final override
   { return true; }
 
+  //! Get a description of the response function
+  std::string description() const final override
+  { return Utility::toString( d_scalar_value ); }
+
 private:
 
-  // The scalar valu
+  // The scalar value
   double d_scalar_value;
 };
 
@@ -56,8 +61,14 @@ public:
   CombinedParticleResponseFunction(
                    const std::shared_ptr<const ParticleResponseFunction>& lhs,
                    const std::shared_ptr<const ParticleResponseFunction>& rhs,
-                   const ArithmeticOperationFunctor& op )
-    : d_lhs( lhs ), d_rhs( rhs ), d_op( op )
+                   const ArithmeticOperationFunctor& op,
+                   const std::string& op_string,
+                   const bool description_requires_parentheses )
+    : d_lhs( lhs ),
+      d_rhs( rhs ),
+      d_op( op ),
+      d_op_string( op_string ),
+      d_description_requires_parentheses( description_requires_parentheses )
   { /* ... */ }
 
   //! Destructor
@@ -72,6 +83,40 @@ public:
   bool isSpatiallyUniform() const final override
   { return d_lhs->isSpatiallyUniform() && d_rhs->isSpatiallyUniform(); }
 
+  //! Get a description of the response function
+  std::string description() const final override
+  {
+    std::string description_string;
+    
+    if( d_lhs->doesDescriptionRequireParentheses() )
+      description_string += "(";
+
+    description_string += d_lhs->description();
+
+    if( d_lhs->doesDescriptionRequireParentheses() )
+      description_string += ")";
+
+    description_string += " ";
+    description_string += d_op_string;
+    description_string += " ";
+
+    if( d_rhs->doesDescriptionRequireParentheses() )
+      description_string += "(";
+
+    description_string += d_rhs->description();
+
+    if( d_rhs->doesDescriptionRequireParentheses() )
+      description_string += ")";
+
+    return description_string;
+  }
+
+protected:
+
+  //! Check if the description requires parentheses
+  bool doesDescriptionRequireParentheses() const final override
+  { return d_description_requires_parentheses; }
+
 private:
 
   // The lhs response function
@@ -82,6 +127,12 @@ private:
 
   // The operation functor
   ArithmeticOperationFunctor d_op;
+
+  // The operation string (used for the description)
+  std::string d_op_string;
+
+  // Used to determine if the description requires parentheses
+  bool d_description_requires_parentheses;
 };
 
 // Create a new response function from the addition of two response functions
@@ -93,7 +144,7 @@ std::shared_ptr<const ParticleResponseFunction> operator+(
   testPrecondition( lhs.get() );
   testPrecondition( rhs.get() );
 
-  return std::make_shared<CombinedParticleResponseFunction<std::plus<double> > >( lhs, rhs, std::plus<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::plus<double> > >( lhs, rhs, std::plus<double>(), "+", true );
 }
 
 // Create a new response function from the subtraction of two response functions
@@ -105,7 +156,7 @@ std::shared_ptr<const ParticleResponseFunction> operator-(
   testPrecondition( lhs.get() );
   testPrecondition( rhs.get() );
 
-  return std::make_shared<CombinedParticleResponseFunction<std::minus<double> > >( lhs, rhs, std::minus<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::minus<double> > >( lhs, rhs, std::minus<double>(), "-", true );
 }
 
 // Create a new response function from the multiplication of two response functions
@@ -117,7 +168,7 @@ std::shared_ptr<const ParticleResponseFunction> operator*(
   testPrecondition( lhs.get() );
   testPrecondition( rhs.get() );
   
-  return std::make_shared<CombinedParticleResponseFunction<std::multiplies<double> > >( lhs, rhs, std::multiplies<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::multiplies<double> > >( lhs, rhs, std::multiplies<double>(), "*", false );
 }
 
 // Create a new response function from the multiplication of a scalar and a response function
@@ -130,7 +181,7 @@ std::shared_ptr<const ParticleResponseFunction> operator*(
   // Make sure that the response function pointer is valid
   testPrecondition( rhs.get() );
 
-  return std::make_shared<CombinedParticleResponseFunction<std::multiplies<double> > >( std::make_shared<ScalarParticleResponseFunction>( lhs ), rhs, std::multiplies<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::multiplies<double> > >( std::make_shared<ScalarParticleResponseFunction>( lhs ), rhs, std::multiplies<double>(), "*", false );
 }
 
 // Create a new response function from the multiplication of a response function and a scalar
@@ -143,7 +194,7 @@ std::shared_ptr<const ParticleResponseFunction> operator*(
   // Make sure that the scalar value is valid
   testPrecondition( !Utility::QuantityTraits<double>::isnaninf( rhs ) );
 
-  return std::make_shared<CombinedParticleResponseFunction<std::multiplies<double> > >( lhs, std::make_shared<ScalarParticleResponseFunction>( rhs ), std::multiplies<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::multiplies<double> > >( lhs, std::make_shared<ScalarParticleResponseFunction>( rhs ), std::multiplies<double>(), "*", false );
 }
 
 // Create a new response function from the division of two response functions
@@ -155,7 +206,7 @@ std::shared_ptr<const ParticleResponseFunction> operator/(
   testPrecondition( lhs.get() );
   testPrecondition( rhs.get() );
 
-  return std::make_shared<CombinedParticleResponseFunction<std::divides<double> > >( lhs, rhs, std::divides<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::divides<double> > >( lhs, rhs, std::divides<double>(), "/", true );
 }
 
 // Create a new response function from the division of a scalar and a response function
@@ -168,7 +219,7 @@ std::shared_ptr<const ParticleResponseFunction> operator/(
   // Make sure that the response function pointer is valid
   testPrecondition( rhs.get() );
 
-  return std::make_shared<CombinedParticleResponseFunction<std::divides<double> > >( std::make_shared<ScalarParticleResponseFunction>( lhs ), rhs, std::divides<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::divides<double> > >( std::make_shared<ScalarParticleResponseFunction>( lhs ), rhs, std::divides<double>(), "/", true );
 }
 
 // Create a new response function from the division of a response function and a scalar
@@ -181,7 +232,7 @@ std::shared_ptr<const ParticleResponseFunction> operator/(
   // Make sure that the scalar value is valid
   testPrecondition( !Utility::QuantityTraits<double>::isnaninf( rhs ) );
 
-  return std::make_shared<CombinedParticleResponseFunction<std::divides<double> > >( lhs, std::make_shared<ScalarParticleResponseFunction>( rhs ), std::divides<double>() );
+  return std::make_shared<CombinedParticleResponseFunction<std::divides<double> > >( lhs, std::make_shared<ScalarParticleResponseFunction>( rhs ), std::divides<double>(), "/", true );
 }
 
 } // end MonteCarlo namespace

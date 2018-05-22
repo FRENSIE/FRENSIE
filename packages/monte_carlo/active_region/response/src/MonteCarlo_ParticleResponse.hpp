@@ -13,6 +13,7 @@
 #include <memory>
 
 // FRENSIE Includes
+#include "MonteCarlo_UniqueIdManager.hpp"
 #include "Utility_Set.hpp"
 
 namespace MonteCarlo{
@@ -43,6 +44,9 @@ public:
 
 protected:
 
+  //! Basic Constructor
+  ParticleResponse( const size_t id );
+
   //! Constructor
   ParticleResponse( const size_t id, const std::string& name );
 
@@ -53,13 +57,10 @@ private:
   { /* ... */ }
 
   // The default response
-  static const std::shared_ptr<const ResponseFunction> s_default_response;
-
-  // The response id set
-  static std::set<size_t> s_id_set;
+  static const std::shared_ptr<const ParticleResponse> s_default_response;
 
   // The response id
-  size_t d_id;
+  UniqueIdManager<ParticleResponse,size_t> d_id;
 
   // The response name
   std::string d_name;

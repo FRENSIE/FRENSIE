@@ -37,15 +37,28 @@ public:
   //! Check if the response function is spatially uniform
   virtual bool isSpatiallyUniform() const = 0;
 
+  //! Get a description of the response function
+  virtual std::string description() const = 0;
+
 protected:
+
+  //! Check if the description requires parentheses
+  virtual bool doesDescriptionRequireParentheses() const;
 
   //! Constructor
   ParticleResponseFunction()
   { /* ... */ }
 };
 
+// Check if the description requires parentheses
+bool ParticleResponseFunction::doesDescriptionRequireParentheses() const
+{
+  return false;
+}
+
 // Evaluate the response function at the desired phase space point
-inline double operator()( const ParticleState& particle ) const
+inline double ParticleResponseFunction::operator()(
+                                          const ParticleState& particle ) const
 {
   return this->evaluate( particle );
 }

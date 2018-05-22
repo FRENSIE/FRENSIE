@@ -1,19 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DetailedResponseFunction.cpp
+//! \file   MonteCarlo_FullPhaseSpaceParticleResponseFunction.cpp
 //! \author Alex Robinson
-//! \brief  Detailed response function class definition
+//! \brief  Full phase-space particle response function class definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_DetailedResponseFunction.hpp"
+#include "MonteCarlo_FullPhaseSpaceParticleResponseFunction.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-DetailedResponseFunction::DetailedResponseFunction(
+FullPhaseSpaceParticleResponseFunction::FullPhaseSpaceParticleResponseFunction(
              const std::shared_ptr<const ParticleDistribution>& particle_dist )
   : d_particle_dist( particle_dist )
 {
@@ -22,19 +22,25 @@ DetailedResponseFunction::DetailedResponseFunction(
 }
 
 // Evaluate the response function at the desired phase space point
-double DetailedResponseFunction::evaluate( const ParticleState& particle ) const
+double FullPhaseSpaceParticleResponseFunction::evaluate( const ParticleState& particle ) const
 {
   return d_particle_dist->evaluate( particle );
 }
 
 // Check if the response function is spatially uniform
-bool DetailedResponseFunction::isSpatiallyUniform() const
+bool FullPhaseSpaceParticleResponseFunction::isSpatiallyUniform() const
 {
   return d_particle_dist->isSpatiallyUniform();
-}  
+}
+
+// Get a description of the response function
+std::string FullPhaseSpaceParticleResponseFunction::description() const
+{
+  return std::string("f_\"") + d_particle_dist->getName() + "\"(particle)";
+}
   
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DetailedResponseFunction.cpp
+// end MonteCarlo_FullPhaseSpaceParticleResponseFunction.cpp
 //---------------------------------------------------------------------------//

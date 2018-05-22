@@ -1,35 +1,35 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DetailedResponseFunction.hpp
+//! \file   MonteCarlo_FullPhaseSpaceParticleResponseFunction.hpp
 //! \author Alex Robinson
-//! \brief  Detailed response function class declaration
+//! \brief  Full phase-space particle response function class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_DETAILED_RESPONSE_FUNCTION_HPP
-#define MONTE_CARLO_DETAILED_RESPONSE_FUNCTION_HPP
+#ifndef MONTE_CARLO_FULL_PHASE_SPACE_PARTICLE_RESPONSE_FUNCTION_HPP
+#define MONTE_CARLO_FULL_PHASE_SPACE_PARTICLE_RESPONSE_FUNCTION_HPP
 
 // Std Lib Includes
 #include <memory>
 
 // FRENSIE Includes
-#include "MonteCarlo_ResponseFunction.hpp"
+#include "MonteCarlo_ParticleResponseFunction.hpp"
 #include "MonteCarlo_ParticleDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The detailed response function class
-class DetailedResponseFunction : public ResponseFunction
+class FullPhaseSpaceParticleResponseFunction : public ParticleResponseFunction
 {
 
 public:
 
   //! Constructor
-  DetailedResponseFunction(
+  FullPhaseSpaceParticleResponseFunction(
             const std::shared_ptr<const ParticleDistribution>& particle_dist );
 
   //! Destructor
-  ~DetailedResponseFunction()
+  ~FullPhaseSpaceParticleResponseFunction()
   { /* ... */ }
 
   //! Evaluate the response function at the desired phase space point
@@ -37,6 +37,9 @@ public:
 
   //! Check if the response function is spatially uniform
   bool isSpatiallyUniform() const final override;
+
+  //! Get a description of the response function
+  std::string description() const final override;
 
 private:
 
@@ -46,8 +49,8 @@ private:
   
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_DETAILED_RESPONSE_FUNCTION_HPP
+#endif // end MONTE_CARLO_FULL_PHASE_SPACE_PARTICLE_RESPONSE_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DetailedResponseFunction.hpp
+// end MonteCarlo_FullPhaseSpaceParticleResponseFunction.hpp
 //---------------------------------------------------------------------------//

@@ -12,7 +12,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleResponse.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ToString.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -20,27 +21,23 @@ namespace MonteCarlo{
 const std::shared_ptr<const ParticleResponse>
 ParticleResponse::s_default_response( new ParticleResponse( std::numeric_limits<size_t>::max(), "default" ) );
 
-// Initialize the response function id set
-std::set<size_t> ParticleResponse::s_id_set;
-
+// Basic Constructor
+ParticleResponse::ParticleResponse( const size_t id )
+  : ParticleResponse( id, std::string( "particle response " ) + Utility::toString( id ) )
+{ /* ... */ }
+  
 // Constructor
 ParticleResponse::ParticleResponse( const size_t id, const std::string& name )
   : d_id( id ),
     d_name( name )
 { 
-  TEST_FOR_EXCEPTION( s_id_set.find( id ) != s_id_set.end(),
-                      std::runtime_error,
-                      "The particle response id " << id << " is already in "
-                      "use!" );
-
-  s_id_set.insert( id );
+  // Make sure that the name is valid
+  testPrecondition( name.size() > 0 );
 }
 
 // Destructor
 ParticleResponse::~ParticleResponse()
-{
-  s_id_set.erase( d_id );
-}
+{ /* ... */ }
   
 // Return the id
 size_t ParticleResponse::getId() const

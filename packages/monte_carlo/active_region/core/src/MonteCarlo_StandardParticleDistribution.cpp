@@ -26,11 +26,17 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_HDF5IArchive.hpp"
 #include "Utility_HDF5OArchive.hpp"
+#include "Utility_ToStringTraits.hpp"
 #include "Utility_LoggingMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
+// Basic Constructor
+StandardParticleDistribution::StandardParticleDistribution( const size_t id )
+  : StandardParticleDistribution( id, std::string( "standard particle dist " ) + Utility::toString( id ) )
+{ /* ... */ }
+  
 // Basic Constructor
 StandardParticleDistribution::StandardParticleDistribution(
                                                       const size_t id,
@@ -45,6 +51,19 @@ StandardParticleDistribution::StandardParticleDistribution(
   // Initialize the distribution
   this->reset();
 }
+
+// Constructor
+StandardParticleDistribution::StandardParticleDistribution(
+   const size_t id,
+   const std::shared_ptr<const Utility::SpatialCoordinateConversionPolicy>&
+   spatial_coord_conversion_policy,
+   const std::shared_ptr<const Utility::DirectionalCoordinateConversionPolicy>&
+   directional_coord_conversion_policy )
+  : StandardParticleDistribution( id,
+                                  std::string( "standard particle dist " ) + Utility::toString( id ),
+                                  spatial_coord_conversion_policy,
+                                  directional_coord_conversion_policy )
+{ /* ... */ }
 
 // Constructor
 StandardParticleDistribution::StandardParticleDistribution(
